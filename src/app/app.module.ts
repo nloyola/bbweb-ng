@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
+import { SharedModule } from './shared/shared.module';
 import { HomeModule } from './home/home.module';
 
 const routes = [
@@ -11,13 +12,13 @@ const routes = [
 ];
 
 @NgModule({
-  declarations: [AppComponent]
+  declarations: [AppComponent],
   imports: [
     BrowserModule,
+    SharedModule,
     HomeModule,
     RouterModule.forRoot(routes)
   ],
-  declarations: [AppComponent],
   bootstrap: [AppComponent]
 })
 
