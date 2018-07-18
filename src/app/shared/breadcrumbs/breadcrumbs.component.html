@@ -1,16 +1,12 @@
 <ol class="breadcrumb">
   <ng-container *ngFor="let crumb of crumbs; last as isLast">
-    <li *ngClass="{ 'active': isLast }">
-      <span *ngIf="!isLast then thenBlock else elseBlock">
-        <ng-template #thenBlock>
-          <a routerLink="crumb.route" ui-sref-opts="{reload: true}">
-            <small>{{crumb.displayNameFn()}}&nbsp;</small>
-          </a>
-        </ng-template>
-        <ng-template #elseBlock>
-          <small>{{ crumb.displayNameFn() }}</small>
-        </ng-template>
-      </span>
+    <li *ngIf="!isLast" class="breadcrumb-item">
+      <a [routerLink]="crumb.url">
+        <small>{{crumb.label}}</small>
+      </a>
+    </li>
+    <li *ngIf="isLast" class="breadcrumb-item active">
+      <small>{{crumb.label}}</small>
     </li>
   </ng-container>
 </ol>
