@@ -1,0 +1,59 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" routerLink="home" >Biobank</a>
+  <button class="navbar-toggler collapsed"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarContent"
+          aria-expanded="false"
+          aria-controls="navbarContent"
+          aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="navbar-collapse collapse"
+       id="navbarContent"
+       (click)="isCollapsed = !isCollapsed"
+       [attr.aria-expanded]="!isCollapsed"
+       aria-controls="collapseExample">
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item dropdown" *ngIf="user" ngbDropdown>
+        <a href="#"
+           class="nav-link dropdown-toggle"
+           id="language-dropdown"
+           role="button"
+           data-togggle="dropdown"
+           ngbDropdownToggle>
+          <span class="glyphicon glyphicon-globe"></span>
+          <ng-container i18n>Language</ng-container>
+          <span class="caret"></span>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="language-dropdown" ngbDropdownMenu>
+          <a class="dropdown-item" (click)="changeLanguage('en')" i18n>English</a>
+          <a class="dropdown-item" (click)="changeLanguage('es-es')" i18n>Spanish</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown" *ngIf="user" ngbDropdown>
+        <a href="#"
+           class="nav-link dropdown"
+           id="user-dropdown"
+           role="button"
+           data-togggle="dropdown"
+           ngbDropdownToggle>
+          <span class="glyphicon glyphicon-user"></span> {{user.name}}<b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="user-dropdown" ngbDropdownMenu>
+          <a class="dropdown-item" routerLink="home.admin.access.users.user({ slug: user.slug })">
+            <span class="glyphicon glyphicon-cog"></span>
+            <ng-container i18n>Profile</ng-container>
+          </a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href (click)="logout()">
+            <span class="glyphicon glyphicon-off"></span>
+            <ng-container i18n>Logout</ng-container>
+          </a>
+        </div>
+      </li>
+      <li><a routerLink="home.users.login" *ngIf="!user" i18n>Login</a></li>
+    </ul>
+  </div><!--/.nav-collapse -->
+</nav>

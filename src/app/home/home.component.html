@@ -1,28 +1,27 @@
-<app-breadcrumbs crumbs="vm.breadcrumbs"
-             ng-if="vm.userIsAuthenticated">
+<app-breadcrumbs crumbs="vm.breadcrumbs" *ngIf="userIsAuthenticated">
 </app-breadcrumbs>
-<div class="page-header">
-  <h1 translate>Welcome to Biobank</h1>
+<div class="pb-2 mt-4 mb-2 border-bottom">
+  <h1 i18n>Welcome to Biobank</h1>
 </div>
-<div class="container" ng-if="!vm.userIsAuthenticated">
+<ng-container *ngIf="!userIsAuthenticated">
   <div class="row">
-    <div class="col-md-12" translate>
+    <div class="col-md-12" i18n>
       Please log in.
     </div>
   </div>
-</div>
-<div class="container" ng-if="vm.userIsAuthenticated">
+</ng-container>
+<ng-container *ngIf="userIsAuthenticated">
 
   <div class="alert alert-warning" ng-if="!vm.hasRoles">
     <span class="glyphicon glyphicon-warning-sign"></span>
-    <translate>
+    <ng-container i18n>
       Your user permissions are not valid. Please contact your website administrator.
-    </translate>
+    </ng-container>
   </div>
 
   <div class="row" ng-if="vm.hasRoles">
     <div class="col-md-12" ng-if="vm.userIsAuthenticated">
-      <h2 translate>Select a task</h2>
+      <h2 i18n>Select a task</h2>
     </div>
   </div>
 
@@ -33,14 +32,14 @@
       <div class="panel panel-default">
         <div class="panel-heading">
           <h3 class="panel-title">
-            <translate>Collection</translate>
+            <ng-container i18n>Collection</ng-container>
             <span class="btn-group pull-right">
               <a ui-sref="home.collection" class="btn btn-xs btn-primary" type="button">Select</a>
             </span>
           </h3>
         </div>
         <div class="panel-body">
-          <p translate>Record specimen collection.</p>
+          <p i18n>Record specimen collection.</p>
         </div>
       </div>
     </div>
@@ -50,14 +49,14 @@
       <div class="panel panel-default">
         <div class="panel-heading">
           <h3 class="panel-title">
-            <translate>Shipping</translate>
+            <ng-container i18n>Shipping</ng-container>
             <span class="btn-group pull-right">
               <a ui-sref="home.shipping" class="btn btn-xs btn-primary" type="button">Select</a>
             </span>
           </h3>
         </div>
         <div class="panel-body">
-          <p translate>Enter shipping information for specimens.</p>
+          <p i18n>Enter shipping information for specimens.</p>
         </div>
       </div>
     </div>
@@ -71,17 +70,17 @@
       <div class="panel panel-default">
         <div class="panel-heading">
           <h3 class="panel-title">
-            <translate>Administration</translate>
+            <ng-container i18n>Administration</ng-container>
             <span class="btn-group pull-right">
               <a ui-sref="home.admin" class="btn btn-xs btn-primary" type="button">Select</a>
             </span>
           </h3>
         </div>
         <div class="panel-body">
-          <p translate>Perform administrative tasks.</p>
+          <p i18n>Perform administrative tasks.</p>
         </div>
       </div>
     </div>
 
   </div>
-</div>
+</ng-container>
