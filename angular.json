@@ -123,5 +123,10 @@
       }
     }
   },
-  "defaultProject": "bbweb-ng"
+  "defaultProject": "bbweb-ng",
+  "schematics": {
+    "@schematics/angular:component": {
+      "styleext": "scss"
+    }
+  }
 }
