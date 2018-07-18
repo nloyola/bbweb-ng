@@ -1,0 +1,85 @@
+<div class="row">
+  <div class="col-sm-8 offset-2 mt-4">
+    <div class="card">
+      <div class="card-header" i18n>Login</div>
+      <div class="card-body">
+        <form class="form-horizontal"
+              #loginForm="ngForm"
+              autocomplete="on"
+              (ngSubmit)="submitForm(loginForm.value)"
+              novalidate>
+
+          <!-- EMAIL -->
+          <div class="form-group row">
+            <label for="email" class="col-md-3 col-form-label" i18n>Email address</label>
+            <div class="col-md-8">
+              <input class="form-control"
+                     type="email"
+                     name="email"
+                     id="email"
+                     ngModel
+                     #email="ngModel"
+                     placeholder="Email"
+                     i18n-placeholder
+                     email
+                     required>
+            </div>
+            <div class="col-md-8 offset-3"
+                 *ngIf="email.invalid && email.touched">
+              <div class="text-danger small" *ngIf="email.errors.required">
+                Email address is required
+              </div>
+              <div class="text-danger small" *ngIf="email.errors.email">
+                Email address is not valid
+              </div>
+            </div>
+          </div>
+
+          <!-- PASSWORD -->
+          <div class="form-group row">
+            <label for="password" class="col-md-3 col-form-label" i18n>Password</label>
+            <div class="col-md-8">
+              <input class="form-control"
+                     type="password"a
+                     name="password"
+                     id="password"
+                     #password="ngModel"
+                     ngModel
+                     placeholder="Password"
+                     i18n-placeholder
+                     required>
+            </div>
+            <div class="col-md-8 offset-3 form-text text-muted"
+                 *ngIf="password.invalid && password.touched">
+              <div class="text-danger small" *ngIf="password.errors.required">
+                A password is required
+              </div>
+            </div>
+          </div>
+
+          <!-- BUTTONS  -->
+          <div class="form-group">
+            <div class="col-md-8 offset-3">
+              <button class="btn btn-primary"
+                      type="submit"
+                      [disabled]="!loginForm.form.valid"
+                      i18n>
+                Log In
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="card-footer">
+        <p><a routerLink="/forgot" i18n>Forgot password?</a></p>
+        <p>
+          <ng-container i18n="used in the login page">
+            Don't have an account?
+          </ng-container>
+          <a routerLink="/register" i18n>Register</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

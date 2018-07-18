@@ -5,6 +5,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AppComponent } from './app.component';
 import { SharedModule } from './shared/shared.module';
 import { HomeModule } from './home/home.module';
+import { UsersModule } from './users/users.module';
 import { AppRoutingModule } from './app-routing.module';
 
 @NgModule({
@@ -13,6 +14,7 @@ import { AppRoutingModule } from './app-routing.module';
     BrowserModule,
     SharedModule,
     HomeModule,
+    UsersModule,
     AppRoutingModule,
     NgbModule.forRoot(),
   ],
