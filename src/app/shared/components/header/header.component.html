@@ -17,8 +17,7 @@
        aria-controls="collapseExample">
     <ul class="navbar-nav ml-auto">
       <li class="nav-item dropdown" *ngIf="user" ngbDropdown>
-        <a href="#"
-           class="nav-link dropdown-toggle"
+        <a class="nav-link dropdown-toggle"
            id="language-dropdown"
            role="button"
            data-togggle="dropdown"
@@ -33,13 +32,12 @@
         </div>
       </li>
       <li class="nav-item dropdown" *ngIf="user" ngbDropdown>
-        <a href="#"
-           class="nav-link dropdown"
+        <a class="nav-link dropdown"
            id="user-dropdown"
            role="button"
            data-togggle="dropdown"
            ngbDropdownToggle>
-          <span class="glyphicon glyphicon-user"></span> {{user.name}}<b class="caret"></b>
+          <span class="glyphicon glyphicon-user"></span> {{user.email}}<b class="caret"></b>
         </a>
         <div class="dropdown-menu" aria-labelledby="user-dropdown" ngbDropdownMenu>
           <a class="dropdown-item" routerLink="home.admin.access.users.user({ slug: user.slug })">
@@ -47,7 +45,7 @@
             <ng-container i18n>Profile</ng-container>
           </a>
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href (click)="logout()">
+          <a class="dropdown-item" (click)="logout()">
             <span class="glyphicon glyphicon-off"></span>
             <ng-container i18n>Logout</ng-container>
           </a>

@@ -1,18 +1,33 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
 
-import { SharedModule } from '../../shared/shared.module';
-import { Crumb } from '../../domain/crumb/crumb.model';
+import { SharedModule } from '@app/shared/shared.module';
+import { Crumb } from '@app/domain/crumb/crumb.model';
+import { AuthService } from '@app/users';
 
 @Component({
   selector: 'home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  templateUrl: './home.component.html'
 })
 
-export class HomeComponent {
-  userIsAuthenticated = true;
-  hasRoles = true;
-  breadcrumbs: Crumb[] = [
-    new Crumb('Home', '/home')
-  ];
+export class HomeComponent implements OnInit, OnDestroy {
+
+  private isUserAuthenticated: boolean;
+  private hasRoles: boolean = true;
+  private userSubscription: Subscription;
+
+  constructor(private authService: AuthService) {
+    this.isUserAuthenticated = this.authService.isLoggedIn();
+  }
+
+  ngOnInit() {
+    this.userSubscription = this.authService.getUserObservable()
+      .subscribe((user) => {
+        this.isUserAuthenticated = user !== null;
+      });
+  }
+
+  ngOnDestroy() {
+    this.userSubscription.unsubscribe();
+  }
 }

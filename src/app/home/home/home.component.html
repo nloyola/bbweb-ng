@@ -1,9 +1,7 @@
-<app-breadcrumbs [crumbs]="breadcrumbs" *ngIf="userIsAuthenticated">
-</app-breadcrumbs>
 <div class="pb-2 mt-4 mb-2 border-bottom">
   <h1 i18n>Welcome to Biobank</h1>
 </div>
-<ng-container *ngIf="userIsAuthenticated; else notLoggedIn">
+<ng-container *ngIf="isUserAuthenticated; else notLoggedIn">
   <div class="alert alert-warning" *ngIf="!hasRoles">
     <span class="glyphicon glyphicon-warning-sign"></span>
     <ng-container i18n>
