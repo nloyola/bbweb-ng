@@ -10,34 +10,39 @@ import { UsersModule } from '../users.module'
 })
 export class AuthService {
 
-  private currentUser: object;
+  private authToken: any;
   private user$ = new Subject<object>();
 
   constructor(private http: HttpClient) {
-    this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    this.user$.next(this.currentUser);
+    this.authToken = JSON.parse(localStorage.getItem('authToken'));
+    if (this.authToken) {
+      this.user$.next(this.authToken.user);
+    } else {
+      this.user$.next(null);
+    }
   }
 
   login(email: string, password: string) {
     return this.http.post<any>('/api/users/login', { email, password })
       .pipe(map((res: any) => {
-        if (res && res.data && res.data.token) {
-          this.currentUser = { email, token: res.data.token };
+        if (res && res.data && res.data.user && res.data.token) {
+          this.authToken = res.data;
+
           // store username and jwt token in local storage to keep user logged in between page refreshes
-          localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
-          this.user$.next(this.currentUser);
+          localStorage.setItem('authToken', JSON.stringify(this.authToken));
+          this.user$.next(this.authToken.user);
         }
       }));
   }
 
   logout() {
-    this.currentUser = null;
-    localStorage.removeItem('currentUser');
+    this.authToken = null;
+    localStorage.removeItem('authToken');
     this.user$.next(null);
   }
 
   isLoggedIn() {
-    return localStorage.getItem('currentUser') !== null;
+    return localStorage.getItem('authToken') !== null;
   }
 
   getUserObservable() {
@@ -45,6 +50,9 @@ export class AuthService {
   }
 
   getUser() {
-    return this.currentUser;
+    if (this.authToken) {
+      return this.authToken.user;
+    }
+    return null;
   }
 }

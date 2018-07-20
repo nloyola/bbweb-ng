@@ -13,17 +13,30 @@ import { AuthService } from '@app/users';
 export class HomeComponent implements OnInit, OnDestroy {
 
   private isUserAuthenticated: boolean;
-  private hasRoles: boolean = true;
+  private hasRoles: boolean;
   private userSubscription: Subscription;
 
   constructor(private authService: AuthService) {
     this.isUserAuthenticated = this.authService.isLoggedIn();
+
+    const user = this.authService.getUser();
+    console.log(user);
+    if (user) {
+      this.hasRoles = user.roles.length > 0;
+    }
+
   }
 
   ngOnInit() {
     this.userSubscription = this.authService.getUserObservable()
-      .subscribe((user) => {
-        this.isUserAuthenticated = user !== null;
+      .subscribe((user: any) => {
+        if (user) {
+          this.isUserAuthenticated = true;
+          this.hasRoles = user.roles.length > 0;
+          // this.allowCollection = this.user.hasSpecimenCollectorRole();
+          // this.shippingAllowed = this.user.hasShippingUserRole();
+          // this.adminAllowed = this.user.hasAdminRole();
+        }
       });
   }
 
