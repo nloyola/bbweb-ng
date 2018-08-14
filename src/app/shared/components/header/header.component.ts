@@ -1,8 +1,16 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 
 import { AuthService } from '@app/users';
 import { Subscription } from 'rxjs';
+import { User } from '@app/domain/users/user.model';
+
+import {
+  RootStoreState,
+  UserLoginStoreActions,
+  UserLoginStoreSelectors
+} from '@app/root-store';
 
 @Component({
   selector: 'app-header',
@@ -11,30 +19,33 @@ import { Subscription } from 'rxjs';
 })
 export class HeaderComponent implements OnInit, OnDestroy {
 
-  private user: object;
-  private isCollapsed = true;
-  private userSubscription: Subscription;
+  user: User = null;
+  isCollapsed = true;
+  userLoginSubscription: Subscription;
 
   constructor(
-    private authService: AuthService,
+    private store$: Store<RootStoreState.State>,
     private router: Router) {
-    this.user = this.authService.getUser();
   }
 
   ngOnInit() {
-    this.userSubscription = this.authService.getUserObservable()
-      .subscribe((user) => {
+    this.userLoginSubscription = this.store$
+      .select(UserLoginStoreSelectors.selectUserLoginUser)
+      .subscribe(user => {
         this.user = user;
+
+        if (user === null) {
+          this.router.navigate(['/']);
+        }
       });
   }
 
-  ngOnDestroy() {
-    this.userSubscription.unsubscribe();
+  logout() {
+    this.store$.dispatch(new UserLoginStoreActions.LogoutRequestAction());
   }
 
-  logout() {
-    this.authService.logout();
-    this.router.navigate(['/']);
+  public ngOnDestroy() {
+    this.userLoginSubscription.unsubscribe();
   }
 
 }

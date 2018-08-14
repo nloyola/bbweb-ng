@@ -1,9 +1,16 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { Observable, Subscription } from 'rxjs';
 
 import { SharedModule } from '@app/shared/shared.module';
 import { Crumb } from '@app/domain/crumb/crumb.model';
-import { AuthService } from '@app/users';
+import { User } from '@app/domain/users/user.model';
+
+import {
+  RootStoreState,
+  UserLoginStoreActions,
+  UserLoginStoreSelectors
+} from '@app/root-store';
 
 @Component({
   selector: 'home',
@@ -12,35 +19,33 @@ import { AuthService } from '@app/users';
 
 export class HomeComponent implements OnInit, OnDestroy {
 
-  private isUserAuthenticated: boolean;
-  private hasRoles: boolean;
-  private userSubscription: Subscription;
+  user$: Observable<User>;
+  error$: Observable<any>;
+  isLoading$: Observable<boolean>;
+  userLoginSubscription: Subscription;
 
-  constructor(private authService: AuthService) {
-    this.isUserAuthenticated = this.authService.isLoggedIn();
+  isUserAuthenticated: boolean;
+  hasRoles: boolean;
 
-    const user = this.authService.getUser();
-    console.log(user);
-    if (user) {
-      this.hasRoles = user.roles.length > 0;
-    }
-
+  constructor(private store$: Store<RootStoreState.State>) {
   }
 
   ngOnInit() {
-    this.userSubscription = this.authService.getUserObservable()
-      .subscribe((user: any) => {
-        if (user) {
+    this.userLoginSubscription = this.store$
+      .select(UserLoginStoreSelectors.selectUserLoginUser)
+      .subscribe(user => {
+        if (user !== null) {
           this.isUserAuthenticated = true;
           this.hasRoles = user.roles.length > 0;
-          // this.allowCollection = this.user.hasSpecimenCollectorRole();
-          // this.shippingAllowed = this.user.hasShippingUserRole();
-          // this.adminAllowed = this.user.hasAdminRole();
+        } else {
+          this.isUserAuthenticated = false;
+          this.hasRoles = false;
         }
       });
   }
 
-  ngOnDestroy() {
-    this.userSubscription.unsubscribe();
+  public ngOnDestroy() {
+    this.userLoginSubscription.unsubscribe();
   }
+
 }

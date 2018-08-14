@@ -10,6 +10,7 @@ import { AppComponent } from '@app/app.component';
 import { AppRoutingModule } from '@app/app-routing.module';
 
 import { JwtInterceptor, ErrorInterceptor } from '@app/http';
+import { RootStoreModule } from '@app/root-store/root-store.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -21,6 +22,7 @@ import { JwtInterceptor, ErrorInterceptor } from '@app/http';
     UsersModule,
     AppRoutingModule,
     NgbModule.forRoot(),
+    RootStoreModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
