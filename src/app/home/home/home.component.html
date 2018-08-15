@@ -3,7 +3,7 @@
 </div>
 <ng-container *ngIf="isUserAuthenticated; else notLoggedIn">
   <div class="alert alert-warning" *ngIf="!hasRoles">
-    <span class="glyphicon glyphicon-warning-sign"></span>
+    <mat-icon>warning</mat-icon>
     <ng-container i18n>
       Your user permissions are not valid. Please contact your website administrator.
     </ng-container>

@@ -1,6 +1,12 @@
 /* You can add global styles to this file, and also import other style files */
 
+@import url('https://fonts.googleapis.com/css?family=Ubuntu');
 @import "~bootstrap/dist/css/bootstrap.css";
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+
+body,h1,h2,h3,h4,h5,h6,h7.toplogo,.nav-title {
+  font-family: 'Ubuntu', sans-serif;
+}
 
 body {
   padding-left: 15px;
@@ -9,4 +15,8 @@ body {
 
 .form-control.ng-invalid.ng-touched {
   border: 2px solid red;
+}
+
+mat-icon {
+  vertical-align: middle;
 }

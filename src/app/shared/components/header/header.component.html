@@ -22,8 +22,10 @@
            role="button"
            data-togggle="dropdown"
            ngbDropdownToggle>
-          <span class="glyphicon glyphicon-globe"></span>
-          <ng-container i18n>Language</ng-container>
+          <mat-icon>language</mat-icon>
+          <ng-container i18n>
+            Language
+          </ng-container>
           <span class="caret"></span>
         </a>
         <div class="dropdown-menu" aria-labelledby="language-dropdown" ngbDropdownMenu>
@@ -37,16 +39,16 @@
            role="button"
            data-togggle="dropdown"
            ngbDropdownToggle>
-          <span class="glyphicon glyphicon-user"></span> {{user.name}}<b class="caret"></b>
+          <mat-icon>account_box</mat-icon> {{user.name}}<b class="caret"></b>
         </a>
         <div class="dropdown-menu" aria-labelledby="user-dropdown" ngbDropdownMenu>
           <a class="dropdown-item" routerLink="home.admin.access.users.user({ slug: user.slug })">
-            <span class="glyphicon glyphicon-cog"></span>
+            <mat-icon>settings</mat-icon>
             <ng-container i18n>Profile</ng-container>
           </a>
           <div class="dropdown-divider"></div>
           <a class="dropdown-item" (click)="logout()">
-            <span class="glyphicon glyphicon-off"></span>
+            <mat-icon>undo</mat-icon>
             <ng-container i18n>Logout</ng-container>
           </a>
         </div>
