@@ -1,9 +1,9 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <a class="navbar-brand" routerLink="home" >Biobank</a>
-  <button class="navbar-toggler collapsed"
+
+  <button class="navbar-toggler navbar-toggler-right"
           type="button"
-          data-toggle="collapse"
-          data-target="#navbarContent"
+          (click)="isCollapsed = !isCollapsed"
           aria-expanded="false"
           aria-controls="navbarContent"
           aria-label="Toggle navigation">
@@ -11,8 +11,7 @@
   </button>
 
   <div class="navbar-collapse collapse"
-       id="navbarContent"
-       (click)="isCollapsed = !isCollapsed"
+       [ngbCollapse]="isCollapsed"
        [attr.aria-expanded]="!isCollapsed"
        aria-controls="collapseExample">
     <ul class="navbar-nav ml-auto">
