@@ -13,7 +13,7 @@ function getLocalStorageUser() {
   if (authToken === null) {
     return null;
   }
-  return authToken.user;
+  return new User().deserialize(authToken.user);
 }
 
 export const initialState: State = {

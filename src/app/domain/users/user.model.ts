@@ -102,6 +102,15 @@ export class User extends ConcurrencySafeEntity {
     return this.membership !== undefined;
   }
 
+  deserialize(input: any) {
+    Object.assign(this, input);
+    this.roles = input.roles.map(role => new UserRole().deserialize(role));
+    if (input.membership) {
+      this.membership = new UserMembership().deserialize(input.membership);
+    }
+    return this;
+  }
+
   // register(password) {
   //   var json = {
   //     name: this.name,

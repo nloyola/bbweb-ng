@@ -1,4 +1,6 @@
-export class ConcurrencySafeEntity extends DomainEntity {
+import { DomainEntity } from './domain-entity.model';
+
+export abstract class ConcurrencySafeEntity extends DomainEntity {
 
   /**
    * The current version for the object. Used for optimistic concurrency versioning.

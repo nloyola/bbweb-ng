@@ -25,7 +25,7 @@ export class AuthService {
 
           // store username and jwt token in local storage to keep user logged in between page refreshes
           localStorage.setItem('authToken', JSON.stringify(this.authToken));
-          return this.authToken.user;
+          return new User().deserialize(this.authToken.user);
         }
       }));
   }
@@ -41,7 +41,7 @@ export class AuthService {
 
   getUser() {
     if (this.authToken) {
-      return this.authToken.user;
+      return new User().deserialize(this.authToken.user);
     }
     return null;
   }

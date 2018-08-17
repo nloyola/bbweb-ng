@@ -19,13 +19,14 @@ import {
 
 export class HomeComponent implements OnInit, OnDestroy {
 
-  user$: Observable<User>;
-  error$: Observable<any>;
-  isLoading$: Observable<boolean>;
   userLoginSubscription: Subscription;
 
-  isUserAuthenticated: boolean;
-  hasRoles: boolean;
+  private user: User;
+  private isUserAuthenticated: boolean;
+  private hasRoles: boolean;
+  private allowCollection: boolean;
+  private shippingAllowed: boolean;
+  private adminAllowed: boolean;
 
   constructor(private store$: Store<RootStoreState.State>) {
   }
@@ -33,13 +34,22 @@ export class HomeComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.userLoginSubscription = this.store$
       .select(UserLoginStoreSelectors.selectUserLoginUser)
-      .subscribe(user => {
+      .subscribe((user: User) => {
+        this.user = user;
         if (user !== null) {
+          console.log(user);
+
           this.isUserAuthenticated = true;
-          this.hasRoles = user.roles.length > 0;
+          this.hasRoles = this.user.hasRoles();
+          this.allowCollection = this.user.hasSpecimenCollectorRole();
+          this.shippingAllowed = this.user.hasShippingUserRole();
+          this.adminAllowed = this.user.hasAdminRole();
         } else {
           this.isUserAuthenticated = false;
           this.hasRoles = false;
+          this.allowCollection = false;
+          this.shippingAllowed = false;
+          this.adminAllowed = false;
         }
       });
   }
