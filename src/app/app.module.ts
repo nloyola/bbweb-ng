@@ -3,12 +3,15 @@ import { NgModule } from '@angular/core';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-
-import { AdminModule } from '@app/admin/admin.module';
-import { HomeModule } from '@app/home/home.module';
 import { MaterialModule } from '@app/material.module';
+
 import { SharedModule } from '@app/shared/shared.module';
+import { AdminModule } from '@app/admin/admin.module';
+import { CollectionModule } from '@app/collection/collection.module';
+import { HomeModule } from '@app/home/home.module';
+import { ShippingModule } from '@app/shipping/shipping.module';
 import { UsersModule } from '@app/users/users.module';
+
 import { AppComponent } from '@app/app.component';
 import { AppRoutingModule } from '@app/app-routing.module';
 
@@ -22,7 +25,9 @@ import { RootStoreModule } from '@app/root-store/root-store.module';
     HttpClientModule,
     SharedModule,
     AdminModule,
+    CollectionModule,
     HomeModule,
+    ShippingModule,
     UsersModule,
     AppRoutingModule,
     NgbModule.forRoot(),
