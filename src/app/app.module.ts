@@ -4,6 +4,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
+import { AdminModule } from '@app/admin/admin.module';
 import { HomeModule } from '@app/home/home.module';
 import { MaterialModule } from '@app/material.module';
 import { SharedModule } from '@app/shared/shared.module';
@@ -20,6 +21,7 @@ import { RootStoreModule } from '@app/root-store/root-store.module';
     BrowserModule,
     HttpClientModule,
     SharedModule,
+    AdminModule,
     HomeModule,
     UsersModule,
     AppRoutingModule,
