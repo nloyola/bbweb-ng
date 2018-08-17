@@ -19,34 +19,26 @@
 
     <!-- COLLECTION -->
     <div class="col-md-4" *ngIf="allowCollection">
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h3 class="panel-title">
-            <ng-container i18n>Collection</ng-container>
-            <span class="btn-group pull-right">
-              <a ui-sref="home.collection" class="btn btn-xs btn-primary" type="button">Select</a>
-            </span>
-          </h3>
-        </div>
-        <div class="panel-body">
+      <div class="card">
+        <h5 class="card-header bg-primary text-light">
+          <ng-container i18n>Collection</ng-container>
+        </h5>
+        <div class="card-body">
           <p i18n>Record specimen collection.</p>
+          <a routerLink="/collection" class="btn btn-primary" i18n>Select</a>
         </div>
       </div>
     </div>
 
     <!-- SHIPPING -->
     <div class="col-md-4" *ngIf="shippingAllowed">
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h3 class="panel-title">
-            <ng-container i18n>Shipping</ng-container>
-            <span class="btn-group pull-right">
-              <a ui-sref="home.shipping" class="btn btn-xs btn-primary" type="button">Select</a>
-            </span>
-          </h3>
-        </div>
-        <div class="panel-body">
+      <div class="card">
+        <h5 class="card-header bg-primary text-light">
+          <ng-container i18n>Shipping</ng-container>
+        </h5>
+        <div class="card-body">
           <p i18n>Enter shipping information for specimens.</p>
+          <a routerLink="/shipping" class="btn btn-primary" i18n>Select</a>
         </div>
       </div>
     </div>
@@ -57,17 +49,13 @@
 
     <!-- ADMINISTRATION -->
     <div class="col-md-4" *ngIf="adminAllowed">
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h3 class="panel-title">
-            <ng-container i18n>Administration</ng-container>
-            <span class="btn-group pull-right">
-              <a ui-sref="home.admin" class="btn btn-xs btn-primary" type="button">Select</a>
-            </span>
-          </h3>
-        </div>
-        <div class="panel-body">
+      <div class="card">
+        <h5 class="card-header bg-primary text-light">
+          <ng-container i18n>Administration</ng-container>
+        </h5>
+        <div class="card-body">
           <p i18n>Perform administrative tasks.</p>
+          <a routerLink="/admin" class="btn btn-primary" i18n>Select</a>
         </div>
       </div>
     </div>

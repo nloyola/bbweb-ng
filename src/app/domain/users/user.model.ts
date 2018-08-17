@@ -65,7 +65,7 @@ export class User extends ConcurrencySafeEntity {
   }
 
   hasAnyRoleOf(...roleIds) {
-    return this.roles.reduce((acc, role) => acc || role.hasAnyRoleOf(roleIds), false);
+    return this.roles.reduce((acc, role) => acc || role.hasAnyRoleOf(...roleIds), false);
   }
 
   hasStudyAdminRole() {
