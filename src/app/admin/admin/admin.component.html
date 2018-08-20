@@ -1,3 +1,46 @@
-<p>
-  admin works!
-</p>
+<div class="pb-2 mt-4 mb-2 border-bottom">
+  <h1 i18n>Select a category</h1>
+</div>
+
+<div class="row">
+
+  <!-- STUDY ADMIN -->
+  <div class="col-md-4" *ngIf="user.hasStudyAdminRole()">
+    <div class="card">
+      <h5 class="card-header bg-primary text-light">
+        <ng-container i18n>Study Administration</ng-container>
+      </h5>
+      <div class="card-body">
+        <p i18n>Add a new study or make changes to existing studies.</p>
+        <a routerLink="study" class="btn btn-primary" i18n>Select</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- CENTRE ADMIN -->
+  <div class="col-md-4" *ngIf="user.hasStudyAdminRole()">
+    <div class="card">
+      <h5 class="card-header bg-primary text-light">
+        <ng-container i18n>Centre Administration</ng-container>
+      </h5>
+      <div class="card-body">
+        <p i18n>Add a new centre or make changes to existing centres.</p>
+        <a routerLink="centre" class="btn btn-primary" i18n>Select</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- STUDY ADMIN -->
+  <div class="col-md-4" *ngIf="user.hasStudyAdminRole()">
+    <div class="card">
+      <h5 class="card-header bg-primary text-light">
+        <ng-container i18n>User Administration</ng-container>
+      </h5>
+      <div class="card-body">
+        <p i18n>Activate users, lock out existing users, or manage user permissions.</p>
+        <a routerLink="user" class="btn btn-primary" i18n>Select</a>
+      </div>
+    </div>
+  </div>
+
+</div>
