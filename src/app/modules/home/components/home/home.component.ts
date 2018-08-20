@@ -35,8 +35,6 @@ export class HomeComponent implements OnInit, OnDestroy {
       .subscribe((user: User) => {
         this.user = user;
         if (user !== null) {
-          console.log(user);
-
           this.isUserAuthenticated = true;
           this.hasRoles = this.user.hasRoles();
           this.allowCollection = this.user.hasSpecimenCollectorRole();

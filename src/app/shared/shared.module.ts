@@ -3,10 +3,11 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
-import { MaterialModule } from '@app/material.module';
-import { BreadcrumbsComponent } from '@app/shared/components/breadcrumbs/breadcrumbs.component';
-import { HeaderComponent } from '@app/shared/components/header/header.component';
-import { FooterComponent } from '@app/shared/components/footer/footer.component';
+import { MaterialModule } from '@app/modules/material.module';
+import { BreadcrumbsComponent } from './components/breadcrumbs/breadcrumbs.component';
+import { FooterComponent } from './components/footer/footer.component';
+import { HeaderComponent } from './components/header/header.component';
+import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 
 @NgModule({
   imports: [
@@ -15,11 +16,12 @@ import { FooterComponent } from '@app/shared/components/footer/footer.component'
     NgbModule,
     MaterialModule
   ],
-  declarations: [BreadcrumbsComponent, HeaderComponent, FooterComponent],
+  declarations: [BreadcrumbsComponent, FooterComponent, HeaderComponent, PageNotFoundComponent],
   exports: [
     BreadcrumbsComponent,
+    FooterComponent,
     HeaderComponent,
-    FooterComponent
+    PageNotFoundComponent
   ]
 })
 export class SharedModule { }

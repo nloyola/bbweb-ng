@@ -6,10 +6,10 @@ import { AuthGuard } from '@app/core/guards';
 
 const homeRoutes: Routes = [
   {
-    path: 'home',
+    path: '',
     component: HomeComponent,
     canActivate: [AuthGuard]
-  },
+  }
 ];
 
 @NgModule({

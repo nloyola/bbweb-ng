@@ -1,12 +1,6 @@
-<ol class="breadcrumb">
-  <ng-container *ngFor="let crumb of crumbs; last as isLast">
-    <li *ngIf="!isLast" class="breadcrumb-item">
-      <a [routerLink]="crumb.url">
-        <small>{{crumb.label}}</small>
-      </a>
-    </li>
-    <li *ngIf="isLast" class="breadcrumb-item active">
-      <small>{{crumb.label}}</small>
-    </li>
-  </ng-container>
+<ol class="breadcrumb" *ngIf="crumbs.length" class="breadcrumb">
+  <li *ngFor="let crumb of crumbs; let isLast = last" [ngClass]="{ 'active': last }">
+    <a *ngIf="!isLast" [routerLink]="crumb.path"><small>{{crumb.label}}</small></a>
+    <span *ngIf="isLast"><small>{{crumb.label}}</small></span>
+  </li>
 </ol>

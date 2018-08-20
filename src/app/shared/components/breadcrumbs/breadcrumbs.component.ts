@@ -1,20 +1,33 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { Observable, Subscription } from 'rxjs';
+import { Crumb } from '@app/domain/crumb';
+import { BreadcrumbService } from '@app/core/services/breadcrumb.service';
 
-import { Crumb } from '@app/domain/crumb/crumb.model';
+// borrowed from:
+//
+// https://github.com/McNull/ngx-breadcrumbs/blob/master/src/lib/mc-breadcrumbs/src/service/mc-breadcrumbs.service.ts
 
 @Component({
   selector: 'app-breadcrumbs',
   templateUrl: './breadcrumbs.component.html',
   styleUrls: ['./breadcrumbs.component.scss']
 })
+export class BreadcrumbsComponent implements OnInit, OnDestroy {
 
-export class BreadcrumbsComponent implements OnInit {
+  private crumbs: Crumb[];
+  private subscriptions = new Array<Subscription>();
 
-  @Input() crumbs: Crumb[];
+  constructor(private service: BreadcrumbService) { }
 
-  constructor() { }
 
   ngOnInit() {
+    const s = this.service.crumbs$.subscribe(x => {
+      console.log(x);
+      this.crumbs = x;
+    });
   }
 
+  ngOnDestroy() {
+    this.subscriptions.forEach((x) => x.unsubscribe());
+  }
 }
