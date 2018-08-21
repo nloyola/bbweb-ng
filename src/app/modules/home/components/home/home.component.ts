@@ -3,7 +3,6 @@ import { Store } from '@ngrx/store';
 import { Observable, Subscription } from 'rxjs';
 
 import { SharedModule } from '@app/shared/shared.module';
-import { Crumb } from '@app/domain/crumb/crumb.model';
 import { User } from '@app/domain/users/user.model';
 
 import {
@@ -16,7 +15,6 @@ import {
   selector: 'home',
   templateUrl: './home.component.html'
 })
-
 export class HomeComponent implements OnInit, OnDestroy {
 
   userLoginSubscription: Subscription;

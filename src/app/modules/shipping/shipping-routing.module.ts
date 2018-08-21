@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { ShippingComponent } from './shipping/shipping.component';
-import { AuthGuard } from '@app/guards';
+import { ShippingComponent } from './components/shipping/shipping.component';
+import { AuthGuard } from '@app/core/guards';
 
 const routes: Routes = [
   {

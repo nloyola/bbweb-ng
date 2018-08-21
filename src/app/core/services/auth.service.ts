@@ -4,8 +4,6 @@ import { Subject } from "rxjs";
 import { map } from 'rxjs/operators';
 import { User } from '@app/domain/users/user.model';
 
-import { UsersModule } from '../users.module'
-
 @Injectable({
   providedIn: 'root'
 })

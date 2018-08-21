@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { MaterialModule } from '@app/material.module';
-import { SharedModule } from '../shared/shared.module';
+import { MaterialModule } from '@app/modules/material.module';
+import { SharedModule } from '@app/shared/shared.module';
 import { ShippingRoutingModule } from './shipping-routing.module';
-import { ShippingComponent } from './shipping/shipping.component';
+import { ShippingComponent } from './components/shipping/shipping.component';
 
 @NgModule({
   imports: [

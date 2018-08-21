@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-import { AdminComponent } from './admin/admin.component';
-import { AuthGuard } from '@app/guards';
+import { AdminComponent } from './components/admin/admin.component';
+import { AuthGuard } from '@app/core/guards';
 
 const adminRoutes: Routes = [
   {

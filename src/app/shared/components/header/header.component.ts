@@ -1,8 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-
-import { AuthService } from '@app/users';
 import { Subscription } from 'rxjs';
 import { User } from '@app/domain/users/user.model';
 
