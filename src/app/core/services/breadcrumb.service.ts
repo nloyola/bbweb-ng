@@ -33,6 +33,8 @@ export class BreadcrumbService {
 
   private breadcrumbs = new BehaviorSubject<Crumb[]>([]);
 
+
+
   constructor(private router: Router, private activatedRoute: ActivatedRoute) {
     this.router.events
       .pipe(filter((x) => x instanceof NavigationEnd))
@@ -45,8 +47,8 @@ export class BreadcrumbService {
           distinct((x) => x.label),
           toArray(),
           flatMap((x) => {
-            //const y = this._config.postProcess(x);
-            return this.wrapIntoObservable<Crumb[]>(x).pipe(first());
+            const y = this.postProcess(x);
+            return this.wrapIntoObservable<Crumb[]>(y).pipe(first());
           }))
           .subscribe((x) => {
             this.breadcrumbs.next(x);
@@ -56,6 +58,13 @@ export class BreadcrumbService {
 
   get crumbs$(): Observable<Crumb[]> {
     return this.breadcrumbs;
+  }
+
+  private postProcess(x: Crumb[]): Crumb[] {
+    if (x.length && (x[0].label !== 'Home')) {
+      return [{ label: 'Home', path: '' }].concat(x);
+    }
+    return x;
   }
 
   private buildBreadcrumbs(route: ActivatedRouteSnapshot): Observable<Crumb[]> {

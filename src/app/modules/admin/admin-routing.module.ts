@@ -30,7 +30,7 @@ const routes: Routes = [
           },
           {
             path: 'add',
-            component: StudyAddComponent
+            component: StudyAddComponent,
             data: {
               breadcrumbs: 'Add'
             }

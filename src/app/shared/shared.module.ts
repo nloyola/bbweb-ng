@@ -16,7 +16,12 @@ import { PageNotFoundComponent } from './components/page-not-found/page-not-foun
     NgbModule,
     MaterialModule
   ],
-  declarations: [BreadcrumbsComponent, FooterComponent, HeaderComponent, PageNotFoundComponent],
+  declarations: [
+    BreadcrumbsComponent,
+    FooterComponent,
+    HeaderComponent,
+    PageNotFoundComponent
+  ],
   exports: [
     BreadcrumbsComponent,
     FooterComponent,
