@@ -5,7 +5,7 @@ import { PageNotFoundComponent } from '@app/shared/components/page-not-found/pag
 const routes: Routes = [
   {
     path: 'admin',
-    loadChildren: 'app/modules/admin/admin.module#AdminModule'
+    loadChildren: '@app/modules/admin/admin.module#AdminModule'
   },
   {
     path: '**',

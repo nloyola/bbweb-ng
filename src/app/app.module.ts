@@ -24,7 +24,6 @@ import { RootStoreModule } from '@app/root-store/root-store.module';
     BrowserModule,
     HttpClientModule,
     SharedModule,
-    AdminModule,
     CollectionModule,
     HomeModule,
     ShippingModule,

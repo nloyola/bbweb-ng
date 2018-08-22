@@ -2,26 +2,47 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { AdminComponent } from './components/admin/admin.component';
+import { StudiesAdminComponent } from './components/studies-admin/studies-admin.component';
+import { StudyAddComponent } from './components/study-add/study-add.component';
 import { AuthGuard } from '@app/core/guards';
-import { PageNotFoundComponent } from '@app/shared/components/page-not-found/page-not-found.component';
 
-const adminRoutes: Routes = [
+const routes: Routes = [
   {
-    path: 'admin',
-    component: AdminComponent,
+    path: '',
     canActivate: [AuthGuard],
     data: {
       breadcrumbs: 'Admin'
     },
-    {
-    path: '**',
-    component: PageNotFoundComponent
-  }
+    children: [
+      {
+        path: '',
+        component: AdminComponent
+      },
+      {
+        path: 'studies',
+        data: {
+          breadcrumbs: 'Studies'
+        },
+        children: [
+          {
+            path: '',
+            component: StudiesAdminComponent
+          },
+          {
+            path: 'add',
+            component: StudyAddComponent
+            data: {
+              breadcrumbs: 'Add'
+            }
+          }
+        ]
+      }
+    ]
   }
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(adminRoutes)],
+  imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
 export class AdminRoutingModule { }
