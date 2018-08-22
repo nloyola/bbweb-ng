@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 
 import { UsersRoutingModule } from './users-routing.module';
 import { LoginComponent } from './components/login/login.component';
+import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 
 @NgModule({
   imports: [
@@ -11,6 +12,6 @@ import { LoginComponent } from './components/login/login.component';
     FormsModule,
     UsersRoutingModule
   ],
-  declarations: [LoginComponent]
+  declarations: [LoginComponent, ForgotPasswordComponent]
 })
 export class UsersModule { }

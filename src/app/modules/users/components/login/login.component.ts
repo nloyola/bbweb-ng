@@ -14,7 +14,7 @@ import {
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements OnInit, OnDestroy {
+export class LoginComponent implements OnInit {
 
   email: string = '';
   password: string = '';
@@ -48,7 +48,9 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   public ngOnDestroy() {
-    this.userLoginSubscription.unsubscribe();
+    if (this.userLoginSubscription) {
+      this.userLoginSubscription.unsubscribe();
+    }
   }
 
 }
