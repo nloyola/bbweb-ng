@@ -4,6 +4,7 @@ import { User } from '@app/domain/users/user.model';
 export enum ActionTypes {
   LOGIN_REQUEST = '[User Login] Login Request',
   LOGIN_FAILURE = '[User Login] Login Failure',
+  LOGIN_CLEAR_FAILURE = '[User Login] Login Clear Failure',
   LOGIN_SUCCESS = '[User Login] Login Success',
   LOGOUT_REQUEST = '[User Login] Logout Request',
   LOGOUT_FAILURE = '[User Login] Logout Failure',
@@ -18,6 +19,10 @@ export class LoginRequestAction implements Action {
 export class LoginFailureAction implements Action {
   readonly type = ActionTypes.LOGIN_FAILURE;
   constructor(public payload: { error: string }) { }
+}
+
+export class LoginClearFailureAction implements Action {
+  readonly type = ActionTypes.LOGIN_CLEAR_FAILURE;
 }
 
 export class LoginSuccessAction implements Action {
@@ -40,6 +45,7 @@ export class LogoutSuccessAction implements Action {
 
 export type Actions = LoginRequestAction |
   LoginFailureAction |
+  LoginClearFailureAction |
   LoginSuccessAction |
   LogoutRequestAction |
   LogoutFailureAction |

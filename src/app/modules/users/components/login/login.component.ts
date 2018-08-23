@@ -44,7 +44,7 @@ export class LoginComponent implements OnInit {
         .select(UserLoginStoreSelectors.selectUserLoginUser)
         .subscribe((user: User) => {
           if (user !== null) {
-            this.router.navigate([this.returnUrl]);
+            this.navigateToReturnUrl();
           }
         }));
 
@@ -52,25 +52,33 @@ export class LoginComponent implements OnInit {
       this.store$
         .select(UserLoginStoreSelectors.selectUserLoginError)
         .subscribe((err: any) => {
-          console.log(err);
           if (err && err.status && (err.status === 401)) {
+            this.store$.dispatch(new UserLoginStoreActions.LoginClearFailureAction());
             this.modalService.open(this.content, { ariaLabelledBy: 'modal-basic-title' }).result
-              .then(() => this.router.navigate(['/']));
+              .then(() => {
+                this.navigateToReturnUrl();
+              }, () => {
+                this.navigateToReturnUrl();
+              });
           }
         }));
-  }
-
-  submitForm(values) {
-    this.store$.dispatch(new UserLoginStoreActions.LoginRequestAction({
-      email: values.email,
-      password: values.password
-    }));
   }
 
   public ngOnDestroy() {
     if (this.subscriptions && this.subscriptions.length) {
       this.subscriptions.forEach(subscription => subscription.unsubscribe());
     }
+  }
+
+  private submitForm(values) {
+    this.store$.dispatch(new UserLoginStoreActions.LoginRequestAction({
+      email: values.email,
+      password: values.password
+    }));
+  }
+
+  private navigateToReturnUrl() {
+    this.router.navigate([this.returnUrl]);
   }
 
 }

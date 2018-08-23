@@ -18,6 +18,12 @@ export function featureReducer(state = initialState, action: Actions): State {
         error: action.payload.error
       };
     }
+    case ActionTypes.LOGIN_CLEAR_FAILURE: {
+      return {
+        ...state,
+        error: null
+      };
+    }
     case ActionTypes.LOGIN_SUCCESS: {
       return {
         ...state,
