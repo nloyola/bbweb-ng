@@ -31,15 +31,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
       .select(UserLoginStoreSelectors.selectUserLoginUser)
       .subscribe(user => {
         this.user = user;
-
-        if (user === null) {
-          this.router.navigate(['/']);
-        }
       });
   }
 
   logout() {
     this.store$.dispatch(new UserLoginStoreActions.LogoutRequestAction());
+    this.router.navigate(['/']);
   }
 
   public ngOnDestroy() {
