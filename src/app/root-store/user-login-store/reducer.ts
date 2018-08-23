@@ -6,6 +6,7 @@ export function featureReducer(state = initialState, action: Actions): State {
     case ActionTypes.LOGIN_REQUEST: {
       return {
         ...state,
+        isLoggingIn: true,
         error: null,
         user: null
       };
@@ -13,12 +14,14 @@ export function featureReducer(state = initialState, action: Actions): State {
     case ActionTypes.LOGIN_FAILURE: {
       return {
         ...state,
+        isLoggingIn: false,
         error: action.payload.error
       };
     }
     case ActionTypes.LOGIN_SUCCESS: {
       return {
         ...state,
+        isLoggingIn: false,
         error: null,
         user: action.payload.user
       };

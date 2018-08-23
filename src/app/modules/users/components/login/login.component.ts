@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { User } from '@app/domain/users/user.model';
 
 import {
@@ -22,6 +22,7 @@ export class LoginComponent implements OnInit {
   returnUrl: string;
   error = '';
   userLoginSubscription: Subscription;
+  isLoggingIn: Observable<boolean>;
 
   constructor(
     private store$: Store<RootStoreState.State>,
@@ -31,6 +32,8 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
     // get return url from route parameters or default to '/'
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+
+    this.isLoggingIn = this.store$.select(UserLoginStoreSelectors.selectUserLoginIsLoggingIn);
 
     this.userLoginSubscription = this.store$
       .select(UserLoginStoreSelectors.selectUserLoginUser)

@@ -1,8 +1,7 @@
 import { User } from '@app/domain/users/user.model';
 
 export interface State {
-  isLoading?: boolean;
-  isLoaded?: boolean;
+  isLoggingIn?: boolean;
   error?: any;
   user?: User;
 }
@@ -17,8 +16,7 @@ function getLocalStorageUser() {
 }
 
 export const initialState: State = {
-  isLoading: false,
-  isLoaded: false,
+  isLoggingIn: false,
   error: null,
   user: getLocalStorageUser()
 };
