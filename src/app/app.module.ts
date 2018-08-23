@@ -17,6 +17,7 @@ import { AppRoutingModule } from '@app/app-routing.module';
 
 import { JwtInterceptor, ErrorInterceptor } from '@app/core/http';
 import { RootStoreModule } from '@app/root-store/root-store.module';
+import { ToastrModule } from 'ngx-toastr';
 
 @NgModule({
   declarations: [AppComponent],
@@ -33,6 +34,7 @@ import { RootStoreModule } from '@app/root-store/root-store.module';
     RootStoreModule,
     BrowserAnimationsModule,
     MaterialModule,
+    ToastrModule.forRoot()
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },

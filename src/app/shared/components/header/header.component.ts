@@ -6,8 +6,8 @@ import { User } from '@app/domain/users/user.model';
 
 import {
   RootStoreState,
-  UserLoginStoreActions,
-  UserLoginStoreSelectors
+  AuthStoreActions,
+  AuthStoreSelectors
 } from '@app/root-store';
 
 @Component({
@@ -19,7 +19,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   user: User = null;
   isCollapsed = true;
-  userLoginSubscription: Subscription;
+  authSubscription: Subscription;
 
   constructor(
     private store$: Store<RootStoreState.State>,
@@ -27,20 +27,20 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.userLoginSubscription = this.store$
-      .select(UserLoginStoreSelectors.selectUserLoginUser)
+    this.authSubscription = this.store$
+      .select(AuthStoreSelectors.selectAuthUser)
       .subscribe(user => {
         this.user = user;
       });
   }
 
   logout() {
-    this.store$.dispatch(new UserLoginStoreActions.LogoutRequestAction());
+    this.store$.dispatch(new AuthStoreActions.LogoutRequestAction());
     this.router.navigate(['/']);
   }
 
   public ngOnDestroy() {
-    this.userLoginSubscription.unsubscribe();
+    this.authSubscription.unsubscribe();
   }
 
 }

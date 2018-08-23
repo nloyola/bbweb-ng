@@ -1,0 +1,104 @@
+<div class="row">
+  <div class="col-sm-8 offset-2 mt-4">
+    <div class="card">
+      <div class="card-header bg-primary text-light" i18n>Register as a User</div>
+      <div class="card-body">
+        <form class="form-horizontal"
+              [formGroup]="registerForm"
+              (ngSubmit)="onSubmit()"
+              novalidate>
+
+          <!-- NAME -->
+          <div class="form-group row">
+            <label for="name" class="col-md-4 col-form-label" i18n>Name</label>
+            <div class="col-md-8">
+              <input class="form-control"
+                     type="text"
+                     formControlName="name">
+            </div>
+            <div class="col-md-8 offset-4"
+                 *ngIf="name.invalid && name.touched">
+              <div class="text-danger small" *ngIf="name.errors.required" i18n>
+                Your name is required
+              </div>
+            </div>
+          </div>
+
+          <!-- EMAIL -->
+          <div class="form-group row">
+            <label for="email" class="col-md-4 col-form-label" i18n>Email address</label>
+            <div class="col-md-8">
+              <input class="form-control"
+                     type="email"
+                     formControlName="email">
+            </div>
+            <div class="col-md-8 offset-4"
+                 *ngIf="email.invalid && email.touched">
+              <div class="text-danger small" *ngIf="email.errors.required" i18n>
+                An email address is required
+              </div>
+              <div class="text-danger small" *ngIf="email.errors.email" i18n>
+                Email address is not valid
+              </div>
+            </div>
+          </div>
+
+          <!-- PASSWORD -->
+          <div class="form-group row">
+            <label for="password" class="col-md-4 col-form-label" i18n>Password</label>
+            <div class="col-md-8">
+              <input class="form-control"
+                     type="password"
+                     formControlName="password">
+            </div>
+            <div class="col-md-8 offset-4 form-text text-muted"
+                 *ngIf="password.invalid && password.touched">
+              <div class="text-danger small" *ngIf="password.errors.required">
+                A password is required
+              </div>
+            </div>
+          </div>
+
+          <!-- CONFIRM PASSWORD -->
+          <div class="form-group row">
+            <label for="password" class="col-md-4 col-form-label" i18n>Confirm Password</label>
+            <div class="col-md-8">
+              <input class="form-control"
+                     type="password"
+                     formControlName="confirmPassword">
+            </div>
+            <div class="col-md-8 offset-4"
+                 *ngIf="registerForm.controls.confirmPassword.errors?.passwordsNonMatching">
+              <div class="text-danger small" i18n>
+                passwords do not match
+              </div>
+            </div>
+          </div>
+
+          <!-- BUTTONS  -->
+          <div class="form-group row">
+            <div class="col-md-2 offset-4">
+              <button class="btn btn-primary"
+                      type="submit"
+                      [disabled]="registerForm.invalid"
+                      i18n>
+                Submit
+              </button>
+            </div>
+            <div class="col-md-2">
+              <button class="btn btn-default" type="button" (click)="onCancel()" i18n>
+                Cancel
+              </button>
+            </div>
+            <div class="col-md-6">
+              <mat-spinner *ngIf="isLoggingIn | async"
+                           diameter="25"
+                           mode="indeterminate">
+              </mat-spinner>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

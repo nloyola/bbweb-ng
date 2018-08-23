@@ -48,6 +48,35 @@ export function featureReducer(state = initialState, action: Actions): State {
         user: null
       };
     }
+    case ActionTypes.REGISTER_REQUEST: {
+      return {
+        ...state,
+        isRegistering: true,
+        error: null,
+        registeredUser: null
+      };
+    }
+    case ActionTypes.REGISTER_FAILURE: {
+      return {
+        ...state,
+        isRegistering: false,
+        error: action.payload.error
+      };
+    }
+    case ActionTypes.REGISTER_CLEAR_FAILURE: {
+      return {
+        ...state,
+        error: null
+      };
+    }
+    case ActionTypes.REGISTER_SUCCESS: {
+      return {
+        ...state,
+        isRegistering: false,
+        error: null,
+        registeredUser: action.payload.user
+      };
+    }
     default: {
       return state;
     }

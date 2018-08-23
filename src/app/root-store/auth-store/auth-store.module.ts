@@ -13,4 +13,4 @@ import { featureReducer } from './reducer';
   ],
   providers: [UserLoginStoreEffects]
 })
-export class UserLoginStoreModule { }
+export class AuthStoreModule { }

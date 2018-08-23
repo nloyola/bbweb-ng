@@ -1,7 +1,7 @@
-import { UserLoginStoreState } from './user-login-store';
+import { AuthStoreState } from './auth-store';
 
 export interface State {
 
-  userLogin: UserLoginStoreState.State;
+  userLogin: AuthStoreState.State;
 
 }

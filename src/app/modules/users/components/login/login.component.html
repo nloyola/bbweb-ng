@@ -97,10 +97,12 @@
     </button>
   </div>
   <div class="modal-body">
-    <mat-icon color="primary">warning</mat-icon>
-    <ng-container i18n>
-      Cannot log into the server at the moment.
-    </ng-container>
+    <div class="alert alert-danger" role="alert">
+      <mat-icon color="primary">warning</mat-icon>
+      <ng-container i18n>
+        Cannot log into the server at the moment.
+      </ng-container>
+    </div>
     <p i18n>
       Ensure the email address and password you entered are correct. Otherwise, please contact
       your web site administrator for more information.

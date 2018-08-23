@@ -6,8 +6,8 @@ import { User } from '@app/domain/users/user.model';
 
 import {
   RootStoreState,
-  UserLoginStoreActions,
-  UserLoginStoreSelectors
+  AuthStoreActions,
+  AuthStoreSelectors
 } from '@app/root-store';
 
 @Component({
@@ -29,7 +29,7 @@ export class AdminComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.userLoginSubscription = this.store$
-      .select(UserLoginStoreSelectors.selectUserLoginUser)
+      .select(AuthStoreSelectors.selectAuthUser)
       .subscribe((user: User) => {
         this.user = user;
         if (user !== null) {

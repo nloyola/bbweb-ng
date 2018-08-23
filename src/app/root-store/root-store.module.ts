@@ -3,12 +3,12 @@ import { CommonModule } from '@angular/common';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { UserLoginStoreModule } from './user-login-store/user-login-store.module';
+import { AuthStoreModule } from './auth-store/auth-store.module';
 
 @NgModule({
   imports: [
     CommonModule,
-    UserLoginStoreModule,
+    AuthStoreModule,
     StoreModule.forRoot({}),
     EffectsModule.forRoot([]),
     StoreDevtoolsModule.instrument({

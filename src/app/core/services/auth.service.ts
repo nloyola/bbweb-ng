@@ -34,6 +34,11 @@ export class AuthService {
     localStorage.removeItem('authToken');
   }
 
+  register(name: string, email: string, password: string) {
+    return this.http.post<any>(this.baseUrl + '/', { name, email, password })
+      .pipe(map((res: any) => new User().deserialize(res.data)));
+  }
+
   isLoggedIn() {
     return localStorage.getItem('authToken') !== null;
   }

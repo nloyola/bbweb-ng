@@ -8,8 +8,8 @@ import { User } from '@app/domain/users/user.model';
 
 import {
   RootStoreState,
-  UserLoginStoreActions,
-  UserLoginStoreSelectors
+  AuthStoreActions,
+  AuthStoreSelectors
 } from '@app/root-store';
 
 @Component({
@@ -37,11 +37,11 @@ export class LoginComponent implements OnInit {
     // get return url from route parameters or default to '/'
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
 
-    this.isLoggingIn = this.store$.select(UserLoginStoreSelectors.selectUserLoginIsLoggingIn);
+    this.isLoggingIn = this.store$.select(AuthStoreSelectors.selectAuthIsLoggingIn);
 
     this.subscriptions.push(
       this.store$
-        .select(UserLoginStoreSelectors.selectUserLoginUser)
+        .select(AuthStoreSelectors.selectAuthUser)
         .subscribe((user: User) => {
           if (user !== null) {
             this.navigateToReturnUrl();
@@ -50,10 +50,10 @@ export class LoginComponent implements OnInit {
 
     this.subscriptions.push(
       this.store$
-        .select(UserLoginStoreSelectors.selectUserLoginError)
+        .select(AuthStoreSelectors.selectAuthError)
         .subscribe((err: any) => {
           if (err && err.status && (err.status === 401)) {
-            this.store$.dispatch(new UserLoginStoreActions.LoginClearFailureAction());
+            this.store$.dispatch(new AuthStoreActions.LoginClearFailureAction());
             this.modalService.open(this.content, { ariaLabelledBy: 'modal-basic-title' }).result
               .then(() => {
                 this.navigateToReturnUrl();
@@ -71,7 +71,7 @@ export class LoginComponent implements OnInit {
   }
 
   private submitForm(values) {
-    this.store$.dispatch(new UserLoginStoreActions.LoginRequestAction({
+    this.store$.dispatch(new AuthStoreActions.LoginRequestAction({
       email: values.email,
       password: values.password
     }));

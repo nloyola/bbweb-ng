@@ -2,8 +2,10 @@ import { User } from '@app/domain/users/user.model';
 
 export interface State {
   isLoggingIn?: boolean;
+  isRegistering?: boolean;
   error?: any;
   user?: User;
+  registeredUser?: User;
 }
 
 // FIXME: this is a hacky way of determining the initial state
@@ -17,6 +19,8 @@ function getLocalStorageUser() {
 
 export const initialState: State = {
   isLoggingIn: false,
+  isRegistering: false,
   error: null,
-  user: getLocalStorageUser()
+  user: getLocalStorageUser(),
+  registeredUser: null
 };
