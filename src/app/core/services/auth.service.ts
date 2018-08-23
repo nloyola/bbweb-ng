@@ -9,6 +9,7 @@ import { User } from '@app/domain/users/user.model';
 })
 export class AuthService {
 
+  private baseUrl = '/api/users';
   private authToken: any;
 
   constructor(private http: HttpClient) {
@@ -16,7 +17,7 @@ export class AuthService {
   }
 
   login(email: string, password: string) {
-    return this.http.post<any>('/api/users/login', { email, password })
+    return this.http.post<any>(this.baseUrl + '/login', { email, password })
       .pipe(map((res: any) => {
         if (res && res.data && res.data.user && res.data.token) {
           this.authToken = res.data;
