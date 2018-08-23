@@ -1,7 +1,9 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable, Subscription } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { User } from '@app/domain/users/user.model';
 
 import {
@@ -17,17 +19,19 @@ import {
 })
 export class LoginComponent implements OnInit {
 
+  @ViewChild('content') private content;
   email: string = '';
   password: string = '';
   returnUrl: string;
   error = '';
-  userLoginSubscription: Subscription;
+  subscriptions: Subscription[] = [];
   isLoggingIn: Observable<boolean>;
 
   constructor(
     private store$: Store<RootStoreState.State>,
     private route: ActivatedRoute,
-    private router: Router) { }
+    private router: Router,
+    private modalService: NgbModal) { }
 
   ngOnInit() {
     // get return url from route parameters or default to '/'
@@ -35,13 +39,25 @@ export class LoginComponent implements OnInit {
 
     this.isLoggingIn = this.store$.select(UserLoginStoreSelectors.selectUserLoginIsLoggingIn);
 
-    this.userLoginSubscription = this.store$
-      .select(UserLoginStoreSelectors.selectUserLoginUser)
-      .subscribe((user: User) => {
-        if (user !== null) {
-          this.router.navigate([this.returnUrl]);
-        }
-      });
+    this.subscriptions.push(
+      this.store$
+        .select(UserLoginStoreSelectors.selectUserLoginUser)
+        .subscribe((user: User) => {
+          if (user !== null) {
+            this.router.navigate([this.returnUrl]);
+          }
+        }));
+
+    this.subscriptions.push(
+      this.store$
+        .select(UserLoginStoreSelectors.selectUserLoginError)
+        .subscribe((err: any) => {
+          console.log(err);
+          if (err && err.status && (err.status === 401)) {
+            this.modalService.open(this.content, { ariaLabelledBy: 'modal-basic-title' }).result
+              .then(() => this.router.navigate(['/']));
+          }
+        }));
   }
 
   submitForm(values) {
@@ -52,8 +68,8 @@ export class LoginComponent implements OnInit {
   }
 
   public ngOnDestroy() {
-    if (this.userLoginSubscription) {
-      this.userLoginSubscription.unsubscribe();
+    if (this.subscriptions && this.subscriptions.length) {
+      this.subscriptions.forEach(subscription => subscription.unsubscribe());
     }
   }
 

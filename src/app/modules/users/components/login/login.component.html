@@ -89,3 +89,24 @@
     </div>
   </div>
 </div>
+<ng-template #content let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title" i18n>Login Error</h4>
+    <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <mat-icon color="primary">warning</mat-icon>
+    <ng-container i18n>
+      Cannot log into the server at the moment.
+    </ng-container>
+    <p i18n>
+      Ensure the email address and password you entered are correct. Otherwise, please contact
+      your web site administrator for more information.
+    </p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="c('OK')">OK</button>
+  </div>
+</ng-template>
