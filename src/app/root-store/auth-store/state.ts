@@ -1,4 +1,4 @@
-import { User } from '@app/domain/users/user.model';
+import { User } from '@app/domain/users';
 
 export interface State {
   isLoggingIn?: boolean;

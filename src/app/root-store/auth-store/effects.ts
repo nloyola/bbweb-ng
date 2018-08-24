@@ -7,7 +7,7 @@ import { AuthService } from '@app/core/services';
 import * as authActions from './actions';
 
 @Injectable()
-export class UserLoginStoreEffects {
+export class AuthStoreEffects {
 
   constructor(private authService: AuthService, private actions$: Actions) { }
 

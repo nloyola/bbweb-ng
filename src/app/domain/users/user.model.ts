@@ -1,6 +1,6 @@
 import { ConcurrencySafeEntity } from '@app/domain/concurrency-safe-entity.model';
 import { EntityInfo } from '@app/domain/entity-info.model';
-import { RoleIds } from '@app/domain/access/role-ids.model';
+import { RoleIds } from '@app/domain/access';
 import { UserState } from '@app/domain/users/user-state.model';
 import { UserRole } from '@app/domain/users/user-role.model';
 import { UserMembership } from '@app/domain/users/user-membership.model';
@@ -29,7 +29,7 @@ export class User extends ConcurrencySafeEntity {
   /**
    * Information for the roles this user has.
    */
-  roles: UserRole[]
+  roles: UserRole[] = [];
 
   /**
    * The state can be one of: registered, active or locked.

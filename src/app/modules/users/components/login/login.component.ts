@@ -4,7 +4,7 @@ import { Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
 import { catchError, takeUntil } from 'rxjs/operators';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
-import { User } from '@app/domain/users/user.model';
+import { User } from '@app/domain/users';
 
 import {
   RootStoreState,

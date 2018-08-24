@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { User } from '@app/domain/users/user.model';
+import { User } from '@app/domain/users';
 
 import {
   RootStoreState,
@@ -23,8 +23,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   user: User = null;
   isCollapsed = true;
 
-  constructor(
-    private store$: Store<RootStoreState.State>,
+  constructor(private store$: Store<RootStoreState.State>,
     private router: Router) {
   }
 

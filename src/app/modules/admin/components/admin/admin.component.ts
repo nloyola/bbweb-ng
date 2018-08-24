@@ -3,7 +3,7 @@ import { Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { User } from '@app/domain/users/user.model';
+import { User } from '@app/domain/users';
 
 import {
   RootStoreState,

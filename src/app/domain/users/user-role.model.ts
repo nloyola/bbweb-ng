@@ -6,7 +6,7 @@ export class UserRole extends DomainEntity {
   slug: string
   name: string
   description: string
-  childData: EntityInfo[]
+  childData: EntityInfo[] = [];
 
   hasAnyRoleOf(...roleIds) {
     const ids = Array.of(this.id).concat(this.childData.map(info => info.id));

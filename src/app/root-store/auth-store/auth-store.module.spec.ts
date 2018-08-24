@@ -1,13 +1,13 @@
 import { AuthStoreModule } from './auth-store.module';
 
 describe('AuthStoreModule', () => {
-  let userLoginStoreModule: AuthStoreModule;
+  let authStoreModule: AuthStoreModule;
 
   beforeEach(() => {
-    userLoginStoreModule = new AuthStoreModule();
+    authStoreModule = new AuthStoreModule();
   });
 
   it('should create an instance', () => {
-    expect(userLoginStoreModule).toBeTruthy();
+    expect(authStoreModule).toBeTruthy();
   });
 });

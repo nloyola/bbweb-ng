@@ -3,7 +3,7 @@ import { Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { SharedModule } from '@app/shared/shared.module';
-import { User } from '@app/domain/users/user.model';
+import { User } from '@app/domain/users';
 
 import {
   RootStoreState,
@@ -18,7 +18,6 @@ import {
 export class HomeComponent implements OnInit, OnDestroy {
 
   private unsubscribe$: Subject<void> = new Subject<void>();
-
   private user: User;
   private isUserAuthenticated: boolean;
   private hasRoles: boolean;
@@ -35,7 +34,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((user: User) => {
         this.user = user;
-        if (user !== null) {
+        if (user) {
           this.isUserAuthenticated = true;
           this.hasRoles = this.user.hasRoles();
           this.allowCollection = this.user.hasSpecimenCollectorRole();

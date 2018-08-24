@@ -17,12 +17,7 @@
       "dom"
     ],
     "paths": {
-      "@app/*": ["src/app/*"],
-      "@app/domain/*": ["src/app/domain/*"],
-      "@app/guards/*": ["src/app/guards/*"],
-      "@app/http/*": ["src/app/http/*"],
-      "@app/shared/*": ["src/app/shared/*"],
-      "@app/users/*": ["src/app/users/*"],
+      "@app/*": ["src/app/*"]
     }
   }
 }

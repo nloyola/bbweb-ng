@@ -33,7 +33,7 @@
         </div>
       </li>
       <li class="nav-item dropdown" *ngIf="user" ngbDropdown>
-        <a class="nav-link dropdown"
+        <a class="nav-link dropdown-toggle"
            id="user-dropdown"
            role="button"
            data-togggle="dropdown"
@@ -52,8 +52,8 @@
           </a>
         </div>
       </li>
-      <li class="nav-item" routerLinkActive="active">
-        <a class="nav-link" routerLink="login" *ngIf="!user">
+      <li class="nav-item" routerLinkActive="active" *ngIf="!user">
+        <a class="nav-link" routerLink="login">
           <mat-icon>exit_to_app</mat-icon>
           <ng-container i18n>Login</ng-container>
         </a>

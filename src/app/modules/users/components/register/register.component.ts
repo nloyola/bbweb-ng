@@ -6,7 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
-import { User } from '@app/domain/users/user.model';
+import { User } from '@app/domain/users';
 
 import {
   RootStoreState,
