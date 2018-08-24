@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Observable, Subscription } from 'rxjs';
-
+import { Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { SharedModule } from '@app/shared/shared.module';
 import { User } from '@app/domain/users/user.model';
 
@@ -17,7 +17,7 @@ import {
 })
 export class HomeComponent implements OnInit, OnDestroy {
 
-  userLoginSubscription: Subscription;
+  private unsubscribe$: Subject<void> = new Subject<void>();
 
   private user: User;
   private isUserAuthenticated: boolean;
@@ -30,8 +30,9 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.userLoginSubscription = this.store$
+    this.store$
       .select(AuthStoreSelectors.selectAuthUser)
+      .pipe(takeUntil(this.unsubscribe$))
       .subscribe((user: User) => {
         this.user = user;
         if (user !== null) {
@@ -51,7 +52,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   public ngOnDestroy() {
-    this.userLoginSubscription.unsubscribe();
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 
 }

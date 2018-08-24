@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { Observable, Subscription } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
+import { catchError, takeUntil } from 'rxjs/operators';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { User } from '@app/domain/users/user.model';
 
@@ -20,11 +20,11 @@ import {
 export class LoginComponent implements OnInit {
 
   @ViewChild('content') private content;
+  private unsubscribe$: Subject<void> = new Subject<void>();
   email: string = '';
   password: string = '';
   returnUrl: string;
   error = '';
-  subscriptions: Subscription[] = [];
   isLoggingIn: Observable<boolean>;
 
   constructor(
@@ -39,35 +39,34 @@ export class LoginComponent implements OnInit {
 
     this.isLoggingIn = this.store$.select(AuthStoreSelectors.selectAuthIsLoggingIn);
 
-    this.subscriptions.push(
-      this.store$
-        .select(AuthStoreSelectors.selectAuthUser)
-        .subscribe((user: User) => {
-          if (user !== null) {
-            this.navigateToReturnUrl();
-          }
-        }));
+    this.store$
+      .select(AuthStoreSelectors.selectAuthUser)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((user: User) => {
+        if (user !== null) {
+          this.navigateToReturnUrl();
+        }
+      });
 
-    this.subscriptions.push(
-      this.store$
-        .select(AuthStoreSelectors.selectAuthError)
-        .subscribe((err: any) => {
-          if (err && err.status && (err.status === 401)) {
-            this.store$.dispatch(new AuthStoreActions.LoginClearFailureAction());
-            this.modalService.open(this.content, { ariaLabelledBy: 'modal-basic-title' }).result
-              .then(() => {
-                this.navigateToReturnUrl();
-              }, () => {
-                this.navigateToReturnUrl();
-              });
-          }
-        }));
+    this.store$
+      .select(AuthStoreSelectors.selectAuthError)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((err: any) => {
+        if (err && err.status && (err.status === 401)) {
+          this.store$.dispatch(new AuthStoreActions.LoginClearFailureAction());
+          this.modalService.open(this.content, { ariaLabelledBy: 'modal-basic-title' }).result
+            .then(() => {
+              this.navigateToReturnUrl();
+            }, () => {
+              this.navigateToReturnUrl();
+            });
+        }
+      });
   }
 
   public ngOnDestroy() {
-    if (this.subscriptions && this.subscriptions.length) {
-      this.subscriptions.forEach(subscription => subscription.unsubscribe());
-    }
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 
   private submitForm(values) {

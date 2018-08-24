@@ -1,7 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { User } from '@app/domain/users/user.model';
 
 import {
@@ -17,9 +18,10 @@ import {
 })
 export class HeaderComponent implements OnInit, OnDestroy {
 
+  private unsubscribe$: Subject<void> = new Subject<void>();
+
   user: User = null;
   isCollapsed = true;
-  authSubscription: Subscription;
 
   constructor(
     private store$: Store<RootStoreState.State>,
@@ -27,8 +29,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.authSubscription = this.store$
+    this.store$
       .select(AuthStoreSelectors.selectAuthUser)
+      .pipe(takeUntil(this.unsubscribe$))
       .subscribe(user => {
         this.user = user;
       });
@@ -40,7 +43,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   public ngOnDestroy() {
-    this.authSubscription.unsubscribe();
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 
 }

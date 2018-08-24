@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
-import { Observable, Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { Crumb } from '@app/domain/crumb';
 import { BreadcrumbService } from '@app/core/services/breadcrumb.service';
 
@@ -15,18 +16,21 @@ import { BreadcrumbService } from '@app/core/services/breadcrumb.service';
 export class BreadcrumbsComponent implements OnInit, OnDestroy {
 
   private crumbs: Crumb[];
-  private subscriptions = new Array<Subscription>();
+  private unsubscribe$: Subject<void> = new Subject<void>();
 
   constructor(private service: BreadcrumbService) { }
 
 
   ngOnInit() {
-    const s = this.service.crumbs$.subscribe(x => {
-      this.crumbs = x;
-    });
+    const s = this.service.crumbs$
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(x => {
+        this.crumbs = x;
+      });
   }
 
   ngOnDestroy() {
-    this.subscriptions.forEach((x) => x.unsubscribe());
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 }
