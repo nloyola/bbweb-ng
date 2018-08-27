@@ -1,5 +1,7 @@
 {
+  "convertTabToSpaces": true,
   "indentSize": 2,
+  "indentStyle": 2,
   "tabSize": 2,
   "insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces": false,
   "placeOpenBraceOnNewLineForFunctions": false,
