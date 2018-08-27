@@ -1,4 +1,5 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { catchError } from 'rxjs/operators';
@@ -12,15 +13,27 @@ import { UserService } from '@app/core/services';
 export class ForgotPasswordComponent {
 
   @ViewChild('content') private content;
-  email: string = '';
-  closeResult: string;
+  forgotForm: FormGroup;
 
-  constructor(private userService: UserService,
+  constructor(
+    private formBuilder: FormBuilder,
+    private userService: UserService,
     private router: Router,
     private modalService: NgbModal) { }
 
-  submitForm(values) {
-    this.userService.passwordReset(values.email)
+  ngOnInit() {
+    this.forgotForm = this.formBuilder.group(
+      {
+        email: ['', [Validators.required, Validators.email]],
+      });
+  }
+
+  get email() {
+    return this.forgotForm.get('email');
+  }
+
+  onSubmit() {
+    this.userService.passwordReset(this.email)
       .pipe(
         catchError(err => this.modalService.open(this.content, { ariaLabelledBy: 'modal-basic-title' }).result
           .then(() => this.router.navigate(['/'])))

@@ -5,6 +5,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule, combineReducers } from '@ngrx/store';
 import { authReducer } from '@app/root-store/auth-store/reducer';
 import { AuthStoreActions, AuthStoreState } from '@app/root-store/auth-store';
+import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 
 import { HeaderComponent } from './header.component';
@@ -15,6 +16,7 @@ describe('HeaderComponent', () => {
   let store: Store<AuthStoreState.State>;
   let component: HeaderComponent;
   let fixture: ComponentFixture<HeaderComponent>;
+  let router: Router;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -32,6 +34,11 @@ describe('HeaderComponent', () => {
     store = TestBed.get(Store);
     fixture = TestBed.createComponent(HeaderComponent);
     component = fixture.componentInstance;
+    router = TestBed.get(Router);
+
+    spyOn(store, 'dispatch').and.callThrough();
+    spyOn(router, 'navigate').and.callThrough();
+
     fixture.detectChanges();
   });
 
@@ -53,6 +60,13 @@ describe('HeaderComponent', () => {
     const dropdowns = fixture.debugElement.queryAll(By.css('.dropdown'));
     const textContent = dropdowns.map(d => d.nativeElement.textContent).join();
     expect(textContent).toContain(user.name);
+  });
+
+  it('calling logout dispatches an action and goes to home state', () => {
+    const action = new AuthStoreActions.LogoutRequestAction();
+    component.logout();
+    expect(store.dispatch).toHaveBeenCalledWith(action);
+    expect(router.navigate).toHaveBeenCalledWith(['/']);
   });
 
 });

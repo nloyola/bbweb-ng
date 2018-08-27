@@ -62,7 +62,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
       .subscribe((err: any) => {
         if (err === null) return;
 
-        console.log(err);
         let message;
         if (err && err.status) {
           if ((err.status === 403) && (err.error.message === 'email already registered')) {

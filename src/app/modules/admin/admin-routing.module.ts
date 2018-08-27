@@ -6,7 +6,7 @@ import { StudiesAdminComponent } from './components/studies-admin/studies-admin.
 import { StudyAddComponent } from './components/study-add/study-add.component';
 import { AuthGuard } from '@app/core/guards';
 
-const routes: Routes = [
+export const routes: Routes = [
   {
     path: '',
     canActivate: [AuthGuard],

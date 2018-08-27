@@ -56,7 +56,7 @@ export class RegisterRequestAction implements Action {
 
 export class RegisterFailureAction implements Action {
   readonly type = ActionTypes.REGISTER_FAILURE;
-  constructor(public payload: { error: string }) { }
+  constructor(public payload: { error: any }) { }
 }
 
 export class RegisterClearFailureAction implements Action {

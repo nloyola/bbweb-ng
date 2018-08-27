@@ -1,4 +1,5 @@
 import { User } from '@app/domain/users';
+import { AUTH_TOKEN_LOCAL_STORAGE_KEY } from '@app/core/services/auth.service';
 
 export interface State {
   isLoggingIn?: boolean;
@@ -10,7 +11,7 @@ export interface State {
 
 // FIXME: this is a hacky way of determining the initial state
 function getLocalStorageUser() {
-  const authToken = JSON.parse(localStorage.getItem('authToken'));
+  const authToken = JSON.parse(localStorage.getItem(AUTH_TOKEN_LOCAL_STORAGE_KEY));
   if (authToken === null) {
     return null;
   }

@@ -36,14 +36,14 @@ export class HeaderComponent implements OnInit, OnDestroy {
       });
   }
 
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
+  }
+
   logout() {
     this.store$.dispatch(new AuthStoreActions.LogoutRequestAction());
     this.router.navigate(['/']);
-  }
-
-  public ngOnDestroy() {
-    this.unsubscribe$.next();
-    this.unsubscribe$.complete();
   }
 
 }

@@ -28,7 +28,7 @@ module.exports = function (config) {
         chromeDataDir: path.resolve(__dirname, '../.chrome')
       }
     },
-    reporters: ['progress', 'kjhtml'],
+    reporters: ['dots', 'kjhtml'],
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,

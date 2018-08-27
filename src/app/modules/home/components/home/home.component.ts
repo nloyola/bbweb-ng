@@ -50,7 +50,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       });
   }
 
-  public ngOnDestroy() {
+  ngOnDestroy() {
     this.unsubscribe$.next();
     this.unsubscribe$.complete();
   }
