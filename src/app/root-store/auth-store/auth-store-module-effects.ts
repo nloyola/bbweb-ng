@@ -4,7 +4,8 @@ import { Action } from '@ngrx/store';
 import { Observable, of as observableOf } from 'rxjs';
 import { catchError, map, startWith, switchMap } from 'rxjs/operators';
 import { AuthService } from '@app/core/services';
-import * as authActions from './actions';
+
+import * as authActions from './auth-store-module-actions';
 
 @Injectable()
 export class AuthStoreEffects {

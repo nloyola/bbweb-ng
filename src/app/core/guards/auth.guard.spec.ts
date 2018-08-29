@@ -9,7 +9,7 @@ import { AuthGuard } from './auth.guard';
 import { AUTH_TOKEN_LOCAL_STORAGE_KEY } from '@app/core/services/auth.service';
 import { User } from '@app/domain/users';
 
-fdescribe('AuthGuard', () => {
+describe('AuthGuard', () => {
 
   @Component({ template: '<router-outlet></router-outlet>' })
   class TestRootComponent { }

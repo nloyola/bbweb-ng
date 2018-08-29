@@ -1,5 +1,5 @@
-import { Actions, ActionTypes } from './actions';
-import { initialState, State } from './state';
+import { Actions, ActionTypes } from './auth-store-module-actions';
+import { initialState, State } from './auth-store-module-state';
 
 export function authReducer(state = initialState, action: Actions): State {
   switch (action.type) {

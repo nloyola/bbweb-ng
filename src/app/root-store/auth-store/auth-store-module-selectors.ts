@@ -6,7 +6,7 @@ import {
 
 import { User } from '@app/domain/users';
 
-import { State } from './state';
+import { State } from './auth-store-module-state';
 
 export const getIsLogginIn = (state: State): any => state.isLoggingIn;
 

@@ -1,6 +1,6 @@
-import * as AuthStoreActions from './actions';
-import * as AuthStoreSelectors from './selectors';
-import * as AuthStoreState from './state';
+import * as AuthStoreActions from './auth-store-module-actions';
+import * as AuthStoreSelectors from './auth-store-module-selectors';
+import * as AuthStoreState from './auth-store-module-state';
 
 export { AuthStoreModule } from './auth-store.module';
 
