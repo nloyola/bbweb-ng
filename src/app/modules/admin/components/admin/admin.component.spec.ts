@@ -3,7 +3,7 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Store, StoreModule, combineReducers } from '@ngrx/store';
 
 import { AdminComponent } from './admin.component';
-import { authReducer } from '@app/root-store/auth-store/reducer';
+import { authReducer } from '@app/root-store/auth-store/auth-store-module-reducer';
 import { AuthStoreActions, AuthStoreState } from '@app/root-store/auth-store';
 
 describe('AdminComponent', () => {

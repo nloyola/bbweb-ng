@@ -33,17 +33,24 @@ export function authReducer(state = initialState, action: Actions): State {
       };
     }
     case ActionTypes.LOGOUT_REQUEST: {
-      return state;
+      return {
+        ...state,
+        isLoggingOut: true,
+        error: null,
+        user: null
+      };
     }
     case ActionTypes.LOGOUT_FAILURE: {
       return {
         ...state,
+        isLoggingOut: false,
         error: action.payload.error
       };
     }
     case ActionTypes.LOGOUT_SUCCESS: {
       return {
         ...state,
+        isLoggingOut: false,
         error: null,
         user: null
       };

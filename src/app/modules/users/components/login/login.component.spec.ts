@@ -5,7 +5,7 @@ import { Store, StoreModule } from '@ngrx/store';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { RouterTestingModule } from '@angular/router/testing';
 
-import { authReducer } from '@app/root-store/auth-store/reducer';
+import { authReducer } from '@app/root-store/auth-store/auth-store-module-reducer';
 import { AuthStoreActions, AuthStoreState } from '@app/root-store/auth-store';
 import { LoginComponent } from './login.component';
 

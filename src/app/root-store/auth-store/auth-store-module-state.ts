@@ -3,6 +3,7 @@ import { AUTH_TOKEN_LOCAL_STORAGE_KEY } from '@app/core/services/auth.service';
 
 export interface State {
   isLoggingIn?: boolean;
+  isLoggingOut?: boolean;
   isRegistering?: boolean;
   error?: any;
   user?: User;
@@ -20,6 +21,7 @@ function getLocalStorageUser() {
 
 export const initialState: State = {
   isLoggingIn: false,
+  isLoggingOut: false,
   isRegistering: false,
   error: null,
   user: getLocalStorageUser(),

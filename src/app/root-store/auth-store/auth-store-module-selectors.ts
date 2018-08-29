@@ -4,9 +4,8 @@ import {
   MemoizedSelector
 } from '@ngrx/store';
 
-import { User } from '@app/domain/users';
-
 import { State } from './auth-store-module-state';
+import { User } from '@app/domain/users';
 
 export const getIsLogginIn = (state: State): any => state.isLoggingIn;
 
@@ -24,7 +23,7 @@ export const selectAuthIsLoggingIn: MemoizedSelector<object, boolean> =
   createSelector(selectAuthState, getIsLogginIn);
 
 export const selectAuthIsRegistering: MemoizedSelector<object, boolean> =
-  createSelector(selectAuthState, getIsLogginIn);
+  createSelector(selectAuthState, getIsRegistering);
 
 export const selectAuthError: MemoizedSelector<object, any> =
   createSelector(selectAuthState, getError);

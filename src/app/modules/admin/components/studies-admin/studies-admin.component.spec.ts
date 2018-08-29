@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Store, StoreModule, combineReducers } from '@ngrx/store';
 
-import { authReducer } from '@app/root-store/auth-store/reducer';
+import { authReducer } from '@app/root-store/auth-store/auth-store-module-reducer';
 import { AuthStoreActions, AuthStoreState } from '@app/root-store/auth-store';
 import { StudiesAdminComponent } from './studies-admin.component';
 

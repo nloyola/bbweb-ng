@@ -6,7 +6,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { Store, StoreModule } from '@ngrx/store';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 
-import { authReducer } from '@app/root-store/auth-store/reducer';
+import { authReducer } from '@app/root-store/auth-store/auth-store-module-reducer';
 import { AuthStoreActions, AuthStoreState } from '@app/root-store/auth-store';
 import { RegisterComponent } from './register.component';
 import { User, UserRole } from '@app/domain/users';

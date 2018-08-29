@@ -3,11 +3,11 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule, combineReducers } from '@ngrx/store';
-import { authReducer } from '@app/root-store/auth-store/reducer';
 import { AuthStoreActions, AuthStoreState } from '@app/root-store/auth-store';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 
+import { authReducer } from '@app/root-store/auth-store/auth-store-module-reducer';
 import { HeaderComponent } from './header.component';
 import { User, UserRole } from '@app/domain/users';
 import { RoleIds } from '@app/domain/access';

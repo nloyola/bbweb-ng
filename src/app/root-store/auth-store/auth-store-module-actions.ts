@@ -24,7 +24,7 @@ export class LoginRequestAction implements Action {
 
 export class LoginFailureAction implements Action {
   readonly type = ActionTypes.LOGIN_FAILURE;
-  constructor(public payload: { error: string }) { }
+  constructor(public payload: { error: any }) { }
 }
 
 export class LoginClearFailureAction implements Action {
@@ -42,7 +42,7 @@ export class LogoutRequestAction implements Action {
 
 export class LogoutFailureAction implements Action {
   readonly type = ActionTypes.LOGOUT_FAILURE;
-  constructor(public payload: { error: string }) { }
+  constructor(public payload: { error: any }) { }
 }
 
 export class LogoutSuccessAction implements Action {
