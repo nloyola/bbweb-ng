@@ -5,7 +5,7 @@
 <div class="row">
 
   <!-- STUDY ADMIN -->
-  <div class="col-md-4" *ngIf="user.hasStudyAdminRole()">
+  <div class="col-md-4" *ngIf="userHasStudyAdminRole">
     <div class="card mt-4">
       <h5 class="card-header bg-primary text-light">
         <ng-container i18n>Study Administration</ng-container>
@@ -18,7 +18,7 @@
   </div>
 
   <!-- CENTRE ADMIN -->
-  <div class="col-md-4" *ngIf="user.hasStudyAdminRole()">
+  <div class="col-md-4" *ngIf="userHasCentreAdminRole">
     <div class="card mt-4">
       <h5 class="card-header bg-primary text-light">
         <ng-container i18n>Centre Administration</ng-container>
@@ -31,7 +31,7 @@
   </div>
 
   <!-- STUDY ADMIN -->
-  <div class="col-md-4" *ngIf="user.hasStudyAdminRole()">
+  <div class="col-md-4" *ngIf="userHasUserAdminRole">
     <div class="card mt-4">
       <h5 class="card-header bg-primary text-light">
         <ng-container i18n>User Administration</ng-container>

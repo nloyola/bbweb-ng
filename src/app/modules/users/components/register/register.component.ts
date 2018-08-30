@@ -62,8 +62,10 @@ export class RegisterComponent implements OnInit, OnDestroy {
       .subscribe((err: any) => {
         if (err === null) return;
 
+        this.store$.dispatch(new AuthStoreActions.RegisterClearFailureAction());
+
         let message;
-        if (err && err.status) {
+        if (err.status) {
           if ((err.status === 403) && (err.error.message === 'email already registered')) {
             message = 'That email address is already registered.';
           } else if (err.error) {
@@ -76,7 +78,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
             {
               disableTimeOut: true
             });
-          this.store$.dispatch(new AuthStoreActions.RegisterClearFailureAction());
         }
       });
   }

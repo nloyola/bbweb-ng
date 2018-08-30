@@ -28,7 +28,7 @@ export class AdminComponent implements OnInit, OnDestroy {
   constructor(private store$: Store<RootStoreState.State>) {
   }
 
-  ngOnInit() {
+  public ngOnInit() {
     this.store$
       .select(AuthStoreSelectors.selectAuthUser)
       .pipe(takeUntil(this.unsubscribe$))

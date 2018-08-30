@@ -1,9 +1,10 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
 import { catchError, takeUntil } from 'rxjs/operators';
-import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { User } from '@app/domain/users';
 
 import {
@@ -21,23 +22,27 @@ export class LoginComponent implements OnInit {
 
   @ViewChild('content') private content;
   private unsubscribe$: Subject<void> = new Subject<void>();
-  email: string = '';
-  password: string = '';
+  isLoggingIn$: Observable<boolean>;
   returnUrl: string;
-  error = '';
-  isLoggingIn: Observable<boolean>;
+  loginForm: FormGroup;
 
   constructor(
     private store$: Store<RootStoreState.State>,
     private route: ActivatedRoute,
     private router: Router,
-    private modalService: NgbModal) { }
+    private modalService: NgbModal,
+    private formBuilder: FormBuilder) { }
 
-  ngOnInit() {
+  public ngOnInit() {
+    this.loginForm = this.formBuilder.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required]]
+    });
+
     // get return url from route parameters or default to '/'
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
 
-    this.isLoggingIn = this.store$.select(AuthStoreSelectors.selectAuthIsLoggingIn);
+    this.isLoggingIn$ = this.store$.select(AuthStoreSelectors.selectAuthIsLoggingIn);
 
     this.store$
       .select(AuthStoreSelectors.selectAuthUser)
@@ -52,15 +57,11 @@ export class LoginComponent implements OnInit {
       .select(AuthStoreSelectors.selectAuthError)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((err: any) => {
-        if (err && err.status && (err.status === 401)) {
-          this.store$.dispatch(new AuthStoreActions.LoginClearFailureAction());
-          this.modalService.open(this.content, { ariaLabelledBy: 'modal-basic-title' }).result
-            .then(() => {
-              this.navigateToReturnUrl();
-            }, () => {
-              this.navigateToReturnUrl();
-            });
-        }
+        if (err === null) { return; }
+        this.store$.dispatch(new AuthStoreActions.LoginClearFailureAction());
+        this.modalService.open(this.content, { ariaLabelledBy: 'modal-basic-title' }).result
+          .then(() => this.navigateToReturnUrl())
+          .catch(() => this.navigateToReturnUrl());
       });
   }
 
@@ -69,10 +70,18 @@ export class LoginComponent implements OnInit {
     this.unsubscribe$.complete();
   }
 
-  private submitForm(values) {
+  get email() {
+    return this.loginForm.get('email');
+  }
+
+  get password() {
+    return this.loginForm.get('password');
+  }
+
+  private onSubmit() {
     this.store$.dispatch(new AuthStoreActions.LoginRequestAction({
-      email: values.email,
-      password: values.password
+      email: this.loginForm.value.email,
+      password: this.loginForm.value.password
     }));
   }
 

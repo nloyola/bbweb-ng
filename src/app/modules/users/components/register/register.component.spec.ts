@@ -13,6 +13,7 @@ import { User, UserRole } from '@app/domain/users';
 import { RoleIds } from '@app/domain/access';
 
 describe('RegisterComponent', () => {
+
   let store: Store<AuthStoreState.State>;
   let component: RegisterComponent;
   let fixture: ComponentFixture<RegisterComponent>;
@@ -170,11 +171,15 @@ describe('RegisterComponent', () => {
       }
     ];
 
+    spyOn(store, 'dispatch').and.callThrough();
     spyOn(toastrService, 'error').and.returnValue(null);
+    const registerClearFailureAction = new AuthStoreActions.RegisterClearFailureAction();
+
     errors.forEach(error => {
       const action = new AuthStoreActions.RegisterFailureAction(error);
       store.dispatch(action);
       expect(toastrService.error).toHaveBeenCalled();
+      expect(store.dispatch).toHaveBeenCalledWith(registerClearFailureAction);
     });
   });
 

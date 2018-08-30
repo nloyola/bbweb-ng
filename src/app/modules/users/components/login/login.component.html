@@ -4,9 +4,9 @@
       <div class="card-header bg-primary text-light" i18n>Login</div>
       <div class="card-body">
         <form class="form-horizontal"
-              #loginForm="ngForm"
+              [formGroup]="loginForm"
               autocomplete="on"
-              (ngSubmit)="submitForm(loginForm.value)"
+              (ngSubmit)="onSubmit()"
               novalidate>
 
           <!-- EMAIL -->
@@ -15,14 +15,7 @@
             <div class="col-md-8">
               <input class="form-control"
                      type="email"
-                     name="email"
-                     id="email"
-                     ngModel
-                     #email="ngModel"
-                     placeholder="Email"
-                     i18n-placeholder
-                     email
-                     required>
+                     formControlName="email">
             </div>
             <div class="col-md-8 offset-3"
                  *ngIf="email.invalid && email.touched">
@@ -40,14 +33,8 @@
             <label for="password" class="col-md-3 col-form-label" i18n>Password</label>
             <div class="col-md-8">
               <input class="form-control"
-                     type="password"a
-                     name="password"
-                     id="password"
-                     #password="ngModel"
-                     ngModel
-                     placeholder="Password"
-                     i18n-placeholder
-                     required>
+                     type="password"
+                     formControlName="password">
             </div>
             <div class="col-md-8 offset-3 form-text text-muted"
                  *ngIf="password.invalid && password.touched">
@@ -62,13 +49,13 @@
             <div class="col-md-2 offset-3">
               <button class="btn btn-primary"
                       type="submit"
-                      [disabled]="!loginForm.form.valid || (isLoggingIn | async)"
+                      [disabled]="loginForm.invalid || (isLoggingIn$ | async)"
                       i18n>
                 Log In
               </button>
             </div>
             <div class="col-md-6">
-              <mat-spinner *ngIf="isLoggingIn | async"
+              <mat-spinner *ngIf="(isLoggingIn$ | async)"
                            diameter="25"
                            mode="indeterminate">
               </mat-spinner>
