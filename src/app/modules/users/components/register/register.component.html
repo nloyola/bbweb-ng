@@ -14,7 +14,9 @@
             <div class="col-md-8">
               <input class="form-control"
                      type="text"
-                     formControlName="name">
+                     formControlName="name"
+                     i18n-placeholder
+                     placeholder="your name">
             </div>
             <div class="col-md-8 offset-4"
                  *ngIf="name.invalid && name.touched">
@@ -30,7 +32,9 @@
             <div class="col-md-8">
               <input class="form-control"
                      type="email"
-                     formControlName="email">
+                     formControlName="email"
+                     i18n-placeholder
+                     placeholder="the email addres you will use to log in">
             </div>
             <div class="col-md-8 offset-4"
                  *ngIf="email.invalid && email.touched">
@@ -68,7 +72,8 @@
                      formControlName="confirmPassword">
             </div>
             <div class="col-md-8 offset-4"
-                 *ngIf="registerForm.controls.confirmPassword.errors?.passwordsNonMatching">
+                 *ngIf="registerForm.controls.confirmPassword.errors?.passwordsNonMatching
+                        && password.touched">
               <div class="text-danger small" i18n>
                 passwords do not match
               </div>
@@ -89,12 +94,6 @@
               <button class="btn btn-default" type="button" (click)="onCancel()" i18n>
                 Cancel
               </button>
-            </div>
-            <div class="col-md-6">
-              <mat-spinner *ngIf="isLoggingIn | async"
-                           diameter="25"
-                           mode="indeterminate">
-              </mat-spinner>
             </div>
           </div>
         </form>
