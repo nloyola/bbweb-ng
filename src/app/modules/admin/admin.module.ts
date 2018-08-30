@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { MaterialModule } from '@app/modules/material.module';
 import { SharedModule } from '@app/shared/shared.module';
@@ -11,6 +12,8 @@ import { StudyAddComponent } from './components/study-add/study-add.component';
 @NgModule({
   imports: [
     CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
     MaterialModule,
     SharedModule,
     AdminRoutingModule
