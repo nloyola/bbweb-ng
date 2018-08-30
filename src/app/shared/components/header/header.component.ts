@@ -1,8 +1,7 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 import { User } from '@app/domain/users';
 
 import {
@@ -16,29 +15,17 @@ import {
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
-export class HeaderComponent implements OnInit, OnDestroy {
+export class HeaderComponent implements OnInit {
 
-  private unsubscribe$: Subject<void> = new Subject<void>();
-
-  user: User = null;
-  isCollapsed = true;
+  user$: Observable<User>;
+  private isCollapsed = true;
 
   constructor(private store$: Store<RootStoreState.State>,
     private router: Router) {
   }
 
   ngOnInit() {
-    this.store$
-      .select(AuthStoreSelectors.selectAuthUser)
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe(user => {
-        this.user = user;
-      });
-  }
-
-  ngOnDestroy() {
-    this.unsubscribe$.next();
-    this.unsubscribe$.complete();
+    this.user$ = this.store$.select(AuthStoreSelectors.selectAuthUser);
   }
 
   logout() {
