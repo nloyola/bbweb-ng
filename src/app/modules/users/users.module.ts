@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { UsersRoutingModule } from './users-routing.module';
 import { MaterialModule } from '@app/modules/material.module';
+import { SharedModule } from '@app/shared/shared.module';
 import { LoginComponent } from './components/login/login.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { RegisterComponent } from './components/register/register.component';
@@ -14,6 +15,7 @@ import { RegisterComponent } from './components/register/register.component';
     FormsModule,
     ReactiveFormsModule,
     MaterialModule,
+    SharedModule,
     UsersRoutingModule
   ],
   declarations: [LoginComponent, ForgotPasswordComponent, RegisterComponent]

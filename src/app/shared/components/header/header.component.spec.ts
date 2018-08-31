@@ -3,17 +3,20 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule, combineReducers } from '@ngrx/store';
-import { AuthStoreActions, AuthStoreState } from '@app/root-store/auth-store';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 
-import { authReducer } from '@app/root-store/auth-store/auth-store-module-reducer';
+import {
+  AuthStoreActions,
+  AuthStoreReducer,
+} from '@app/root-store/auth-store';
+
 import { HeaderComponent } from './header.component';
 import { User, UserRole } from '@app/domain/users';
 import { RoleIds } from '@app/domain/access';
 
 describe('HeaderComponent', () => {
-  let store: Store<AuthStoreState.State>;
+  let store: Store<AuthStoreReducer.State>;
   let component: HeaderComponent;
   let fixture: ComponentFixture<HeaderComponent>;
   let router: Router;
@@ -24,7 +27,7 @@ describe('HeaderComponent', () => {
         NgbModule.forRoot(),
         RouterTestingModule,
         StoreModule.forRoot({
-          'auth': authReducer
+          'auth': AuthStoreReducer.reducer
         })
       ],
       declarations: [HeaderComponent],

@@ -1,5 +1,4 @@
-import { authReducer } from './auth-store-module-reducer';
-import { AuthStoreActions, AuthStoreState } from '@app/root-store/auth-store';
+import { AuthStoreActions, AuthStoreReducer } from '@app/root-store/auth-store';
 import { User } from '@app/domain/users';
 
 describe('auth-store-model reducer', () => {
@@ -10,10 +9,10 @@ describe('auth-store-model reducer', () => {
       password: 'a random password'
     };
     const action = new AuthStoreActions.LoginRequestAction(payload);
-    const state = authReducer(undefined, action);
+    const state = AuthStoreReducer.reducer(undefined, action);
 
     expect(state).toEqual({
-      ...AuthStoreState.initialState,
+      ...AuthStoreReducer.initialState,
       isLoggingIn: true
     });
   });
@@ -28,10 +27,10 @@ describe('auth-store-model reducer', () => {
       }
     };
     const action = new AuthStoreActions.LoginFailureAction(payload);
-    const state = authReducer(undefined, action);
+    const state = AuthStoreReducer.reducer(undefined, action);
 
     expect(state).toEqual({
-      ...AuthStoreState.initialState,
+      ...AuthStoreReducer.initialState,
       isLoggingIn: false,
       error: payload.error
     });
@@ -39,7 +38,7 @@ describe('auth-store-model reducer', () => {
 
   it('LoginClearFailureAction', () => {
     const startState = {
-      ...AuthStoreState.initialState,
+      ...AuthStoreReducer.initialState,
       error: {
         status: 404,
         error: {
@@ -48,10 +47,10 @@ describe('auth-store-model reducer', () => {
       }
     };
     const action = new AuthStoreActions.LoginClearFailureAction();
-    const state = authReducer(startState, action);
+    const state = AuthStoreReducer.reducer(startState, action);
 
     expect(state).toEqual({
-      ...AuthStoreState.initialState,
+      ...AuthStoreReducer.initialState,
       error: null
     });
   });
@@ -64,10 +63,10 @@ describe('auth-store-model reducer', () => {
       })
     };
     const action = new AuthStoreActions.LoginSuccessAction(payload);
-    const state = authReducer(undefined, action);
+    const state = AuthStoreReducer.reducer(undefined, action);
 
     expect(state).toEqual({
-      ...AuthStoreState.initialState,
+      ...AuthStoreReducer.initialState,
       isLoggingIn: false,
       user: payload.user
     });
@@ -75,10 +74,10 @@ describe('auth-store-model reducer', () => {
 
   it('LogoutRequestAction', () => {
     const action = new AuthStoreActions.LogoutRequestAction();
-    const state = authReducer(undefined, action);
+    const state = AuthStoreReducer.reducer(undefined, action);
 
     expect(state).toEqual({
-      ...AuthStoreState.initialState,
+      ...AuthStoreReducer.initialState,
       isLoggingOut: true
     });
   });
@@ -93,10 +92,10 @@ describe('auth-store-model reducer', () => {
       }
     };
     const action = new AuthStoreActions.LogoutFailureAction(payload);
-    const state = authReducer(undefined, action);
+    const state = AuthStoreReducer.reducer(undefined, action);
 
     expect(state).toEqual({
-      ...AuthStoreState.initialState,
+      ...AuthStoreReducer.initialState,
       isLoggingOut: false,
       error: payload.error
     });
@@ -104,10 +103,10 @@ describe('auth-store-model reducer', () => {
 
   it('LogoutSuccessAction', () => {
     const action = new AuthStoreActions.LogoutSuccessAction();
-    const state = authReducer(undefined, action);
+    const state = AuthStoreReducer.reducer(undefined, action);
 
     expect(state).toEqual({
-      ...AuthStoreState.initialState,
+      ...AuthStoreReducer.initialState,
       isLoggingOut: false,
       user: null
     });
@@ -120,10 +119,10 @@ describe('auth-store-model reducer', () => {
       password: 'a random password'
     };
     const action = new AuthStoreActions.RegisterRequestAction(payload);
-    const state = authReducer(undefined, action);
+    const state = AuthStoreReducer.reducer(undefined, action);
 
     expect(state).toEqual({
-      ...AuthStoreState.initialState,
+      ...AuthStoreReducer.initialState,
       isRegistering: true
     });
   });
@@ -138,10 +137,10 @@ describe('auth-store-model reducer', () => {
       }
     };
     const action = new AuthStoreActions.RegisterFailureAction(payload);
-    const state = authReducer(undefined, action);
+    const state = AuthStoreReducer.reducer(undefined, action);
 
     expect(state).toEqual({
-      ...AuthStoreState.initialState,
+      ...AuthStoreReducer.initialState,
       isRegistering: false,
       error: payload.error
     });
@@ -149,7 +148,7 @@ describe('auth-store-model reducer', () => {
 
   it('RegisterClearFailureAction', () => {
     const startState = {
-      ...AuthStoreState.initialState,
+      ...AuthStoreReducer.initialState,
       error: {
         status: 404,
         error: {
@@ -158,10 +157,10 @@ describe('auth-store-model reducer', () => {
       }
     };
     const action = new AuthStoreActions.RegisterClearFailureAction();
-    const state = authReducer(startState, action);
+    const state = AuthStoreReducer.reducer(startState, action);
 
     expect(state).toEqual({
-      ...AuthStoreState.initialState,
+      ...AuthStoreReducer.initialState,
       error: null
     });
   });
@@ -174,10 +173,10 @@ describe('auth-store-model reducer', () => {
       })
     };
     const action = new AuthStoreActions.RegisterSuccessAction(payload);
-    const state = authReducer(undefined, action);
+    const state = AuthStoreReducer.reducer(undefined, action);
 
     expect(state).toEqual({
-      ...AuthStoreState.initialState,
+      ...AuthStoreReducer.initialState,
       isRegistering: false,
       registeredUser: payload.user
     });

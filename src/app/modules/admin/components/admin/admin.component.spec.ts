@@ -4,13 +4,12 @@ import { By } from '@angular/platform-browser';
 import { Store, StoreModule, combineReducers } from '@ngrx/store';
 
 import { AdminComponent } from './admin.component';
-import { authReducer } from '@app/root-store/auth-store/auth-store-module-reducer';
-import { AuthStoreActions, AuthStoreState } from '@app/root-store/auth-store';
+import { AuthStoreActions, AuthStoreReducer } from '@app/root-store/auth-store';
 import { User, UserRole } from '@app/domain/users';
 import { RoleIds } from '@app/domain/access';
 
 describe('AdminComponent', () => {
-  let store: Store<AuthStoreState.State>;
+  let store: Store<AuthStoreReducer.State>;
   let component: AdminComponent;
   let fixture: ComponentFixture<AdminComponent>;
 
@@ -18,7 +17,7 @@ describe('AdminComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         StoreModule.forRoot({
-          'auth': authReducer
+          'auth': AuthStoreReducer.reducer
         })
       ],
       declarations: [AdminComponent],

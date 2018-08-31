@@ -1,7 +1,35 @@
-import { Actions, ActionTypes } from './auth-store-module-actions';
-import { initialState, State } from './auth-store-module-state';
+import { Actions, ActionTypes } from './auth-store.actions';
+import { User } from '@app/domain/users';
+import { AUTH_TOKEN_LOCAL_STORAGE_KEY } from '@app/core/services/auth.service';
 
-export function authReducer(state = initialState, action: Actions): State {
+export interface State {
+  isLoggingIn?: boolean;
+  isLoggingOut?: boolean;
+  isRegistering?: boolean;
+  error?: any;
+  user?: User;
+  registeredUser?: User;
+}
+
+// FIXME: this is a hacky way of determining the initial state
+function getLocalStorageUser() {
+  const authToken = JSON.parse(localStorage.getItem(AUTH_TOKEN_LOCAL_STORAGE_KEY));
+  if (authToken === null) {
+    return null;
+  }
+  return new User().deserialize(authToken.user);
+}
+
+export const initialState: State = {
+  isLoggingIn: false,
+  isLoggingOut: false,
+  isRegistering: false,
+  error: null,
+  user: getLocalStorageUser(),
+  registeredUser: null
+};
+
+export function reducer(state = initialState, action: Actions): State {
   switch (action.type) {
     case ActionTypes.LOGIN_REQUEST: {
       return {

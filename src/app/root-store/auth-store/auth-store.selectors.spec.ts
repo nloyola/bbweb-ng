@@ -1,14 +1,18 @@
 import { TestBed } from '@angular/core/testing';
 import { Store, StoreModule } from '@ngrx/store';
 
-import { AuthStoreActions, AuthStoreSelectors, AuthStoreState } from '@app/root-store/auth-store';
+import {
+  AuthStoreActions,
+  AuthStoreSelectors,
+  AuthStoreReducer
+} from '@app/root-store/auth-store';
 
 describe('auth-store-module selectors', () => {
 
   it('selectAuthIsLoggingIn', () => {
     const state = {
       auth: {
-        ...AuthStoreState.initialState,
+        ...AuthStoreReducer.initialState,
         isLoggingIn: true
       }
     };
@@ -19,7 +23,7 @@ describe('auth-store-module selectors', () => {
   it('selectAuthIsRegistering', () => {
     const state = {
       auth: {
-        ...AuthStoreState.initialState,
+        ...AuthStoreReducer.initialState,
         isRegistering: true
       }
     };
@@ -30,7 +34,7 @@ describe('auth-store-module selectors', () => {
   it('selectAuthError', () => {
     const state = {
       auth: {
-        ...AuthStoreState.initialState,
+        ...AuthStoreReducer.initialState,
         error: {
           status: 404,
           error: {
@@ -46,7 +50,7 @@ describe('auth-store-module selectors', () => {
   it('selectUserLogoutError', () => {
     const state = {
       auth: {
-        ...AuthStoreState.initialState,
+        ...AuthStoreReducer.initialState,
         error: {
           status: 404,
           error: {
@@ -62,7 +66,7 @@ describe('auth-store-module selectors', () => {
   it('selectAuthUser', () => {
     const state = {
       auth: {
-        ...AuthStoreState.initialState,
+        ...AuthStoreReducer.initialState,
         user: {
           name: 'Random user'
         }
@@ -75,7 +79,7 @@ describe('auth-store-module selectors', () => {
   it('selectAuthRegisteredUser', () => {
     const state = {
       auth: {
-        ...AuthStoreState.initialState,
+        ...AuthStoreReducer.initialState,
         registeredUser: {
           name: 'Random user'
         }

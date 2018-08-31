@@ -6,15 +6,14 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { Store, StoreModule } from '@ngrx/store';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 
-import { authReducer } from '@app/root-store/auth-store/auth-store-module-reducer';
-import { AuthStoreActions, AuthStoreState } from '@app/root-store/auth-store';
+import { AuthStoreActions, AuthStoreReducer } from '@app/root-store/auth-store';
 import { RegisterComponent } from './register.component';
 import { User, UserRole } from '@app/domain/users';
 import { RoleIds } from '@app/domain/access';
 
 describe('RegisterComponent', () => {
 
-  let store: Store<AuthStoreState.State>;
+  let store: Store<AuthStoreReducer.State>;
   let component: RegisterComponent;
   let fixture: ComponentFixture<RegisterComponent>;
   let router: Router;
@@ -27,7 +26,7 @@ describe('RegisterComponent', () => {
         ReactiveFormsModule,
         RouterTestingModule,
         StoreModule.forRoot({
-          'auth': authReducer
+          'auth': AuthStoreReducer.reducer
         }),
         ToastrModule.forRoot()
       ],

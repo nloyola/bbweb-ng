@@ -1,7 +1,7 @@
-import { AuthStoreState } from './auth-store';
+import { AuthStoreReducer } from '@app/root-store/auth-store';
 
 export interface State {
 
-  auth: AuthStoreState.State;
+  auth: AuthStoreReducer.State;
 
 }

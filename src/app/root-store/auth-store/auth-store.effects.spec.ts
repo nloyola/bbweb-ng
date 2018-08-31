@@ -4,7 +4,7 @@ import { hot, cold } from 'jasmine-marbles';
 import { Observable, of, throwError } from 'rxjs';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 
-import { AuthStoreEffects } from './auth-store-module-effects';
+import { AuthStoreEffects } from './auth-store.effects';
 import { AuthStoreActions } from '@app/root-store/auth-store';
 import { AuthService } from '@app/core/services';
 import { User } from '@app/domain/users';
@@ -48,7 +48,7 @@ describe('auth-store-module effects', () => {
       actions = hot('--a-', { a: action });
       const expected = cold('--b', { b: completion });
 
-      expect(effects.loginRequestEffect$).toBeObservable(expected);
+      expect(effects.loginRequest$).toBeObservable(expected);
     });
 
     it('should respond with login failure', () => {
@@ -65,7 +65,7 @@ describe('auth-store-module effects', () => {
       actions = hot('--a-', { a: action });
       const expected = cold('--b', { b: completion });
 
-      expect(effects.loginRequestEffect$).toBeObservable(expected);
+      expect(effects.loginRequest$).toBeObservable(expected);
     });
 
   });
@@ -80,7 +80,7 @@ describe('auth-store-module effects', () => {
       actions = hot('--a-', { a: action });
       const expected = cold('--b', { b: completion });
 
-      expect(effects.logoutRequestEffect$).toBeObservable(expected);
+      expect(effects.logoutRequest$).toBeObservable(expected);
       expect(authService.logout).toHaveBeenCalled();
     });
 
@@ -105,7 +105,7 @@ describe('auth-store-module effects', () => {
       actions = hot('--a-', { a: action });
       const expected = cold('--b', { b: completion });
 
-      expect(effects.registerRequestEffect$).toBeObservable(expected);
+      expect(effects.registerRequest$).toBeObservable(expected);
     });
 
     it('should respond with register failure', () => {
@@ -122,7 +122,7 @@ describe('auth-store-module effects', () => {
       actions = hot('--a-', { a: action });
       const expected = cold('--b', { b: completion });
 
-      expect(effects.registerRequestEffect$).toBeObservable(expected);
+      expect(effects.registerRequest$).toBeObservable(expected);
     });
 
   });

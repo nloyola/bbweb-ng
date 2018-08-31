@@ -5,7 +5,7 @@ import { Observable, of as observableOf } from 'rxjs';
 import { catchError, map, startWith, switchMap } from 'rxjs/operators';
 import { AuthService } from '@app/core/services';
 
-import * as authActions from './auth-store-module-actions';
+import * as authActions from './auth-store.actions';
 
 @Injectable()
 export class AuthStoreEffects {
@@ -13,7 +13,7 @@ export class AuthStoreEffects {
   constructor(private authService: AuthService, private actions$: Actions) { }
 
   @Effect()
-  loginRequestEffect$: Observable<Action> = this.actions$.pipe(
+  loginRequest$: Observable<Action> = this.actions$.pipe(
     ofType<authActions.LoginRequestAction>(authActions.ActionTypes.LOGIN_REQUEST),
     map(action => action.payload),
     switchMap(payload =>
@@ -25,7 +25,7 @@ export class AuthStoreEffects {
   );
 
   @Effect()
-  logoutRequestEffect$: Observable<Action> = this.actions$.pipe(
+  logoutRequest$: Observable<Action> = this.actions$.pipe(
     ofType<authActions.LogoutRequestAction>(authActions.ActionTypes.LOGOUT_REQUEST),
     switchMap(() => {
       this.authService.logout();
@@ -34,7 +34,7 @@ export class AuthStoreEffects {
   );
 
   @Effect()
-  registerRequestEffect$: Observable<Action> = this.actions$.pipe(
+  registerRequest$: Observable<Action> = this.actions$.pipe(
     ofType<authActions.RegisterRequestAction>(authActions.ActionTypes.REGISTER_REQUEST),
     map(action => action.payload),
     switchMap(payload =>

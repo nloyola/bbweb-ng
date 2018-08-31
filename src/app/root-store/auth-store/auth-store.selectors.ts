@@ -4,7 +4,7 @@ import {
   MemoizedSelector
 } from '@ngrx/store';
 
-import { State } from './auth-store-module-state';
+import { State } from './auth-store.reducer';
 import { User } from '@app/domain/users';
 
 export const getIsLogginIn = (state: State): any => state.isLoggingIn;

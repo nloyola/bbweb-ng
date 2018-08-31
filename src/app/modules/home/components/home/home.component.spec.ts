@@ -6,11 +6,10 @@ import { Store, StoreModule } from '@ngrx/store';
 import { HomeComponent } from './home.component';
 import { User, UserRole } from '@app/domain/users';
 import { RoleIds } from '@app/domain/access';
-import { authReducer } from '@app/root-store/auth-store/auth-store-module-reducer';
-import { AuthStoreActions, AuthStoreState } from '@app/root-store/auth-store';
+import { AuthStoreActions, AuthStoreReducer } from '@app/root-store/auth-store';
 
 describe('HomeComponent', () => {
-  let store: Store<AuthStoreState.State>;
+  let store: Store<AuthStoreReducer.State>;
   let component: HomeComponent;
   let fixture: ComponentFixture<HomeComponent>;
 
@@ -18,7 +17,7 @@ describe('HomeComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         StoreModule.forRoot({
-          'auth': authReducer
+          'auth': AuthStoreReducer.reducer
         })
       ],
       declarations: [HomeComponent],
