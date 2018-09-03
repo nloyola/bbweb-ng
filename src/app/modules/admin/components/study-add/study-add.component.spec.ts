@@ -18,7 +18,7 @@ describe('StudyAddComponent', () => {
       ],
       declarations: [StudyAddComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
-    })
+    });
 
     fixture = TestBed.createComponent(StudyAddComponent);
     component = fixture.componentInstance;

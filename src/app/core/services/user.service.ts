@@ -6,7 +6,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class UserService {
 
-  readonly BASE_URL = '/api/users'
+  readonly BASE_URL = '/api/users';
 
   constructor(private http: HttpClient) {
   }

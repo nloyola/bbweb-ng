@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Store } from '@ngrx/store';
+import { Store, select } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
 import { catchError, takeUntil } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -18,7 +18,7 @@ import {
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
 
   @ViewChild('content') private content;
   private unsubscribe$: Subject<void> = new Subject<void>();
@@ -42,11 +42,12 @@ export class LoginComponent implements OnInit {
     // get return url from route parameters or default to '/'
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
 
-    this.isLoggingIn$ = this.store$.select(AuthStoreSelectors.selectAuthIsLoggingIn);
+    this.isLoggingIn$ = this.store$.pipe(select(AuthStoreSelectors.selectAuthIsLoggingIn));
 
     this.store$
-      .select(AuthStoreSelectors.selectAuthUser)
-      .pipe(takeUntil(this.unsubscribe$))
+      .pipe(
+        select(AuthStoreSelectors.selectAuthUser),
+        takeUntil(this.unsubscribe$))
       .subscribe((user: User) => {
         if (user !== null) {
           this.navigateToReturnUrl();
@@ -54,8 +55,9 @@ export class LoginComponent implements OnInit {
       });
 
     this.store$
-      .select(AuthStoreSelectors.selectAuthError)
-      .pipe(takeUntil(this.unsubscribe$))
+      .pipe(
+        select(AuthStoreSelectors.selectAuthError),
+        takeUntil(this.unsubscribe$))
       .subscribe((err: any) => {
         if (err === null) { return; }
         this.store$.dispatch(new AuthStoreActions.LoginClearFailureAction());

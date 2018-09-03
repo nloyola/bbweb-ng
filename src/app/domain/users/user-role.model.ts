@@ -3,9 +3,9 @@ import { EntityInfo } from '@app/domain/entity-info.model';
 
 export class UserRole extends DomainEntity {
 
-  slug: string
-  name: string
-  description: string
+  slug: string;
+  name: string;
+  description: string;
   childData: EntityInfo[] = [];
 
   hasAnyRoleOf(...roleIds) {

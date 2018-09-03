@@ -27,9 +27,8 @@ describe('UserService', () => {
 
   it('makes a password reset request',
     inject(
-      [HttpTestingController, UserService],
+      [UserService],
       (
-        httpMock: HttpTestingController,
         service: UserService
       ) => {
         const email = 'test@test.com';
@@ -38,8 +37,8 @@ describe('UserService', () => {
           email: email
         });
 
-        service.passwordReset(email).subscribe(user => {
-          expect(user.email).toBe(email);
+        service.passwordReset(email).subscribe(u => {
+          expect(u.email).toBe(email);
         });
 
         const req = httpMock.expectOne(`${service.BASE_URL}/passreset`);

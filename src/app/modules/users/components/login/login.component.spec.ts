@@ -63,13 +63,13 @@ describe('LoginComponent', () => {
     });
 
     it('when invalid is errored', () => {
-      component.email.setValue("test");
+      component.email.setValue('test');
       const errors = component.email.errors || {};
       expect(errors['email']).toBeTruthy();
     });
 
     it('when valid, form is not errored', () => {
-      component.email.setValue("test@test.com");
+      component.email.setValue('test@test.com');
       const errors = component.email.errors || {};
       expect(errors).toEqual({});
     });
@@ -84,7 +84,7 @@ describe('LoginComponent', () => {
     });
 
     it('when password is valid form is not errored', () => {
-      component.password.setValue("test");
+      component.password.setValue('test');
       const errors = component.password.errors || {};
       expect(errors).toEqual({});
     });

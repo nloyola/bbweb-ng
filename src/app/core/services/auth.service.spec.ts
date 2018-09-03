@@ -25,125 +25,93 @@ describe('AuthService', () => {
     httpMock.verify();
   });
 
-  it('should be created', inject([AuthService], (service: AuthService) => {
+  it('should be created', () => {
     expect(service).toBeTruthy();
-  }));
+  });
 
-  it('makes a login request',
-    inject(
-      [HttpTestingController, AuthService],
-      (
-        httpMock: HttpTestingController,
-        service: AuthService
-      ) => {
-        const password = 'fake password';
-        const rawUser = {
-          name: 'Random Person',
-          email: 'test@test.com',
-          roles: []
-        };
-        const reply = {
-          status: 'success',
-          data: {
-            token: 'fake token',
-            user: rawUser
-          }
-        };
+  it('makes a login request', () => {
+    const password = 'fake password';
+    const rawUser = {
+      name: 'Random Person',
+      email: 'test@test.com',
+      roles: []
+    };
+    const reply = {
+      status: 'success',
+      data: {
+        token: 'fake token',
+        user: rawUser
+      }
+    };
 
-        service.login(rawUser.email, password).subscribe(u => {
-          const user = new User().deserialize(rawUser);
-          expect(u).toEqual(user);
-        });
+    service.login(rawUser.email, password).subscribe(u => {
+      const user = new User().deserialize(rawUser);
+      expect(u).toEqual(user);
+    });
 
-        const req = httpMock.expectOne(`${service.BASE_URL}/login`);
-        expect(req.request.method).toBe('POST');
-        req.flush(reply);
+    const req = httpMock.expectOne(`${service.BASE_URL}/login`);
+    expect(req.request.method).toBe('POST');
+    req.flush(reply);
 
-        expect(localStorage.getItem(AUTH_TOKEN_LOCAL_STORAGE_KEY)).toBeTruthy();
-      }));
+    expect(localStorage.getItem(AUTH_TOKEN_LOCAL_STORAGE_KEY)).toBeTruthy();
+  });
 
-  it('logs out a user',
-    inject(
-      [AuthService],
-      (
-        service: AuthService
-      ) => {
-        localStorage.removeItem(AUTH_TOKEN_LOCAL_STORAGE_KEY);
-        service.logout();
-        expect(localStorage.getItem(AUTH_TOKEN_LOCAL_STORAGE_KEY)).toBeFalsy();
-      }));
+  it('logs out a user', () => {
+    localStorage.removeItem(AUTH_TOKEN_LOCAL_STORAGE_KEY);
+    service.logout();
+    expect(localStorage.getItem(AUTH_TOKEN_LOCAL_STORAGE_KEY)).toBeFalsy();
+  });
 
-  it('makes a registration request',
-    inject(
-      [HttpTestingController, AuthService],
-      (
-        httpMock: HttpTestingController,
-        service: AuthService
-      ) => {
-        const password = 'fake password';
-        const rawUser = {
-          name: 'Random Person',
-          email: 'test@test.com',
-          roles: []
-        };
-        const reply = {
-          status: 'success',
-          data: rawUser
-        };
+  it('makes a registration request', () => {
+    const password = 'fake password';
+    const rawUser = {
+      name: 'Random Person',
+      email: 'test@test.com',
+      roles: []
+    };
+    const reply = {
+      status: 'success',
+      data: rawUser
+    };
 
-        service.register(rawUser.name, rawUser.email, password).subscribe(u => {
-          const user = new User().deserialize(rawUser);
-          expect(u).toEqual(user);
-        });
+    service.register(rawUser.name, rawUser.email, password).subscribe(u => {
+      const user = new User().deserialize(rawUser);
+      expect(u).toEqual(user);
+    });
 
-        const req = httpMock.expectOne(`${service.BASE_URL}/`);
-        expect(req.request.method).toBe('POST');
-        req.flush(reply);
-      }));
+    const req = httpMock.expectOne(`${service.BASE_URL}/`);
+    expect(req.request.method).toBe('POST');
+    req.flush(reply);
+  });
 
   describe('isLogged in works', () => {
 
-    it('on initialization',
-      inject(
-        [AuthService],
-        (service: AuthService) => {
-          expect(service.isLoggedIn()).toBeFalsy();
-        }));
+    it('on initialization', () => {
+      expect(service.isLoggedIn()).toBeFalsy();
+    });
 
-    it('after user logs in',
-      inject(
-        [AuthService],
-        (service: AuthService) => {
-          fakeLogin();
-          expect(service.isLoggedIn()).toBeTruthy();
-        }));
+    it('after user logs in', () => {
+      fakeLogin();
+      expect(service.isLoggedIn()).toBeTruthy();
+    });
   });
 
   describe('getUser works', () => {
 
-    it('returns null if user has not logged in',
-      inject(
-        [AuthService],
-        (service: AuthService) => {
-          expect(service.getUser()).toEqual(null);
-        }));
+    it('returns null if user has not logged in', () => {
+      expect(service.getUser()).toEqual(null);
+    });
 
-    it('returns a valid user after login',
-      inject(
-        [AuthService],
-        (service: AuthService) => {
-          const user = fakeLogin();
-          expect(service.getUser()).toEqual(user);
-        }));
+    it('returns a valid user after login', () => {
+      const user = fakeLogin();
+      expect(service.getUser()).toEqual(user);
+    });
 
-    it('returns null after user logs out',
-      inject(
-        [AuthService],
-        (service: AuthService) => {
-          const user = fakeLogin();
-          service.logout();
-          expect(service.getUser()).toEqual(null);
-        }));
+    it('returns null after user logs out', () => {
+      const user = fakeLogin();
+      service.logout();
+      expect(service.getUser()).toEqual(null);
+    });
   });
 
   function fakeLogin() {

@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Store } from '@ngrx/store';
+import { Store, select } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -30,8 +30,9 @@ export class AdminComponent implements OnInit, OnDestroy {
 
   public ngOnInit() {
     this.store$
-      .select(AuthStoreSelectors.selectAuthUser)
-      .pipe(takeUntil(this.unsubscribe$))
+      .pipe(
+        select(AuthStoreSelectors.selectAuthUser),
+        takeUntil(this.unsubscribe$))
       .subscribe((user: User) => {
         this.user = user;
         if (user !== null) {

@@ -5,7 +5,7 @@ import { PasswordValidation } from '@app/core/password-validation';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { Store } from '@ngrx/store';
+import { Store, select } from '@ngrx/store';
 import { User } from '@app/domain/users';
 
 import {
@@ -43,11 +43,13 @@ export class RegisterComponent implements OnInit, OnDestroy {
       });
 
     this.store$
-      .select(AuthStoreSelectors.selectAuthRegisteredUser)
-      .pipe(takeUntil(this.unsubscribe$))
+      .pipe(
+        select(AuthStoreSelectors.selectAuthRegisteredUser),
+        takeUntil(this.unsubscribe$))
       .subscribe((user: User) => {
         if (user !== null) {
-          this.toastr.success('Your account was created and is now pending administrator approval.',
+          this.toastr.success(
+            'Your account was created and is now pending administrator approval.',
             'Registration Successful',
             {
               disableTimeOut: true
@@ -57,10 +59,11 @@ export class RegisterComponent implements OnInit, OnDestroy {
       });
 
     this.store$
-      .select(AuthStoreSelectors.selectAuthError)
-      .pipe(takeUntil(this.unsubscribe$))
+      .pipe(
+        select(AuthStoreSelectors.selectAuthError),
+        takeUntil(this.unsubscribe$))
       .subscribe((err: any) => {
-        if (err === null) return;
+        if (err === null) { return; }
 
         this.store$.dispatch(new AuthStoreActions.RegisterClearFailureAction());
 

@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Store } from '@ngrx/store';
+import { Store, select } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { SharedModule } from '@app/shared/shared.module';
@@ -12,7 +12,7 @@ import {
 } from '@app/root-store';
 
 @Component({
-  selector: 'home',
+  selector: 'app-home',
   templateUrl: './home.component.html'
 })
 export class HomeComponent implements OnInit, OnDestroy {
@@ -30,8 +30,9 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.store$
-      .select(AuthStoreSelectors.selectAuthUser)
-      .pipe(takeUntil(this.unsubscribe$))
+      .pipe(
+        select(AuthStoreSelectors.selectAuthUser),
+        takeUntil(this.unsubscribe$))
       .subscribe((user: User) => {
         this.user = user;
         if (user) {

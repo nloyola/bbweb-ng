@@ -62,13 +62,13 @@ describe('ForgotPasswordComponent', () => {
     });
 
     it('when invalid is errored', () => {
-      component.email.setValue("test");
+      component.email.setValue('test');
       const errors = component.email.errors || {};
       expect(errors['email']).toBeTruthy();
     });
 
     it('when valid is not errored', () => {
-      component.email.setValue("test@test.com");
+      component.email.setValue('test@test.com');
       const errors = component.email.errors || {};
       expect(errors).toEqual({});
     });
@@ -84,7 +84,7 @@ describe('ForgotPasswordComponent', () => {
         email: email
       });
 
-      component.email.setValue("test@test.com");
+      component.email.setValue('test@test.com');
       component.onSubmit();
       const req = httpMock.expectOne(`${service.BASE_URL}/passreset`);
       expect(req.request.method).toBe('POST');
@@ -96,7 +96,7 @@ describe('ForgotPasswordComponent', () => {
       spyOn(modalService, 'open').and
         .returnValue({ result: Promise.resolve('OK') });
 
-      component.email.setValue("test@test.com");
+      component.email.setValue('test@test.com');
       component.onSubmit();
       const req = httpMock.expectOne(`${service.BASE_URL}/passreset`);
       expect(req.request.method).toBe('POST');

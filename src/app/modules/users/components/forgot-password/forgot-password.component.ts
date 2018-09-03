@@ -10,7 +10,7 @@ import { UserService } from '@app/core/services';
   templateUrl: './forgot-password.component.html',
   styleUrls: ['./forgot-password.component.scss']
 })
-export class ForgotPasswordComponent {
+export class ForgotPasswordComponent implements OnInit {
 
   @ViewChild('content') private content;
   forgotForm: FormGroup;

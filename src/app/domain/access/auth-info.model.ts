@@ -6,6 +6,6 @@ export interface AuthInfo {
 
   token: string;
 
-  expiresOn: Date
+  expiresOn: Date;
 
 }

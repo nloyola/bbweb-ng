@@ -14,17 +14,17 @@ export class User extends ConcurrencySafeEntity {
   /**
    * The user's full name.
    */
-  name: string
+  name: string;
 
   /**
    * The user's email address.
    */
-  email: string
+  email: string;
 
   /**
    * The user's optional avatar URL.
    */
-  avatarUrl: string
+  avatarUrl: string;
 
   /**
    * Information for the roles this user has.

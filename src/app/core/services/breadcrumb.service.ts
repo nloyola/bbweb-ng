@@ -7,8 +7,8 @@ import {
   RouterStateSnapshot,
   UrlSegment
 } from '@angular/router';
-import { Observable, BehaviorSubject, Subscription, from, of } from 'rxjs';
-import { concat, distinct, filter, first, flatMap, toArray } from 'rxjs/operators';
+import { Observable, BehaviorSubject, Subscription, concat, from, of } from 'rxjs';
+import { distinct, filter, first, flatMap, toArray } from 'rxjs/operators';
 import { Crumb } from '@app/domain/crumb';
 
 // borrowed from:
@@ -81,7 +81,7 @@ export class BreadcrumbService {
     }
 
     if (route.firstChild) {
-      crumbs$ = crumbs$.pipe(concat(this.buildBreadcrumbs(route.firstChild)));
+      crumbs$ = concat(crumbs$, this.buildBreadcrumbs(route.firstChild));
     }
 
     return crumbs$;
@@ -127,8 +127,8 @@ export class BreadcrumbService {
     return value && (typeof value.then === 'function');
   }
 
-  private stringFormat(template: string, binding: any): string {
-    const compiled = _.template(template);
+  private stringFormat(tplt: string, binding: any): string {
+    const compiled = _.template(tplt);
     return compiled(binding);
   }
 
