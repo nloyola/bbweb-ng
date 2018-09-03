@@ -8,7 +8,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { AuthGuard } from './auth.guard';
 import { AUTH_TOKEN_LOCAL_STORAGE_KEY } from '@app/core/services/auth.service';
 import { User } from '@app/domain/users';
-import { Factory } from '@app/test/factory'
+import { Factory } from '@app/test/factory';
 
 describe('AuthGuard', () => {
 

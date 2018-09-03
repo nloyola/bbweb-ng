@@ -3,7 +3,7 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 
 import { AuthService, AUTH_TOKEN_LOCAL_STORAGE_KEY } from './auth.service';
 import { User } from '@app/domain/users';
-import { Factory } from '@app/test/factory'
+import { Factory } from '@app/test/factory';
 
 describe('AuthService', () => {
   let httpMock: HttpTestingController;
@@ -32,27 +32,51 @@ describe('AuthService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('makes a login request', () => {
-    const password = 'fake password';
-    const rawUser = factory.user();
-    const reply = {
-      status: 'success',
-      data: {
-        token: 'fake token',
-        user: rawUser
-      }
-    };
+  describe('for a login request', () => {
 
-    service.login(rawUser.email, password).subscribe(u => {
-      const user = new User().deserialize(rawUser);
-      expect(u).toEqual(user);
+    const password = 'fake password';
+    let rawUser;
+
+    beforeEach(() => {
+      rawUser = factory.user();
     });
 
-    const req = httpMock.expectOne(`${service.BASE_URL}/login`);
-    expect(req.request.method).toBe('POST');
-    req.flush(reply);
+    it('reply is handled correctly', () => {
+      const reply = {
+        status: 'success',
+        data: {
+          token: 'fake token',
+          user: rawUser
+        }
+      };
 
-    expect(localStorage.getItem(AUTH_TOKEN_LOCAL_STORAGE_KEY)).toBeTruthy();
+      service.login(rawUser.email, password).subscribe(u => {
+        const user = new User().deserialize(rawUser);
+        expect(u).toEqual(user);
+      });
+
+      const req = httpMock.expectOne(`${service.BASE_URL}/login`);
+      expect(req.request.method).toBe('POST');
+      req.flush(reply);
+
+      expect(localStorage.getItem(AUTH_TOKEN_LOCAL_STORAGE_KEY)).toBeTruthy();
+    });
+
+    it('handles an error  response from the server', () => {
+      const reply = {
+        status: 'success',
+        data: {}
+      };
+
+      service.login(rawUser.email, password).subscribe(
+        u => { fail('should have been an error response'); },
+        err => { expect(err.message).toContain('expected an auth token object'); }
+      );
+
+      const req = httpMock.expectOne(`${service.BASE_URL}/login`);
+      req.flush(reply);
+    });
+
   });
 
   it('logs out a user', () => {

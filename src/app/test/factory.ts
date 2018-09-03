@@ -1,7 +1,9 @@
-import { User, UserState } from '@app/domain/users';
+import { UserState } from '@app/domain/users';
+import { StudyState } from '@app/domain/studies';
+import { ValueTypes, MaxValueCount } from '@app/domain/annotations';
 
-import * as faker from 'faker'
-import * as _ from "lodash";
+import * as faker from 'faker';
+import * as _ from 'lodash';
 
 enum DomainEntities {
 
@@ -26,6 +28,9 @@ enum DomainEntities {
   PERMISSION = 'permission',
 }
 
+/**
+ * Generates plain objects for {@link domain|Domain Entities} simulating what is returned by the server.
+ */
 export class Factory {
 
   private defaultEntities = new Map();
@@ -34,7 +39,7 @@ export class Factory {
     return this.domainEntityNameNext();
   }
 
-  user(options: any = { membership: undefined }) {
+  user(options: any = { membership: undefined }): any {
     const name = faker.name.findName();
     const defaults = {
       id: this.domainEntityIdNext(DomainEntities.USER),
@@ -57,12 +62,12 @@ export class Factory {
     return u;
   }
 
-  defaultUser() {
+  defaultUser(): any {
     const dflt = this.defaultEntities.get(DomainEntities.USER);
     return dflt ? dflt : this.user();
   }
 
-  membershipBase(options?: any) {
+  membershipBase(options?: any): any {
     const defaults = this.membershipBaseDefaults();
     const m = {
       ...defaults,
@@ -73,16 +78,16 @@ export class Factory {
     return m;
   }
 
-  defaultMembershipBase() {
+  defaultMembershipBase(): any {
     const dflt = this.defaultEntities.get(DomainEntities.MEMBERSHIP_BASE);
     return dflt ? dflt : this.membershipBase();
   }
 
-  userMembership(options?: any) {
+  userMembership(options?: any): any {
     return this.membershipBase(options);
   }
 
-  accessItem(options = {}) {
+  accessItem(options: any = {}): any {
     const defaults = this.accessItemDefaults();
     const item = {
       ...defaults,
@@ -93,7 +98,7 @@ export class Factory {
     return item;
   }
 
-  role(options?: any) {
+  role(options?: any): any {
     const role = {
       ...{ userData: [this.entityInfo()] },
       ...this.accessItem(options),
@@ -103,30 +108,102 @@ export class Factory {
     return role;
   }
 
-  defaultRole() {
+  defaultRole(): any {
     const dflt = this.defaultEntities.get(DomainEntities.ROLE);
     return dflt ? dflt : this.role();
   }
 
-  userRole() {
+  userRole(): any {
     const role = this.defaultRole(),
       userRole = _.omit(role, ['userData', 'parentData']);
     return userRole;
   }
 
-  entityInfo() {
+  study(options?: any): any {
+    const defaults = {
+      ...{
+        id: this.domainEntityIdNext(DomainEntities.STUDY),
+        description: faker.lorem.sentences(4),
+        annotationTypes: [],
+        state: StudyState.Disabled
+      },
+      ...this.nameAndSlug()
+    };
+
+    const s = {
+      ...defaults,
+      ...options
+    };
+    this.defaultEntities.set(DomainEntities.STUDY, s);
+    return s;
+  }
+
+  /**
+   * Returns the last {@link domain.studies.Study Study} plain object created by this factory.
+   */
+  defaultStudy(): any {
+    const dflt = this.defaultEntities.get(DomainEntities.STUDY);
+    return dflt ? dflt : this.study();
+  }
+
+  entityInfo(): any {
     return {
       ...{ id: this.stringNext() },
       ...this.nameAndSlug()
     };
   }
 
-  entitySet() {
+  entitySet(): any {
     return { allEntities: false, entityData: [this.entityInfo()] };
   }
 
+  /**
+   * @param {ValueType} options.valueType the type of annotation Type to create. Valid types are: Text,
+   * Number, DateTime and Select.
+   *
+   * @param {Int} options.maxValueCount when valueType is 'Select', use 1 for single selection or '2' for
+   * multiple selection.
+   */
+  annotationType(options: any = {
+    valueType: ValueTypes.Text,
+    maxValueCount: MaxValueCount.None
+  })
+    : any {
+    const defaults = {
+      ...{
+        id: this.domainEntityIdNext(DomainEntities.ANNOTATION_TYPE),
+        description: null,
+        valueType: ValueTypes.Text,
+        options: [],
+        maxValueCount: MaxValueCount.None,
+        required: false
+      },
+      ...this.nameAndSlug()
+    };
+
+    if (!options.valueType) {
+      options.valueType = ValueTypes.Text;
+    }
+
+    if (options.valueType === ValueTypes.Select) {
+      if (!options.maxValueCount) {
+        options.maxValueCount = MaxValueCount.SelectSingle;
+      }
+
+      if (!options.options) {
+        options.options = [1, 2]
+          .map(() => this.domainEntityNameNext(DomainEntities.ANNOTATION_TYPE));
+      }
+    }
+
+    return {
+      ...defaults,
+      ...options
+    };
+  }
+
   private domainEntityNameNext(domainEntityType?: string) {
-    let id = domainEntityType ? domainEntityType : 'string';
+    const id = domainEntityType ? domainEntityType : 'string';
     return _.uniqueId(id + '_');
   }
 
@@ -143,11 +220,11 @@ export class Factory {
   }
 
   private nameAndSlug() {
-    const name = this.stringNext()
+    const name = this.stringNext();
     return {
       slug: this.slugify(name),
       name: name
-    }
+    };
   }
 
   // this function taken from here:

@@ -8,7 +8,7 @@ import { AuthStoreEffects } from './auth-store.effects';
 import { AuthStoreActions } from '@app/root-store/auth-store';
 import { AuthService } from '@app/core/services';
 import { User } from '@app/domain/users';
-import { Factory } from '@app/test/factory'
+import { Factory } from '@app/test/factory';
 
 describe('auth-store-module effects', () => {
 

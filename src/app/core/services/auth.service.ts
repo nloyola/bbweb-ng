@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
+
+import { ApiReply } from '@app/domain/api-reply.model';
 import { AuthInfo } from '@app/domain/access';
 import { User } from '@app/domain/users';
 
@@ -19,8 +21,8 @@ export class AuthService {
   }
 
   login(email: string, password: string) {
-    return this.http.post<any>(this.BASE_URL + '/login', { email, password })
-      .pipe(map((res: any) => {
+    return this.http.post<ApiReply>(this.BASE_URL + '/login', { email, password })
+      .pipe(map((res: ApiReply) => {
         if (res && res.data && res.data.user && res.data.token) {
           this.authToken = res.data;
 
@@ -28,6 +30,7 @@ export class AuthService {
           localStorage.setItem(AUTH_TOKEN_LOCAL_STORAGE_KEY, JSON.stringify(this.authToken));
           return new User().deserialize(this.authToken.user);
         }
+        throw new Error('expected an auth token object');
       }));
   }
 

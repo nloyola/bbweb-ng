@@ -9,7 +9,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { ForgotPasswordComponent } from './forgot-password.component';
 import { UserService } from '@app/core/services';
 import { User } from '@app/domain/users';
-import { Factory } from '@app/test/factory'
+import { Factory } from '@app/test/factory';
 
 describe('ForgotPasswordComponent', () => {
   let component: ForgotPasswordComponent;

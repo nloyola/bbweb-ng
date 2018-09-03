@@ -6,7 +6,7 @@ import {
   AuthStoreSelectors,
   AuthStoreReducer
 } from '@app/root-store/auth-store';
-import { Factory } from '@app/test/factory'
+import { Factory } from '@app/test/factory';
 
 describe('auth-store-module selectors', () => {
 

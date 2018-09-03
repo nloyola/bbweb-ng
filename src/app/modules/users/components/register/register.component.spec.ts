@@ -10,7 +10,7 @@ import { AuthStoreActions, AuthStoreReducer } from '@app/root-store/auth-store';
 import { RegisterComponent } from './register.component';
 import { User, UserRole } from '@app/domain/users';
 import { RoleIds } from '@app/domain/access';
-import { Factory } from '@app/test/factory'
+import { Factory } from '@app/test/factory';
 
 describe('RegisterComponent', () => {
 

@@ -3,12 +3,14 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 
 import { UserService } from './user.service';
 import { User } from '@app/domain/users';
-import { Factory } from '@app/test/factory'
+import { Factory } from '@app/test/factory';
 
 describe('UserService', () => {
 
+  const BASE_URL = '/api/users';
+
   let httpMock: HttpTestingController;
-  let service: UserService
+  let service: UserService;
   let factory: Factory;
 
   beforeEach(() => {
@@ -27,9 +29,9 @@ describe('UserService', () => {
     httpMock.verify();
   });
 
-  it('should be created', inject([UserService], (service: UserService) => {
+  it('should be created', () => {
     expect(service).toBeTruthy();
-  }));
+  });
 
   it('makes a password reset request', () => {
     const user = new User().deserialize(factory.user());
@@ -38,7 +40,7 @@ describe('UserService', () => {
       expect(u.email).toBe(user.email);
     });
 
-    const req = httpMock.expectOne(`${service.BASE_URL}/passreset`);
+    const req = httpMock.expectOne(`${BASE_URL}/passreset`);
     expect(req.request.method).toBe('POST');
     req.flush(user);
   });

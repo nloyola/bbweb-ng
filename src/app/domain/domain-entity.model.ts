@@ -10,6 +10,9 @@ export abstract class DomainEntity implements Deserializable {
    */
   id: string;
 
-  abstract deserialize(input: any): this;
+  deserialize(input: any) {
+    Object.assign(this, input);
+    return this;
+  }
 
 }

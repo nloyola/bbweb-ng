@@ -11,7 +11,7 @@ import { LoginComponent } from './login.component';
 import { AuthStoreActions, AuthStoreReducer } from '@app/root-store/auth-store';
 import { User, UserRole } from '@app/domain/users';
 import { RoleIds } from '@app/domain/access';
-import { Factory } from '@app/test/factory'
+import { Factory } from '@app/test/factory';
 
 describe('LoginComponent', () => {
 
