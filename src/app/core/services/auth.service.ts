@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Subject } from "rxjs";
 import { map } from 'rxjs/operators';
+import { AuthInfo } from '@app/domain/access';
 import { User } from '@app/domain/users';
 
 export const AUTH_TOKEN_LOCAL_STORAGE_KEY = 'authToken';
@@ -12,7 +13,7 @@ export const AUTH_TOKEN_LOCAL_STORAGE_KEY = 'authToken';
 export class AuthService {
 
   readonly BASE_URL = '/api/users';
-  private authToken: any;
+  private authToken: AuthInfo;
 
   constructor(private http: HttpClient) {
   }
