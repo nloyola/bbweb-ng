@@ -1,11 +1,19 @@
 import { AuthStoreActions } from '@app/root-store/auth-store';
 import { User } from '@app/domain/users';
+import { Factory } from '@app/test/factory'
+import * as faker from 'faker'
 
 describe('auth-store-module actions', () => {
 
+  let factory: Factory;
+
+  beforeEach(() => {
+    factory = new Factory();
+  });
+
   it('LoginRequestAction', () => {
     const payload = {
-      email: 'test@test.com',
+      email: faker.internet.email(),
       password: 'a random password'
     };
     const action = new AuthStoreActions.LoginRequestAction(payload);
@@ -40,10 +48,7 @@ describe('auth-store-module actions', () => {
 
   it('LoginSuccessAction', () => {
     const payload = {
-      user: new User().deserialize({
-        name: 'Random person',
-        email: 'test@test.com',
-      })
+      user: new User().deserialize(factory.user())
     };
     const action = new AuthStoreActions.LoginSuccessAction(payload);
     expect({ ...action }).toEqual({
@@ -83,9 +88,10 @@ describe('auth-store-module actions', () => {
   });
 
   it('RegisterRequestAction', () => {
+    const rawUser = factory.user();
     const payload = {
-      name: 'Random person',
-      email: 'test@test.com',
+      name: rawUser.name,
+      email: rawUser.email,
       password: 'a random password'
     };
     const action = new AuthStoreActions.RegisterRequestAction(payload);
@@ -120,10 +126,7 @@ describe('auth-store-module actions', () => {
 
   it('RegisterSuccessAction', () => {
     const payload = {
-      user: new User().deserialize({
-        name: 'Random person',
-        email: 'test@test.com',
-      })
+      user: new User().deserialize(factory.user())
     };
     const action = new AuthStoreActions.RegisterSuccessAction(payload);
     expect({ ...action }).toEqual({

@@ -24,4 +24,15 @@ export abstract class ConcurrencySafeEntity extends DomainEntity {
     return (this.id === null);
   }
 
+  deserialize(input: any) {
+    Object.assign(this, input);
+    if (input.timeAdded) {
+      this.timeAdded = new Date(input.timeAdded);
+    }
+    if (input.timeModified) {
+      this.timeModified = new Date(input.timeModified);
+    }
+    return this;
+  }
+
 }

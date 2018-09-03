@@ -1,7 +1,14 @@
 import { AuthStoreActions, AuthStoreReducer } from '@app/root-store/auth-store';
 import { User } from '@app/domain/users';
+import { Factory } from '@app/test/factory'
 
 describe('auth-store-model reducer', () => {
+
+  let factory: Factory;
+
+  beforeEach(() => {
+    factory = new Factory();
+  });
 
   it('LoginRequestAction', () => {
     const payload = {
@@ -57,10 +64,7 @@ describe('auth-store-model reducer', () => {
 
   it('LoginSuccessAction', () => {
     const payload = {
-      user: new User().deserialize({
-        name: 'Random person',
-        email: 'test@test.com',
-      })
+      user: new User().deserialize(factory.user())
     };
     const action = new AuthStoreActions.LoginSuccessAction(payload);
     const state = AuthStoreReducer.reducer(undefined, action);
@@ -113,9 +117,10 @@ describe('auth-store-model reducer', () => {
   });
 
   it('RegisterRequestAction', () => {
+    const rawUser = factory.user();
     const payload = {
-      name: 'Random person',
-      email: 'test@test.com',
+      name: rawUser.name,
+      email: rawUser.email,
       password: 'a random password'
     };
     const action = new AuthStoreActions.RegisterRequestAction(payload);
@@ -167,10 +172,7 @@ describe('auth-store-model reducer', () => {
 
   it('RegisterSuccessAction', () => {
     const payload = {
-      user: new User().deserialize({
-        name: 'Random person',
-        email: 'test@test.com'
-      })
+      user: new User().deserialize(factory.user())
     };
     const action = new AuthStoreActions.RegisterSuccessAction(payload);
     const state = AuthStoreReducer.reducer(undefined, action);

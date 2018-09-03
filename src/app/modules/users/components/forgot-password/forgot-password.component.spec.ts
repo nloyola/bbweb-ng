@@ -9,6 +9,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { ForgotPasswordComponent } from './forgot-password.component';
 import { UserService } from '@app/core/services';
 import { User } from '@app/domain/users';
+import { Factory } from '@app/test/factory'
 
 describe('ForgotPasswordComponent', () => {
   let component: ForgotPasswordComponent;
@@ -17,6 +18,7 @@ describe('ForgotPasswordComponent', () => {
   let service: UserService;
   let router: Router;
   let modalService: NgbModal;
+  let factory: Factory;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -38,6 +40,7 @@ describe('ForgotPasswordComponent', () => {
     service = TestBed.get(UserService);
     router = TestBed.get(Router);
     modalService = TestBed.get(NgbModal);
+    factory = new Factory();
 
     spyOn(router, 'navigate').and.callThrough();
 
@@ -78,13 +81,9 @@ describe('ForgotPasswordComponent', () => {
   describe('when submitted', () => {
 
     it('form submission sends a request to the server', () => {
-      const email = 'test@test.com';
-      const user = new User().deserialize({
-        name: 'Random Person',
-        email: email
-      });
+      const user = new User().deserialize(factory.user);
 
-      component.email.setValue('test@test.com');
+      component.email.setValue(user.email);
       component.onSubmit();
       const req = httpMock.expectOne(`${service.BASE_URL}/passreset`);
       expect(req.request.method).toBe('POST');

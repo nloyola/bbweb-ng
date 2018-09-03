@@ -3,10 +3,12 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 
 import { AuthService, AUTH_TOKEN_LOCAL_STORAGE_KEY } from './auth.service';
 import { User } from '@app/domain/users';
+import { Factory } from '@app/test/factory'
 
 describe('AuthService', () => {
   let httpMock: HttpTestingController;
   let service: AuthService;
+  let factory: Factory;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -19,6 +21,7 @@ describe('AuthService', () => {
 
     localStorage.removeItem(AUTH_TOKEN_LOCAL_STORAGE_KEY);
     service = TestBed.get(AuthService);
+    factory = new Factory();
   });
 
   afterEach(() => {
@@ -31,11 +34,7 @@ describe('AuthService', () => {
 
   it('makes a login request', () => {
     const password = 'fake password';
-    const rawUser = {
-      name: 'Random Person',
-      email: 'test@test.com',
-      roles: []
-    };
+    const rawUser = factory.user();
     const reply = {
       status: 'success',
       data: {
@@ -64,11 +63,7 @@ describe('AuthService', () => {
 
   it('makes a registration request', () => {
     const password = 'fake password';
-    const rawUser = {
-      name: 'Random Person',
-      email: 'test@test.com',
-      roles: []
-    };
+    const rawUser = factory.user();
     const reply = {
       status: 'success',
       data: rawUser
@@ -117,11 +112,7 @@ describe('AuthService', () => {
   function fakeLogin() {
     const tokenData = {
       token: 'fake token',
-      user: {
-        name: 'Random Person',
-        email: 'test@test.com',
-        roles: []
-      }
+      user: factory.user()
     };
 
     localStorage.setItem('authToken', JSON.stringify(tokenData));

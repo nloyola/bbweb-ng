@@ -14,12 +14,15 @@ import {
 import { HeaderComponent } from './header.component';
 import { User, UserRole } from '@app/domain/users';
 import { RoleIds } from '@app/domain/access';
+import { Factory } from '@app/test/factory'
 
 describe('HeaderComponent', () => {
+
   let store: Store<AuthStoreReducer.State>;
   let component: HeaderComponent;
   let fixture: ComponentFixture<HeaderComponent>;
   let router: Router;
+  let factory: Factory;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -38,6 +41,7 @@ describe('HeaderComponent', () => {
     fixture = TestBed.createComponent(HeaderComponent);
     component = fixture.componentInstance;
     router = TestBed.get(Router);
+    factory = new Factory();
 
     spyOn(store, 'dispatch').and.callThrough();
     spyOn(router, 'navigate').and.callThrough();
@@ -50,12 +54,11 @@ describe('HeaderComponent', () => {
   });
 
   it('a dropdown menu item is created with the user`s name', () => {
-    const user = new User().deserialize({
-      name: 'Random Person',
+    const user = new User().deserialize(factory.user({
       roles: [
-        new UserRole().deserialize({ id: RoleIds.SpecimenCollector }),
+        factory.role({ id: RoleIds.SpecimenCollector })
       ]
-    });
+    }));
     const action = new AuthStoreActions.LoginSuccessAction({ user });
     store.dispatch(action);
 

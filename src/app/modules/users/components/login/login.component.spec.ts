@@ -11,6 +11,7 @@ import { LoginComponent } from './login.component';
 import { AuthStoreActions, AuthStoreReducer } from '@app/root-store/auth-store';
 import { User, UserRole } from '@app/domain/users';
 import { RoleIds } from '@app/domain/access';
+import { Factory } from '@app/test/factory'
 
 describe('LoginComponent', () => {
 
@@ -19,6 +20,7 @@ describe('LoginComponent', () => {
   let fixture: ComponentFixture<LoginComponent>;
   let modalService: NgbModal;
   let router: Router;
+  let factory: Factory;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -41,6 +43,7 @@ describe('LoginComponent', () => {
     store = TestBed.get(Store);
     modalService = TestBed.get(NgbModal);
     router = TestBed.get(Router);
+    factory = new Factory();
 
     fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;
@@ -92,12 +95,11 @@ describe('LoginComponent', () => {
   });
 
   it('on valid login', () => {
-    const user = new User().deserialize({
-      name: 'Random Person',
+    const user = new User().deserialize(factory.user({
       roles: [
-        new UserRole().deserialize({ id: RoleIds.SpecimenCollector }),
+        factory.role({ id: RoleIds.SpecimenCollector })
       ]
-    });
+    }));
     const action = new AuthStoreActions.LoginSuccessAction({ user });
 
     spyOn(store, 'dispatch').and.callThrough();

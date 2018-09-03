@@ -10,6 +10,7 @@ import { AuthStoreActions, AuthStoreReducer } from '@app/root-store/auth-store';
 import { RegisterComponent } from './register.component';
 import { User, UserRole } from '@app/domain/users';
 import { RoleIds } from '@app/domain/access';
+import { Factory } from '@app/test/factory'
 
 describe('RegisterComponent', () => {
 
@@ -18,6 +19,7 @@ describe('RegisterComponent', () => {
   let fixture: ComponentFixture<RegisterComponent>;
   let router: Router;
   let toastrService: ToastrService;
+  let factory: Factory;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -40,6 +42,7 @@ describe('RegisterComponent', () => {
     store = TestBed.get(Store);
     router = TestBed.get(Router);
     toastrService = TestBed.get(ToastrService);
+    factory = new Factory();
 
     fixture = TestBed.createComponent(RegisterComponent);
     component = fixture.componentInstance;
@@ -131,12 +134,11 @@ describe('RegisterComponent', () => {
   });
 
   it('on valid registration', () => {
-    const user = new User().deserialize({
-      name: 'Random Person',
+    const user = new User().deserialize(factory.user({
       roles: [
-        new UserRole().deserialize({ id: RoleIds.SpecimenCollector }),
+        { id: RoleIds.SpecimenCollector },
       ]
-    });
+    }));
     const action = new AuthStoreActions.RegisterSuccessAction({ user });
 
     spyOn(toastrService, 'success').and.returnValue(null);
@@ -183,18 +185,19 @@ describe('RegisterComponent', () => {
   });
 
   it('onSubmit dispatches an action', () => {
-    const user = {
-      name: 'Random User',
-      email: 'test@test.com',
-      password: 'a random password'
-    };
+    const password = 'a random password';
+    const user = factory.user();
 
     spyOn(store, 'dispatch').and.callThrough();
     component.name.setValue(user.name);
     component.email.setValue(user.email);
-    component.password.setValue(user.password);
+    component.password.setValue(password);
 
-    const action = new AuthStoreActions.RegisterRequestAction(user);
+    const action = new AuthStoreActions.RegisterRequestAction({
+      name: user.name,
+      email: user.email,
+      password
+    });
     component.onSubmit();
     expect(store.dispatch).toHaveBeenCalledWith(action);
   });

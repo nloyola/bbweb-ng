@@ -8,6 +8,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { AuthGuard } from './auth.guard';
 import { AUTH_TOKEN_LOCAL_STORAGE_KEY } from '@app/core/services/auth.service';
 import { User } from '@app/domain/users';
+import { Factory } from '@app/test/factory'
 
 describe('AuthGuard', () => {
 
@@ -31,6 +32,7 @@ describe('AuthGuard', () => {
 
   let location: Location;
   let router: Router;
+  let factory: Factory;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -46,6 +48,7 @@ describe('AuthGuard', () => {
 
     location = TestBed.get(Location);
     router = TestBed.get(Router);
+    factory = new Factory();
   });
 
   it('can navigate to router when user is logged in', () => {
@@ -72,11 +75,7 @@ describe('AuthGuard', () => {
   function fakeLogin() {
     const tokenData = {
       token: 'fake token',
-      user: {
-        name: 'Random Person',
-        email: 'test@test.com',
-        roles: []
-      }
+      user: factory.user()
     };
 
     localStorage.setItem('authToken', JSON.stringify(tokenData));

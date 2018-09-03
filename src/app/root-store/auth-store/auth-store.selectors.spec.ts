@@ -6,8 +6,15 @@ import {
   AuthStoreSelectors,
   AuthStoreReducer
 } from '@app/root-store/auth-store';
+import { Factory } from '@app/test/factory'
 
 describe('auth-store-module selectors', () => {
+
+  let factory: Factory;
+
+  beforeEach(() => {
+    factory = new Factory();
+  });
 
   it('selectAuthIsLoggingIn', () => {
     const state = {
@@ -67,9 +74,7 @@ describe('auth-store-module selectors', () => {
     const state = {
       auth: {
         ...AuthStoreReducer.initialState,
-        user: {
-          name: 'Random user'
-        }
+        user: factory.user()
       }
     };
 
@@ -80,9 +85,7 @@ describe('auth-store-module selectors', () => {
     const state = {
       auth: {
         ...AuthStoreReducer.initialState,
-        registeredUser: {
-          name: 'Random user'
-        }
+        registeredUser: factory.user()
       }
     };
 

@@ -103,7 +103,7 @@ export class User extends ConcurrencySafeEntity {
   }
 
   deserialize(input: any) {
-    Object.assign(this, input);
+    super.deserialize(input);
     if (input.roles) {
       this.roles = input.roles.map(role => new UserRole().deserialize(role));
     }

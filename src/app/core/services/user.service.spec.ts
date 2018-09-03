@@ -3,9 +3,13 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 
 import { UserService } from './user.service';
 import { User } from '@app/domain/users';
+import { Factory } from '@app/test/factory'
 
 describe('UserService', () => {
+
   let httpMock: HttpTestingController;
+  let service: UserService
+  let factory: Factory;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -15,6 +19,8 @@ describe('UserService', () => {
       providers: [UserService]
     });
     httpMock = TestBed.get(HttpTestingController);
+    service = TestBed.get(UserService);
+    factory = new Factory();
   });
 
   afterEach(() => {
@@ -25,24 +31,15 @@ describe('UserService', () => {
     expect(service).toBeTruthy();
   }));
 
-  it('makes a password reset request',
-    inject(
-      [UserService],
-      (
-        service: UserService
-      ) => {
-        const email = 'test@test.com';
-        const user = new User().deserialize({
-          name: 'Random Person',
-          email: email
-        });
+  it('makes a password reset request', () => {
+    const user = new User().deserialize(factory.user());
 
-        service.passwordReset(email).subscribe(u => {
-          expect(u.email).toBe(email);
-        });
+    service.passwordReset(user.email).subscribe(u => {
+      expect(u.email).toBe(user.email);
+    });
 
-        const req = httpMock.expectOne(`${service.BASE_URL}/passreset`);
-        expect(req.request.method).toBe('POST');
-        req.flush(user);
-      }));
+    const req = httpMock.expectOne(`${service.BASE_URL}/passreset`);
+    expect(req.request.method).toBe('POST');
+    req.flush(user);
+  });
 });
