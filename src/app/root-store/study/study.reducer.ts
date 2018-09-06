@@ -1,21 +1,38 @@
 import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
-import { Study } from './study.model';
+
+import { Study } from '@app/domain/studies';
 import { StudyActions, StudyActionTypes } from './study.actions';
 
 export interface State extends EntityState<Study> {
-  // additional entities state properties
+
+  isAdding?: boolean;
+
+  error?: any;
 }
 
 export const adapter: EntityAdapter<Study> = createEntityAdapter<Study>();
 
 export const initialState: State = adapter.getInitialState({
-  // additional entity state properties
+  isAdding: false,
+  error: null
 });
 
 export function reducer(state = initialState, action: StudyActions): State {
   switch (action.type) {
     case StudyActionTypes.AddStudyRequest: {
-      return adapter.addOne(action.payload.study, state);
+      return { ...state, isAdding: true };
+    }
+
+    case StudyActionTypes.AddStudySuccess: {
+      return adapter.addOne(action.payload.study, { ...state, isAdding: false });
+    }
+
+    case StudyActionTypes.AddStudyFailure: {
+      return {
+        ...state,
+        error: action.payload.error,
+        isAdding: false
+      };
     }
 
     case StudyActionTypes.UpsertStudy: {

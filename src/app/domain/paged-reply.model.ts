@@ -1,4 +1,4 @@
-import { ConcurrencySafeEntity } from "@app/domain/concurrency-safe-entity.model";
+import { ConcurrencySafeEntity } from '@app/domain/concurrency-safe-entity.model';
 
 /**
  * Object returned by server for a paged API call.
@@ -19,6 +19,6 @@ export class PagedReply<T extends ConcurrencySafeEntity> {
     public offset: number,
 
     /** The total number of entities in all pages. */
-    public total: number) { };
+    public total: number) { }
 
 }

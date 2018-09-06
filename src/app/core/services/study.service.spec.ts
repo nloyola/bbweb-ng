@@ -46,7 +46,7 @@ describe('StudyService', () => {
 
     it('reply is handled correctly', () => {
       service.get(study.slug).subscribe(s => {
-        expect(s).toEqual(study);
+        expect(s).toEqual(jasmine.any(Study));
       });
 
       const req = httpMock.expectOne(`${BASE_URL}/${study.slug}`);
@@ -61,7 +61,6 @@ describe('StudyService', () => {
       );
 
       const req = httpMock.expectOne(`${BASE_URL}/${study.slug}`);
-      expect(req.request.method).toBe('GET');
       req.flush({ status: 'error', data: undefined });
     });
 
@@ -94,7 +93,7 @@ describe('StudyService', () => {
         expect(pr.total).toBe(reply.total);
       });
 
-      const req = httpMock.expectOne(req => req.url === `${BASE_URL}/search`);
+      const req = httpMock.expectOne(r => r.url === `${BASE_URL}/search`);
       expect(req.request.method).toBe('GET');
       expect(req.request.params.keys()).toEqual([]);
       req.flush({
@@ -105,22 +104,63 @@ describe('StudyService', () => {
 
     describe('uses valid query parameters', function () {
 
-      let context: PagedQueryBehaviour.Context<Study> = {};
+      const context: PagedQueryBehaviour.Context<Study> = {};
 
       beforeEach(() => {
         context.service = service;
         context.url = `${BASE_URL}/search`;
-        context.reply = {
-          items: [ factory.study() ],
-          page: 1,
-          limit: 10,
-          offset: 0,
-          total: 1
-        };
+        context.reply = reply;
       });
 
       PagedQueryBehaviour.sharedBehaviour(context);
 
+    });
+
+    it('handles and error reply correctly', () => {
+      service.search().subscribe(
+        u => { fail('should have been an error response'); },
+        err => { expect(err.message).toContain('expected a paged reply'); }
+      );
+
+      const req = httpMock.expectOne(`${BASE_URL}/search`);
+      expect(req.request.method).toBe('GET');
+      req.flush({ status: 'error', data: undefined });
+    });
+
+  });
+
+  describe('when adding a study', () => {
+    let rawStudy;
+    let study;
+
+    beforeEach(() => {
+      rawStudy = factory.study();
+      study = new Study().deserialize(rawStudy);
+    });
+
+    it('request contains correct JSON and reply is handled correctly', () => {
+      service.add(study).subscribe(s => {
+        expect(s).toEqual(jasmine.any(Study));
+        expect(s).toEqual(study);
+      });
+
+      const req = httpMock.expectOne(`${BASE_URL}/`);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual({
+        name: study.name,
+        description: study.description
+      });
+      req.flush({ status: 'success', data: rawStudy });
+    });
+
+    it('handles and error reply correctly', () => {
+      service.add(study).subscribe(
+        u => { fail('should have been an error response'); },
+        err => { expect(err.message).toContain('expected a study object'); }
+      );
+
+      const req = httpMock.expectOne(`${BASE_URL}/`);
+      req.flush({ status: 'error', data: undefined });
     });
 
   });

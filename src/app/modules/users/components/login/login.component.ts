@@ -26,12 +26,11 @@ export class LoginComponent implements OnInit, OnDestroy {
   returnUrl: string;
   loginForm: FormGroup;
 
-  constructor(
-    private store$: Store<RootStoreState.State>,
-    private route: ActivatedRoute,
-    private router: Router,
-    private modalService: NgbModal,
-    private formBuilder: FormBuilder) { }
+  constructor(private store$: Store<RootStoreState.State>,
+              private route: ActivatedRoute,
+              private router: Router,
+              private modalService: NgbModal,
+              private formBuilder: FormBuilder) { }
 
   public ngOnInit() {
     this.loginForm = this.formBuilder.group({

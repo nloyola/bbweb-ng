@@ -74,4 +74,18 @@ export class StudyService implements SearchService<Study> {
         throw new Error('expected a paged reply');
       }));
   }
+
+  add(study: Study): Observable<Study> {
+    const json = {
+      name: study.name,
+      description: study.description ? study.description : null
+    };
+    return this.http.post<ApiReply>(`${this.BASE_URL}/`, json)
+      .pipe(map((reply: ApiReply) => {
+        if (reply && reply.data) {
+          return new Study().deserialize(reply.data);
+        }
+        throw new Error('expected a study object');
+      }));
+  }
 }

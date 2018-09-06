@@ -55,4 +55,12 @@ export class AuthService {
     }
     return null;
   }
+
+  getToken() {
+    this.authToken = JSON.parse(localStorage.getItem(AUTH_TOKEN_LOCAL_STORAGE_KEY));
+    if (this.authToken) {
+      return this.authToken.token;
+    }
+    return null;
+  }
 }

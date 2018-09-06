@@ -1,6 +1,7 @@
 import { Action } from '@ngrx/store';
 import { Update } from '@ngrx/entity';
-import { Study } from './study.model';
+
+import { Study } from '@app/domain/studies';
 
 export enum StudyActionTypes {
   LoadStudies = '[Study] Load Studies',
@@ -24,6 +25,18 @@ export class AddStudyRequest implements Action {
   constructor(public payload: { study: Study }) { }
 }
 
+export class AddStudySuccess implements Action {
+  readonly type = StudyActionTypes.AddStudySuccess;
+
+  constructor(public payload: { study: Study }) { }
+}
+
+export class AddStudyFailure implements Action {
+  readonly type = StudyActionTypes.AddStudyFailure;
+
+  constructor(public payload: { error: any }) { }
+}
+
 export class UpsertStudy implements Action {
   readonly type = StudyActionTypes.UpsertStudy;
 
@@ -45,6 +58,8 @@ export class DeleteStudy implements Action {
 export type StudyActions =
   LoadStudies
   | AddStudyRequest
+  | AddStudySuccess
+  | AddStudyFailure
   | UpsertStudy
   | UpdateStudy
   | DeleteStudy;

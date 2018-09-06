@@ -31,7 +31,7 @@ export namespace PagedQueryBehaviour {
           expect(pr.entities.length).toBe(context.reply.items.length);
         });
 
-        const req = httpMock.expectOne(req => req.url === context.url);
+        const req = httpMock.expectOne(r => r.url === context.url);
         expect(req.request.method).toBe('GET');
         expect(req.request.params.keys()).not.toEqual([]);
         expect(req.request.params.get('filter')).toBe(filter);
@@ -48,7 +48,7 @@ export namespace PagedQueryBehaviour {
           expect(pr.entities.length).toBe(context.reply.items.length);
         });
 
-        const req = httpMock.expectOne(req => req.url === context.url);
+        const req = httpMock.expectOne(r => r.url === context.url);
         expect(req.request.method).toBe('GET');
         expect(req.request.params.keys()).not.toEqual([]);
         expect(req.request.params.get('sort')).toBe(sort);
@@ -65,7 +65,7 @@ export namespace PagedQueryBehaviour {
           expect(pr.entities.length).toBe(context.reply.items.length);
         });
 
-        const req = httpMock.expectOne(req => req.url === context.url);
+        const req = httpMock.expectOne(r => r.url === context.url);
         expect(req.request.method).toBe('GET');
         expect(req.request.params.keys()).not.toEqual([]);
         expect(req.request.params.get('page')).toBe(String(page));
@@ -82,7 +82,7 @@ export namespace PagedQueryBehaviour {
           expect(pr.entities.length).toBe(context.reply.items.length);
         });
 
-        const req = httpMock.expectOne(req => req.url === context.url);
+        const req = httpMock.expectOne(r => r.url === context.url);
         expect(req.request.method).toBe('GET');
         expect(req.request.params.keys()).not.toEqual([]);
         expect(req.request.params.get('limit')).toBe(String(limit));
