@@ -6,7 +6,7 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { AuthStoreReducer } from '@app/root-store/auth-store';
 
 import { AuthStoreEffects } from './auth-store/auth-store.effects';
-import { environment } from '../../environments/environment';
+import { environment } from '@env/environment';
 
 @NgModule({
   imports: [
