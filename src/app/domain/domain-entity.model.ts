@@ -8,7 +8,7 @@ export abstract class DomainEntity implements Deserializable {
   /**
    * The unique ID that identifies an object of this type.
    */
-  id: string;
+  id: string =  null;
 
   deserialize(input: any) {
     Object.assign(this, input);
