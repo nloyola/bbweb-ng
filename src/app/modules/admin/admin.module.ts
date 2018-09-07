@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { MaterialModule } from '@app/modules/material.module';
 import { SharedModule } from '@app/shared/shared.module';
@@ -8,6 +10,7 @@ import { AdminRoutingModule } from './admin-routing.module';
 import { AdminComponent } from './components/admin/admin.component';
 import { StudiesAdminComponent } from './components/studies-admin/studies-admin.component';
 import { StudyAddComponent } from './components/study-add/study-add.component';
+import { StudyCountsComponent } from './components/study-counts/study-counts.component';
 
 @NgModule({
   imports: [
@@ -16,8 +19,10 @@ import { StudyAddComponent } from './components/study-add/study-add.component';
     ReactiveFormsModule,
     MaterialModule,
     SharedModule,
-    AdminRoutingModule
+    AdminRoutingModule,
+    NgbModule,
+    FontAwesomeModule
   ],
-  declarations: [AdminComponent, StudiesAdminComponent, StudyAddComponent]
+  declarations: [AdminComponent, StudiesAdminComponent, StudyAddComponent, StudyCountsComponent]
 })
 export class AdminModule { }

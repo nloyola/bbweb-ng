@@ -57,13 +57,13 @@ export class StudyAddComponent implements OnInit, OnDestroy {
     this.isSaving = true;
     this.actions$.pipe(
       ofType<StudyStoreActions.AddStudySuccess>(
-        StudyStoreActions.StudyActionTypes.AddStudySuccess),
+        StudyStoreActions.ActionTypes.AddStudySuccess),
       takeUntil(this.unsubscribe$),
       map(action => action.payload.study),
-      tap(study => {
+      tap(s => {
         this.isSaving = false;
         this.toastr.success(
-          `Study was added successfully: ${study.name}`,
+          `Study was added successfully: ${s.name}`,
           'Add Successfull');
         this.navigateToReturnUrl();
       }))
@@ -71,7 +71,7 @@ export class StudyAddComponent implements OnInit, OnDestroy {
 
     this.actions$.pipe(
       ofType<StudyStoreActions.AddStudyFailure>(
-        StudyStoreActions.StudyActionTypes.AddStudyFailure),
+        StudyStoreActions.ActionTypes.AddStudyFailure),
       takeUntil(this.unsubscribe$),
       map(action => action.payload.error.error),
       tap(error => {

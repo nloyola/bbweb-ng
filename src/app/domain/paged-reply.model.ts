@@ -1,4 +1,5 @@
 import { ConcurrencySafeEntity } from '@app/domain/concurrency-safe-entity.model';
+import { SearchParams } from '@app/domain';
 
 /**
  * Object returned by server for a paged API call.
@@ -6,14 +7,12 @@ import { ConcurrencySafeEntity } from '@app/domain/concurrency-safe-entity.model
 export class PagedReply<T extends ConcurrencySafeEntity> {
 
   constructor(
+
+    /** The search parameters (i.e.query string) used to generate the reply. */
+    public searchParams: SearchParams,
+
     /** The items in the page. */
     public entities: T[],
-
-    /** The page these entities belong to */
-    public page: number,
-
-    /** The number of entities in this page. */
-    public limit: number,
 
     /** The page offset. Starts at 0. */
     public offset: number,

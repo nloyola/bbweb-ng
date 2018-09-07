@@ -3,7 +3,7 @@
 @import url('https://fonts.googleapis.com/css?family=Ubuntu');
 @import "~bootstrap/dist/css/bootstrap.css";
 @import '~ngx-toastr/toastr.css';
-@import "~@angular/material/prebuilt-themes/deeppurple-amber.css";
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
 
 body,h1,h2,h3,h4,h5,h6,h7.toplogo,.nav-title {
   font-family: 'Ubuntu', sans-serif;
@@ -20,4 +20,16 @@ body {
 
 mat-icon {
   vertical-align: middle;
+}
+
+.success-icon {
+  color: #1e7e34;
+}
+
+.warning-icon {
+  color: #d39e00;
+}
+
+.danger-icon {
+  color: #bd2130;
 }

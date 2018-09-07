@@ -14,7 +14,7 @@ import { StudyStoreActions, StudyStoreReducer } from '@app/root-store/study';
 describe('StudyAddComponent', () => {
 
   let store: Store<StudyStoreReducer.State>;
-  let actions: Observable<any>;
+  const actions: Observable<any>;
   let component: StudyAddComponent;
   let fixture: ComponentFixture<StudyAddComponent>;
 

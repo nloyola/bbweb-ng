@@ -6,10 +6,10 @@ import { SpinnerService } from '@app/core/services';
 @Component({
   selector: 'app-spinner',
   template: `
-    <div *ngIf="show">
+    <ng-container *ngIf="show">
       <fa-icon [icon]="faSpinner" [spin]="true"></fa-icon>
       &nbsp;<ng-content></ng-content>
-    </div>`,
+    </ng-container>`,
   styleUrls: ['./spinner.component.scss']
 })
 export class SpinnerComponent implements OnInit, OnDestroy {
@@ -21,7 +21,7 @@ export class SpinnerComponent implements OnInit, OnDestroy {
   constructor(private spinnerService: SpinnerService) { }
 
   ngOnInit(): void {
-    if (!this.name) throw new Error('name must be specified');
+    if (!this.name) { throw new Error('name must be specified'); }
     this.spinnerService.register(this);
   }
 

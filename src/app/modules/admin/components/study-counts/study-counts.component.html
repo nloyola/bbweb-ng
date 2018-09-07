@@ -1,0 +1,7 @@
+<ng-container *ngFor="let countInfo of countData; let isLast = last">
+  <mat-icon [ngClass]="countInfo.iconClass">
+    {{countInfo.icon}}
+  </mat-icon>
+  {{countInfo.count}}&nbsp;{{countInfo.label}}
+  <ng-container *ngIf="!isLast">,&nbsp;</ng-container>
+</ng-container>

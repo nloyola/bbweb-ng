@@ -31,7 +31,7 @@ export class Study extends ConcurrencySafeEntity implements HasSlug {
   state: StudyState;
 
   deserialize(input: any) {
-    Object.assign(this, input);
+    super.deserialize(input);
     if (input.annotationTypes) {
       this.annotationTypes = input.annotationTypes
         .map(at => new AnnotationType().deserialize(at));

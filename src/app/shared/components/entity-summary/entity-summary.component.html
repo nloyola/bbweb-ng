@@ -1,0 +1,20 @@
+<div class="row">
+  <div class="col-md-12">
+    <mat-icon [ngClass]="iconClass">{{icon}}</mat-icon>
+    <a [routerLink]="" (click)="linkSelected()"><strong>{{entity.name}}</strong></a>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    {{entity.description | truncate:100}}
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <app-entity-status [state]="entity.state"
+                       [timeAdded]="entity.timeAdded"
+                       [timeModified]="entity.timeModified"
+                       [useBadges]="false">
+    </app-entity-status>
+  </div>
+</div>
