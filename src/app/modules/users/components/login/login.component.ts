@@ -6,6 +6,7 @@ import { Observable, Subject } from 'rxjs';
 import { catchError, takeUntil } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { User } from '@app/domain/users';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 
 import {
   RootStoreState,
@@ -25,6 +26,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   isLoggingIn$: Observable<boolean>;
   returnUrl: string;
   loginForm: FormGroup;
+  faSpinner = faSpinner;
 
   constructor(private store$: Store<RootStoreState.State>,
               private route: ActivatedRoute,

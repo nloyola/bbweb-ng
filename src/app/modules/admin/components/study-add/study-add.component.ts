@@ -24,6 +24,7 @@ export class StudyAddComponent implements OnInit, OnDestroy {
 
   private studyForm: FormGroup;
   private unsubscribe$: Subject<void> = new Subject<void>();
+  private isSaving: boolean;
 
   constructor(private store$: Store<RootStoreState.State>,
               private actions$: Actions,
@@ -53,12 +54,14 @@ export class StudyAddComponent implements OnInit, OnDestroy {
   }
 
   private onSubmit() {
+    this.isSaving = true;
     this.actions$.pipe(
       ofType<StudyStoreActions.AddStudySuccess>(
         StudyStoreActions.StudyActionTypes.AddStudySuccess),
       takeUntil(this.unsubscribe$),
       map(action => action.payload.study),
       tap(study => {
+        this.isSaving = false;
         this.toastr.success(
           `Study was added successfully: ${study.name}`,
           'Add Successfull');
@@ -72,6 +75,7 @@ export class StudyAddComponent implements OnInit, OnDestroy {
       takeUntil(this.unsubscribe$),
       map(action => action.payload.error.error),
       tap(error => {
+        this.isSaving = false;
         let errMessage;
         if (error.message.match(/EntityCriteriaError: name already used/)) {
           errMessage = `The name is already in use: ${this.studyForm.value.name}`;

@@ -51,14 +51,13 @@
                       type="submit"
                       [disabled]="loginForm.invalid || (isLoggingIn$ | async)"
                       i18n>
-                Log In
+                <ng-container *ngIf="!(isLoggingIn$ | async)">
+                  Log In
+                </ng-container>
+                <app-spinner name="login" [show]="(isLoggingIn$ | async)">
+                  Logging in
+                </app-spinner>
               </button>
-            </div>
-            <div class="col-md-6">
-              <mat-spinner *ngIf="(isLoggingIn$ | async)"
-                           diameter="25"
-                           mode="indeterminate">
-              </mat-spinner>
             </div>
           </div>
         </form>

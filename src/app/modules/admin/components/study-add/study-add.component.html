@@ -47,7 +47,8 @@
                       type="submit"
                       [disabled]="studyForm.invalid"
                       i18n>
-                Submit
+                <ng-container *ngIf="!isSaving">Submit</ng-container>
+                <app-spinner name="studySaving" [show]="isSaving">Saving</app-spinner>
               </button>
             </div>
             <div class="col-md-2">
