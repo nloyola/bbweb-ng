@@ -6,6 +6,16 @@ import { ConcurrencySafeEntity } from '@app/domain/concurrency-safe-entity.model
 export class PagedReply<T extends ConcurrencySafeEntity> {
 
   constructor(
+
+    /** The filter used on the entity attributes. */
+    public filter: string,
+
+    /**
+     * The field the entities are sorted by. A minus sign prefix is used to sort in descending
+     * order.
+     */
+    public sort: string,
+
     /** The items in the page. */
     public entities: T[],
 

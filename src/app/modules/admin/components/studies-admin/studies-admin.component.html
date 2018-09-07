@@ -10,6 +10,96 @@
   </h1>
 </div>
 
-<div>
-  <!--studies-paged-list></studies-paged-list-->
+<app-entity-filters class="mb-2"
+                    [useNameFilter]="true"
+                    [stateData]="stateData"
+                    (filters)="onFiltersUpdated($event)">
+</app-entity-filters>
+
+<div class="row">
+  <div class="col-sm-12 my-2">
+    <div class="card">
+      <div class="card-header bg-default">
+        <ng-container *ngIf="counts$ | async; let counts">
+          <fa-icon [icon]="faCheckCircle"></fa-icon> {{counts.enabledCount}}
+          <ng-container i18n>Enabled</ng-container>,
+          <fa-icon [icon]="faCog"></fa-icon> {{counts.disabledCount}}
+          <ng-container i18n>Disabled</ng-container>,
+          <fa-icon [icon]="faMinusCircle"></fa-icon> {{counts.retiredCount}}
+          <ng-container i18n>Retired</ng-container>
+        </ng-container>
+
+        <span class="float-right d-inline-block" ngbDropdown>
+          <button class="btn btn-sm btn-outline-primary"
+                  type="button"
+                  id="tableMenu"
+                  ngbDropdownToggle>
+          </button>
+
+          <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="tableMenu">
+            <h5 class="dropdown-header" i18n>Sort by</h5>
+            <a class="dropdown-item"
+               *ngFor="let sortChoice of sortChoices"
+               (click)="sortFieldSelected(sortChoice.id)">
+              {{ sortChoice.label }}
+            </a>
+          </div>
+        </span>
+      </div>
+
+      <div class="card-body" *ngIf="hasNoEntitiesToDisplay">
+        <div class="card-text" i18n>
+          <div class="alert alert-warning" role="alert">
+            <fa-icon [icon]="faExclamationTriangle"></fa-icon>
+            No studies have been added yet.
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body" *ngIf="hasNoResultsToDisplay">
+        <div class="card-text" i18n>
+          <div class="alert alert-warning" role="alert">
+            <fa-icon [icon]="faExclamationTriangle"></fa-icon>
+            No studies match the criteria.
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body" *ngIf="isLoading$ | async">
+        <div class="card-text">
+          <div class="alert alert-warning" role="alert">
+            <app-spinner name="studies" [show]="isLoading$ | async" i18n>
+              Loading...
+            </app-spinner>
+          </div>
+        </div>
+      </div>
+
+      <ul class="list-group" *ngIf="!(isLoading$ | async) && hasResultsToDisplay">
+        <li class="list-group-item" *ngFor="let study of studies">
+          <app-entity-summary [entity]="study"
+                              [icon]="getItemIcon(study)"
+                              (onSelected)="studySelected($event)">
+          </app-entity-summary>
+        </li>
+
+      </ul>
+    </div>
+  </div>
 </div>
+
+<ngb-pagination class="pagination-sm"
+                [collectionSize]="results.total"
+                [(page)]="currentPage"
+                items-per-page="results.limit"
+                max-size="5"
+                rotate="false"
+                boundary-links="true"
+                previous-text="&lsaquo;"
+                next-text="&rsaquo;"
+                first-text="&laquo;"
+                last-text="&raquo;"
+                *ngIf="hasResultsToDisplay"
+                aria-label="Default pagination"
+                (pageChange)="paginationPageChanged($event)">
+</ngb-pagination>

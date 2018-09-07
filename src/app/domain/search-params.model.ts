@@ -3,7 +3,7 @@
  */
 export interface SearchParams {
 
-  /** The filter to use on the entity name. */
+  /** The filter to use on the entity attributes. */
   filter?: string;
 
   /**

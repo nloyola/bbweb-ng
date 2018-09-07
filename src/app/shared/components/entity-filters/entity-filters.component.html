@@ -1,0 +1,42 @@
+<div class="card card-body bg-light">
+  <form class="form-inline" [formGroup]="form" novalidate>
+
+    <!-- NAME -->
+    <ng-container *ngIf="useNameFilter">
+      <input class="form-control form-control-sm mb-2 mr-sm-2 mb-sm-0"
+             type="text"
+             id="name"
+             formControlName="name"
+             i18n-placeholder
+             placeholder="name filter">
+    </ng-container>
+
+    <!-- EMAIL -->
+    <ng-container *ngIf="useEmailFilter">
+      <input class="form-control form-control-sm mb-2 mr-sm-2 mb-sm-0"
+             type="text"
+             id="email"
+             formControlName="email"
+             i18n-placeholder
+             placeholder="email filter">
+    </ng-container>
+
+    <ng-container>
+      <label for="state" class="small mr-2" for="state" i18n>
+        State filter:
+      </label>
+      <select class="form-control form-control-sm mr-sm-2 mb-2 mb-sm-0"
+              id="state"
+              formControlName="state">
+        <option *ngFor="let stateInfo of stateData" [value]="stateInfo.id">
+          {{stateInfo.label}}
+        </option>
+      </select>
+    </ng-container>
+
+    <button class="btn btn-sm" type="button" (click)="clearFilters()">
+      <ng-container i18n>Clear filters</ng-container>
+      <i class="glyphicon glyphicon-erase"></i>
+    </button>
+  </form>
+</div>

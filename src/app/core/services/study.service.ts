@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { ApiReply } from '@app/domain/api-reply.model';
-import { Study } from '@app/domain/studies';
+import { Study, StudyCounts } from '@app/domain/studies';
 import { PagedReply, SearchParams } from '@app/domain';
 import { SearchService } from '@app/core/services/search.service';
 
@@ -16,6 +16,21 @@ export class StudyService implements SearchService<Study> {
   readonly BASE_URL = '/api/studies';
 
   constructor(private http: HttpClient) {
+  }
+
+  /**
+  * Retrieves the counts of all Studies from the server indexed by state.
+  */
+  counts(): Observable<StudyCounts> {
+    return this.http.get<ApiReply>(`${this.BASE_URL}/counts`)
+      .pipe(map((reply: ApiReply) => {
+        if (reply && reply.data) {
+          return {
+            ...reply.data
+          };
+        }
+        throw new Error('expected a study object');
+      }));
   }
 
   /**
@@ -65,7 +80,9 @@ export class StudyService implements SearchService<Study> {
       .pipe(map((reply: ApiReply) => {
         if (reply && reply.data && reply.data.items) {
           const entities: Study[] = reply.data.items.map(obj => new Study().deserialize(obj));
-          return new PagedReply<Study>(entities,
+          return new PagedReply<Study>(options.filter,
+                                       options.sort,
+                                       entities,
                                        reply.data.page,
                                        reply.data.limit,
                                        reply.data.offset,
