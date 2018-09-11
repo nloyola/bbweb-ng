@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { PasswordValidation } from '@app/core/password-validation';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { filter, takeUntil } from 'rxjs/operators';
 import { Store, select } from '@ngrx/store';
 import { User } from '@app/domain/users';
 
@@ -38,51 +38,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
         password: ['', [Validators.required]],
         confirmPassword: ['', [Validators.required]],
       },
-      {
-        validator: PasswordValidation.matchingPasswords
-      });
-
-    this.store$
-      .pipe(
-        select(AuthStoreSelectors.selectAuthRegisteredUser),
-        takeUntil(this.unsubscribe$))
-      .subscribe((user: User) => {
-        if (user !== null) {
-          this.toastr.success(
-            'Your account was created and is now pending administrator approval.',
-            'Registration Successful',
-            {
-              disableTimeOut: true
-            });
-          this.navigateToReturnUrl();
-        }
-      });
-
-    this.store$
-      .pipe(
-        select(AuthStoreSelectors.selectAuthError),
-        takeUntil(this.unsubscribe$))
-      .subscribe((err: any) => {
-        if (err === null) { return; }
-
-        this.store$.dispatch(new AuthStoreActions.RegisterClearFailureAction());
-
-        let message;
-        if (err.status) {
-          if ((err.status === 403) && (err.error.message === 'email already registered')) {
-            message = 'That email address is already registered.';
-          } else if (err.error) {
-            message = err.error.message;
-          } else {
-            message = 'Registration failed.';
-          }
-          this.toastr.error(message,
-            'Registration Error',
-            {
-              disableTimeOut: true
-            });
-        }
-      });
+      { validator: PasswordValidation.matchingPasswords });
   }
 
   public ngOnDestroy() {
@@ -112,6 +68,42 @@ export class RegisterComponent implements OnInit, OnDestroy {
       email: this.registerForm.value.email,
       password: this.registerForm.value.password
     }));
+
+    this.store$
+      .pipe(
+        select(AuthStoreSelectors.selectAuthRegisteredUser),
+        filter(user => user !== null),
+        takeUntil(this.unsubscribe$))
+      .subscribe((user: User) => {
+        this.toastr.success(
+          'Your account was created and is now pending administrator approval.',
+          'Registration Successful',
+          { disableTimeOut: true });
+        this.navigateToReturnUrl();
+      });
+
+    this.store$
+      .pipe(
+        select(AuthStoreSelectors.selectAuthError),
+        filter(err => err !== null),
+        takeUntil(this.unsubscribe$))
+      .subscribe((err: any) => {
+        this.store$.dispatch(new AuthStoreActions.RegisterClearFailureAction());
+
+        let message;
+        if (err.status) {
+          if ((err.status === 403) && (err.error.message === 'email already registered')) {
+            message = 'That email address is already registered.';
+          } else if (err.error) {
+            message = err.error.message;
+          } else {
+            message = 'Registration failed.';
+          }
+          this.toastr.error(message,
+                            'Registration Error',
+                            { disableTimeOut: true });
+        }
+      });
   }
 
   onCancel() {
