@@ -20,7 +20,7 @@ export class EntityStatusComponent implements OnInit {
       this.useBadges = true;
 
       if (this.bsClass === undefined) {
-        this.bsClass = 'badge-secondary';
+        this.bsClass = 'badge badge-secondary';
       }
     } else if (this.bsClass === undefined) {
       this.bsClass = 'text-info';

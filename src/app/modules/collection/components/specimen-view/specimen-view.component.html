@@ -1,0 +1,127 @@
+<div class="pb-2 mt-4 mb-2">
+  <h1>
+    PROBE
+    <small>
+      <ng-container i18n>Participant</ng-container> ACH003:
+      <ng-container i18n>Specimen</ng-container> U0941-2
+    </small>
+  </h1>
+</div>
+<div class="card">
+  <div class="card-header bg-default">Specimen U0941-2</div>
+
+  <ul class="list-group">
+    <li class="list-group-item">
+      <div class="row">
+        <div class="col-md-3">
+          <strong translate>Study</strong>
+        </div>
+        <div class="col-md-7">
+          PROBE
+        </div>
+      </div>
+    </li>
+    <li class="list-group-item">
+      <div class="row">
+        <div class="col-md-3">
+          <strong translate>Participant ID</strong>
+        </div>
+        <div class="col-md-7">
+          ACH003
+        </div>
+      </div>
+    </li>
+    <li class="list-group-item">
+      <div class="row">
+        <div class="col-md-3">
+          <strong translate>Visit #</strong>
+        </div>
+        <div class="col-md-7">
+          8
+        </div>
+      </div>
+    </li>
+    <li class="list-group-item">
+      <div class="row">
+        <div class="col-md-3">
+          <strong translate>Event type</strong>
+        </div>
+        <div class="col-md-7">
+          default
+        </div>
+      </div>
+    </li>
+    <li class="list-group-item">
+      <div class="row">
+        <div class="col-md-3">
+          <strong translate>Specimen Type</strong>
+        </div>
+        <div class="col-md-7">
+          Urine
+        </div>
+      </div>
+    </li>
+    <li class="list-group-item">
+      <div class="row">
+        <div class="col-md-3">
+          <strong translate>Created</strong>
+        </div>
+        <div class="col-md-7">
+          2014-10-06 06:00
+        </div>
+      </div>
+    </li>
+    <li class="list-group-item">
+      <div class="row">
+        <div class="col-md-3">
+          <strong translate>Amount</strong>
+        </div>
+        <div class="col-md-7">
+          0.5 ml
+          <small>(default amount: Yes)</small>
+        </div>
+      </div>
+    </li>
+    <li class="list-group-item">
+      <div class="row">
+        <div class="col-md-3">
+          <strong translate>State</strong>
+        </div>
+        <div class="col-md-7">
+          Usable
+        </div>
+      </div>
+    </li>
+    <li class="list-group-item">
+      <div class="row">
+        <div class="col-md-3">
+          <strong translate>Origin location</strong>
+        </div>
+        <div class="col-md-7">
+          PROBE - ACH
+        </div>
+      </div>
+    </li>
+    <li class="list-group-item">
+      <div class="row">
+        <div class="col-md-3">
+          <strong translate>Current location</strong>
+        </div>
+        <div class="col-md-7">
+          CBSR
+        </div>
+      </div>
+    </li>
+  </ul>
+  <app-entity-status [state]="state"
+                     [timeAdded]="date"
+                     [useBadges]="true">
+  </app-entity-status>
+
+</div>
+<div class="row mt-2">
+  <div class="col-md-12">
+    <button class="btn btn-primary mr-2" i18n>Back</button>
+    <button class="btn btn-primary" i18n>Location History</button>
+  </div>
+</div>

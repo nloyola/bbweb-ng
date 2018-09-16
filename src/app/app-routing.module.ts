@@ -8,6 +8,10 @@ const routes: Routes = [
     loadChildren: '@app/modules/admin/admin.module#AdminModule'
   },
   {
+    path: 'collection',
+    loadChildren: '@app/modules/collection/collection.module#CollectionModule'
+  },
+  {
     path: '**',
     component: PageNotFoundComponent
   }
