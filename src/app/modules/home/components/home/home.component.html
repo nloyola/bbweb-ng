@@ -15,48 +15,44 @@
     </div>
   </div>
 
-  <div class="row" *ngIf="hasRoles">
+  <div class="d-flex flex-row flex-wrap justify-content-center" *ngIf="hasRoles">
 
     <!-- COLLECTION -->
-    <div class="col-md-4" *ngIf="allowCollection">
-      <div class="card mb-4">
-        <h5 class="card-header bg-primary text-light">
-          <ng-container i18n>Collection</ng-container>
-        </h5>
-        <div class="card-body">
+    <div class="card m-2" *ngIf="allowCollection" style="width: 18rem;">
+      <h5 class="card-header bg-primary text-light">
+        <ng-container i18n>Collection</ng-container>
+      </h5>
+      <div class="card-body">
           <p i18n>Record specimen collection.</p>
-          <a routerLink="/collection" class="btn btn-primary" i18n>Select</a>
-        </div>
+      </div>
+      <div class="card-footer">
+        <a routerLink="/collection" class="btn btn-primary" i18n>Select</a>
       </div>
     </div>
 
     <!-- SHIPPING -->
-    <div class="col-md-4" *ngIf="shippingAllowed">
-      <div class="card mb-4">
-        <h5 class="card-header bg-primary text-light">
-          <ng-container i18n>Shipping</ng-container>
-        </h5>
-        <div class="card-body">
-          <p i18n>Enter shipping information for specimens.</p>
-          <a routerLink="/shipping" class="btn btn-primary" i18n>Select</a>
-        </div>
+    <div class="card m-2" *ngIf="shippingAllowed" style="width: 18rem;">
+      <h5 class="card-header bg-primary text-light">
+        <ng-container i18n>Shipping</ng-container>
+      </h5>
+      <div class="card-body">
+        <p i18n>Enter shipping information for specimens.</p>
+      </div>
+      <div class="card-footer">
+        <a routerLink="/shipping" class="btn btn-primary" i18n>Select</a>
       </div>
     </div>
 
-  </div>
-
-  <div class="row">
-
     <!-- ADMINISTRATION -->
-    <div class="col-md-4" *ngIf="adminAllowed">
-      <div class="card mb-4">
-        <h5 class="card-header bg-primary text-light">
-          <ng-container i18n>Administration</ng-container>
-        </h5>
-        <div class="card-body">
-          <p i18n>Perform administrative tasks.</p>
-          <a routerLink="/admin" class="btn btn-primary" i18n>Select</a>
-        </div>
+    <div class="card m-2" *ngIf="adminAllowed" style="width: 18rem;">
+      <h5 class="card-header bg-primary text-light">
+        <ng-container i18n>Administration</ng-container>
+      </h5>
+      <div class="card-body">
+        <p i18n>Perform administrative tasks.</p>
+      </div>
+      <div class="card-footer">
+        <a routerLink="/admin" class="btn btn-primary" i18n>Select</a>
       </div>
     </div>
   </div>

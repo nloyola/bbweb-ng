@@ -2,44 +2,44 @@
   <h1 i18n>Select a category</h1>
 </div>
 
-<div class="row">
+<div class="d-flex flex-row flex-wrap justify-content-center">
 
   <!-- STUDY ADMIN -->
-  <div class="col-md-4" *ngIf="userHasStudyAdminRole">
-    <div class="card mt-4">
-      <h5 class="card-header bg-primary text-light">
-        <ng-container i18n>Study Administration</ng-container>
-      </h5>
-      <div class="card-body">
-        <p i18n>Add a new study or make changes to existing studies.</p>
-        <a routerLink="studies" class="btn btn-primary" i18n>Select</a>
-      </div>
+  <div class="card m-2" *ngIf="userHasStudyAdminRole" style="width: 18rem;">
+    <h5 class="card-header bg-primary text-light">
+      <ng-container i18n>Study Administration</ng-container>
+    </h5>
+    <div class="card-body">
+      <p i18n>Add a new study or make changes to existing studies.</p>
+    </div>
+    <div class="card-footer">
+      <a routerLink="studies" class="btn btn-primary" i18n>Select</a>
     </div>
   </div>
 
   <!-- CENTRE ADMIN -->
-  <div class="col-md-4" *ngIf="userHasCentreAdminRole">
-    <div class="card mt-4">
-      <h5 class="card-header bg-primary text-light">
-        <ng-container i18n>Centre Administration</ng-container>
-      </h5>
-      <div class="card-body">
-        <p i18n>Add a new centre or make changes to existing centres.</p>
-        <a routerLink="centre" class="btn btn-primary" i18n>Select</a>
-      </div>
+  <div class="card m-2" *ngIf="userHasCentreAdminRole" style="width: 18rem;">
+    <h5 class="card-header bg-primary text-light">
+      <ng-container i18n>Centre Administration</ng-container>
+    </h5>
+    <div class="card-body">
+      <p i18n>Add a new centre or make changes to existing centres.</p>
+    </div>
+    <div class="card-footer">
+      <a routerLink="centre" class="btn btn-primary" i18n>Select</a>
     </div>
   </div>
 
   <!-- STUDY ADMIN -->
-  <div class="col-md-4" *ngIf="userHasUserAdminRole">
-    <div class="card mt-4">
-      <h5 class="card-header bg-primary text-light">
-        <ng-container i18n>User Administration</ng-container>
-      </h5>
-      <div class="card-body">
-        <p i18n>Activate users, lock out existing users, or manage user permissions.</p>
-        <a routerLink="user" class="btn btn-primary" i18n>Select</a>
-      </div>
+  <div class="card m-2" *ngIf="userHasUserAdminRole" style="width: 18rem;">
+    <h5 class="card-header bg-primary text-light">
+      <ng-container i18n>User Administration</ng-container>
+    </h5>
+    <div class="card-body">
+      <p i18n>Activate users, lock out existing users, or manage user permissions.</p>
+    </div>
+    <div class="card-footer">
+      <a routerLink="user" class="btn btn-primary" i18n>Select</a>
     </div>
   </div>
 
