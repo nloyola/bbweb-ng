@@ -71,3 +71,14 @@ export const selectStudySearchRepliesAndEntities =
         studies: reply.entityIds.map(id => entities[id])
       };
     });
+
+export const selectStudyBySlug =
+  createSelector(
+    selectAllStudies,
+    (entities: { [id: string]: Study }, props: any): Study => {
+      const found = Object.values(entities).find(s => s.slug === props.slug);
+      if (found) {
+        return found;
+      }
+      return undefined;
+    });

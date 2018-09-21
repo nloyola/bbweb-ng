@@ -21,8 +21,7 @@ export class HeaderComponent implements OnInit {
   private isCollapsed = true;
 
   constructor(private store$: Store<RootStoreState.State>,
-    private router: Router) {
-  }
+              private router: Router) {}
 
   ngOnInit() {
     this.user$ = this.store$.pipe(select(AuthStoreSelectors.selectAuthUser));

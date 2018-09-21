@@ -19,7 +19,12 @@ export enum ActionTypes {
   AddStudyFailure = '[Study] Add Study Failure',
 
   UpsertStudy = '[Study] Upsert Study',
-  UpdateStudy = '[Study] Update Study'
+  UpdateStudy = '[Study] Update Study',
+
+  GetStudyRequest = '[Study] Get Study Request',
+  GetStudySuccess = '[Study] Get Study Success',
+  GetStudyFailure = '[Study] Get Study Failure',
+
 }
 
 @ShowSpinner()
@@ -89,6 +94,24 @@ export class UpdateStudy implements Action {
   constructor(public payload: { study: Update<Study> }) { }
 }
 
+export class GetStudyRequest implements Action {
+  readonly type = ActionTypes.GetStudyRequest;
+
+  constructor(public payload: { slug: string }) { }
+}
+
+export class GetStudySuccess implements Action {
+  readonly type = ActionTypes.GetStudySuccess;
+
+  constructor(public payload: { study: Study }) { }
+}
+
+export class GetStudyFailure implements Action {
+  readonly type = ActionTypes.GetStudyFailure;
+
+  constructor(public payload: { error: any }) { }
+}
+
 export type StudyActions =
   GetStudyCountsRequest
   | GetStudyCountsSuccess
@@ -100,4 +123,7 @@ export type StudyActions =
   | AddStudySuccess
   | AddStudyFailure
   | UpsertStudy
-  | UpdateStudy;
+  | UpdateStudy
+  | GetStudyRequest
+  | GetStudySuccess
+  | GetStudyFailure;

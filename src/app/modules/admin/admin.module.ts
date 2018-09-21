@@ -11,6 +11,7 @@ import { AdminComponent } from './components/admin/admin.component';
 import { StudiesAdminComponent } from './components/studies-admin/studies-admin.component';
 import { StudyAddComponent } from './components/study-add/study-add.component';
 import { StudyCountsComponent } from './components/study-counts/study-counts.component';
+import { StudyViewComponent } from './components/study-view/study-view.component';
 
 @NgModule({
   imports: [
@@ -23,6 +24,6 @@ import { StudyCountsComponent } from './components/study-counts/study-counts.com
     NgbModule,
     FontAwesomeModule
   ],
-  declarations: [AdminComponent, StudiesAdminComponent, StudyAddComponent, StudyCountsComponent]
+  declarations: [AdminComponent, StudiesAdminComponent, StudyAddComponent, StudyCountsComponent, StudyViewComponent]
 })
 export class AdminModule { }

@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
 import { Store, select } from '@ngrx/store';
 import { Observable, Subject, combineLatest, merge } from 'rxjs';
 import { catchError, filter, map, takeUntil, tap } from 'rxjs/operators';
@@ -64,13 +65,13 @@ export class StudiesAdminComponent implements OnInit, OnDestroy {
   stateData: EntityStateInfo[];
   sortChoices: LabelledId[];
 
-
   private filters: { [ name: string]: SearchFilter };
   private unsubscribe$: Subject<void> = new Subject<void>();
-  private searchParams: SearchParams;
 
   currentPage = 1;
-  constructor(private store$: Store<RootStoreState.State>) {
+
+  constructor(private store$: Store<RootStoreState.State>,
+              private router: Router) {
     this.stateData = Object.keys(StudyState).map(state => ({
       id: state.toLowerCase(),
       label: state
@@ -168,9 +169,8 @@ export class StudiesAdminComponent implements OnInit, OnDestroy {
   }
 
   public studySelected($event: Study) {
-    //  ui-sref="home.admin.studies.study.summary({ studySlug: entity.slug })"
-    console.log($event);
-  }
+    this.router.navigate([ '/admin/studies/view', $event.slug ]);
+ }
 
   private getFilters() {
     return Object.values(this.filters)
@@ -179,12 +179,11 @@ export class StudiesAdminComponent implements OnInit, OnDestroy {
   }
 
   private applySearchParams() {
-    this.searchParams = new SearchParams(this.getFilters().join(';'),
-                                         this.sortField,
-                                         this.currentPage,
-                                         5);
     this.store$.dispatch(new StudyStoreActions.SearchStudiesRequest({
-      searchParams: this.searchParams
+      searchParams: new SearchParams(this.getFilters().join(';'),
+                                     this.sortField,
+                                     this.currentPage,
+                                     5)
     }));
   }
 
