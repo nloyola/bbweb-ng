@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Subject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { delay, map } from 'rxjs/operators';
 
 import { ApiReply } from '@app/domain/api-reply.model';
 import { AuthInfo } from '@app/domain/access';
@@ -41,7 +41,8 @@ export class AuthService {
 
   register(name: string, email: string, password: string) {
     return this.http.post<any>(this.BASE_URL + '/', { name, email, password })
-      .pipe(map((res: any) => new User().deserialize(res.data)));
+      .pipe(
+        map((res: any) => new User().deserialize(res.data)));
   }
 
   isLoggedIn() {

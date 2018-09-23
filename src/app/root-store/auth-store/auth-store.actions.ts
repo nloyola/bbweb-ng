@@ -1,5 +1,6 @@
 import { Action } from '@ngrx/store';
 import { User } from '@app/domain/users';
+import { ShowSpinner, HideSpinner } from '@app/core/decorators';
 
 export enum ActionTypes {
   LOGIN_REQUEST = '[User Login] Login Request',
@@ -17,23 +18,26 @@ export enum ActionTypes {
   REGISTER_SUCCESS = '[User Login] Register Success',
 }
 
+@ShowSpinner()
 export class LoginRequestAction implements Action {
   readonly type = ActionTypes.LOGIN_REQUEST;
   constructor(public payload: { email: string, password: string }) { }
 }
 
+@HideSpinner(ActionTypes.LOGIN_REQUEST)
 export class LoginFailureAction implements Action {
   readonly type = ActionTypes.LOGIN_FAILURE;
   constructor(public payload: { error: any }) { }
 }
 
-export class LoginClearFailureAction implements Action {
-  readonly type = ActionTypes.LOGIN_CLEAR_FAILURE;
-}
-
+@HideSpinner(ActionTypes.LOGIN_REQUEST)
 export class LoginSuccessAction implements Action {
   readonly type = ActionTypes.LOGIN_SUCCESS;
   constructor(public payload: { user: User }) { }
+}
+
+export class LoginClearFailureAction implements Action {
+  readonly type = ActionTypes.LOGIN_CLEAR_FAILURE;
 }
 
 export class LogoutRequestAction implements Action {
@@ -49,23 +53,26 @@ export class LogoutSuccessAction implements Action {
   readonly type = ActionTypes.LOGOUT_SUCCESS;
 }
 
+@ShowSpinner()
 export class RegisterRequestAction implements Action {
   readonly type = ActionTypes.REGISTER_REQUEST;
   constructor(public payload: { name: string, email: string, password: string }) { }
 }
 
+@HideSpinner(ActionTypes.REGISTER_REQUEST)
 export class RegisterFailureAction implements Action {
   readonly type = ActionTypes.REGISTER_FAILURE;
   constructor(public payload: { error: any }) { }
 }
 
-export class RegisterClearFailureAction implements Action {
-  readonly type = ActionTypes.REGISTER_CLEAR_FAILURE;
-}
-
+@HideSpinner(ActionTypes.REGISTER_REQUEST)
 export class RegisterSuccessAction implements Action {
   readonly type = ActionTypes.REGISTER_SUCCESS;
   constructor(public payload: { user: User }) { }
+}
+
+export class RegisterClearFailureAction implements Action {
+  readonly type = ActionTypes.REGISTER_CLEAR_FAILURE;
 }
 
 export type Actions = LoginRequestAction |

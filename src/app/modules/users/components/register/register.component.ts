@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { PasswordValidation } from '@app/core/password-validation';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
+import { filter, takeUntil, tap } from 'rxjs/operators';
 import { Store, select } from '@ngrx/store';
 import { User } from '@app/domain/users';
 
@@ -13,6 +13,7 @@ import {
   AuthStoreActions,
   AuthStoreSelectors
 } from '@app/root-store';
+import { SpinnerStoreSelectors } from '@app/root-store/spinner';
 
 @Component({
   selector: 'app-register',
@@ -21,14 +22,14 @@ import {
 })
 export class RegisterComponent implements OnInit, OnDestroy {
 
+  isRegistering$: Observable<any>;
   private unsubscribe$: Subject<void> = new Subject<void>();
   registerForm: FormGroup;
 
-  constructor(
-    private store$: Store<RootStoreState.State>,
-    private formBuilder: FormBuilder,
-    private router: Router,
-    private toastr: ToastrService) { }
+  constructor(private store$: Store<RootStoreState.State>,
+              private formBuilder: FormBuilder,
+              private router: Router,
+              private toastr: ToastrService) {}
 
   ngOnInit() {
     this.registerForm = this.formBuilder.group(
@@ -39,35 +40,8 @@ export class RegisterComponent implements OnInit, OnDestroy {
         confirmPassword: ['', [Validators.required]],
       },
       { validator: PasswordValidation.matchingPasswords });
-  }
 
-  public ngOnDestroy() {
-    this.unsubscribe$.next();
-    this.unsubscribe$.complete();
-  }
-
-  get name() {
-    return this.registerForm.get('name');
-  }
-
-  get email() {
-    return this.registerForm.get('email');
-  }
-
-  get password() {
-    return this.registerForm.get('password');
-  }
-
-  get confirmPassword() {
-    return this.registerForm.get('confirmPassword');
-  }
-
-  onSubmit() {
-    this.store$.dispatch(new AuthStoreActions.RegisterRequestAction({
-      name: this.registerForm.value.name,
-      email: this.registerForm.value.email,
-      password: this.registerForm.value.password
-    }));
+    this.isRegistering$ = this.store$.pipe(select(SpinnerStoreSelectors.selectSpinnerIsActive));
 
     this.store$
       .pipe(
@@ -104,6 +78,35 @@ export class RegisterComponent implements OnInit, OnDestroy {
                             { disableTimeOut: true });
         }
       });
+  }
+
+  public ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
+  }
+
+  get name() {
+    return this.registerForm.get('name');
+  }
+
+  get email() {
+    return this.registerForm.get('email');
+  }
+
+  get password() {
+    return this.registerForm.get('password');
+  }
+
+  get confirmPassword() {
+    return this.registerForm.get('confirmPassword');
+  }
+
+  onSubmit() {
+    this.store$.dispatch(new AuthStoreActions.RegisterRequestAction({
+      name: this.registerForm.value.name,
+      email: this.registerForm.value.email,
+      password: this.registerForm.value.password
+    }));
   }
 
   onCancel() {

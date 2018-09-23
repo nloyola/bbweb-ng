@@ -13,6 +13,7 @@ import {
   AuthStoreActions,
   AuthStoreSelectors
 } from '@app/root-store';
+import { SpinnerStoreSelectors } from '@app/root-store/spinner';
 
 @Component({
   selector: 'app-login',
@@ -23,7 +24,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   @ViewChild('content') private content;
   private unsubscribe$: Subject<void> = new Subject<void>();
-  isLoggingIn$: Observable<boolean>;
+  isLoggingIn$: Observable<any>;
   returnUrl: string;
   loginForm: FormGroup;
   faSpinner = faSpinner;
@@ -43,8 +44,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     // get return url from route parameters or default to '/'
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
 
-    this.isLoggingIn$ = this.store$.pipe(select(AuthStoreSelectors.selectAuthIsLoggingIn),
-                                         filter(val => val !== undefined));
+    this.isLoggingIn$ = this.store$.pipe(select(SpinnerStoreSelectors.selectSpinnerIsActive));
   }
 
   public ngOnDestroy() {

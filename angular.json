@@ -81,7 +81,7 @@
             ],
             "codeCoverageExclude": [
               "src/app/test/**/*"
-            ],
+            ]
           }
         },
         "lint": {

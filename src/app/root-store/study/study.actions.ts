@@ -3,6 +3,7 @@ import { Update } from '@ngrx/entity';
 
 import { Study, StudyCounts } from '@app/domain/studies';
 import { PagedReply, SearchParams } from '@app/domain';
+import { ShowSpinner, HideSpinner } from '@app/core/decorators';
 
 export enum ActionTypes {
   GetStudyCountsRequest = '[Study] Get Study Count Request',
@@ -21,16 +22,19 @@ export enum ActionTypes {
   UpdateStudy = '[Study] Update Study'
 }
 
+@ShowSpinner()
 export class GetStudyCountsRequest implements Action {
   readonly type = ActionTypes.GetStudyCountsRequest;
 }
 
+@HideSpinner(ActionTypes.AddStudyRequest)
 export class GetStudyCountsSuccess implements Action {
   readonly type = ActionTypes.GetStudyCountsSuccess;
 
   constructor(public payload: { studyCounts: StudyCounts }) { }
 }
 
+@HideSpinner(ActionTypes.AddStudyRequest)
 export class GetStudyCountsFailure implements Action {
   readonly type = ActionTypes.GetStudyCountsFailure;
 

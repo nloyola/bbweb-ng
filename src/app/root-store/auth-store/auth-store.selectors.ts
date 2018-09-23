@@ -7,23 +7,13 @@ import {
 import { State } from './auth-store.reducer';
 import { User } from '@app/domain/users';
 
-export const getIsLogginIn = (state: State): any => state.isLoggingIn;
-
-export const getIsRegistering = (state: State): any => state.isRegistering;
+export const selectAuthState = createFeatureSelector<State>('auth');
 
 export const getError = (state: State): any => state.error;
 
 export const getUser = (state: State): User => state.user;
 
 export const getRegisteredUser = (state: State): User => state.registeredUser;
-
-export const selectAuthState = createFeatureSelector<State>('auth');
-
-export const selectAuthIsLoggingIn: MemoizedSelector<object, boolean> =
-  createSelector(selectAuthState, getIsLogginIn);
-
-export const selectAuthIsRegistering: MemoizedSelector<object, boolean> =
-  createSelector(selectAuthState, getIsRegistering);
 
 export const selectAuthError: MemoizedSelector<object, any> =
   createSelector(selectAuthState, getError);
