@@ -82,10 +82,10 @@ export class StudyService implements SearchService<Study> {
     };
     return this.http.post<ApiReply>(`${this.BASE_URL}/`, json)
       .pipe(map((reply: ApiReply) => {
-        if (reply && reply.data) {
-          return new Study().deserialize(reply.data);
-        }
-        throw new Error('expected a study object');
-      }));
+          if (reply && reply.data) {
+            return new Study().deserialize(reply.data);
+          }
+          throw new Error('expected a study object');
+        }));
   }
 }

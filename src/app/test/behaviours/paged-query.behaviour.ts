@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpTestingController } from '@angular/common/http/testing';
-import { PagedReply, ConcurrencySafeEntity } from '@app/domain';
+import { PagedReply, ConcurrencySafeEntity, SearchParams } from '@app/domain';
 import { SearchService } from '@app/core/services/search.service';
 
 export namespace PagedQueryBehaviour {
@@ -27,7 +27,8 @@ export namespace PagedQueryBehaviour {
 
       it('uses the `filter` query parameter', () => {
         const filter = 'name:like:test';
-        context.service.search({ filter }).subscribe((pr: PagedReply<T>) => {
+        const params = new SearchParams(filter);
+        context.service.search(params).subscribe((pr: PagedReply<T>) => {
           expect(pr.entities.length).toBe(context.reply.items.length);
         });
 
@@ -44,7 +45,8 @@ export namespace PagedQueryBehaviour {
 
       it('uses the `sort` query parameter', () => {
         const sort = '-name';
-        context.service.search({ sort }).subscribe((pr: PagedReply<T>) => {
+        const params = new SearchParams(undefined, sort);
+        context.service.search(params).subscribe((pr: PagedReply<T>) => {
           expect(pr.entities.length).toBe(context.reply.items.length);
         });
 
@@ -61,7 +63,8 @@ export namespace PagedQueryBehaviour {
 
       it('uses the `page` query parameter', () => {
         const page = 2;
-        context.service.search({ page }).subscribe((pr: PagedReply<T>) => {
+        const params = new SearchParams(undefined, undefined, page);
+        context.service.search(params).subscribe((pr: PagedReply<T>) => {
           expect(pr.entities.length).toBe(context.reply.items.length);
         });
 
@@ -78,7 +81,8 @@ export namespace PagedQueryBehaviour {
 
       it('uses the `limit` query parameter', () => {
         const limit = 10;
-        context.service.search({ limit }).subscribe((pr: PagedReply<T>) => {
+        const params = new SearchParams(undefined, undefined, undefined, limit);
+        context.service.search(params).subscribe((pr: PagedReply<T>) => {
           expect(pr.entities.length).toBe(context.reply.items.length);
         });
 

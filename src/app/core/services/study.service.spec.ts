@@ -5,7 +5,7 @@ import { StudyService } from './study.service';
 import { Study } from '@app/domain/studies';
 import { Factory } from '@app/test/factory';
 import { ValueTypes, MaxValueCount } from '@app/domain/annotations';
-import { PagedReply } from '@app/domain';
+import { PagedReply, SearchParams } from '@app/domain';
 import { PagedQueryBehaviour } from '@app/test/behaviours/paged-query.behaviour';
 
 describe('StudyService', () => {
@@ -84,11 +84,10 @@ describe('StudyService', () => {
     });
 
     it('can retrieve studies', () => {
-      service.search().subscribe((pr: PagedReply<Study>) => {
+      const params = new SearchParams();
+      service.search(params).subscribe((pr: PagedReply<Study>) => {
         expect(pr.entities.length).toBe(1);
         expect(pr.entities[0]).toEqual(jasmine.any(Study));
-        expect(pr.page).toBe(reply.page);
-        expect(pr.limit).toBe(reply.limit);
         expect(pr.offset).toBe(reply.offset);
         expect(pr.total).toBe(reply.total);
       });
@@ -117,7 +116,8 @@ describe('StudyService', () => {
     });
 
     it('handles and error reply correctly', () => {
-      service.search().subscribe(
+      const params = new SearchParams();
+      service.search(params).subscribe(
         u => { fail('should have been an error response'); },
         err => { expect(err.message).toContain('expected a paged reply'); }
       );

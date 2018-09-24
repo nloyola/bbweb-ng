@@ -4,7 +4,7 @@
       <div class="card-header bg-primary text-light" i18n>Add Study</div>
       <div class="card-body">
         <form class="form-horizontal"
-              [formGroup]="studyForm"
+              [formGroup]="form"
               autocomplete="on"
               (ngSubmit)="onSubmit()"
               novalidate>
@@ -45,10 +45,14 @@
             <div class="col-md-2 offset-3">
               <button class="btn btn-primary"
                       type="submit"
-                      [disabled]="studyForm.invalid"
+                      [disabled]="form.invalid"
                       i18n>
-                <ng-container *ngIf="!isSaving">Submit</ng-container>
-                <app-spinner name="studySaving" [show]="isSaving">Saving</app-spinner>
+                <ng-container *ngIf="!(isSaving$ | async)">
+                  Submit
+                </ng-container>
+                <app-spinner name="studySaving" [show]="(isSaving$ | async)">
+                  Saving
+                </app-spinner>
               </button>
             </div>
             <div class="col-md-2">

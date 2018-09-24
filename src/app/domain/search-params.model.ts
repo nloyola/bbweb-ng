@@ -9,21 +9,21 @@ export class SearchParams {
 
   constructor(
     /** The filter to use on the entity attributes. */
-    public filter: string = '',
+    public filter: string = undefined,
 
     /**
      * The field to sort the entities by. Use a minus sign prefix to sort in descending order.
      */
-    public sort: string = '',
+    public sort: string = undefined,
 
     /**
      * If the total number of entities are greater than limit, then page selects which entities
      * should be returned. If an invalid value is used then the response is an error.
      */
-    public page: number = 1,
+    public page: number = undefined,
 
     /** The number of entities to return per page. */
-    public limit: number) {
+    public limit: number = undefined) {
 
     this.params = new HttpParams();
 

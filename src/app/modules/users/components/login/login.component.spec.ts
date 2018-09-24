@@ -94,53 +94,70 @@ describe('LoginComponent', () => {
 
   });
 
-  it('on valid login', () => {
-    const user = new User().deserialize(factory.user({
-      roles: [
-        factory.role({ id: RoleIds.SpecimenCollector })
-      ]
-    }));
-    const action = new AuthStoreActions.LoginSuccessAction({ user });
+  describe('when submitting', () => {
 
-    spyOn(store, 'dispatch').and.callThrough();
-    spyOn(router, 'navigate').and.callThrough();
+    let user;
 
-    store.dispatch(action);
-    expect(router.navigate).toHaveBeenCalledWith(['/']);
-    expect(store.dispatch).toHaveBeenCalledWith(action);
-  });
+    beforeEach(() => {
+      user = new User().deserialize(factory.user({
+        roles: [
+          factory.role({ id: RoleIds.SpecimenCollector })
+        ]
+      }));
+    });
 
-  it('on login failure', async(() => {
-    const errors = [
-      {
-        error: {
-          status: 401,
-        }
-      },
-      {
-        error: {
-          status: 404,
-          message: 'simulated error'
-        }
-      }
-    ];
+    it('on valid login', async(() => {
+      spyOn(router, 'navigate').and.callThrough();
 
-    spyOn(store, 'dispatch').and.callThrough();
-    spyOn(router, 'navigate').and.callThrough();
-    spyOn(modalService, 'open').and
-      .returnValue({ result: Promise.resolve('OK') });
+      component.email.setValue(user.email);
+      component.password.setValue('test');
+      component.onSubmit();
 
-    const loginClearFailureAction = new AuthStoreActions.LoginClearFailureAction();
-
-    errors.forEach(error => {
-      const action = new AuthStoreActions.LoginFailureAction(error);
+      const action = new AuthStoreActions.LoginSuccessAction({ user });
       store.dispatch(action);
-      expect(modalService.open).toHaveBeenCalled();
-      expect(store.dispatch).toHaveBeenCalledWith(loginClearFailureAction);
 
       fixture.whenStable().then(() => {
         expect(router.navigate).toHaveBeenCalledWith(['/']);
       });
-    });
-  }));
+    }));
+
+    it('on login failure', async(() => {
+      const errors = [
+        {
+          error: {
+            status: 401,
+          }
+        },
+        {
+          error: {
+            status: 404,
+            message: 'simulated error'
+          }
+        }
+      ];
+
+      spyOn(store, 'dispatch').and.callThrough();
+      spyOn(router, 'navigate').and.callThrough();
+      spyOn(modalService, 'open').and
+        .returnValue({ result: Promise.resolve('OK') });
+
+      const loginClearFailureAction = new AuthStoreActions.LoginClearFailureAction();
+
+      errors.forEach(error => {
+        component.email.setValue(user.email);
+        component.password.setValue('test');
+        component.onSubmit();
+
+        const action = new AuthStoreActions.LoginFailureAction(error);
+        store.dispatch(action);
+        expect(modalService.open).toHaveBeenCalled();
+        expect(store.dispatch).toHaveBeenCalledWith(loginClearFailureAction);
+
+        fixture.whenStable().then(() => {
+          expect(router.navigate).toHaveBeenCalledWith(['/']);
+        });
+      });
+    }));
+
+  });
 });

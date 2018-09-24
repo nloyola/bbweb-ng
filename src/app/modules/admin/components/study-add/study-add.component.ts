@@ -1,10 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Actions, ofType } from '@ngrx/effects';
 import { Store, select } from '@ngrx/store';
-import { Subject } from 'rxjs';
-import { catchError, map, takeUntil, tap } from 'rxjs/operators';
+import { Subject, Observable } from 'rxjs';
+import { catchError, filter, map, takeUntil, tap } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 
 import {
@@ -22,22 +21,23 @@ import { Study } from '@app/domain/studies';
 })
 export class StudyAddComponent implements OnInit, OnDestroy {
 
-  private studyForm: FormGroup;
+  form: FormGroup;
+
   private unsubscribe$: Subject<void> = new Subject<void>();
-  private isSaving: boolean;
+  private isSaving$: Observable<boolean>;
 
   constructor(private store$: Store<RootStoreState.State>,
-              private actions$: Actions,
               private formBuilder: FormBuilder,
               private router: Router,
               private toastr: ToastrService) { }
 
   ngOnInit() {
-    this.studyForm = this.formBuilder.group(
+    this.form = this.formBuilder.group(
       {
         name: ['', [Validators.required]],
         description: ['']
       });
+    this.isSaving$ = this.store$.pipe(select(StudyStoreSelectors.selectStudyIsAdding));
   }
 
   public ngOnDestroy() {
@@ -46,51 +46,44 @@ export class StudyAddComponent implements OnInit, OnDestroy {
   }
 
   get name() {
-    return this.studyForm.get('name');
+    return this.form.get('name');
   }
 
   get description() {
-    return this.studyForm.get('description');
+    return this.form.get('description');
   }
 
-  private onSubmit() {
-    this.isSaving = true;
-    this.actions$.pipe(
-      ofType<StudyStoreActions.AddStudySuccess>(
-        StudyStoreActions.ActionTypes.AddStudySuccess),
-      takeUntil(this.unsubscribe$),
-      map(action => action.payload.study),
-      tap(s => {
-        this.isSaving = false;
+  onSubmit() {
+    this.store$
+      .pipe(
+        select(StudyStoreSelectors.selectStudyLastAdded),
+        filter(s => !!s),
+        takeUntil(this.unsubscribe$))
+      .subscribe((s: Study) => {
         this.toastr.success(
           `Study was added successfully: ${s.name}`,
           'Add Successfull');
         this.navigateToReturnUrl();
-      }))
-      .subscribe();
+      });
 
-    this.actions$.pipe(
-      ofType<StudyStoreActions.AddStudyFailure>(
-        StudyStoreActions.ActionTypes.AddStudyFailure),
-      takeUntil(this.unsubscribe$),
-      map(action => action.payload.error.error),
-      tap(error => {
-        this.isSaving = false;
-        let errMessage;
-        if (error.message.match(/EntityCriteriaError: name already used/)) {
-          errMessage = `The name is already in use: ${this.studyForm.value.name}`;
-        } else {
-          errMessage = error.message;
+    this.store$
+      .pipe(
+        select(StudyStoreSelectors.selectStudyError),
+        filter(s => !!s),
+        takeUntil(this.unsubscribe$))
+      .subscribe((error: any) => {
+        let errMessage = error.error ? error.error.message : error.statusText;
+        if (errMessage.match(/EntityCriteriaError: name already used/)) {
+          errMessage = `The name is already in use: ${this.form.value.name}`;
         }
         this.toastr.error(errMessage, 'Add Error', { disableTimeOut: true });
-      }))
-      .subscribe();
+      });
 
-    const study = new Study().deserialize(this.studyForm.value);
+    const study = new Study().deserialize(this.form.value);
     this.store$.dispatch(new StudyStoreActions.AddStudyRequest({ study }));
   }
 
-  private onCancel() {
+  onCancel() {
     this.navigateToReturnUrl();
   }
 

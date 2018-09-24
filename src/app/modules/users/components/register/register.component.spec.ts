@@ -133,73 +133,92 @@ describe('RegisterComponent', () => {
 
   });
 
-  it('on valid registration', () => {
-    const user = new User().deserialize(factory.user({
-      roles: [
-        { id: RoleIds.SpecimenCollector },
-      ]
-    }));
-    const action = new AuthStoreActions.RegisterSuccessAction({ user });
+  describe('when submitting', () => {
 
-    spyOn(toastrService, 'success').and.returnValue(null);
-    store.dispatch(action);
-    expect(toastrService.success).toHaveBeenCalled();
-  });
+    let user;
 
-  it('on registration failure', () => {
-    const errors = [
-      {
-        error: {
-          status: 403,
+    beforeEach(() => {
+      user = new User().deserialize(factory.user({
+        roles: [
+          { id: RoleIds.SpecimenCollector },
+        ]
+      }));
+    });
+
+    it('on valid registration', () => {
+      component.name.setValue(user.name);
+      component.email.setValue(user.email);
+      component.password.setValue('test');
+      component.onSubmit();
+
+      const action = new AuthStoreActions.RegisterSuccessAction({ user });
+
+      spyOn(toastrService, 'success').and.returnValue(null);
+      store.dispatch(action);
+      expect(toastrService.success).toHaveBeenCalled();
+    });
+
+    it('on registration failure', () => {
+      const errors = [
+        {
           error: {
-            message: 'email already registered'
+            status: 403,
+            error: {
+              message: 'email already registered'
+            }
           }
-        }
-      },
-      {
-        error: {
-          status: 404,
+        },
+        {
           error: {
+            status: 404,
+            error: {
+              message: 'simulated error'
+            }
+          }
+        },
+        {
+          error: {
+            status: 404,
             message: 'simulated error'
           }
         }
-      },
-      {
-        error: {
-          status: 404,
-          message: 'simulated error'
-        }
-      }
-    ];
+      ];
 
-    spyOn(store, 'dispatch').and.callThrough();
-    spyOn(toastrService, 'error').and.returnValue(null);
-    const registerClearFailureAction = new AuthStoreActions.RegisterClearFailureAction();
+      spyOn(store, 'dispatch').and.callThrough();
+      spyOn(toastrService, 'error').and.returnValue(null);
+      const registerClearFailureAction = new AuthStoreActions.RegisterClearFailureAction();
 
-    errors.forEach(error => {
-      const action = new AuthStoreActions.RegisterFailureAction(error);
-      store.dispatch(action);
-      expect(toastrService.error).toHaveBeenCalled();
-      expect(store.dispatch).toHaveBeenCalledWith(registerClearFailureAction);
+      errors.forEach(error => {
+        component.name.setValue(user.name);
+        component.email.setValue(user.email);
+        component.password.setValue('test');
+        component.onSubmit();
+
+        const action = new AuthStoreActions.RegisterFailureAction(error);
+        store.dispatch(action);
+        expect(toastrService.error).toHaveBeenCalled();
+        expect(store.dispatch).toHaveBeenCalledWith(registerClearFailureAction);
+      });
     });
-  });
 
-  it('onSubmit dispatches an action', () => {
-    const password = 'a random password';
-    const user = factory.user();
+    it('onSubmit dispatches an action', () => {
+      const password = 'a random password';
+      const user = factory.user();
 
-    spyOn(store, 'dispatch').and.callThrough();
-    component.name.setValue(user.name);
-    component.email.setValue(user.email);
-    component.password.setValue(password);
+      spyOn(store, 'dispatch').and.callThrough();
+      component.name.setValue(user.name);
+      component.email.setValue(user.email);
+      component.password.setValue(password);
 
-    const action = new AuthStoreActions.RegisterRequestAction({
-      name: user.name,
-      email: user.email,
-      password
+      const action = new AuthStoreActions.RegisterRequestAction({
+        name: user.name,
+        email: user.email,
+        password
+      });
+      component.onSubmit();
+      expect(store.dispatch).toHaveBeenCalledWith(action);
     });
-    component.onSubmit();
-    expect(store.dispatch).toHaveBeenCalledWith(action);
+
   });
 
   it('onCancel navigates to the home page', () => {

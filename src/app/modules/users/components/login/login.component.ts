@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Store, select } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
-import { catchError, filter, takeUntil } from 'rxjs/operators';
+import { catchError, filter, tap, takeUntil } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { User } from '@app/domain/users';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
@@ -60,7 +60,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     return this.loginForm.get('password');
   }
 
-  private onSubmit() {
+  onSubmit() {
     this.store$.dispatch(new AuthStoreActions.LoginRequestAction({
       email: this.loginForm.value.email,
       password: this.loginForm.value.password

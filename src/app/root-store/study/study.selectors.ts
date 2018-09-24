@@ -13,6 +13,8 @@ export const getIsAdding = (state: fromStudy.State): any => state.isAdding;
 
 export const getIsSearching = (state: fromStudy.State): any => state.isSearching;
 
+export const getLastAddedId = (state: fromStudy.State): any => state.lastAddedId;
+
 export const getLastSearch = (state: fromStudy.State): any => state.lastSearch;
 
 export const getIsLoadingCounts = (state: fromStudy.State): any => state.isLoadingCounts;
@@ -30,6 +32,9 @@ export const selectStudyIsAdding: MemoizedSelector<object, boolean> =
 
 export const selectStudyIsSearching: MemoizedSelector<object, boolean> =
   createSelector(selectStudyState, getIsSearching);
+
+export const selectStudyLastAddedId: MemoizedSelector<object, string> =
+  createSelector(selectStudyState, getLastAddedId);
 
 export const selectStudyLastSearch: MemoizedSelector<object, SearchParams> =
   createSelector(selectStudyState, getLastSearch);
@@ -81,4 +86,13 @@ export const selectStudyBySlug =
         return found;
       }
       return undefined;
+    });
+
+
+export const selectStudyLastAdded =
+  createSelector(
+    selectStudyLastAddedId,
+    selectAllStudies,
+    (id: string, entities: { [id: string]: Study }): Study => {
+      return entities[id];
     });

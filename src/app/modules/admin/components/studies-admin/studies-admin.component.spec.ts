@@ -1,20 +1,22 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Store, StoreModule, combineReducers } from '@ngrx/store';
+import { RouterTestingModule } from '@angular/router/testing';
 
-import { AuthStoreActions, AuthStoreReducer } from '@app/root-store/auth-store';
+import { StudyStoreActions, StudyStoreReducer } from '@app/root-store/study';
 import { StudiesAdminComponent } from './studies-admin.component';
 
 describe('StudiesAdminComponent', () => {
-  let store: Store<AuthStoreReducer.State>;
+  let store: Store<StudyStoreReducer.State>;
   let component: StudiesAdminComponent;
   let fixture: ComponentFixture<StudiesAdminComponent>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [
+        RouterTestingModule,
         StoreModule.forRoot({
-          'auth': AuthStoreReducer.reducer
+          'study': StudyStoreReducer.reducer
         })
       ],
       declarations: [StudiesAdminComponent],
