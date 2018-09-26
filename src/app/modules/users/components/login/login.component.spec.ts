@@ -12,6 +12,7 @@ import { AuthStoreActions, AuthStoreReducer } from '@app/root-store/auth-store';
 import { User, UserRole } from '@app/domain/users';
 import { RoleIds } from '@app/domain/access';
 import { Factory } from '@app/test/factory';
+import { SpinnerStoreReducer } from '@app/root-store/spinner';
 
 describe('LoginComponent', () => {
 
@@ -30,7 +31,8 @@ describe('LoginComponent', () => {
         ReactiveFormsModule,
         RouterTestingModule,
         StoreModule.forRoot({
-          'auth': AuthStoreReducer.reducer
+          'auth': AuthStoreReducer.reducer,
+          'spinner': SpinnerStoreReducer.reducer
         })
       ],
       declarations: [LoginComponent],

@@ -7,5 +7,5 @@ export function HideSpinner(triggerAction: string) {
     Object.defineProperty(Class.prototype, 'triggerAction', {
       value: triggerAction
     });
-  }
+  };
 }

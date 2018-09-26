@@ -8,4 +8,4 @@ import * as SpinnerStoreReducer from './spinner.reducer';
 export {
   SpinnerStoreReducer,
   SpinnerStoreSelectors
-}
+};

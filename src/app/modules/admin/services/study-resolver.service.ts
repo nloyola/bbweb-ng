@@ -3,7 +3,7 @@ import { Router, Resolve, RouterStateSnapshot,
          ActivatedRouteSnapshot } from '@angular/router';
 import { Store, select } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { take, tap } from 'rxjs/operators';
+import { filter, take, tap } from 'rxjs/operators';
 import { Study } from '@app/domain/studies';
 import {
   RootStoreState,
@@ -25,7 +25,7 @@ export class StudyResolver implements Resolve<Study> {
 
     return this.store$.pipe(
       select(StudyStoreSelectors.selectStudyBySlug, { slug }),
-      take(1),
-      tap(v => console.log('resolver', v)));
+      filter(s => !!s),
+      take(1));
   }
 }

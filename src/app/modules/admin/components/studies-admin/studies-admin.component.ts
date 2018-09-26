@@ -90,8 +90,6 @@ export class StudiesAdminComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.applySearchParams();
-
     this.isCountsLoading$ =
       this.store$.pipe(select(SpinnerStoreSelectors.selectSpinnerIsActive));
 
@@ -143,9 +141,10 @@ export class StudiesAdminComponent implements OnInit, OnDestroy {
 
           studies: searchReply.studies,
           totalStudies: searchReply.reply.total
-        }
+        };
       }));
 
+    this.applySearchParams();
     this.store$.dispatch(new StudyStoreActions.GetStudyCountsRequest());
   }
 

@@ -19,8 +19,7 @@ describe('auth-store-model reducer', () => {
     const state = AuthStoreReducer.reducer(undefined, action);
 
     expect(state).toEqual({
-      ...AuthStoreReducer.initialState,
-      isLoggingIn: true
+      ...AuthStoreReducer.initialState
     });
   });
 
@@ -38,7 +37,6 @@ describe('auth-store-model reducer', () => {
 
     expect(state).toEqual({
       ...AuthStoreReducer.initialState,
-      isLoggingIn: false,
       error: payload.error
     });
   });
@@ -71,7 +69,6 @@ describe('auth-store-model reducer', () => {
 
     expect(state).toEqual({
       ...AuthStoreReducer.initialState,
-      isLoggingIn: false,
       user: payload.user
     });
   });
@@ -81,8 +78,7 @@ describe('auth-store-model reducer', () => {
     const state = AuthStoreReducer.reducer(undefined, action);
 
     expect(state).toEqual({
-      ...AuthStoreReducer.initialState,
-      isLoggingOut: true
+      ...AuthStoreReducer.initialState
     });
   });
 
@@ -100,7 +96,6 @@ describe('auth-store-model reducer', () => {
 
     expect(state).toEqual({
       ...AuthStoreReducer.initialState,
-      isLoggingOut: false,
       error: payload.error
     });
   });
@@ -111,7 +106,6 @@ describe('auth-store-model reducer', () => {
 
     expect(state).toEqual({
       ...AuthStoreReducer.initialState,
-      isLoggingOut: false,
       user: null
     });
   });
@@ -127,8 +121,7 @@ describe('auth-store-model reducer', () => {
     const state = AuthStoreReducer.reducer(undefined, action);
 
     expect(state).toEqual({
-      ...AuthStoreReducer.initialState,
-      isRegistering: true
+      ...AuthStoreReducer.initialState
     });
   });
 
@@ -146,7 +139,6 @@ describe('auth-store-model reducer', () => {
 
     expect(state).toEqual({
       ...AuthStoreReducer.initialState,
-      isRegistering: false,
       error: payload.error
     });
   });
@@ -179,7 +171,6 @@ describe('auth-store-model reducer', () => {
 
     expect(state).toEqual({
       ...AuthStoreReducer.initialState,
-      isRegistering: false,
       registeredUser: payload.user
     });
   });

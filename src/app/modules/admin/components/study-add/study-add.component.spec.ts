@@ -13,6 +13,7 @@ import { StudyAddComponent } from './study-add.component';
 import { StudyStoreActions, StudyStoreReducer } from '@app/root-store/study';
 import { Factory } from '@app/test/factory';
 import { Study } from '@app/domain/studies';
+import { SpinnerStoreReducer } from '@app/root-store/spinner';
 
 describe('StudyAddComponent', () => {
 
@@ -34,7 +35,7 @@ describe('StudyAddComponent', () => {
     },
   ];
 
-  beforeEach(() => {
+  beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
         FormsModule,
@@ -42,7 +43,8 @@ describe('StudyAddComponent', () => {
         ReactiveFormsModule,
         RouterTestingModule.withRoutes(routes),
         StoreModule.forRoot({
-          'study': StudyStoreReducer.reducer
+          'study': StudyStoreReducer.reducer,
+          'spinner': SpinnerStoreReducer.reducer
         }),
         ToastrModule.forRoot()
       ],
@@ -51,8 +53,11 @@ describe('StudyAddComponent', () => {
         provideMockActions(() => actions)
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
-    });
+    })
+      .compileComponents();
+  }));
 
+  beforeEach(() => {
     store = TestBed.get(Store);
     fixture = TestBed.createComponent(StudyAddComponent);
     component = fixture.componentInstance;

@@ -3,13 +3,13 @@ import {NgZone} from '@angular/core';
 import { TimeagoPipe } from './timeago.pipe';
 
 class NgZoneMock {
-	runOutsideAngular (fn: Function) {
-		return fn();
-	}
-	run(fn: Function) {
-		return fn();
-	}
-};
+  runOutsideAngular (fn: Function) {
+    return fn();
+  }
+  run(fn: Function) {
+    return fn();
+  }
+}
 
 describe('Timeago Pipe', () => {
   let pipe: TimeagoPipe;

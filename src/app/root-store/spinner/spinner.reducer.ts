@@ -19,14 +19,13 @@ export function reducer(state = initialState, action: any): State {
   switch (action.type) {
 
     case SpinnerActionTypes.ShowSpinner: {
-
       const isActionAlreadyInProgress = state.actionsInProgress
-        .filter((currentAction: any) =>
-                currentAction === action.payload.action.type)
+        .filter((currentAction: any) => currentAction === action.payload.type)
         .length;
+
       // If the action in already in progress and is registered
       // we don't modify the state
-      if(isActionAlreadyInProgress) {
+      if (isActionAlreadyInProgress) {
         return state;
       }
       // Adding the action type in our actionsInProgress array

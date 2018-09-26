@@ -4,8 +4,8 @@
 
 export function ShowSpinner() {
   return function (Class: Function) {
-    Object.defineProperty(Class.prototype,'showLoader', {
+    Object.defineProperty(Class.prototype, 'showLoader', {
       value: true
     });
-  }
+  };
 }

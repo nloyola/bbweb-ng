@@ -5,11 +5,11 @@ import { RouterTestingModule } from '@angular/router/testing';
 
 import { EntitySummaryComponent } from './entity-summary.component';
 import { ConcurrencySafeEntity } from '@app/domain';
-import { TruncatePipe } from '@app/shared/pipes'
+import { TruncatePipe } from '@app/shared/pipes';
 import { Factory } from '@app/test/factory';
 import { Study } from '@app/domain/studies';
 
-class TestDomainEntity extends ConcurrencySafeEntity {};
+class TestDomainEntity extends ConcurrencySafeEntity {}
 
 describe('EntitySummaryComponent', () => {
 

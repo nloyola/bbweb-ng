@@ -14,10 +14,22 @@ export class StudyStoreEffects {
   constructor(private studyService: StudyService, private actions$: Actions) { }
 
   @Effect()
+  getRequest$: Observable<Action> = this.actions$.pipe(
+    ofType<StudyActions.GetStudyRequest>(StudyActions.ActionTypes.GetStudyRequest),
+    map(action => action.payload),
+    switchMap(
+      payload =>
+        this.studyService.get(payload.slug)
+        .pipe(
+          map(study => new StudyActions.GetStudySuccess({ study })),
+          catchError(error => observableOf(new StudyActions.GetStudyFailure({ error }))))
+    )
+  );
+
+  @Effect()
   addRequest$: Observable<Action> = this.actions$.pipe(
     ofType<StudyActions.AddStudyRequest>(StudyActions.ActionTypes.AddStudyRequest),
     map(action => action.payload),
-    delay(2000),
     switchMap(
       payload =>
         this.studyService.add(payload.study)

@@ -16,28 +16,6 @@ describe('auth-store-module selectors', () => {
     factory = new Factory();
   });
 
-  it('selectAuthIsLoggingIn', () => {
-    const state = {
-      auth: {
-        ...AuthStoreReducer.initialState,
-        isLoggingIn: true
-      }
-    };
-
-    expect(AuthStoreSelectors.selectAuthIsLoggingIn(state)).toBeTruthy();
-  });
-
-  it('selectAuthIsRegistering', () => {
-    const state = {
-      auth: {
-        ...AuthStoreReducer.initialState,
-        isRegistering: true
-      }
-    };
-
-    expect(AuthStoreSelectors.selectAuthIsRegistering(state)).toBeTruthy();
-  });
-
   it('selectAuthError', () => {
     const state = {
       auth: {

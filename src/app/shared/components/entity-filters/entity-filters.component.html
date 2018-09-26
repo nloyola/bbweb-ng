@@ -21,7 +21,7 @@
              placeholder="email filter">
     </ng-container>
 
-    <ng-container>
+    <ng-container *ngIf="hasStateFilter">
       <label for="state" class="small mr-2" for="state" i18n>
         State filter:
       </label>

@@ -11,8 +11,6 @@ export interface State extends EntityState<Study> {
 
   lastSearch?: SearchParams;
 
-  isLoadingCounts?: boolean;
-
   error?: any;
 
   searchActive?: boolean;
@@ -27,7 +25,6 @@ export const adapter: EntityAdapter<Study> = createEntityAdapter<Study>();
 export const initialState: State = adapter.getInitialState({
   lastAddedId: null,
   lastSearch: null,
-  isLoadingCounts: false,
   error: null,
   searchActive: false,
   searchReplies: {},
@@ -39,7 +36,6 @@ export function reducer(state = initialState, action: StudyActions): State {
     case ActionTypes.GetStudyCountsRequest: {
       return {
         ...state,
-        isLoadingCounts: true,
         error: null
       };
     }
@@ -47,7 +43,6 @@ export function reducer(state = initialState, action: StudyActions): State {
     case ActionTypes.GetStudyCountsSuccess: {
       return {
         ...state,
-        isLoadingCounts: false,
         studyCounts: action.payload.studyCounts
       };
     }
@@ -55,8 +50,7 @@ export function reducer(state = initialState, action: StudyActions): State {
     case ActionTypes.GetStudyCountsFailure: {
       return {
         ...state,
-        error: action.payload.error,
-        isLoadingCounts: false
+        error: action.payload.error
       };
     }
 
@@ -126,6 +120,17 @@ export function reducer(state = initialState, action: StudyActions): State {
         },
         searchActive: false
       });
+    }
+
+    case ActionTypes.GetStudySuccess: {
+      return adapter.addOne(action.payload.study, state);
+    }
+
+    case ActionTypes.GetStudyFailure: {
+      return {
+        ...state,
+        error: action.payload.error
+      };
     }
 
     default: {

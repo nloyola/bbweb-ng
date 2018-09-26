@@ -7,6 +7,7 @@ import { Store, StoreModule } from '@ngrx/store';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 
 import { AuthStoreActions, AuthStoreReducer } from '@app/root-store/auth-store';
+import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { RegisterComponent } from './register.component';
 import { User, UserRole } from '@app/domain/users';
 import { RoleIds } from '@app/domain/access';
@@ -28,7 +29,8 @@ describe('RegisterComponent', () => {
         ReactiveFormsModule,
         RouterTestingModule,
         StoreModule.forRoot({
-          'auth': AuthStoreReducer.reducer
+          'auth': AuthStoreReducer.reducer,
+          'spinner': SpinnerStoreReducer.reducer
         }),
         ToastrModule.forRoot()
       ],
@@ -203,7 +205,6 @@ describe('RegisterComponent', () => {
 
     it('onSubmit dispatches an action', () => {
       const password = 'a random password';
-      const user = factory.user();
 
       spyOn(store, 'dispatch').and.callThrough();
       component.name.setValue(user.name);

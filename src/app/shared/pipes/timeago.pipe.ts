@@ -27,7 +27,11 @@ export class TimeagoPipe implements PipeTransform, OnDestroy {
     this.timer = this.ngZone.runOutsideAngular(() => {
       if (typeof window !== 'undefined') {
         return window.setTimeout(() => {
-          this.ngZone.run(() => this.changeDetectorRef.markForCheck());
+          this.ngZone.run(() => {
+            if (this.changeDetectorRef) {
+              this.changeDetectorRef.markForCheck();
+            }
+          });
         }, timeToUpdate);
       }
       return null;

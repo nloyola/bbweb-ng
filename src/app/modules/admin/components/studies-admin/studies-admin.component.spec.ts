@@ -4,6 +4,7 @@ import { Store, StoreModule, combineReducers } from '@ngrx/store';
 import { RouterTestingModule } from '@angular/router/testing';
 
 import { StudyStoreActions, StudyStoreReducer } from '@app/root-store/study';
+import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { StudiesAdminComponent } from './studies-admin.component';
 
 describe('StudiesAdminComponent', () => {
@@ -16,7 +17,8 @@ describe('StudiesAdminComponent', () => {
       imports: [
         RouterTestingModule,
         StoreModule.forRoot({
-          'study': StudyStoreReducer.reducer
+          'study': StudyStoreReducer.reducer,
+          'spinner': SpinnerStoreReducer.reducer
         })
       ],
       declarations: [StudiesAdminComponent],
