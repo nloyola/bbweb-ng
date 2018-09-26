@@ -17,6 +17,7 @@ export class StudyStoreEffects {
   addRequest$: Observable<Action> = this.actions$.pipe(
     ofType<StudyActions.AddStudyRequest>(StudyActions.ActionTypes.AddStudyRequest),
     map(action => action.payload),
+    delay(2000),
     switchMap(
       payload =>
         this.studyService.add(payload.study)

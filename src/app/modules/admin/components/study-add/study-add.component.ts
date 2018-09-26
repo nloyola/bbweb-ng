@@ -13,6 +13,7 @@ import {
 } from '@app/root-store';
 
 import { Study } from '@app/domain/studies';
+import { SpinnerStoreSelectors } from '@app/root-store/spinner';
 
 @Component({
   selector: 'app-study-add',
@@ -37,23 +38,9 @@ export class StudyAddComponent implements OnInit, OnDestroy {
         name: ['', [Validators.required]],
         description: ['']
       });
-    this.isSaving$ = this.store$.pipe(select(StudyStoreSelectors.selectStudyIsAdding));
-  }
 
-  public ngOnDestroy() {
-    this.unsubscribe$.next();
-    this.unsubscribe$.complete();
-  }
+    this.isSaving$ = this.store$.pipe(select(SpinnerStoreSelectors.selectSpinnerIsActive));
 
-  get name() {
-    return this.form.get('name');
-  }
-
-  get description() {
-    return this.form.get('description');
-  }
-
-  onSubmit() {
     this.store$
       .pipe(
         select(StudyStoreSelectors.selectStudyLastAdded),
@@ -78,7 +65,22 @@ export class StudyAddComponent implements OnInit, OnDestroy {
         }
         this.toastr.error(errMessage, 'Add Error', { disableTimeOut: true });
       });
+  }
 
+  public ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
+  }
+
+  get name() {
+    return this.form.get('name');
+  }
+
+  get description() {
+    return this.form.get('description');
+  }
+
+  onSubmit() {
     const study = new Study().deserialize(this.form.value);
     this.store$.dispatch(new StudyStoreActions.AddStudyRequest({ study }));
   }

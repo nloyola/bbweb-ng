@@ -25,6 +25,7 @@ import {
   SearchParams } from '@app/domain';
 
 import { NameFilter, StateFilter, SearchFilter } from '@app/domain/search-filters';
+import { SpinnerStoreSelectors } from '@app/root-store/spinner';
 
 interface StudyIconData {
   icon?: string;
@@ -92,13 +93,17 @@ export class StudiesAdminComponent implements OnInit, OnDestroy {
     this.applySearchParams();
 
     this.isCountsLoading$ =
-      this.store$.pipe(select(StudyStoreSelectors.selectStudyIsLoadingCounts));
-    this.isLoading$ = this.store$.pipe(select(StudyStoreSelectors.selectStudyIsSearching));
+      this.store$.pipe(select(SpinnerStoreSelectors.selectSpinnerIsActive));
+
+    this.isLoading$ =
+      this.store$.pipe(select(StudyStoreSelectors.selectStudySearchActive));
+
     this.serverError$ = this.store$.pipe(select(StudyStoreSelectors.selectStudyError));
-    this.hasLoaded$ = combineLatest(this.isLoading$, this.serverError$)
-      .pipe(map(result => !result[0] && (result[1] === null)),
-            // tap(v => console.log('tap2', v)),
-            takeUntil(this.unsubscribe$));
+    this.hasLoaded$ =
+      combineLatest(this.isLoading$, this.serverError$)
+      .pipe(
+        map(result => !result[0] && (result[1] === null)),
+        takeUntil(this.unsubscribe$));
 
     this.studyCountData$ = this.store$.pipe(
       select(StudyStoreSelectors.selectStudyCounts),
@@ -124,7 +129,6 @@ export class StudiesAdminComponent implements OnInit, OnDestroy {
 
     this.studyPageInfo$ = this.store$.pipe(
       select(StudyStoreSelectors.selectStudySearchRepliesAndEntities),
-      // tap(v => console.log('tap', v)),
       takeUntil(this.unsubscribe$),
       map((searchReply: StudySearchReply) => {
         if (searchReply === undefined) { return {}; }

@@ -7,10 +7,6 @@ import { StudyCounts } from '@app/domain/studies/study-counts.model';
 
 export interface State extends EntityState<Study> {
 
-  isAdding?: boolean;
-
-  isSearching?: boolean;
-
   lastAddedId: string;
 
   lastSearch?: SearchParams;
@@ -18,6 +14,8 @@ export interface State extends EntityState<Study> {
   isLoadingCounts?: boolean;
 
   error?: any;
+
+  searchActive?: boolean;
 
   searchReplies: { [ url: string ]: SearchParamsReply };
 
@@ -27,12 +25,11 @@ export interface State extends EntityState<Study> {
 export const adapter: EntityAdapter<Study> = createEntityAdapter<Study>();
 
 export const initialState: State = adapter.getInitialState({
-  isAdding: false,
-  isSearching: false,
   lastAddedId: null,
   lastSearch: null,
   isLoadingCounts: false,
   error: null,
+  searchActive: false,
   searchReplies: {},
   studyCounts: {}
 });
@@ -66,7 +63,6 @@ export function reducer(state = initialState, action: StudyActions): State {
     case ActionTypes.AddStudyRequest: {
       return {
         ...state,
-        isAdding: true,
         error: null
       };
     }
@@ -74,7 +70,6 @@ export function reducer(state = initialState, action: StudyActions): State {
     case ActionTypes.AddStudySuccess: {
       return adapter.addOne(action.payload.study, {
         ...state,
-        isAdding: false,
         lastAddedId: action.payload.study.id
       });
     }
@@ -82,8 +77,7 @@ export function reducer(state = initialState, action: StudyActions): State {
     case ActionTypes.AddStudyFailure: {
       return {
         ...state,
-        error: action.payload.error,
-        isAdding: false
+        error: action.payload.error
       };
     }
 
@@ -98,8 +92,8 @@ export function reducer(state = initialState, action: StudyActions): State {
     case ActionTypes.SearchStudiesRequest: {
       return {
         ...state,
-        isSearching: true,
         lastSearch: action.payload.searchParams,
+        searchActive: true,
         error: null
       };
     }
@@ -108,8 +102,8 @@ export function reducer(state = initialState, action: StudyActions): State {
       return {
         ...state,
         error: action.payload.error,
-        isSearching: false,
-        lastSearch: null
+        lastSearch: null,
+        searchActive: false
       };
     }
 
@@ -126,11 +120,11 @@ export function reducer(state = initialState, action: StudyActions): State {
 
       return adapter.addMany(pagedReply.entities, {
         ...state,
-        isSearching: false,
         searchReplies: {
           ...state.searchReplies,
           ...newReply
-        }
+        },
+        searchActive: false
       });
     }
 

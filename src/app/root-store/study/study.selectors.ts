@@ -9,15 +9,11 @@ import { SearchParamsReply, SearchParams } from '@app/domain';
 import { Study, StudySearchReply } from '@app/domain/studies';
 import { PagedReply } from '@app/domain';
 
-export const getIsAdding = (state: fromStudy.State): any => state.isAdding;
-
-export const getIsSearching = (state: fromStudy.State): any => state.isSearching;
-
 export const getLastAddedId = (state: fromStudy.State): any => state.lastAddedId;
 
-export const getLastSearch = (state: fromStudy.State): any => state.lastSearch;
+export const getSearchActive = (state: fromStudy.State): any => state.searchActive;
 
-export const getIsLoadingCounts = (state: fromStudy.State): any => state.isLoadingCounts;
+export const getLastSearch = (state: fromStudy.State): any => state.lastSearch;
 
 export const getError = (state: fromStudy.State): any => state.error;
 
@@ -27,20 +23,14 @@ export const getCounts = (state: fromStudy.State): any => state.studyCounts;
 
 export const selectStudyState = createFeatureSelector<fromStudy.State>('study');
 
-export const selectStudyIsAdding: MemoizedSelector<object, boolean> =
-  createSelector(selectStudyState, getIsAdding);
-
-export const selectStudyIsSearching: MemoizedSelector<object, boolean> =
-  createSelector(selectStudyState, getIsSearching);
-
 export const selectStudyLastAddedId: MemoizedSelector<object, string> =
   createSelector(selectStudyState, getLastAddedId);
 
+export const selectStudySearchActive: MemoizedSelector<object, boolean> =
+  createSelector(selectStudyState, getSearchActive);
+
 export const selectStudyLastSearch: MemoizedSelector<object, SearchParams> =
   createSelector(selectStudyState, getLastSearch);
-
-export const selectStudyIsLoadingCounts: MemoizedSelector<object, boolean> =
-  createSelector(selectStudyState, getIsLoadingCounts);
 
 export const selectStudyError: MemoizedSelector<object, any> =
   createSelector(selectStudyState, getError);
@@ -58,15 +48,15 @@ export const selectAllStudies = createSelector(
 
 export const selectStudySearchRepliesAndEntities =
   createSelector(
-    selectStudyIsSearching,
+    selectStudySearchActive,
     selectStudyLastSearch,
     selectStudySearchReplies,
     selectAllStudies,
-    (isSearching: boolean,
+    (searchActive: boolean,
      lastSearch: SearchParams,
      searchReplies: { [ url: string ]: SearchParamsReply },
      entities: any): StudySearchReply => {
-      if (isSearching || (lastSearch === null)) { return undefined; }
+      if (searchActive || (lastSearch === null)) { return undefined; }
 
       const reply = searchReplies[lastSearch.queryString()];
       if (reply === undefined) { return undefined; }

@@ -32,14 +32,14 @@ export class GetStudyCountsRequest implements Action {
   readonly type = ActionTypes.GetStudyCountsRequest;
 }
 
-@HideSpinner(ActionTypes.AddStudyRequest)
+@HideSpinner(ActionTypes.GetStudyCountsRequest)
 export class GetStudyCountsSuccess implements Action {
   readonly type = ActionTypes.GetStudyCountsSuccess;
 
   constructor(public payload: { studyCounts: StudyCounts }) { }
 }
 
-@HideSpinner(ActionTypes.AddStudyRequest)
+@HideSpinner(ActionTypes.GetStudyCountsRequest)
 export class GetStudyCountsFailure implements Action {
   readonly type = ActionTypes.GetStudyCountsFailure;
 
@@ -64,18 +64,21 @@ export class SearchStudiesFailure implements Action {
   constructor(public payload: { error: any }) { }
 }
 
+@ShowSpinner()
 export class AddStudyRequest implements Action {
   readonly type = ActionTypes.AddStudyRequest;
 
   constructor(public payload: { study: Study }) { }
 }
 
+@HideSpinner(ActionTypes.AddStudyRequest)
 export class AddStudySuccess implements Action {
   readonly type = ActionTypes.AddStudySuccess;
 
   constructor(public payload: { study: Study }) { }
 }
 
+@HideSpinner(ActionTypes.AddStudyRequest)
 export class AddStudyFailure implements Action {
   readonly type = ActionTypes.AddStudyFailure;
 
@@ -94,18 +97,21 @@ export class UpdateStudy implements Action {
   constructor(public payload: { study: Update<Study> }) { }
 }
 
+@ShowSpinner()
 export class GetStudyRequest implements Action {
   readonly type = ActionTypes.GetStudyRequest;
 
   constructor(public payload: { slug: string }) { }
 }
 
+@HideSpinner(ActionTypes.GetStudyRequest)
 export class GetStudySuccess implements Action {
   readonly type = ActionTypes.GetStudySuccess;
 
   constructor(public payload: { study: Study }) { }
 }
 
+@HideSpinner(ActionTypes.GetStudyRequest)
 export class GetStudyFailure implements Action {
   readonly type = ActionTypes.GetStudyFailure;
 
