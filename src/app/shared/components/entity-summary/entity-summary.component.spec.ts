@@ -8,17 +8,18 @@ import { ConcurrencySafeEntity } from '@app/domain';
 import { TruncatePipe } from '@app/shared/pipes';
 import { Factory } from '@app/test/factory';
 import { Study } from '@app/domain/studies';
+import { StudyUI } from '@app/domain/studies/study-ui.model';
 
 class TestDomainEntity extends ConcurrencySafeEntity {}
 
 describe('EntitySummaryComponent', () => {
 
   @Component({
-    template  : '<app-entity-summary [entity]="entity"></app-entity-summary>'
+    template  : '<app-entity-summary [entityUI]="entity"></app-entity-summary>'
   })
   class TestComponent {
     factory = new Factory();
-    entity = new Study().deserialize(this.factory.study());
+    entity = new StudyUI(new Study().deserialize(this.factory.study()));
   }
 
   let component: TestComponent;
@@ -48,7 +49,6 @@ describe('EntitySummaryComponent', () => {
   });
 
   it('should create', () => {
-
     expect(component).toBeTruthy();
   });
 });

@@ -91,9 +91,9 @@
 
           <ul class="list-group">
             <li class="list-group-item" *ngFor="let study of studyPageInfo.studies">
-              <app-entity-summary [entity]="study"
-                                  [icon]="getItemIcon(study)"
-                                  [iconClass]="getItemIconClass(study)"
+              <app-entity-summary [entityUI]="study"
+                                  [icon]="study.icon"
+                                  [iconClass]="study.iconClass"
                                   (selected)="studySelected($event)">
               </app-entity-summary>
             </li>

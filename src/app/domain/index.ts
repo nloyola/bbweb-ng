@@ -5,6 +5,7 @@ export * from './deserializable.model';
 export * from './domain-entity.model';
 export * from './entity-info.model';
 export * from './entity-state-info.model';
+export * from './entity-ui.model';
 export * from './has-slug.model';
 export * from './labelled-id.model';
 export * from './paged-reply.model';

@@ -1,42 +1,20 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Store, select } from '@ngrx/store';
-import { Observable, Subject, combineLatest, merge } from 'rxjs';
-import { catchError, filter, map, takeUntil, tap } from 'rxjs/operators';
-import {
-  RootStoreState,
-  StudyStoreActions,
-  StudyStoreSelectors
-} from '@app/root-store';
-
-import {
-  StudyState,
-  StudyCounts,
-  Study,
-  StudyCountInfo,
-  StudySearchReply } from '@app/domain/studies';
-
-import {
-  SearchFilters,
-  EntityStateInfo,
-  LabelledId,
-  SearchParamsReply,
-  PagedReply,
-  SearchParams } from '@app/domain';
-
-import { NameFilter, StateFilter, SearchFilter } from '@app/domain/search-filters';
+import { EntityStateInfo, LabelledId, SearchFilters, SearchParams } from '@app/domain';
+import { NameFilter, SearchFilter, StateFilter } from '@app/domain/search-filters';
+import { Study, StudyCountInfo, StudySearchReply, StudyState, StudyStateUIMap } from '@app/domain/studies';
+import { StudyUI } from '@app/domain/studies/study-ui.model';
+import { RootStoreState, StudyStoreActions, StudyStoreSelectors } from '@app/root-store';
 import { SpinnerStoreSelectors } from '@app/root-store/spinner';
-
-interface StudyIconData {
-  icon?: string;
-  iconClass?: string;
-}
+import { select, Store } from '@ngrx/store';
+import { combineLatest, Observable, Subject } from 'rxjs';
+import { filter, map, takeUntil } from 'rxjs/operators';
 
 interface StudyPageInfo {
   hasNoEntitiesToDisplay?: boolean;
   hasNoResultsToDisplay?: boolean;
   hasResultsToDisplay?: boolean;
-  studies?: Study[];
+  studies?: StudyUI[];
   totalStudies?: number;
 }
 
@@ -46,12 +24,6 @@ interface StudyPageInfo {
   styleUrls: ['./studies-admin.component.scss']
 })
 export class StudiesAdminComponent implements OnInit, OnDestroy {
-
-  private studyIconData: { [ state: string ]: StudyIconData } = {
-    disabled: { icon: 'settings', iconClass: 'warning-icon' },
-    enabled: { icon: 'check_circle', iconClass: 'success-icon' },
-    retired: { icon: 'remove_circle', iconClass: 'danger-icon' }
-  };
 
   isCountsLoading$: Observable<boolean>;
   isLoading$: Observable<boolean>;
@@ -73,9 +45,9 @@ export class StudiesAdminComponent implements OnInit, OnDestroy {
 
   constructor(private store$: Store<RootStoreState.State>,
               private router: Router) {
-    this.stateData = Object.keys(StudyState).map(state => ({
+    this.stateData = Object.values(StudyState).map(state => ({
       id: state.toLowerCase(),
-      label: state
+      label: StudyStateUIMap.get(state).stateLabel
     }));
 
     this.filters = {
@@ -97,11 +69,13 @@ export class StudiesAdminComponent implements OnInit, OnDestroy {
       this.store$.pipe(select(StudyStoreSelectors.selectStudySearchActive));
 
     this.serverError$ = this.store$.pipe(select(StudyStoreSelectors.selectStudyError));
+
     this.hasLoaded$ =
       combineLatest(this.isLoading$, this.serverError$)
       .pipe(
         map(result => !result[0] && (result[1] === null)),
         takeUntil(this.unsubscribe$));
+
 
     this.studyCountData$ = this.store$.pipe(
       select(StudyStoreSelectors.selectStudyCounts),
@@ -109,26 +83,23 @@ export class StudiesAdminComponent implements OnInit, OnDestroy {
       takeUntil(this.unsubscribe$),
       map(counts => [
         {
-          label: 'Enabled',
           count: counts.enabledCount,
-          ...this.studyIconData.enabled
+          ...StudyStateUIMap.get(StudyState.Enabled)
         },
         {
-          label: 'Disabled',
           count: counts.disabledCount,
-          ...this.studyIconData.disabled
+          ...StudyStateUIMap.get(StudyState.Disabled)
         },
         {
-          label: 'Retired',
           count: counts.retiredCount,
-          ...this.studyIconData.retired
+          ...StudyStateUIMap.get(StudyState.Retired)
         }
       ]));
 
     this.studyPageInfo$ = this.store$.pipe(
       select(StudyStoreSelectors.selectStudySearchRepliesAndEntities),
       takeUntil(this.unsubscribe$),
-      map((searchReply: StudySearchReply) => {
+      map((searchReply: StudySearchReply): StudyPageInfo => {
         if (searchReply === undefined) { return {}; }
 
         return {
@@ -139,13 +110,13 @@ export class StudiesAdminComponent implements OnInit, OnDestroy {
           hasNoResultsToDisplay: ((searchReply.studies.length <= 0)
                                   && (searchReply.reply.searchParams.filter !== '')),
 
-          studies: searchReply.studies,
+          studies: searchReply.studies.map(s => new StudyUI(s)),
           totalStudies: searchReply.reply.total
         };
       }));
 
-    this.applySearchParams();
     this.store$.dispatch(new StudyStoreActions.GetStudyCountsRequest());
+    this.applySearchParams();
   }
 
   public ngOnDestroy() {
@@ -188,14 +159,6 @@ export class StudiesAdminComponent implements OnInit, OnDestroy {
                                      this.currentPage,
                                      5)
     }));
-  }
-
-  private getItemIcon(study) {
-    return this.studyIconData[study.state].icon;
-  }
-
-  private getItemIconClass(study) {
-    return this.studyIconData[study.state].iconClass;
   }
 
 }
