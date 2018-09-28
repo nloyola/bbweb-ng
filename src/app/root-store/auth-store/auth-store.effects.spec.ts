@@ -10,7 +10,7 @@ import { AuthService } from '@app/core/services';
 import { User } from '@app/domain/users';
 import { Factory } from '@app/test/factory';
 
-describe('auth-store-module effects', () => {
+describe('auth-store effects', () => {
 
   let effects: AuthStoreEffects;
   let actions: Observable<any>;

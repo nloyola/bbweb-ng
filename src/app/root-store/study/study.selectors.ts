@@ -1,13 +1,7 @@
-import {
-  createFeatureSelector,
-  createSelector,
-  MemoizedSelector
-} from '@ngrx/store';
-
-import * as fromStudy from './study.reducer';
-import { SearchParamsReply, SearchParams } from '@app/domain';
+import { SearchParams, PagedReplyEntityIds } from '@app/domain';
 import { Study, StudySearchReply } from '@app/domain/studies';
-import { PagedReply } from '@app/domain';
+import { createFeatureSelector, createSelector, MemoizedSelector } from '@ngrx/store';
+import * as fromStudy from './study.reducer';
 
 export const getLastAddedId = (state: fromStudy.State): any => state.lastAddedId;
 
@@ -38,10 +32,15 @@ export const selectStudyError: MemoizedSelector<object, any> =
 export const selectStudyCounts: MemoizedSelector<object, any> =
   createSelector(selectStudyState, getCounts);
 
-export const selectStudySearchReplies: MemoizedSelector<object, any> =
+export const selectStudySearchReplies: MemoizedSelector<object, { [ url: string ]: PagedReplyEntityIds }> =
   createSelector(selectStudyState, getSearchReplies);
 
 export const selectAllStudies = createSelector(
+  selectStudyState,
+  fromStudy.selectAll
+);
+
+export const selectAllStudyEntities = createSelector(
   selectStudyState,
   fromStudy.selectEntities
 );
@@ -51,10 +50,10 @@ export const selectStudySearchRepliesAndEntities =
     selectStudySearchActive,
     selectStudyLastSearch,
     selectStudySearchReplies,
-    selectAllStudies,
+    createSelector(selectStudyState, fromStudy.selectEntities),
     (searchActive: boolean,
      lastSearch: SearchParams,
-     searchReplies: { [ url: string ]: SearchParamsReply },
+     searchReplies: { [ url: string ]: PagedReplyEntityIds },
      entities: any): StudySearchReply => {
       if (searchActive || (lastSearch === null)) { return undefined; }
 
@@ -70,19 +69,14 @@ export const selectStudySearchRepliesAndEntities =
 export const selectStudyBySlug =
   createSelector(
     selectAllStudies,
-    (entities: { [id: string]: Study }, props: any): Study => {
-      const found = Object.values(entities).find(s => s.slug === props.slug);
-      if (found) {
-        return found;
-      }
-      return undefined;
+    (studies: Study[], props: any): Study => {
+      return studies.find(s => s.slug === props.slug);
     });
-
 
 export const selectStudyLastAdded =
   createSelector(
     selectStudyLastAddedId,
-    selectAllStudies,
+    selectAllStudyEntities,
     (id: string, entities: { [id: string]: Study }): Study => {
       return entities[id];
     });

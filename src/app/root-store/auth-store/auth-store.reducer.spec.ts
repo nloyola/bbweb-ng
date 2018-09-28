@@ -10,6 +10,14 @@ describe('auth-store-model reducer', () => {
     factory = new Factory();
   });
 
+  describe('unknown action', () => {
+    it('should return the initial state', () => {
+      const action = {} as any;
+      const result = AuthStoreReducer.reducer(AuthStoreReducer.initialState, action);
+      expect(result).toBe(AuthStoreReducer.initialState);
+    });
+  });
+
   it('LoginRequestAction', () => {
     const payload = {
       email: 'test@test.com',

@@ -1,14 +1,7 @@
-import { TestBed } from '@angular/core/testing';
-import { Store, StoreModule } from '@ngrx/store';
-
-import {
-  AuthStoreActions,
-  AuthStoreSelectors,
-  AuthStoreReducer
-} from '@app/root-store/auth-store';
+import { AuthStoreReducer, AuthStoreSelectors } from '@app/root-store/auth-store';
 import { Factory } from '@app/test/factory';
 
-describe('auth-store-module selectors', () => {
+describe('auth-store selectors', () => {
 
   let factory: Factory;
 

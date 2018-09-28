@@ -1,12 +1,12 @@
 import { ConcurrencySafeEntity } from '@app/domain/concurrency-safe-entity.model';
 import { StudyState } from './study-state.enum';
-import { HasSlug } from '@app/domain/has-slug.model';
 import { AnnotationType } from '@app/domain/annotations/annotation-type.model';
+import { HasDescription, HasName, HasSlug } from '@app/domain';
 
 /*
  * A Study represents a collection of participants and specimens collected for a particular research study.
  */
-export class Study extends ConcurrencySafeEntity implements HasSlug {
+export class Study extends ConcurrencySafeEntity implements HasSlug, HasName, HasDescription {
 
   slug: string;
 
@@ -68,3 +68,5 @@ export class Study extends ConcurrencySafeEntity implements HasSlug {
 
 
 }
+
+export type StudyToAdd = Pick<Study, 'name' | 'description' >;

@@ -2,7 +2,7 @@ import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 
 import { Study } from '@app/domain/studies';
 import { StudyActions, ActionTypes } from './study.actions';
-import { SearchParamsReply, SearchParams } from '@app/domain';
+import { SearchParams, PagedReplyEntityIds } from '@app/domain';
 import { StudyCounts } from '@app/domain/studies/study-counts.model';
 
 export interface State extends EntityState<Study> {
@@ -15,7 +15,7 @@ export interface State extends EntityState<Study> {
 
   searchActive?: boolean;
 
-  searchReplies: { [ url: string ]: SearchParamsReply };
+  searchReplies: { [ url: string ]: PagedReplyEntityIds };
 
   studyCounts: StudyCounts;
 }
@@ -52,35 +52,6 @@ export function reducer(state = initialState, action: StudyActions): State {
         ...state,
         error: action.payload.error
       };
-    }
-
-    case ActionTypes.AddStudyRequest: {
-      return {
-        ...state,
-        error: null
-      };
-    }
-
-    case ActionTypes.AddStudySuccess: {
-      return adapter.addOne(action.payload.study, {
-        ...state,
-        lastAddedId: action.payload.study.id
-      });
-    }
-
-    case ActionTypes.AddStudyFailure: {
-      return {
-        ...state,
-        error: action.payload.error
-      };
-    }
-
-    case ActionTypes.UpsertStudy: {
-      return adapter.upsertOne(action.payload.study, state);
-    }
-
-    case ActionTypes.UpdateStudy: {
-      return adapter.updateOne(action.payload.study, state);
     }
 
     case ActionTypes.SearchStudiesRequest: {
@@ -120,6 +91,35 @@ export function reducer(state = initialState, action: StudyActions): State {
         },
         searchActive: false
       });
+    }
+
+    case ActionTypes.AddStudyRequest: {
+      return {
+        ...state,
+        error: null
+      };
+    }
+
+    case ActionTypes.AddStudySuccess: {
+      return adapter.addOne(action.payload.study, {
+        ...state,
+        lastAddedId: action.payload.study.id
+      });
+    }
+
+    case ActionTypes.AddStudyFailure: {
+      return {
+        ...state,
+        error: action.payload.error
+      };
+    }
+
+    case ActionTypes.UpsertStudy: {
+      return adapter.upsertOne(action.payload.study, state);
+    }
+
+    case ActionTypes.UpdateStudy: {
+      return adapter.updateOne(action.payload.study, state);
     }
 
     case ActionTypes.GetStudySuccess: {

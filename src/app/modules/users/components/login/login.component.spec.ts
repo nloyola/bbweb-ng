@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, async, fakeAsync, tick } from '@angular/core/testing';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Store, StoreModule } from '@ngrx/store';
@@ -123,11 +123,11 @@ describe('LoginComponent', () => {
       });
     }));
 
-    it('on login failure', async(() => {
+    it('and there is a login failure', async(() => {
       const errors = [
         {
           error: {
-            status: 401,
+            status: 401
           }
         },
         {
@@ -152,13 +152,30 @@ describe('LoginComponent', () => {
 
         const action = new AuthStoreActions.LoginFailureAction(error);
         store.dispatch(action);
-        expect(modalService.open).toHaveBeenCalled();
-        expect(store.dispatch).toHaveBeenCalledWith(loginClearFailureAction);
 
         fixture.whenStable().then(() => {
+          fixture.detectChanges();
+          expect(modalService.open).toHaveBeenCalled();
+          expect(store.dispatch).toHaveBeenCalledWith(loginClearFailureAction);
           expect(router.navigate).toHaveBeenCalledWith(['/']);
         });
       });
+    }));
+
+    // this test has to use fakeAsync
+    //
+    // see https://stackoverflow.com/questions/45502462/angular-unit-test-spyon-not-detecting-my-call
+    it('handles close on the modal', fakeAsync(() => {
+      spyOn(modalService, 'open').and.returnValue({ result: Promise.reject('Cancel') });
+      spyOn(router, 'navigate').and.callThrough();
+
+      const action = new AuthStoreActions.LoginFailureAction({ error: { status: 401 } });
+      store.dispatch(action);
+
+      tick();
+
+      expect(modalService.open).toHaveBeenCalled();
+      expect(router.navigate).toHaveBeenCalledWith(['/']);
     }));
 
   });

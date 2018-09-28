@@ -8,3 +8,6 @@ export interface EntityUI<T extends ConcurrencySafeEntity> {
   readonly iconClass?: string;
 
 }
+
+export type NoEntityUI<T extends ConcurrencySafeEntity> =
+  Pick<EntityUI<T>, 'stateLabel' | 'icon' | 'iconClass'>

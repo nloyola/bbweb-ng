@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { delay, map } from 'rxjs/operators';
 
 import { ApiReply } from '@app/domain/api-reply.model';
-import { Study, StudyCounts } from '@app/domain/studies';
+import { Study, StudyCounts, StudyToAdd } from '@app/domain/studies';
 import { PagedReply, SearchParams } from '@app/domain';
 import { SearchService } from '@app/core/services/search.service';
 
@@ -54,28 +54,30 @@ export class StudyService implements SearchService<Study> {
    *
    * <p>A paged API is used to list studies. See below for more details.</p>
    *
-   * @param params - The options to use to search for studies.
+   * @param searchParams - The options to use to search for studies.
    *
    * @returns The studies within a PagedReply.
    */
-  search(params: SearchParams): Observable<PagedReply<Study>> {
+  search(searchParams: SearchParams): Observable<PagedReply<Study>> {
     return this.http.get<ApiReply>(`${this.BASE_URL}/search`,
-                                   { params: params.httpParams() })
+                                   { params: searchParams.httpParams() })
       .pipe(
         // delay(1000),
         map((reply: ApiReply) => {
           if (reply && reply.data && reply.data.items) {
             const entities: Study[] = reply.data.items.map(obj => new Study().deserialize(obj));
-            return new PagedReply<Study>(params,
-                                         entities,
-                                         reply.data.offset,
-                                         reply.data.total);
+            return {
+              searchParams,
+              entities,
+              offset: reply.data.offset,
+              total: reply.data.total
+            };
           }
           throw new Error('expected a paged reply');
         }));
   }
 
-  add(study: Study): Observable<Study> {
+  add(study: StudyToAdd): Observable<Study> {
     const json = {
       name: study.name,
       description: study.description ? study.description : null

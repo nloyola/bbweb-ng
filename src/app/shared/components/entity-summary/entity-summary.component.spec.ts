@@ -1,5 +1,5 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, async, fakeAsync, tick } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 
@@ -9,21 +9,18 @@ import { TruncatePipe } from '@app/shared/pipes';
 import { Factory } from '@app/test/factory';
 import { Study } from '@app/domain/studies';
 import { StudyUI } from '@app/domain/studies/study-ui.model';
+import { EntityUI } from '@app/domain';
 
-class TestDomainEntity extends ConcurrencySafeEntity {}
+class TestDomainEntity extends ConcurrencySafeEntity {
+
+  name: string;
+
+}
 
 describe('EntitySummaryComponent', () => {
 
-  @Component({
-    template  : '<app-entity-summary [entityUI]="entity"></app-entity-summary>'
-  })
-  class TestComponent {
-    factory = new Factory();
-    entity = new StudyUI(new Study().deserialize(this.factory.study()));
-  }
-
-  let component: TestComponent;
-  let fixture: ComponentFixture<TestComponent>;
+  let component: EntitySummaryComponent<TestDomainEntity>;
+  let fixture: ComponentFixture<EntitySummaryComponent<TestDomainEntity>>;
   let router: Router;
 
   beforeEach(async(() => {
@@ -32,7 +29,6 @@ describe('EntitySummaryComponent', () => {
         RouterTestingModule
       ],
       declarations: [
-        TestComponent,
         EntitySummaryComponent,
         TruncatePipe
       ],
@@ -43,12 +39,36 @@ describe('EntitySummaryComponent', () => {
 
   beforeEach(() => {
     router = TestBed.get(Router);
-    fixture = TestBed.createComponent(TestComponent);
+    fixture = TestBed.createComponent<EntitySummaryComponent<TestDomainEntity>>(
+      EntitySummaryComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
+    component.entityUI = {
+      entity: new TestDomainEntity(),
+      stateLabel: 'test',
+      icon: 'test',
+      iconClass: 'test'
+    }
+    fixture.detectChanges();
     expect(component).toBeTruthy();
   });
+
+  it('emits an event when the entity is selected', fakeAsync(() => {
+    let entityUI: EntityUI<TestDomainEntity>;
+    component.selected.subscribe((e: EntityUI<TestDomainEntity>) => entityUI = e);
+    component.entityUI = {
+      entity: new TestDomainEntity(),
+      stateLabel: 'test',
+      icon: 'test',
+      iconClass: 'test'
+    }
+    fixture.detectChanges();
+    expect(component).toBeTruthy();
+
+    tick(500);
+    component.linkSelected();
+    expect(entityUI).toBeDefined();
+  }));
 });

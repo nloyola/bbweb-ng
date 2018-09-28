@@ -1,5 +1,5 @@
 /**
- * A short name that can be used in a URL to identify an entity.
+ * A string that can be used in a URL.
  */
 export interface HasSlug {
 

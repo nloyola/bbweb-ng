@@ -1,8 +1,16 @@
+import { CUSTOM_ELEMENTS_SCHEMA, NgZone } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-
-import { EntityStatusComponent } from './entity-status.component';
 import { TimeagoPipe } from '@app/shared/pipes';
+import { EntityStatusComponent } from './entity-status.component';
+
+class NgZoneMock {
+  runOutsideAngular (fn: Function) {
+    return fn();
+  }
+  run(fn: Function) {
+    return fn();
+  }
+}
 
 describe('EntityStatusComponent', () => {
   let component: EntityStatusComponent;
@@ -16,16 +24,131 @@ describe('EntityStatusComponent', () => {
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(EntityStatusComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
+    fixture.detectChanges();
     expect(component).toBeTruthy();
   });
+
+  it('use badges defaults to true', () => {
+    component.useBadges = undefined;
+    fixture.detectChanges();
+    expect(component.useBadges).toBe(true);
+  });
+
+  it('when useBadges is true, badge class defaults to badge-secondary', () => {
+    component.useBadges = true;
+    component.bsClass = undefined;
+    fixture.detectChanges();
+    expect(component.bsClass).toBe('badge-secondary');
+  });
+
+  it('when useBadges is false, badge class defaults to text-info', () => {
+    component.useBadges = false;
+    component.bsClass = undefined;
+    fixture.detectChanges();
+    expect(component.bsClass).toBe('text-info');
+  });
+
+  describe('for displaying of dates', () => {
+
+    let pipe: TimeagoPipe;
+
+    beforeEach(() => {
+      pipe = new TimeagoPipe(null, new NgZoneMock() as NgZone);
+    });
+
+    describe('for timeAdded', () => {
+
+      it('if timeAdded is less than year 1900, it is reassigned to undefined', () => {
+        component.timeAdded = new Date('31 Dec 1899');
+        fixture.detectChanges();
+        expect(component.timeAdded).toBeUndefined();
+      });
+
+      it('if timeAdded is greater or equal than year 1900, it is not reassigned', () => {
+        const date = new Date('01 Jan 1900')
+        component.timeAdded = date;
+        fixture.detectChanges();
+        expect(component.timeAdded).toBe(date);
+      });
+
+      it('displayed content', () => {
+        let textContent;
+
+        [ new Date('31 Dec 1899'), new Date('01 Jan 1900') ].forEach(date => {
+          [ true, false ].forEach(useBadges => {
+            component.state = undefined;
+            component.timeAdded = date;
+            component.useBadges = useBadges;
+            component.ngOnInit();
+            fixture.detectChanges();
+
+            if (useBadges) {
+              const spanEls = fixture.debugElement.nativeElement.querySelectorAll('span.badge');
+              expect(spanEls.length).toBeGreaterThan(0);
+              textContent = spanEls[0].textContent;
+            } else {
+              const smallEls = fixture.debugElement.nativeElement.querySelectorAll('small');
+              expect(smallEls.length).toBeGreaterThan(0);
+              textContent = smallEls[0].textContent;
+            }
+
+            expect(textContent).toContain('Added');
+            if (date.getFullYear() < 1900) {
+              expect(textContent).toContain('On System Initialization');
+            } else {
+              expect(textContent).toContain(pipe.transform(date.toString()));
+            }
+          });
+        });
+      });
+    });
+
+    describe('for timeModified', () => {
+
+      it('when timeModified is given, it is displayed', () => {
+        const date = new Date('10 Jan 2018')
+        let textContent;
+
+        [ new Date('01 Jan 2000'), null ].forEach(date => {
+          [ true, false ].forEach(useBadges => {
+            component.state = undefined;
+            component.timeModified = date;
+            component.useBadges = useBadges;
+            component.ngOnInit();
+            fixture.detectChanges();
+
+            if (useBadges) {
+              const spanEls = fixture.debugElement.nativeElement.querySelectorAll('span.badge');
+              expect(spanEls.length).toBeGreaterThan(1);
+              textContent = spanEls[1].textContent;
+            } else {
+              const smallEls = fixture.debugElement.nativeElement.querySelectorAll('small');
+              expect(smallEls.length).toBeGreaterThan(1);
+              textContent = smallEls[1].textContent;
+            }
+
+            expect(textContent).toContain('Modified');
+            if (date !== null) {
+              expect(textContent).toContain(pipe.transform(date.toString()));
+            } else {
+              expect(textContent).toContain('Never');
+            }
+          });
+        });
+
+      });
+
+    });
+
+  });
+
 });

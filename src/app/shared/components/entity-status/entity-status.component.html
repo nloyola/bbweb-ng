@@ -1,4 +1,4 @@
-<ng-container class="m-0 p-0" *ngIf="useBadges">
+<ng-container class="m-0 p-0" *ngIf="useBadges; else noBadges">
   <span class="badge" [ngClass]="bsClass" *ngIf="state">
     <ng-container i18n>State:&nbsp;</ng-container> {{state}}
   </span>
@@ -15,19 +15,22 @@
     <ng-container *ngIf="! timeModified" i18n>Never</ng-container>
   </span>
 </ng-container>
-<ng-container class="m-0 p-0" *ngIf="!useBadges">
-  <small [ngClass]="bsClass" *ngIf="state">
-    <span><strong i18n>State:&nbsp;</strong> {{state}},&nbsp;</span>
-  </small>
-  <small [ngClass]="bsClass" >
-    <strong i18n>Added:&nbsp;</strong>
-    <span *ngIf="!timeAdded" i18n>On System Initialization</span>
-    <span *ngIf="timeAdded" i18n>{{timeAdded | timeago}}</span>
-    ,&nbsp;
-  </small>
-  <small [ngClass]="bsClass" >
-    <strong i18n>Modified:&nbsp;</strong>
-    <span *ngIf="!timeModified" i18n>Never</span>
-    <span *ngIf="timeModified" i18n>{{timeModified | timeago}}</span>
-  </small>
-</ng-container>
+
+<ng-template #noBadges>
+  <ng-container class="m-0 p-0">
+    <small [ngClass]="bsClass" *ngIf="state">
+      <span><strong i18n>State:&nbsp;</strong> {{state}},&nbsp;</span>
+    </small>
+    <small [ngClass]="bsClass" >
+      <strong i18n>Added:&nbsp;</strong>
+      <span *ngIf="!timeAdded" i18n>On System Initialization</span>
+      <span *ngIf="timeAdded" i18n>{{timeAdded | timeago}}</span>
+      ,&nbsp;
+    </small>
+    <small [ngClass]="bsClass" >
+      <strong i18n>Modified:&nbsp;</strong>
+      <span *ngIf="!timeModified" i18n>Never</span>
+      <span *ngIf="timeModified" i18n>{{timeModified | timeago}}</span>
+    </small>
+  </ng-container>
+</ng-template>

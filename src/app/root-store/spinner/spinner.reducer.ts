@@ -44,8 +44,8 @@ export function reducer(state = initialState, action: any): State {
     case SpinnerActionTypes.HideSpinner: {
       // We remove trigger action from actionsInProgress array
       const newActionsInProgress = action.payload.triggerAction
-        ? (state.actionsInProgress
-           .filter((currentAction: Action) => currentAction !== action.payload.triggerAction))
+        ? state.actionsInProgress.filter(
+          (currentAction: Action) => currentAction !== action.payload.triggerAction)
         : state.actionsInProgress;
 
       return {

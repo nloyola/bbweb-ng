@@ -1,9 +1,9 @@
-import { SearchParamsReply } from '@app/domain/search-params-reply.model';
+import { PagedReplyEntityIds } from '@app/domain/paged-reply.model';
 import { Study } from '@app/domain/studies/study.model';
 
 export interface StudySearchReply {
 
-  reply?: SearchParamsReply;
+  reply?: PagedReplyEntityIds;
 
   studies: Study[];
 

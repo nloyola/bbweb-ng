@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable, Subject, merge, timer } from 'rxjs';
 import { debounce, distinct, map, takeUntil } from 'rxjs/operators';
 
-import { EntityStateInfo, SearchFilters } from '@app/domain';
+import { EntityStateInfo, SearchFilterValues } from '@app/domain';
 
 @Component({
   selector: 'app-entity-filters',
@@ -16,7 +16,7 @@ export class EntityFiltersComponent implements OnInit, OnDestroy {
   @Input() useEmailFilter = false;
   @Input() stateData: EntityStateInfo[] = [];
 
-  @Output() filters = new EventEmitter<SearchFilters>();
+  @Output() filters = new EventEmitter<SearchFilterValues>();
 
   form: FormGroup;
 
@@ -54,7 +54,7 @@ export class EntityFiltersComponent implements OnInit, OnDestroy {
         distinct(() => this.form.value),
         takeUntil(this.unsubscribe$))
       .subscribe(value => {
-        const filters: SearchFilters = {};
+        const filters: SearchFilterValues = {};
         if (this.useNameFilter) {
           filters.name = this.form.value.name;
         }

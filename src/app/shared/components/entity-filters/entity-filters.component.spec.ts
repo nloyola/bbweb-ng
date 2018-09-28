@@ -5,7 +5,7 @@ import { By } from '@angular/platform-browser';
 import * as faker from 'faker';
 
 import { EntityFiltersComponent } from './entity-filters.component';
-import { EntityStateInfo, SearchFilters } from '@app/domain';
+import { EntityStateInfo, SearchFilterValues } from '@app/domain';
 import { SearchFilter } from '@app/domain/search-filters';
 import { Factory } from '@app/test/factory';
 
@@ -86,7 +86,7 @@ describe('EntityFiltersComponent', () => {
 
   it('should send a `filters` event when name input changes', fakeAsync(() => {
     const newValue = factory.stringNext();
-    let filters: SearchFilters;
+    let filters: SearchFilterValues;
     component.filters.subscribe((f: SearchFilter) => filters = f);
 
     component.useNameFilter = true;
@@ -102,7 +102,7 @@ describe('EntityFiltersComponent', () => {
 
   it('should send a `filters` event when email input changes', fakeAsync(() => {
     const newEmail = faker.internet.email();
-    let filters: SearchFilters;
+    let filters: SearchFilterValues;
     component.filters.subscribe((f: SearchFilter) => filters = f);
 
     component.useEmailFilter = true;
@@ -117,7 +117,7 @@ describe('EntityFiltersComponent', () => {
   }));
 
   it('should send a `filters` event when state selection changes', fakeAsync(() => {
-    let filters: SearchFilters;
+    let filters: SearchFilterValues;
     component.filters.subscribe((f: SearchFilter) => filters = f);
 
     const stateData: EntityStateInfo[] = [
@@ -135,7 +135,7 @@ describe('EntityFiltersComponent', () => {
   }));
 
   it('should send a `filters` event when the filters are cleared', fakeAsync(() => {
-    let filters: SearchFilters;
+    let filters: SearchFilterValues;
     component.filters.subscribe((f: SearchFilter) => filters = f);
 
     const stateData: EntityStateInfo[] = [

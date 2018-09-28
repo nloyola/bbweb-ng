@@ -18,10 +18,11 @@ describe('StudyCountsComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(StudyCountsComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
+    component.countData = [];
+    fixture.detectChanges();
     expect(component).toBeTruthy();
   });
 });

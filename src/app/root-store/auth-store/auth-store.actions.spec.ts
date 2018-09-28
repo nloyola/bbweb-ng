@@ -3,7 +3,7 @@ import { User } from '@app/domain/users';
 import { Factory } from '@app/test/factory';
 import * as faker from 'faker';
 
-describe('auth-store-module actions', () => {
+describe('auth-store actions', () => {
 
   let factory: Factory;
 

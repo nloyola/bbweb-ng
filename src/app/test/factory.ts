@@ -214,7 +214,12 @@ export class Factory {
 
   pagedReply<T extends ConcurrencySafeEntity>(entities: T[]): PagedReply<T> {
     const searchParams = new SearchParams();
-    return new PagedReply<T>(searchParams, entities, 0, entities.length);
+    return {
+      searchParams,
+      entities,
+      offset: 0,
+      total: entities.length
+    };
   }
 
   private domainEntityNameNext(domainEntityType?: string) {

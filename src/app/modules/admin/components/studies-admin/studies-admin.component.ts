@@ -1,8 +1,17 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { EntityStateInfo, LabelledId, SearchFilters, SearchParams } from '@app/domain';
+import { EntityStateInfo, LabelledId, SearchFilterValues, SearchParams } from '@app/domain';
 import { NameFilter, SearchFilter, StateFilter } from '@app/domain/search-filters';
-import { Study, StudyCountInfo, StudySearchReply, StudyState, StudyStateUIMap } from '@app/domain/studies';
+import {
+  Study,
+  StudyCountInfo,
+  StudySearchReply,
+  StudyState,
+  StudyStateUIMap,
+  StudyCounts,
+  studyCountsToUIMap,
+  StudyCountsUIMap
+} from '@app/domain/studies';
 import { StudyUI } from '@app/domain/studies/study-ui.model';
 import { RootStoreState, StudyStoreActions, StudyStoreSelectors } from '@app/root-store';
 import { SpinnerStoreSelectors } from '@app/root-store/spinner';
@@ -29,7 +38,7 @@ export class StudiesAdminComponent implements OnInit, OnDestroy {
   isLoading$: Observable<boolean>;
   serverError$: Observable<boolean>;
   hasLoaded$: Observable<boolean>;
-  studyCountData$: Observable<StudyCountInfo[]>;
+  studyCountData$: Observable<StudyCountsUIMap>;
   studyPageInfo$: Observable<StudyPageInfo>;
 
   studiesLimit = 5;
@@ -62,9 +71,6 @@ export class StudiesAdminComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.isCountsLoading$ =
-      this.store$.pipe(select(SpinnerStoreSelectors.selectSpinnerIsActive));
-
     this.isLoading$ =
       this.store$.pipe(select(StudyStoreSelectors.selectStudySearchActive));
 
@@ -73,43 +79,12 @@ export class StudiesAdminComponent implements OnInit, OnDestroy {
     this.studyCountData$ = this.store$.pipe(
       select(StudyStoreSelectors.selectStudyCounts),
       takeUntil(this.unsubscribe$),
-      map(counts => {
-        if (Object.keys(counts).length === 0) { return []; }
-
-        return [
-          {
-            count: counts.enabledCount,
-            ...StudyStateUIMap.get(StudyState.Enabled)
-          },
-          {
-            count: counts.disabledCount,
-            ...StudyStateUIMap.get(StudyState.Disabled)
-          },
-          {
-            count: counts.retiredCount,
-            ...StudyStateUIMap.get(StudyState.Retired)
-          }
-        ];
-      }));
+      map(studyCountsToUIMap));
 
     this.studyPageInfo$ = this.store$.pipe(
       select(StudyStoreSelectors.selectStudySearchRepliesAndEntities),
       takeUntil(this.unsubscribe$),
-      map((searchReply: StudySearchReply): StudyPageInfo => {
-        if (searchReply === undefined) { return {}; }
-
-        return {
-          hasResultsToDisplay: searchReply.studies.length > 0,
-          hasNoEntitiesToDisplay: ((searchReply.studies.length <= 0)
-                                   && (searchReply.reply.searchParams.filter === '')),
-
-          hasNoResultsToDisplay: ((searchReply.studies.length <= 0)
-                                  && (searchReply.reply.searchParams.filter !== '')),
-
-          studies: searchReply.studies.map(s => new StudyUI(s)),
-          totalStudies: searchReply.reply.total
-        };
-      }));
+      map(this.searchReplyToPageInfo));
 
     this.store$.dispatch(new StudyStoreActions.GetStudyCountsRequest());
     this.applySearchParams();
@@ -120,10 +95,14 @@ export class StudiesAdminComponent implements OnInit, OnDestroy {
     this.unsubscribe$.complete();
   }
 
-  public onFiltersUpdated($event: SearchFilters) {
+  public onFiltersUpdated($event: SearchFilterValues) {
     this.currentPage = 1;
-    this.filters.nameFilter.setValue($event.name);
-    this.filters.stateFilter.setValue($event.stateId);
+    if ($event.name) {
+      this.filters.nameFilter.setValue($event.name);
+    }
+    if ($event.stateId) {
+      this.filters.stateFilter.setValue($event.stateId);
+    }
     this.applySearchParams();
   }
 
@@ -157,4 +136,19 @@ export class StudiesAdminComponent implements OnInit, OnDestroy {
     }));
   }
 
+  private searchReplyToPageInfo(searchReply: StudySearchReply): StudyPageInfo {
+    if (searchReply === undefined) { return {}; }
+
+    return {
+      hasResultsToDisplay: searchReply.studies.length > 0,
+      hasNoEntitiesToDisplay: ((searchReply.studies.length <= 0)
+                               && (searchReply.reply.searchParams.filter === '')),
+
+      hasNoResultsToDisplay: ((searchReply.studies.length <= 0)
+                              && (searchReply.reply.searchParams.filter !== '')),
+
+      studies: searchReply.studies.map(s => new StudyUI(s)),
+      totalStudies: searchReply.reply.total
+    };
+  }
 }
