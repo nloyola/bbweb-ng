@@ -12,13 +12,13 @@ export enum SpinnerActionTypes {
 export class ShowSpinner implements Action {
   readonly type = SpinnerActionTypes.ShowSpinner;
 
-  constructor(public payload: { action: any }) { }
+  constructor(public payload?: any) { }
 }
 
 export class HideSpinner implements Action {
   readonly type = SpinnerActionTypes.HideSpinner;
 
-  constructor(public payload: { action: any }) { }
+  constructor(public payload?: any) { }
 }
 
 export type SpinnerActions = ShowSpinner | HideSpinner;
