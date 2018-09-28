@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { StudyCountInfo } from '@app/domain/studies';
 
 @Component({
@@ -6,13 +6,10 @@ import { StudyCountInfo } from '@app/domain/studies';
   templateUrl: './study-counts.component.html',
   styleUrls: ['./study-counts.component.scss']
 })
-export class StudyCountsComponent implements OnInit {
+export class StudyCountsComponent {
 
   @Input() countData: StudyCountInfo[];
 
   constructor() { }
-
-  ngOnInit() {
-  }
 
 }

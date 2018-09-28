@@ -29,13 +29,8 @@
     <div class="col-sm-12 mt-2">
       <div class="card">
         <div class="card-header bg-default">
-          <app-study-counts [countData]="studyCountData$ | async"
-                            *ngIf="!(isCountsLoading$ | async)">
+          <app-study-counts [countData]="studyCountData$ | async">
           </app-study-counts>
-
-          <app-spinner name="login" [show]="(isCountsLoading$ | async)" i18n>
-            Loading
-          </app-spinner>
 
           <span class="float-right d-inline-block" ngbDropdown>
             <button class="btn btn-sm btn-outline-primary"

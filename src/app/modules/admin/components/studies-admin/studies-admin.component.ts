@@ -8,7 +8,7 @@ import { RootStoreState, StudyStoreActions, StudyStoreSelectors } from '@app/roo
 import { SpinnerStoreSelectors } from '@app/root-store/spinner';
 import { select, Store } from '@ngrx/store';
 import { combineLatest, Observable, Subject } from 'rxjs';
-import { filter, map, takeUntil } from 'rxjs/operators';
+import { filter, map, tap, takeUntil } from 'rxjs/operators';
 
 interface StudyPageInfo {
   hasNoEntitiesToDisplay?: boolean;
@@ -70,31 +70,27 @@ export class StudiesAdminComponent implements OnInit, OnDestroy {
 
     this.serverError$ = this.store$.pipe(select(StudyStoreSelectors.selectStudyError));
 
-    this.hasLoaded$ =
-      combineLatest(this.isLoading$, this.serverError$)
-      .pipe(
-        map(result => !result[0] && (result[1] === null)),
-        takeUntil(this.unsubscribe$));
-
-
     this.studyCountData$ = this.store$.pipe(
       select(StudyStoreSelectors.selectStudyCounts),
-      filter(counts => Object.keys(counts).length !== 0),
       takeUntil(this.unsubscribe$),
-      map(counts => [
-        {
-          count: counts.enabledCount,
-          ...StudyStateUIMap.get(StudyState.Enabled)
-        },
-        {
-          count: counts.disabledCount,
-          ...StudyStateUIMap.get(StudyState.Disabled)
-        },
-        {
-          count: counts.retiredCount,
-          ...StudyStateUIMap.get(StudyState.Retired)
-        }
-      ]));
+      map(counts => {
+        if (Object.keys(counts).length === 0) { return []; }
+
+        return [
+          {
+            count: counts.enabledCount,
+            ...StudyStateUIMap.get(StudyState.Enabled)
+          },
+          {
+            count: counts.disabledCount,
+            ...StudyStateUIMap.get(StudyState.Disabled)
+          },
+          {
+            count: counts.retiredCount,
+            ...StudyStateUIMap.get(StudyState.Retired)
+          }
+        ];
+      }));
 
     this.studyPageInfo$ = this.store$.pipe(
       select(StudyStoreSelectors.selectStudySearchRepliesAndEntities),

@@ -1,9 +1,10 @@
 import { UserState } from '@app/domain/users';
-import { StudyState } from '@app/domain/studies';
+import { StudyState, StudyCounts } from '@app/domain/studies';
 import { ValueTypes, MaxValueCount } from '@app/domain/annotations';
 
 import * as faker from 'faker';
 import * as _ from 'lodash';
+import { ConcurrencySafeEntity, PagedReply, SearchParams } from '@app/domain';
 
 enum DomainEntities {
 
@@ -115,7 +116,7 @@ export class Factory {
 
   userRole(): any {
     const role = this.defaultRole(),
-      userRole = _.omit(role, ['userData', 'parentData']);
+    userRole = _.omit(role, ['userData', 'parentData']);
     return userRole;
   }
 
@@ -168,7 +169,7 @@ export class Factory {
     valueType: ValueTypes.Text,
     maxValueCount: MaxValueCount.None
   })
-    : any {
+  : any {
     const defaults = {
       ...{
         id: this.domainEntityIdNext(DomainEntities.ANNOTATION_TYPE),
@@ -200,6 +201,20 @@ export class Factory {
       ...defaults,
       ...options
     };
+  }
+
+  studyCounts(): StudyCounts {
+    return {
+      total: 3,
+      disabledCount: 1,
+      enabledCount: 1,
+      retiredCount: 1
+    };
+  }
+
+  pagedReply<T extends ConcurrencySafeEntity>(entities: T[]): PagedReply<T> {
+    const searchParams = new SearchParams();
+    return new PagedReply<T>(searchParams, entities, 0, entities.length);
   }
 
   private domainEntityNameNext(domainEntityType?: string) {
