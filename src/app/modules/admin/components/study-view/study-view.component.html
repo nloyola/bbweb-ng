@@ -1,3 +1,17 @@
-<p>
-  study-view works!
-</p>
+<div class="pb-2 mt-4 mb-2 border-bottom">
+  <h1>{{ study.name }} <small i18n>Administration</small></h1>
+</div>
+<div class="row">
+  <div class="col-sm-12 mt-4">
+    <ngb-tabset [activeId]="activeTabId" (tabChange)="tabSelection($event)">
+      <ngb-tab *ngFor="let tabId of tabIds" [id]="tabId">
+        <ng-template ngbTabTitle>
+          {{tabData[tabId].heading}}
+        </ng-template>
+        <ng-template ngbTabContent>
+          <router-outlet></router-outlet>
+        </ng-template>
+      </ngb-tab>
+    </ngb-tabset>
+  </div>
+</div>

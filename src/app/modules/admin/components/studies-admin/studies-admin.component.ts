@@ -1,23 +1,13 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { EntityStateInfo, LabelledId, SearchFilterValues, SearchParams } from '@app/domain';
 import { NameFilter, SearchFilter, StateFilter } from '@app/domain/search-filters';
-import {
-  Study,
-  StudyCountInfo,
-  StudySearchReply,
-  StudyState,
-  StudyStateUIMap,
-  StudyCounts,
-  studyCountsToUIMap,
-  StudyCountsUIMap
-} from '@app/domain/studies';
+import { studyCountsToUIMap, StudyCountsUIMap, StudySearchReply, StudyState, StudyStateUIMap } from '@app/domain/studies';
 import { StudyUI } from '@app/domain/studies/study-ui.model';
 import { RootStoreState, StudyStoreActions, StudyStoreSelectors } from '@app/root-store';
-import { SpinnerStoreSelectors } from '@app/root-store/spinner';
 import { select, Store } from '@ngrx/store';
-import { combineLatest, Observable, Subject } from 'rxjs';
-import { filter, map, tap, takeUntil } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
 
 interface StudyPageInfo {
   hasNoEntitiesToDisplay?: boolean;
@@ -53,7 +43,8 @@ export class StudiesAdminComponent implements OnInit, OnDestroy {
   currentPage = 1;
 
   constructor(private store$: Store<RootStoreState.State>,
-              private router: Router) {
+              private router: Router,
+              private route: ActivatedRoute) {
     this.stateData = Object.values(StudyState).map(state => ({
       id: state.toLowerCase(),
       label: StudyStateUIMap.get(state).stateLabel
@@ -117,8 +108,8 @@ export class StudiesAdminComponent implements OnInit, OnDestroy {
     this.applySearchParams();
   }
 
-  public studySelected($event: Study) {
-    this.router.navigate([ '/admin/studies/view', $event.slug ]);
+  public studySelected($event: StudyUI) {
+    this.router.navigate([ 'view', $event.slug, 'summary' ], { relativeTo: this.route });
  }
 
   private getFilters() {

@@ -16,6 +16,8 @@ import { TruncatePipe } from '@app/shared/pipes/truncate.pipe';
 import { TimeagoPipe } from '@app/shared/pipes/timeago.pipe';
 import { EntityStatusComponent } from './components/entity-status/entity-status.component';
 import { EntitySummaryComponent } from './components/entity-summary/entity-summary.component';
+import { TruncateToggleComponent } from './components/truncate-toggle/truncate-toggle.component';
+import { NlToBrPipe } from '@app/shared/pipes/nl-to-br.pipe';
 
 @NgModule({
   imports: [
@@ -37,7 +39,9 @@ import { EntitySummaryComponent } from './components/entity-summary/entity-summa
     TimeagoPipe,
     TruncatePipe,
     EntityStatusComponent,
-    EntitySummaryComponent
+    EntitySummaryComponent,
+    TruncateToggleComponent,
+    NlToBrPipe
   ],
   exports: [
     BreadcrumbsComponent,
@@ -49,7 +53,9 @@ import { EntitySummaryComponent } from './components/entity-summary/entity-summa
     TimeagoPipe,
     TruncatePipe,
     EntityStatusComponent,
-    EntitySummaryComponent
+    EntitySummaryComponent,
+    TruncateToggleComponent,
+    NlToBrPipe
   ]
 })
 export class SharedModule { }

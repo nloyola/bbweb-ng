@@ -1,4 +1,6 @@
-import { StudyState, StudyCounts, StudyStateUIMap } from "@app/domain/studies";
+import { StudyState } from "@app/domain/studies/study-state.enum";
+import { StudyCounts } from "@app/domain/studies/study-counts.model";
+import { StudyStateUIMap } from "@app/domain/studies/study-state-ui-map.model";
 
 export interface StudyCountInfo {
 

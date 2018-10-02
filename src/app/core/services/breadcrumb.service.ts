@@ -1,23 +1,14 @@
-import {
-  ActivatedRoute,
-  ActivatedRouteSnapshot,
-  NavigationEnd,
-  Router,
-  RouterState,
-  RouterStateSnapshot,
-  UrlSegment
-} from '@angular/router';
-import { Observable, BehaviorSubject, Subscription, concat, from, of } from 'rxjs';
-import { distinct, filter, first, flatMap, toArray } from 'rxjs/operators';
+import { Injectable } from '@angular/core';
+import { ActivatedRoute, ActivatedRouteSnapshot, NavigationEnd, Router, RouterStateSnapshot, UrlSegment } from '@angular/router';
 import { Crumb } from '@app/domain/crumb';
-
 // borrowed from:
 //
 // https://github.com/McNull/ngx-breadcrumbs/blob/master/src/lib/mc-breadcrumbs/src/service/mc-breadcrumbs.service.ts
-
 import * as template from 'lodash.template';
 import * as templateSettings from 'lodash.templatesettings';
-import { Injectable } from '@angular/core';
+import { BehaviorSubject, concat, from, Observable, of } from 'rxjs';
+import { distinct, filter, first, flatMap, toArray } from 'rxjs/operators';
+
 
 const _ = {
   template: template,
@@ -33,11 +24,9 @@ export class BreadcrumbService {
 
   private breadcrumbs = new BehaviorSubject<Crumb[]>([]);
 
-  // (custom-set-faces '(tide-hl-identifier-face ((t (:foreground "#030303" :background "#6b6b6b")))))
-
   constructor(private router: Router, private activatedRoute: ActivatedRoute) {
     this.router.events
-      .pipe(filter((x) => x instanceof NavigationEnd))
+      .pipe(filter(x => x instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
 
         const currentRoot = router.routerState.snapshot.root;

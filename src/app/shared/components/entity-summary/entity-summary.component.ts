@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { ConcurrencySafeEntity, EntityUI } from '@app/domain';
+import { ConcurrencySafeEntity, DomainEntityUI, EntityUI } from '@app/domain';
 
 @Component({
   selector: 'app-entity-summary',
@@ -8,11 +8,11 @@ import { ConcurrencySafeEntity, EntityUI } from '@app/domain';
 })
 export class EntitySummaryComponent<T extends ConcurrencySafeEntity> implements OnInit {
 
-  @Input() entityUI: EntityUI<T>;
+  @Input() entity: DomainEntityUI<T>;
   @Input() icon: string;
   @Input() iconClass: string;
 
-  @Output() selected = new EventEmitter<EntityUI<T>>();
+  @Output() selected = new EventEmitter<DomainEntityUI<T>>();
 
   constructor() { }
 
@@ -20,7 +20,7 @@ export class EntitySummaryComponent<T extends ConcurrencySafeEntity> implements 
   }
 
   linkSelected() {
-    this.selected.emit(this.entityUI);
+    this.selected.emit(this.entity);
   }
 
 }

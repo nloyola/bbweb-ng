@@ -90,4 +90,17 @@ export class StudyService implements SearchService<Study> {
           throw new Error('expected a study object');
         }));
   }
+
+  enableAllowed(studyId: string): Observable<any> {
+    return this.http.get<ApiReply>(`${this.BASE_URL}/enableAllowed/${studyId}`)
+      .pipe(map((reply: ApiReply) => {
+          if (reply && reply.data) {
+            return {
+              studyId,
+              allowed: reply.data
+            };
+          }
+          throw new Error('expected a valid response');
+        }));
+  }
 }

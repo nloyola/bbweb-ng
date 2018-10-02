@@ -65,4 +65,19 @@ export class StudyStoreEffects {
     )
   );
 
+  @Effect()
+  enableAllowedRequest$: Observable<Action> = this.actions$.pipe(
+    ofType<StudyActions.GetEnableAllowedRequest>(
+      StudyActions.ActionTypes.GetEnableAllowedRequest),
+    map(action => action.payload),
+    switchMap(
+      payload =>
+        this.studyService.enableAllowed(payload.studyId)
+        .pipe(
+          // delay(5000),
+          map(value => new StudyActions.GetEnableAllowedSuccess(value)),
+          catchError(error => observableOf(new StudyActions.GetEnableAllowedFailure({ error }))))
+    )
+  );
+
 }

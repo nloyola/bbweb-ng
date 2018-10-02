@@ -1,20 +1,15 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { Store, StoreModule, combineReducers } from '@ngrx/store';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-
-import {
-  AuthStoreActions,
-  AuthStoreReducer,
-} from '@app/root-store/auth-store';
-
-import { HeaderComponent } from './header.component';
-import { User, UserRole } from '@app/domain/users';
 import { RoleIds } from '@app/domain/access';
+import { User } from '@app/domain/users';
+import { AuthStoreActions, AuthStoreReducer } from '@app/root-store/auth-store';
 import { Factory } from '@app/test/factory';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { Store, StoreModule } from '@ngrx/store';
+import { HeaderComponent } from './header.component';
 
 describe('HeaderComponent', () => {
 

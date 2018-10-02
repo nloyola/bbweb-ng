@@ -6,18 +6,13 @@ import { SearchParams, PagedReplyEntityIds } from '@app/domain';
 import { StudyCounts } from '@app/domain/studies/study-counts.model';
 
 export interface State extends EntityState<Study> {
-
   lastAddedId: string;
-
   lastSearch?: SearchParams;
-
   error?: any;
-
   searchActive?: boolean;
-
-  searchReplies: { [ url: string ]: PagedReplyEntityIds };
-
-  studyCounts: StudyCounts;
+  searchReplies?: { [ url: string ]: PagedReplyEntityIds };
+  studyCounts?: StudyCounts;
+  enableAllowedIds?: string[];
 }
 
 export const adapter: EntityAdapter<Study> = createEntityAdapter<Study>();
@@ -28,7 +23,8 @@ export const initialState: State = adapter.getInitialState({
   error: null,
   searchActive: false,
   searchReplies: {},
-  studyCounts: {}
+  studyCounts: {},
+  enableAllowedIds: []
 });
 
 export function reducer(state = initialState, action: StudyActions): State {
@@ -127,6 +123,22 @@ export function reducer(state = initialState, action: StudyActions): State {
     }
 
     case ActionTypes.GetStudyFailure: {
+      return {
+        ...state,
+        error: action.payload.error
+      };
+    }
+
+    case ActionTypes.GetEnableAllowedSuccess: {
+      const enableAllowedIds = action.payload.allowed
+        ? [ ...state.enableAllowedIds, action.payload.studyId ] : state.enableAllowedIds;
+      return {
+        ...state,
+        enableAllowedIds
+      };
+    }
+
+    case ActionTypes.GetEnableAllowedFailure: {
       return {
         ...state,
         error: action.payload.error

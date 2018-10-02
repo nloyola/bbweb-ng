@@ -1,12 +1,15 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
-
+import { RouterModule, Routes } from '@angular/router';
+import { AuthGuard } from '@app/core/guards';
+import { StudyCollectionComponent } from '@app/modules/admin/components/study-collection/study-collection.component';
+import { StudyParticipantsComponent } from '@app/modules/admin/components/study-participants/study-participants.component';
+import { StudyProcessingComponent } from '@app/modules/admin/components/study-processing/study-processing.component';
+import { StudySummaryComponent } from '@app/modules/admin/components/study-summary/study-summary.component';
+import { StudyViewComponent } from '@app/modules/admin/components/study-view/study-view.component';
+import { StudyResolver } from '@app/modules/admin/services/study-resolver.service';
 import { AdminComponent } from './components/admin/admin.component';
 import { StudiesAdminComponent } from './components/studies-admin/studies-admin.component';
 import { StudyAddComponent } from './components/study-add/study-add.component';
-import { AuthGuard } from '@app/core/guards';
-import { StudyViewComponent } from '@app/modules/admin/components/study-view/study-view.component';
-import { StudyResolver } from '@app/modules/admin/services/study-resolver.service';
 
 export const routes: Routes = [
   {
@@ -45,7 +48,38 @@ export const routes: Routes = [
             },
             data: {
               breadcrumbs: '{{ study.name }}'
-            }
+            },
+            children: [
+              { path: '', redirectTo: 'summary', pathMatch: 'full' },
+              {
+                path: 'summary',
+                component: StudySummaryComponent,
+                data: {
+                  breadcrumbs: 'Summary'
+                }
+              },
+              {
+                path: 'participants',
+                component: StudyParticipantsComponent,
+                data: {
+                  breadcrumbs: 'Participants'
+                }
+              },
+              {
+                path: 'collection',
+                component: StudyCollectionComponent,
+                data: {
+                  breadcrumbs: 'Collection'
+                }
+              },
+              {
+                path: 'processing',
+                component: StudyProcessingComponent,
+                data: {
+                  breadcrumbs: 'Processing'
+                }
+              },
+            ]
           }
         ]
       }

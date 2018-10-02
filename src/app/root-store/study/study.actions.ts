@@ -25,6 +25,9 @@ export enum ActionTypes {
   GetStudySuccess = '[Study] Get Study Success',
   GetStudyFailure = '[Study] Get Study Failure',
 
+  GetEnableAllowedRequest = '[Study] Get Enable Allowed Request',
+  GetEnableAllowedSuccess = '[Study] Get Enable Allowed Success',
+  GetEnableAllowedFailure = '[Study] Get Enable Allowed Failure',
 }
 
 @ShowSpinner()
@@ -118,6 +121,27 @@ export class GetStudyFailure implements Action {
   constructor(public payload: { error: any }) { }
 }
 
+@ShowSpinner()
+export class GetEnableAllowedRequest implements Action {
+  readonly type = ActionTypes.GetEnableAllowedRequest;
+
+  constructor(public payload: { studyId: string }) { }
+}
+
+@HideSpinner(ActionTypes.GetEnableAllowedRequest)
+export class GetEnableAllowedSuccess implements Action {
+  readonly type = ActionTypes.GetEnableAllowedSuccess;
+
+  constructor(public payload: { studyId: string, allowed: boolean }) { }
+}
+
+@HideSpinner(ActionTypes.GetEnableAllowedRequest)
+export class GetEnableAllowedFailure implements Action {
+  readonly type = ActionTypes.GetEnableAllowedFailure;
+
+  constructor(public payload: { error: any }) { }
+}
+
 export type StudyActions =
   GetStudyCountsRequest
   | GetStudyCountsSuccess
@@ -132,4 +156,7 @@ export type StudyActions =
   | UpdateStudy
   | GetStudyRequest
   | GetStudySuccess
-  | GetStudyFailure;
+  | GetStudyFailure
+  | GetEnableAllowedRequest
+  | GetEnableAllowedSuccess
+  | GetEnableAllowedFailure;

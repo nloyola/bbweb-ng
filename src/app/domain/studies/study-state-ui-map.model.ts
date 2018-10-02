@@ -1,9 +1,7 @@
+import { EntityUI } from "@app/domain/entity-ui.model";
 import { StudyState } from "@app/domain/studies/study-state.enum";
-import { EntityUI, NoEntityUI } from "@app/domain/entity-ui.model";
-import { Study } from "@app/domain/studies/study.model";
-import { ConcurrencySafeEntity } from "@app/domain/concurrency-safe-entity.model";
 
-export const StudyStateUIMap = new Map<StudyState, NoEntityUI<Study>>([
+export const StudyStateUIMap = new Map<StudyState, EntityUI>([
   [
     StudyState.Disabled,
     {
