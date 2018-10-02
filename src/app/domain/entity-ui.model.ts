@@ -9,6 +9,6 @@ export interface EntityUI {
 export interface DomainEntityUI<T extends ConcurrencySafeEntity> {
   readonly entity: T;
   stateLabel(): string;
-  icon(): string;
-  iconClass(): string;
+  stateIcon(): string;
+  stateIconClass(): string;
 }

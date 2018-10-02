@@ -28,6 +28,10 @@ export enum ActionTypes {
   GetEnableAllowedRequest = '[Study] Get Enable Allowed Request',
   GetEnableAllowedSuccess = '[Study] Get Enable Allowed Success',
   GetEnableAllowedFailure = '[Study] Get Enable Allowed Failure',
+
+  UpdateStudyRequest = '[Study] Update Study Request',
+  UpdateStudySuccess = '[Study] Update Study Success',
+  UpdateStudyFailure = '[Study] Update Study Failure',
 }
 
 @ShowSpinner()
@@ -88,16 +92,29 @@ export class AddStudyFailure implements Action {
   constructor(public payload: { error: any }) { }
 }
 
-export class UpsertStudy implements Action {
-  readonly type = ActionTypes.UpsertStudy;
+@ShowSpinner()
+export class UpdateStudyRequest implements Action {
+  readonly type = ActionTypes.UpdateStudyRequest;
+
+  constructor(public payload: {
+    study: Study,
+    attributeName: string,
+    valueAsStr: string
+  }) { }
+}
+
+@HideSpinner(ActionTypes.UpdateStudyRequest)
+export class UpdateStudySuccess implements Action {
+  readonly type = ActionTypes.UpdateStudySuccess;
 
   constructor(public payload: { study: Study }) { }
 }
 
-export class UpdateStudy implements Action {
-  readonly type = ActionTypes.UpdateStudy;
+@HideSpinner(ActionTypes.UpdateStudyRequest)
+export class UpdateStudyFailure implements Action {
+  readonly type = ActionTypes.UpdateStudyFailure;
 
-  constructor(public payload: { study: Update<Study> }) { }
+  constructor(public payload: { error: any }) { }
 }
 
 @ShowSpinner()
@@ -152,11 +169,12 @@ export type StudyActions =
   | AddStudyRequest
   | AddStudySuccess
   | AddStudyFailure
-  | UpsertStudy
-  | UpdateStudy
   | GetStudyRequest
   | GetStudySuccess
   | GetStudyFailure
   | GetEnableAllowedRequest
   | GetEnableAllowedSuccess
-  | GetEnableAllowedFailure;
+  | GetEnableAllowedFailure
+  | UpdateStudyRequest
+  | UpdateStudySuccess
+  | UpdateStudyFailure;

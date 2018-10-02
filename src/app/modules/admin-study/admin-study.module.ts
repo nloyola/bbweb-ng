@@ -14,6 +14,7 @@ import { StudyParticipantsComponent } from './components/study-participants/stud
 import { StudyProcessingComponent } from './components/study-processing/study-processing.component';
 import { StudySummaryComponent } from './components/study-summary/study-summary.component';
 import { StudyViewComponent } from './components/study-view/study-view.component';
+import { ModalInputModule } from '@app/modules/modal-input/modal-input.module';
 
 @NgModule({
   imports: [
@@ -21,10 +22,11 @@ import { StudyViewComponent } from './components/study-view/study-view.component
     FormsModule,
     ReactiveFormsModule,
     MaterialModule,
+    FontAwesomeModule,
     SharedModule,
-    AdminStudyRoutingModule,
     NgbModule,
-    FontAwesomeModule
+    AdminStudyRoutingModule,
+    ModalInputModule
   ],
   declarations: [
     StudiesAdminComponent,

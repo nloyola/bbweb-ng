@@ -8,9 +8,14 @@ const routes: Routes = [
     loadChildren: '@app/modules/admin/admin.module#AdminModule'
   },
   {
-    path: '**',
+    path: '404',
     component: PageNotFoundComponent
+  },
+  {
+    path: '**',
+    redirectTo: '/404'
   }
+
 ];
 
 @NgModule({

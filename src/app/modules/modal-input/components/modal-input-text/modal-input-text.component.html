@@ -1,0 +1,29 @@
+<ng-template #modalBody>
+  <form class="form-horizontal"
+        [formGroup]="textForm"
+        autocomplete="on"
+        novalidate>
+
+    <div class="form-group row">
+      <label for="email" class="col-md-3 col-form-label" i18n>{{label}}</label>
+      <div class="col-md-8">
+        <input class="form-control"
+               type="text"
+               formControlName="text">
+      </div>
+      <div class="col-md-8 offset-3" *ngIf="text.invalid && text.touched">
+        <div class="text-danger small" *ngIf="text.errors.required" i18n>
+          A value is required
+        </div>
+        <div class="text-danger small" *ngIf="text.errors.minLength" i18n>
+          A value with a minimum length of {{minlength}} is required
+        </div>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+<app-modal-input [title]="title"
+                 [modalBodyTemplate]="modalBody"
+                 [modalClose]="close()">
+</app-modal-input>

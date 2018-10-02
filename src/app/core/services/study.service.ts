@@ -91,10 +91,50 @@ export class StudyService implements SearchService<Study> {
         }));
   }
 
-  enableAllowed(studyId: string): Observable<any> {
-    return this.http.get<ApiReply>(`${this.BASE_URL}/enableAllowed/${studyId}`)
+  update(study: Study,
+         attributeName: string,
+         valueAsString: string): Observable<Study> {
+    let json;
+    let url;
+
+    switch (attributeName) {
+      case 'name':
+        json = { name: valueAsString };
+        url = `${this.BASE_URL}/name/${study.id}`;
+        break;
+      case 'description':
+        json = { description: valueAsString };
+        url = `${this.BASE_URL}/description/${study.id}`;
+        break;
+      case 'state':
+        if (![ 'disable', 'enable', 'retire', 'unretire'].includes(valueAsString)) {
+          throw new Error('invalid state change for study: ' + valueAsString);
+        }
+        json = {};
+        url = `${this.BASE_URL}/${valueAsString}/${study.id}`;
+        break;
+
+      default:
+        throw new Error('invalid attribute name for update: ' + attributeName);
+    }
+
+    json['expectedVersion'] = study.version;
+
+    return this.http.post<ApiReply>(url, json)
       .pipe(map((reply: ApiReply) => {
           if (reply && reply.data) {
+            return new Study().deserialize(reply.data);
+          }
+          throw new Error('expected a study object');
+        }));
+  }
+
+  enableAllowed(studyId: string): Observable<any> {
+    return this.http.get<ApiReply>(`${this.BASE_URL}/enableAllowed/${studyId}`)
+      .pipe(
+        //delay(1000),
+        map((reply: ApiReply) => {
+          if (reply && (reply.data !== undefined)) {
             return {
               studyId,
               allowed: reply.data

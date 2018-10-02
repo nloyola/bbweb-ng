@@ -1,4 +1,4 @@
-import { createSelector, createFeatureSelector } from '@ngrx/store';
+import { createSelector, createFeatureSelector, MemoizedSelector } from '@ngrx/store';
 import * as fromSpinner from './spinner.reducer';
 
 // borrowed from here:
@@ -8,6 +8,7 @@ import * as fromSpinner from './spinner.reducer';
 export const selectSpinnerEntity =
   createFeatureSelector<fromSpinner.State>('spinner');
 
-export const isActive = (state: fromSpinner.State) => state.active > 0;
+export const isActive = (state: fromSpinner.State): boolean => state.active > 0;
 
-export const selectSpinnerIsActive = createSelector(selectSpinnerEntity, isActive);
+export const selectSpinnerIsActive: MemoizedSelector<object, boolean> =
+  createSelector(selectSpinnerEntity, isActive);

@@ -22,9 +22,9 @@ import { SpinnerStoreSelectors } from '@app/root-store/spinner';
 })
 export class LoginComponent implements OnInit, OnDestroy {
 
-  @ViewChild('content') private content;
+  @ViewChild('modal') private modal;
   private unsubscribe$: Subject<void> = new Subject<void>();
-  isLoggingIn$: Observable<any>;
+  isLoggingIn$: Observable<boolean>;
   returnUrl: string;
   loginForm: FormGroup;
   faSpinner = faSpinner;
@@ -63,7 +63,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       .subscribe((err: any) => {
         this.store$.dispatch(new AuthStoreActions.LoginClearFailureAction());
         this.modalService
-          .open(this.content, { ariaLabelledBy: 'modal-basic-title' }).result
+          .open(this.modal, { ariaLabelledBy: 'modal-basic-title' }).result
           .then(() => this.navigateToReturnUrl())
           .catch(() => this.navigateToReturnUrl());
       });

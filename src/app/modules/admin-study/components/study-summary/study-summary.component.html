@@ -1,5 +1,8 @@
 <div class="card mt-2">
-  <div class="card-header">
+  <div class="card-header" *ngIf="!(isLoading$ | async); else showLoading">
+    <mat-icon [ngClass]="study.stateIconClass()">
+      {{study.stateIcon()}}
+    </mat-icon>
     {{study.name}}
     <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
 
@@ -24,7 +27,7 @@
           </mat-icon>
           <ng-container i18n>Disable this study</ng-container>
         </a>
-        <a class="dropdown-item" *ngIf="study.isDisabled()" (click)="enable()">
+        <a class="dropdown-item" *ngIf="study.isDisabled() && isEnableAllowed" (click)="enable()">
           <mat-icon class="mr-1" [ngClass]="getStateIconClass('enabled')">
             {{getStateIcon('enabled')}}
           </mat-icon>
@@ -70,7 +73,7 @@
         </div>
       </div>
     </li>
-    <li class="list-group-item" *ngIf="!(isEnableAllowed$ | async)">
+    <li class="list-group-item" *ngIf="!isEnableAllowed">
       <div class="alert alert-warning">
         <mat-icon color="primary">warning</mat-icon>
         <ng-container i18n>
@@ -85,5 +88,32 @@
                          [useBadges]="false">
       </app-entity-status>
     </li>
+
   </ul>
 </div>
+
+<ng-template #showLoading>
+  <div class="card-header">
+    <app-spinner name="login" [show]="true" i18n>
+      Loading
+    </app-spinner>
+  </div>
+</ng-template>
+
+<ng-template #updateNameModal let-close="close">
+  <app-modal-input-text [title]="'Update Name'"
+                        [label]="'New study name'"
+                        [value]="study.name"
+                        [options]="updateNameModalOptions"
+                        [modalClose]="close">
+  </app-modal-input-text>
+</ng-template>
+
+<ng-template #updateDescriptionModal let-close="close">
+  <app-modal-input-textarea [title]="'Update Description'"
+                            [label]="'New study description'"
+                            [value]="study.description"
+                            [options]="updateDescriptionModalOptions"
+                            [modalClose]="close">
+  </app-modal-input-textarea>
+</ng-template>

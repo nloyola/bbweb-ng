@@ -1,15 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Router, Resolve, RouterStateSnapshot,
-         ActivatedRouteSnapshot } from '@angular/router';
-import { Store, select } from '@ngrx/store';
-import { Observable } from 'rxjs';
-import { filter, take, tap } from 'rxjs/operators';
+import { ActivatedRouteSnapshot, Resolve, Router, RouterStateSnapshot } from '@angular/router';
 import { Study } from '@app/domain/studies';
-import {
-  RootStoreState,
-  StudyStoreActions,
-  StudyStoreSelectors
-} from '@app/root-store';
+import { RootStoreState, StudyStoreActions, StudyStoreSelectors } from '@app/root-store';
+import { select, Store } from '@ngrx/store';
+import { Observable, race } from 'rxjs';
+import { filter, map, take, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -23,9 +18,21 @@ export class StudyResolver implements Resolve<Study> {
 
     this.store$.dispatch(new StudyStoreActions.GetStudyRequest({ slug }));
 
-    return this.store$.pipe(
-      select(StudyStoreSelectors.selectStudyBySlug, { slug }),
-      filter(s => !!s),
-      take(1));
+    return race(
+      this.store$.pipe(
+        select(StudyStoreSelectors.selectStudyError),
+        filter(s => !!s),
+        tap((error) => this.router.navigateByUrl('/404'))),
+      this.store$.pipe(
+        select(StudyStoreSelectors.selectAllStudies),
+        filter(s => s.length > 0),
+        map((studies: Study[]) => studies.find(s => s.slug === slug)),
+        map(study => {
+          // have to do the following because of this issue:
+          //
+          // https://github.com/ngrx/platform/issues/976
+          return (study instanceof Study) ? study :  new Study().deserialize(study)
+        })))
+      .pipe(take(1));
   }
 }

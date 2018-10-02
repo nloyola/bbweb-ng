@@ -39,11 +39,11 @@ export class StudyUI implements DomainEntityUI<Study> {
     return StudyStateUIMap.get(this.entity.state).stateLabel;
   }
 
-  icon(): string {
+  stateIcon(): string {
     return StudyStateUIMap.get(this.entity.state).icon;
   }
 
-  iconClass(): string {
+  stateIconClass(): string {
     return StudyStateUIMap.get(this.entity.state).iconClass;
   }
 

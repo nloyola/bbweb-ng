@@ -1,0 +1,13 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title" i18n>{{title}}</h4>
+  <button type="button" class="close" aria-label="Close" (click)="close('Cancel')">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <ng-container *ngTemplateOutlet="modalBodyTemplate"></ng-container>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-default" (click)="close('Cancel')" i18n>Cancel</button>
+  <button type="button" class="btn btn-primary" (click)="close('OK')" i18n>OK</button>
+</div>

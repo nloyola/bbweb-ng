@@ -29,7 +29,9 @@ export const initialState: State = adapter.getInitialState({
 
 export function reducer(state = initialState, action: StudyActions): State {
   switch (action.type) {
-    case ActionTypes.GetStudyCountsRequest: {
+    case ActionTypes.GetStudyCountsRequest:
+    case ActionTypes.AddStudyRequest:
+    case ActionTypes.GetEnableAllowedRequest: {
       return {
         ...state,
         error: null
@@ -89,13 +91,6 @@ export function reducer(state = initialState, action: StudyActions): State {
       });
     }
 
-    case ActionTypes.AddStudyRequest: {
-      return {
-        ...state,
-        error: null
-      };
-    }
-
     case ActionTypes.AddStudySuccess: {
       return adapter.addOne(action.payload.study, {
         ...state,
@@ -110,12 +105,20 @@ export function reducer(state = initialState, action: StudyActions): State {
       };
     }
 
-    case ActionTypes.UpsertStudy: {
-      return adapter.upsertOne(action.payload.study, state);
+    case ActionTypes.UpdateStudySuccess: {
+      return adapter.updateOne(
+        {
+          id: action.payload.study.id,
+          changes: action.payload.study,
+        },
+        state);
     }
 
-    case ActionTypes.UpdateStudy: {
-      return adapter.updateOne(action.payload.study, state);
+    case ActionTypes.UpdateStudyFailure: {
+      return {
+        ...state,
+        error: action.payload.error
+      };
     }
 
     case ActionTypes.GetStudySuccess: {
@@ -130,12 +133,17 @@ export function reducer(state = initialState, action: StudyActions): State {
     }
 
     case ActionTypes.GetEnableAllowedSuccess: {
-      const enableAllowedIds = action.payload.allowed
-        ? [ ...state.enableAllowedIds, action.payload.studyId ] : state.enableAllowedIds;
-      return {
-        ...state,
-        enableAllowedIds
-      };
+      if (action.payload.allowed) {
+        const included = state.enableAllowedIds.includes(action.payload.studyId)
+        if (!included) {
+          const enableAllowedIds = [ ...state.enableAllowedIds, action.payload.studyId ];
+          return {
+            ...state,
+            enableAllowedIds
+          };
+        }
+      }
+      return state;
     }
 
     case ActionTypes.GetEnableAllowedFailure: {
@@ -144,11 +152,8 @@ export function reducer(state = initialState, action: StudyActions): State {
         error: action.payload.error
       };
     }
-
-    default: {
-      return state;
-    }
   }
+  return state;
 }
 
 export const {

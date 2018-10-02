@@ -52,6 +52,19 @@ export class StudyStoreEffects {
   );
 
   @Effect()
+  updateRequest$: Observable<Action> = this.actions$.pipe(
+    ofType<StudyActions.UpdateStudyRequest>(StudyActions.ActionTypes.UpdateStudyRequest),
+    map(action => action.payload),
+    switchMap(
+      payload =>
+        this.studyService.update(payload.study, payload.attributeName, payload.valueAsStr)
+        .pipe(
+          map(study => new StudyActions.UpdateStudySuccess({ study })),
+          catchError(error => observableOf(new StudyActions.UpdateStudyFailure({ error }))))
+    )
+  );
+
+  @Effect()
   countsRequest$: Observable<Action> = this.actions$.pipe(
     ofType<StudyActions.GetStudyCountsRequest>(
       StudyActions.ActionTypes.GetStudyCountsRequest),

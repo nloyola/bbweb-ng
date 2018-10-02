@@ -1,0 +1,28 @@
+<ng-template #modalBody>
+  <form class="form-horizontal"
+        [formGroup]="form"
+        autocomplete="on"
+        novalidate>
+
+    <div class="form-group row">
+      <label for="email" class="col-md-3 col-form-label" i18n>{{label}}</label>
+      <div class="col-md-9">
+        <textarea class="form-control"
+                  formControlName="textarea"
+                  [rows]="options.rows"
+                  [cols]="options.cols">
+        </textarea>
+      </div>
+      <div class="col-md-8 offset-3" *ngIf="textarea.invalid && textarea.touched">
+        <div class="text-danger small" *ngIf="textarea.errors.required" i18n>
+          Some text is required
+        </div>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+<app-modal-input [title]="title"
+                 [modalBodyTemplate]="modalBody"
+                 [modalClose]="close()">
+</app-modal-input>
