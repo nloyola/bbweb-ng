@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { StudyCountInfo } from '@app/domain/studies';
+import { StudyCountsUIMap } from '@app/domain/studies';
 
 @Component({
   selector: 'app-study-counts',
@@ -8,8 +8,12 @@ import { StudyCountInfo } from '@app/domain/studies';
 })
 export class StudyCountsComponent {
 
-  @Input() countData: StudyCountInfo[];
+  @Input() countData: StudyCountsUIMap;
 
   constructor() { }
+
+  getCounts() {
+    return Array.from(this.countData.values());
+  }
 
 }

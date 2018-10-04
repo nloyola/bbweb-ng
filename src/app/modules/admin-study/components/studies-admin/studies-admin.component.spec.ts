@@ -1,7 +1,7 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed, async } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { StudyCounts, StudyCountInfo, StudyCountsUIMap, StudyState, Study } from '@app/domain/studies';
+import { StudyCounts, StudyCountInfo, StudyCountsUI, StudyState, Study } from '@app/domain/studies';
 import { SpinnerStoreReducer, SpinnerStoreActions } from '@app/root-store/spinner';
 import { StudyStoreActions, StudyStoreReducer } from '@app/root-store/study';
 import { Factory } from '@app/test/factory';
@@ -52,7 +52,7 @@ describe('StudiesAdminComponent', () => {
     const action = new StudyStoreActions.GetStudyCountsSuccess({ studyCounts });
     store.dispatch(action);
 
-    component['studyCountData$'].subscribe((countMap: StudyCountsUIMap) => {
+    component['studyCountData$'].subscribe((countMap: StudyCountsUI) => {
       expect(countMap.get(StudyState.Disabled).count).toBe(studyCounts.disabledCount);
       expect(countMap.get(StudyState.Enabled).count).toBe(studyCounts.enabledCount);
       expect(countMap.get(StudyState.Retired).count).toBe(studyCounts.retiredCount);

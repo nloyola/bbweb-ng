@@ -1,15 +1,14 @@
-<ng-container *ngIf="countData.length > 0; else showLoading">
-  <ng-container *ngFor="let countInfo of countData; let isLast = last">
+<ng-container *ngIf="!!countData; else showLoading">
+  <span class="mr-2" *ngFor="let countInfo of getCounts()">
     <mat-icon [ngClass]="countInfo.iconClass">
       {{countInfo.icon}}
     </mat-icon>
-    {{countInfo.count}}&nbsp;{{countInfo.stateLabel}}
-    <ng-container *ngIf="!isLast">,&nbsp;</ng-container>
-  </ng-container>
+    {{countInfo.stateLabel}}: {{countInfo.count}}
+  </span>
 </ng-container>
 
 <ng-template #showLoading>
-  <app-spinner name="study-counts" [show]="countData.length === 0" i18n>
+  <app-spinner name="study-counts" [show]="!countData" i18n>
     Retrieving counts...
   </app-spinner>
 </ng-template>
