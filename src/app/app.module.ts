@@ -1,22 +1,18 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { MaterialModule } from '@app/modules/material.module';
-
-import { SharedModule } from '@app/shared/shared.module';
-import { AdminModule } from '@app/modules/admin/admin.module';
+import { AppRoutingModule } from '@app/app-routing.module';
+import { AppComponent } from '@app/app.component';
+import { ErrorInterceptor, JwtInterceptor } from '@app/core/http';
 import { CollectionModule } from '@app/modules/collection/collection.module';
 import { HomeModule } from '@app/modules/home/home.module';
+import { MaterialModule } from '@app/modules/material.module';
 import { ShippingModule } from '@app/modules/shipping/shipping.module';
 import { UsersModule } from '@app/modules/users/users.module';
-
-import { AppComponent } from '@app/app.component';
-import { AppRoutingModule } from '@app/app-routing.module';
-
-import { JwtInterceptor, ErrorInterceptor } from '@app/core/http';
 import { RootStoreModule } from '@app/root-store/root-store.module';
+import { SharedModule } from '@app/shared/shared.module';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrModule } from 'ngx-toastr';
 
 @NgModule({

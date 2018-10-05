@@ -1,0 +1,26 @@
+<div class="row">
+  <div class="col-md-12">
+    <strong>
+      {{annotationType.name}}
+    </strong>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-3">
+    <small class="text-info">
+      <ng-container i18n>Type:</ng-container>
+      <strong class="ml-1">{{ annotationType.valueTypeToLabel() }}</strong>
+    </small>
+  </div>
+  <div class="col-md-9">
+    <small class="text-muted">
+      <ng-container i18n>Required:</ng-container>
+      <strong class="ml-1">{{ requiredLabel }}</strong>
+    </small>
+  </div>
+</div>
+<div class="row" *ngIf="!!annotationType.description">
+  <div class="col-md-12">
+    <p>{{annotationType.description | truncate:100}}</p>
+  </div>
+</div>

@@ -18,7 +18,7 @@ import {
 export class HeaderComponent implements OnInit {
 
   user$: Observable<User>;
-  private isCollapsed = true;
+  isCollapsed = true;
 
   constructor(private store$: Store<RootStoreState.State>,
               private router: Router) {}

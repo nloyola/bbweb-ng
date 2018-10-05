@@ -6,3 +6,9 @@
   </div>
   <app-footer></app-footer>
 </div>
+
+<div class="row loading-overlay" *ngIf="loading">
+  <div class="col-12">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  </div>
+</div>

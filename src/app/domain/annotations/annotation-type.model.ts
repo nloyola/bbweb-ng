@@ -40,4 +40,17 @@ export class AnnotationType extends DomainEntity {
     return this;
   }
 
+  valueTypeToLabel() {
+    if (this.valueType === ValueTypes.Select) {
+      if (this.maxValueCount === undefined) {
+        return ValueTypes.Select;
+      } else  if (this.maxValueCount === 1) {
+        return 'Single Select';
+      }
+      return 'Multiple Select';
+    }
+
+    return this.valueType;
+  }
+
 }

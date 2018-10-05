@@ -17,13 +17,6 @@ export abstract class ConcurrencySafeEntity extends DomainEntity {
    */
   timeModified: Date | null;
 
-  /**
-   * If the object does not have an ID it is new and is not yet present in the system.
-   */
-  isNew(): boolean {
-    return (this.id === null);
-  }
-
   deserialize(input: any) {
     super.deserialize(input);
     if (input.timeAdded) {

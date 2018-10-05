@@ -1,13 +1,23 @@
 import {
   MatButtonModule,
   MatCheckboxModule,
-  MatProgressSpinnerModule
+  MatProgressBarModule
 } from '@angular/material';
 import { MatIconModule } from '@angular/material/icon';
 import { NgModule } from '@angular/core';
 
 @NgModule({
-  imports: [MatButtonModule, MatCheckboxModule, MatIconModule, MatProgressSpinnerModule],
-  exports: [MatButtonModule, MatCheckboxModule, MatIconModule, MatProgressSpinnerModule]
+  imports: [
+    MatButtonModule,
+    MatCheckboxModule,
+    MatIconModule,
+    MatProgressBarModule
+  ],
+  exports: [
+    MatButtonModule,
+    MatCheckboxModule,
+    MatIconModule,
+    MatProgressBarModule
+  ]
 })
 export class MaterialModule { }

@@ -1,15 +1,9 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Store, select } from '@ngrx/store';
-import { Observable, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { User } from '@app/domain/users';
-
-import {
-  RootStoreState,
-  AuthStoreActions,
-  AuthStoreSelectors
-} from '@app/root-store';
+import { AuthStoreSelectors, RootStoreState } from '@app/root-store';
+import { select, Store } from '@ngrx/store';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-admin',
@@ -20,10 +14,10 @@ export class AdminComponent implements OnInit, OnDestroy {
 
   private unsubscribe$: Subject<void> = new Subject<void>();
 
-  private user: User;
-  private userHasStudyAdminRole = false;
-  private userHasCentreAdminRole = false;
-  private userHasUserAdminRole = false;
+  userHasStudyAdminRole = false;
+  userHasCentreAdminRole = false;
+  userHasUserAdminRole = false;
+  user: User;
 
   constructor(private store$: Store<RootStoreState.State>) {
   }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Actions, Effect, ofType } from '@ngrx/effects';
+import { Actions, Effect } from '@ngrx/effects';
 import { filter, map } from 'rxjs/operators';
 import * as spinnerActions from './spinner.actions';
 

@@ -12,13 +12,14 @@ export class TruncateToggleComponent implements OnInit, OnChanges {
   @Input() toggleLength: number;
   @Input() textEmptyWarning: string;
 
-  private displayText: string;
   private showLessLabel = 'Show less';
   private showMoreLabel = 'Show more';
-  private toggleState = false;
   private toggleRequired: boolean;
-  private buttonLabel = this.showLessLabel;
   private truncatePipe = new TruncatePipe();
+
+  displayText: string;
+  toggleState = false;
+  buttonLabel = this.showLessLabel;
 
   constructor() {}
 

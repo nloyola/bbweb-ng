@@ -1,12 +1,13 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { delay, map } from 'rxjs/operators';
-
-import { ApiReply } from '@app/domain/api-reply.model';
-import { Study, StudyCounts, StudyToAdd } from '@app/domain/studies';
-import { PagedReply, SearchParams } from '@app/domain';
 import { SearchService } from '@app/core/services/search.service';
+import { PagedReply, SearchParams } from '@app/domain';
+import { ApiReply } from '@app/domain/api-reply.model';
+import { Study, StudyCounts, StudyToAdd, StudyState } from '@app/domain/studies';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { AnnotationType } from '@app/domain/annotations';
+
 
 @Injectable({
   providedIn: 'root'
@@ -41,12 +42,7 @@ export class StudyService implements SearchService<Study> {
   */
   get(slug: string): Observable<Study> {
     return this.http.get<ApiReply>(`${this.BASE_URL}/${slug}`)
-      .pipe(map((reply: ApiReply) => {
-        if (reply && reply.data) {
-          return new Study().deserialize(reply.data);
-        }
-        throw new Error('expected a study object');
-      }));
+      .pipe(map(this.replyToStudy));
   }
 
   /**
@@ -83,35 +79,28 @@ export class StudyService implements SearchService<Study> {
       description: study.description ? study.description : null
     };
     return this.http.post<ApiReply>(`${this.BASE_URL}/`, json)
-      .pipe(map((reply: ApiReply) => {
-          if (reply && reply.data) {
-            return new Study().deserialize(reply.data);
-          }
-          throw new Error('expected a study object');
-        }));
+      .pipe(map(this.replyToStudy));
   }
 
-  update(study: Study,
-         attributeName: string,
-         valueAsString: string): Observable<Study> {
+  update(study: Study, attributeName: string, value: string): Observable<Study> {
     let json;
     let url;
 
     switch (attributeName) {
       case 'name':
-        json = { name: valueAsString };
+        json = { name: value };
         url = `${this.BASE_URL}/name/${study.id}`;
         break;
       case 'description':
-        json = { description: valueAsString };
+        json = { description: value };
         url = `${this.BASE_URL}/description/${study.id}`;
         break;
       case 'state':
-        if (![ 'disable', 'enable', 'retire', 'unretire'].includes(valueAsString)) {
-          throw new Error('invalid state change for study: ' + valueAsString);
+        if (!Object.values(StudyState).includes(value)) {
+          throw new Error('invalid state change for study: ' + value);
         }
         json = {};
-        url = `${this.BASE_URL}/${valueAsString}/${study.id}`;
+        url = `${this.BASE_URL}/${value}/${study.id}`;
         break;
 
       default:
@@ -121,12 +110,23 @@ export class StudyService implements SearchService<Study> {
     json['expectedVersion'] = study.version;
 
     return this.http.post<ApiReply>(url, json)
-      .pipe(map((reply: ApiReply) => {
-          if (reply && reply.data) {
-            return new Study().deserialize(reply.data);
-          }
-          throw new Error('expected a study object');
-        }));
+      .pipe(map(this.replyToStudy));
+  }
+
+  addOrUpdateAnnotationType(study: Study, annotationType: AnnotationType): Observable<Study> {
+    const json = annotationType;
+    let url = `${this.BASE_URL}/pannottype/${study.id}`;
+    if (!annotationType.isNew()) {
+      url += '/' + annotationType.id;
+    }
+    return this.http.post<ApiReply>(url, json)
+      .pipe(map(this.replyToStudy));
+  }
+
+  removeAnnotationType(study: Study, annotationTypeId: string): Observable<Study> {
+    const url = `${this.BASE_URL}/pannottype/${study.id}/${study.version}/${annotationTypeId}`;
+    return this.http.delete<ApiReply>(url)
+      .pipe(map(this.replyToStudy));
   }
 
   enableAllowed(studyId: string): Observable<any> {
@@ -142,5 +142,12 @@ export class StudyService implements SearchService<Study> {
           }
           throw new Error('expected a valid response');
         }));
+  }
+
+  private replyToStudy(reply: ApiReply): Study {
+    if (reply && reply.data) {
+      return new Study().deserialize(reply.data);
+    }
+    throw new Error('expected a study object');
   }
 }

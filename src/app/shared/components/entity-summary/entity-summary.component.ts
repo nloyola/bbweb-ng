@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { ConcurrencySafeEntity, DomainEntityUI, EntityUI } from '@app/domain';
+import { ConcurrencySafeEntity, DomainEntityUI } from '@app/domain';
 
 @Component({
   selector: 'app-entity-summary',

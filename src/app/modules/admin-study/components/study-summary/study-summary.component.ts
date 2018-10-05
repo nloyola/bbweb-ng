@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef, ViewChild, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Study, StudyStateUIMap } from '@app/domain/studies';
 import { StudyUI } from '@app/domain/studies/study-ui.model';
@@ -8,8 +8,8 @@ import { SpinnerStoreSelectors } from '@app/root-store/spinner';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
-import { combineLatest, Observable, Subject } from 'rxjs';
-import { filter, map, take, takeUntil, tap } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
+import { filter, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-study-summary',
@@ -23,15 +23,15 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
 
   private studyId: string;
   private unsubscribe$: Subject<void> = new Subject<void>();
-  private isLoading$: Observable<boolean>;
-  private isEnableAllowed: boolean;
+  isLoading$: Observable<boolean>;
+  isEnableAllowed: boolean;
   private study: StudyUI;
-  private studyStateUIMap = StudyStateUIMap;
-  private descriptionToggleLength = 80;
-  private getStateIcon = StudyUI.getStateIcon;
-  private getStateIconClass = StudyUI.getStateIconClass;
-  private updateNameModalOptions: ModalInputTextOptions;
-  private updateDescriptionModalOptions: ModalInputTextareaOptions;
+  studyStateUIMap = StudyStateUIMap;
+  descriptionToggleLength = 80;
+  getStateIcon = StudyUI.getStateIcon;
+  getStateIconClass = StudyUI.getStateIconClass;
+  updateNameModalOptions: ModalInputTextOptions;
+  updateDescriptionModalOptions: ModalInputTextareaOptions;
   private updatedMessage: string;
 
   constructor(private store$: Store<RootStoreState.State>,
@@ -81,7 +81,7 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
     this.unsubscribe$.complete();
   }
 
-  private updateName() {
+  updateName() {
     this.updateNameModalOptions = {
       required: true,
       minLength: 2
@@ -92,7 +92,7 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
           this.store$.dispatch(new StudyStoreActions.UpdateStudyRequest({
             study: this.study.entity,
             attributeName: 'name',
-            valueAsStr: value.value
+            value: value.value
           }));
           this.updatedMessage = 'Study name was updated';
         }
@@ -100,7 +100,7 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
       .catch(err => console.log('err', err));
   }
 
-  private updateDescription() {
+  updateDescription() {
     this.updateDescriptionModalOptions = {
       required: true,
       rows: 20,
@@ -112,7 +112,7 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
           this.store$.dispatch(new StudyStoreActions.UpdateStudyRequest({
             study: this.study.entity,
             attributeName: 'description',
-            valueAsStr: value.value
+            value: value.value
           }));
           this.updatedMessage = 'Study description was updated';
         }
@@ -120,19 +120,19 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
       .catch(err => console.log('err', err));
   }
 
-  private disable() {
+  disable() {
     this.changeState('disable');
   }
 
-  private enable() {
+  enable() {
     this.changeState('enable');
   }
 
-  private retire() {
+  retire() {
     this.changeState('retire');
   }
 
-  private unretire() {
+  unretire() {
     this.changeState('unretire');
   }
 
@@ -140,7 +140,7 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
     this.store$.dispatch(new StudyStoreActions.UpdateStudyRequest({
       study: this.study.entity,
       attributeName: 'state',
-      valueAsStr: action
+      value: action
     }));
     this.updatedMessage = 'Study state was updated';
   }

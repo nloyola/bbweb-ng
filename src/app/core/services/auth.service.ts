@@ -1,11 +1,9 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Subject } from 'rxjs';
-import { delay, map } from 'rxjs/operators';
-
-import { ApiReply } from '@app/domain/api-reply.model';
+import { Injectable } from '@angular/core';
 import { AuthInfo } from '@app/domain/access';
+import { ApiReply } from '@app/domain/api-reply.model';
 import { User } from '@app/domain/users';
+import { map } from 'rxjs/operators';
 
 export const AUTH_TOKEN_LOCAL_STORAGE_KEY = 'authToken';
 

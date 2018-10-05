@@ -1,9 +1,25 @@
 import { Action } from '@ngrx/store';
-import { Update } from '@ngrx/entity';
 
 import { Study, StudyCounts, StudyToAdd } from '@app/domain/studies';
 import { PagedReply, SearchParams } from '@app/domain';
 import { ShowSpinner, HideSpinner } from '@app/core/decorators';
+import { AnnotationType } from '@app/domain/annotations';
+
+interface StudyUpdateRequestPayload {
+  study: Study,
+  attributeName: string,
+  value: string
+}
+
+interface StudyAddOrUpdateAnnotationTypeRequestPayload {
+  study: Study,
+  annotationType: AnnotationType
+}
+
+interface StudyRemoveAnnotationTypeRequestPayload {
+  study: Study,
+  annotationTypeId: string
+}
 
 export enum ActionTypes {
   GetStudyCountsRequest = '[Study] Get Study Count Request',
@@ -30,6 +46,8 @@ export enum ActionTypes {
   GetEnableAllowedFailure = '[Study] Get Enable Allowed Failure',
 
   UpdateStudyRequest = '[Study] Update Study Request',
+  UpdateStudyAddOrUpdateAnnotationTypeRequest = '[Study] Update Study Add or Update Annotation Type Request',
+  UpdateStudyRemoveAnnotationTypeRequest = '[Study] Update Study Remove Annotation Type Request',
   UpdateStudySuccess = '[Study] Update Study Success',
   UpdateStudyFailure = '[Study] Update Study Failure',
 }
@@ -96,11 +114,21 @@ export class AddStudyFailure implements Action {
 export class UpdateStudyRequest implements Action {
   readonly type = ActionTypes.UpdateStudyRequest;
 
-  constructor(public payload: {
-    study: Study,
-    attributeName: string,
-    valueAsStr: string
-  }) { }
+  constructor(public payload: StudyUpdateRequestPayload) { }
+}
+
+@ShowSpinner()
+export class UpdateStudyAddOrUpdateAnnotationTypeRequest implements Action {
+  readonly type = ActionTypes.UpdateStudyAddOrUpdateAnnotationTypeRequest;
+
+  constructor(public payload: StudyAddOrUpdateAnnotationTypeRequestPayload) { }
+}
+
+@ShowSpinner()
+export class UpdateStudyRemoveAnnotationTypeRequest implements Action {
+  readonly type = ActionTypes.UpdateStudyRemoveAnnotationTypeRequest;
+
+  constructor(public payload: StudyRemoveAnnotationTypeRequestPayload) { }
 }
 
 @HideSpinner(ActionTypes.UpdateStudyRequest)

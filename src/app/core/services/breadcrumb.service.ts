@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRoute, ActivatedRouteSnapshot, NavigationEnd, Router, RouterStateSnapshot, UrlSegment } from '@angular/router';
+import { ActivatedRouteSnapshot, NavigationEnd, Router, RouterStateSnapshot, UrlSegment } from '@angular/router';
 import { Crumb } from '@app/domain/crumb';
 // borrowed from:
 //
@@ -24,11 +24,10 @@ export class BreadcrumbService {
 
   private breadcrumbs = new BehaviorSubject<Crumb[]>([]);
 
-  constructor(private router: Router, private activatedRoute: ActivatedRoute) {
+  constructor(private router: Router) {
     this.router.events
       .pipe(filter(x => x instanceof NavigationEnd))
-      .subscribe((event: NavigationEnd) => {
-
+      .subscribe(() => {
         const currentRoot = router.routerState.snapshot.root;
 
         this.buildBreadcrumbs(currentRoot).pipe(

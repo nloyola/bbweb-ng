@@ -1,3 +1,81 @@
-<p>
-  study-participants works!
-</p>
+<div class="card mt-2">
+  <div class="card-header" *ngIf="!(isLoading$ | async); else showLoading">
+    <mat-icon [ngClass]="study.stateIconClass()">{{study.stateIcon()}}</mat-icon>
+    {{study.name}} <small i18n>Participant Annotations</small>
+    <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
+      <button class="btn btn-sm btn-outline-primary"
+              type="button"
+              id="studyMenu"
+              ngbDropdownToggle>
+      </button>
+
+      <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="studyMenu">
+        <a class="dropdown-item" *ngIf="study.isDisabled()" (click)="add()">
+          <mat-icon class="success-icon mr-1">add_circle_outline</mat-icon>
+          <ng-container i18n>Add Annotation</ng-container>
+        </a>
+      </div>
+    </span>
+
+  </div>
+  <ul class="list-group">
+    <li class="list-group-item">
+      <span class="text-primary" i18n>
+        Participant annotations allow a study to collect custom named and defined pieces of data for each
+        participant. Annotations are optional and are not required to be defined.
+      </span>
+    </li>
+
+    <li class="list-group-item" *ngIf="study.annotationTypes.length <= 0">
+      <div class="alert alert-warning">
+        <mat-icon color="primary">warning</mat-icon>
+        <ng-container i18n>
+          No annotations have been entered yet.
+        </ng-container>
+      </div>
+    </li>
+
+    <li class="list-group-item" *ngIf="study.annotationTypes.length > 0">
+      <ng-container i18n>This study has the following annotations for participants:</ng-container>
+    </li>
+
+    <li class="list-group-item" *ngFor="let annotationType of study.annotationTypes">
+      <div class="row">
+        <div class="col-md-10">
+          <app-annotation-type-summary [annotationType]="annotationType">
+          </app-annotation-type-summary>
+        </div>
+        <div class="col-md-2">
+
+          <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
+            <button class="btn btn-sm btn-outline-primary"
+                    type="button"
+                    id="annotationsMenu"
+                    ngbDropdownToggle>
+            </button>
+
+            <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="annotationsMenu">
+              <a class="dropdown-item" *ngIf="study.isDisabled()" (click)="view(annotationType)">
+                <mat-icon class="success-icon mr-1">edit</mat-icon>
+                <ng-container i18n>View / Edit</ng-container>
+              </a>
+              <a class="dropdown-item" *ngIf="study.isDisabled()" (click)="remove(annotationType)">
+                <mat-icon class="danger-icon mr-1">remove_circle</mat-icon>
+                <ng-container i18n>Remove</ng-container>
+              </a>
+            </div>
+          </span>
+        </div>
+      </div>
+    </li>
+  </ul>
+</div>
+
+
+<ng-template #showLoading>
+  <div class="card-header">
+    <app-spinner name="login" [show]="true" i18n>
+      Loading
+    </app-spinner>
+  </div>
+</ng-template>

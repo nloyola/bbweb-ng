@@ -1,9 +1,8 @@
-import { Component, EventEmitter, Input, OnInit, OnDestroy, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Observable, Subject, merge, timer } from 'rxjs';
-import { debounce, distinct, map, takeUntil } from 'rxjs/operators';
-
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { EntityStateInfo, SearchFilterValues } from '@app/domain';
+import { merge, Subject, timer } from 'rxjs';
+import { debounce, distinct, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-entity-filters',
@@ -53,7 +52,7 @@ export class EntityFiltersComponent implements OnInit, OnDestroy {
         debounce(() => timer(500)),
         distinct(() => this.form.value),
         takeUntil(this.unsubscribe$))
-      .subscribe(value => {
+      .subscribe(() => {
         const filters: SearchFilterValues = {};
         if (this.useNameFilter) {
           filters.name = this.form.value.name;

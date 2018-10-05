@@ -1,5 +1,5 @@
 import { Action } from '@ngrx/store';
-import { SpinnerActions, SpinnerActionTypes } from './spinner.actions';
+import { SpinnerActionTypes } from './spinner.actions';
 
 // borrowed from here:
 //

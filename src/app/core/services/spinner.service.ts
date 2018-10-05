@@ -15,7 +15,6 @@ export class SpinnerService {
   }
 
   remove(spinnerName: string): void {
-    const spinner = this.findSpinner(spinnerName);
     this.spinnerCache.delete(spinnerName);
   }
 

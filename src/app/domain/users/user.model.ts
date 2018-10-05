@@ -1,5 +1,4 @@
 import { ConcurrencySafeEntity } from '@app/domain/concurrency-safe-entity.model';
-import { EntityInfo } from '@app/domain/entity-info.model';
 import { RoleIds } from '@app/domain/access';
 import { UserState } from '@app/domain/users/user-state.enum';
 import { UserRole } from '@app/domain/users/user-role.model';

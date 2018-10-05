@@ -57,7 +57,7 @@ export class StudyStoreEffects {
     map(action => action.payload),
     switchMap(
       payload =>
-        this.studyService.update(payload.study, payload.attributeName, payload.valueAsStr)
+        this.studyService.update(payload.study, payload.attributeName, payload.value)
         .pipe(
           map(study => new StudyActions.UpdateStudySuccess({ study })),
           catchError(error => observableOf(new StudyActions.UpdateStudyFailure({ error }))))
@@ -65,11 +65,41 @@ export class StudyStoreEffects {
   );
 
   @Effect()
+  addOrUpdateAnnotationTypeRequest$: Observable<Action> =
+    this.actions$.pipe(
+      ofType<StudyActions.UpdateStudyAddOrUpdateAnnotationTypeRequest>
+        (StudyActions.ActionTypes.UpdateStudyAddOrUpdateAnnotationTypeRequest),
+      map(action => action.payload),
+      switchMap(
+        payload =>
+          this.studyService.addOrUpdateAnnotationType(payload.study,
+                                                      payload.annotationType)
+          .pipe(
+            map(study => new StudyActions.UpdateStudySuccess({ study })),
+            catchError(error =>
+                       observableOf(new StudyActions.UpdateStudyFailure({ error }))))));
+
+  @Effect()
+  removeAnnotationTypeRequest$: Observable<Action> =
+    this.actions$.pipe(
+      ofType<StudyActions.UpdateStudyRemoveAnnotationTypeRequest>
+        (StudyActions.ActionTypes.UpdateStudyRemoveAnnotationTypeRequest),
+      map(action => action.payload),
+      switchMap(
+        payload =>
+          this.studyService.removeAnnotationType(payload.study,
+                                                 payload.annotationTypeId)
+          .pipe(
+            map(study => new StudyActions.UpdateStudySuccess({ study })),
+            catchError(error =>
+                       observableOf(new StudyActions.UpdateStudyFailure({ error }))))));
+
+  @Effect()
   countsRequest$: Observable<Action> = this.actions$.pipe(
     ofType<StudyActions.GetStudyCountsRequest>(
       StudyActions.ActionTypes.GetStudyCountsRequest),
     switchMap(
-      payload =>
+      () =>
         this.studyService.counts()
         .pipe(
           // delay(5000),

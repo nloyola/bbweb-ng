@@ -2,6 +2,7 @@ import { EntityUI, DomainEntityUI } from "@app/domain/entity-ui.model";
 import { Study } from "@app/domain/studies/study.model";
 import { StudyState } from "@app/domain/studies/study-state.enum";
 import { StudyStateUIMap } from "@app/domain/studies/study-state-ui-map.model";
+import { AnnotationType } from "@app/domain/annotations";
 
 export class StudyUI implements DomainEntityUI<Study> {
 
@@ -33,6 +34,10 @@ export class StudyUI implements DomainEntityUI<Study> {
 
   get timeModified(): Date | null {
     return this.entity.timeModified;
+  }
+
+  get annotationTypes(): AnnotationType[] {
+    return this.entity.annotationTypes;
   }
 
   stateLabel(): string {
