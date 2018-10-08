@@ -9,6 +9,7 @@ import { StudyResolver } from '@app/modules/admin-study/services/study-resolver.
 import { StudiesAdminComponent } from './components/studies-admin/studies-admin.component';
 import { StudyAddComponent } from './components/study-add/study-add.component';
 import { AuthGuard } from '@app/core/guards';
+import { AnnotationTypeAddComponent } from '@app/shared/components/annotation-type-add/annotation-type-add.component';
 
 export const routes: Routes = [
   {

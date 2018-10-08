@@ -114,7 +114,10 @@ export class StudyService implements SearchService<Study> {
   }
 
   addOrUpdateAnnotationType(study: Study, annotationType: AnnotationType): Observable<Study> {
-    const json = annotationType;
+    const json = {
+      ...annotationType,
+      expectedVersion: study.version
+    };
     let url = `${this.BASE_URL}/pannottype/${study.id}`;
     if (!annotationType.isNew()) {
       url += '/' + annotationType.id;

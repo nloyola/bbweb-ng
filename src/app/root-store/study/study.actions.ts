@@ -3,7 +3,7 @@ import { Action } from '@ngrx/store';
 import { Study, StudyCounts, StudyToAdd } from '@app/domain/studies';
 import { PagedReply, SearchParams } from '@app/domain';
 import { ShowSpinner, HideSpinner } from '@app/core/decorators';
-import { AnnotationType } from '@app/domain/annotations';
+import { AnnotationType, AnnotationTypeToAdd } from '@app/domain/annotations';
 
 interface StudyUpdateRequestPayload {
   study: Study,
@@ -117,14 +117,12 @@ export class UpdateStudyRequest implements Action {
   constructor(public payload: StudyUpdateRequestPayload) { }
 }
 
-@ShowSpinner()
 export class UpdateStudyAddOrUpdateAnnotationTypeRequest implements Action {
   readonly type = ActionTypes.UpdateStudyAddOrUpdateAnnotationTypeRequest;
 
   constructor(public payload: StudyAddOrUpdateAnnotationTypeRequestPayload) { }
 }
 
-@ShowSpinner()
 export class UpdateStudyRemoveAnnotationTypeRequest implements Action {
   readonly type = ActionTypes.UpdateStudyRemoveAnnotationTypeRequest;
 

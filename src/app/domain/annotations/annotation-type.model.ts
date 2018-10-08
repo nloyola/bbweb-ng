@@ -54,3 +54,10 @@ export class AnnotationType extends DomainEntity {
   }
 
 }
+
+export type AnnotationTypeToAdd = Pick<AnnotationType, 'name'
+  | 'description'
+  | 'valueType'
+  | 'maxValueCount'
+  | 'required'
+  | 'options' >;

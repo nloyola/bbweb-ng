@@ -11,7 +11,7 @@
 
       <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="studyMenu">
         <a class="dropdown-item" *ngIf="study.isDisabled()" (click)="add()">
-          <mat-icon class="success-icon mr-1">add_circle_outline</mat-icon>
+          <mat-icon class="success-icon mr-1">add_circle</mat-icon>
           <ng-container i18n>Add Annotation</ng-container>
         </a>
       </div>
@@ -68,9 +68,18 @@
         </div>
       </div>
     </li>
+
+    <li class="list-group-item" *ngIf="isAddingAnnotation">
+      <div class="row">
+        <div class="col-md-10">
+          <app-spinner name="addingAnnotation" [show]="true" i18n>
+            Saving annotation
+          </app-spinner>
+        </div>
+      </div>
+    </li>
   </ul>
 </div>
-
 
 <ng-template #showLoading>
   <div class="card-header">

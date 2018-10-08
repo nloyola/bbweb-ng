@@ -18,6 +18,7 @@ import { HeaderComponent } from './components/header/header.component';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { SpinnerComponent } from './components/spinner/spinner.component';
 import { TruncateToggleComponent } from './components/truncate-toggle/truncate-toggle.component';
+import { AnnotationTypeAddComponent } from './components/annotation-type-add/annotation-type-add.component';
 
 
 @NgModule({
@@ -43,6 +44,7 @@ import { TruncateToggleComponent } from './components/truncate-toggle/truncate-t
     EntitySummaryComponent,
     TruncateToggleComponent,
     NlToBrPipe,
+    AnnotationTypeAddComponent,
     AnnotationTypeRemoveComponent
   ],
   exports: [
@@ -58,6 +60,7 @@ import { TruncateToggleComponent } from './components/truncate-toggle/truncate-t
     EntitySummaryComponent,
     TruncateToggleComponent,
     NlToBrPipe,
+    AnnotationTypeAddComponent,
     AnnotationTypeRemoveComponent
   ]
 })

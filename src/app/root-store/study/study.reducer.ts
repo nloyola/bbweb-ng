@@ -109,7 +109,7 @@ export function reducer(state = initialState, action: StudyActions): State {
       return adapter.updateOne(
         {
           id: action.payload.study.id,
-          changes: action.payload.study,
+          changes: action.payload.study
         },
         state);
     }

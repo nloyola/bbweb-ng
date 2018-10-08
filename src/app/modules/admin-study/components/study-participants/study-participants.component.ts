@@ -10,6 +10,8 @@ import { Study } from '@app/domain/studies';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AnnotationTypeRemoveComponent } from '@app/shared/components/annotation-type-remove/annotation-type-remove.component';
 import { SpinnerStoreSelectors } from '@app/root-store/spinner';
+import { AnnotationTypeAddComponent } from '@app/shared/components/annotation-type-add/annotation-type-add.component';
+import { AnnotationType } from '@app/domain/annotations';
 
 @Component({
   selector: 'app-study-participants',
@@ -24,6 +26,7 @@ export class StudyParticipantsComponent implements OnInit {
   private study: StudyUI;
   private updatedMessage: string;
   private unsubscribe$: Subject<void> = new Subject<void>();
+  private isAddingAnnotation = false;
 
   constructor(private store$: Store<RootStoreState.State>,
               private router: Router,
@@ -46,6 +49,7 @@ export class StudyParticipantsComponent implements OnInit {
 
         const updatedStudy = (entity instanceof Study) ? entity : new Study().deserialize(entity);
         this.study = new StudyUI(updatedStudy);
+        this.isAddingAnnotation = false;
 
         if (this.updatedMessage) {
           this.toastr.success(this.updatedMessage, 'Update Successfull');
@@ -61,11 +65,18 @@ export class StudyParticipantsComponent implements OnInit {
   }
 
   add() {
-    this.router.navigate([ 'participants', 'add' ], { relativeTo: this.route });
+    this.modalService.open(AnnotationTypeAddComponent, { size: 'lg' }).result
+      .then((annotationType: AnnotationType) => this.addOrUpdateAnnotationType(annotationType))
+      .catch(() => undefined);
   }
 
   view(annotationType) {
-    this.router.navigate([ 'participants', annotationType.slug ], { relativeTo: this.route });
+    const modalRef = this.modalService.open(AnnotationTypeAddComponent, { size: 'lg' });
+    modalRef.componentInstance.annotationType = annotationType;
+
+    modalRef.result
+      .then((annotationType: AnnotationType) => this.addOrUpdateAnnotationType(annotationType))
+      .catch(() => undefined);
   }
 
   remove(annotationType) {
@@ -85,6 +96,15 @@ export class StudyParticipantsComponent implements OnInit {
         this.updatedMessage = 'Annotation removed';
       })
       .catch(() => undefined);
+  }
+
+  private addOrUpdateAnnotationType(annotationType: AnnotationType): void {
+    this.isAddingAnnotation = true;
+    this.updatedMessage = 'Annotation added';
+    this.store$.dispatch(new StudyStoreActions.UpdateStudyAddOrUpdateAnnotationTypeRequest({
+      study: this.study.entity,
+      annotationType
+    }));
   }
 
 }

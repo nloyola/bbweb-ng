@@ -17,6 +17,7 @@ import { StudyProcessingComponent } from './components/study-processing/study-pr
 import { StudySummaryComponent } from './components/study-summary/study-summary.component';
 import { StudyViewComponent } from './components/study-view/study-view.component';
 import { AnnotationTypeRemoveComponent } from '@app/shared/components/annotation-type-remove/annotation-type-remove.component';
+import { AnnotationTypeAddComponent } from '@app/shared/components/annotation-type-add/annotation-type-add.component';
 
 @NgModule({
   imports: [
@@ -45,6 +46,7 @@ import { AnnotationTypeRemoveComponent } from '@app/shared/components/annotation
     StudiesAdminComponent
   ],
   entryComponents: [
+    AnnotationTypeAddComponent,
     AnnotationTypeRemoveComponent
   ]
 })
