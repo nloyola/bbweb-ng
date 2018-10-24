@@ -10,6 +10,9 @@ export interface PagedReplyBase {
 
   /** The total number of entities in all pages. */
   total: number;
+
+  /** The maximum number of pages. */
+  maxPages: number;
 }
 
 export interface PagedReplyEntityIds extends PagedReplyBase {

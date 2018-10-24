@@ -1,9 +1,8 @@
-import { Action } from '@ngrx/store';
-
-import { Study, StudyCounts, StudyToAdd } from '@app/domain/studies';
+import { HideSpinner, ShowSpinner } from '@app/core/decorators';
 import { PagedReply, SearchParams } from '@app/domain';
-import { ShowSpinner, HideSpinner } from '@app/core/decorators';
-import { AnnotationType, AnnotationTypeToAdd } from '@app/domain/annotations';
+import { AnnotationType } from '@app/domain/annotations';
+import { Study, StudyCounts, StudyToAdd } from '@app/domain/studies';
+import { Action } from '@ngrx/store';
 
 interface StudyUpdateRequestPayload {
   study: Study,
@@ -28,14 +27,11 @@ export enum ActionTypes {
 
   SearchStudiesRequest = '[Study] Search Studies Request',
   SearchStudiesSuccess = '[Study] Search Studies Success',
-  SearchStudiesFailure = '[Study] Search Studies Failure',
+  SearchStudiesFailure = '[Studyts] Search Studies Failure',
 
   AddStudyRequest = '[Study] Add Study Request',
   AddStudySuccess = '[Study] Add Study Success',
   AddStudyFailure = '[Study] Add Study Failure',
-
-  UpsertStudy = '[Study] Upsert Study',
-  UpdateStudy = '[Study] Update Study',
 
   GetStudyRequest = '[Study] Get Study Request',
   GetStudySuccess = '[Study] Get Study Success',
@@ -202,5 +198,7 @@ export type StudyActions =
   | GetEnableAllowedSuccess
   | GetEnableAllowedFailure
   | UpdateStudyRequest
+  | UpdateStudyAddOrUpdateAnnotationTypeRequest
+  | UpdateStudyRemoveAnnotationTypeRequest
   | UpdateStudySuccess
   | UpdateStudyFailure;

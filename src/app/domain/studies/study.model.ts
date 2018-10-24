@@ -32,6 +32,11 @@ export class Study extends ConcurrencySafeEntity implements HasSlug, HasName, Ha
 
   deserialize(input: any) {
     super.deserialize(input);
+
+    if (input.description === undefined) {
+      this.description = undefined;
+    }
+
     if (input.annotationTypes) {
       this.annotationTypes = input.annotationTypes
         .map(at => new AnnotationType().deserialize(at));

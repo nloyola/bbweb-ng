@@ -1,3 +1,10 @@
-<p>
-  study-collection works!
-</p>
+<div class="row">
+  <div class="col-md-3">
+    <app-event-types-add-and-select (addSelected)="addEventTypeSelected($event)"
+                                    (selected)="eventTypeSelected($event)">
+    </app-event-types-add-and-select>
+  </div>
+  <div class="col-md-9">
+    <app-event-type-view></app-event-type-view>
+  </div>
+</div>

@@ -6,11 +6,12 @@
       <button class="btn btn-sm btn-outline-primary"
               type="button"
               id="studyMenu"
+              *ngIf="study.isDisabled()"
               ngbDropdownToggle>
       </button>
 
       <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="studyMenu">
-        <a class="dropdown-item" *ngIf="study.isDisabled()" (click)="add()">
+        <a class="dropdown-item" (click)="add()">
           <mat-icon class="success-icon mr-1">add_circle</mat-icon>
           <ng-container i18n>Add Annotation</ng-container>
         </a>
@@ -18,7 +19,7 @@
     </span>
 
   </div>
-  <ul class="list-group">
+  <ul class="list-group list-group-flush">
     <li class="list-group-item">
       <span class="text-primary" i18n>
         Participant annotations allow a study to collect custom named and defined pieces of data for each
@@ -39,32 +40,19 @@
       <ng-container i18n>This study has the following annotations for participants:</ng-container>
     </li>
 
-    <li class="list-group-item" *ngFor="let annotationType of study.annotationTypes">
+    <li class="list-group-item" *ngFor="let annotationType of sortedAnnotationTypes">
       <div class="row">
         <div class="col-md-10">
           <app-annotation-type-summary [annotationType]="annotationType">
           </app-annotation-type-summary>
         </div>
         <div class="col-md-2">
-
-          <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
-            <button class="btn btn-sm btn-outline-primary"
-                    type="button"
-                    id="annotationsMenu"
-                    ngbDropdownToggle>
-            </button>
-
-            <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="annotationsMenu">
-              <a class="dropdown-item" *ngIf="study.isDisabled()" (click)="view(annotationType)">
-                <mat-icon class="success-icon mr-1">edit</mat-icon>
-                <ng-container i18n>View / Edit</ng-container>
-              </a>
-              <a class="dropdown-item" *ngIf="study.isDisabled()" (click)="remove(annotationType)">
-                <mat-icon class="danger-icon mr-1">remove_circle</mat-icon>
-                <ng-container i18n>Remove</ng-container>
-              </a>
-            </div>
-          </span>
+          <app-annotation-type-actions [annotationType]="annotationType"
+                                       [modifyAllowed]="study.isDisabled()"
+                                       (viewSelected)="view($event)"
+                                       (editSelected)="edit($event)"
+                                       (removeSelected)="remove($event)">
+          </app-annotation-type-actions>
         </div>
       </div>
     </li>

@@ -1,16 +1,17 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { AuthStoreReducer } from '@app/root-store/auth-store';
+import { StudyStoreReducer } from '@app/root-store/study';
+import { environment } from '@env/environment';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { AuthStoreReducer } from '@app/root-store/auth-store';
-import { StudyStoreReducer } from '@app/root-store/study';
-
 import { AuthStoreEffects } from './auth-store/auth-store.effects';
-import { StudyStoreEffects } from './study/study.effects';
-import { environment } from '@env/environment';
+import { EventTypeStoreReducer } from './event-type';
+import { EventTypeStoreEffects } from './event-type/event-type.effects';
+import { SpinnerStoreReducer } from './spinner';
 import { SpinnerEffects } from './spinner/spinner.effects';
-import { SpinnerStoreReducer } from '@app/root-store/spinner';
+import { StudyStoreEffects } from './study/study.effects';
 
 @NgModule({
   imports: [
@@ -19,9 +20,11 @@ import { SpinnerStoreReducer } from '@app/root-store/spinner';
     EffectsModule.forRoot([]),
     StoreModule.forFeature('auth', AuthStoreReducer.reducer),
     StoreModule.forFeature('study', StudyStoreReducer.reducer),
+    StoreModule.forFeature('event-type', EventTypeStoreReducer.reducer),
     StoreModule.forFeature('spinner', SpinnerStoreReducer.reducer),
     EffectsModule.forFeature([
       AuthStoreEffects,
+      EventTypeStoreEffects,
       StudyStoreEffects,
       SpinnerEffects
     ]),

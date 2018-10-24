@@ -21,7 +21,6 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
   @ViewChild('updateNameModal') updateNameModal: TemplateRef<any>;
   @ViewChild('updateDescriptionModal') updateDescriptionModal: TemplateRef<any>;
 
-  private studyId: string;
   private unsubscribe$: Subject<void> = new Subject<void>();
   isLoading$: Observable<boolean>;
   isEnableAllowed: boolean;
@@ -41,7 +40,7 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
               private toastr: ToastrService) {}
 
   ngOnInit() {
-    this.studyId = this.route.parent.snapshot.data.study.id;
+    this.study = new StudyUI(this.route.parent.snapshot.data.study);
 
     this.isLoading$ = this.store$.pipe(select(SpinnerStoreSelectors.selectSpinnerIsActive));
 
@@ -49,7 +48,7 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
       select(StudyStoreSelectors.selectStudyEnableAllowedIds),
       filter((ids: string[]) => ids.length > 0))
       .subscribe((enableAllowedIds: string[]) => {
-        this.isEnableAllowed = enableAllowedIds.includes(this.studyId);
+        this.isEnableAllowed = enableAllowedIds.includes(this.study.id);
       });
 
     // when study name is changed, the route must be updated because the slug used in the route,
@@ -59,7 +58,7 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
       filter((entities: { [key: string]: any }) => Object.keys(entities).length > 0),
       takeUntil(this.unsubscribe$))
       .subscribe((entities: any) => {
-        const entity = entities[this.studyId];
+        const entity = entities[this.study.id];
 
         if (!location.pathname.includes(entity.slug)) {
           this.router.navigate([ '../..', entity.slug, 'summary' ], { relativeTo: this.route });
@@ -73,7 +72,7 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
         }
       });
 
-    this.store$.dispatch(new StudyStoreActions.GetEnableAllowedRequest({ studyId: this.studyId}));
+    this.store$.dispatch(new StudyStoreActions.GetEnableAllowedRequest({ studyId: this.study.id}));
   }
 
   ngOnDestroy() {
@@ -102,20 +101,17 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
 
   updateDescription() {
     this.updateDescriptionModalOptions = {
-      required: true,
       rows: 20,
       cols: 10
     };
     this.modalService.open(this.updateDescriptionModal, { size: 'lg' }).result
       .then(value => {
-        if (value.value) {
-          this.store$.dispatch(new StudyStoreActions.UpdateStudyRequest({
-            study: this.study.entity,
-            attributeName: 'description',
-            value: value.value
-          }));
-          this.updatedMessage = 'Study description was updated';
-        }
+        this.store$.dispatch(new StudyStoreActions.UpdateStudyRequest({
+          study: this.study.entity,
+          attributeName: 'description',
+          value: value.value ? value.value : undefined
+        }));
+        this.updatedMessage = 'Study description was updated';
       })
       .catch(err => console.log('err', err));
   }

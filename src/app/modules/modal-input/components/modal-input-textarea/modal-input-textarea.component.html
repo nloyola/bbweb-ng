@@ -10,7 +10,8 @@
         <textarea class="form-control"
                   formControlName="textarea"
                   [rows]="options.rows"
-                  [cols]="options.cols">
+                  [cols]="options.cols"
+                  ngbAutoFocus>
         </textarea>
       </div>
       <div class="col-md-8 offset-3" *ngIf="textarea.invalid && textarea.touched">

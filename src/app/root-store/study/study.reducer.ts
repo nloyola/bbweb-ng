@@ -8,11 +8,11 @@ import { StudyCounts } from '@app/domain/studies/study-counts.model';
 export interface State extends EntityState<Study> {
   lastAddedId: string;
   lastSearch?: SearchParams;
-  error?: any;
   searchActive?: boolean;
   searchReplies?: { [ url: string ]: PagedReplyEntityIds };
   studyCounts?: StudyCounts;
   enableAllowedIds?: string[];
+  error?: any;
 }
 
 export const adapter: EntityAdapter<Study> = createEntityAdapter<Study>();
@@ -48,7 +48,7 @@ export function reducer(state = initialState, action: StudyActions): State {
     case ActionTypes.GetStudyCountsFailure: {
       return {
         ...state,
-        error: action.payload.error
+        error: action
       };
     }
 
@@ -64,9 +64,9 @@ export function reducer(state = initialState, action: StudyActions): State {
     case ActionTypes.SearchStudiesFailure: {
       return {
         ...state,
-        error: action.payload.error,
         lastSearch: null,
-        searchActive: false
+        searchActive: false,
+        error: action
       };
     }
 
@@ -78,7 +78,8 @@ export function reducer(state = initialState, action: StudyActions): State {
         entityIds: pagedReply.entities.map(study => study.id),
         searchParams: pagedReply.searchParams,
         offset: pagedReply.offset,
-        total: pagedReply.total
+        total: pagedReply.total,
+        maxPages: pagedReply.maxPages
       };
 
       return adapter.addMany(pagedReply.entities, {
@@ -91,6 +92,13 @@ export function reducer(state = initialState, action: StudyActions): State {
       });
     }
 
+    case ActionTypes.AddStudyRequest: {
+      return {
+        ...state,
+        lastAddedId: null
+      };
+    }
+
     case ActionTypes.AddStudySuccess: {
       return adapter.addOne(action.payload.study, {
         ...state,
@@ -101,7 +109,7 @@ export function reducer(state = initialState, action: StudyActions): State {
     case ActionTypes.AddStudyFailure: {
       return {
         ...state,
-        error: action.payload.error
+        error: action
       };
     }
 
@@ -117,7 +125,7 @@ export function reducer(state = initialState, action: StudyActions): State {
     case ActionTypes.UpdateStudyFailure: {
       return {
         ...state,
-        error: action.payload.error
+        error: action
       };
     }
 
@@ -128,7 +136,7 @@ export function reducer(state = initialState, action: StudyActions): State {
     case ActionTypes.GetStudyFailure: {
       return {
         ...state,
-        error: action.payload.error
+        error: action
       };
     }
 
@@ -149,7 +157,7 @@ export function reducer(state = initialState, action: StudyActions): State {
     case ActionTypes.GetEnableAllowedFailure: {
       return {
         ...state,
-        error: action.payload.error
+        error: action
       };
     }
   }

@@ -1,37 +1,42 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
 import { AnnotationType, MaxValueCount, ValueTypes } from '@app/domain/annotations';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-annotation-type-add',
-  templateUrl: './annotation-type-add.component.html',
-  styleUrls: ['./annotation-type-add.component.scss']
+  templateUrl: './annotation-type-add.component.html'
 })
-export class AnnotationTypeAddComponent implements OnInit {
+export class AnnotationTypeAddComponent implements OnInit, OnChanges {
 
+  @Input('isSaving') isSaving$: Observable<boolean>;
   @Input() annotationType: AnnotationType;
+
+  @Output() submitted = new EventEmitter<AnnotationType>();
+  @Output() cancelled = new EventEmitter<any>();
+
+  @ViewChild("nameInput") nameInput: ElementRef;
 
   form: FormGroup;
   valueTypes: string[];
   valueTypeLabels: { [ key: string]: string };
+  title: string;
 
-  constructor(public activeModal: NgbActiveModal,
-              private formBuilder: FormBuilder,
-              private router: Router,
-              private route: ActivatedRoute) {
+  protected parentStateRelativePath: string
+
+  constructor(private formBuilder: FormBuilder) {
     this.valueTypes = Object.values(ValueTypes);
     this.valueTypeLabels = {};
     Object.values(ValueTypes).forEach(vt => this.valueTypeLabels[vt] = vt.toUpperCase());
   }
 
   ngOnInit() {
-    if (this.annotationType === undefined) {
-      this.annotationType = new AnnotationType();
-    }
+    this.nameInput.nativeElement.focus();
+    this.title = this.annotationType.isNew() ? 'Add Annotation' : 'Update Annotation';
 
     const valueType = this.annotationType.valueType ? this.annotationType.valueType : '';
+    const maxValueCount = this.annotationType.maxValueCount
+      ? this.annotationType.maxValueCount : MaxValueCount.None
 
     this.form = this.formBuilder.group(
       {
@@ -39,7 +44,7 @@ export class AnnotationTypeAddComponent implements OnInit {
         description: [ this.annotationType.description ],
         required: [ this.annotationType.required ],
         valueType: [ valueType, [ Validators.required ]],
-        maxValueCount: [ this.annotationType.maxValueCount, [ Validators.required ]],
+        maxValueCount: [ maxValueCount, [ Validators.required ]],
         optionsGroup: this.formBuilder.array([])
       });
 
@@ -47,6 +52,15 @@ export class AnnotationTypeAddComponent implements OnInit {
       this.annotationType.options.forEach((option: String) => {
         this.options.push(this.formBuilder.control(option, Validators.required));
       });
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.annotationType && !changes.annotationType.firstChange) {
+      this.annotationType = changes.annotationType.currentValue;
+      this.title = this.annotationType.isNew() ? 'Add Annotation' : 'Update Annotation';
+      this.title = 'Update Annotation';
+      this.annotationTypeToForm();
     }
   }
 
@@ -78,7 +92,7 @@ export class AnnotationTypeAddComponent implements OnInit {
     return this.valueType.value === ValueTypes.Select;
   }
 
-  valueTypeSelected($event) {
+  valueTypeSelected() {
     this.maxValueCount.setValue(MaxValueCount.None);
     while (this.options.length > 0) {
       this.options.removeAt(0)
@@ -108,21 +122,40 @@ export class AnnotationTypeAddComponent implements OnInit {
     return this.options.controls.length <= 1;
   }
 
-  onSubmit() {
+  onSubmit(): void {
+    this.submitted.emit(this.formToAnnotationType());
+  }
+
+  onCancel(): void {
+    this.cancelled.emit(null);
+  }
+
+  private annotationTypeToForm() {
+    this.name.setValue(this.annotationType.name);
+    this.description.setValue(this.annotationType.description);
+    this.required.setValue(this.annotationType.required);
+    this.valueType.setValue(this.annotationType.valueType);
+    this.maxValueCount.setValue(
+      this.annotationType.maxValueCount ? this.annotationType.maxValueCount : MaxValueCount.None);
+
+    if (this.isValueTypeSelect()) {
+      this.annotationType.options.forEach((option: String) => {
+        this.options.push(this.formBuilder.control(option, Validators.required));
+      });
+    }
+  }
+
+  private formToAnnotationType(): AnnotationType {
     const annotationType = new AnnotationType().deserialize({
       id: this.annotationType ? this.annotationType.id : undefined,
       name: this.form.value.name,
       description: this.form.value.description,
       valueType: this.form.value.valueType,
       maxValueCount: this.isValueTypeSelect() ? this.form.value.maxValueCount : undefined,
-      required: this.form.value.required,
+      required: this.form.value.required !== null ? this.form.value.required : false,
       options: this.form.value.optionsGroup,
     });
-    this.activeModal.close(annotationType);
-  }
-
-  onCancel() {
-    this.activeModal.dismiss();
+    return annotationType;
   }
 
   private checkInvalidIndex(index): void {

@@ -1,153 +1,162 @@
-<div class="modal-header">
-  <h4 class="modal-title" id="modal-basic-title" i18n>Add Annotation</h4>
-  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cancel')">
-    <span aria-hidden="true">&times;</span>
-  </button>
-</div>
-<div class="modal-body" i18n>
-  <form class="form-horizontal"
-        [formGroup]="form"
-        autocomplete="on"
-        (ngSubmit)="onSubmit()"
-        novalidate>
+<div class="card mt-2">
+  <div class="card-header bg-primary text-light">{{ this.title }}</div>
+  <div class="card-body">
+    <form class="form-horizontal"
+          [formGroup]="form"
+          autocomplete="on"
+          (ngSubmit)="onSubmit()"
+          novalidate>
 
-    <!-- NAME -->
-    <div class="form-group row">
-      <label for="name" class="col-md-2 col-form-label" i18n>Name</label>
-      <div class="col-md-10">
-        <input class="form-control"
-               type="text"
-               formControlName="name"
-               i18n-placeholder
-               placeholder="A short name for the annotation type">
-      </div>
-      <div class="offset-2 col-md-10" *ngIf="name.invalid && name.touched">
-        <div class="text-danger small" *ngIf="name.errors.required" i18n>
-          A name is required
-        </div>
-        <div class="text-danger small" *ngIf="name.errors.minlength" i18n>
-          Name is too short
-        </div>
-      </div>
-    </div>
-
-    <!-- DESCRIPTION -->
-    <div class="form-group row">
-      <label for="name" class="col-md-2 col-form-label" i18n>Description</label>
-      <div class="col-md-10">
-        <textarea class="form-control"
-                  formControlName="description"
-                  i18n-placeholder
-                  placeholder="A description of the annotation type (optional)">
-        </textarea>
-      </div>
-    </div>
-
-    <!-- REQUIRED -->
-    <div class="form-group row">
-      <label for="required" class="col-md-2 col-form-label" i18n>Required</label>
-      <div class="col-md-10">
-        <input formControlName="required" type="checkbox"/>
-      </div>
-    </div>
-
-    <!--VALUE TYPE  -->
-    <div class="form-group row">
-      <label for="valueType" class="col-md-2 col-form-label" i18n>Value Type</label>
-      <div class="col-md-10">
-        <select class="form-control"
-                id="valueType"
-                formControlName="valueType"
-                (change)="valueTypeSelected($event)">
-          <option value="" i18n>-- make a selection --</option>
-          <option *ngFor="let valueType of valueTypes" [value]="valueType">
-            {{valueTypeLabels[valueType]}}
-          </option>
-        </select>
-      </div>
-
-      <div class="offset-2 col-md-10" *ngIf="valueType.invalid && valueType.touched">
-        <div class="text-danger small" *ngIf="valueType.errors.required" i18n>
-          Please make a selection
-        </div>
-      </div>
-    </div>
-
-    <!-- SELECTIONS -->
-    <div class="form-group row" *ngIf="isValueTypeSelect()">
-      <label for="maxValueCount" class="col-md-2 col-form-label" i18n>Selections</label>
-      <div class="col-md-5">
-        <input type="radio"
-               formControlName="maxValueCount"
-               [value]="1"
-               [checked]="maxValueCount.value === 1">
-        <span class="ml-1" i18n>Single selection only</span>
-      </div>
-      <div class="col-md-5">
-        <input type="radio"
-               formControlName="maxValueCount"
-               [value]="2"
-               [checked]="maxValueCount.value === 2">
-        <span class="ml-1" i18n>Multiple selections allowed</span>
-      </div>
-      <div class="offset-2 col-md-10" *ngIf="maxValueCount.invalid && maxValueCount.touched">
-        <div class="text-danger small" *ngIf="valueType.errors.required" i18n>
-          Please select one from above
-        </div>
-      </div>
-    </div>
-
-    <!-- ADD SELECTION OPTION -->
-    <div class="form-group row" *ngIf="isValueTypeSelect()">
-      <div class="offset-2 col-md-10">
-        <button class="btn btn-sm btn-default"
-                type="button"
-                (click)="optionAdd()">
-          <mat-icon class="success-icon mr-1">add_circle</mat-icon>
-          <span i18n>Add option</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- SELECTION OPTIONS -->
-    <ng-container *ngIf="isValueTypeSelect()">
-      <div class="form-group row" *ngFor="let option of options.controls; let i = index"
-           formArrayName="optionsGroup">
-        <label class="col-md-2 col-form-label" i18n>Selection Option {{i + 1}}</label>
-        <div class="col-md-8">
-          <input class="form-control"
-                 formControlName="{{i}}"
+      <!-- NAME -->
+      <div class="form-group row">
+        <label for="name" class="col-md-3 col-form-label" i18n>Name</label>
+        <div class="col-md-9">
+          <input #nameInput
+                 class="form-control"
                  type="text"
-                 i18placeholder
-                 placeholder="Enter an option">
+                 formControlName="name"
+                 i18n-placeholder
+                 placeholder="A short name for the annotation"
+                 ngbAutoFocus>
         </div>
-        <div class="col-md-2">
-          <button class="btn btn-sm"
-                  (click)="optionRemove(i)"
-                  [disabled]="removeButtonDisabled()">
-            <mat-icon class="danger-icon mr-1">remove_circle</mat-icon>
-            <span i18n>Remove</span>
-          </button>
-        </div>
-        <div class="offset-2 col-md-10"
-             *ngIf="options.at(i).invalid && options.at(i).touched">
-          <div class="text-danger small"
-               *ngIf="options.at(i).errors.required" i18n>
-            A value is required
+        <div class="offset-3 col-md-9" *ngIf="name.invalid && (name.dirty || name.touched)">
+          <div class="text-danger small" *ngIf="name.errors.required" i18n>
+            A name is required
+          </div>
+          <div class="text-danger small" *ngIf="name.errors.minlength" i18n>
+            Name is too short
           </div>
         </div>
       </div>
-    </ng-container>
 
-  </form>
-</div>
+      <!-- DESCRIPTION -->
+      <div class="form-group row">
+        <label for="name" class="col-md-3 col-form-label" i18n>Description</label>
+        <div class="col-md-9">
+          <textarea class="form-control"
+                    formControlName="description"
+                    i18n-placeholder
+                    placeholder="A description of the annotation (optional)">
+          </textarea>
+        </div>
+      </div>
 
-<div class="modal-footer">
-  <button type="button" class="btn btn-default" (click)="onCancel()" i18n>Cancel</button>
-  <button class="btn btn-primary"
-          type="submit"
-          [disabled]="form.invalid"
-          (click)="onSubmit()">
-      Submit
-  </button>
+      <!-- REQUIRED -->
+      <div class="form-group row">
+        <label for="required" class="col-md-3 col-form-label" i18n>Required</label>
+        <div class="col-md-9">
+          <input formControlName="required" type="checkbox"/>
+        </div>
+      </div>
+
+      <!--VALUE TYPE  -->
+      <div class="form-group row">
+        <label for="valueType" class="col-md-3 col-form-label" i18n>Value Type</label>
+        <div class="col-md-9">
+          <select class="form-control"
+                  id="valueType"
+                  formControlName="valueType"
+                  (change)="valueTypeSelected($event)">
+            <option value="" i18n>-- make a selection --</option>
+            <option *ngFor="let valueType of valueTypes" [value]="valueType">
+              {{valueTypeLabels[valueType]}}
+            </option>
+          </select>
+        </div>
+
+        <div class="offset-3 col-md-9" *ngIf="valueType.invalid && valueType.touched">
+          <div class="text-danger small" *ngIf="valueType.errors.required" i18n>
+            Please make a selection
+          </div>
+        </div>
+      </div>
+
+      <!-- SELECTIONS -->
+      <div class="form-group row" *ngIf="isValueTypeSelect()">
+        <label for="maxValueCount" class="col-md-3 col-form-label" i18n>Selections</label>
+        <div class="col-md-9">
+          <input type="radio"
+                 formControlName="maxValueCount"
+                 [value]="1"
+                 [checked]="maxValueCount.value === 1">
+          <span class="ml-1" i18n>Single selection only</span>
+        </div>
+        <div class="col-md-9 offset-3">
+          <input type="radio"
+                 formControlName="maxValueCount"
+                 [value]="2"
+                 [checked]="maxValueCount.value === 2">
+          <span class="ml-1" i18n>Multiple selections allowed</span>
+        </div>
+        <div class="offset-3 col-md-9" *ngIf="maxValueCount.invalid && maxValueCount.touched">
+          <div class="text-danger small" *ngIf="valueType.errors.required" i18n>
+            Please select one from above
+          </div>
+        </div>
+      </div>
+
+      <!-- ADD SELECTION OPTION -->
+      <div class="form-group row" *ngIf="isValueTypeSelect()">
+        <div class="offset-3 col-md-9">
+          <button class="btn btn-sm btn-default"
+                  type="button"
+                  (click)="optionAdd()">
+            <mat-icon class="success-icon mr-1">add_circle</mat-icon>
+            <span i18n>Add option</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- SELECTION OPTIONS -->
+      <ng-container *ngIf="isValueTypeSelect()">
+        <div class="form-group row" *ngFor="let option of options.controls; let i = index"
+             formArrayName="optionsGroup">
+          <label class="col-md-3 col-form-label" i18n>Selection Option {{i + 1}}</label>
+          <div class="col-md-7">
+            <input class="form-control"
+                   formControlName="{{i}}"
+                   type="text"
+                   i18placeholder
+                   placeholder="Enter an option">
+          </div>
+          <div class="col-md-2">
+            <button class="btn btn-sm mt-2"
+                    (click)="optionRemove(i)"
+                    [disabled]="removeButtonDisabled()">
+              <mat-icon class="danger-icon mr-1">remove_circle</mat-icon>
+              <span i18n>Remove</span>
+            </button>
+          </div>
+          <div class="offset-3 col-md-9"
+               *ngIf="options.at(i).invalid && options.at(i).touched">
+            <div class="text-danger small"
+                 *ngIf="options.at(i).errors.required" i18n>
+              A value is required
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- BUTTONS  -->
+      <div class="form-group row">
+        <div class="col-md-9 offset-3">
+          <button class="btn btn-primary mr-2"
+                  type="submit"
+                  [disabled]="form.invalid || !!(isSaving$ | async)"
+                  i18n>
+            <ng-container *ngIf="!(isSaving$ | async)">
+              Submit
+            </ng-container>
+            <app-spinner name="annotationTypeSaving" [show]="(isSaving$ | async)">
+              Saving
+            </app-spinner>
+          </button>
+          <button class="btn btn-default" type="button" (click)="onCancel()" i18n>
+            Cancel
+          </button>
+        </div>
+      </div>
+
+    </form>
+  </div>
 </div>

@@ -18,8 +18,10 @@ import { HeaderComponent } from './components/header/header.component';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { SpinnerComponent } from './components/spinner/spinner.component';
 import { TruncateToggleComponent } from './components/truncate-toggle/truncate-toggle.component';
+import { YesNoPipe } from './pipes/yes-no-pipe';
+import { AnnotationTypeViewComponent } from './components/annotation-type-view/annotation-type-view.component';
+import { AnnotationTypeActionsComponent } from './components/annotation-type-actions/annotation-type-actions.component';
 import { AnnotationTypeAddComponent } from './components/annotation-type-add/annotation-type-add.component';
-
 
 @NgModule({
   imports: [
@@ -44,8 +46,11 @@ import { AnnotationTypeAddComponent } from './components/annotation-type-add/ann
     EntitySummaryComponent,
     TruncateToggleComponent,
     NlToBrPipe,
+    AnnotationTypeRemoveComponent,
+    YesNoPipe,
+    AnnotationTypeActionsComponent,
     AnnotationTypeAddComponent,
-    AnnotationTypeRemoveComponent
+    AnnotationTypeViewComponent
   ],
   exports: [
     BreadcrumbsComponent,
@@ -60,8 +65,11 @@ import { AnnotationTypeAddComponent } from './components/annotation-type-add/ann
     EntitySummaryComponent,
     TruncateToggleComponent,
     NlToBrPipe,
+    AnnotationTypeRemoveComponent,
+    YesNoPipe,
+    AnnotationTypeActionsComponent,
     AnnotationTypeAddComponent,
-    AnnotationTypeRemoveComponent
+    AnnotationTypeViewComponent
   ]
 })
 export class SharedModule { }

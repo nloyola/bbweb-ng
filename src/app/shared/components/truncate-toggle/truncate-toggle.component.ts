@@ -12,9 +12,10 @@ export class TruncateToggleComponent implements OnInit, OnChanges {
   @Input() toggleLength: number;
   @Input() textEmptyWarning: string;
 
+  toggleRequired: boolean;
+
   private showLessLabel = 'Show less';
   private showMoreLabel = 'Show more';
-  private toggleRequired: boolean;
   private truncatePipe = new TruncatePipe();
 
   displayText: string;
@@ -30,7 +31,7 @@ export class TruncateToggleComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.text) {
       this.text = changes.text.currentValue;
-      this.toggleRequired = (this.text.length > this.toggleLength);
+      this.toggleRequired = this.text && (this.text.length > this.toggleLength);
       this.determineDisplayText();
     }
   }

@@ -68,13 +68,6 @@ export const selectStudySearchRepliesAndEntities =
       };
     });
 
-export const selectStudyBySlug =
-  createSelector(
-    selectAllStudies,
-    (studies: Study[], props: any): Study => {
-      return studies.find(s => s.slug === props.slug);
-    });
-
 export const selectStudyLastAdded =
   createSelector(
     selectStudyLastAddedId,

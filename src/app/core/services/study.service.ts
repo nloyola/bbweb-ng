@@ -1,23 +1,23 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { SearchService } from '@app/core/services/search.service';
 import { PagedReply, SearchParams } from '@app/domain';
-import { ApiReply } from '@app/domain/api-reply.model';
-import { Study, StudyCounts, StudyToAdd, StudyState } from '@app/domain/studies';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { AnnotationType } from '@app/domain/annotations';
-
+import { ApiReply } from '@app/domain/api-reply.model';
+import { Study, StudyCounts, StudyToAdd } from '@app/domain/studies';
+import { Observable } from 'rxjs';
+import { map, delay } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
-export class StudyService implements SearchService<Study> {
+export class StudyService {
 
   readonly BASE_URL = '/api/studies';
 
   constructor(private http: HttpClient) {
   }
+
+  private stateActions = [ 'disable', 'enable', 'retire', 'unretire' ];
 
   /**
   * Retrieves the counts of all Studies from the server indexed by state.
@@ -66,7 +66,8 @@ export class StudyService implements SearchService<Study> {
               searchParams,
               entities,
               offset: reply.data.offset,
-              total: reply.data.total
+              total: reply.data.total,
+              maxPages: reply.data.maxPages
             };
           }
           throw new Error('expected a paged reply');
@@ -79,7 +80,9 @@ export class StudyService implements SearchService<Study> {
       description: study.description ? study.description : null
     };
     return this.http.post<ApiReply>(`${this.BASE_URL}/`, json)
-      .pipe(map(this.replyToStudy));
+      .pipe(
+        delay(2000),
+        map(this.replyToStudy));
   }
 
   update(study: Study, attributeName: string, value: string): Observable<Study> {
@@ -96,7 +99,7 @@ export class StudyService implements SearchService<Study> {
         url = `${this.BASE_URL}/description/${study.id}`;
         break;
       case 'state':
-        if (!Object.values(StudyState).includes(value)) {
+        if (!this.stateActions.includes(value)) {
           throw new Error('invalid state change for study: ' + value);
         }
         json = {};
@@ -109,8 +112,8 @@ export class StudyService implements SearchService<Study> {
 
     json['expectedVersion'] = study.version;
 
-    return this.http.post<ApiReply>(url, json)
-      .pipe(map(this.replyToStudy));
+    return this.http.post<ApiReply>(url, json).pipe(
+      map(this.replyToStudy));
   }
 
   addOrUpdateAnnotationType(study: Study, annotationType: AnnotationType): Observable<Study> {
@@ -122,8 +125,9 @@ export class StudyService implements SearchService<Study> {
     if (!annotationType.isNew()) {
       url += '/' + annotationType.id;
     }
-    return this.http.post<ApiReply>(url, json)
-      .pipe(map(this.replyToStudy));
+    return this.http.post<ApiReply>(url, json).pipe(
+      //delay(2000),
+      map(this.replyToStudy));
   }
 
   removeAnnotationType(study: Study, annotationTypeId: string): Observable<Study> {

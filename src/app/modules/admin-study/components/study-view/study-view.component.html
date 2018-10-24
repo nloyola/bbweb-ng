@@ -8,10 +8,12 @@
         <ng-template ngbTabTitle>
           {{tabData[tabId].heading}}
         </ng-template>
-        <ng-template ngbTabContent>
-          <router-outlet></router-outlet>
-        </ng-template>
       </ngb-tab>
     </ngb-tabset>
   </div>
 </div>
+<!--
+     Had to move router outlet outside of ng-tab tag because router had trouble displaying the children
+     states.
+-->
+<router-outlet></router-outlet>

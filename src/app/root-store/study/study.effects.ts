@@ -3,7 +3,7 @@ import { StudyService } from '@app/core/services';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
 import { Observable, of as observableOf } from 'rxjs';
-import { catchError, map, switchMap, delay } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import * as StudyActions from './study.actions';
 
 @Injectable()

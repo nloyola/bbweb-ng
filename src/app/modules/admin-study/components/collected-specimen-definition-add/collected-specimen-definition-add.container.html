@@ -1,0 +1,16 @@
+<app-collected-specimen-definition-add-ui *ngIf="!isLoading; else showLoading"
+                                          [specimenDefinition]="specimenDefinition"
+                                          [isSaving]="isSaving$"
+                                          (submitted)="onSubmit($event)"
+                                          (cancelled)="onCancel($event)">
+</app-collected-specimen-definition-add-ui>
+
+<ng-template #showLoading>
+  <div class="card mt-2">
+    <div class="card-header bg-primary text-light">
+      <app-spinner name="login" [show]="true" i18n>
+        Loading
+      </app-spinner>
+    </div>
+  </div>
+</ng-template>

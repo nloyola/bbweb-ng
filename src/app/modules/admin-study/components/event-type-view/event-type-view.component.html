@@ -1,0 +1,180 @@
+<div class="card mt-2" *ngIf="eventType">
+  <div class="card-header" *ngIf="!(isLoading$ | async); else showLoading">
+    <ng-container i18>Event:</ng-container> {{eventType.name}}
+    <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
+
+      <button class="btn btn-sm btn-outline-primary mr-1"
+              type="button"
+              id="eventTypeMenu"
+              ngbDropdownToggle>
+        <mat-icon>menu</mat-icon>
+      </button>
+
+      <button class="btn btn-sm btn-outline-primary"
+              type="button"
+              (click)="isPanelCollapsed = !isPanelCollapsed"
+              [attr.aria-expanded]="!isCollapsed"
+              aria-controls="eventTypeCollapse">
+        <mat-icon *ngIf="!isPanelCollapsed">keyboard_arrow_down</mat-icon>
+        <mat-icon *ngIf="isPanelCollapsed">keyboard_arrow_right</mat-icon>
+      </button>
+
+      <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="eventTypeMenu">
+        <a class="dropdown-item" (click)="updateName()">
+          <mat-icon class="success-icon mr-1">edit</mat-icon>
+          <ng-container i18n>Update name</ng-container>
+        </a>
+        <a class="dropdown-item" (click)="updateDescription()">
+          <mat-icon class="success-icon mr-1">edit</mat-icon>
+          <ng-container i18n>Update description</ng-container>
+        </a>
+        <a class="dropdown-item" (click)="updateRecurring()">
+          <mat-icon class="success-icon mr-1">edit</mat-icon>
+          <ng-container i18n>Update recurring</ng-container>
+        </a>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" *ngIf="study.isDisabled()" (click)="addAnnotationType()">
+          <mat-icon class="success-icon mr-1">edit</mat-icon>
+          <ng-container i18n>Add an Annotation</ng-container>
+        </a>
+        <a class="dropdown-item" *ngIf="study.isDisabled()" (click)="removeEventType()">
+          <mat-icon class="danger-icon mr-1">warning</mat-icon>
+          <ng-container i18n>Remove this Event</ng-container>
+        </a>
+      </div>
+    </span>
+  </div>
+  <div [ngbCollapse]="isPanelCollapsed" id="eventTypeCollapse">
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-md-3">
+            <strong i18n>Name</strong>
+          </div>
+          <div class="col-md-9">
+            {{eventType.name}}
+          </div>
+        </div>
+      </li>
+      <li class="list-group-item" *ngIf="eventType.description">
+        <div class="row">
+          <div class="col-md-3">
+            <strong i18n>Description</strong>
+          </div>
+          <div class="col-md-9">
+            <app-truncate-toggle [text]="eventType.description"
+                                 [toggleLength]="60">
+            </app-truncate-toggle>
+          </div>
+        </div>
+      </li>
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-md-3">
+            <strong i18n>Recurring</strong>
+          </div>
+          <div class="col-md-9">{{eventType.recurring | yesNo}}</div>
+        </div>
+      </li>
+      <li class="list-group-item" *ngFor="let annotationType of sortedAnnotationTypes">
+        <div class="row">
+          <div class="col-md-3">
+            <strong translate>Annotation</strong>
+          </div>
+          <div class="col-md-7">
+            <app-annotation-type-summary [annotationType]="annotationType">
+            </app-annotation-type-summary>
+          </div>
+          <div class="col-md-2">
+            <app-annotation-type-actions [annotationType]="annotationType"
+                                         [modifyAllowed]="study.isDisabled()"
+                                         (viewSelected)="viewAnnotationType($event)"
+                                         (editSelected)="editAnnotationType($event)"
+                                         (removeSelected)="removeAnnotationType($event)">
+            </app-annotation-type-actions>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="card mt-2" *ngIf="eventType">
+  <div class="card-header" *ngIf="!(isLoading$ | async); else showLoading">
+    <ng-container i18>Collected Specimens</ng-container>
+    <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
+
+      <button class="btn btn-sm btn-outline-primary mr-1"
+              type="button"
+              id="specimensMenu"
+              ngbDropdownToggle>
+        <mat-icon>menu</mat-icon>
+      </button>
+
+      <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="specimensMenu">
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" *ngIf="study.isDisabled()" (click)="addSpecimenDefinition()">
+          <mat-icon class="success-icon mr-1">edit</mat-icon>
+          <ng-container i18n>Add a Specimen</ng-container>
+        </a>
+      </div>
+    </span>
+  </div>
+  <ul class="list-group list-group-flush"
+      *ngIf="sortedSpecimenDefinitions.length > 0">
+    <li class="list-group-item"
+        *ngFor="let specimenDefinition of sortedSpecimenDefinitions">
+      <div class="row">
+        <div class="col-md-10">
+          <app-specimen-definition-summary [specimenDefinition]="specimenDefinition">
+          </app-specimen-definition-summary>
+        </div>
+        <div class="col-md-2">
+          <app-specimen-definition-actions [specimenDefinition]="specimenDefinition"
+                                           [modifyAllowed]="allowChanges"
+                                           (viewSelected)="viewSpecimenDefinition($event)"
+                                           (editSelected)="editSpecimenDefinition($event)"
+                                           (removeSelected)="removeSpecimenDefinition($event)">
+          </app-specimen-definition-actions>
+        </div>
+      </div>
+    </li>
+  </ul>
+  <ul class="list-group list-group-flush"
+      *ngIf="sortedSpecimenDefinitions.length <= 0">
+    <li class="list-group-item">
+      <div class="alert alert-warning" role="alert">
+        <mat-icon>warning</mat-icon>
+        <ng-container i18n>
+          No specimens have been added yet.
+        </ng-container>
+      </div>
+    </li>
+  </ul>
+</div>
+
+<ng-template #showLoading>
+  <div class="card-header">
+    <app-spinner name="login" [show]="true" i18n>
+      Loading
+    </app-spinner>
+  </div>
+</ng-template>
+
+<ng-template #updateNameModal let-close="close">
+  <app-modal-input-text [title]="'Update Name'"
+                        [label]="'New event name'"
+                        [value]="eventType.name"
+                        [options]="updateNameModalOptions"
+                        [modalClose]="close">
+  </app-modal-input-text>
+</ng-template>
+
+<ng-template #updateDescriptionModal let-close="close">
+  <app-modal-input-textarea [title]="'Update Description'"
+                            [label]="'New event description'"
+                            [value]="eventType.description"
+                            [options]="updateDescriptionModalOptions"
+                            [modalClose]="close">
+  </app-modal-input-textarea>
+</ng-template>

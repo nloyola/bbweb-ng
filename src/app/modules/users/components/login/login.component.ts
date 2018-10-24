@@ -1,19 +1,13 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
-import { Store, select } from '@ngrx/store';
-import { Observable, Subject } from 'rxjs';
-import { catchError, filter, tap, takeUntil } from 'rxjs/operators';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { User } from '@app/domain/users';
-import { faSpinner } from '@fortawesome/free-solid-svg-icons';
-
-import {
-  RootStoreState,
-  AuthStoreActions,
-  AuthStoreSelectors
-} from '@app/root-store';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AuthStoreActions, AuthStoreSelectors, RootStoreState } from '@app/root-store';
 import { SpinnerStoreSelectors } from '@app/root-store/spinner';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { select, Store } from '@ngrx/store';
+import { Observable, Subject } from 'rxjs';
+import { filter, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-login',
@@ -51,7 +45,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         select(AuthStoreSelectors.selectAuthUser),
         filter(user => user !== null),
         takeUntil(this.unsubscribe$))
-      .subscribe((user: User) => {
+      .subscribe(() => {
         this.navigateToReturnUrl();
       });
 
@@ -60,7 +54,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         select(AuthStoreSelectors.selectAuthError),
         filter(err => err !== null),
         takeUntil(this.unsubscribe$))
-      .subscribe((err: any) => {
+      .subscribe(() => {
         this.store$.dispatch(new AuthStoreActions.LoginClearFailureAction());
         this.modalService
           .open(this.modal, { ariaLabelledBy: 'modal-basic-title' }).result

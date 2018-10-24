@@ -1,17 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { StudyUI } from '@app/domain/studies/study-ui.model';
-import { ToastrService } from 'ngx-toastr';
-import { select, Store } from '@ngrx/store';
-import { filter, takeUntil } from 'rxjs/operators';
-import { RootStoreState, StudyStoreActions, StudyStoreSelectors } from '@app/root-store';
-import { Subject, Observable } from 'rxjs';
-import { Study } from '@app/domain/studies';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { AnnotationTypeRemoveComponent } from '@app/shared/components/annotation-type-remove/annotation-type-remove.component';
-import { SpinnerStoreSelectors } from '@app/root-store/spinner';
-import { AnnotationTypeAddComponent } from '@app/shared/components/annotation-type-add/annotation-type-add.component';
 import { AnnotationType } from '@app/domain/annotations';
+import { Study } from '@app/domain/studies';
+import { StudyUI } from '@app/domain/studies/study-ui.model';
+import { RootStoreState, StudyStoreActions, StudyStoreSelectors } from '@app/root-store';
+import { SpinnerStoreSelectors } from '@app/root-store/spinner';
+import { AnnotationTypeRemoveComponent } from '@app/shared/components/annotation-type-remove/annotation-type-remove.component';
+import { AnnotationTypeViewComponent } from '@app/shared/components/annotation-type-view/annotation-type-view.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { select, Store } from '@ngrx/store';
+import { ToastrService } from 'ngx-toastr';
+import { Observable, Subject } from 'rxjs';
+import { filter, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-study-participants',
@@ -21,12 +21,12 @@ import { AnnotationType } from '@app/domain/annotations';
 export class StudyParticipantsComponent implements OnInit {
 
   isLoading$: Observable<boolean>;
+  isAddingAnnotation = false;
+  sortedAnnotationTypes: AnnotationType[];
 
-  private studyId: string;
   private study: StudyUI;
   private updatedMessage: string;
   private unsubscribe$: Subject<void> = new Subject<void>();
-  private isAddingAnnotation = false;
 
   constructor(private store$: Store<RootStoreState.State>,
               private router: Router,
@@ -35,28 +35,40 @@ export class StudyParticipantsComponent implements OnInit {
               private toastr: ToastrService) { }
 
   ngOnInit() {
-    this.studyId = this.route.parent.snapshot.data.study.id;
+    this.study = new StudyUI(this.route.parent.parent.snapshot.data.study);
+    this.setAnnotations();
 
     this.isLoading$ = this.store$.pipe(select(SpinnerStoreSelectors.selectSpinnerIsActive));
 
-    // and the slug is derived from the name
     this.store$.pipe(
       select(StudyStoreSelectors.selectAllStudyEntities),
       filter((entities: { [key: string]: any }) => Object.keys(entities).length > 0),
       takeUntil(this.unsubscribe$))
       .subscribe((entities: any) => {
-        const entity = entities[this.studyId];
+        const entity = entities[this.study.id];
 
-        const updatedStudy = (entity instanceof Study) ? entity : new Study().deserialize(entity);
+        const updatedStudy = (entity instanceof Study)
+          ? entity : new Study().deserialize(entity);
         this.study = new StudyUI(updatedStudy);
-        this.isAddingAnnotation = false;
+        this.setAnnotations();
 
         if (this.updatedMessage) {
           this.toastr.success(this.updatedMessage, 'Update Successfull');
         }
       });
 
-    this.store$.dispatch(new StudyStoreActions.GetEnableAllowedRequest({ studyId: this.studyId}));
+    this.store$
+      .pipe(
+        select(StudyStoreSelectors.selectStudyError),
+        filter(s => !!s),
+        takeUntil(this.unsubscribe$))
+      .subscribe((error: any) => {
+        let errMessage = error.payload.error
+          ? error.payload.error.error.message : error.payload.error.statusText;
+        this.toastr.error(errMessage, 'Update Error', { disableTimeOut: true });
+      });
+
+    this.store$.dispatch(new StudyStoreActions.GetEnableAllowedRequest({ studyId: this.study.id}));
   }
 
   ngOnDestroy() {
@@ -65,21 +77,33 @@ export class StudyParticipantsComponent implements OnInit {
   }
 
   add() {
-    this.modalService.open(AnnotationTypeAddComponent, { size: 'lg' }).result
-      .then((annotationType: AnnotationType) => this.addOrUpdateAnnotationType(annotationType))
-      .catch(() => undefined);
+    if (!this.study.isDisabled()) {
+      throw new Error('modifications not allowed');
+    }
+    console.log('navigate to add', this.route);
+    this.router.navigate([ 'add' ], { relativeTo: this.route });
   }
 
-  view(annotationType) {
-    const modalRef = this.modalService.open(AnnotationTypeAddComponent, { size: 'lg' });
+  view(annotationType: AnnotationType) {
+    const modalRef = this.modalService.open(AnnotationTypeViewComponent, { size: 'lg' });
     modalRef.componentInstance.annotationType = annotationType;
 
+    // nothing is done with this modal's result
     modalRef.result
-      .then((annotationType: AnnotationType) => this.addOrUpdateAnnotationType(annotationType))
+      .then(() => undefined)
       .catch(() => undefined);
   }
 
-  remove(annotationType) {
+  edit(annotationType: AnnotationType) {
+    console.log('navigate to edit');
+
+    if (!this.study.isDisabled()) {
+      throw new Error('modifications not allowed');
+    }
+    this.router.navigate([ `../${annotationType.id}` ], { relativeTo: this.route });
+  }
+
+  remove(annotationType: AnnotationType) {
     if (!this.study.isDisabled()) {
       throw new Error('modifications not allowed');
     }
@@ -98,13 +122,8 @@ export class StudyParticipantsComponent implements OnInit {
       .catch(() => undefined);
   }
 
-  private addOrUpdateAnnotationType(annotationType: AnnotationType): void {
-    this.isAddingAnnotation = true;
-    this.updatedMessage = 'Annotation added';
-    this.store$.dispatch(new StudyStoreActions.UpdateStudyAddOrUpdateAnnotationTypeRequest({
-      study: this.study.entity,
-      annotationType
-    }));
+  private setAnnotations() {
+    this.sortedAnnotationTypes = AnnotationType.sortAnnotationTypes(this.study.annotationTypes);
   }
 
 }
