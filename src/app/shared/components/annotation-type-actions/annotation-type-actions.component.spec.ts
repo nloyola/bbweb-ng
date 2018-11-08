@@ -1,21 +1,21 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { SpecimenDefinitionActionsComponent } from './specimen-definition-actions.component';
+import { AnnotationTypeActionsComponent } from './annotation-type-actions.component';
 
-describe('SpecimenDefinitionActionsComponent', () => {
-  let component: SpecimenDefinitionActionsComponent;
-  let fixture: ComponentFixture<SpecimenDefinitionActionsComponent>;
+describe('AnnotationTypeActionsComponent', () => {
+  let component: AnnotationTypeActionsComponent;
+  let fixture: ComponentFixture<AnnotationTypeActionsComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SpecimenDefinitionActionsComponent ],
+      declarations: [ AnnotationTypeActionsComponent ],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SpecimenDefinitionActionsComponent);
+    fixture = TestBed.createComponent(AnnotationTypeActionsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

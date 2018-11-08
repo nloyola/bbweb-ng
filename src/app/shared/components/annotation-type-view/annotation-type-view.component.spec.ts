@@ -1,6 +1,11 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { AnnotationTypeViewComponent } from './annotation-type-view.component';
+import { NgbModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { TruncateToggleComponent } from '../truncate-toggle/truncate-toggle.component';
+import { YesNoPipe } from '@app/shared/pipes/yes-no-pipe';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NlToBrPipe } from '@app/shared/pipes/nl-to-br.pipe';
+import { AnnotationType } from '@app/domain/annotations';
 
 describe('AnnotationTypeViewComponent', () => {
   let component: AnnotationTypeViewComponent;
@@ -8,7 +13,19 @@ describe('AnnotationTypeViewComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ AnnotationTypeViewComponent ]
+      imports: [
+        NgbModule.forRoot()
+      ],
+      providers: [
+        NgbActiveModal
+      ],
+      declarations: [
+        AnnotationTypeViewComponent,
+        TruncateToggleComponent,
+        YesNoPipe,
+        NlToBrPipe
+      ],
+      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     })
     .compileComponents();
   }));
@@ -16,10 +33,11 @@ describe('AnnotationTypeViewComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(AnnotationTypeViewComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
+    component.annotationType = new AnnotationType();
+    fixture.detectChanges();
     expect(component).toBeTruthy();
   });
 });

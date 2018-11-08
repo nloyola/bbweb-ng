@@ -85,7 +85,8 @@ describe('study-store selectors', () => {
       searchParams: pagedReply.searchParams,
       offset: pagedReply.offset,
       total: pagedReply.total,
-      entityIds: pagedReply.entities.map(e => e.id)
+      entityIds: pagedReply.entities.map(e => e.id),
+      maxPages: pagedReply.maxPages,
     };
     const state = {
       study: {
@@ -122,7 +123,8 @@ describe('study-store selectors', () => {
         searchParams: pagedReply.searchParams,
         offset: pagedReply.offset,
         total: pagedReply.total,
-        entityIds: pagedReply.entities.map(e => e.id)
+        entityIds: pagedReply.entities.map(e => e.id),
+        maxPages: pagedReply.maxPages
       };
       const state = {
         study: adapter.addAll([ study ], {
@@ -138,6 +140,7 @@ describe('study-store selectors', () => {
           searchParams: pagedReply.searchParams,
           offset: pagedReply.offset,
           total: pagedReply.total,
+          maxPages: pagedReply.maxPages,
           entityIds: pagedReply.entities.map(e => e.id)
         },
         studies: [ study ]
@@ -175,18 +178,6 @@ describe('study-store selectors', () => {
       expect(StudyStoreSelectors.selectStudySearchRepliesAndEntities(state)).toBeUndefined();
     });
 
-  });
-
-  it('selectStudyBySlug', () => {
-    const study = factory.study();
-    const adapter: EntityAdapter<Study> = createEntityAdapter<Study>({
-      selectId: (study: Study) => study.id
-    });
-    const state = {
-      study: adapter.addAll([ study ], StudyStoreReducer.initialState)
-    };
-
-    expect(StudyStoreSelectors.selectStudyBySlug(state, { slug: study.slug })).toEqual(study);
   });
 
   it('selectStudyLastAdded', () => {

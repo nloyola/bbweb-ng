@@ -4,7 +4,7 @@ import { ValueTypes, MaxValueCount } from '@app/domain/annotations';
 
 import * as faker from 'faker';
 import * as _ from 'lodash';
-import { ConcurrencySafeEntity, PagedReply, SearchParams } from '@app/domain';
+import { ConcurrencySafeEntity, PagedReply, SearchParams, AnatomicalSource, PreservationType, PreservationTemperature, SpecimenType } from '@app/domain';
 
 enum DomainEntities {
 
@@ -16,6 +16,7 @@ enum DomainEntities {
   PROCESSED_SPECIMEN_DEFINITION = 'processedSpecimenDefinition',
   PARTICIPANT = 'participant',
   COLLECTION_EVENT = 'collectionEvent',
+  COLLECTED_SPECIMEN_DEFINITION = 'collectedSpecimenDefinition',
   SPECIMEN = 'specimen',
   CENTRE = 'centre',
   LOCATION = 'location',
@@ -203,6 +204,45 @@ export class Factory {
     };
   }
 
+  randomAnatomicalSourceType(): AnatomicalSource {
+    return faker.random.arrayElement(Object.values(AnatomicalSource));
+  }
+
+  randomPreservationType(): PreservationType {
+    return faker.random.arrayElement(Object.values(PreservationType));
+  }
+
+  randomPreservationTemperature(): PreservationTemperature {
+    return faker.random.arrayElement(Object.values(PreservationTemperature));
+  }
+
+  randomSpecimenType(): SpecimenType {
+    return faker.random.arrayElement(Object.values(SpecimenType));
+  }
+
+  collectedSpecimenDefinition(options: any = {}): any {
+    const defaults = {
+      ...{
+        id:                      this.domainEntityIdNext(DomainEntities.COLLECTED_SPECIMEN_DEFINITION),
+        description:             faker.lorem.sentences(4),
+        units:                   'mL',
+        anatomicalSourceType:    this.randomAnatomicalSourceType(),
+        preservationType:        this.randomPreservationType(),
+        preservationTemperature: this.randomPreservationTemperature(),
+        specimenType:            this.randomSpecimenType(),
+        maxCount:                1,
+        amount:                  0.5
+      },
+      ...this.nameAndSlug()
+    };
+
+    return {
+      ...defaults,
+      ...options
+    };
+  }
+
+
   studyCounts(): StudyCounts {
     return {
       total: 3,
@@ -218,7 +258,8 @@ export class Factory {
       searchParams,
       entities,
       offset: 0,
-      total: entities.length
+      total: entities.length,
+      maxPages: 1
     };
   }
 

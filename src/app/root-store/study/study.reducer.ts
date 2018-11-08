@@ -48,7 +48,10 @@ export function reducer(state = initialState, action: StudyActions): State {
     case ActionTypes.GetStudyCountsFailure: {
       return {
         ...state,
-        error: action
+        error: {
+          type: ActionTypes.GetStudyCountsFailure,
+          error: action.payload.error
+        }
       };
     }
 
@@ -66,7 +69,10 @@ export function reducer(state = initialState, action: StudyActions): State {
         ...state,
         lastSearch: null,
         searchActive: false,
-        error: action
+        error: {
+          type: ActionTypes.SearchStudiesFailure,
+          error: action.payload.error
+        }
       };
     }
 
@@ -109,7 +115,10 @@ export function reducer(state = initialState, action: StudyActions): State {
     case ActionTypes.AddStudyFailure: {
       return {
         ...state,
-        error: action
+        error: {
+          type: ActionTypes.AddStudyFailure,
+          error: action.payload.error
+        }
       };
     }
 
@@ -125,7 +134,10 @@ export function reducer(state = initialState, action: StudyActions): State {
     case ActionTypes.UpdateStudyFailure: {
       return {
         ...state,
-        error: action
+        error: {
+          type: ActionTypes.UpdateStudyFailure,
+          error: action.payload.error
+        }
       };
     }
 
@@ -136,7 +148,10 @@ export function reducer(state = initialState, action: StudyActions): State {
     case ActionTypes.GetStudyFailure: {
       return {
         ...state,
-        error: action
+        error: {
+          type: ActionTypes.GetStudyFailure,
+          error: action.payload.error
+        }
       };
     }
 
@@ -157,7 +172,10 @@ export function reducer(state = initialState, action: StudyActions): State {
     case ActionTypes.GetEnableAllowedFailure: {
       return {
         ...state,
-        error: action
+        error: {
+          type: ActionTypes.GetEnableAllowedFailure,
+          error: action.payload.error
+        }
       };
     }
   }

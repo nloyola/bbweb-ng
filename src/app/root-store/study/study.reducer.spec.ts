@@ -53,7 +53,10 @@ describe('Study Reducer', () => {
 
     expect(state).toEqual({
       ...StudyStoreReducer.initialState,
-      error: payload.error
+      error: {
+        type: action.type,
+        error: action.payload.error
+      }
     });
   });
 
@@ -89,7 +92,8 @@ describe('Study Reducer', () => {
       searchParams: payload.pagedReply.searchParams,
       offset: payload.pagedReply.offset,
       total: payload.pagedReply.total,
-      entityIds: payload.pagedReply.entities.map(e => e.id)
+      entityIds: payload.pagedReply.entities.map(e => e.id),
+      maxPages: payload.pagedReply.maxPages
     };
 
     expect(state.searchReplies).toEqual(searchReply);
@@ -113,7 +117,10 @@ describe('Study Reducer', () => {
     expect(state).toEqual({
       ...StudyStoreReducer.initialState,
       lastSearch: null,
-      error: payload.error
+      error: {
+        type: action.type,
+        error: action.payload.error
+      }
     });
   });
 
@@ -154,7 +161,10 @@ describe('Study Reducer', () => {
     expect(state).toEqual({
       ...StudyStoreReducer.initialState,
       lastSearch: null,
-      error: payload.error
+      error: {
+        type: action.type,
+        error: action.payload.error
+      }
     });
   });
 
@@ -194,7 +204,10 @@ describe('Study Reducer', () => {
     expect(state).toEqual({
       ...StudyStoreReducer.initialState,
       lastSearch: null,
-      error: payload.error
+      error: {
+        type: action.type,
+        error: action.payload.error
+      }
     });
   });
 

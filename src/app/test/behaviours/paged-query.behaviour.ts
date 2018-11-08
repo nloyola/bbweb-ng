@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpTestingController } from '@angular/common/http/testing';
 import { PagedReply, ConcurrencySafeEntity, SearchParams } from '@app/domain';
-import { SearchService } from '@app/core/services/search.service';
+import { Observable } from 'rxjs';
 
 export namespace PagedQueryBehaviour {
 
@@ -9,7 +9,7 @@ export namespace PagedQueryBehaviour {
 
     url?: string;
 
-    service?: SearchService<T>;
+    search?(searchParams: SearchParams): Observable<PagedReply<T>>;
 
     reply?: any;
 
@@ -28,7 +28,7 @@ export namespace PagedQueryBehaviour {
       it('uses the `filter` query parameter', () => {
         const filter = 'name:like:test';
         const params = new SearchParams(filter);
-        context.service.search(params).subscribe((pr: PagedReply<T>) => {
+        context.search(params).subscribe((pr: PagedReply<T>) => {
           expect(pr.entities.length).toBe(context.reply.items.length);
         });
 
@@ -46,7 +46,7 @@ export namespace PagedQueryBehaviour {
       it('uses the `sort` query parameter', () => {
         const sort = '-name';
         const params = new SearchParams(undefined, sort);
-        context.service.search(params).subscribe((pr: PagedReply<T>) => {
+        context.search(params).subscribe((pr: PagedReply<T>) => {
           expect(pr.entities.length).toBe(context.reply.items.length);
         });
 
@@ -64,7 +64,7 @@ export namespace PagedQueryBehaviour {
       it('uses the `page` query parameter', () => {
         const page = 2;
         const params = new SearchParams(undefined, undefined, page);
-        context.service.search(params).subscribe((pr: PagedReply<T>) => {
+        context.search(params).subscribe((pr: PagedReply<T>) => {
           expect(pr.entities.length).toBe(context.reply.items.length);
         });
 
@@ -82,7 +82,7 @@ export namespace PagedQueryBehaviour {
       it('uses the `limit` query parameter', () => {
         const limit = 10;
         const params = new SearchParams(undefined, undefined, undefined, limit);
-        context.service.search(params).subscribe((pr: PagedReply<T>) => {
+        context.search(params).subscribe((pr: PagedReply<T>) => {
           expect(pr.entities.length).toBe(context.reply.items.length);
         });
 

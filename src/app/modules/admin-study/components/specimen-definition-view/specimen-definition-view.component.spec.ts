@@ -1,5 +1,7 @@
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { CollectedSpecimenDefinition } from '@app/domain/studies';
+import { NgbActiveModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SpecimenDefinitionViewComponent } from './specimen-definition-view.component';
 
 describe('SpecimenDefinitionViewComponent', () => {
@@ -8,7 +10,14 @@ describe('SpecimenDefinitionViewComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SpecimenDefinitionViewComponent ]
+      imports: [
+        NgbModule.forRoot()
+      ],
+      providers: [
+        NgbActiveModal
+      ],
+      declarations: [ SpecimenDefinitionViewComponent ],
+      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     })
     .compileComponents();
   }));
@@ -16,10 +25,11 @@ describe('SpecimenDefinitionViewComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(SpecimenDefinitionViewComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
+    component.specimenDefinition = new CollectedSpecimenDefinition();
+    fixture.detectChanges();
     expect(component).toBeTruthy();
   });
 });

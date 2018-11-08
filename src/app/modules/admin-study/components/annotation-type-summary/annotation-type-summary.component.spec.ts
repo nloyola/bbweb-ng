@@ -1,5 +1,7 @@
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { AnnotationType } from '@app/domain/annotations';
+import { TruncatePipe } from '@app/shared/pipes';
 import { AnnotationTypeSummaryComponent } from './annotation-type-summary.component';
 
 describe('AnnotationTypeSummaryComponent', () => {
@@ -8,7 +10,11 @@ describe('AnnotationTypeSummaryComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ AnnotationTypeSummaryComponent ]
+      declarations: [
+        AnnotationTypeSummaryComponent,
+        TruncatePipe
+      ],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
     .compileComponents();
   }));
@@ -16,10 +22,11 @@ describe('AnnotationTypeSummaryComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(AnnotationTypeSummaryComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
+    component.annotationType = new AnnotationType();
+    fixture.detectChanges();
     expect(component).toBeTruthy();
   });
 });

@@ -1,19 +1,21 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { Study } from '@app/domain/studies';
-import { SpinnerStoreReducer } from '@app/root-store/spinner';
-import { TruncatePipe } from '@app/shared/pipes';
-import { Factory } from '@app/test/factory';
+import { AnnotationType } from '@app/domain/annotations';
+import { AnnotationTypeAddComponent } from '@app/shared/components/annotation-type-add/annotation-type-add.component';
 import { StoreModule } from '@ngrx/store';
-import { EventTypesAddAndSelectComponent } from './event-types-add-and-select.component';
-import { StudyStoreReducer, EventTypeStoreReducer } from '@app/root-store';
+import { SpinnerStoreReducer } from '@app/root-store/spinner';
+import { ToastrModule } from 'ngx-toastr';
+import { Study } from '@app/domain/studies';
+import { Factory } from '@app/test/factory';
+import { ActivatedRoute } from '@angular/router';
+import { ParticipantAnnotationTypeAddContainer } from './participant-annotation-type-add.container';
+import { StudyStoreReducer } from '@app/root-store';
 
-describe('EventTypesAddAndSelectComponent', () => {
-  let component: EventTypesAddAndSelectComponent;
-  let fixture: ComponentFixture<EventTypesAddAndSelectComponent>;
+describe('ParticipantAnnotationTypeAddContainer', () => {
+  let component: ParticipantAnnotationTypeAddContainer;
+  let fixture: ComponentFixture<ParticipantAnnotationTypeAddContainer>;
   let factory: Factory;
 
   beforeEach(async(() => {
@@ -26,9 +28,9 @@ describe('EventTypesAddAndSelectComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot({
           'spinner': SpinnerStoreReducer.reducer,
-          'study': StudyStoreReducer.reducer,
-          'event-type': EventTypeStoreReducer.reducer
-        })
+          'study': StudyStoreReducer.reducer
+        }),
+        ToastrModule.forRoot()
       ],
       providers: [
         {
@@ -42,13 +44,18 @@ describe('EventTypesAddAndSelectComponent', () => {
                   }
                 }
               }
+            },
+            snapshot: {
+              params: {
+                eventTypeSlug: 'test'
+              }
             }
           }
         }
       ],
       declarations: [
-        EventTypesAddAndSelectComponent,
-        TruncatePipe
+        AnnotationTypeAddComponent,
+        ParticipantAnnotationTypeAddContainer
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
@@ -56,7 +63,7 @@ describe('EventTypesAddAndSelectComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(EventTypesAddAndSelectComponent);
+    fixture = TestBed.createComponent(ParticipantAnnotationTypeAddContainer);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

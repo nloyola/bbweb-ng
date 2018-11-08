@@ -44,10 +44,7 @@ export class StudyViewComponent implements OnInit {
 
   ngOnInit() {
     this.activeTabId = this.getActiveTabId(this.router.url);
-
-    this.route.data.subscribe(data => {
-      this.study = data.study;
-    });
+    this.study = this.route.snapshot.data.study;
 
     this.router.events
       .pipe(filter(x => x instanceof NavigationEnd))

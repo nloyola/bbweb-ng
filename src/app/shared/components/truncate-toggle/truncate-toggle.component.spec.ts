@@ -1,5 +1,6 @@
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { NlToBrPipe } from '@app/shared/pipes/nl-to-br.pipe';
 import { TruncateToggleComponent } from './truncate-toggle.component';
 
 describe('TruncateToggleComponent', () => {
@@ -8,7 +9,11 @@ describe('TruncateToggleComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TruncateToggleComponent ]
+      declarations: [
+        TruncateToggleComponent,
+        NlToBrPipe
+      ],
+      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     })
     .compileComponents();
   }));
@@ -16,10 +21,11 @@ describe('TruncateToggleComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(TruncateToggleComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
+    component.text = '';
+    fixture.detectChanges();
     expect(component).toBeTruthy();
   });
 });

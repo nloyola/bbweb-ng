@@ -1,5 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ModalInputComponent } from '../modal-input/modal-input.component';
 import { ModalInputTextComponent } from './modal-input-text.component';
 
 describe('ModalInputTextComponent', () => {
@@ -8,7 +9,14 @@ describe('ModalInputTextComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ModalInputTextComponent ]
+      imports: [
+        FormsModule,
+        ReactiveFormsModule
+      ],
+      declarations: [
+        ModalInputComponent,
+        ModalInputTextComponent
+      ]
     })
     .compileComponents();
   }));
@@ -16,10 +24,11 @@ describe('ModalInputTextComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ModalInputTextComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
+    component.options = {};
+    fixture.detectChanges();
     expect(component).toBeTruthy();
   });
 });

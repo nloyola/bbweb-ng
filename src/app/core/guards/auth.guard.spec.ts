@@ -1,14 +1,13 @@
-import { Component } from '@angular/core';
 import { Location } from '@angular/common';
-import { TestBed, inject } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { Component, NgZone } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
 import { Router, Routes } from '@angular/router';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-
-import { AuthGuard } from './auth.guard';
 import { AUTH_TOKEN_LOCAL_STORAGE_KEY } from '@app/core/services/auth.service';
 import { User } from '@app/domain/users';
 import { Factory } from '@app/test/factory';
+import { AuthGuard } from './auth.guard';
 
 describe('AuthGuard', () => {
 
@@ -30,6 +29,7 @@ describe('AuthGuard', () => {
     }
   ];
 
+  let ngZone: NgZone;
   let location: Location;
   let router: Router;
   let factory: Factory;
@@ -46,30 +46,35 @@ describe('AuthGuard', () => {
 
     localStorage.removeItem(AUTH_TOKEN_LOCAL_STORAGE_KEY);
 
+    ngZone = TestBed.get(NgZone);
     location = TestBed.get(Location);
     router = TestBed.get(Router);
     factory = new Factory();
+
+    ngZone.run(() => router.initialNavigation());
   });
 
   it('can navigate to router when user is logged in', () => {
     fakeLogin();
-    router.navigate(['/admin'])
-      .then(value => {
-        expect(location.path()).toBe('/admin');
-      })
-      .catch(err => {
-        fail('should not be invoked');
-      });
+
+    ngZone.run(() => router.navigate(['/admin'])
+               .then(value => {
+                 expect(location.path()).toBe('/admin');
+               })
+               .catch(() => {
+                 fail('should not be invoked');
+               }));
   });
 
-  it('can NOT navigate to router when user is NOT logged in', () => {
-    router.navigate(['/admin'])
-      .then(value => {
-        expect(location.path()).toBe('/');
-      })
-      .catch(err => {
-        fail('should not be invoked');
-      });
+  it('can NOT navigate to admin page when user is NOT logged in', () => {
+    ngZone.run(() =>
+               router.navigate(['/admin'])
+               .then(() => {
+                 expect(location.path()).toContain('returnUrl');
+               })
+               .catch(err => {
+                 fail('should not be invoked');
+               }));
   });
 
   function fakeLogin() {

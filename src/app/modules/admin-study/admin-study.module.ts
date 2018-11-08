@@ -24,7 +24,7 @@ import { AnnotationTypeViewComponent } from '@app/shared/components/annotation-t
 import { EventTypeAddComponent } from './components/event-type-add/event-type-add.component';
 import { EventTypeRemoveComponent } from './components/event-type-remove/event-type-remove.component';
 import { StudiesViewComponent } from './components/studies-view/studies-view.component';
-import { ParticipantAnnotationTypeAddComponent } from './components/participant-annotation-type-add/participant-annotation-type-add.component';
+import { ParticipantAnnotationTypeAddContainer } from './components/participant-annotation-type-add/participant-annotation-type-add.container';
 import { CollectionAnnotationTypeAddContainer } from './components/collection-annotation-type-add/collection-annotation-type-add.container';
 import { SpecimenDefinitionSummaryComponent } from './components/specimen-definition-summary/specimen-definition-summary.component';
 import { SpecimenDefinitionActionsComponent } from './components/specimen-definition-actions/specimen-definition-actions.component';
@@ -60,7 +60,7 @@ import { SpecimenDefinitionRemoveComponent } from './components/specimen-definit
     EventTypeAddComponent,
     EventTypeRemoveComponent,
     StudiesViewComponent,
-    ParticipantAnnotationTypeAddComponent,
+    ParticipantAnnotationTypeAddContainer,
     CollectionAnnotationTypeAddContainer,
     SpecimenDefinitionSummaryComponent,
     SpecimenDefinitionActionsComponent,

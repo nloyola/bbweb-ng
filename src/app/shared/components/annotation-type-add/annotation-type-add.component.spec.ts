@@ -1,6 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AnnotationTypeAddComponent } from './annotation-type-add.component';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { AnnotationType } from '@app/domain/annotations';
 
 describe('AnnotationTypeAddComponent', () => {
   let component: AnnotationTypeAddComponent;
@@ -8,7 +10,12 @@ describe('AnnotationTypeAddComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ AnnotationTypeAddComponent ]
+      imports: [
+        FormsModule,
+        ReactiveFormsModule
+      ],
+      declarations: [ AnnotationTypeAddComponent ],
+      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     })
     .compileComponents();
   }));
@@ -16,10 +23,11 @@ describe('AnnotationTypeAddComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(AnnotationTypeAddComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
+    component.annotationType = new AnnotationType();
+    fixture.detectChanges();
     expect(component).toBeTruthy();
   });
 });

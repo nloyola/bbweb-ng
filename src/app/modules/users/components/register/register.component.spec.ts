@@ -1,23 +1,24 @@
+import { CUSTOM_ELEMENTS_SCHEMA, NgZone } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { Store, StoreModule } from '@ngrx/store';
-import { ToastrModule, ToastrService } from 'ngx-toastr';
-
+import { RoleIds } from '@app/domain/access';
+import { User } from '@app/domain/users';
 import { AuthStoreActions, AuthStoreReducer } from '@app/root-store/auth-store';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
-import { RegisterComponent } from './register.component';
-import { User, UserRole } from '@app/domain/users';
-import { RoleIds } from '@app/domain/access';
 import { Factory } from '@app/test/factory';
+import { Store, StoreModule } from '@ngrx/store';
+import { ToastrModule, ToastrService } from 'ngx-toastr';
+import { RegisterComponent } from './register.component';
+import { StudyStoreReducer } from '@app/root-store';
 
 describe('RegisterComponent', () => {
 
   let store: Store<AuthStoreReducer.State>;
   let component: RegisterComponent;
   let fixture: ComponentFixture<RegisterComponent>;
+  let ngZone: NgZone;
   let router: Router;
   let toastrService: ToastrService;
   let factory: Factory;
@@ -30,7 +31,8 @@ describe('RegisterComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot({
           'auth': AuthStoreReducer.reducer,
-          'spinner': SpinnerStoreReducer.reducer
+          'spinner': SpinnerStoreReducer.reducer,
+          'study': StudyStoreReducer.reducer
         }),
         ToastrModule.forRoot()
       ],
@@ -41,6 +43,7 @@ describe('RegisterComponent', () => {
   }));
 
   beforeEach(() => {
+    ngZone = TestBed.get(NgZone);
     store = TestBed.get(Store);
     router = TestBed.get(Router);
     toastrService = TestBed.get(ToastrService);
@@ -152,11 +155,10 @@ describe('RegisterComponent', () => {
       component.email.setValue(user.email);
       component.password.setValue('test');
       component.onSubmit();
+      spyOn(toastrService, 'success').and.returnValue(null);
 
       const action = new AuthStoreActions.RegisterSuccessAction({ user });
-
-      spyOn(toastrService, 'success').and.returnValue(null);
-      store.dispatch(action);
+      ngZone.run(() => store.dispatch(action));
       expect(toastrService.success).toHaveBeenCalled();
     });
 
@@ -197,7 +199,7 @@ describe('RegisterComponent', () => {
         component.onSubmit();
 
         const action = new AuthStoreActions.RegisterFailureAction(error);
-        store.dispatch(action);
+        ngZone.run(() => store.dispatch(action));
         expect(toastrService.error).toHaveBeenCalled();
         expect(store.dispatch).toHaveBeenCalledWith(registerClearFailureAction);
       });
@@ -224,7 +226,7 @@ describe('RegisterComponent', () => {
 
   it('onCancel navigates to the home page', () => {
     spyOn(router, 'navigate').and.callThrough();
-    component.onCancel();
+    ngZone.run(() => component.onCancel());
     expect(router.navigate).toHaveBeenCalledWith(['/']);
   });
 });

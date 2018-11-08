@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgZone } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { Router } from '@angular/router';
@@ -13,9 +13,10 @@ import { HeaderComponent } from './header.component';
 
 describe('HeaderComponent', () => {
 
-  let store: Store<AuthStoreReducer.State>;
   let component: HeaderComponent;
   let fixture: ComponentFixture<HeaderComponent>;
+  let ngZone: NgZone;
+  let store: Store<AuthStoreReducer.State>;
   let router: Router;
   let factory: Factory;
 
@@ -32,9 +33,10 @@ describe('HeaderComponent', () => {
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     });
 
-    store = TestBed.get(Store);
     fixture = TestBed.createComponent(HeaderComponent);
     component = fixture.componentInstance;
+    ngZone = TestBed.get(NgZone);
+    store = TestBed.get(Store);
     router = TestBed.get(Router);
     factory = new Factory();
 
@@ -65,7 +67,7 @@ describe('HeaderComponent', () => {
 
   it('calling logout dispatches an action and goes to home state', () => {
     const action = new AuthStoreActions.LogoutRequestAction();
-    component.logout();
+    ngZone.run(() => component.logout());
     expect(store.dispatch).toHaveBeenCalledWith(action);
     expect(router.navigate).toHaveBeenCalledWith(['/']);
   });

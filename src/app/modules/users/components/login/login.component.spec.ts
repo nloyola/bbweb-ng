@@ -1,24 +1,23 @@
-import { ComponentFixture, TestBed, async, fakeAsync, tick } from '@angular/core/testing';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgZone } from '@angular/core';
+import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Store, StoreModule } from '@ngrx/store';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-
-import { LoginComponent } from './login.component';
-import { AuthStoreActions, AuthStoreReducer } from '@app/root-store/auth-store';
-import { User, UserRole } from '@app/domain/users';
 import { RoleIds } from '@app/domain/access';
-import { Factory } from '@app/test/factory';
+import { User } from '@app/domain/users';
+import { AuthStoreActions, AuthStoreReducer } from '@app/root-store/auth-store';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
+import { Factory } from '@app/test/factory';
+import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { Store, StoreModule } from '@ngrx/store';
+import { LoginComponent } from './login.component';
 
 describe('LoginComponent', () => {
 
   let store: Store<AuthStoreReducer.State>;
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
+  let ngZone: NgZone;
   let modalService: NgbModal;
   let router: Router;
   let factory: Factory;
@@ -27,8 +26,8 @@ describe('LoginComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         FormsModule,
-        NgbModule.forRoot(),
         ReactiveFormsModule,
+        NgbModule.forRoot(),
         RouterTestingModule,
         StoreModule.forRoot({
           'auth': AuthStoreReducer.reducer,
@@ -42,6 +41,7 @@ describe('LoginComponent', () => {
   }));
 
   beforeEach(() => {
+    ngZone = TestBed.get(NgZone);
     store = TestBed.get(Store);
     modalService = TestBed.get(NgbModal);
     router = TestBed.get(Router);
@@ -116,7 +116,7 @@ describe('LoginComponent', () => {
       component.onSubmit();
 
       const action = new AuthStoreActions.LoginSuccessAction({ user });
-      store.dispatch(action);
+      ngZone.run(() => store.dispatch(action));
 
       fixture.whenStable().then(() => {
         expect(router.navigate).toHaveBeenCalledWith(['/']);
@@ -151,7 +151,7 @@ describe('LoginComponent', () => {
         component.onSubmit();
 
         const action = new AuthStoreActions.LoginFailureAction(error);
-        store.dispatch(action);
+        ngZone.run(() => store.dispatch(action));
 
         fixture.whenStable().then(() => {
           fixture.detectChanges();
@@ -170,7 +170,7 @@ describe('LoginComponent', () => {
       spyOn(router, 'navigate').and.callThrough();
 
       const action = new AuthStoreActions.LoginFailureAction({ error: { status: 401 } });
-      store.dispatch(action);
+      ngZone.run(() => store.dispatch(action));
 
       tick();
 

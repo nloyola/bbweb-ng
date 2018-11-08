@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { NgbModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { AnnotationTypeRemoveComponent } from './annotation-type-remove.component';
+import { AnnotationType } from '@app/domain/annotations';
 
 describe('AnnotationTypeRemoveComponent', () => {
   let component: AnnotationTypeRemoveComponent;
@@ -8,6 +9,12 @@ describe('AnnotationTypeRemoveComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
+      imports: [
+        NgbModule.forRoot()
+      ],
+      providers: [
+        NgbActiveModal
+      ],
       declarations: [ AnnotationTypeRemoveComponent ]
     })
     .compileComponents();
@@ -16,10 +23,11 @@ describe('AnnotationTypeRemoveComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(AnnotationTypeRemoveComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
+    component.annotationType = new AnnotationType();
+    fixture.detectChanges();
     expect(component).toBeTruthy();
   });
 });

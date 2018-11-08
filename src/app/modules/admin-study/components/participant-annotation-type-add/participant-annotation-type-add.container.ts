@@ -10,9 +10,9 @@ import { filter, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-participant-annotation-type-add',
-  templateUrl: './participant-annotation-type-add.component.html'
+  templateUrl: './participant-annotation-type-add.container.html'
 })
-export class ParticipantAnnotationTypeAddComponent implements OnInit, OnDestroy {
+export class ParticipantAnnotationTypeAddContainer implements OnInit, OnDestroy {
 
   annotationType: AnnotationType;
   isSaving$ = new BehaviorSubject<boolean>(false);
@@ -33,6 +33,9 @@ export class ParticipantAnnotationTypeAddComponent implements OnInit, OnDestroy 
     this.study = this.route.parent.parent.snapshot.data.study;
     this.annotationType = this.study.annotationTypes
       .find(at => at.id == this.route.snapshot.params.annotationTypeId);
+    if (!this.annotationType) {
+      this.annotationType = new AnnotationType();
+    }
 
     this.store$.pipe(
       select(StudyStoreSelectors.selectAllStudyEntities),

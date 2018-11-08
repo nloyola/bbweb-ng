@@ -1,19 +1,18 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, NgZone } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, Routes } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { Store, StoreModule } from '@ngrx/store';
-import { provideMockActions } from '@ngrx/effects/testing';
-import { Observable } from 'rxjs';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { ToastrModule, ToastrService } from 'ngx-toastr';
-
-import { StudyAddComponent } from './study-add.component';
-import { StudyStoreActions, StudyStoreReducer } from '@app/root-store/study';
-import { Factory } from '@app/test/factory';
 import { Study } from '@app/domain/studies';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
+import { StudyStoreActions, StudyStoreReducer } from '@app/root-store/study';
+import { Factory } from '@app/test/factory';
+import { provideMockActions } from '@ngrx/effects/testing';
+import { Store, StoreModule } from '@ngrx/store';
+import { ToastrModule, ToastrService } from 'ngx-toastr';
+import { Observable } from 'rxjs';
+import { StudyAddComponent } from './study-add.component';
 
 describe('StudyAddComponent', () => {
 
@@ -22,6 +21,7 @@ describe('StudyAddComponent', () => {
   let component: StudyAddComponent;
   let fixture: ComponentFixture<StudyAddComponent>;
   let factory: Factory;
+  let ngZone: NgZone;
   let router: Router;
   let toastr: ToastrService;
 
@@ -63,8 +63,11 @@ describe('StudyAddComponent', () => {
     component = fixture.componentInstance;
     fixture.detectChanges();
     factory = new Factory();
+    ngZone = TestBed.get(NgZone);
     router = TestBed.get(Router);
     toastr = TestBed.get(ToastrService);
+
+    ngZone.run(() => router.initialNavigation());
   });
 
   it('should create', () => {
@@ -91,13 +94,9 @@ describe('StudyAddComponent', () => {
   });
 
   describe('when submitting', () => {
-    let study;
-
-    beforeEach(() => {
-      study = new Study().deserialize(factory.study());
-    });
 
     it('on valid submission', async(() => {
+      const study = new Study().deserialize(factory.study());
       spyOn(store, 'dispatch').and.callThrough();
       spyOn(router, 'navigate').and.callThrough();
       spyOn(toastr, 'success').and.returnValue(null);
@@ -115,16 +114,20 @@ describe('StudyAddComponent', () => {
 
       expect(store.dispatch).toHaveBeenCalledWith(expectedAction);
 
-      const action = new StudyStoreActions.AddStudySuccess({ study });
-      store.dispatch(action);
+      ngZone.run(() => {
+        const action = new StudyStoreActions.AddStudySuccess({ study });
+        store.dispatch(action);
+      });
 
       fixture.whenStable().then(() => {
         expect(toastr.success).toHaveBeenCalled();
-        expect(router.navigate).toHaveBeenCalledWith(['/admin/studies']);
+        expect(router.navigate).toHaveBeenCalled();
+        expect((router.navigate as any).calls.mostRecent().args[0]).toEqual(['../']);
       });
     }));
 
     it('on submission failure', async(() => {
+      const study = new Study().deserialize(factory.study());
       const errors = [
         {
           status: 401,
@@ -151,7 +154,7 @@ describe('StudyAddComponent', () => {
         component.description.setValue(study.description);
         component.onSubmit();
 
-        const action = new StudyStoreActions.AddStudyFailure({ error });
+        const action = new StudyStoreActions.AddStudyFailure({ error: error });
         store.dispatch(action);
 
         fixture.whenStable().then(() => {
@@ -164,8 +167,9 @@ describe('StudyAddComponent', () => {
 
   it('on cancel', async(() => {
     spyOn(router, 'navigate').and.callThrough();
-    component.onCancel();
-    expect(router.navigate).toHaveBeenCalledWith(['/admin/studies']);
+    ngZone.run(() => component.onCancel());
+    expect(router.navigate).toHaveBeenCalled();
+    expect((router.navigate as any).calls.mostRecent().args[0]).toEqual(['../']);
   }));
 
 });

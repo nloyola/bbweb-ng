@@ -1,20 +1,21 @@
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { CUSTOM_ELEMENTS_SCHEMA, NgZone } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { NgbModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-
-import { ForgotPasswordComponent } from './forgot-password.component';
 import { UserService } from '@app/core/services';
 import { User } from '@app/domain/users';
 import { Factory } from '@app/test/factory';
+import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { ForgotPasswordComponent } from './forgot-password.component';
 
 describe('ForgotPasswordComponent', () => {
+
   let component: ForgotPasswordComponent;
   let fixture: ComponentFixture<ForgotPasswordComponent>;
   let httpMock: HttpTestingController;
+  let ngZone: NgZone;
   let service: UserService;
   let router: Router;
   let modalService: NgbModal;
@@ -37,11 +38,13 @@ describe('ForgotPasswordComponent', () => {
 
   beforeEach(() => {
     httpMock = TestBed.get(HttpTestingController);
+    ngZone = TestBed.get(NgZone);
     service = TestBed.get(UserService);
     router = TestBed.get(Router);
     modalService = TestBed.get(NgbModal);
     factory = new Factory();
 
+    ngZone.run(() => router.initialNavigation());
     spyOn(router, 'navigate').and.callThrough();
 
     fixture = TestBed.createComponent(ForgotPasswordComponent);
@@ -80,28 +83,40 @@ describe('ForgotPasswordComponent', () => {
 
   describe('when submitted', () => {
 
-    it('form submission sends a request to the server', () => {
+    it('form submission sends a request to the server', async(() => {
       const user = new User().deserialize(factory.user);
+      spyOn(modalService, 'open').and
+        .returnValue({ result: Promise.resolve('OK') });
 
       component.email.setValue(user.email);
       component.onSubmit();
+
       const req = httpMock.expectOne(`${service.BASE_URL}/passreset`);
       expect(req.request.method).toBe('POST');
-      req.flush(user);
-      expect(router.navigate).toHaveBeenCalledWith(['/']);
-    });
+      ngZone.run(() => req.flush(user));
 
-    it('a error reply from the server causes a modal to be shown', () => {
+      fixture.whenStable().then(() => {
+        expect(modalService.open).toHaveBeenCalled();
+        expect(router.navigate).toHaveBeenCalledWith(['/']);
+      });
+    }));
+
+    it('a error reply from the server causes a modal to be shown', async(() => {
       spyOn(modalService, 'open').and
         .returnValue({ result: Promise.resolve('OK') });
 
       component.email.setValue('test@test.com');
       component.onSubmit();
+
       const req = httpMock.expectOne(`${service.BASE_URL}/passreset`);
       expect(req.request.method).toBe('POST');
-      req.flush('simulated error', { status: 400, statusText: 'error' });
-      expect(modalService.open).toHaveBeenCalled();
-    });
+      ngZone.run(() => req.flush('simulated error', { status: 400, statusText: 'error' }));
+
+      fixture.whenStable().then(() => {
+        expect(modalService.open).toHaveBeenCalled();
+        expect(router.navigate).toHaveBeenCalledWith(['/']);
+      });
+    }));
 
   });
 });

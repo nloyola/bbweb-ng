@@ -1,9 +1,8 @@
-import { Component } from '@angular/core';
 import { Location } from '@angular/common';
+import { Component, NgZone } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
 import { Router, Routes } from '@angular/router';
-import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-
 import { BreadcrumbService } from './breadcrumb.service';
 
 describe('BreadcrumbService', () => {
@@ -48,6 +47,7 @@ describe('BreadcrumbService', () => {
     }
   ];
 
+  let ngZone: NgZone;
   let location: Location;
   let router: Router;
   let service: BreadcrumbService;
@@ -61,11 +61,12 @@ describe('BreadcrumbService', () => {
       providers: [BreadcrumbService]
     });
 
+    ngZone = TestBed.get(NgZone);
     location = TestBed.get(Location);
     router = TestBed.get(Router);
     service = TestBed.get(BreadcrumbService);
 
-    router.initialNavigation();
+    ngZone.run(() => router.initialNavigation());
   });
 
   it('should be created', () => {
@@ -73,16 +74,17 @@ describe('BreadcrumbService', () => {
   });
 
   it('navigating to /admin/studies/add has the correct breadcrumbs', () => {
-    router.navigate(['/admin/studies/add'])
-      .then(() => {
-        service.crumbs$.subscribe(result => {
-          expect(result.length).toBe(4); // need to add link for Home page
-          expect(result).toContain({ label: 'Admin', path: '/admin' });
-          expect(result).toContain({ label: 'Studies', path: '/admin/studies' });
-          expect(result)
-            .toContain({ label: 'Add', path: '/admin/studies/add' });
-        });
+    ngZone.run(() => {
+      router.navigate(['/admin/studies/add'])
+        .then(() => {
+          service.crumbs$.subscribe(result => {
+            expect(result.length).toBe(4); // need to add link for Home page
+            expect(result).toContain({ label: 'Admin', path: '/admin' });
+            expect(result).toContain({ label: 'Studies', path: '/admin/studies' });
+            expect(result).toContain({ label: 'Add', path: '/admin/studies/add' });
+          });
       });
+    });
   });
 
 });

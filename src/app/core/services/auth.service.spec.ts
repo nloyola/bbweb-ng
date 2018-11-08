@@ -1,9 +1,8 @@
-import { TestBed, inject } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-
-import { AuthService, AUTH_TOKEN_LOCAL_STORAGE_KEY } from './auth.service';
+import { TestBed } from '@angular/core/testing';
 import { User } from '@app/domain/users';
 import { Factory } from '@app/test/factory';
+import { AuthService, AUTH_TOKEN_LOCAL_STORAGE_KEY } from './auth.service';
 
 describe('AuthService', () => {
   let httpMock: HttpTestingController;

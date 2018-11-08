@@ -34,13 +34,13 @@ export class EventTypesAddAndSelectComponent implements OnInit, OnDestroy {
   pageInfo$: Observable<EventTypePageInfo>;
   serverError$: Observable<boolean>;
   filterForm: FormGroup;
+  isAddAllowed: boolean;
 
   currentPage = 1;
   eventTypesLimit = 5;
   sortField = 'name';
 
   private study: Study;
-  private isAddAllowed: boolean;
   private unsubscribe$: Subject<void> = new Subject<void>();
   private filters: { [ name: string]: SearchFilter };
 

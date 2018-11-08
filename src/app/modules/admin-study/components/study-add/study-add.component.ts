@@ -58,8 +58,8 @@ export class StudyAddComponent implements OnInit, OnDestroy {
         filter(s => !!s),
         takeUntil(this.unsubscribe$))
       .subscribe((error: any) => {
-        let errMessage = error.payload.error
-          ? error.payload.error.error.message : error.payload.error.statusText;
+        let errMessage = error.error.error
+          ? error.error.error.message : error.error.statusText;
         if (errMessage.match(/EntityCriteriaError: name already used/)) {
           errMessage = `The name is already in use: ${this.form.value.name}`;
         }

@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { NgbModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { EventTypeRemoveComponent } from './event-type-remove.component';
+import { CollectionEventType } from '@app/domain/studies';
 
 describe('EventTypeRemoveComponent', () => {
   let component: EventTypeRemoveComponent;
@@ -8,6 +9,12 @@ describe('EventTypeRemoveComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
+      imports: [
+        NgbModule.forRoot()
+      ],
+      providers: [
+        NgbActiveModal
+      ],
       declarations: [ EventTypeRemoveComponent ]
     })
     .compileComponents();
@@ -16,10 +23,11 @@ describe('EventTypeRemoveComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(EventTypeRemoveComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
+    component.eventType = new CollectionEventType();
+    fixture.detectChanges();
     expect(component).toBeTruthy();
   });
 });

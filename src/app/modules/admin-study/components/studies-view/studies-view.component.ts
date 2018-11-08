@@ -116,8 +116,8 @@ export class StudiesViewComponent implements OnInit {
     this.applySearchParams();
   }
 
-  public studySelected($event: StudyUI) {
-    this.router.navigate([ 'view', $event.slug, 'summary' ], { relativeTo: this.route });
+  public studySelected(study: StudyUI): void {
+    this.router.navigate([ 'view', study.slug, 'summary' ], { relativeTo: this.route });
  }
 
   private getFilters() {

@@ -16,8 +16,8 @@ export class ErrorInterceptor implements HttpInterceptor {
         // auto logout if 401 response returned from api
         this.authService.logout();
 
-        // if not at the login page then reload the page
-        if (location.pathname !== '/login') {
+        // if not at the login or forgot password page then reload the page
+        if ((location.pathname !== '/login') && (location.pathname !== '/forgot')) {
           location.reload(true);
         }
       }

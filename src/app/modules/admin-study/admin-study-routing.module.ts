@@ -10,7 +10,7 @@ import { StudyResolver } from '@app/modules/admin-study/services/study-resolver.
 import { CollectedSpecimenDefinitionAddContainer } from './components/collected-specimen-definition-add/collected-specimen-definition-add.container';
 import { CollectionAnnotationTypeAddContainer } from './components/collection-annotation-type-add/collection-annotation-type-add.container';
 import { EventTypeAddComponent } from './components/event-type-add/event-type-add.component';
-import { ParticipantAnnotationTypeAddComponent } from './components/participant-annotation-type-add/participant-annotation-type-add.component';
+import { ParticipantAnnotationTypeAddContainer } from './components/participant-annotation-type-add/participant-annotation-type-add.container';
 import { StudiesAdminComponent } from './components/studies-admin/studies-admin.component';
 import { StudyAddComponent } from './components/study-add/study-add.component';
 
@@ -63,14 +63,14 @@ export const routes: Routes = [
               },
               {
                 path: 'add',
-                component: ParticipantAnnotationTypeAddComponent,
+                component: ParticipantAnnotationTypeAddContainer,
                 data: {
                   breadcrumbs: 'Add'
                 }
               },
               {
                 path: ':annotationTypeId',
-                component: ParticipantAnnotationTypeAddComponent,
+                component: ParticipantAnnotationTypeAddContainer,
                 data: {
                   breadcrumbs: 'Update'
                 }
