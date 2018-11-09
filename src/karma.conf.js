@@ -12,6 +12,11 @@ module.exports = function (config) {
   config.set({
     basePath: '',
     client: {
+      jasmine: {
+        config: {
+          random: true
+        }
+      },
       captureConsole: false,
       clearContext: false // leave Jasmine Spec Runner output visible in browser
     },
@@ -34,13 +39,12 @@ module.exports = function (config) {
         chromeDataDir: path.resolve(__dirname, '../.chrome')
       }
     },
-    reporters: ['dots', 'kjhtml'],
+    reporters: ['progress', 'kjhtml'], // ['dots', 'kjhtml'],
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: true,
     restartOnFileChange: true,
-    //browsers: ['Chrome'],
     browsers: ['ChromeHeadless'],
     singleRun: false
   });
