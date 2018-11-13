@@ -1,5 +1,5 @@
 <div class="card mt-2" *ngIf="eventType">
-  <div class="card-header" *ngIf="!(isLoading$ | async); else showLoading">
+  <div class="card-header">
     <ng-container i18>Event:</ng-container> {{eventType.name}}
     <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
 
@@ -7,7 +7,6 @@
               type="button"
               id="eventTypeMenu"
               ngbDropdownToggle>
-        <mat-icon>menu</mat-icon>
       </button>
 
       <button class="btn btn-sm btn-outline-primary"
@@ -33,11 +32,11 @@
           <ng-container i18n>Update recurring</ng-container>
         </a>
         <div class="dropdown-divider"></div>
-        <a class="dropdown-item" *ngIf="study.isDisabled()" (click)="addAnnotationType()">
+        <a class="dropdown-item" *ngIf="allowChanges" (click)="addAnnotationType()">
           <mat-icon class="success-icon mr-1">edit</mat-icon>
           <ng-container i18n>Add an Annotation</ng-container>
         </a>
-        <a class="dropdown-item" *ngIf="study.isDisabled()" (click)="removeEventType()">
+        <a class="dropdown-item" *ngIf="allowChanges" (click)="removeEventType()">
           <mat-icon class="danger-icon mr-1">warning</mat-icon>
           <ng-container i18n>Remove this Event</ng-container>
         </a>
@@ -87,7 +86,7 @@
           </div>
           <div class="col-md-2">
             <app-annotation-type-actions [annotationType]="annotationType"
-                                         [modifyAllowed]="study.isDisabled()"
+                                         [modifyAllowed]="allowChanges"
                                          (viewSelected)="viewAnnotationType($event)"
                                          (editSelected)="editAnnotationType($event)"
                                          (removeSelected)="removeAnnotationType($event)">
@@ -100,7 +99,7 @@
 </div>
 
 <div class="card mt-2" *ngIf="eventType">
-  <div class="card-header" *ngIf="!(isLoading$ | async); else showLoading">
+  <div class="card-header">
     <ng-container i18>Collected Specimens</ng-container>
     <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
 
@@ -108,12 +107,11 @@
               type="button"
               id="specimensMenu"
               ngbDropdownToggle>
-        <mat-icon>menu</mat-icon>
       </button>
 
       <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="specimensMenu">
         <div class="dropdown-divider"></div>
-        <a class="dropdown-item" *ngIf="study.isDisabled()" (click)="addSpecimenDefinition()">
+        <a class="dropdown-item" *ngIf="allowChanges" (click)="addSpecimenDefinition()">
           <mat-icon class="success-icon mr-1">edit</mat-icon>
           <ng-container i18n>Add a Specimen</ng-container>
         </a>
@@ -152,29 +150,3 @@
     </li>
   </ul>
 </div>
-
-<ng-template #showLoading>
-  <div class="card-header">
-    <app-spinner name="login" [show]="true" i18n>
-      Loading
-    </app-spinner>
-  </div>
-</ng-template>
-
-<ng-template #updateNameModal let-close="close">
-  <app-modal-input-text [title]="'Update Name'"
-                        [label]="'New event name'"
-                        [value]="eventType.name"
-                        [options]="updateNameModalOptions"
-                        [modalClose]="close">
-  </app-modal-input-text>
-</ng-template>
-
-<ng-template #updateDescriptionModal let-close="close">
-  <app-modal-input-textarea [title]="'Update Description'"
-                            [label]="'New event description'"
-                            [value]="eventType.description"
-                            [options]="updateDescriptionModalOptions"
-                            [modalClose]="close">
-  </app-modal-input-textarea>
-</ng-template>

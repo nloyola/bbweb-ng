@@ -1,0 +1,51 @@
+<app-event-type-view-ui *ngIf="!(isLoading$ | async); else showLoading"
+                        [eventType]="eventType"
+                        [allowChanges]="allowChanges"
+                        (updateNameSelected)="updateName($event)"
+                        (updateDescriptionSelected)="updateDescription($event)"
+                        (updateRecurringSelected)="updateRecurring($event)"
+                        (addAnnotationTypeSelected)="addAnnotationType($event)"
+                        (viewAnnotationTypeSelected)="viewAnnotationType($event)"
+                        (editAnnotationTypeSelected)="editAnnotationType($event)"
+                        (removeAnnotationTypeSelected)="removeAnnotationType($event)"
+                        (addSpecimenDefinitionSelected)="addSpecimenDefinition($event)"
+                        (viewSpecimenDefinitionSelected)="viewSpecimenDefinition($event)"
+                        (editSpecimenDefinitionSelected)="editSpecimenDefinition($event)"
+                        (removeSpecimenDefinitionSelected)="removeSpecimenDefinition($event)"
+                        (removeEventTypeSelected)="removeEventType($event)">
+</app-event-type-view-ui>
+
+<ng-template #showLoading>
+  <div class="card-header">
+    <app-spinner name="login" [show]="true" i18n>
+      Loading
+    </app-spinner>
+  </div>
+</ng-template>
+
+<ng-template #updateNameModal let-close="close">
+  <app-modal-input-text [title]="'Update Name'"
+                        [label]="'New event name'"
+                        [value]="eventType.name"
+                        [options]="updateNameModalOptions"
+                        [modalClose]="close">
+  </app-modal-input-text>
+</ng-template>
+
+<ng-template #updateDescriptionModal let-close="close">
+  <app-modal-input-textarea [title]="'Update Description'"
+                            [label]="'New event description'"
+                            [value]="eventType.description"
+                            [options]="updateDescriptionModalOptions"
+                            [modalClose]="close">
+  </app-modal-input-textarea>
+</ng-template>
+
+<ng-template #updateRecurringModal let-close="close">
+  <app-modal-input-text [title]="'Update Recurring'"
+                        [label]="'New recurring value'"
+                        [value]="eventType.recurring"
+                        [options]="{ required: true }"
+                        [modalClose]="close">
+  </app-modal-input-text>
+</ng-template>

@@ -103,7 +103,7 @@ export class EventTypeService {
       url += '/' + annotationType.id;
     }
     return this.http.post<ApiReply>(url, json).pipe(
-      delay(2000),
+      //delay(2000),
       map(this.replyToEventType));
   }
 
