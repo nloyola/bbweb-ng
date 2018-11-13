@@ -1,13 +1,13 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { StudyViewComponent } from './study-view.component';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { StoreModule } from '@ngrx/store';
-import { StudyStoreReducer } from '@app/root-store';
-import { ActivatedRoute, Data } from '@angular/router';
-import { Factory } from '@app/test/factory';
 import { Study } from '@app/domain/studies';
+import { StudyStoreReducer } from '@app/root-store';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
+import { Factory } from '@app/test/factory';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { StoreModule } from '@ngrx/store';
+import { StudyViewComponent } from './study-view.component';
 
 describe('StudyViewComponent', () => {
 

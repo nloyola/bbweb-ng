@@ -50,12 +50,14 @@ export enum ActionTypes {
   AddEventTypeFailure = '[EventType] Add Event Type Failure',
 
   UpdateEventTypeRequest = '[EventType] Update Event Type Request',
-  UpdateEventTypeAddOrUpdateAnnotationTypeRequest
-    = '[EventType] Update EventType Add or Update Annotation Type Request',
-  UpdateEventTypeRemoveAnnotationTypeRequest = '[EventType] Update Event Type Remove Annotation Type Request',
-  UpdateEventTypeAddOrUpdateSpecimenDefinitionRequest
-    = '[EventType] Update EventType Add or Update Specimen Definition Request',
-  UpdateEventTypeRemoveSpecimenDefinitionRequest = '[EventType] Update Event Type Remove Specimen Definition Request',
+  UpdateEventTypeAddOrUpdateAnnotationTypeRequest =
+    '[EventType] Update EventType Add or Update Annotation Type Request',
+  UpdateEventTypeRemoveAnnotationTypeRequest =
+    '[EventType] Update Event Type Remove Annotation Type Request',
+  UpdateEventTypeAddOrUpdateSpecimenDefinitionRequest =
+    '[EventType] Update EventType Add or Update Specimen Definition Request',
+  UpdateEventTypeRemoveSpecimenDefinitionRequest =
+    '[EventType] Update Event Type Remove Specimen Definition Request',
   UpdateEventTypeSuccess = '[EventType] Update Event Type Success',
   UpdateEventTypeFailure = '[EventType] Update Event Type Failure',
 

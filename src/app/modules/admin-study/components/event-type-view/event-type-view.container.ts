@@ -96,6 +96,10 @@ export class EventTypeViewContainer implements OnInit, OnDestroy {
   }
 
   updateName() {
+    if (!this.allowChanges) {
+      throw new Error('modifications not allowed');
+    }
+
     this.updateNameModalOptions = {
       required: true,
       minLength: 2
@@ -115,6 +119,10 @@ export class EventTypeViewContainer implements OnInit, OnDestroy {
   }
 
   updateDescription() {
+    if (!this.allowChanges) {
+      throw new Error('modifications not allowed');
+    }
+
     this.updateDescriptionModalOptions = {
       rows: 20,
       cols: 10
@@ -134,13 +142,17 @@ export class EventTypeViewContainer implements OnInit, OnDestroy {
   }
 
   updateRecurring() {
+    if (!this.allowChanges) {
+      throw new Error('modifications not allowed');
+    }
+
     this.modalService.open(this.updateRecurringModal, { size: 'lg' }).result
       .then(result => {
         if (result.confirmed) {
           this.store$.dispatch(new EventTypeStoreActions.UpdateEventTypeRequest({
             eventType: this.eventType,
             attributeName: 'recurring',
-            value: result.value
+            value: result.value.toString()
           }));
           this.updatedMessage = 'Recurring was updated';
         }
@@ -149,7 +161,7 @@ export class EventTypeViewContainer implements OnInit, OnDestroy {
   }
 
   addAnnotationType() {
-    if (!this.study.isDisabled()) {
+    if (!this.allowChanges) {
       throw new Error('modifications not allowed');
     }
     this.router.navigate([ this.eventType.slug, 'annotationAdd' ],
@@ -166,26 +178,26 @@ export class EventTypeViewContainer implements OnInit, OnDestroy {
       .catch(() => undefined);
   }
 
-  editAnnotationType($event: AnnotationType): void {
-    if (!this.study.isDisabled()) {
+  editAnnotationType(annotationType: AnnotationType): void {
+    if (!this.allowChanges) {
       throw new Error('modifications not allowed');
     }
-    this.router.navigate([ this.eventType.slug, 'annotation', $event.id ],
+    this.router.navigate([ this.eventType.slug, 'annotation', annotationType.id ],
                          { relativeTo: this.route });
   }
 
-  removeAnnotationType($event: AnnotationType): void {
-    if (!this.study.isDisabled()) {
+  removeAnnotationType(annotationType: AnnotationType): void {
+    if (!this.allowChanges) {
       throw new Error('modifications not allowed');
     }
 
     const modalRef = this.modalService.open(AnnotationTypeRemoveComponent);
-    modalRef.componentInstance.annotationType = $event;
+    modalRef.componentInstance.annotationType = annotationType;
     modalRef.result
       .then(() => {
         this.store$.dispatch(new EventTypeStoreActions.UpdateEventTypeRemoveAnnotationTypeRequest({
           eventType: this.eventType,
-          annotationTypeId: $event.id
+          annotationTypeId: annotationType.id
         }));
 
         this.updatedMessage = 'Annotation removed';
@@ -194,7 +206,7 @@ export class EventTypeViewContainer implements OnInit, OnDestroy {
   }
 
   addSpecimenDefinition() {
-    if (!this.study.isDisabled()) {
+    if (!this.allowChanges) {
       throw new Error('modifications not allowed');
     }
     this.router.navigate([ this.eventType.slug, 'spcDefAdd' ], { relativeTo: this.route });
@@ -211,7 +223,7 @@ export class EventTypeViewContainer implements OnInit, OnDestroy {
   }
 
   editSpecimenDefinition(specimenDefinition: CollectedSpecimenDefinition): void {
-    if (!this.study.isDisabled()) {
+    if (!this.allowChanges) {
       throw new Error('modifications not allowed');
     }
     this.router.navigate([ this.eventType.slug, 'spcDef', specimenDefinition.id ],
@@ -219,7 +231,7 @@ export class EventTypeViewContainer implements OnInit, OnDestroy {
   }
 
   removeSpecimenDefinition(specimenDefinition: CollectedSpecimenDefinition): void {
-    if (!this.study.isDisabled()) {
+    if (!this.allowChanges) {
       throw new Error('modifications not allowed');
     }
 
@@ -238,7 +250,7 @@ export class EventTypeViewContainer implements OnInit, OnDestroy {
   }
 
   removeEventType() {
-    if (!this.study.isDisabled()) {
+    if (!this.allowChanges) {
       throw new Error('modifications not allowed');
     }
 

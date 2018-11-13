@@ -49,6 +49,7 @@ describe('LoginComponent', () => {
 
     fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;
+    ngZone.run(() => router.initialNavigation());
     fixture.detectChanges();
   });
 

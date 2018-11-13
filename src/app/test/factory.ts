@@ -242,6 +242,27 @@ export class Factory {
     };
   }
 
+  collectionEventType(options: any = {}): any {
+    const study = this.defaultStudy();
+    const defaults = {
+      ...{
+        id:                  DomainEntities.COLLECTION_EVENT_TYPE,
+        studyId:             study.id,
+        description:         faker.lorem.sentences(4),
+        specimenDefinitions: [],
+        annotationTypes:     [],
+        recurring:           false
+      },
+      ...this.nameAndSlug()
+    };
+
+    const eventType = {
+      ...defaults,
+      ...options
+    };
+    this.defaultEntities.set(DomainEntities.COLLECTION_EVENT_TYPE, eventType);
+    return eventType;
+  }
 
   studyCounts(): StudyCounts {
     return {

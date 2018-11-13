@@ -2,7 +2,7 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { Study } from '@app/domain/studies';
+import { Study, CollectionEventType } from '@app/domain/studies';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { YesNoPipe } from '@app/shared/pipes/yes-no-pipe';
 import { Factory } from '@app/test/factory';
@@ -21,28 +21,7 @@ describe('EventTypeViewComponent', () => {
 
     TestBed.configureTestingModule({
       imports: [
-        NgbModule.forRoot(),
-        RouterTestingModule,
-        StoreModule.forRoot({
-          'spinner': SpinnerStoreReducer.reducer
-        }),
-        ToastrModule.forRoot()
-      ],
-      providers: [
-        {
-          provide: ActivatedRoute,
-          useValue: {
-            parent: {
-              parent: {
-                snapshot: {
-                  data: {
-                    study: new Study().deserialize(factory.study())
-                  }
-                }
-              }
-            }
-          }
-        }
+        NgbModule.forRoot()
       ],
       declarations: [
         EventTypeViewComponent,
@@ -54,12 +33,15 @@ describe('EventTypeViewComponent', () => {
   }));
 
   beforeEach(() => {
+    factory = new Factory();
     fixture = TestBed.createComponent(EventTypeViewComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
+    component.eventType = new CollectionEventType().deserialize(factory.collectionEventType());
+    component.allowChanges = false;
+    fixture.detectChanges();
     expect(component).toBeTruthy();
   });
 });
