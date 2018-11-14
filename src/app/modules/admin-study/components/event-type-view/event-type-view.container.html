@@ -42,10 +42,10 @@
 </ng-template>
 
 <ng-template #updateRecurringModal let-close="close">
-  <app-modal-input-text [title]="'Update Recurring'"
-                        [label]="'New recurring value'"
-                        [value]="eventType.recurring"
-                        [options]="{ required: true }"
-                        [modalClose]="close">
-  </app-modal-input-text>
+  <app-modal-input-boolean [title]="'Update Recurring'"
+                           [label]="'New recurring value'"
+                           [value]="eventType.recurring"
+                           [options]="{ required: true }"
+                           [modalClose]="close">
+  </app-modal-input-boolean>
 </ng-template>

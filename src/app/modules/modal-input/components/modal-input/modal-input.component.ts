@@ -1,4 +1,4 @@
-import { Component, Input, TemplateRef, ViewChild } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-modal-input',
@@ -7,8 +7,6 @@ import { Component, Input, TemplateRef, ViewChild } from '@angular/core';
 })
 export class ModalInputComponent {
 
-  @Input() title: string;
-  @Input() modalBodyTemplate: TemplateRef<any>;
   @Input() modalClose: (result: any) => void;
 
   constructor() { }

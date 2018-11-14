@@ -1,5 +1,6 @@
-<ng-template #modalBody>
-  <form class="form-horizontal"
+<app-modal-input [modalClose]="close()">
+  <span class="title">{{title}}</span>
+  <form class="body form-horizontal"
         [formGroup]="textForm"
         autocomplete="on"
         novalidate>
@@ -22,9 +23,4 @@
       </div>
     </div>
   </form>
-</ng-template>
-
-<app-modal-input [title]="title"
-                 [modalBodyTemplate]="modalBody"
-                 [modalClose]="close()">
 </app-modal-input>

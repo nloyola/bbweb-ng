@@ -8,6 +8,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ModalInputTextComponent } from './components/modal-input-text/modal-input-text.component';
 import { ModalInputComponent } from './components/modal-input/modal-input.component';
 import { ModalInputTextareaComponent } from './components/modal-input-textarea/modal-input-textarea.component';
+import { ModalInputBooleanComponent } from './components/modal-input-boolean/modal-input-boolean.component';
 
 @NgModule({
   imports: [
@@ -23,8 +24,10 @@ import { ModalInputTextareaComponent } from './components/modal-input-textarea/m
     ModalInputComponent,
     ModalInputTextComponent,
     ModalInputTextareaComponent,
+    ModalInputBooleanComponent,
   ],
   exports: [
+    ModalInputBooleanComponent,
     ModalInputTextComponent,
     ModalInputTextareaComponent
   ]

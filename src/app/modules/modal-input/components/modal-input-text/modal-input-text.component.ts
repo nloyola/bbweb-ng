@@ -1,6 +1,6 @@
-import { Component, Input, OnInit, ViewChild, TemplateRef } from '@angular/core';
-import { FormBuilder, Validators, FormGroup, AbstractControl } from '@angular/forms';
-import { ModalInputTextOptions } from '@app/modules/modal-input/models';
+import { Component, Input, OnInit } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ModalInputTextOptions, ModalInputResult } from '@app/modules/modal-input/models';
 
 @Component({
   selector: 'app-modal-input-text',
@@ -13,8 +13,7 @@ export class ModalInputTextComponent implements OnInit {
   @Input() label: string;
   @Input() value: string;
   @Input() options: ModalInputTextOptions;
-  @Input() modalClose: (result: any) => void;
-  @ViewChild('modalBody') modalBody: TemplateRef<any>;
+  @Input() modalClose: (result: ModalInputResult) => void;
 
   private textForm: FormGroup;
 
@@ -38,9 +37,12 @@ export class ModalInputTextComponent implements OnInit {
   }
 
   close(): (result: any) => void {
-    return (source: any) => {
-      const value = this.textForm.value.text;
-      this.modalClose((source === 'OK') ? { value } : source)
+    return (source: any): void => {
+      const result = {
+        confirmed: (source === 'OK'),
+        value: this.textForm.value.text,
+      }
+      this.modalClose(result);
     };
   }
 

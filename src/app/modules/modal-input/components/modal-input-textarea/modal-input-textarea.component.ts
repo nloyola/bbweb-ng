@@ -34,10 +34,13 @@ export class ModalInputTextareaComponent implements OnInit {
   }
 
   close(): (result: any) => void {
-    return (source: any) => {
-      const value = this.form.value.textarea;
-      this.modalClose((source === 'OK') ? { value } : source)
-    };
+    return (source: any): void => {
+      const trimmedValue = this.form.value.textarea.trim();
+      this.modalClose({
+        confirmed: (source === 'OK'),
+        value: trimmedValue.length > 0 ? trimmedValue : undefined,
+      });
+    }
   }
 
 }

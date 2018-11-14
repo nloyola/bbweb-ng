@@ -1,0 +1,32 @@
+<app-modal-input [modalClose]="close()">
+  <span class="title">{{title}}</span>
+  <form class="body form-horizontal"
+        [formGroup]="form"
+        autocomplete="on"
+        novalidate>
+
+    <div class="form-group row">
+      <label for="email" class="col-md-3 col-form-label" i18n>{{label}}</label>
+      <div class="col-md-2">
+        <input class="mr-1"
+               type="radio"
+               formControlName="input"
+               [value]="true"
+               ngbAutoFocus>
+        <ng-container i18n>Yes</ng-container>
+      </div>
+      <div class="col-md-2">
+        <input class="mr-1"
+               type="radio"
+               formControlName="input"
+               [value]="false">
+        <ng-container i18n>No</ng-container>
+      </div>
+    </div>
+    <div class="col-md-8 offset-3" *ngIf="input.invalid && input.touched">
+      <div class="text-danger small" *ngIf="input.errors.required" i18n>
+        A value is required
+      </div>
+    </div>
+  </form>
+</app-modal-input>

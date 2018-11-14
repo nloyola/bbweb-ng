@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AnnotationType } from '@app/domain/annotations';
 import { CollectionEventType, Study } from '@app/domain/studies';
 import { CollectedSpecimenDefinition } from '@app/domain/studies/collected-specimen-definition.model';
-import { ModalInputTextareaOptions, ModalInputTextOptions } from '@app/modules/modal-input/models';
+import { ModalInputTextareaOptions, ModalInputTextOptions, ModalInputResult } from '@app/modules/modal-input/models';
 import { EventTypeStoreActions, EventTypeStoreSelectors, RootStoreState, StudyStoreSelectors } from '@app/root-store';
 import { AnnotationTypeViewComponent } from '@app/shared/components/annotation-type-view/annotation-type-view.component';
 import { NgbModal, NgbDropdownConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -101,12 +101,12 @@ export class EventTypeViewContainer implements OnInit, OnDestroy {
       minLength: 2
     };
     this.modalService.open(this.updateNameModal, { size: 'lg' }).result
-      .then(value => {
-        if (value.value) {
+      .then((result: ModalInputResult) => {
+        if (result.confirmed) {
           this.store$.dispatch(new EventTypeStoreActions.UpdateEventTypeRequest({
             eventType: this.eventType,
             attributeName: 'name',
-            value: value.value
+            value: result.value
           }));
           this.updatedMessage = 'Event name was updated';
         }
@@ -120,26 +120,30 @@ export class EventTypeViewContainer implements OnInit, OnDestroy {
       cols: 10
     };
     this.modalService.open(this.updateDescriptionModal, { size: 'lg' }).result
-      .then(value => {
-        this.store$.dispatch(new EventTypeStoreActions.UpdateEventTypeRequest({
-          eventType: this.eventType,
-          attributeName: 'description',
-          value: value.value ? value.value : undefined
-        }));
-        this.updatedMessage = 'Event description was updated';
+      .then((result: ModalInputResult) => {
+        if (result.confirmed) {
+          this.store$.dispatch(new EventTypeStoreActions.UpdateEventTypeRequest({
+            eventType: this.eventType,
+            attributeName: 'description',
+            value: result.value
+          }));
+          this.updatedMessage = 'Event description was updated';
+        }
       })
       .catch(err => console.log('err', err));
   }
 
   updateRecurring() {
     this.modalService.open(this.updateRecurringModal, { size: 'lg' }).result
-      .then(value => {
-        this.store$.dispatch(new EventTypeStoreActions.UpdateEventTypeRequest({
-          eventType: this.eventType,
-          attributeName: 'recurring',
-          value: value.value
-        }));
-        this.updatedMessage = 'Recurring was updated';
+      .then(result => {
+        if (result.confirmed) {
+          this.store$.dispatch(new EventTypeStoreActions.UpdateEventTypeRequest({
+            eventType: this.eventType,
+            attributeName: 'recurring',
+            value: result.value
+          }));
+          this.updatedMessage = 'Recurring was updated';
+        }
       })
       .catch(err => console.log('err', err));
   }
