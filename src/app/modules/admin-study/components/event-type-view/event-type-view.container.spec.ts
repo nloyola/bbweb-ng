@@ -171,24 +171,29 @@ fdescribe('EventTypeViewContainer', () => {
       });
     });
 
-    fit('functions that should notify the user', async(() => {
+    it('functions that should notify the user', async(() => {
       const eventType = componentSetup(fixture, store, factory);
-      const toastrService = TestBed.get(ToastrService);
+      const toastr = TestBed.get(ToastrService);
       const modalService = TestBed.get(NgbModal);
+      const modalSpy = spyOn(modalService, 'open');
 
-      spyOn(modalService, 'open').and.returnValue({
-        componentInstance: {},
-        result: Promise.resolve({ confirmed: true, value: 'test' })
-      });
-      spyOn(toastrService, 'success').and.returnValue(null);
+      spyOn(toastr, 'success').and.returnValue(null);
 
       componentUpdateFuncs.forEach(updateFunc => {
+        modalSpy.and.returnValue({
+          componentInstance: {},
+          result: Promise.resolve({ confirmed: true, value: 'test' })
+        });
+
         updateFunc(component, eventType);
         fixture.whenStable().then(() => {
           store.dispatch(new EventTypeStoreActions.UpdateEventTypeSuccess({ eventType }));
         });
       });
-      expect(toastrService.success.calls.count()).toBe(componentUpdateFuncs.length);
+
+      fixture.whenStable().then(() => {
+        expect(toastr.success.calls.count()).toBe(componentUpdateFuncs.length);
+      });
     }));
 
   });

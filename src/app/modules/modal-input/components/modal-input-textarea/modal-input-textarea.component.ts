@@ -26,6 +26,9 @@ export class ModalInputTextareaComponent implements OnInit {
       validators.push(Validators.required);
     }
 
+    if (!this.options.rows) { this.options.rows = 3; }
+    if (!this.options.cols) { this.options.cols = 10; }
+
     this.form = this.formBuilder.group({ textarea: [this.value, validators] });
   }
 
