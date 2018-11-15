@@ -95,7 +95,7 @@ export class EventTypeAddComponent implements OnInit, OnDestroy {
     this.store$.dispatch(new EventTypeStoreActions.AddEventTypeRequest({
       eventType: this.eventTypeToSave
     }));
-    this.savedMessage = this.eventType.isNew() ? 'Event Added' : 'Event Updated'
+    this.savedMessage = 'Event Added';
   }
 
   onCancel() {

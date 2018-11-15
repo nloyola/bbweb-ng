@@ -165,6 +165,13 @@ export function reducer(state = initialState, action: StudyActions): State {
             enableAllowedIds
           };
         }
+      } else {
+        const enableAllowedIds =
+          state.enableAllowedIds.filter(id => id != action.payload.studyId);
+        return {
+          ...state,
+          enableAllowedIds
+        };
       }
       return state;
     }

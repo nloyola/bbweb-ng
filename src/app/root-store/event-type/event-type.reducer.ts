@@ -24,10 +24,7 @@ export const initialState: State = adapter.getInitialState({
   error: null,
 });
 
-export function reducer(
-  state = initialState,
-  action: EventTypeActions
-): State {
+export function reducer(state = initialState, action: EventTypeActions): State {
   switch (action.type) {
 
     case ActionTypes.SearchEventTypesRequest: {
@@ -114,7 +111,7 @@ export function reducer(
     case ActionTypes.UpdateEventTypeFailure: {
       return {
         ...state,
-        error: action
+        error: action.payload.error
       };
     }
 

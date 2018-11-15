@@ -1,13 +1,13 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { AuthService, StudyService } from '@app/core/services';
+import { StudyService } from '@app/core/services';
+import { SearchParams } from '@app/domain';
 import { StudyStoreActions } from '@app/root-store';
 import { Factory } from '@app/test/factory';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { cold, hot } from 'jasmine-marbles';
 import { Observable, of, throwError } from 'rxjs';
 import { StudyStoreEffects } from './study.effects';
-import { SearchParams } from '@app/domain';
 
 describe('study-store effects', () => {
 
@@ -162,6 +162,160 @@ describe('study-store effects', () => {
       const expected = cold('--b', { b: completion });
 
       expect(effects.getRequest$).toBeObservable(expected);
+    });
+  });
+
+  describe('updateRequestEffect', () => {
+
+    let study;
+    let action;
+
+    beforeEach(() => {
+      study = factory.study();
+      action = new StudyStoreActions.UpdateStudyRequest({
+        study,
+        attributeName: 'name',
+        value: factory.stringNext()
+      });
+      jest.spyOn(studyService, 'update');
+    });
+
+    it('should respond with success', () => {
+      const completion = new StudyStoreActions.UpdateStudySuccess({ study });
+
+      studyService.update.mockReturnValue(of(study));
+      actions = hot('--a-', { a: action });
+      expect(effects.updateRequest$).toBeObservable(cold('--b', { b: completion }));
+    });
+
+    it('should respond with failure', () => {
+      const error = {
+        status: 404,
+        error: {
+          message: 'simulated error'
+        }
+      };
+      const completion = new StudyStoreActions.UpdateStudyFailure({ error });
+
+      studyService.update.mockReturnValue(throwError(error));
+      actions = hot('--a-', { a: action });
+      expect(effects.updateRequest$).toBeObservable(cold('--b', { b: completion }));
+    });
+  });
+
+  describe('addOrUpdateAnnotationTypeRequestEffect', () => {
+
+    let annotationType;
+    let study;
+    let action;
+
+    beforeEach(() => {
+      annotationType = factory.annotationType();
+      study = factory.study({ annotationTypes: [ annotationType ]});
+      action = new StudyStoreActions.UpdateStudyAddOrUpdateAnnotationTypeRequest({
+        study,
+        annotationType
+      });
+      jest.spyOn(studyService, 'addOrUpdateAnnotationType');
+    });
+
+    it('should respond with success', () => {
+      const completion = new StudyStoreActions.UpdateStudySuccess({ study });
+
+      studyService.addOrUpdateAnnotationType.mockReturnValue(of(study));
+      actions = hot('--a-', { a: action });
+      expect(effects.addOrUpdateAnnotationTypeRequest$).toBeObservable(cold('--b', { b: completion }));
+    });
+
+    it('should respond with failure', () => {
+      const error = {
+        status: 404,
+        error: {
+          message: 'simulated error'
+        }
+      };
+      const completion = new StudyStoreActions.UpdateStudyFailure({ error });
+
+      studyService.addOrUpdateAnnotationType.mockReturnValue(throwError(error));
+      actions = hot('--a-', { a: action });
+      expect(effects.addOrUpdateAnnotationTypeRequest$).toBeObservable(cold('--b', { b: completion }));
+    });
+  });
+
+  describe('removeAnnotationTypeRequestEffect', () => {
+
+    let annotationType;
+    let study;
+    let action;
+
+    beforeEach(() => {
+      annotationType = factory.annotationType();
+      study = factory.study({ annotationTypes: [ annotationType ]});
+      action = new StudyStoreActions.UpdateStudyRemoveAnnotationTypeRequest({
+        study,
+        annotationTypeId: annotationType.id
+      });
+      jest.spyOn(studyService, 'removeAnnotationType');
+    });
+
+    it('should respond with success', () => {
+      const completion = new StudyStoreActions.UpdateStudySuccess({ study });
+
+      studyService.removeAnnotationType.mockReturnValue(of(study));
+      actions = hot('--a-', { a: action });
+      expect(effects.removeAnnotationTypeRequest$).toBeObservable(cold('--b', { b: completion }));
+    });
+
+    it('should respond with failure', () => {
+      const error = {
+        status: 404,
+        error: {
+          message: 'simulated error'
+        }
+      };
+      const completion = new StudyStoreActions.UpdateStudyFailure({ error });
+
+      studyService.removeAnnotationType.mockReturnValue(throwError(error));
+      actions = hot('--a-', { a: action });
+      expect(effects.removeAnnotationTypeRequest$).toBeObservable(cold('--b', { b: completion }));
+    });
+  });
+
+  describe('enableAllowedRequestEffect', () => {
+
+    let study;
+    let action;
+
+    beforeEach(() => {
+      study = factory.study();
+      action = new StudyStoreActions.GetEnableAllowedRequest({ studyId: study.id });
+      jest.spyOn(studyService, 'enableAllowed');
+    });
+
+    it('should respond with success', () => {
+      const reply = {
+        studyId: study.id,
+        allowed: true
+      };
+      const completion = new StudyStoreActions.GetEnableAllowedSuccess(reply);
+
+      studyService.enableAllowed.mockReturnValue(of(reply));
+      actions = hot('--a-', { a: action });
+      expect(effects.enableAllowedRequest$).toBeObservable(cold('--b', { b: completion }));
+    });
+
+    it('should respond with failure', () => {
+      const error = {
+        status: 404,
+        error: {
+          message: 'simulated error'
+        }
+      };
+      const completion = new StudyStoreActions.GetEnableAllowedFailure({ error });
+
+      studyService.enableAllowed.mockReturnValue(throwError(error));
+      actions = hot('--a-', { a: action });
+      expect(effects.enableAllowedRequest$).toBeObservable(cold('--b', { b: completion }));
     });
   });
 

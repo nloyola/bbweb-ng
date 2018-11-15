@@ -55,7 +55,13 @@ export class EventTypeService {
   }
 
   add(eventType: CollectionEventTypeToAdd): Observable<CollectionEventType> {
-    return this.http.post<ApiReply>(`${this.BASE_URL}/${eventType.studyId}`, eventType)
+    const json = {
+      name: eventType.name,
+      description: eventType.description,
+      recurring: eventType.recurring,
+      studyId: eventType.studyId
+    };
+    return this.http.post<ApiReply>(`${this.BASE_URL}/${eventType.studyId}`, json)
       .pipe(map(this.replyToEventType));
   }
 
@@ -141,7 +147,12 @@ export class EventTypeService {
   removeEventType(eventType: CollectionEventType): Observable<string> {
     const url = `${this.BASE_URL}/${eventType.studyId}/${eventType.id}/${eventType.version}`;
     return this.http.delete<ApiReply>(url)
-      .pipe(map((reply: ApiReply) => eventType.id));
+      .pipe(map((reply: ApiReply) => {
+        if (reply && reply.data) {
+          return reply.data;
+        }
+        throw new Error('expected a valid reply');
+      }));
   }
 
   private replyToEventType(reply: ApiReply): CollectionEventType {

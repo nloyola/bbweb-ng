@@ -49,7 +49,7 @@ export class ParticipantAnnotationTypeAddContainer implements OnInit, OnDestroy 
         if (this.savedMessage) {
           this.isSaving$.next(false);
           this.toastr.success(this.savedMessage, 'Update Successfull');
-          this.router.navigate([ '..' ], { relativeTo: this.route });
+          this.router.navigate([ this.parentStateRelativePath ], { relativeTo: this.route });
         }
       });
 
@@ -61,8 +61,7 @@ export class ParticipantAnnotationTypeAddContainer implements OnInit, OnDestroy 
       .subscribe((error: any) => {
         this.isSaving$.next(false);
 
-        let errMessage = error.payload.error
-          ? error.payload.error.error.message : error.payload.error.statusText;
+        let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
         if (errMessage.match(/EntityCriteriaError.*name already used/)) {
           errMessage = `The name is already in use: ${this.annotationTypeToSave.name}`;
         }
@@ -79,12 +78,14 @@ export class ParticipantAnnotationTypeAddContainer implements OnInit, OnDestroy 
   onSubmit(annotationType: AnnotationType): void {
     this.isSaving$.next(true);
     this.annotationTypeToSave = annotationType;
-    this.store$.dispatch(new StudyStoreActions.UpdateStudyAddOrUpdateAnnotationTypeRequest({
-      study: this.study,
-      annotationType: this.annotationTypeToSave
-    }));
+    this.store$.dispatch(
+      new StudyStoreActions.UpdateStudyAddOrUpdateAnnotationTypeRequest({
+        study: this.study,
+        annotationType: this.annotationTypeToSave
+      }));
 
-    this.savedMessage = this.annotationType.isNew() ? 'Annotation Added' : 'Annotation Updated'
+    this.savedMessage = this.annotationType.isNew() ?
+      'Annotation Added' : 'Annotation Updated'
   }
 
   onCancel(): void {

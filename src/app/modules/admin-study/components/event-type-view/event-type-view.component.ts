@@ -20,18 +20,18 @@ export class EventTypeViewComponent implements OnInit, OnChanges {
   @Input() eventType: CollectionEventType;
   @Input() allowChanges: boolean;
 
-  @Output() updateNameSelected = new EventEmitter<any>();
-  @Output() updateDescriptionSelected = new EventEmitter<any>();
-  @Output() updateRecurringSelected = new EventEmitter<any>();
-  @Output() addAnnotationTypeSelected = new EventEmitter<any>();
-  @Output() viewAnnotationTypeSelected = new EventEmitter<AnnotationType>();
-  @Output() editAnnotationTypeSelected = new EventEmitter<AnnotationType>();
-  @Output() removeAnnotationTypeSelected = new EventEmitter<AnnotationType>();
-  @Output() addSpecimenDefinitionSelected = new EventEmitter<CollectedSpecimenDefinition>();
-  @Output() viewSpecimenDefinitionSelected = new EventEmitter<CollectedSpecimenDefinition>();
-  @Output() editSpecimenDefinitionSelected = new EventEmitter<CollectedSpecimenDefinition>();
+  @Output() updateNameSelected               = new EventEmitter<any>();
+  @Output() updateDescriptionSelected        = new EventEmitter<any>();
+  @Output() updateRecurringSelected          = new EventEmitter<any>();
+  @Output() addAnnotationTypeSelected        = new EventEmitter<any>();
+  @Output() viewAnnotationTypeSelected       = new EventEmitter<AnnotationType>();
+  @Output() editAnnotationTypeSelected       = new EventEmitter<AnnotationType>();
+  @Output() removeAnnotationTypeSelected     = new EventEmitter<AnnotationType>();
+  @Output() addSpecimenDefinitionSelected    = new EventEmitter<CollectedSpecimenDefinition>();
+  @Output() viewSpecimenDefinitionSelected   = new EventEmitter<CollectedSpecimenDefinition>();
+  @Output() editSpecimenDefinitionSelected   = new EventEmitter<CollectedSpecimenDefinition>();
   @Output() removeSpecimenDefinitionSelected = new EventEmitter<any>();
-  @Output() removeEventTypeSelected = new EventEmitter<any>();
+  @Output() removeEventTypeSelected          = new EventEmitter<any>();
 
   isPanelCollapsed = false;
   sortedAnnotationTypes: AnnotationType[];
@@ -40,8 +40,9 @@ export class EventTypeViewComponent implements OnInit, OnChanges {
   constructor() {}
 
   ngOnInit() {
-    this.setSortedAnnotationTypes();
-    this.setSoredSpecimenDefinitions();
+    if (this.eventType) {
+      this.setEventType(this.eventType);
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -82,6 +83,10 @@ export class EventTypeViewComponent implements OnInit, OnChanges {
     this.addSpecimenDefinitionSelected.emit(null);
   }
 
+  viewSpecimenDefinition(specimenDefinition: CollectedSpecimenDefinition): void {
+    this.viewSpecimenDefinitionSelected.emit(specimenDefinition);
+  }
+
   editSpecimenDefinition(specimenDefinition: CollectedSpecimenDefinition): void {
     this.editSpecimenDefinitionSelected.emit(specimenDefinition);
   }
@@ -101,16 +106,13 @@ export class EventTypeViewComponent implements OnInit, OnChanges {
   }
 
   private setSortedAnnotationTypes(): void {
-    if (this.eventType) {
-      this.sortedAnnotationTypes = AnnotationType.sortAnnotationTypes(this.eventType.annotationTypes);
-    }
+    this.sortedAnnotationTypes = this.eventType
+      ? AnnotationType.sortAnnotationTypes(this.eventType.annotationTypes) : [];
   }
 
   private setSoredSpecimenDefinitions(): void {
-    if (this.eventType) {
-      this.sortedSpecimenDefinitions =
-        SpecimenDefinition.sortSpecimenDefinitions(this.eventType.specimenDefinitions);
-    }
+    this.sortedSpecimenDefinitions = this.eventType
+      ? SpecimenDefinition.sortSpecimenDefinitions(this.eventType.specimenDefinitions) : [];
   }
 
 }

@@ -22,7 +22,7 @@ export class StudyResolver implements Resolve<Study> {
       this.store$.pipe(
         select(StudyStoreSelectors.selectStudyError),
         filter(s => !!s),
-        tap((error) => this.router.navigateByUrl('/404'))),
+        tap(() => this.router.navigateByUrl('/404'))),
       this.store$.pipe(
         select(StudyStoreSelectors.selectAllStudies),
         filter(s => s.length > 0),

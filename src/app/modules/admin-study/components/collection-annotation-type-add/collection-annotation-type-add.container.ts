@@ -20,9 +20,10 @@ export class CollectionAnnotationTypeAddContainer implements OnInit, OnDestroy {
   isLoading$: Observable<boolean>;
   isSaving$ = new BehaviorSubject<boolean>(false);
 
-  private study: Study;
-  private eventTypeSlug: string;
-  private eventType: CollectionEventType;
+  study: Study;
+  eventTypeSlug: string;
+  eventType: CollectionEventType;
+
   private parentStateRelativePath = '../..';
   private annotationTypeToSave: AnnotationType;
   private savedMessage: string;
@@ -70,8 +71,7 @@ export class CollectionAnnotationTypeAddContainer implements OnInit, OnDestroy {
         takeUntil(this.unsubscribe$))
       .subscribe((error: any) => {
         this.isSaving$.next(false);
-        let errMessage = error.payload.error
-          ? error.payload.error.error.message : error.payload.error.statusText;
+        let errMessage = error.error ? error.error.message : error.statusText;
         if (errMessage.match(/EntityCriteriaError.*name already used/)) {
           errMessage = `The name is already in use: ${this.annotationTypeToSave.name}`;
         }

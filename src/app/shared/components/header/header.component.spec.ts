@@ -40,6 +40,8 @@ describe('HeaderComponent', () => {
     router = TestBed.get(Router);
     factory = new Factory();
 
+    ngZone.run(() => router.initialNavigation());
+
     spyOn(store, 'dispatch').and.callThrough();
     spyOn(router, 'navigate').and.callThrough();
 

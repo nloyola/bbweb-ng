@@ -58,7 +58,6 @@ export class AnnotationTypeAddComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.annotationType && !changes.annotationType.firstChange) {
       this.annotationType = changes.annotationType.currentValue;
-      this.title = this.annotationType.isNew() ? 'Add Annotation' : 'Update Annotation';
       this.title = 'Update Annotation';
       this.annotationTypeToForm();
     }

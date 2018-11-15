@@ -1,23 +1,22 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgZone } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { AnnotationType } from '@app/domain/annotations';
 import { CollectionEventType, Study } from '@app/domain/studies';
 import { EventTypeStoreActions, EventTypeStoreReducer, StudyStoreReducer } from '@app/root-store';
-import { AnnotationTypeAddComponent } from '@app/shared/components/annotation-type-add/annotation-type-add.component';
+import { YesNoPipe } from '@app/shared/pipes/yes-no-pipe';
 import { Factory } from '@app/test/factory';
+import { MockActivatedRoute } from '@app/test/mocks';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
 import { cold } from 'jasmine-marbles';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
-import { CollectionAnnotationTypeAddContainer } from './collection-annotation-type-add.container';
-import { MockActivatedRoute } from '@app/test/mocks';
+import { CollectedSpecimenDefinitionAddContainer } from './collected-specimen-definition-add.container';
 
-describe('CollectionAnnotationTypeAddContainer', () => {
+describe('CollectedSpecimenDefinitionAddContainer', () => {
 
-  let component: CollectionAnnotationTypeAddContainer;
-  let fixture: ComponentFixture<CollectionAnnotationTypeAddContainer>;
+  let component: CollectedSpecimenDefinitionAddContainer;
+  let fixture: ComponentFixture<CollectedSpecimenDefinitionAddContainer>;
   let ngZone: NgZone;
   let router: Router;
   let mockActivatedRoute = new MockActivatedRoute();
@@ -32,12 +31,10 @@ describe('CollectionAnnotationTypeAddContainer', () => {
 
     TestBed.configureTestingModule({
       imports: [
-        FormsModule,
-        ReactiveFormsModule,
+        NgbModule.forRoot(),
         RouterTestingModule,
         StoreModule.forRoot({
-          'study': StudyStoreReducer.reducer,
-          'event-type': EventTypeStoreReducer.reducer
+          'event-type': EventTypeStoreReducer.reducer,
         }),
         ToastrModule.forRoot()
       ],
@@ -48,12 +45,12 @@ describe('CollectionAnnotationTypeAddContainer', () => {
         }
       ],
       declarations: [
-        AnnotationTypeAddComponent,
-        CollectionAnnotationTypeAddContainer
+        CollectedSpecimenDefinitionAddContainer,
+        YesNoPipe
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
-    .compileComponents();
+      .compileComponents();
 
     mockActivatedRoute.spyOnParent(() => ({
       parent: {
@@ -72,25 +69,26 @@ describe('CollectionAnnotationTypeAddContainer', () => {
     router = TestBed.get(Router);
     toastr = TestBed.get(ToastrService);
 
-    fixture = TestBed.createComponent(CollectionAnnotationTypeAddContainer);
+    fixture = TestBed.createComponent(CollectedSpecimenDefinitionAddContainer);
     component = fixture.componentInstance;
     ngZone.run(() => router.initialNavigation());
   });
 
   it('should create', () => {
     const eventType = createEventType();
-    mockActivatedRouteSnapshot('annotationAdd', eventType);
-    component.annotationType = new AnnotationType();
+    mockActivatedRouteSnapshot('spcDefAdd', eventType);
     fixture.detectChanges();
     expect(component).toBeTruthy();
   });
 
   it('dispatches the action to retrive the event type', () => {
     const eventType = createEventType();
-    mockActivatedRouteSnapshot('annotationAdd', eventType);
+    mockActivatedRouteSnapshot('spcDefAdd', eventType);
     jest.spyOn(store, 'dispatch');
     fixture.detectChanges();
-    expect(store.dispatch).toHaveBeenCalledWith(new EventTypeStoreActions.GetEventTypeRequest({
+    expect(store.dispatch.mock.calls.length).toBe(1);
+    expect(store.dispatch.mock.calls[0][0]).toEqual(
+      new EventTypeStoreActions.GetEventTypeRequest({
       studySlug: study.slug,
       eventTypeSlug: eventType.slug
     }));
@@ -110,8 +108,8 @@ describe('CollectionAnnotationTypeAddContainer', () => {
     const spy = jest.spyOn(router, 'navigate');
 
     const testData = [
-      { path: 'annotationAdd', returnPath: '../..' },
-      { path: 'annotation', returnPath: '../../..' }
+      { path: 'spcDefAdd', returnPath: '../..' },
+      { path: 'spcDef', returnPath: '../../..' }
     ];
 
     testData.forEach((testInfo, index) => {
@@ -126,24 +124,60 @@ describe('CollectionAnnotationTypeAddContainer', () => {
     });
   });
 
+  describe('for adding a specimen definition', () => {
+
+    it('loading is false by default', () => {
+      const eventType = createEventType();
+      mockActivatedRouteSnapshot('spcDefAdd', eventType);
+      fixture.detectChanges();
+
+      expect(component.study).toBe(study);
+      expect(component.eventTypeSlug).toBe(eventType.slug);
+      expect(component.loading).toBe(false);
+    });
+
+  });
+
+  describe('for updating a specimen definition', () => {
+
+    let eventType;
+
+    beforeEach(() => {
+      eventType = createEventType();
+      mockActivatedRouteSnapshot('spcDef', eventType);
+    });
+
+    it('shows loading animation', () => {
+      fixture.detectChanges();
+      expect(component.loading).toBe(true);
+    });
+
+    it('loading is cleared after event type is received', () => {
+      store.dispatch(new EventTypeStoreActions.GetEventTypeSuccess({ eventType }));
+      fixture.detectChanges();
+      expect(component.loading).toBe(false);
+    });
+
+  });
+
   describe('when submitting', () => {
 
     it('on valid submission', async(() => {
       const eventType = createEventType();
-      const expectedAction = new EventTypeStoreActions.UpdateEventTypeAddOrUpdateAnnotationTypeRequest({
+      const expectedAction = new EventTypeStoreActions.UpdateEventTypeAddOrUpdateSpecimenDefinitionRequest({
         eventType,
-        annotationType: eventType.annotationTypes[0]
+        specimenDefinition: eventType.specimenDefinitions[0]
       });
 
       jest.spyOn(store, 'dispatch');
       jest.spyOn(toastr, 'success').mockReturnValue(null);
       const spy = jest.spyOn(router, 'navigate');
 
-      mockActivatedRouteSnapshot('annotationAdd', eventType);
+      mockActivatedRouteSnapshot('spcDefAdd', eventType);
       store.dispatch(new EventTypeStoreActions.GetEventTypeSuccess({ eventType }));
       fixture.detectChanges();
 
-      component.onSubmit(eventType.annotationTypes[0]);
+      component.onSubmit(eventType.specimenDefinitions[0]);
       expect(store.dispatch).toHaveBeenCalledWith(expectedAction);
 
       expect(component.isSaving$).toBeObservable(cold('b', { b: true }));
@@ -161,8 +195,8 @@ describe('CollectionAnnotationTypeAddContainer', () => {
     it('on submission failure', async(() => {
       const eventType = createEventType();
       const testData = [
-        { path: 'annotationAdd', savedMessage: 'Annotation Added' },
-        { path: 'annotation', savedMessage: 'Annotation Updated' },
+        { path: 'spcDefAdd', savedMessage: 'Specimen Added' },
+        { path: 'spcDef', savedMessage: 'Specimen Updated' },
       ];
       const errors = [
         {
@@ -194,7 +228,7 @@ describe('CollectionAnnotationTypeAddContainer', () => {
         fixture.detectChanges();
 
         errors.forEach(error => {
-          component.onSubmit(eventType.annotationTypes[0]);
+          component.onSubmit(eventType.specimenDefinitions[0]);
           expect(component.savedMessage).toBe(testInfo.savedMessage);
           expect(component.isSaving$).toBeObservable(cold('b', { b: true }));
           store.dispatch(new EventTypeStoreActions.GetEventTypeFailure({ error }));
@@ -213,16 +247,17 @@ describe('CollectionAnnotationTypeAddContainer', () => {
 
   function createEventType(): CollectionEventType {
     return new CollectionEventType().deserialize(factory.collectionEventType({
-      annotationTypes: [ factory.annotationType() ]
+      specimenDefinitions: [factory.collectedSpecimenDefinition() ]
     }));
   }
 
-  function mockActivatedRouteSnapshot(path: string, eventType: CollectionEventType): void {
-    const annotationTypeId = (path === 'annotationAdd') ? undefined : eventType.annotationTypes[0].id;
+  function mockActivatedRouteSnapshot(path: string,
+                                      eventType: CollectionEventType): void {
+    const specimenDefinitionId = (path === 'spcDefAdd') ? undefined : eventType.specimenDefinitions[0].id;
     mockActivatedRoute.spyOnSnapshot(() => ({
       params: {
         eventTypeSlug: eventType.slug,
-        annotationTypeId
+        specimenDefinitionId
       },
       url: [
         { path: '' },
@@ -230,4 +265,5 @@ describe('CollectionAnnotationTypeAddContainer', () => {
       ]
     }));
   }
+
 });

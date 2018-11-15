@@ -1,20 +1,20 @@
-import { Component, OnChanges, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AnnotationType } from '@app/domain/annotations';
 import { CollectionEventType, Study } from '@app/domain/studies';
 import { CollectedSpecimenDefinition } from '@app/domain/studies/collected-specimen-definition.model';
-import { ModalInputTextareaOptions, ModalInputTextOptions, ModalInputResult } from '@app/modules/modal-input/models';
+import { ModalInputResult, ModalInputTextareaOptions, ModalInputTextOptions } from '@app/modules/modal-input/models';
 import { EventTypeStoreActions, EventTypeStoreSelectors, RootStoreState, StudyStoreSelectors } from '@app/root-store';
+import { AnnotationTypeRemoveComponent } from '@app/shared/components/annotation-type-remove/annotation-type-remove.component';
 import { AnnotationTypeViewComponent } from '@app/shared/components/annotation-type-view/annotation-type-view.component';
-import { NgbModal, NgbDropdownConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
-import { SpecimenDefinitionRemoveComponent } from '../specimen-definition-remove/specimen-definition-remove.component';
-import { AnnotationTypeRemoveComponent } from '@app/shared/components/annotation-type-remove/annotation-type-remove.component';
-import { SpecimenDefinitionViewComponent } from '../specimen-definition-view/specimen-definition-view.component';
 import { EventTypeRemoveComponent } from '../event-type-remove/event-type-remove.component';
+import { SpecimenDefinitionRemoveComponent } from '../specimen-definition-remove/specimen-definition-remove.component';
+import { SpecimenDefinitionViewComponent } from '../specimen-definition-view/specimen-definition-view.component';
 
 @Component({
   selector: 'app-event-type-view',
@@ -69,15 +69,12 @@ export class EventTypeViewContainer implements OnInit, OnDestroy {
     // get latest updates to this event type from the store
     this.store$.pipe(
       select(EventTypeStoreSelectors.selectAllEventTypeEntities),
-      filter((entities: { [key: string]: any }) => Object.keys(entities).length > 0),
       takeUntil(this.unsubscribe$))
       .subscribe((entities: { [key: string]: any }) => {
         if (!this.eventType) { return; }
 
         const entity = entities[this.eventType.id];
-
-        if (!entity) {
-          // the event type was removed
+        if ((Object.keys(entities).length <= 0) || !entity) {
           this.eventType = undefined;
           return;
         }

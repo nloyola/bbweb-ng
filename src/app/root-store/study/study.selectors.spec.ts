@@ -25,7 +25,6 @@ describe('study-store selectors', () => {
   });
 
   it('selectStudySearchActive', () => {
-    const study = factory.study();
     const state = {
       study: {
         ...StudyStoreReducer.initialState,
@@ -78,7 +77,6 @@ describe('study-store selectors', () => {
 
   it('selectStudySearchReplies', () => {
     const study = factory.study();
-    const searchParams = new SearchParams();
     const pagedReply = factory.pagedReply<Study>([ study ]);
     const searchReplies: { [ key: string]: PagedReplyEntityIds } = {};
     searchReplies[pagedReply.searchParams.queryString()] = {
@@ -148,7 +146,6 @@ describe('study-store selectors', () => {
     });
 
     it('when there is no last search', () => {
-      const searchParams = new SearchParams();
       const state = {
         study: {
           ...StudyStoreReducer.initialState,

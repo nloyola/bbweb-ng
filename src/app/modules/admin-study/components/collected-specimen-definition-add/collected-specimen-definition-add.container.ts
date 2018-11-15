@@ -14,16 +14,16 @@ import { filter, takeUntil } from 'rxjs/operators';
 })
 export class CollectedSpecimenDefinitionAddContainer implements OnInit, OnDestroy {
 
+  study: Study;
+  eventTypeSlug: string;
+  eventType: CollectionEventType;
   loading: boolean;
   specimenDefinition: CollectedSpecimenDefinition;
   isSaving$ = new BehaviorSubject<boolean>(false);
+  savedMessage: string;
 
-  private study: Study;
-  private eventTypeSlug: string;
-  private eventType: CollectionEventType;
   private parentStateRelativePath = '../..';
   private specimenDefinitionToSave: CollectedSpecimenDefinition;
-  private savedMessage: string;
   private unsubscribe$: Subject<void> = new Subject<void>();
 
   constructor(private route: ActivatedRoute,
@@ -69,9 +69,7 @@ export class CollectedSpecimenDefinitionAddContainer implements OnInit, OnDestro
         takeUntil(this.unsubscribe$))
       .subscribe((error: any) => {
         this.isSaving$.next(false);
-
-        let errMessage = error.payload.error
-          ? error.payload.error.error.message : error.payload.error.statusText;
+        let errMessage = error.error ? error.error.message : error.statusText;
         if (errMessage.match(/EntityCriteriaError.*name already used/)) {
           errMessage = `The name is already in use: ${this.specimenDefinitionToSave.name}`;
         }

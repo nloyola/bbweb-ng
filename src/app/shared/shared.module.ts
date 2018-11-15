@@ -46,11 +46,11 @@ import { AnnotationTypeAddComponent } from './components/annotation-type-add/ann
     EntitySummaryComponent,
     TruncateToggleComponent,
     NlToBrPipe,
-    AnnotationTypeRemoveComponent,
     YesNoPipe,
     AnnotationTypeActionsComponent,
     AnnotationTypeAddComponent,
-    AnnotationTypeViewComponent
+    AnnotationTypeViewComponent,
+    AnnotationTypeRemoveComponent
   ],
   exports: [
     BreadcrumbsComponent,
@@ -65,11 +65,11 @@ import { AnnotationTypeAddComponent } from './components/annotation-type-add/ann
     EntitySummaryComponent,
     TruncateToggleComponent,
     NlToBrPipe,
-    AnnotationTypeRemoveComponent,
     YesNoPipe,
     AnnotationTypeActionsComponent,
     AnnotationTypeAddComponent,
-    AnnotationTypeViewComponent
+    AnnotationTypeViewComponent,
+    AnnotationTypeRemoveComponent
   ]
 })
 export class SharedModule { }

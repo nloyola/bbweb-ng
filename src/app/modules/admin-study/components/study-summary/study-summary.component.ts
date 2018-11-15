@@ -45,8 +45,7 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
     this.isLoading$ = this.store$.pipe(select(SpinnerStoreSelectors.selectSpinnerIsActive));
 
     this.store$.pipe(
-      select(StudyStoreSelectors.selectStudyEnableAllowedIds),
-      filter((ids: string[]) => ids.length > 0))
+      select(StudyStoreSelectors.selectStudyEnableAllowedIds))
       .subscribe((enableAllowedIds: string[]) => {
         this.isEnableAllowed = enableAllowedIds.includes(this.study.id);
       });

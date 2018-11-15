@@ -20,12 +20,12 @@ import { filter, takeUntil } from 'rxjs/operators';
 })
 export class StudyParticipantsComponent implements OnInit {
 
+  study: StudyUI;
   isLoading$: Observable<boolean>;
   isAddingAnnotation = false;
   sortedAnnotationTypes: AnnotationType[];
+  updatedMessage: string;
 
-  private study: StudyUI;
-  private updatedMessage: string;
   private unsubscribe$: Subject<void> = new Subject<void>();
 
   constructor(private store$: Store<RootStoreState.State>,
@@ -63,8 +63,7 @@ export class StudyParticipantsComponent implements OnInit {
         filter(s => !!s),
         takeUntil(this.unsubscribe$))
       .subscribe((error: any) => {
-        let errMessage = error.payload.error
-          ? error.payload.error.error.message : error.payload.error.statusText;
+        let errMessage = error.error ? error.error.message : error.statusText;
         this.toastr.error(errMessage, 'Update Error', { disableTimeOut: true });
       });
 
@@ -80,23 +79,16 @@ export class StudyParticipantsComponent implements OnInit {
     if (!this.study.isDisabled()) {
       throw new Error('modifications not allowed');
     }
-    console.log('navigate to add', this.route);
     this.router.navigate([ 'add' ], { relativeTo: this.route });
   }
 
   view(annotationType: AnnotationType) {
     const modalRef = this.modalService.open(AnnotationTypeViewComponent, { size: 'lg' });
     modalRef.componentInstance.annotationType = annotationType;
-
     // nothing is done with this modal's result
-    modalRef.result
-      .then(() => undefined)
-      .catch(() => undefined);
   }
 
   edit(annotationType: AnnotationType) {
-    console.log('navigate to edit');
-
     if (!this.study.isDisabled()) {
       throw new Error('modifications not allowed');
     }

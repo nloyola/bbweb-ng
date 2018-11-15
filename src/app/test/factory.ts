@@ -45,6 +45,7 @@ export class Factory {
     const name = faker.name.findName();
     const defaults = {
       id: this.domainEntityIdNext(DomainEntities.USER),
+      version: 0,
       name: name,
       slug: this.slugify(name),
       email: faker.internet.email(),
@@ -125,6 +126,7 @@ export class Factory {
     const defaults = {
       ...{
         id: this.domainEntityIdNext(DomainEntities.STUDY),
+        version: 0,
         description: faker.lorem.sentences(4),
         annotationTypes: [],
         state: StudyState.Disabled
@@ -247,6 +249,7 @@ export class Factory {
     const defaults = {
       ...{
         id:                  DomainEntities.COLLECTION_EVENT_TYPE,
+        version:             0,
         studyId:             study.id,
         description:         faker.lorem.sentences(4),
         specimenDefinitions: [],
@@ -301,7 +304,7 @@ export class Factory {
     };
   }
 
-  private nameAndSlug() {
+  nameAndSlug() {
     const name = this.stringNext();
     return {
       slug: this.slugify(name),

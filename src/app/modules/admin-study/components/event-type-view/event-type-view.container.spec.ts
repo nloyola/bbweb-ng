@@ -14,7 +14,7 @@ import { StudyStoreReducer, EventTypeStoreReducer, StudyStoreActions, EventTypeS
 import { ModalInputResult } from '@app/modules/modal-input/models';
 import * as faker from 'faker';
 
-fdescribe('EventTypeViewContainer', () => {
+describe('EventTypeViewContainer', () => {
   let component: EventTypeViewContainer;
   let fixture: ComponentFixture<EventTypeViewContainer>;
   let factory: Factory;
@@ -390,6 +390,19 @@ fdescribe('EventTypeViewContainer', () => {
         });
 
         expect(store.dispatch).toHaveBeenCalledWith(action);
+      });
+    }));
+
+    it('event type becomes undefined when removed', async(() => {
+      const eventType = componentSetup(fixture, store, factory);
+
+      fixture.whenStable().then(() => {
+        const action = new EventTypeStoreActions.RemoveEventTypeSuccess({ eventTypeId: eventType.id });
+        store.dispatch(action);
+
+        fixture.whenStable().then(() => {
+          expect(component.eventType).toBeUndefined();
+        });
       });
     }));
   });

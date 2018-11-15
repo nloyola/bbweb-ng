@@ -1,9 +1,9 @@
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, SimpleChange } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { CollectedSpecimenDefinition } from '@app/domain/studies';
+import { CollectedSpecimenDefinition, CollectionEventType } from '@app/domain/studies';
 import { AuthStoreReducer } from '@app/root-store/auth-store';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { Factory } from '@app/test/factory';
@@ -53,4 +53,61 @@ describe('CollectedSpecimenDefinitionAddComponent', () => {
     fixture.detectChanges();
     expect(component).toBeTruthy();
   });
+
+  it('test for emitters', () => {
+    const eventType = eventTypeForTest();
+    const testData = [
+      {
+        componentFunc: () => component.onSubmit(),
+        emitter: component.submitted,
+        arg: undefined
+      },
+      {
+        componentFunc: () => component.onCancel(),
+        emitter: component.cancelled,
+        arg: undefined
+      }
+    ];
+
+    [
+      eventType.specimenDefinitions[0],
+      new CollectedSpecimenDefinition()
+    ].forEach(specimenDefinition => {
+      component.specimenDefinition = specimenDefinition;
+      fixture.detectChanges();
+
+      testData.forEach(testInfo => {
+        jest.spyOn(testInfo.emitter, 'emit').mockReturnValue(null);
+        testInfo.componentFunc();
+        expect(testInfo.emitter.emit).toHaveBeenCalled();
+      });
+    });
+
+  });
+
+  it('specimen definition can be assigned using change detection', () => {
+    const eventType = eventTypeForTest();
+    component.specimenDefinition = new CollectedSpecimenDefinition();
+    fixture.detectChanges();
+    expect(component.title).toBe('Add Collected Specimen');
+
+    eventType.specimenDefinitions[0].id = factory.stringNext();
+
+    component.ngOnChanges({
+      specimenDefinition: new SimpleChange(null, eventType.specimenDefinitions[0])
+    });
+
+    expect(component.title).toBe('Update Collected Specimen');
+  });
+
+  function eventTypeForTest(): CollectionEventType {
+    return new CollectionEventType().deserialize({
+      ...factory.collectionEventType(),
+      specimenDefinitions: [
+        factory.collectedSpecimenDefinition()
+      ]
+    });
+  }
+
+
 });

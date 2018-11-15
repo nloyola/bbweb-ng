@@ -97,10 +97,10 @@ export class EventTypesAddAndSelectComponent implements OnInit, OnDestroy {
     this.unsubscribe$.complete();
   }
 
-  public onFiltersUpdated($event: SearchFilterValues) {
+  public onFiltersUpdated(filterValues: SearchFilterValues) {
     this.currentPage = 1;
-    if ($event.name) {
-      this.filters.nameFilter.setValue($event.name);
+    if (filterValues.name) {
+      this.filters.nameFilter.setValue(filterValues.name);
     }
     this.applySearchParams();
   }
@@ -113,8 +113,8 @@ export class EventTypesAddAndSelectComponent implements OnInit, OnDestroy {
     this.selected.emit(eventType);
   }
 
-  public paginationPageChanged($event) {
-    if (isNaN($event)) { return; }
+  public paginationPageChanged(newPage) {
+    if (isNaN(newPage)) { return; }
     this.applySearchParams();
   }
 

@@ -15,7 +15,8 @@ export const getLastAddedId = (state: fromEventType.State): string => state.last
 export const getSelectedId =
   (state: fromEventType.State): string => state.selectedEventTypeId;
 
-export const getError = (state: fromEventType.State): any => state.error;
+export const getError =
+  (state: fromEventType.State): any => state.error;
 
 export const selectEventTypeState = createFeatureSelector<fromEventType.State>('event-type');
 
