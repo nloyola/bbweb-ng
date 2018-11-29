@@ -16,7 +16,8 @@ export const getSearchReplies =
 
 export const getCounts = (state: fromStudy.State): StudyCounts => state.studyCounts;
 
-export const getEnableAllowedIds = (state: fromStudy.State): string[] => state.enableAllowedIds;
+export const getEnableAllowedIds =
+  (state: fromStudy.State): fromStudy.EnableAllowdIds => state.enableAllowedIds;
 
 export const selectStudyState = createFeatureSelector<fromStudy.State>('study');
 
@@ -35,7 +36,7 @@ export const selectStudyError: MemoizedSelector<object, any> =
 export const selectStudyCounts: MemoizedSelector<object, StudyCounts> =
   createSelector(selectStudyState, getCounts);
 
-export const selectStudyEnableAllowedIds: MemoizedSelector<object, string[]> =
+export const selectStudyEnableAllowedIds: MemoizedSelector<object, fromStudy.EnableAllowdIds> =
   createSelector(selectStudyState, getEnableAllowedIds);
 
 export const selectStudySearchReplies: MemoizedSelector<object, { [ url: string ]: PagedReplyEntityIds }> =
@@ -75,9 +76,3 @@ export const selectStudyLastAdded =
     (id: string, entities: { [id: string]: Study }): Study => {
       return entities[id];
     });
-
-export const selectStudyEnableAllowed =
-  createSelector(
-    selectStudyEnableAllowedIds,
-    (enableAllowedIds: string[], props: any): boolean =>
-      enableAllowedIds.includes(props.studyId));

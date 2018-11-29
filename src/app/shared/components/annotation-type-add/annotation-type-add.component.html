@@ -1,5 +1,7 @@
 <div class="card mt-2">
-  <div class="card-header bg-primary text-light">{{ this.title }}</div>
+  <div class="card-header bg-primary text-light">
+    {{entityName}}: <small>{{ this.title }}</small>
+  </div>
   <div class="card-body">
     <form class="form-horizontal"
           [formGroup]="form"

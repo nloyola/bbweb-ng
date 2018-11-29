@@ -2,8 +2,9 @@ import { HasDescription, HasName, HasSlug } from '@app/domain';
 import { ConcurrencySafeEntity } from '@app/domain/concurrency-safe-entity.model';
 import { AnnotationType } from '@app/domain/annotations';
 import { CollectedSpecimenDefinition } from './collected-specimen-definition.model';
+import { ProcessingTypeInputEntity } from '.';
 
-export class CollectionEventType extends ConcurrencySafeEntity implements HasSlug, HasName, HasDescription {
+export class CollectionEventType extends ConcurrencySafeEntity implements ProcessingTypeInputEntity, HasSlug, HasName, HasDescription {
 
   slug: string;
 
@@ -46,12 +47,12 @@ export class CollectionEventType extends ConcurrencySafeEntity implements HasSlu
 
     if (input.annotationTypes) {
       this.annotationTypes = input.annotationTypes
-        .map(at => new AnnotationType().deserialize(at));
+        .map((at: AnnotationType) => new AnnotationType().deserialize(at));
     }
 
     if (input.specimenDefinitions) {
       this.specimenDefinitions = input.specimenDefinitions
-        .map(sd => new CollectedSpecimenDefinition().deserialize(sd));
+        .map((sd: CollectedSpecimenDefinition) => new CollectedSpecimenDefinition().deserialize(sd));
     }
 
     return this;

@@ -1,24 +1,13 @@
-import { Component, OnDestroy, OnInit, Output, EventEmitter } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { RootStoreState, StudyStoreSelectors } from '@app/root-store';
-import { select, Store } from '@ngrx/store';
-import { Observable, Subject, timer } from 'rxjs';
-import { EventTypeStoreSelectors, EventTypeStoreActions } from '@app/root-store/event-type';
-import { filter, map, takeUntil, debounce, distinct } from 'rxjs/operators';
-import { EventTypeSearchReply, CollectionEventType, Study } from '@app/domain/studies';
-import { SearchParams, SearchFilterValues } from '@app/domain';
-import { SearchFilter, NameFilter } from '@app/domain/search-filters';
+import { Component, EventEmitter, OnDestroy, OnInit, Output, Input } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-
-interface EventTypePageInfo {
-  hasNoEntitiesToDisplay: boolean;
-  hasNoResultsToDisplay: boolean;
-  hasResultsToDisplay: boolean;
-  eventTypes: CollectionEventType[];
-  total: number;
-  maxPages: number;
-  showPagination: boolean;
-}
+import { ActivatedRoute } from '@angular/router';
+import { PagedReplyInfo, SearchParams } from '@app/domain';
+import { CollectionEventType, EventTypeSearchReply, Study } from '@app/domain/studies';
+import { RootStoreState } from '@app/root-store';
+import { EventTypeStoreActions, EventTypeStoreSelectors } from '@app/root-store/event-type';
+import { select, Store } from '@ngrx/store';
+import { Observable, Subject } from 'rxjs';
+import { map, takeUntil, filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-event-types-add-and-select',
@@ -27,11 +16,13 @@ interface EventTypePageInfo {
 })
 export class EventTypesAddAndSelectComponent implements OnInit, OnDestroy {
 
+  @Input() study: Study;
+
   @Output() addSelected = new EventEmitter<any>();
   @Output() selected = new EventEmitter<CollectionEventType>();
 
   isLoading$: Observable<boolean>;
-  pageInfo$: Observable<EventTypePageInfo>;
+  pageInfo$: Observable<PagedReplyInfo<CollectionEventType>>;
   serverError$: Observable<boolean>;
   filterForm: FormGroup;
   isAddAllowed: boolean;
@@ -40,27 +31,14 @@ export class EventTypesAddAndSelectComponent implements OnInit, OnDestroy {
   eventTypesLimit = 5;
   sortField = 'name';
 
-  private study: Study;
+  private filterValues = '';
   private unsubscribe$: Subject<void> = new Subject<void>();
-  private filters: { [ name: string]: SearchFilter };
 
-  constructor(private store$: Store<RootStoreState.State>,
-              private route: ActivatedRoute,
-              private formBuilder: FormBuilder) {
-
-    this.filters = {
-      nameFilter: new NameFilter()
-    };
-  }
+  constructor(private store$: Store<RootStoreState.State>) {}
 
   ngOnInit() {
-    this.filterForm = this.formBuilder.group({ name: [''] });
-
-    this.study = this.route.parent.parent.snapshot.data.study;
     this.isAddAllowed = this.study.isDisabled();
-
     this.serverError$ = this.store$.pipe(select(EventTypeStoreSelectors.selectError));
-
     this.isLoading$ =
       this.store$.pipe(select(EventTypeStoreSelectors.selectSearchActive));
 
@@ -69,27 +47,25 @@ export class EventTypesAddAndSelectComponent implements OnInit, OnDestroy {
       takeUntil(this.unsubscribe$),
       map(reply => this.searchReplyToPageInfo(reply)));
 
-    // debounce the input to the name filter and then apply it to the search
-    this.name.valueChanges.pipe(
-        debounce(() => timer(500)),
-        distinct(() => this.filterForm.value),
-        takeUntil(this.unsubscribe$))
-      .subscribe(() => {
-        this.filters.nameFilter.setValue(this.filterForm.value.name);
-        this.applySearchParams();
+    this.store$.pipe(
+      select(EventTypeStoreSelectors.selectError),
+      filter(error => error !== null),
+      takeUntil(this.unsubscribe$))
+      .subscribe(error => {
+        if (error.actionType === EventTypeStoreActions.ActionTypes.SearchEventTypesFailure) {
+          this.currentPage = 1;
+          this.applySearchParams();
+        }
       });
 
     // if event types change, then reload the current page
-    this.store$
-      .pipe(
-        select(EventTypeStoreSelectors.selectAllEventTypes),
-        filter((eventTypes: CollectionEventType[]) => !!eventTypes),
-        takeUntil(this.unsubscribe$))
+    this.store$.pipe(
+      select(EventTypeStoreSelectors.selectAllEventTypes),
+      takeUntil(this.unsubscribe$))
       .subscribe(() => {
+        // do this even if there are no event types in the store
         this.applySearchParams();
       });
-
-    this.applySearchParams();
   }
 
   public ngOnDestroy() {
@@ -97,11 +73,8 @@ export class EventTypesAddAndSelectComponent implements OnInit, OnDestroy {
     this.unsubscribe$.complete();
   }
 
-  public onFiltersUpdated(filterValues: SearchFilterValues) {
-    this.currentPage = 1;
-    if (filterValues.name) {
-      this.filters.nameFilter.setValue(filterValues.name);
-    }
+  public onFiltersUpdated(filterValues: string) {
+    this.filterValues = filterValues;
     this.applySearchParams();
   }
 
@@ -113,39 +86,29 @@ export class EventTypesAddAndSelectComponent implements OnInit, OnDestroy {
     this.selected.emit(eventType);
   }
 
-  public paginationPageChanged(newPage) {
-    if (isNaN(newPage)) { return; }
+  public paginationPageChange() {
     this.applySearchParams();
-  }
-
-  get name() {
-    return this.filterForm.get('name');
   }
 
   public add() {
     this.addSelected.emit(null);
   }
 
-  private getFilters() {
-    return Object.values(this.filters)
-      .map(f => f.getValue())
-      .filter(value => value !== '');
-  }
-
   private applySearchParams() {
     this.store$.dispatch(new EventTypeStoreActions.SearchEventTypesRequest({
       studySlug: this.study.slug,
-      searchParams: new SearchParams(this.getFilters().join(';'),
+      studyId: this.study.id,
+      searchParams: new SearchParams(this.filterValues,
                                      this.sortField,
                                      this.currentPage,
                                      this.eventTypesLimit)
     }));
   }
 
-  private searchReplyToPageInfo(searchReply: EventTypeSearchReply): EventTypePageInfo {
-    if (searchReply === undefined) { return undefined; }
+  private searchReplyToPageInfo(searchReply: EventTypeSearchReply): PagedReplyInfo<CollectionEventType> {
+    if (searchReply === undefined) { return {} as any; }
 
-    return {
+    const result = {
       hasResultsToDisplay: searchReply.eventTypes.length > 0,
       hasNoEntitiesToDisplay: ((searchReply.eventTypes.length <= 0)
                                && (searchReply.reply.searchParams.filter === '')),
@@ -153,11 +116,12 @@ export class EventTypesAddAndSelectComponent implements OnInit, OnDestroy {
       hasNoResultsToDisplay: ((searchReply.eventTypes.length <= 0)
                               && (searchReply.reply.searchParams.filter !== '')),
 
-      eventTypes: searchReply.eventTypes,
+      entities: searchReply.eventTypes,
       total: searchReply.reply.total,
       maxPages: searchReply.reply.maxPages,
       showPagination: searchReply.reply.maxPages > 1
     };
+    return result;
   }
 
 }

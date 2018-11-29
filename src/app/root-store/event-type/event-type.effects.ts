@@ -16,7 +16,7 @@ export class EventTypeStoreEffects {
     ofType<EventTypeStoreActions.SearchEventTypesRequest>(
       EventTypeStoreActions.ActionTypes.SearchEventTypesRequest),
     map(action => action.payload),
-    // delay(2000),
+    //delay(2000),
     switchMap(
       payload =>
         this.eventTypeService.search(payload.studySlug, payload.searchParams)
@@ -33,6 +33,19 @@ export class EventTypeStoreEffects {
     switchMap(
       payload =>
         this.eventTypeService.get(payload.studySlug, payload.eventTypeSlug)
+        .pipe(
+          map(eventType => new EventTypeStoreActions.GetEventTypeSuccess({ eventType })),
+          catchError(error => observableOf(new EventTypeStoreActions.GetEventTypeFailure({ error }))))
+    )
+  );
+
+  @Effect()
+  getByIdRequest$: Observable<Action> = this.actions$.pipe(
+    ofType<EventTypeStoreActions.GetEventTypeByIdRequest>(EventTypeStoreActions.ActionTypes.GetEventTypeByIdRequest),
+    map(action => action.payload),
+    switchMap(
+      payload =>
+        this.eventTypeService.getById(payload.studyId, payload.eventTypeId)
         .pipe(
           map(eventType => new EventTypeStoreActions.GetEventTypeSuccess({ eventType })),
           catchError(error => observableOf(new EventTypeStoreActions.GetEventTypeFailure({ error }))))
@@ -142,5 +155,23 @@ export class EventTypeStoreEffects {
             // delay(2000),
             map(eventTypeId => new EventTypeStoreActions.RemoveEventTypeSuccess({ eventTypeId })),
             catchError(error => observableOf(new EventTypeStoreActions.RemoveEventTypeFailure({ error }))))));
+
+
+  @Effect()
+  specimenDefinitionNamesRequest$: Observable<Action> = this.actions$.pipe(
+    ofType<EventTypeStoreActions.GetSpecimenDefinitionNamesRequest>(
+      EventTypeStoreActions.ActionTypes.GetSpecimenDefinitionNamesRequest),
+    map(action => action.payload),
+    // delay(2000),
+    switchMap(
+      payload =>
+        this.eventTypeService.getSpecimenDefinitionNames(payload.studySlug)
+        .pipe(
+          map(reply => new EventTypeStoreActions.GetSpecimenDefinitionNamesSuccess({
+            specimenDefinitionNames: reply
+          })),
+          catchError(error => observableOf(new EventTypeStoreActions.GetSpecimenDefinitionNamesFailure({ error }))))
+    )
+  );
 
 }

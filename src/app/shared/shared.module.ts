@@ -22,6 +22,7 @@ import { YesNoPipe } from './pipes/yes-no-pipe';
 import { AnnotationTypeViewComponent } from './components/annotation-type-view/annotation-type-view.component';
 import { AnnotationTypeActionsComponent } from './components/annotation-type-actions/annotation-type-actions.component';
 import { AnnotationTypeAddComponent } from './components/annotation-type-add/annotation-type-add.component';
+import { AddAndSelectComponent } from './components/add-and-select/add-and-select.component';
 
 @NgModule({
   imports: [
@@ -50,7 +51,8 @@ import { AnnotationTypeAddComponent } from './components/annotation-type-add/ann
     AnnotationTypeActionsComponent,
     AnnotationTypeAddComponent,
     AnnotationTypeViewComponent,
-    AnnotationTypeRemoveComponent
+    AnnotationTypeRemoveComponent,
+    AddAndSelectComponent
   ],
   exports: [
     BreadcrumbsComponent,
@@ -69,7 +71,8 @@ import { AnnotationTypeAddComponent } from './components/annotation-type-add/ann
     AnnotationTypeActionsComponent,
     AnnotationTypeAddComponent,
     AnnotationTypeViewComponent,
-    AnnotationTypeRemoveComponent
+    AnnotationTypeRemoveComponent,
+    AddAndSelectComponent
   ]
 })
 export class SharedModule { }

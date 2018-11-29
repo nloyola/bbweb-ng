@@ -1,13 +1,13 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CollectionEventType, Study } from '@app/domain/studies';
-import { Store, select } from '@ngrx/store';
 import { RootStoreState } from '@app/root-store';
-import { EventTypeStoreSelectors, EventTypeStoreActions } from '@app/root-store/event-type';
-import { filter, takeUntil } from 'rxjs/operators';
+import { EventTypeStoreActions, EventTypeStoreSelectors } from '@app/root-store/event-type';
+import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
+import { filter, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-event-type-add',
@@ -22,7 +22,6 @@ export class EventTypeAddComponent implements OnInit, OnDestroy {
   form: FormGroup;
 
   private eventTypeToSave: CollectionEventType;
-  private savedMessage: string;
   private unsubscribe$: Subject<void> = new Subject<void>();
 
   constructor(private store$: Store<RootStoreState.State>,
@@ -53,6 +52,7 @@ export class EventTypeAddComponent implements OnInit, OnDestroy {
         this.toastr.success(
           `EventType was added successfully: ${eventType.name}`,
           'Add Successfull');
+        this.store$.dispatch(new EventTypeStoreActions.ClearLastAdded());
         this.navigateToReturnUrl();
       });
 
@@ -67,7 +67,6 @@ export class EventTypeAddComponent implements OnInit, OnDestroy {
           errMessage = `The name is already in use: ${this.eventTypeToSave.name}`;
         }
         this.toastr.error(errMessage, 'Add Error', { disableTimeOut: true });
-        this.savedMessage = undefined;
       });
   }
 
@@ -95,7 +94,6 @@ export class EventTypeAddComponent implements OnInit, OnDestroy {
     this.store$.dispatch(new EventTypeStoreActions.AddEventTypeRequest({
       eventType: this.eventTypeToSave
     }));
-    this.savedMessage = 'Event Added';
   }
 
   onCancel() {

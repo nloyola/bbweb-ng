@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ApiReply, PagedReply, SearchParams } from '@app/domain';
-import { CollectionEventType, CollectionEventTypeToAdd, CollectedSpecimenDefinition } from '@app/domain/studies';
+import { CollectionEventType, CollectionEventTypeToAdd, CollectedSpecimenDefinition, CollectedSpecimenDefinitionName } from '@app/domain/studies';
 import { Observable } from 'rxjs';
 import { map, delay } from 'rxjs/operators';
 import { AnnotationType } from '@app/domain/annotations';
@@ -45,13 +45,42 @@ export class EventTypeService {
   }
 
   /**
-  * Retrieves a CollectionEventType from the server.
-  *
-  * @param {string} slug the slug of the eventType to retrieve.
-  */
+   * Retrieves a CollectionEventType from the server.
+   *
+   * @param studySlug the slug of the {@link Study}.
+   * @param eventTypeSlug the slug of the {@link CollectionEventType} to retrieve.
+   */
   get(studySlug: String, eventTypeSlug: string): Observable<CollectionEventType> {
     return this.http.get<ApiReply>(`${this.BASE_URL}/${studySlug}/${eventTypeSlug}`)
       .pipe(map(this.replyToEventType));
+  }
+
+  /**
+   * Retrieves a CollectionEventType from the server.
+   *
+   * @param studyId the ID of the {@link Study}.
+   * @param eventTypeId the ID of the {@link CollectionEventType} to retrieve.
+   */
+  getById(studyId: string, eventTypeId: string): Observable<CollectionEventType> {
+    return this.http.get<ApiReply>(`${this.BASE_URL}/id/${studyId}/${eventTypeId}`)
+      .pipe(map(this.replyToEventType));
+  }
+
+  /**
+   * Retrieves all the specimen definitions for all {@link CollectionEventTypes} in a {@link
+   * Study} from the server.
+   *
+   * @param studySlug The slug of the {@link Study} to return results for.
+   */
+  getSpecimenDefinitionNames(studySlug: String): Observable<CollectedSpecimenDefinitionName[]> {
+    return this.http.get<ApiReply>(`${this.BASE_URL}/spcdefs/${studySlug}`)
+      .pipe(map((reply: ApiReply) => {
+        if (reply && reply.data) {
+          return reply.data
+            .map(info => new CollectedSpecimenDefinitionName().deserialize(info));
+        }
+        throw new Error('expected a processed specimen definition names array');
+      }));
   }
 
   add(eventType: CollectionEventTypeToAdd): Observable<CollectionEventType> {
@@ -149,7 +178,7 @@ export class EventTypeService {
     return this.http.delete<ApiReply>(url)
       .pipe(map((reply: ApiReply) => {
         if (reply && reply.data) {
-          return reply.data;
+          return eventType.id;
         }
         throw new Error('expected a valid reply');
       }));

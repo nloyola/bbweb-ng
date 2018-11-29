@@ -14,7 +14,7 @@ import { filter, takeUntil } from 'rxjs/operators';
   selector: 'app-collection-annotation-type-add',
   templateUrl: './collection-annotation-type-add.container.html'
 })
-export class CollectionAnnotationTypeAddContainer implements OnInit, OnDestroy {
+export class CollectionAnnotationTypeAddContainerComponent implements OnInit, OnDestroy {
 
   annotationType: AnnotationType;
   isLoading$: Observable<boolean>;
@@ -24,7 +24,7 @@ export class CollectionAnnotationTypeAddContainer implements OnInit, OnDestroy {
   eventTypeSlug: string;
   eventType: CollectionEventType;
 
-  private parentStateRelativePath = '../..';
+  private parentStateRelativePath = '..';
   private annotationTypeToSave: AnnotationType;
   private savedMessage: string;
   private unsubscribe$: Subject<void> = new Subject<void>();
@@ -36,7 +36,7 @@ export class CollectionAnnotationTypeAddContainer implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.study = this.route.parent.parent.snapshot.data.study;
+    this.study = this.route.parent.parent.parent.parent.snapshot.data.study;
     this.eventTypeSlug = this.route.snapshot.params.eventTypeSlug;
     this.annotationType = new AnnotationType();
 
@@ -52,7 +52,7 @@ export class CollectionAnnotationTypeAddContainer implements OnInit, OnDestroy {
           ? entity : new CollectionEventType().deserialize(entity);
 
         if (this.route.snapshot.params.annotationTypeId) {
-          this.parentStateRelativePath = '../../..';
+          this.parentStateRelativePath = '../..';
           this.annotationType = this.eventType.annotationTypes
             .find(at => at.id == this.route.snapshot.params.annotationTypeId);
         }

@@ -4,7 +4,7 @@ import { EventTypeStoreReducer, EventTypeStoreSelectors } from '@app/root-store'
 import { Factory } from '@app/test/factory';
 import { State } from './event-type.reducer';
 
-describe('eventType-store selectors', () => {
+describe('EventTypeStore selectors', () => {
 
   let factory: Factory;
 

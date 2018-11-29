@@ -5,11 +5,13 @@ import { StudyUI } from '@app/domain/studies/study-ui.model';
 import { ModalInputTextareaOptions, ModalInputTextOptions } from '@app/modules/modal-input/models';
 import { RootStoreState, StudyStoreActions, StudyStoreSelectors } from '@app/root-store';
 import { SpinnerStoreSelectors } from '@app/root-store/spinner';
+import { EnableAllowdIds } from '@app/root-store/study/study.reducer';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
+import { filter, map, takeUntil } from 'rxjs/operators';
+import { Dictionary } from '@ngrx/entity';
 
 @Component({
   selector: 'app-study-summary',
@@ -21,17 +23,19 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
   @ViewChild('updateNameModal') updateNameModal: TemplateRef<any>;
   @ViewChild('updateDescriptionModal') updateDescriptionModal: TemplateRef<any>;
 
-  private unsubscribe$: Subject<void> = new Subject<void>();
   isLoading$: Observable<boolean>;
   isEnableAllowed: boolean;
-  private study: StudyUI;
   studyStateUIMap = StudyStateUIMap;
   descriptionToggleLength = 80;
   getStateIcon = StudyUI.getStateIcon;
   getStateIconClass = StudyUI.getStateIconClass;
   updateNameModalOptions: ModalInputTextOptions;
   updateDescriptionModalOptions: ModalInputTextareaOptions;
+
+  private studyId: string;
+  private study: StudyUI;
   private updatedMessage: string;
+  private unsubscribe$: Subject<void> = new Subject<void>();
 
   constructor(private store$: Store<RootStoreState.State>,
               private modalService: NgbModal,
@@ -40,38 +44,50 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
               private toastr: ToastrService) {}
 
   ngOnInit() {
-    this.study = new StudyUI(this.route.parent.snapshot.data.study);
-
     this.isLoading$ = this.store$.pipe(select(SpinnerStoreSelectors.selectSpinnerIsActive));
 
     this.store$.pipe(
-      select(StudyStoreSelectors.selectStudyEnableAllowedIds))
-      .subscribe((enableAllowedIds: string[]) => {
-        this.isEnableAllowed = enableAllowedIds.includes(this.study.id);
+      select(StudyStoreSelectors.selectStudyEnableAllowedIds),
+      takeUntil(this.unsubscribe$))
+      .subscribe((enableAllowedIds: EnableAllowdIds) => {
+        if (this.studyId === undefined) { return; }
+        this.isEnableAllowed = (enableAllowedIds[this.studyId] === true);
       });
 
-    // when study name is changed, the route must be updated because the slug used in the route,
-    // and the slug is derived from the name
+    this.store$.pipe(
+      select(StudyStoreSelectors.selectAllStudies),
+      filter(s => s.length > 0),
+      map((studies: Study[]) => studies.find(s => s.slug === this.route.parent.snapshot.params.slug)),
+      filter(study => study !== undefined),
+      map(study => (study instanceof Study) ? study :  new Study().deserialize(study)),
+      takeUntil(this.unsubscribe$))
+      .subscribe(study => {
+        this.study = new StudyUI(study);
+        this.studyId = study.id;
+        this.store$.dispatch(new StudyStoreActions.GetEnableAllowedRequest({ studyId: study.id }));
+      });
+
     this.store$.pipe(
       select(StudyStoreSelectors.selectAllStudyEntities),
-      filter((entities: { [key: string]: any }) => Object.keys(entities).length > 0),
+      filter((entities: Dictionary<Study>) => Object.keys(entities).length > 0),
       takeUntil(this.unsubscribe$))
       .subscribe((entities: any) => {
-        const entity = entities[this.study.id];
+        if (this.studyId === undefined) { return; }
 
-        if (!location.pathname.includes(entity.slug)) {
+        const entity = entities[this.studyId];
+        const updatedStudy = (entity instanceof Study) ? entity : new Study().deserialize(entity);
+        this.study = new StudyUI(updatedStudy);
+
+        // when study name is changed, the route must be updated because the slug used in the route,
+        // and the slug is derived from the name
+        if (!location.pathname.endsWith(`/${entity.slug}`)) {
           this.router.navigate([ '../..', entity.slug, 'summary' ], { relativeTo: this.route });
-        } else {
-          const updatedStudy = (entity instanceof Study) ? entity : new Study().deserialize(entity);
-          this.study = new StudyUI(updatedStudy);
         }
 
         if (this.updatedMessage) {
-          this.toastr.success(this.updatedMessage,'Update Successfull');
+          this.toastr.success(this.updatedMessage, 'Update Successfull');
         }
       });
-
-    this.store$.dispatch(new StudyStoreActions.GetEnableAllowedRequest({ studyId: this.study.id}));
   }
 
   ngOnDestroy() {

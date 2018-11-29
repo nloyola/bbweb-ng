@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Study } from '@app/domain/studies';
-import { filter } from 'rxjs/operators';
-import { Store } from '@ngrx/store';
-import { RootStoreState, EventTypeStoreActions } from '@app/root-store';
+import { filter, map, takeUntil } from 'rxjs/operators';
+import { Store, select } from '@ngrx/store';
+import { RootStoreState, EventTypeStoreActions, StudyStoreSelectors } from '@app/root-store';
+import { Observable, Subject } from 'rxjs';
 
 interface Tab {
   heading: string;
@@ -14,13 +15,14 @@ interface Tab {
   templateUrl: './study-view.component.html',
   styleUrls: ['./study-view.component.scss']
 })
-export class StudyViewComponent implements OnInit {
+export class StudyViewComponent implements OnInit, OnDestroy {
 
-  study: Study;
+  study$: Observable<Study>;
   tabIds: string[];
   activeTabId: string;
 
   private tabData: { [id: string]: Tab };
+  private unsubscribe$: Subject<void> = new Subject<void>();
 
   constructor(private store$: Store<RootStoreState.State>,
               private router: Router,
@@ -43,21 +45,35 @@ export class StudyViewComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.study$ = this.store$.pipe(
+      select(StudyStoreSelectors.selectAllStudies),
+      filter(s => s.length > 0),
+      map((studies: Study[]) => studies.find(s => s.slug === this.route.snapshot.params.slug)),
+      filter(study => study !== undefined),
+      map(study => {
+        // have to do the following because of this issue:
+        //
+        // https://github.com/ngrx/platform/issues/976
+        return (study instanceof Study) ? study :  new Study().deserialize(study);
+      }),
+      takeUntil(this.unsubscribe$));
+
     this.activeTabId = this.getActiveTabId(this.router.url);
-    this.study = this.route.snapshot.data.study;
 
     this.router.events
       .pipe(filter(x => x instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
         this.activeTabId = this.getActiveTabId(event.urlAfterRedirects);
       });
+  }
 
-    // clear the selected event type since user is viewing a new study
-    this.store$.dispatch(new EventTypeStoreActions.EventTypeSelected({ id: null }));
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 
   public tabSelection($event) {
-    this.router.navigate([ '/admin/studies/view', this.study.slug, $event.nextId ]);
+    this.router.navigate([ '/admin/studies/view', this.route.snapshot.params.slug, $event.nextId ]);
   }
 
   private getActiveTabId(routeUrl: string): string {

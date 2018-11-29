@@ -1,18 +1,13 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EntityStateInfo, LabelledId, SearchFilterValues, SearchParams } from '@app/domain';
 import { NameFilter, SearchFilter, StateFilter } from '@app/domain/search-filters';
-import { studyCountsToUIMap, StudyCountsUIMap, StudySearchReply, StudyState, StudyStateUIMap, Study } from '@app/domain/studies';
+import { studyCountsToUIMap, StudyCountsUIMap, StudySearchReply, StudyState, StudyStateUIMap } from '@app/domain/studies';
 import { StudyUI } from '@app/domain/studies/study-ui.model';
 import { RootStoreState, StudyStoreActions, StudyStoreSelectors } from '@app/root-store';
 import { select, Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
-import { map, takeUntil, filter } from 'rxjs/operators';
-import { ToastrService } from 'ngx-toastr';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { SpinnerStoreSelectors } from '@app/root-store/spinner';
-import { StudyAddComponent } from '../study-add/study-add.component';
+import { filter, map, takeUntil } from 'rxjs/operators';
 
 interface StudyPageInfo {
   hasNoEntitiesToDisplay?: boolean;
@@ -28,6 +23,7 @@ interface StudyPageInfo {
   styleUrls: ['./studies-view.component.scss']
 })
 export class StudiesViewComponent implements OnInit {
+
   isCountsLoading$: Observable<boolean>;
   isLoading$: Observable<boolean>;
   serverError$: Observable<boolean>;
@@ -41,7 +37,7 @@ export class StudiesViewComponent implements OnInit {
   stateData: EntityStateInfo[];
   sortChoices: LabelledId[];
 
-  private filters: { [ name: string]: SearchFilter };
+  private filters: { [ name: string ]: SearchFilter };
   private unsubscribe$: Subject<void> = new Subject<void>();
 
   currentPage = 1;
@@ -49,9 +45,7 @@ export class StudiesViewComponent implements OnInit {
 
   constructor(private store$: Store<RootStoreState.State>,
               private router: Router,
-              private route: ActivatedRoute,
-              private modalService: NgbModal,
-              private toastr: ToastrService) {
+              private route: ActivatedRoute) {
     this.stateData = Object.values(StudyState).map(state => ({
       id: state.toLowerCase(),
       label: StudyStateUIMap.get(state).stateLabel
@@ -67,6 +61,7 @@ export class StudiesViewComponent implements OnInit {
       { id: 'state', label: 'State' }
     ];
   }
+
   ngOnInit() {
     this.isLoading$ =
       this.store$.pipe(select(StudyStoreSelectors.selectStudySearchActive));

@@ -33,3 +33,8 @@ mat-icon {
 .danger-icon {
   color: #bd2130;
 }
+
+/* disable the caret in dropdown menus in cards */
+.card .dropdown-toggle::after {
+  display: none;
+}

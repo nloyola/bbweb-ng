@@ -12,7 +12,7 @@ import { filter, takeUntil } from 'rxjs/operators';
   selector: 'app-collected-specimen-definition-add',
   templateUrl: './collected-specimen-definition-add.container.html'
 })
-export class CollectedSpecimenDefinitionAddContainer implements OnInit, OnDestroy {
+export class CollectedSpecimenDefinitionAddContainerComponent implements OnInit, OnDestroy {
 
   study: Study;
   eventTypeSlug: string;
@@ -22,7 +22,7 @@ export class CollectedSpecimenDefinitionAddContainer implements OnInit, OnDestro
   isSaving$ = new BehaviorSubject<boolean>(false);
   savedMessage: string;
 
-  private parentStateRelativePath = '../..';
+  private parentStateRelativePath = '..';
   private specimenDefinitionToSave: CollectedSpecimenDefinition;
   private unsubscribe$: Subject<void> = new Subject<void>();
 
@@ -34,8 +34,8 @@ export class CollectedSpecimenDefinitionAddContainer implements OnInit, OnDestro
 
   ngOnInit() {
     this.specimenDefinition = new CollectedSpecimenDefinition();
-    this.loading = (this.route.snapshot.url[1].path !== 'spcDefAdd');
-    this.study = this.route.parent.parent.snapshot.data.study;
+    this.loading = (this.route.snapshot.url[0].path !== 'spcDefAdd');
+    this.study = this.route.parent.parent.parent.parent.snapshot.data.study;
     this.eventTypeSlug = this.route.snapshot.params.eventTypeSlug;
 
     this.store$.pipe(
@@ -50,7 +50,7 @@ export class CollectedSpecimenDefinitionAddContainer implements OnInit, OnDestro
         this.loading = false;
 
         if (this.route.snapshot.params.specimenDefinitionId) {
-          this.parentStateRelativePath = '../../..';
+          this.parentStateRelativePath = '../..';
           this.specimenDefinition = this.eventType.specimenDefinitions
             .find(sd => sd.id == this.route.snapshot.params.specimenDefinitionId);
         }

@@ -1,14 +1,23 @@
 import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 import { EventTypeActions, ActionTypes } from './event-type.actions';
 import { SearchParams, PagedReplyEntityIds } from '@app/domain';
-import { CollectionEventType } from '@app/domain/studies';
+import { CollectionEventType, CollectedSpecimenDefinitionName } from '@app/domain/studies';
+
+export interface LastSearch {
+  studyId: string;
+  params: SearchParams;
+}
+
+export interface PagedReplyHash {
+  [ id: string ]: { [ url: string ]: PagedReplyEntityIds };
+}
 
 export interface State extends EntityState<CollectionEventType> {
-  lastSearch?: SearchParams;
+  lastSearch?: LastSearch;
   searchActive?: boolean;
-  searchReplies?: { [ url: string ]: PagedReplyEntityIds };
+  searchReplies?: PagedReplyHash;
+  specimenDefinitionNames: CollectedSpecimenDefinitionName[];
   lastAddedId: string;
-  selectedEventTypeId: string;
   error?: any;
 }
 
@@ -19,8 +28,8 @@ export const initialState: State = adapter.getInitialState({
   lastSearch: null,
   searchActive: false,
   searchReplies: {},
+  specimenDefinitionNames: [],
   lastAddedId: null,
-  selectedEventTypeId: null,
   error: null,
 });
 
@@ -30,7 +39,10 @@ export function reducer(state = initialState, action: EventTypeActions): State {
     case ActionTypes.SearchEventTypesRequest: {
       return {
         ...state,
-        lastSearch: action.payload.searchParams,
+        lastSearch: {
+          studyId: action.payload.studyId,
+          params: action.payload.searchParams
+        },
         searchActive: true,
         error: null
       };
@@ -39,7 +51,10 @@ export function reducer(state = initialState, action: EventTypeActions): State {
     case ActionTypes.SearchEventTypesFailure: {
       return {
         ...state,
-        error: action.payload.error,
+        error: {
+          error: action.payload.error,
+          actionType: action.type
+        },
         lastSearch: null,
         searchActive: false
       };
@@ -47,7 +62,8 @@ export function reducer(state = initialState, action: EventTypeActions): State {
 
     case ActionTypes.SearchEventTypesSuccess: {
       const pagedReply = action.payload.pagedReply;
-      const queryString = state.lastSearch.queryString();
+      const studyId = state.lastSearch.studyId;
+      const queryString = state.lastSearch.params.queryString();
       const newReply = {};
       newReply[queryString] = {
         entityIds: pagedReply.entities.map(et => et.id),
@@ -57,11 +73,17 @@ export function reducer(state = initialState, action: EventTypeActions): State {
         maxPages: pagedReply.maxPages
       };
 
+      const studyReplies = {};
+      studyReplies[studyId] = {
+        ...state.searchReplies[studyId],
+        ...newReply
+      };
+
       return adapter.addMany(pagedReply.entities, {
         ...state,
         searchReplies: {
           ...state.searchReplies,
-          ...newReply
+          ...studyReplies
         },
         searchActive: false
       });
@@ -69,13 +91,6 @@ export function reducer(state = initialState, action: EventTypeActions): State {
 
     case ActionTypes.GetEventTypeSuccess: {
       return adapter.addOne(action.payload.eventType, state);
-    }
-
-    case ActionTypes.GetEventTypeFailure: {
-      return {
-        ...state,
-        error: action.payload.error
-      };
     }
 
     case ActionTypes.AddEventTypeRequest: {
@@ -92,13 +107,6 @@ export function reducer(state = initialState, action: EventTypeActions): State {
       });
     }
 
-    case ActionTypes.AddEventTypeFailure: {
-      return {
-        ...state,
-        error: action.payload.error
-      };
-    }
-
     case ActionTypes.UpdateEventTypeSuccess: {
       return adapter.updateOne(
         {
@@ -108,35 +116,35 @@ export function reducer(state = initialState, action: EventTypeActions): State {
         state);
     }
 
-    case ActionTypes.UpdateEventTypeFailure: {
-      return {
-        ...state,
-        error: action.payload.error
-      };
-    }
-
     case ActionTypes.RemoveEventTypeSuccess: {
-      const selectedEventTypeId = (state.selectedEventTypeId !== action.payload.eventTypeId)
-        ? state.selectedEventTypeId : null;
-      return adapter.removeOne(action.payload.eventTypeId, {
-        ...state,
-        selectedEventTypeId
-      });
+      return adapter.removeOne(action.payload.eventTypeId, state);
     }
 
-    case ActionTypes.RemoveEventTypeFailure: {
+    case ActionTypes.GetSpecimenDefinitionNamesSuccess: {
       return {
         ...state,
-        error: action.payload.error
+        specimenDefinitionNames: action.payload.specimenDefinitionNames
       };
     }
 
-    case ActionTypes.EventTypeSelected: {
+    case ActionTypes.ClearLastAdded: {
       return {
         ...state,
-        selectedEventTypeId: action.payload.id
+        lastAddedId: null
       };
     }
+
+    case ActionTypes.UpdateEventTypeFailure:
+    case ActionTypes.AddEventTypeFailure:
+    case ActionTypes.GetEventTypeFailure:
+    case ActionTypes.RemoveEventTypeFailure:
+      return {
+        ...state,
+        error: {
+          error: action.payload.error,
+          actionType: action.type
+        },
+      };
 
     default: {
       return state;

@@ -125,11 +125,11 @@ export class Factory {
   study(options?: any): any {
     const defaults = {
       ...{
-        id: this.domainEntityIdNext(DomainEntities.STUDY),
-        version: 0,
-        description: faker.lorem.sentences(4),
+        id:              this.domainEntityIdNext(DomainEntities.STUDY),
+        version:         0,
+        description:     faker.lorem.sentences(4),
         annotationTypes: [],
-        state: StudyState.Disabled
+        state:           StudyState.Disabled
       },
       ...this.nameAndSlug()
     };
@@ -148,6 +148,71 @@ export class Factory {
   defaultStudy(): any {
     const dflt = this.defaultEntities.get(DomainEntities.STUDY);
     return dflt ? dflt : this.study();
+  }
+
+  collectionEventType(options: any = {}): any {
+    const study = this.defaultStudy();
+    const defaults = {
+      ...{
+        id:                  this.domainEntityIdNext(DomainEntities.COLLECTION_EVENT_TYPE),
+        version:             0,
+        studyId:             study.id,
+        description:         faker.lorem.sentences(4),
+        specimenDefinitions: [],
+        annotationTypes:     [],
+        recurring:           false
+      },
+      ...this.nameAndSlug()
+    };
+
+    const eventType = {
+      ...defaults,
+      ...options
+    };
+    this.defaultEntities.set(DomainEntities.COLLECTION_EVENT_TYPE, eventType);
+    return eventType;
+  }
+
+  /**
+   * Returns the last {@link domain.studies.CollectionEventType CollectionEventType} plain
+   * object created by this factory.
+   */
+  defaultCollectionEventType(): any {
+    const dflt = this.defaultEntities.get(DomainEntities.COLLECTION_EVENT_TYPE);
+    return dflt ? dflt : this.collectionEventType();
+  }
+
+  processingType(options:any = {}): any {
+    const study = this.defaultStudy();
+    const defaults = {
+      ...{
+        id:                 this.domainEntityIdNext(DomainEntities.PROCESSING_TYPE),
+        version:            0,
+        studyId:            study.id,
+        description:        faker.lorem.sentences(4),
+        enabled:            false,
+        input:              this.inputSpecimenProcessing(),
+        output:             this.outputSpecimenProcessing(),
+        annotationTypes:    []
+      },
+      ...this.nameAndSlug()
+    };
+
+    const processingType = {
+      ...defaults,
+      ...options
+    };
+    this.defaultEntities.set(DomainEntities.PROCESSING_TYPE, processingType);
+    return processingType;
+  }
+
+  /**
+   * Returns the last {@link domain.studies.ProcessingType ProcessingType} plain
+   * object created by this factory.
+   */
+  defaultProcessingType(): any {
+    const dflt = this.defaultEntities.get(DomainEntities.PROCESSING_TYPE);
+    return dflt ? dflt : this.processingType();
   }
 
   entityInfo(): any {
@@ -206,6 +271,57 @@ export class Factory {
     };
   }
 
+  processedSpecimenDefinition(options = {}) {
+    const defaults = {
+      ...{
+        id:                      this.domainEntityIdNext(DomainEntities.PROCESSED_SPECIMEN_DEFINITION),
+        description:             faker.lorem.sentences(4),
+        units:                   'mL',
+        anatomicalSourceType:    this.randomAnatomicalSourceType(),
+        preservationType:        this.randomPreservationType(),
+        preservationTemperature: this.randomPreservationTemperature(),
+        specimenType:            this.randomSpecimenType()
+      },
+      ...this.nameAndSlug()
+    };
+    return {
+      ...defaults,
+      ...options
+    };
+  }
+
+  inputSpecimenProcessing(options = {}) {
+    const specimenDefinition =  this.processedSpecimenDefinition();
+    const collectionEventType = this.collectionEventType({
+      specimenDefinitions: [ specimenDefinition ]
+    });
+    const defaults = {
+      expectedChange:       1.0,
+      count:                1,
+      containerTypeId:      null,
+      definitionType:       'collected',
+      entityId:             collectionEventType.id,
+      specimenDefinitionId: specimenDefinition.id
+    };
+    return {
+      ...defaults,
+      ...options
+    };
+  }
+
+  outputSpecimenProcessing(options = {}) {
+    const defaults = {
+      expectedChange:     1.0,
+      count:              1,
+      containerTypeId:    null,
+      specimenDefinition: this.processedSpecimenDefinition()
+    };
+    return {
+      ...defaults,
+      ...options
+    };
+  }
+
   randomAnatomicalSourceType(): AnatomicalSource {
     return faker.random.arrayElement(Object.values(AnatomicalSource));
   }
@@ -242,29 +358,6 @@ export class Factory {
       ...defaults,
       ...options
     };
-  }
-
-  collectionEventType(options: any = {}): any {
-    const study = this.defaultStudy();
-    const defaults = {
-      ...{
-        id:                  DomainEntities.COLLECTION_EVENT_TYPE,
-        version:             0,
-        studyId:             study.id,
-        description:         faker.lorem.sentences(4),
-        specimenDefinitions: [],
-        annotationTypes:     [],
-        recurring:           false
-      },
-      ...this.nameAndSlug()
-    };
-
-    const eventType = {
-      ...defaults,
-      ...options
-    };
-    this.defaultEntities.set(DomainEntities.COLLECTION_EVENT_TYPE, eventType);
-    return eventType;
   }
 
   studyCounts(): StudyCounts {

@@ -35,6 +35,16 @@ export class AnnotationType extends DomainEntity {
    */
   options: string[];
 
+  static sortAnnotationTypes(annotationTypes: AnnotationType[]): AnnotationType[] {
+    const sortedAnnotationTypes = annotationTypes.slice(0);
+    sortedAnnotationTypes.sort((a: AnnotationType, b: AnnotationType): number => {
+      if (a.name < b.name) { return -1; }
+      if (a.name > b.name) { return 1; }
+      return 0;
+    });
+    return sortedAnnotationTypes;
+  }
+
   deserialize(input: any) {
     Object.assign(this, input);
     return this;
@@ -55,16 +65,6 @@ export class AnnotationType extends DomainEntity {
 
   isValueTypeSelect() {
     return this.valueType === ValueTypes.Select;
-  }
-
-  static sortAnnotationTypes(annotationTypes: AnnotationType[]): AnnotationType[] {
-    const sortedAnnotationTypes = annotationTypes.slice(0);
-    sortedAnnotationTypes.sort((a: AnnotationType, b: AnnotationType): number => {
-      if (a.name < b.name) { return -1; }
-      if (a.name > b.name) { return 1; }
-      return 0;
-    });
-    return sortedAnnotationTypes;
   }
 
 }

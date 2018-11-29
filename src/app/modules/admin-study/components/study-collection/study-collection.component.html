@@ -1,10 +1,11 @@
-<div class="row">
+<div class="row" *ngIf="study$ | async as study">
   <div class="col-md-3">
-    <app-event-types-add-and-select (addSelected)="addEventTypeSelected($event)"
+    <app-event-types-add-and-select [study]="study"
+                                    (addSelected)="addEventTypeSelected($event)"
                                     (selected)="eventTypeSelected($event)">
     </app-event-types-add-and-select>
   </div>
   <div class="col-md-9">
-    <app-event-type-view></app-event-type-view>
+    <router-outlet></router-outlet>
   </div>
 </div>

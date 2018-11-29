@@ -10,19 +10,20 @@ import { Observable } from 'rxjs';
 export class AnnotationTypeAddComponent implements OnInit, OnChanges {
 
   @Input('isSaving') isSaving$: Observable<boolean>;
+  @Input() entityName: string;
   @Input() annotationType: AnnotationType;
 
   @Output() submitted = new EventEmitter<AnnotationType>();
   @Output() cancelled = new EventEmitter<any>();
 
-  @ViewChild("nameInput") nameInput: ElementRef;
+  @ViewChild('nameInput') nameInput: ElementRef;
 
   form: FormGroup;
   valueTypes: string[];
   valueTypeLabels: { [ key: string]: string };
   title: string;
 
-  protected parentStateRelativePath: string
+  protected parentStateRelativePath: string;
 
   constructor(private formBuilder: FormBuilder) {
     this.valueTypes = Object.values(ValueTypes);

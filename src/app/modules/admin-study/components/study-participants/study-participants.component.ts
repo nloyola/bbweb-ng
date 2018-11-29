@@ -11,7 +11,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
+import { filter, map, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-study-participants',
@@ -35,21 +35,18 @@ export class StudyParticipantsComponent implements OnInit {
               private toastr: ToastrService) { }
 
   ngOnInit() {
-    this.study = new StudyUI(this.route.parent.parent.snapshot.data.study);
-    this.setAnnotations();
-
     this.isLoading$ = this.store$.pipe(select(SpinnerStoreSelectors.selectSpinnerIsActive));
 
-    this.store$.pipe(
-      select(StudyStoreSelectors.selectAllStudyEntities),
-      filter((entities: { [key: string]: any }) => Object.keys(entities).length > 0),
-      takeUntil(this.unsubscribe$))
-      .subscribe((entities: any) => {
-        const entity = entities[this.study.id];
-
-        const updatedStudy = (entity instanceof Study)
-          ? entity : new Study().deserialize(entity);
-        this.study = new StudyUI(updatedStudy);
+    this.store$
+      .pipe(
+        select(StudyStoreSelectors.selectAllStudies),
+        filter(s => s.length > 0),
+        map((studies: Study[]) => studies.find(s => s.slug === this.route.parent.parent.snapshot.params.slug)),
+        filter(study => study !== undefined),
+        map(study => (study instanceof Study) ? study :  new Study().deserialize(study)),
+        takeUntil(this.unsubscribe$))
+      .subscribe((study: Study) => {
+        this.study = new StudyUI(study);
         this.setAnnotations();
 
         if (this.updatedMessage) {
@@ -63,11 +60,9 @@ export class StudyParticipantsComponent implements OnInit {
         filter(s => !!s),
         takeUntil(this.unsubscribe$))
       .subscribe((error: any) => {
-        let errMessage = error.error ? error.error.message : error.statusText;
+        const errMessage = error.error ? error.error.message : error.statusText;
         this.toastr.error(errMessage, 'Update Error', { disableTimeOut: true });
       });
-
-    this.store$.dispatch(new StudyStoreActions.GetEnableAllowedRequest({ studyId: this.study.id}));
   }
 
   ngOnDestroy() {

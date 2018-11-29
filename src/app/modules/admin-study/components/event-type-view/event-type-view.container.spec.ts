@@ -9,14 +9,14 @@ import { Factory } from '@app/test/factory';
 import { NgbModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { StoreModule, Store } from '@ngrx/store';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
-import { EventTypeViewContainer } from './event-type-view.container';
+import { EventTypeViewContainerComponent } from './event-type-view.container';
 import { StudyStoreReducer, EventTypeStoreReducer, StudyStoreActions, EventTypeStoreActions } from '@app/root-store';
 import { ModalInputResult } from '@app/modules/modal-input/models';
 import * as faker from 'faker';
 
 describe('EventTypeViewContainer', () => {
-  let component: EventTypeViewContainer;
-  let fixture: ComponentFixture<EventTypeViewContainer>;
+  let component: EventTypeViewContainerComponent;
+  let fixture: ComponentFixture<EventTypeViewContainerComponent>;
   let factory: Factory;
   let study: Study;
   let store: Store<StudyStoreReducer.State>;
@@ -57,7 +57,7 @@ describe('EventTypeViewContainer', () => {
         }
       ],
       declarations: [
-        EventTypeViewContainer,
+        EventTypeViewContainerComponent,
         YesNoPipe
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
@@ -67,7 +67,7 @@ describe('EventTypeViewContainer', () => {
 
   beforeEach(() => {
     store = TestBed.get(Store);
-    fixture = TestBed.createComponent(EventTypeViewContainer);
+    fixture = TestBed.createComponent(EventTypeViewContainerComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

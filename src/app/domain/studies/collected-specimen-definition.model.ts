@@ -19,7 +19,7 @@ export class CollectedSpecimenDefinition extends SpecimenDefinition {
    * The number of specimens to be collected.
    * @see #units
    */
-  maxCount: number
+  maxCount: number;
 
   deserialize(input: any) {
     Object.assign(this, input);

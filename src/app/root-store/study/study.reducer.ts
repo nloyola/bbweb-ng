@@ -5,13 +5,17 @@ import { StudyActions, ActionTypes } from './study.actions';
 import { SearchParams, PagedReplyEntityIds } from '@app/domain';
 import { StudyCounts } from '@app/domain/studies/study-counts.model';
 
+export interface EnableAllowdIds {
+  [ slug: string ]: boolean;
+}
+
 export interface State extends EntityState<Study> {
   lastAddedId: string;
   lastSearch?: SearchParams;
   searchActive?: boolean;
   searchReplies?: { [ url: string ]: PagedReplyEntityIds };
   studyCounts?: StudyCounts;
-  enableAllowedIds?: string[];
+  enableAllowedIds?: EnableAllowdIds;
   error?: any;
 }
 
@@ -24,7 +28,7 @@ export const initialState: State = adapter.getInitialState({
   searchActive: false,
   searchReplies: {},
   studyCounts: {} as any,
-  enableAllowedIds: []
+  enableAllowedIds: {}
 });
 
 export function reducer(state = initialState, action: StudyActions): State {
@@ -42,16 +46,6 @@ export function reducer(state = initialState, action: StudyActions): State {
       return {
         ...state,
         studyCounts: action.payload.studyCounts
-      };
-    }
-
-    case ActionTypes.GetStudyCountsFailure: {
-      return {
-        ...state,
-        error: {
-          type: ActionTypes.GetStudyCountsFailure,
-          error: action.payload.error
-        }
       };
     }
 
@@ -112,16 +106,6 @@ export function reducer(state = initialState, action: StudyActions): State {
       });
     }
 
-    case ActionTypes.AddStudyFailure: {
-      return {
-        ...state,
-        error: {
-          type: ActionTypes.AddStudyFailure,
-          error: action.payload.error
-        }
-      };
-    }
-
     case ActionTypes.UpdateStudySuccess: {
       return adapter.updateOne(
         {
@@ -129,16 +113,6 @@ export function reducer(state = initialState, action: StudyActions): State {
           changes: action.payload.study
         },
         state);
-    }
-
-    case ActionTypes.UpdateStudyFailure: {
-      return {
-        ...state,
-        error: {
-          type: ActionTypes.UpdateStudyFailure,
-          error: action.payload.error
-        }
-      };
     }
 
     case ActionTypes.GetStudySuccess: {
@@ -156,27 +130,18 @@ export function reducer(state = initialState, action: StudyActions): State {
     }
 
     case ActionTypes.GetEnableAllowedSuccess: {
-      if (action.payload.allowed) {
-        const included = state.enableAllowedIds.includes(action.payload.studyId)
-        if (!included) {
-          const enableAllowedIds = [ ...state.enableAllowedIds, action.payload.studyId ];
-          return {
-            ...state,
-            enableAllowedIds
-          };
-        }
-      } else {
-        const enableAllowedIds =
-          state.enableAllowedIds.filter(id => id != action.payload.studyId);
-        return {
-          ...state,
-          enableAllowedIds
-        };
-      }
-      return state;
+      const enableAllowedIds = { ...state.enableAllowedIds };
+      enableAllowedIds[action.payload.studyId] = action.payload.allowed;
+      return {
+        ...state,
+        enableAllowedIds
+      };
     }
 
-    case ActionTypes.GetEnableAllowedFailure: {
+    case ActionTypes.GetStudyCountsFailure:
+    case ActionTypes.AddStudyFailure:
+    case ActionTypes.UpdateStudyFailure:
+    case ActionTypes.GetEnableAllowedFailure:
       return {
         ...state,
         error: {
@@ -184,7 +149,6 @@ export function reducer(state = initialState, action: StudyActions): State {
           error: action.payload.error
         }
       };
-    }
   }
   return state;
 }

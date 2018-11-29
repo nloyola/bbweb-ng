@@ -1,0 +1,57 @@
+<div class="card mt-2">
+  <div class="card-header" *ngIf="!isLoading">
+    <ng-container *ngTemplateOutlet="heading"></ng-container>
+  </div>
+
+  <div class="card-header" *ngIf="isLoading">
+    <ng-container *ngTemplateOutlet="loadingContent">
+    </ng-container>
+  </div>
+
+  <div class="card-body" *ngIf="pageInfo.hasNoEntitiesToDisplay">
+    <div class="card-text">
+      <ng-container *ngTemplateOutlet="noEntitiesToDisplay">
+      </ng-container>
+    </div>
+  </div>
+
+  <div class="card-body" *ngIf="pageInfo.hasNoResultsToDisplay">
+    <div class="card-text">
+      <ng-container *ngTemplateOutlet="noResultsToDisplay">
+      </ng-container>
+    </div>
+  </div>
+
+  <ul class="list-group list-group-flush" *ngIf="pageInfo.hasResultsToDisplay">
+    <ng-template ngFor
+                 let-entity
+                 [ngForOf]="pageInfo.entities"
+                 [ngForTemplate]="entityTemplate">
+    </ng-template>
+  </ul>
+
+  <div class="card-footer pb-1" *ngIf="pageInfo.showPagination">
+    <ngb-pagination size="sm"
+                    [collectionSize]="pageInfo.total"
+                    [(page)]="page"
+                    [maxSize]="entitiesLimit"
+                    [pageSize]="entitiesLimit"
+                    [rotate]="false"
+                    [boundaryLinks]="true"
+                    (pageChange)="paginationPageChange($event)">
+    </ngb-pagination>
+  </div>
+
+  <div class="card-footer p-2">
+    <form [formGroup]="filterForm" novalidate>
+      <div class="form-group">
+        <label class="small" for="nameFilter" i18n>
+          Name filter:
+        </label>
+        <input type="text"
+               class="form-control form-control-sm"
+               formControlName="name">
+      </div>
+    </form>
+  </div>
+</div>

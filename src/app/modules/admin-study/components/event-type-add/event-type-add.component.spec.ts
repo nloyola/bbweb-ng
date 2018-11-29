@@ -9,6 +9,7 @@ import { Factory } from '@app/test/factory';
 import { Store, StoreModule } from '@ngrx/store';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { EventTypeAddComponent } from './event-type-add.component';
+import { SpinnerStoreReducer } from '@app/root-store/spinner';
 
 describe('EventTypeAddComponent', () => {
 
@@ -30,7 +31,8 @@ describe('EventTypeAddComponent', () => {
         ReactiveFormsModule,
         RouterTestingModule,
         StoreModule.forRoot({
-          'event-type': EventTypeStoreReducer.reducer
+          'event-type': EventTypeStoreReducer.reducer,
+          'spinner': SpinnerStoreReducer.reducer
         }),
         ToastrModule.forRoot()
       ],

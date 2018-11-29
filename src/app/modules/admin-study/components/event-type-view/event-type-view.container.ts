@@ -20,7 +20,7 @@ import { SpecimenDefinitionViewComponent } from '../specimen-definition-view/spe
   selector: 'app-event-type-view',
   templateUrl: './event-type-view.container.html'
 })
-export class EventTypeViewContainer implements OnInit, OnDestroy {
+export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
 
   @ViewChild('updateNameModal') updateNameModal: TemplateRef<any>;
   @ViewChild('updateDescriptionModal') updateDescriptionModal: TemplateRef<any>;
@@ -43,7 +43,8 @@ export class EventTypeViewContainer implements OnInit, OnDestroy {
               private toastr: ToastrService) {}
 
   ngOnInit() {
-    this.study = this.route.parent.parent.snapshot.data.study;
+    this.study = this.route.parent.parent.parent.parent.snapshot.data.study;
+    this.eventType = this.route.snapshot.data.eventType;
     this.allowChanges = this.study.isDisabled();
 
     // check if the state of the study has changed
@@ -57,15 +58,6 @@ export class EventTypeViewContainer implements OnInit, OnDestroy {
         this.allowChanges = updatedStudy.isDisabled();
       });
 
-    // checks to see if the user already selected an event type
-    this.store$.pipe(
-      select(EventTypeStoreSelectors.selectSelectedEventType),
-      filter((et: CollectionEventType) => !!et),
-      takeUntil(this.unsubscribe$))
-      .subscribe((eventType: CollectionEventType) => {
-        this.eventType = eventType;
-      });
-
     // get latest updates to this event type from the store
     this.store$.pipe(
       select(EventTypeStoreSelectors.selectAllEventTypeEntities),
@@ -74,8 +66,9 @@ export class EventTypeViewContainer implements OnInit, OnDestroy {
         if (!this.eventType) { return; }
 
         const entity = entities[this.eventType.id];
-        if ((Object.keys(entities).length <= 0) || !entity) {
-          this.eventType = undefined;
+        if (!entities || (Object.keys(entities).length <= 0) || !entity) {
+          this.router.navigate([ '/admin/studies/view/bbpsp/collection/view' ]);
+          this.toastr.success('Event removed');
           return;
         }
 
@@ -85,6 +78,10 @@ export class EventTypeViewContainer implements OnInit, OnDestroy {
           this.toastr.success(this.updatedMessage, 'Update Successfull');
         }
       });
+
+    this.route.data.subscribe(data => {
+      this.eventType = data.eventType;
+    });
   }
 
   ngOnDestroy() {
@@ -161,8 +158,7 @@ export class EventTypeViewContainer implements OnInit, OnDestroy {
     if (!this.allowChanges) {
       throw new Error('modifications not allowed');
     }
-    this.router.navigate([ this.eventType.slug, 'annotationAdd' ],
-                         { relativeTo: this.route });
+    this.router.navigate([ 'annotationAdd' ], { relativeTo: this.route });
   }
 
   viewAnnotationType(annotationType: AnnotationType): void {
@@ -179,8 +175,7 @@ export class EventTypeViewContainer implements OnInit, OnDestroy {
     if (!this.allowChanges) {
       throw new Error('modifications not allowed');
     }
-    this.router.navigate([ this.eventType.slug, 'annotation', annotationType.id ],
-                         { relativeTo: this.route });
+    this.router.navigate([ 'annotation', annotationType.id ], { relativeTo: this.route });
   }
 
   removeAnnotationType(annotationType: AnnotationType): void {
@@ -206,7 +201,7 @@ export class EventTypeViewContainer implements OnInit, OnDestroy {
     if (!this.allowChanges) {
       throw new Error('modifications not allowed');
     }
-    this.router.navigate([ this.eventType.slug, 'spcDefAdd' ], { relativeTo: this.route });
+    this.router.navigate([ 'spcDefAdd' ], { relativeTo: this.route });
   }
 
   viewSpecimenDefinition(specimenDefinition: CollectedSpecimenDefinition): void {
@@ -223,8 +218,7 @@ export class EventTypeViewContainer implements OnInit, OnDestroy {
     if (!this.allowChanges) {
       throw new Error('modifications not allowed');
     }
-    this.router.navigate([ this.eventType.slug, 'spcDef', specimenDefinition.id ],
-                         { relativeTo: this.route });
+    this.router.navigate([ 'spcDef', specimenDefinition.id ], { relativeTo: this.route });
   }
 
   removeSpecimenDefinition(specimenDefinition: CollectedSpecimenDefinition): void {
@@ -262,6 +256,21 @@ export class EventTypeViewContainer implements OnInit, OnDestroy {
         this.updatedMessage = 'Event removed';
       })
       .catch(() => undefined);
+  }
+
+  addEventTypeSelected() {
+    if (!this.study.isDisabled()) {
+      throw new Error('modifications not allowed');
+    }
+
+    // relative route does not work here, why?
+    this.router.navigate([ '/admin/studies/view/bbpsp/collection/add' ]);
+  }
+
+  eventTypeSelected(eventType: CollectionEventType) {
+    this.eventType = eventType;
+    // relative route does not work here, why?
+    this.router.navigate([ `/admin/studies/view/bbpsp/collection/${eventType.slug}` ]);
   }
 
 }

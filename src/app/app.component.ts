@@ -10,25 +10,25 @@ export class AppComponent {
   // Sets initial value to true to show loading spinner on first load
   loading = true;
 
-  constructor(private router: Router) {
+  constructor(router: Router) {
     router.events.subscribe((event: RouterEvent) => {
-      this.navigationInterceptor(event)
-    })
+      this.navigationInterceptor(event);
+    });
   }
 
   // Shows and hides the loading spinner during RouterEvent changes
   navigationInterceptor(event: RouterEvent): void {
     if (event instanceof NavigationStart) {
-      this.loading = true
+      this.loading = true;
     }
     if (event instanceof NavigationEnd) {
-      this.loading = false
+      this.loading = false;
     }
 
     // Set loading state to false in both of the below events to hide the spinner in case a
     // request fails
     if ((event instanceof NavigationCancel) || (event instanceof NavigationError)) {
-      this.loading = false
+      this.loading = false;
     }
   }
 

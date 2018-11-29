@@ -11,12 +11,12 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
 import { cold } from 'jasmine-marbles';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
-import { CollectedSpecimenDefinitionAddContainer } from './collected-specimen-definition-add.container';
+import { CollectedSpecimenDefinitionAddContainerComponent } from './collected-specimen-definition-add.container';
 
 describe('CollectedSpecimenDefinitionAddContainer', () => {
 
-  let component: CollectedSpecimenDefinitionAddContainer;
-  let fixture: ComponentFixture<CollectedSpecimenDefinitionAddContainer>;
+  let component: CollectedSpecimenDefinitionAddContainerComponent;
+  let fixture: ComponentFixture<CollectedSpecimenDefinitionAddContainerComponent>;
   let ngZone: NgZone;
   let router: Router;
   let mockActivatedRoute = new MockActivatedRoute();
@@ -45,7 +45,7 @@ describe('CollectedSpecimenDefinitionAddContainer', () => {
         }
       ],
       declarations: [
-        CollectedSpecimenDefinitionAddContainer,
+        CollectedSpecimenDefinitionAddContainerComponent,
         YesNoPipe
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
@@ -69,7 +69,7 @@ describe('CollectedSpecimenDefinitionAddContainer', () => {
     router = TestBed.get(Router);
     toastr = TestBed.get(ToastrService);
 
-    fixture = TestBed.createComponent(CollectedSpecimenDefinitionAddContainer);
+    fixture = TestBed.createComponent(CollectedSpecimenDefinitionAddContainerComponent);
     component = fixture.componentInstance;
     ngZone.run(() => router.initialNavigation());
   });

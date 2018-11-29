@@ -12,6 +12,8 @@ import { EventTypeStoreEffects } from './event-type/event-type.effects';
 import { SpinnerStoreReducer } from './spinner';
 import { SpinnerEffects } from './spinner/spinner.effects';
 import { StudyStoreEffects } from './study/study.effects';
+import { ProcessingTypeStoreReducer } from './processing-type';
+import { ProcessingTypeStoreEffects } from './processing-type/processing-type.effects';
 
 @NgModule({
   imports: [
@@ -21,10 +23,12 @@ import { StudyStoreEffects } from './study/study.effects';
     StoreModule.forFeature('auth', AuthStoreReducer.reducer),
     StoreModule.forFeature('study', StudyStoreReducer.reducer),
     StoreModule.forFeature('event-type', EventTypeStoreReducer.reducer),
+    StoreModule.forFeature('processing-type', ProcessingTypeStoreReducer.reducer),
     StoreModule.forFeature('spinner', SpinnerStoreReducer.reducer),
     EffectsModule.forFeature([
       AuthStoreEffects,
       EventTypeStoreEffects,
+      ProcessingTypeStoreEffects,
       StudyStoreEffects,
       SpinnerEffects
     ]),

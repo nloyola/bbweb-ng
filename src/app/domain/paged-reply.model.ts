@@ -1,5 +1,4 @@
-import { ConcurrencySafeEntity } from '@app/domain/concurrency-safe-entity.model';
-import { SearchParams } from '@app/domain';
+import { SearchParams, DomainEntity, ConcurrencySafeEntity } from '@app/domain';
 
 export interface PagedReplyBase {
 
@@ -28,4 +27,14 @@ export interface PagedReply<T extends ConcurrencySafeEntity> extends PagedReplyB
   /** The items in the page. */
   entities: T[],
 
+}
+
+export interface PagedReplyInfo<T extends DomainEntity> {
+  hasNoEntitiesToDisplay: boolean;
+  hasNoResultsToDisplay: boolean;
+  hasResultsToDisplay: boolean;
+  entities: T[];
+  total: number;
+  maxPages: number;
+  showPagination: boolean;
 }

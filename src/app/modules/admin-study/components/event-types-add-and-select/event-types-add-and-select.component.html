@@ -1,89 +1,66 @@
-<div class="card mt-2">
-  <div class="card-header" *ngIf="!(isLoading$ | async); else showLoading">
-    <ng-container i18n>Events</ng-container>
-    <span class="float-right d-inline-block" *ngIf="study.isDisabled()" ngbDropdown placement="bottom-right">
-      <button class="btn btn-sm btn-outline-primary"
-              type="button"
-              id="eventTypeMenu"
-              ngbDropdownToggle>
-      </button>
+<app-add-and-select [isAddAllowed]="isAddallowed"
+                    [pageInfo]="(pageInfo$ | async)"
+                    [isLoading]="(isLoading$ | async)"
+                    [entitiesLimit]="eventTypesLimit"
+                    [(page)]="currentPage"
+                    [heading]="heading"
+                    [noEntitiesToDisplay]="noEntitiesToDisplay"
+                    [noResultsToDisplay]="noResultsToDisplay"
+                    [loadingContent]="showLoading"
+                    (nameFilterUpdated)="onFiltersUpdated($event)"
+                    (pageChange)="paginationPageChange($event)">
+  <ng-template let-entity>
+    <li class="list-group-item">
+      <a href="#" (click)="!!eventTypeSelected(entity)">
+        <small>{{entity.name | truncate:18}}</small>
+      </a>
+      <span class="float-right badge badge-secondary">{{ getRecurringLabel(entity) }}</span>
+    </li>
+  </ng-template>
+</app-add-and-select>
 
-      <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="eventTypeMenu">
-        <a class="dropdown-item" (click)="add()">
-          <mat-icon class="success-icon mr-1">add_circle</mat-icon>
-          <ng-container i18n>Add Event</ng-container>
-        </a>
-      </div>
-    </span>
+<ng-template #heading>
+  <small i18n>Events</small>
+  <span class="float-right d-inline-block"
+        *ngIf="isAddAllowed"
+        ngbDropdown
+        placement="bottom-right">
+    <button class="btn btn-sm btn-outline-secondary"
+            type="button"
+            id="eventTypeMenu"
+            ngbDropdownToggle>
+      <mat-icon>more_vert</mat-icon>
+    </button>
+
+    <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="eventTypeMenu">
+      <a class="dropdown-item" (click)="add()">
+        <mat-icon class="success-icon mr-1">add_circle</mat-icon>
+        <ng-container i18n>Add Event</ng-container>
+      </a>
+    </div>
+  </span>
+</ng-template>
+
+<ng-template #noEntitiesToDisplay>
+  <div class="alert alert-warning" role="alert">
+    <mat-icon>warning</mat-icon>
+    <ng-container i18n>
+      No events have been added to this study yet
+    </ng-container>
   </div>
+</ng-template>
 
-  <ng-container *ngIf="(pageInfo$ | async); let pageInfo">
-
-    <div class="card-body" *ngIf="pageInfo.hasNoEntitiesToDisplay">
-      <div class="card-text">
-        <div class="alert alert-warning" role="alert">
-          <mat-icon>warning</mat-icon>
-          <ng-container i18n>
-            No events have been added yet.
-          </ng-container>
-        </div>
-      </div>
-    </div>
-
-    <div class="card-body" *ngIf="pageInfo.hasNoResultsToDisplay">
-      <div class="card-text">
-        <div class="alert alert-warning" role="alert">
-          <mat-icon>warning</mat-icon>
-          <ng-container i18n>
-            There are no events that match your criteria.
-          </ng-container>
-        </div>
-      </div>
-    </div>
-
-    <ul class="list-group list-group-flush" *ngIf="pageInfo.hasResultsToDisplay">
-      <li class="list-group-item" *ngFor="let eventType of pageInfo.eventTypes">
-        <a href="#" (click)="!!eventTypeSelected(eventType)">
-          <small>{{eventType.name | truncate:18}}</small>
-        </a>
-        <span class="float-right badge badge-secondary">{{ getRecurringLabel(eventType) }}</span>
-      </li>
-    </ul>
-
-    <div class="card-footer pb-1" *ngIf="pageInfo.showPagination">
-      <ngb-pagination size="sm"
-                      [collectionSize]="pageInfo.total"
-                      [(page)]="currentPage"
-                      [maxSize]="eventTypesLimit"
-                      [pageSize]="eventTypesLimit"
-                      [rotate]="false"
-                      [boundaryLinks]="true"
-                      aria-label="Default pagination"
-                      (pageChange)="paginationPageChanged($event)">
-      </ngb-pagination>
-    </div>
-
-    <div class="card-footer p-2">
-      <form [formGroup]="filterForm" *ngIf="pageInfo.hasResultsToDisplay" novalidate>
-        <div class="form-group">
-          <label class="small" for="nameFilter" i18n>
-            Name filter:
-          </label>
-          <input type="text"
-                 class="form-control form-control-sm"
-                 formControlName="name">
-        </div>
-      </form>
-    </div>
-
-  </ng-container>
-
-</div>
+<ng-template #noResultsToDisplay>
+  <div class="alert alert-warning" role="alert">
+    <mat-icon>warning</mat-icon>
+    <ng-container i18n>
+      There are no events that match your criteria
+    </ng-container>
+  </div>
+</ng-template>
 
 <ng-template #showLoading>
-  <div class="card-header">
-    <app-spinner name="login" [show]="true" i18n>
-      Loading
-    </app-spinner>
-  </div>
+  <app-spinner name="loading" [show]="true" i18n>
+    <small>Loading</small>
+  </app-spinner>
 </ng-template>

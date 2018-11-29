@@ -1,3 +1,22 @@
-<p>
-  study-processing works!
-</p>
+<div class="row mt-2" *ngIf="studyData$ | async as studyData">
+  <div class="col-md-3" *ngIf="studyData.hasEventTypes; else noEventTypes">
+    <app-processing-types-add-and-select [study]="studyData.study"
+                                         (addSelected)="addProcessingTypeSelected($event)"
+                                         (selected)="processingTypeSelected($event)">
+    </app-processing-types-add-and-select>
+  </div>
+  <div class="col-md-9">
+    <router-outlet></router-outlet>
+  </div>
+</div>
+
+<ng-template #noEventTypes>
+  <div class="alert alert-warning mt-2" role="alert">
+    <mat-icon>warning</mat-icon>
+    <span class="sr-only">Error:</span>
+    <ng-container i18n>
+      No events have been defined for this study.<br>
+      Processing steps cannot be added until collection events are added.
+    </ng-container>
+  </div>
+</ng-template>

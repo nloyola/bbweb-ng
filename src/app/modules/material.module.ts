@@ -1,7 +1,8 @@
 import {
   MatButtonModule,
   MatCheckboxModule,
-  MatProgressBarModule
+  MatProgressBarModule,
+  MatStepperModule
 } from '@angular/material';
 import { MatIconModule } from '@angular/material/icon';
 import { NgModule } from '@angular/core';
@@ -11,13 +12,15 @@ import { NgModule } from '@angular/core';
     MatButtonModule,
     MatCheckboxModule,
     MatIconModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatStepperModule
   ],
   exports: [
     MatButtonModule,
     MatCheckboxModule,
     MatIconModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatStepperModule
   ]
 })
 export class MaterialModule { }

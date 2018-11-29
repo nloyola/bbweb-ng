@@ -1,0 +1,72 @@
+<app-add-and-select [isAddAllowed]="isAddallowed"
+                    [pageInfo]="(pageInfo$ | async)"
+                    [isLoading]="(isLoading$ | async)"
+                    [entitiesLimit]="processingTypesLimit"
+                    [(page)]="currentPage"
+                    [heading]="heading"
+                    [noEntitiesToDisplay]="noEntitiesToDisplay"
+                    [noResultsToDisplay]="noResultsToDisplay"
+                    [loadingContent]="showLoading"
+                    (nameFilterUpdated)="onFiltersUpdated($event)"
+                    (pageChange)="paginationPageChange($event)">
+  <ng-template let-entity>
+    <li class="list-group-item">
+      <a href="#" (click)="!!processingTypeSelected(entity)">
+        <small>{{entity.name | truncate:18}}</small>
+      </a>
+    </li>
+  </ng-template>
+</app-add-and-select>
+
+<ng-template #heading>
+  <small i18n>Processing Steps</small>
+  <span class="float-right d-inline-block"
+        *ngIf="study.isDisabled()"
+        ngbDropdown
+        placement="bottom-right">
+    <button class="btn btn-sm btn-outline-secondary"
+            type="button"
+            id="processingTypeMenu"
+            ngbDropdownToggle>
+      <mat-icon>more_vert</mat-icon>
+    </button>
+
+    <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="processingTypeMenu">
+      <a class="dropdown-item" *ngIf="isAddAllowed" (click)="add()">
+        <mat-icon class="success-icon mr-1">add_circle</mat-icon>
+        <ng-container i18n>Add Step</ng-container>
+      </a>
+    </div>
+  </span>
+</ng-template>
+
+<ng-template #noEntitiesToDisplay>
+  <div class="alert alert-warning" role="alert">
+    <mat-icon>warning</mat-icon>
+    <ng-container i18n>
+      Processing steps have not been added to this study yet
+    </ng-container>
+  </div>
+</ng-template>
+
+<ng-template #noResultsToDisplay>
+  <div class="alert alert-warning" role="alert">
+    <mat-icon>warning</mat-icon>
+    <ng-container i18n>
+      No processing steps match the filter
+    </ng-container>
+  </div>
+</ng-template>
+
+<ng-template #showLoading>
+  <app-spinner name="loading" [show]="true" i18n>
+    <small>Loading</small>
+  </app-spinner>
+</ng-template>
+
+<div class="alert alert-danger mt-2" role="alert" *ngIf="serverError$ | async">
+  <mat-icon>warning</mat-icon>
+  <ng-container i18n>
+    Server error. Please contact your web site administrator.
+  </ng-container>
+</div>

@@ -1,13 +1,15 @@
-<div class="card mt-2">
-  <div class="card-header" *ngIf="!(isLoading$ | async); else showLoading">
+<div class="card mt-2" *ngIf="study">
+  <div class="card-header bg-primary text-light"
+       *ngIf="!(isLoading$ | async); else showLoading">
     <mat-icon [ngClass]="study.stateIconClass()">{{study.stateIcon()}}</mat-icon>
     {{study.name}} <small i18n>Participant Annotations</small>
     <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
-      <button class="btn btn-sm btn-outline-primary"
+      <button class="btn btn-sm btn-light"
               type="button"
               id="studyMenu"
               *ngIf="study.isDisabled()"
               ngbDropdownToggle>
+        <mat-icon>more_vert</mat-icon>
       </button>
 
       <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="studyMenu">

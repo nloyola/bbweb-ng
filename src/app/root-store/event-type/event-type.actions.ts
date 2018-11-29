@@ -1,38 +1,39 @@
-import { Action } from '@ngrx/store';
+import { HideSpinner, ShowSpinner } from '@app/core/decorators';
 import { PagedReply, SearchParams } from '@app/domain';
-import { CollectionEventType, CollectionEventTypeToAdd, CollectedSpecimenDefinition } from '@app/domain/studies';
-import { ShowSpinner, HideSpinner } from '@app/core/decorators';
 import { AnnotationType } from '@app/domain/annotations';
+import { CollectedSpecimenDefinition, CollectedSpecimenDefinitionName, CollectionEventType, CollectionEventTypeToAdd } from '@app/domain/studies';
+import { Action } from '@ngrx/store';
 
 interface EventTypesRequestPayload {
-  studySlug: string,
-  searchParams: SearchParams
+  studySlug: string;
+  studyId: string;
+  searchParams: SearchParams;
 }
 
 interface EventTypeUpdateRequestPayload {
-  eventType: CollectionEventType,
-  attributeName: string,
-  value: string
+  eventType: CollectionEventType;
+  attributeName: string;
+  value: string;
 }
 
 interface EventTypeAddOrUpdateAnnotationTypeRequestPayload {
-  eventType: CollectionEventType,
-  annotationType: AnnotationType
+  eventType: CollectionEventType;
+  annotationType: AnnotationType;
 }
 
 interface EventTypeRemoveAnnotationTypeRequestPayload {
-  eventType: CollectionEventType,
-  annotationTypeId: string
+  eventType: CollectionEventType;
+  annotationTypeId: string;
 }
 
 interface EventTypeAddOrUpdateSpecimenDefinitionRequestPayload {
-  eventType: CollectionEventType,
-  specimenDefinition: CollectedSpecimenDefinition
+  eventType: CollectionEventType;
+  specimenDefinition: CollectedSpecimenDefinition;
 }
 
 interface EventTypeRemoveSpecimenDefinitionRequestPayload {
-  eventType: CollectionEventType,
-  specimenDefinitionId: string
+  eventType: CollectionEventType;
+  specimenDefinitionId: string;
 }
 
 export enum ActionTypes {
@@ -42,8 +43,10 @@ export enum ActionTypes {
   SearchEventTypesFailure = '[EventType] Search Event Types Failure',
 
   GetEventTypeRequest = '[EventType] Get Event Type Request',
+  GetEventTypeByIdRequest = '[EventType] Get Event Type By ID Request',
   GetEventTypeSuccess = '[EventType] Get Event Type Success',
   GetEventTypeFailure = '[EventType] Get Event Type Failure',
+
 
   AddEventTypeRequest = '[EventType] Add Event Type Request',
   AddEventTypeSuccess = '[EventType] Add Event Type Success',
@@ -65,8 +68,11 @@ export enum ActionTypes {
   RemoveEventTypeSuccess = '[EventType] Remove Event Type Success',
   RemoveEventTypeFailure = '[EventType] Remove Event Type Failure',
 
-  EventTypeSelected = '[EventType] Event Type Selected',
+  GetSpecimenDefinitionNamesRequest = '[EventType] Get Specimen Definition Names Request',
+  GetSpecimenDefinitionNamesSuccess = '[EventType] Get Specimen Definition Names Success',
+  GetSpecimenDefinitionNamesFailure = '[EventType] Get Specimen Definition Names Failure',
 
+  ClearLastAdded = '[EventType] Clear Last Added'
 }
 
 export class SearchEventTypesRequest implements Action {
@@ -92,6 +98,12 @@ export class GetEventTypeRequest implements Action {
   readonly type = ActionTypes.GetEventTypeRequest;
 
   constructor(public payload: { studySlug: string, eventTypeSlug: string }) { }
+}
+
+export class GetEventTypeByIdRequest implements Action {
+  readonly type = ActionTypes.GetEventTypeByIdRequest;
+
+  constructor(public payload: { studyId: string, eventTypeId: string }) { }
 }
 
 @HideSpinner(ActionTypes.GetEventTypeRequest)
@@ -195,10 +207,29 @@ export class RemoveEventTypeFailure implements Action {
   constructor(public payload: { error: any }) { }
 }
 
-export class EventTypeSelected implements Action {
-  readonly type = ActionTypes.EventTypeSelected;
+@ShowSpinner()
+export class GetSpecimenDefinitionNamesRequest implements Action {
+  readonly type = ActionTypes.GetSpecimenDefinitionNamesRequest;
 
-  constructor(public payload: { id: string }) { }
+  constructor(public payload: { studySlug: string }) { }
+}
+
+@HideSpinner(ActionTypes.GetSpecimenDefinitionNamesRequest)
+export class GetSpecimenDefinitionNamesSuccess implements Action {
+  readonly type = ActionTypes.GetSpecimenDefinitionNamesSuccess;
+
+  constructor(public payload: { specimenDefinitionNames: CollectedSpecimenDefinitionName[] }) { }
+}
+
+@HideSpinner(ActionTypes.GetSpecimenDefinitionNamesRequest)
+export class GetSpecimenDefinitionNamesFailure implements Action {
+  readonly type = ActionTypes.GetSpecimenDefinitionNamesFailure;
+
+  constructor(public payload: { error: any }) { }
+}
+
+export class ClearLastAdded implements Action {
+  readonly type = ActionTypes.ClearLastAdded;
 }
 
 export type EventTypeActions =
@@ -206,6 +237,7 @@ export type EventTypeActions =
   | SearchEventTypesSuccess
   | SearchEventTypesFailure
   | GetEventTypeRequest
+  | GetEventTypeByIdRequest
   | GetEventTypeSuccess
   | GetEventTypeFailure
   | AddEventTypeRequest
@@ -214,9 +246,14 @@ export type EventTypeActions =
   | UpdateEventTypeRequest
   | UpdateEventTypeAddOrUpdateAnnotationTypeRequest
   | UpdateEventTypeRemoveAnnotationTypeRequest
+  | UpdateEventTypeAddOrUpdateSpecimenDefinitionRequest
+  | UpdateEventTypeRemoveSpecimenDefinitionRequest
   | UpdateEventTypeSuccess
   | UpdateEventTypeFailure
-  | EventTypeSelected
   | RemoveEventTypeRequest
   | RemoveEventTypeSuccess
-  | RemoveEventTypeFailure;
+  | RemoveEventTypeFailure
+  | GetSpecimenDefinitionNamesRequest
+  | GetSpecimenDefinitionNamesSuccess
+  | GetSpecimenDefinitionNamesFailure
+  | ClearLastAdded;

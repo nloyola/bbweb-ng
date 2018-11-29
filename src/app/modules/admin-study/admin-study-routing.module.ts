@@ -7,12 +7,18 @@ import { StudyProcessingComponent } from '@app/modules/admin-study/components/st
 import { StudySummaryComponent } from '@app/modules/admin-study/components/study-summary/study-summary.component';
 import { StudyViewComponent } from '@app/modules/admin-study/components/study-view/study-view.component';
 import { StudyResolver } from '@app/modules/admin-study/services/study-resolver.service';
-import { CollectedSpecimenDefinitionAddContainer } from './components/collected-specimen-definition-add/collected-specimen-definition-add.container';
-import { CollectionAnnotationTypeAddContainer } from './components/collection-annotation-type-add/collection-annotation-type-add.container';
+import { CollectedSpecimenDefinitionAddContainerComponent } from './components/collected-specimen-definition-add/collected-specimen-definition-add.container';
+import { CollectionAnnotationTypeAddContainerComponent } from './components/collection-annotation-type-add/collection-annotation-type-add.container';
 import { EventTypeAddComponent } from './components/event-type-add/event-type-add.component';
+import { EventTypeViewContainerComponent } from './components/event-type-view/event-type-view.container';
 import { ParticipantAnnotationTypeAddContainer } from './components/participant-annotation-type-add/participant-annotation-type-add.container';
+import { ProcessingAnnotationTypeAddContainerComponent } from './components/processing-annotation-type-add/processing-annotation-type-add.container';
+import { ProcessingTypeAddComponent } from './components/processing-type-add/processing-type-add.component';
+import { ProcessingTypeViewContainerComponent } from './components/processing-type-view/processing-type-view.container';
 import { StudiesAdminComponent } from './components/studies-admin/studies-admin.component';
 import { StudyAddComponent } from './components/study-add/study-add.component';
+import { EventTypeResolver } from './services/event-type-resolver.service';
+import { ProcessingTypeResolver } from './services/processing-type-resolver.service';
 
 export const routes: Routes = [
   {
@@ -83,9 +89,56 @@ export const routes: Routes = [
               breadcrumbs: 'Collection'
             },
             children: [
+              { path: '', redirectTo: 'view', pathMatch: 'full' },
               {
-                path: '',
+                path: 'view',
                 component: StudyCollectionComponent,
+                children: [
+                  {
+                    path: ':eventTypeSlug',
+                    runGuardsAndResolvers: 'always',
+                    resolve: {
+                      eventType: EventTypeResolver
+                    },
+                    data: {
+                      breadcrumbs: '{{eventType.name}}'
+                    },
+                    children: [
+                      {
+                        path: '',
+                        component: EventTypeViewContainerComponent,
+                      },
+                      {
+                        path: 'annotationAdd',
+                        component: CollectionAnnotationTypeAddContainerComponent,
+                        data: {
+                          breadcrumbs: 'Add Annotation'
+                        }
+                      },
+                      {
+                        path: 'annotation/:annotationTypeId',
+                        component: CollectionAnnotationTypeAddContainerComponent,
+                        data: {
+                          breadcrumbs: 'Update Annotation'
+                        }
+                      },
+                      {
+                        path: 'spcDefAdd',
+                        component: CollectedSpecimenDefinitionAddContainerComponent,
+                        data: {
+                          breadcrumbs: 'Add Specimen'
+                        }
+                      },
+                      {
+                        path: 'spcDef/:specimenDefinitionId',
+                        component: CollectedSpecimenDefinitionAddContainerComponent,
+                        data: {
+                          breadcrumbs: 'Update Specimen'
+                        }
+                      }
+                    ]
+                  }
+                ]
               },
               {
                 path: 'add',
@@ -93,44 +146,61 @@ export const routes: Routes = [
                 data: {
                   breadcrumbs: 'Add Event'
                 }
-              },
-              {
-                path: ':eventTypeSlug/annotationAdd',
-                component: CollectionAnnotationTypeAddContainer,
-                data: {
-                  breadcrumbs: 'Add Annotation'
-                }
-              },
-              {
-                path: ':eventTypeSlug/annotation/:annotationTypeId',
-                component: CollectionAnnotationTypeAddContainer,
-                data: {
-                  breadcrumbs: 'Update Annotation'
-                }
-              },
-              {
-                path: ':eventTypeSlug/spcDefAdd',
-                component: CollectedSpecimenDefinitionAddContainer,
-                data: {
-                  breadcrumbs: 'Add Specimen'
-                }
-              },
-              {
-                path: ':eventTypeSlug/spcDef/:specimenDefinitionId',
-                component: CollectedSpecimenDefinitionAddContainer,
-                data: {
-                  breadcrumbs: 'Update Specimen'
-                }
               }
             ]
           },
           {
             path: 'processing',
-            component: StudyProcessingComponent,
             data: {
               breadcrumbs: 'Processing'
-            }
-          },
+            },
+            children: [
+              { path: '', redirectTo: 'view', pathMatch: 'full' },
+              {
+                path: 'view',
+                component: StudyProcessingComponent,
+                children: [
+                  {
+                    path: ':processingTypeSlug',
+                    runGuardsAndResolvers: 'always',
+                    resolve: {
+                      processingType: ProcessingTypeResolver
+                    },
+                    data: {
+                      breadcrumbs: '{{processingType.name}}'
+                    },
+                    children: [
+                      {
+                        path: '',
+                        component: ProcessingTypeViewContainerComponent,
+                      },
+                      {
+                        path: 'annotationAdd',
+                        component: ProcessingAnnotationTypeAddContainerComponent,
+                        data: {
+                          breadcrumbs: 'Add Annotation'
+                        }
+                      },
+                      {
+                        path: 'annotation/:annotationTypeId',
+                        component: ProcessingAnnotationTypeAddContainerComponent,
+                        data: {
+                          breadcrumbs: 'Update Annotation'
+                        }
+                      },
+                    ]
+                  }
+                ]
+              },
+              {
+                path: 'add',
+                component: ProcessingTypeAddComponent,
+                data: {
+                  breadcrumbs: 'Add Specimen'
+                }
+              }
+            ]
+          }
         ]
       }
     ]

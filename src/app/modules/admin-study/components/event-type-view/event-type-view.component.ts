@@ -2,13 +2,6 @@ import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChange
 import { AnnotationType } from '@app/domain/annotations';
 import { CollectionEventType, SpecimenDefinition } from '@app/domain/studies';
 import { CollectedSpecimenDefinition } from '@app/domain/studies/collected-specimen-definition.model';
-import { EventTypeStoreActions } from '@app/root-store';
-import { AnnotationTypeRemoveComponent } from '@app/shared/components/annotation-type-remove/annotation-type-remove.component';
-import { AnnotationTypeViewComponent } from '@app/shared/components/annotation-type-view/annotation-type-view.component';
-import { Subject } from 'rxjs';
-import { EventTypeRemoveComponent } from '../event-type-remove/event-type-remove.component';
-import { SpecimenDefinitionRemoveComponent } from '../specimen-definition-remove/specimen-definition-remove.component';
-import { SpecimenDefinitionViewComponent } from '../specimen-definition-view/specimen-definition-view.component';
 
 @Component({
   selector: 'app-event-type-view-ui',

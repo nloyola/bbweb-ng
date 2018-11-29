@@ -1,15 +1,17 @@
 <div class="card mt-2" *ngIf="eventType">
-  <div class="card-header">
+  <div class="card-header bg-primary text-light">
     <ng-container i18>Event:</ng-container> {{eventType.name}}
     <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
 
-      <button class="btn btn-sm btn-outline-primary mr-1"
+      <button class="btn btn-sm btn-light mr-1"
               type="button"
               id="eventTypeMenu"
-              ngbDropdownToggle>
+              ngbDropdownToggle
+              *ngIf="allowChanges">
+        <mat-icon>more_vert</mat-icon>
       </button>
 
-      <button class="btn btn-sm btn-outline-primary"
+      <button class="btn btn-sm btn-light"
               type="button"
               (click)="isPanelCollapsed = !isPanelCollapsed"
               [attr.aria-expanded]="!isCollapsed"
@@ -32,11 +34,11 @@
           <ng-container i18n>Update recurring</ng-container>
         </a>
         <div class="dropdown-divider"></div>
-        <a class="dropdown-item" *ngIf="allowChanges" (click)="addAnnotationType()">
+        <a class="dropdown-item" (click)="addAnnotationType()">
           <mat-icon class="success-icon mr-1">edit</mat-icon>
           <ng-container i18n>Add an Annotation</ng-container>
         </a>
-        <a class="dropdown-item" *ngIf="allowChanges" (click)="removeEventType()">
+        <a class="dropdown-item" (click)="removeEventType()">
           <mat-icon class="danger-icon mr-1">warning</mat-icon>
           <ng-container i18n>Remove this Event</ng-container>
         </a>
@@ -94,24 +96,32 @@
           </div>
         </div>
       </li>
+      <li class="list-group-item m-0 p-0">
+        <app-entity-status [timeAdded]="eventType.timeAdded"
+                           [timeModified]="eventType.timeModified"
+                           [useBadges]="false">
+        </app-entity-status>
+      </li>
     </ul>
   </div>
 </div>
 
 <div class="card mt-2" *ngIf="eventType">
-  <div class="card-header">
+  <div class="card-header bg-primary text-light">
     <ng-container i18>Collected Specimens</ng-container>
     <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
 
-      <button class="btn btn-sm btn-outline-primary mr-1"
+      <button class="btn btn-sm btn-light mr-1"
               type="button"
               id="specimensMenu"
-              ngbDropdownToggle>
+              ngbDropdownToggle
+              *ngIf="allowChanges">
+        <mat-icon>more_vert</mat-icon>
       </button>
 
       <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="specimensMenu">
         <div class="dropdown-divider"></div>
-        <a class="dropdown-item" *ngIf="allowChanges" (click)="addSpecimenDefinition()">
+        <a class="dropdown-item" (click)="addSpecimenDefinition()">
           <mat-icon class="success-icon mr-1">edit</mat-icon>
           <ng-container i18n>Add a Specimen</ng-container>
         </a>

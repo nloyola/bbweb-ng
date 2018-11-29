@@ -1,0 +1,168 @@
+<div class="card mt-2" *ngIf="processingType">
+  <div class="card-header bg-primary text-light">
+    <ng-container i18>Processing Step:</ng-container> {{processingType.name}}
+    <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
+
+      <button class="btn btn-sm btn-light mr-1"
+              type="button"
+              id="processingTypeMenu"
+              ngbDropdownToggle
+              *ngIf="allowChanges">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+
+      <button class="btn btn-sm btn-light"
+              type="button"
+              (click)="isPanelCollapsed = !isPanelCollapsed"
+              [attr.aria-expanded]="!isCollapsed"
+              aria-controls="processingTypeCollapse">
+        <mat-icon *ngIf="!isPanelCollapsed">keyboard_arrow_down</mat-icon>
+        <mat-icon *ngIf="isPanelCollapsed">keyboard_arrow_right</mat-icon>
+      </button>
+
+      <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="processingTypeMenu">
+        <a class="dropdown-item" (click)="updateName()">
+          <mat-icon class="success-icon mr-1">edit</mat-icon>
+          <ng-container i18n>Update name</ng-container>
+        </a>
+        <a class="dropdown-item" (click)="updateDescription()">
+          <mat-icon class="success-icon mr-1">edit</mat-icon>
+          <ng-container i18n>Update description</ng-container>
+        </a>
+        <a class="dropdown-item" (click)="updateEnabled()">
+          <mat-icon class="success-icon mr-1">edit</mat-icon>
+          <ng-container i18n>Update enabled</ng-container>
+        </a>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" (click)="addAnnotationType()">
+          <mat-icon class="success-icon mr-1">edit</mat-icon>
+          <ng-container i18n>Add an Annotation</ng-container>
+        </a>
+        <a class="dropdown-item" (click)="removeProcessingType()">
+          <mat-icon class="danger-icon mr-1">warning</mat-icon>
+          <ng-container i18n>Remove this Processing Step</ng-container>
+        </a>
+      </div>
+    </span>
+  </div>
+  <div [ngbCollapse]="isPanelCollapsed" id="processingTypeCollapse">
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-md-3">
+            <strong i18n>Name</strong>
+          </div>
+          <div class="col-md-9">
+            {{processingType.name}}
+          </div>
+        </div>
+      </li>
+      <li class="list-group-item" *ngIf="processingType.description">
+        <div class="row">
+          <div class="col-md-3">
+            <strong i18n>Description</strong>
+          </div>
+          <div class="col-md-9">
+            <app-truncate-toggle [text]="processingType.description"
+                                 [toggleLength]="60">
+            </app-truncate-toggle>
+          </div>
+        </div>
+      </li>
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-md-3">
+            <strong i18n>Enabled</strong>
+          </div>
+          <div class="col-md-9">{{processingType.enabled | yesNo}}</div>
+        </div>
+      </li>
+      <li class="list-group-item" *ngFor="let annotationType of sortedAnnotationTypes">
+        <div class="row">
+          <div class="col-md-3">
+            <strong translate>Annotation</strong>
+          </div>
+          <div class="col-md-7">
+            <app-annotation-type-summary [annotationType]="annotationType">
+            </app-annotation-type-summary>
+          </div>
+          <div class="col-md-2">
+            <app-annotation-type-actions [annotationType]="annotationType"
+                                         [modifyAllowed]="allowChanges"
+                                         (viewSelected)="viewAnnotationType($event)"
+                                         (editSelected)="editAnnotationType($event)"
+                                         (removeSelected)="removeAnnotationType($event)">
+            </app-annotation-type-actions>
+          </div>
+        </div>
+      </li>
+      <li class="list-group-item m-0 p-0">
+        <app-entity-status [timeAdded]="processingType.timeAdded"
+                           [timeModified]="processingType.timeModified"
+                           [useBadges]="false">
+        </app-entity-status>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- -INPUT -->
+<div class="card mt-2" *ngIf="processingType">
+  <div class="card-header bg-primary text-light">
+    <span i18>Input Specimen</span>
+    <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
+
+      <button class="btn btn-sm btn-light mr-1"
+              type="button"
+              id="inputSpecimenMenu"
+              ngbDropdownToggle
+              *ngIf="allowChanges">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+
+      <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="inputSpecimenMenu">
+        <a class="dropdown-item" (click)="inputSpecimenUpdate()">
+          <mat-icon class="success-icon mr-1">edit</mat-icon>
+          <ng-container i18n>Make changes to this specimen</ng-container>
+        </a>
+      </div>
+    </span>
+  </div>
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item">
+      <app-processing-input-specimen-summary [input]="processingType.input"
+                                             [inputEntity]="inputEntity">
+      </app-processing-input-specimen-summary>
+    </li>
+  </ul>
+</div>
+
+<!-- -OUTPUT -->
+<div class="card mt-2" *ngIf="processingType">
+  <div class="card-header bg-primary text-light">
+    <span i18>Output Specimen</span>
+    <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
+
+      <button class="btn btn-sm btn-light mr-1"
+              type="button"
+              id="outputSpecimenMenu"
+              ngbDropdownToggle
+              *ngIf="allowChanges">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+
+      <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="outputSpecimenMenu">
+        <a class="dropdown-item" (click)="outputSpecimenUpdate()">
+          <mat-icon class="success-icon mr-1">edit</mat-icon>
+          <ng-container i18n>Make changes to this specimen</ng-container>
+        </a>
+      </div>
+    </span>
+  </div>
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item">
+      <app-processing-output-specimen-summary [output]="processingType.output">
+      </app-processing-output-specimen-summary>
+    </li>
+  </ul>
+</div>

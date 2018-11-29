@@ -1,0 +1,20 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">
+    {{processingType.name}}:
+    <small class="small ml-1">Output Specimen</small>
+  </h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cancel')">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body" i18n>
+  <form [formGroup]="outputSubForm">
+    <app-processing-type-output-subform [processingType]="processingType"
+                                        [subform]="outputSubForm">
+    </app-processing-type-output-subform>
+  </form>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-default" (click)="activeModal.close('Cancel')" i18n>Cancel</button>
+  <button type="button" class="btn btn-primary" (click)="onSubmit()" i18n>OK</button>
+</div>

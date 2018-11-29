@@ -1,14 +1,13 @@
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { PagedReply, SearchParams } from '@app/domain';
-import { Study, StudyState, CollectionEventType } from '@app/domain/studies';
+import { CollectionEventType, Study } from '@app/domain/studies';
 import { PagedQueryBehaviour } from '@app/test/behaviours/paged-query.behaviour';
 import { Factory } from '@app/test/factory';
-import { StudyService } from './study.service';
 import * as faker from 'faker';
 import { EventTypeService } from '.';
 
-describe('StudyService', () => {
+describe('EventTypeService', () => {
 
   const BASE_URL = '/api/studies/cetypes';
 

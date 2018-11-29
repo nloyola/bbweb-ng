@@ -5,3 +5,4 @@ export { RootStoreState, RootStoreModule };
 export * from './auth-store';
 export * from './study';
 export * from './event-type';
+export * from './processing-type';

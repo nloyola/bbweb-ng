@@ -1,0 +1,113 @@
+<mat-horizontal-stepper [linear]="'true'" (selectionChange)="stepClick($event)" #stepper>
+  <mat-step [stepControl]="infoFormGroup">
+
+    <div class="row">
+      <div class="col-sm-12 mt-4">
+        <div class="card">
+          <div class="card-header bg-primary text-light" i18n>Processing Step Information</div>
+          <div class="card-body">
+
+            <form [formGroup]="infoSubForm">
+              <ng-template matStepLabel>Information</ng-template>
+
+              <app-processing-type-information-subform [processingType]="processingType"
+                                                       [subform]="infoSubForm">
+              </app-processing-type-information-subform>
+
+              <div>
+                <button class="btn btn-primary mr-2"
+                        [disabled]="infoSubForm.invalid"
+                        matStepperNext
+                        i18n>
+                  Next
+                </button>
+                <button class="btn" (click)="onCancel()" i18n>Cancel</button>
+              </div>
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </mat-step>
+  <mat-step [stepControl]="inputFormGroup">
+    <div class="row">
+      <div class="col-sm-12 mt-4">
+        <div class="card">
+          <div class="card-header bg-primary text-light" i18n>Input Specimen</div>
+          <div class="card-body">
+
+            <ng-template matStepLabel>Input specimen</ng-template>
+            <form [formGroup]="inputSubForm">
+
+              <app-processing-type-input-subform [processingType]="processingType"
+                                                 [processedDefinitionNames]="processedDefinitionNames"
+                                                 [collectedDefinitionNames]="collectedDefinitionNames"
+                                                 [subform]="inputSubForm">
+              </app-processing-type-input-subform>
+
+
+              <div>
+                <button class="btn btn-primary mr-2" matStepperPrevious i18n>Back</button>
+                <button class="btn btn-primary mr-2"
+                        [disabled]="inputSubForm.invalid"
+                        matStepperNext
+                        i18n>
+                  Next
+                </button>
+                <button class="btn" (click)="onCancel()" i18n>Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </mat-step>
+
+  <mat-step [stepControl]="outputFormGroup">
+    <div class="row">
+      <div class="col-sm-12 mt-4">
+        <div class="card">
+          <div class="card-header bg-primary text-light" i18n>Output Specimen</div>
+          <div class="card-body">
+
+            <ng-template matStepLabel>Output specimen</ng-template>
+            <form [formGroup]="outputSubForm">
+
+              <app-processing-type-output-subform [processingType]="processingType"
+                                                  [subform]="outputSubForm">
+              </app-processing-type-output-subform>
+
+              <div>
+                <button class="btn btn-primary mr-2" matStepperPrevious i18n>Back</button>
+                <button class="btn btn-primary mr-2"
+                        [disabled]="outputSubForm.invalid"
+                        matStepperNext
+                        i18n>
+                  Next
+                </button>
+                <button class="btn" (click)="onCancel()" i18n>Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </mat-step>
+  <mat-step>
+    <ng-template matStepLabel>Done</ng-template>
+    <span i18n class="mt-4">Submit this Processing Step?</span>
+    <app-processing-type-card [processingType]="processingTypeToSave"
+                              [inputEntityName]="inputEntityName"
+                              [inputDefinitionName]="inputDefinitionName">
+    </app-processing-type-card>
+
+    <div class="mt-4">
+      <button class="btn btn-primary mr-2" matStepperPrevious i18n>Back</button>
+      <button class="btn btn-primary mr-2" (click)="onSubmit()" i18n>Submit</button>
+      <button class="btn mr-2" (click)="onCancel()" i18n>Cancel</button>
+      <button class="btn btn-primary" (click)="stepper.reset()" i18n>Reset</button>
+    </div>
+  </mat-step>
+</mat-horizontal-stepper>

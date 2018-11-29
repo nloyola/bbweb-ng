@@ -15,7 +15,7 @@ export class EventTypeResolver implements Resolve<CollectionEventType> {
               private router: Router) {}
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<CollectionEventType> {
-    const studySlug = route.parent.parent.paramMap.get('slug');
+    const studySlug = route.parent.parent.parent.paramMap.get('slug');
     const eventTypeSlug = route.paramMap.get('eventTypeSlug');
 
     this.store$.dispatch(new EventTypeStoreActions.GetEventTypeRequest({ studySlug, eventTypeSlug }));
@@ -34,7 +34,7 @@ export class EventTypeResolver implements Resolve<CollectionEventType> {
           //
           // https://github.com/ngrx/platform/issues/976
           return (eventType instanceof CollectionEventType)
-            ? eventType :  new CollectionEventType().deserialize(eventType)
+            ? eventType :  new CollectionEventType().deserialize(eventType);
         })))
       .pipe(take(1));
   }

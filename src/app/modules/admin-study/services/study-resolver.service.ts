@@ -31,7 +31,7 @@ export class StudyResolver implements Resolve<Study> {
           // have to do the following because of this issue:
           //
           // https://github.com/ngrx/platform/issues/976
-          return (study instanceof Study) ? study :  new Study().deserialize(study)
+          return (study instanceof Study) ? study :  new Study().deserialize(study);
         })))
       .pipe(take(1));
   }

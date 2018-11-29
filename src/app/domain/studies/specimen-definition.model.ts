@@ -20,11 +20,6 @@ export abstract class SpecimenDefinition extends DomainEntity implements HasSlug
    */
   description: string | null;
 
-  /**
-   * Specifies how the specimen amount is measured (e.g. volume, weight, length, etc.).
-   */
-  units: string;
-
   anatomicalSourceType: AnatomicalSource;
 
   preservationType: PreservationType;
@@ -32,6 +27,11 @@ export abstract class SpecimenDefinition extends DomainEntity implements HasSlug
   preservationTemperature: PreservationTemperature;
 
   specimenType: SpecimenType;
+
+  /**
+   * Specifies how the specimen amount is measured (e.g. volume, weight, length, etc.).
+   */
+  units: string;
 
   static sortSpecimenDefinitions(specimenDefinitions: SpecimenDefinition[]): SpecimenDefinition[] {
     const sortedSpecimenDefinitions = specimenDefinitions.slice(0);
