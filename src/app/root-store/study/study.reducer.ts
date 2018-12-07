@@ -23,7 +23,7 @@ export const initialState: State = adapter.getInitialState({
   error: null,
   searchActive: false,
   searchReplies: {},
-  studyCounts: {},
+  studyCounts: {} as any,
   enableAllowedIds: []
 });
 
