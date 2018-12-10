@@ -11,7 +11,8 @@
     "test:debug": "node --inspect node_modules/.bin/jest --runInBand",
     "test:watch": "jest --watch",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "compodoc": "compodoc -p tsconfig.json"
   },
   "private": true,
   "dependencies": {
@@ -50,6 +51,7 @@
     "@angular/cli": "^7.1.2",
     "@angular/compiler-cli": "^7.1.2",
     "@angular/language-service": "^7.1.2",
+    "@compodoc/compodoc": "^1.1.7",
     "@ngrx/schematics": "^6.1.2",
     "@types/faker": "^4.1.4",
     "@types/jasmine": "~3.3.0",
@@ -68,7 +70,7 @@
     "puppeteer": "^1.11.0",
     "ts-node": "~7.0.1",
     "tslint": "~5.11.0",
-    "typescript": "^3.2.2"
+    "typescript": "3.1.6"
   },
   "jest": {
     "preset": "jest-preset-angular",
