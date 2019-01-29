@@ -99,7 +99,7 @@ describe('LoginComponent', () => {
 
   describe('when submitting', () => {
 
-    let user;
+    let user: User;
 
     beforeEach(() => {
       user = new User().deserialize(factory.user({

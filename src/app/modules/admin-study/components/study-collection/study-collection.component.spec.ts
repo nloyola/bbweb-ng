@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CollectionEventType, Study, StudyState } from '@app/domain/studies';
-import { EventTypeStoreActions, EventTypeStoreReducer, StudyStoreReducer } from '@app/root-store';
+import { EventTypeStoreActions, EventTypeStoreReducer, StudyStoreReducer, StudyStoreActions } from '@app/root-store';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { TruncatePipe } from '@app/shared/pipes';
 import { YesNoPipe } from '@app/shared/pipes/yes-no-pipe';
@@ -84,14 +84,19 @@ describe('StudyCollectionComponent', () => {
 
   describe('when user wants to add an event type', () => {
 
-    it('changes state if study is disabled', () => {
-    const study = new Study().deserialize(factory.study());
-    mockActivatedRouteSnapshot(study);
+    it('changes state if study is disabled', async(() => {
+      const study = new Study().deserialize(factory.study());
+      expect(study.state).toBe(StudyState.Disabled);
+      mockActivatedRouteSnapshot(study);
+      store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
       fixture.detectChanges();
-      ngZone.run(() => component.addEventTypeSelected());
-      expect(router.navigate.mock.calls.length).toBe(1);
-      expect(router.navigate.mock.calls[0][0]).toEqual([ 'add' ]);
-    });
+
+      fixture.whenStable().then(() => {
+        ngZone.run(() => component.addEventTypeSelected());
+        expect(router.navigate.mock.calls.length).toBe(1);
+        expect(router.navigate.mock.calls[0][0]).toEqual([ '../add' ]);
+      });
+    }));
 
     it('throws an error if user  ', () => {
       [ StudyState.Enabled, StudyState.Retired ].forEach(state => {
@@ -107,26 +112,13 @@ describe('StudyCollectionComponent', () => {
 
   });
 
-  it('dispatches and action when user selects and existing event type', () => {
-    const study = new Study().deserialize(factory.study());
-    const eventType = new CollectionEventType().deserialize(factory.collectionEventType());
-    jest.spyOn(store, 'dispatch');
-
-    mockActivatedRouteSnapshot(study);
-    fixture.detectChanges();
-    store.dispatch.mockReset();
-    ngZone.run(() => component.eventTypeSelected(eventType));
-    fixture.detectChanges();
-
-    expect(store.dispatch.mock.calls.length).toBe(1);
-    expect(store.dispatch.mock.calls[0][0])
-      .toEqual(new EventTypeStoreActions.EventTypeSelected({ id: eventType.id }));
-  });
-
   function mockActivatedRouteSnapshot(study: Study): void {
     mockActivatedRoute.spyOnParent(() => ({
       parent: {
         snapshot: {
+          params: {
+            slug: study.slug
+          },
           data: {
             study
           }

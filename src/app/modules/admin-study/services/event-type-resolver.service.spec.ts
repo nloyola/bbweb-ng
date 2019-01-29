@@ -52,7 +52,7 @@ describe('EventTypeResolver', () => {
     expect(resolver.resolve(route, null)).toBeObservable(expected);
   });
 
-  it('should return a eventType', () => {
+  it('should handle an error response', () => {
     const study = new Study().deserialize(factory.study());
     const eventType = new CollectionEventType().deserialize(factory.collectionEventType());
     const route = createRoute(study, eventType);
@@ -65,7 +65,12 @@ describe('EventTypeResolver', () => {
 
     const action = new EventTypeStoreActions.GetEventTypeFailure({ error });
     store.dispatch(action);
-    const expected = cold('(b|)', { b: error });
+    const expected = cold('(b|)', {
+      b: {
+        actionType: EventTypeStoreActions.ActionTypes.GetEventTypeFailure,
+        error
+      }
+    });
     ngZone.run(() => {
       expect(resolver.resolve(route, null)).toBeObservable(expected);
     });
@@ -79,7 +84,9 @@ describe('EventTypeResolver', () => {
                           { get: () => convertToParamMap({ eventTypeSlug: eventType.slug })});
     Object.defineProperty(route, 'parent', { get: () => ({
       parent: {
-        paramMap: convertToParamMap({ slug: study.slug })
+        parent: {
+          paramMap: convertToParamMap({ slug: study.slug })
+        }
       }
     })});
     return route;

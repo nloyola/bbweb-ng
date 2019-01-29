@@ -60,6 +60,7 @@ describe('EventTypesAddAndSelectComponent', () => {
   it('should create', () => {
     const study = new Study().deserialize(factory.study());
     mockActivatedRouteSnapshot(study);
+    component.study = study;
     fixture.detectChanges();
     expect(component).toBeTruthy();
   });
@@ -71,6 +72,7 @@ describe('EventTypesAddAndSelectComponent', () => {
         state
       });
       mockActivatedRouteSnapshot(study);
+      component.study = study;
       component.ngOnInit();
       fixture.detectChanges();
       expect(component.isAddAllowed).toBe(state === StudyState.Disabled);
@@ -83,11 +85,12 @@ describe('EventTypesAddAndSelectComponent', () => {
       const study = new Study().deserialize(factory.study());
       const testData = [
         { componentFunc: () => component.onFiltersUpdated({ name: 'test' }) },
-        { componentFunc: () => component.paginationPageChanged(1) }
+        { componentFunc: () => component.paginationPageChange() }
       ];
       jest.spyOn(store, 'dispatch');
 
       mockActivatedRouteSnapshot(study);
+      component.study = study;
       fixture.detectChanges();
       store.dispatch.mockReset();
       testData.forEach(testInfo => {
@@ -111,6 +114,7 @@ describe('EventTypesAddAndSelectComponent', () => {
       ];
       jest.spyOn(store, 'dispatch');
 
+      component.study = study;
       mockActivatedRouteSnapshot(study);
       fixture.detectChanges();
       testData.forEach(testInfo => {
@@ -124,6 +128,7 @@ describe('EventTypesAddAndSelectComponent', () => {
 
   it('returns the correct recurring label for an event type', () => {
     const study = new Study().deserialize(factory.study());
+    component.study = study;
     mockActivatedRouteSnapshot(study);
     fixture.detectChanges();
 

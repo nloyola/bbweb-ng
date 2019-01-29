@@ -1,8 +1,7 @@
-import { PagedReplyEntityIds, SearchParams } from '@app/domain';
+import { PagedReply, PagedReplyEntityIds, SearchParams } from '@app/domain';
 import { CollectionEventType } from '@app/domain/studies';
 import { EventTypeStoreReducer, EventTypeStoreSelectors } from '@app/root-store';
 import { Factory } from '@app/test/factory';
-import { State } from './event-type.reducer';
 
 describe('EventTypeStore selectors', () => {
 
@@ -14,15 +13,16 @@ describe('EventTypeStore selectors', () => {
 
   describe('selectSearchRepliesAndEntities', () => {
 
-    let eventType;
-    let pagedReply;
+    let eventType: CollectionEventType;
+    let pagedReply: PagedReply<CollectionEventType>;
     let searchReplies: { [ key: string]: PagedReplyEntityIds };
 
     beforeEach(() => {
       eventType = factory.collectionEventType();
       pagedReply = factory.pagedReply<CollectionEventType>([ eventType ]);
       searchReplies = {};
-      searchReplies[pagedReply.searchParams.queryString()] = {
+      searchReplies[factory.defaultStudy().id] = {} as any;
+      searchReplies[factory.defaultStudy().id][pagedReply.searchParams.queryString()] = {
         searchParams: pagedReply.searchParams,
         offset:       pagedReply.offset,
         total:        pagedReply.total,
@@ -33,12 +33,15 @@ describe('EventTypeStore selectors', () => {
 
     it('returns entities', () => {
       const state = initialStateWithEntity(eventType, {
-        lastSearch: pagedReply.searchParams,
+        lastSearch: {
+          studyId: factory.defaultStudy().id,
+          params: pagedReply.searchParams
+        },
         searchReplies
       });
 
       expect(EventTypeStoreSelectors.selectSearchRepliesAndEntities(state)).toEqual({
-        reply: searchReplies[pagedReply.searchParams.queryString()],
+        reply: searchReplies[factory.defaultStudy().id][pagedReply.searchParams.queryString()],
         eventTypes: [ eventType ]
       });
     });
@@ -64,7 +67,10 @@ describe('EventTypeStore selectors', () => {
 
     it('when the search was never completed returns undefined', () => {
       const state = initialStateWithEntity(eventType, {
-        lastSearch: new SearchParams(undefined, 'name'),
+        lastSearch: {
+          studyId: factory.defaultStudy().id,
+          params: new SearchParams(undefined, 'name')
+        },
         searchReplies
       });
 
@@ -78,13 +84,6 @@ describe('EventTypeStore selectors', () => {
     const state = initialStateWithEntity(eventType, { lastAddedId: eventType.id });
 
     expect(EventTypeStoreSelectors.selectLastAdded(state)).toEqual(eventType);
-  });
-
-  it('selectSelectedEventType', () => {
-    const eventType = factory.collectionEventType();
-    const state = initialStateWithEntity(eventType, { selectedEventTypeId: eventType.id });
-
-    expect(EventTypeStoreSelectors.selectSelectedEventType(state)).toEqual(eventType);
   });
 
   function initialStateWithEntity(eventType: CollectionEventType, additionalState: any) {

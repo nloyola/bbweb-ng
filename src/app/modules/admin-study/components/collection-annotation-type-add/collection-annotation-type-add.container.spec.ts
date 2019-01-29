@@ -11,16 +11,17 @@ import { Factory } from '@app/test/factory';
 import { Store, StoreModule } from '@ngrx/store';
 import { cold } from 'jasmine-marbles';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
-import { CollectionAnnotationTypeAddContainer } from './collection-annotation-type-add.container';
+import { CollectionAnnotationTypeAddContainerComponent } from './collection-annotation-type-add.container';
 import { MockActivatedRoute } from '@app/test/mocks';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-describe('CollectionAnnotationTypeAddContainer', () => {
+describe('CollectionAnnotationTypeAddContainerComponent', () => {
 
-  let component: CollectionAnnotationTypeAddContainer;
-  let fixture: ComponentFixture<CollectionAnnotationTypeAddContainer>;
+  let component: CollectionAnnotationTypeAddContainerComponent;
+  let fixture: ComponentFixture<CollectionAnnotationTypeAddContainerComponent>;
   let ngZone: NgZone;
+  const mockActivatedRoute = new MockActivatedRoute();
   let router: Router;
-  let mockActivatedRoute = new MockActivatedRoute();
   let store: Store<StudyStoreReducer.State>;
   let factory: Factory;
   let study: Study;
@@ -32,6 +33,7 @@ describe('CollectionAnnotationTypeAddContainer', () => {
 
     TestBed.configureTestingModule({
       imports: [
+        BrowserAnimationsModule,
         FormsModule,
         ReactiveFormsModule,
         RouterTestingModule,
@@ -49,7 +51,7 @@ describe('CollectionAnnotationTypeAddContainer', () => {
       ],
       declarations: [
         AnnotationTypeAddComponent,
-        CollectionAnnotationTypeAddContainer
+        CollectionAnnotationTypeAddContainerComponent
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
@@ -57,9 +59,13 @@ describe('CollectionAnnotationTypeAddContainer', () => {
 
     mockActivatedRoute.spyOnParent(() => ({
       parent: {
-        snapshot: {
-          data: {
-            study
+        parent: {
+          parent: {
+            snapshot: {
+              data: {
+                study
+              }
+            }
           }
         }
       }
@@ -72,7 +78,7 @@ describe('CollectionAnnotationTypeAddContainer', () => {
     router = TestBed.get(Router);
     toastr = TestBed.get(ToastrService);
 
-    fixture = TestBed.createComponent(CollectionAnnotationTypeAddContainer);
+    fixture = TestBed.createComponent(CollectionAnnotationTypeAddContainerComponent);
     component = fixture.componentInstance;
     ngZone.run(() => router.initialNavigation());
   });
@@ -81,6 +87,7 @@ describe('CollectionAnnotationTypeAddContainer', () => {
     const eventType = createEventType();
     mockActivatedRouteSnapshot('annotationAdd', eventType);
     component.annotationType = new AnnotationType();
+    store.dispatch(new EventTypeStoreActions.GetEventTypeSuccess({ eventType }));
     fixture.detectChanges();
     expect(component).toBeTruthy();
   });
@@ -89,6 +96,7 @@ describe('CollectionAnnotationTypeAddContainer', () => {
     const eventType = createEventType();
     mockActivatedRouteSnapshot('annotationAdd', eventType);
     jest.spyOn(store, 'dispatch');
+    store.dispatch(new EventTypeStoreActions.GetEventTypeSuccess({ eventType }));
     fixture.detectChanges();
     expect(store.dispatch).toHaveBeenCalledWith(new EventTypeStoreActions.GetEventTypeRequest({
       studySlug: study.slug,
@@ -110,8 +118,8 @@ describe('CollectionAnnotationTypeAddContainer', () => {
     const spy = jest.spyOn(router, 'navigate');
 
     const testData = [
-      { path: 'annotationAdd', returnPath: '../..' },
-      { path: 'annotation', returnPath: '../../..' }
+      { path: 'annotationAdd', returnPath: '..' },
+      { path: 'annotation', returnPath: '../..' }
     ];
 
     testData.forEach((testInfo, index) => {
@@ -154,7 +162,7 @@ describe('CollectionAnnotationTypeAddContainer', () => {
         expect(component.isSaving$).toBeObservable(cold('b', { b: false }));
         expect(store.dispatch).toHaveBeenCalled();
         expect(toastr.success).toHaveBeenCalled();
-        expect(spy.mock.calls[0][0]).toEqual(['../..']);
+        expect(spy.mock.calls[0][0]).toEqual(['..']);
       });
     }));
 
@@ -162,7 +170,7 @@ describe('CollectionAnnotationTypeAddContainer', () => {
       const eventType = createEventType();
       const testData = [
         { path: 'annotationAdd', savedMessage: 'Annotation Added' },
-        { path: 'annotation', savedMessage: 'Annotation Updated' },
+        { path: 'annotation', savedMessage: 'Annotation Updated' }
       ];
       const errors = [
         {
@@ -195,12 +203,15 @@ describe('CollectionAnnotationTypeAddContainer', () => {
 
         errors.forEach(error => {
           component.onSubmit(eventType.annotationTypes[0]);
-          expect(component.savedMessage).toBe(testInfo.savedMessage);
-          expect(component.isSaving$).toBeObservable(cold('b', { b: true }));
-          store.dispatch(new EventTypeStoreActions.GetEventTypeFailure({ error }));
           fixture.detectChanges();
 
+          expect(component.savedMessage).toBe(testInfo.savedMessage);
+          expect(component.isSaving$).toBeObservable(cold('b', { b: true }));
+
+          store.dispatch(new EventTypeStoreActions.GetEventTypeFailure({ error }));
+
           fixture.whenStable().then(() => {
+            fixture.detectChanges();
             expect(component.isSaving$).toBeObservable(cold('b', { b: false }));
             expect(toastr.error).toHaveBeenCalled();
             expect(router.navigate).not.toHaveBeenCalled();

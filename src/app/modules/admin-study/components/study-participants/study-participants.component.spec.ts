@@ -51,8 +51,8 @@ describe('StudyParticipantsComponent', () => {
             parent: {
               parent: {
                 snapshot: {
-                  data: {
-                    study
+                  params: {
+                    slug: study.slug
                   }
                 }
               }
@@ -119,6 +119,7 @@ describe('StudyParticipantsComponent', () => {
       }
     ];
 
+    store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
     fixture.detectChanges();
 
     testData.forEach((testInfo, index) => {
@@ -140,6 +141,7 @@ describe('StudyParticipantsComponent', () => {
       }
     ];
 
+    store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
     fixture.detectChanges();
 
     testData.forEach((testInfo, index) => {
@@ -180,10 +182,6 @@ describe('StudyParticipantsComponent', () => {
         annotationTypes: []
       });
       const annotationType = study.annotationTypes[0];
-      const expectedAction = new StudyStoreActions.UpdateStudyRemoveAnnotationTypeRequest({
-        study,
-        annotationTypeId: annotationType.id
-      });
 
       jest.spyOn(store, 'dispatch');
       jest.spyOn(toastr, 'success').mockReturnValue(null);
@@ -197,8 +195,12 @@ describe('StudyParticipantsComponent', () => {
       component.remove(annotationType);
 
       tick(1000);
-      expect(store.dispatch.mock.calls.length).toBe(3);
-      expect(store.dispatch.mock.calls[2][0]).toEqual(expectedAction);
+      const expectedAction = new StudyStoreActions.UpdateStudyRemoveAnnotationTypeRequest({
+        study,
+        annotationTypeId: annotationType.id
+      });
+      expect(store.dispatch.mock.calls.length).toBe(2);
+      expect(store.dispatch.mock.calls[1][0]).toEqual(expectedAction);
       store.dispatch(new StudyStoreActions.UpdateStudySuccess({ study: studyNoAnnotations }));
 
       tick(1000);

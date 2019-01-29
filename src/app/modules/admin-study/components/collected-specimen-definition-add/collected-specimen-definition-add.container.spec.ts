@@ -12,6 +12,7 @@ import { Store, StoreModule } from '@ngrx/store';
 import { cold } from 'jasmine-marbles';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { CollectedSpecimenDefinitionAddContainerComponent } from './collected-specimen-definition-add.container';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('CollectedSpecimenDefinitionAddContainer', () => {
 
@@ -31,6 +32,7 @@ describe('CollectedSpecimenDefinitionAddContainer', () => {
 
     TestBed.configureTestingModule({
       imports: [
+        BrowserAnimationsModule,
         NgbModule.forRoot(),
         RouterTestingModule,
         StoreModule.forRoot({
@@ -54,9 +56,13 @@ describe('CollectedSpecimenDefinitionAddContainer', () => {
 
     mockActivatedRoute.spyOnParent(() => ({
       parent: {
-        snapshot: {
-          data: {
-            study
+        parent: {
+          parent: {
+            snapshot: {
+              data: {
+                study
+              }
+            }
           }
         }
       }
@@ -108,8 +114,8 @@ describe('CollectedSpecimenDefinitionAddContainer', () => {
     const spy = jest.spyOn(router, 'navigate');
 
     const testData = [
-      { path: 'spcDefAdd', returnPath: '../..' },
-      { path: 'spcDef', returnPath: '../../..' }
+      { path: 'spcDefAdd', returnPath: '..' },
+      { path: 'spcDef', returnPath: '../..' }
     ];
 
     testData.forEach((testInfo, index) => {
@@ -127,6 +133,8 @@ describe('CollectedSpecimenDefinitionAddContainer', () => {
   describe('for adding a specimen definition', () => {
 
     it('loading is false by default', () => {
+      debugger;
+
       const eventType = createEventType();
       mockActivatedRouteSnapshot('spcDefAdd', eventType);
       fixture.detectChanges();
@@ -188,7 +196,7 @@ describe('CollectedSpecimenDefinitionAddContainer', () => {
         expect(component.isSaving$).toBeObservable(cold('b', { b: false }));
         expect(store.dispatch).toHaveBeenCalled();
         expect(toastr.success).toHaveBeenCalled();
-        expect(spy.mock.calls[0][0]).toEqual(['../..']);
+        expect(spy.mock.calls[0][0]).toEqual(['..']);
       });
     }));
 
@@ -260,7 +268,6 @@ describe('CollectedSpecimenDefinitionAddContainer', () => {
         specimenDefinitionId
       },
       url: [
-        { path: '' },
         { path }
       ]
     }));

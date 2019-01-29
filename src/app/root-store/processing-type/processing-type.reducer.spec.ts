@@ -21,7 +21,9 @@ describe('ProcessingType Reducer', () => {
   });
 
   it('SearchProcessingTypesRequest', () => {
+    const studyId = factory.stringNext();
     const payload = {
+      studyId,
       studySlug: factory.stringNext(),
       searchParams: new SearchParams()
     };
@@ -30,7 +32,10 @@ describe('ProcessingType Reducer', () => {
 
     expect(state).toEqual({
       ...ProcessingTypeStoreReducer.initialState,
-      lastSearch: payload.searchParams,
+      lastSearch: {
+        studyId,
+        params: payload.searchParams
+      },
       searchActive: true
     });
   });
@@ -45,12 +50,16 @@ describe('ProcessingType Reducer', () => {
     const state = ProcessingTypeStoreReducer.reducer(
       {
         ...ProcessingTypeStoreReducer.initialState,
-        lastSearch: payload.pagedReply.searchParams
+        lastSearch: {
+          studyId: processingType.studyId,
+          params: payload.pagedReply.searchParams
+        }
       },
       action);
 
     const searchReply: { [ key: string]: PagedReplyEntityIds } = {};
-    searchReply[payload.pagedReply.searchParams.queryString()] = {
+    searchReply[processingType.studyId] = {} as any;
+    searchReply[processingType.studyId][payload.pagedReply.searchParams.queryString()] = {
       searchParams: payload.pagedReply.searchParams,
       offset: payload.pagedReply.offset,
       total: payload.pagedReply.total,
@@ -79,7 +88,10 @@ describe('ProcessingType Reducer', () => {
     expect(state).toEqual({
       ...ProcessingTypeStoreReducer.initialState,
       lastSearch: null,
-      error: payload.error
+      error: {
+        actionType: action.type,
+        error: payload.error
+      }
     });
   });
 
@@ -108,7 +120,10 @@ describe('ProcessingType Reducer', () => {
     expect(state).toEqual({
       ...ProcessingTypeStoreReducer.initialState,
       lastSearch: null,
-      error: payload.error
+      error: {
+        actionType: action.type,
+        error: payload.error
+      }
     });
   });
 
@@ -137,7 +152,10 @@ describe('ProcessingType Reducer', () => {
     expect(state).toEqual({
       ...ProcessingTypeStoreReducer.initialState,
       lastSearch: null,
-      error: payload.error
+      error: {
+        actionType: action.type,
+        error: payload.error
+      }
     });
   });
 
@@ -152,7 +170,7 @@ describe('ProcessingType Reducer', () => {
         ...ProcessingTypeStoreReducer.initialState,
         ids: [ processingType.id ],
         entities: {}
-      }
+      };
       initialState['entities'][processingType.id] = {};
     });
 
@@ -176,7 +194,10 @@ describe('ProcessingType Reducer', () => {
       };
       const action = new ProcessingTypeStoreActions.UpdateProcessingTypeFailure(payload);
       const state = ProcessingTypeStoreReducer.reducer(initialState, action);
-      expect(state.error).toEqual(payload.error);
+      expect(state.error).toEqual({
+        actionType: action.type,
+        error: payload.error
+      });
     });
 
   });
@@ -192,11 +213,11 @@ describe('ProcessingType Reducer', () => {
         ...ProcessingTypeStoreReducer.initialState,
         ids: [ processingType.id ],
         entities: {}
-      }
+      };
       initialState['entities'][processingType.id] = processingType;
     });
 
-    it('UpdateProcessingTypeSuccess', () => {
+    it('RemoveProcessingTypeSuccess', () => {
       const payload = { processingTypeId: processingType.id };
       const action = new ProcessingTypeStoreActions.RemoveProcessingTypeSuccess(payload);
       const state = ProcessingTypeStoreReducer.reducer(initialState, action);
@@ -205,7 +226,7 @@ describe('ProcessingType Reducer', () => {
       expect(state.entities[processingType.id]).toBeUndefined();
     });
 
-    it('UpdateProcessingTypeFailure', () => {
+    it('RemoveProcessingTypeFailure', () => {
       const payload = {
         error: {
           status: 404,
@@ -216,7 +237,10 @@ describe('ProcessingType Reducer', () => {
       };
       const action = new ProcessingTypeStoreActions.RemoveProcessingTypeFailure(payload);
       const state = ProcessingTypeStoreReducer.reducer(initialState, action);
-      expect(state.error).toEqual(payload.error);
+      expect(state.error).toEqual({
+        actionType: action.type,
+        error: payload.error
+      });
     });
   });
 });

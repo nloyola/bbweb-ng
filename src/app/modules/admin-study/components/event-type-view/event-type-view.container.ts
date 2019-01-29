@@ -8,7 +8,7 @@ import { EventTypeStoreActions, EventTypeStoreSelectors, RootStoreState, StudySt
 import { AnnotationTypeRemoveComponent } from '@app/shared/components/annotation-type-remove/annotation-type-remove.component';
 import { AnnotationTypeViewComponent } from '@app/shared/components/annotation-type-view/annotation-type-view.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { select, Store } from '@ngrx/store';
+import { select, Store, createSelector } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
@@ -43,45 +43,39 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
               private toastr: ToastrService) {}
 
   ngOnInit() {
-    this.study = this.route.parent.parent.parent.parent.snapshot.data.study;
-    this.eventType = this.route.snapshot.data.eventType;
-    this.allowChanges = this.study.isDisabled();
+    const entitiesSelector = createSelector(
+      StudyStoreSelectors.selectAllStudies,
+      EventTypeStoreSelectors.selectAllEventTypes,
+      (studies: Study[], eventTypes: CollectionEventType[]) => {
+        return { studies, eventTypes };
+      });
 
-    // check if the state of the study has changed
     this.store$.pipe(
-      select(StudyStoreSelectors.selectAllStudyEntities),
-      filter((entities: { [key: string]: any }) => Object.keys(entities).length > 0),
+      select(entitiesSelector),
       takeUntil(this.unsubscribe$))
       .subscribe((entities: any) => {
-        const entity = entities[this.study.id];
-        const updatedStudy = (entity instanceof Study) ? entity : new Study().deserialize(entity);
-        this.allowChanges = updatedStudy.isDisabled();
-      });
+        const studyEntity = entities.studies
+          .find(s => s.slug === this.route.parent.parent.parent.parent.snapshot.params.slug);
+        if (studyEntity) {
+          this.study = (studyEntity instanceof Study)
+            ? studyEntity :  new Study().deserialize(studyEntity);
+          this.allowChanges = this.study.isDisabled();
+        }
 
-    // get latest updates to this event type from the store
-    this.store$.pipe(
-      select(EventTypeStoreSelectors.selectAllEventTypeEntities),
-      takeUntil(this.unsubscribe$))
-      .subscribe((entities: { [key: string]: any }) => {
-        if (!this.eventType) { return; }
-
-        const entity = entities[this.eventType.id];
-        if (!entities || (Object.keys(entities).length <= 0) || !entity) {
+        const eventTypeEntity =
+          entities.eventTypes.find(et => et.slug === this.route.snapshot.params.eventTypeSlug);
+        if (eventTypeEntity) {
+          this.eventType = (eventTypeEntity instanceof CollectionEventType)
+            ? eventTypeEntity : new CollectionEventType().deserialize(eventTypeEntity);
+          if (this.updatedMessage) {
+            this.toastr.success(this.updatedMessage, 'Update Successfull');
+          }
+        } else if (this.eventType) {
+          this.eventType = undefined;
           this.router.navigate([ '/admin/studies/view/bbpsp/collection/view' ]);
           this.toastr.success('Event removed');
-          return;
-        }
-
-        this.eventType = (entity instanceof CollectionEventType)
-          ? entity : new CollectionEventType().deserialize(entity);
-        if (this.updatedMessage) {
-          this.toastr.success(this.updatedMessage, 'Update Successfull');
         }
       });
-
-    this.route.data.subscribe(data => {
-      this.eventType = data.eventType;
-    });
   }
 
   ngOnDestroy() {

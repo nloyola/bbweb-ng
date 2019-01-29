@@ -45,8 +45,7 @@ export class ProcessingTypesAddAndSelectComponent implements OnInit, OnDestroy {
   private filterValues = '';
   private unsubscribe$: Subject<void> = new Subject<void>();
 
-  constructor(private store$: Store<RootStoreState.State>,
-              private route: ActivatedRoute) {}
+  constructor(private store$: Store<RootStoreState.State>) {}
 
   ngOnInit() {
     this.isAddAllowed = this.study.isDisabled();

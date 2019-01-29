@@ -145,8 +145,8 @@ export function reducer(state = initialState, action: StudyActions): State {
       return {
         ...state,
         error: {
-          type: ActionTypes.GetEnableAllowedFailure,
-          error: action.payload.error
+          error: action.payload.error,
+          actionType: action.type
         }
       };
   }

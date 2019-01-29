@@ -13,13 +13,18 @@ import { EventTypeViewContainerComponent } from './event-type-view.container';
 import { StudyStoreReducer, EventTypeStoreReducer, StudyStoreActions, EventTypeStoreActions } from '@app/root-store';
 import { ModalInputResult } from '@app/modules/modal-input/models';
 import * as faker from 'faker';
+import { MockActivatedRoute } from '@app/test/mocks';
+import { of as observableOf } from 'rxjs';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('EventTypeViewContainer', () => {
   let component: EventTypeViewContainerComponent;
   let fixture: ComponentFixture<EventTypeViewContainerComponent>;
+  const mockActivatedRoute = new MockActivatedRoute();
   let factory: Factory;
   let study: Study;
   let store: Store<StudyStoreReducer.State>;
+  let router: Router;
 
   beforeEach(async(() => {
     factory = new Factory();
@@ -30,6 +35,7 @@ describe('EventTypeViewContainer', () => {
 
     TestBed.configureTestingModule({
       imports: [
+        BrowserAnimationsModule,
         NgbModule.forRoot(),
         RouterTestingModule,
         StoreModule.forRoot({
@@ -42,18 +48,7 @@ describe('EventTypeViewContainer', () => {
       providers: [
         {
           provide: ActivatedRoute,
-          useValue: {
-            parent: {
-              parent: {
-                snapshot: {
-                  data: {
-                    study
-                  }
-                }
-              }
-            },
-            snapshot: {}
-          }
+          useValue: mockActivatedRoute
         }
       ],
       declarations: [
@@ -67,23 +62,28 @@ describe('EventTypeViewContainer', () => {
 
   beforeEach(() => {
     store = TestBed.get(Store);
+    router = TestBed.get(Router);
     fixture = TestBed.createComponent(EventTypeViewContainerComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
+    const eventType = createEventType();
+    createMockActivatedRouteSpies(study, eventType);
+    fixture.detectChanges();
     expect(component).toBeTruthy();
   });
 
   it('allow changes is updated', () => {
+    const eventType = createEventType();
+    createMockActivatedRouteSpies(study, eventType);
+    componentSetup(study, eventType);
+    fixture.detectChanges();
+
     const stateValues = [
       { state: StudyState.Enabled, expectedAllowChanges: false },
       { state: StudyState.Disabled, expectedAllowChanges: true },
     ];
-
-    // put study in store
-    store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
 
     stateValues.forEach(stateValue => {
       const updatedStudy = new Study().deserialize({
@@ -97,17 +97,10 @@ describe('EventTypeViewContainer', () => {
     });
   });
 
-  it('assigns the event type when it is selected', () => {
-    const eventType = new CollectionEventType().deserialize(factory.collectionEventType());
-    store.dispatch(new EventTypeStoreActions.GetEventTypeSuccess({ eventType }));
-    store.dispatch(new EventTypeStoreActions.EventTypeSelected({ id: eventType.id }));
-
-    fixture.detectChanges();
-    expect(component.eventType).toEqual(eventType);
-  });
-
   it('updates to event types are received', () => {
-    const eventType = componentSetup(fixture, store, factory);
+    const eventType = createEventType();
+    createMockActivatedRouteSpies(study, eventType);
+    componentSetup(study, eventType);
     const recurringValues = [ !eventType.recurring, eventType.recurring ];
 
     recurringValues.forEach(recurringValue => {
@@ -135,7 +128,10 @@ describe('EventTypeViewContainer', () => {
     ];
 
     it('functions should open a modal', () => {
-      const eventType = componentSetup(fixture, store, factory);
+      const eventType = createEventType();
+      createMockActivatedRouteSpies(study, eventType);
+      componentSetup(study, eventType);
+
       const modalService = TestBed.get(NgbModal);
       spyOn(modalService, 'open').and.returnValue({
         componentInstance: {},
@@ -156,8 +152,9 @@ describe('EventTypeViewContainer', () => {
         ...study,
         state: StudyState.Enabled
       });
-      store.dispatch(new StudyStoreActions.GetStudySuccess({ study: updatedStudy }));
-      const eventType = componentSetup(fixture, store, factory);
+      const eventType = createEventType();
+      createMockActivatedRouteSpies(updatedStudy, eventType);
+      componentSetup(updatedStudy, eventType);
 
       const throwErrFuncs = componentUpdateFuncs.concat([
         (component, eventType) => component.addAnnotationType(eventType.annotationTypes[0]),
@@ -172,12 +169,14 @@ describe('EventTypeViewContainer', () => {
     });
 
     it('functions that should notify the user', async(() => {
-      const eventType = componentSetup(fixture, store, factory);
       const toastr = TestBed.get(ToastrService);
       const modalService = TestBed.get(NgbModal);
       const modalSpy = spyOn(modalService, 'open');
-
       spyOn(toastr, 'success').and.returnValue(null);
+
+      const eventType = createEventType();
+      createMockActivatedRouteSpies(study, eventType);
+      componentSetup(study, eventType);
 
       componentUpdateFuncs.forEach(updateFunc => {
         modalSpy.and.returnValue({
@@ -201,8 +200,7 @@ describe('EventTypeViewContainer', () => {
   describe('when updating name, description and recurring', () => {
 
     it('dispatches an action to update the event type', async(() => {
-      const eventType = componentSetup(fixture, store, factory);
-
+      const eventType = createEventType();
       const testData = [
         {
           updateFunc: () => component.updateName(),
@@ -224,6 +222,9 @@ describe('EventTypeViewContainer', () => {
       const modalService = TestBed.get(NgbModal);
       const modalSpy = spyOn(modalService, 'open');
       spyOn(store, 'dispatch').and.callThrough();
+
+      createMockActivatedRouteSpies(study, eventType);
+      componentSetup(study, eventType);
 
       testData.forEach(testInfo => {
         modalSpy.and.returnValue({
@@ -251,13 +252,16 @@ describe('EventTypeViewContainer', () => {
       const ngZone = TestBed.get(NgZone);
       const router = TestBed.get(Router);
       ngZone.run(() => router.initialNavigation());
-      const eventType = componentSetup(fixture, store, factory);
+      const eventType = createEventType();
 
       spyOn(router, 'navigate').and.callThrough();
 
+      createMockActivatedRouteSpies(study, eventType);
+      componentSetup(study, eventType);
+
       ngZone.run(() => component.addAnnotationType());
       expect(router.navigate).toHaveBeenCalled();
-      expect((router.navigate as any).calls.mostRecent().args[0]).toEqual([ eventType.slug, 'annotationAdd' ]);
+      expect((router.navigate as any).calls.mostRecent().args[0]).toEqual([ 'annotationAdd' ]);
     });
 
     it('when an annotation type is edited, a state change is made', () => {
@@ -265,25 +269,24 @@ describe('EventTypeViewContainer', () => {
       const router = TestBed.get(Router);
       ngZone.run(() => router.initialNavigation());
 
-      const eventType = componentSetup(fixture, store, factory);
+      const eventType = createEventType();
       const annotationType = eventType.annotationTypes[0];
 
-      store.dispatch(new EventTypeStoreActions.GetEventTypeSuccess({ eventType }));
-      store.dispatch(new EventTypeStoreActions.EventTypeSelected({ id: eventType.id }));
-      fixture.detectChanges();
+      createMockActivatedRouteSpies(study, eventType);
+      componentSetup(study, eventType);
 
       spyOn(router, 'navigate').and.callThrough();
 
       ngZone.run(() => component.editAnnotationType(eventType.annotationTypes[0]));
       expect(router.navigate).toHaveBeenCalled();
       expect((router.navigate as any).calls.mostRecent().args[0])
-        .toEqual([ eventType.slug, 'annotation', annotationType.id ]);
+        .toEqual([ 'annotation', annotationType.id ]);
     });
 
     describe('when removing an annotation type', () => {
 
       it('dispatches an event to update the event type', async(() => {
-        const eventType = componentSetup(fixture, store, factory);
+        const eventType = createEventType();
 
         const newRecurring = !eventType.recurring;
         const modalService = TestBed.get(NgbModal);
@@ -294,6 +297,9 @@ describe('EventTypeViewContainer', () => {
           result: Promise.resolve(modalResult)
         });
         spyOn(store, 'dispatch').and.callThrough();
+
+        createMockActivatedRouteSpies(study, eventType);
+        componentSetup(study, eventType);
 
         component.removeAnnotationType(eventType.annotationTypes[0]);
         fixture.whenStable().then(() => {
@@ -317,13 +323,16 @@ describe('EventTypeViewContainer', () => {
       const router = TestBed.get(Router);
       ngZone.run(() => router.initialNavigation());
 
-      const eventType = componentSetup(fixture, store, factory);
+      const eventType = createEventType();
 
       spyOn(router, 'navigate').and.callThrough();
 
+      createMockActivatedRouteSpies(study, eventType);
+      componentSetup(study, eventType);
+
       ngZone.run(() => component.addSpecimenDefinition());
       expect(router.navigate).toHaveBeenCalled();
-      expect((router.navigate as any).calls.mostRecent().args[0]).toEqual([ eventType.slug, 'spcDefAdd' ]);
+      expect((router.navigate as any).calls.mostRecent().args[0]).toEqual([ 'spcDefAdd' ]);
     });
 
     it('when an specimen definition is edited, a state change is made', () => {
@@ -331,21 +340,24 @@ describe('EventTypeViewContainer', () => {
       const router = TestBed.get(Router);
       ngZone.run(() => router.initialNavigation());
 
-      const eventType = componentSetup(fixture, store, factory);
+      const eventType = createEventType();
       const specimenDefinition = eventType.specimenDefinitions[0];
 
       spyOn(router, 'navigate').and.callThrough();
 
+      createMockActivatedRouteSpies(study, eventType);
+      componentSetup(study, eventType);
+
       ngZone.run(() => component.editSpecimenDefinition(eventType.specimenDefinitions[0]));
       expect(router.navigate).toHaveBeenCalled();
       expect((router.navigate as any).calls.mostRecent().args[0])
-        .toEqual([ eventType.slug, 'spcDef', specimenDefinition.id ]);
+        .toEqual([ 'spcDef', specimenDefinition.id ]);
     });
 
     describe('when removing an specimen definition', () => {
 
       it('dispatches an event to update the event type', async(() => {
-        const eventType = componentSetup(fixture, store, factory);
+        const eventType = createEventType();
         const newRecurring = !eventType.recurring;
         const modalService = TestBed.get(NgbModal);
         const modalResult: ModalInputResult = { confirmed: true, value: newRecurring };
@@ -355,6 +367,9 @@ describe('EventTypeViewContainer', () => {
           result: Promise.resolve(modalResult)
         });
         spyOn(store, 'dispatch').and.callThrough();
+
+        createMockActivatedRouteSpies(study, eventType);
+        componentSetup(study, eventType);
 
         component.removeSpecimenDefinition(eventType.specimenDefinitions[0]);
         fixture.whenStable().then(() => {
@@ -374,7 +389,7 @@ describe('EventTypeViewContainer', () => {
   describe('when removing an event type', () => {
 
     it('dispatches an event to update the event type', async(() => {
-      const eventType = componentSetup(fixture, store, factory);
+      const eventType = createEventType();
       const modalService = TestBed.get(NgbModal);
 
       spyOn(modalService, 'open').and.returnValue({
@@ -382,6 +397,9 @@ describe('EventTypeViewContainer', () => {
         result: Promise.resolve('OK')
       });
       spyOn(store, 'dispatch').and.callThrough();
+
+      createMockActivatedRouteSpies(study, eventType);
+      componentSetup(study, eventType);
 
       component.removeEventType();
       fixture.whenStable().then(() => {
@@ -393,21 +411,23 @@ describe('EventTypeViewContainer', () => {
       });
     }));
 
-    it('event type becomes undefined when removed', async(() => {
-      const eventType = componentSetup(fixture, store, factory);
+    it('event type becomes undefined when removed', () => {
+      const eventType = createEventType();
+      const spy = jest.spyOn(router, 'navigate').mockReturnValue(true);
+      createMockActivatedRouteSpies(study, eventType);
+      componentSetup(study, eventType);
 
-      fixture.whenStable().then(() => {
-        const action = new EventTypeStoreActions.RemoveEventTypeSuccess({ eventTypeId: eventType.id });
-        store.dispatch(action);
+      const action = new EventTypeStoreActions.RemoveEventTypeSuccess({ eventTypeId: eventType.id });
+      store.dispatch(action);
+      fixture.detectChanges();
 
-        fixture.whenStable().then(() => {
-          expect(component.eventType).toBeUndefined();
-        });
-      });
-    }));
+      expect(component.eventType).toBeUndefined();
+      expect(spy).toHaveBeenCalled();
+      expect(spy.mock.calls[0][0]).toEqual([ '/admin/studies/view/bbpsp/collection/view' ]);
+    });
   });
 
-  function componentSetup(fixture, store, factory): CollectionEventType {
+  function createEventType(): CollectionEventType {
     const annotationType = factory.annotationType();
     const specimenDefinition = factory.collectedSpecimenDefinition();
     const eventType = new CollectionEventType().deserialize({
@@ -415,11 +435,35 @@ describe('EventTypeViewContainer', () => {
       annotationTypes: [ annotationType ],
       specimenDefinitions: [ specimenDefinition ]
     });
-    store.dispatch(new EventTypeStoreActions.GetEventTypeSuccess({ eventType }));
-    store.dispatch(new EventTypeStoreActions.EventTypeSelected({ id: eventType.id }));
-    fixture.detectChanges();
-
     return eventType;
+  }
+
+  function componentSetup(study: Study, eventType: CollectionEventType): void {
+    store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
+    store.dispatch(new EventTypeStoreActions.GetEventTypeSuccess({ eventType }));
+    fixture.detectChanges();
+  }
+
+  function createMockActivatedRouteSpies(study: Study, eventType: CollectionEventType): void {
+    mockActivatedRoute.spyOnParent(() => ({
+      parent: {
+        parent: {
+          parent: {
+            snapshot: {
+              params: {
+                slug: study.slug
+              }
+            }
+          }
+        }
+      }
+    }));
+
+    mockActivatedRoute.spyOnSnapshot(() => ({
+      params: {
+        eventTypeSlug: eventType.slug
+      }
+    }));
   }
 
 });

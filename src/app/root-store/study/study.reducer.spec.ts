@@ -54,7 +54,7 @@ describe('Study Reducer', () => {
     expect(state).toEqual({
       ...StudyStoreReducer.initialState,
       error: {
-        type: action.type,
+        actionType: action.type,
         error: action.payload.error
       }
     });
@@ -162,7 +162,7 @@ describe('Study Reducer', () => {
       ...StudyStoreReducer.initialState,
       lastSearch: null,
       error: {
-        type: action.type,
+        actionType: action.type,
         error: action.payload.error
       }
     });

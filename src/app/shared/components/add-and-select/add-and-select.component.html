@@ -8,21 +8,21 @@
     </ng-container>
   </div>
 
-  <div class="card-body" *ngIf="pageInfo.hasNoEntitiesToDisplay">
+  <div class="card-body" *ngIf="pageInfo?.hasNoEntitiesToDisplay">
     <div class="card-text">
       <ng-container *ngTemplateOutlet="noEntitiesToDisplay">
       </ng-container>
     </div>
   </div>
 
-  <div class="card-body" *ngIf="pageInfo.hasNoResultsToDisplay">
+  <div class="card-body" *ngIf="pageInfo?.hasNoResultsToDisplay">
     <div class="card-text">
       <ng-container *ngTemplateOutlet="noResultsToDisplay">
       </ng-container>
     </div>
   </div>
 
-  <ul class="list-group list-group-flush" *ngIf="pageInfo.hasResultsToDisplay">
+  <ul class="list-group list-group-flush" *ngIf="pageInfo?.hasResultsToDisplay">
     <ng-template ngFor
                  let-entity
                  [ngForOf]="pageInfo.entities"
@@ -30,7 +30,7 @@
     </ng-template>
   </ul>
 
-  <div class="card-footer pb-1" *ngIf="pageInfo.showPagination">
+  <div class="card-footer pb-1" *ngIf="pageInfo?.showPagination">
     <ngb-pagination size="sm"
                     [collectionSize]="pageInfo.total"
                     [(page)]="page"

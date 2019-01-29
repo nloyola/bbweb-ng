@@ -182,7 +182,7 @@ export class Factory {
     return dflt ? dflt : this.collectionEventType();
   }
 
-  processingType(options:any = {}): any {
+  processingType(options: any = {}): any {
     const study = this.defaultStudy();
     const defaults = {
       ...{

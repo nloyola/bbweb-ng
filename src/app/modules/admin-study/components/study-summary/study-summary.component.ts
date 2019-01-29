@@ -80,7 +80,7 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
 
         // when study name is changed, the route must be updated because the slug used in the route,
         // and the slug is derived from the name
-        if (!location.pathname.endsWith(`/${entity.slug}`)) {
+        if (this.studyId && !location.pathname.endsWith(`/${entity.slug}`)) {
           this.router.navigate([ '../..', entity.slug, 'summary' ], { relativeTo: this.route });
         }
 

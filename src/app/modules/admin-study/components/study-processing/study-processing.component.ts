@@ -8,9 +8,9 @@ import { Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 interface StudyData {
-  study: Study,
-  hasEventTypes: boolean
-};
+  study: Study;
+  hasEventTypes: boolean;
+}
 
 @Component({
   selector: 'app-study-processing',
@@ -22,7 +22,6 @@ export class StudyProcessingComponent implements OnInit {
   studyData$: Observable<StudyData>;
   haveEventTypes: boolean;
   private modificationsAllowed = false;
-  private unsubscribe$: Subject<void> = new Subject<void>();
 
   constructor(private store$: Store<RootStoreState.State>,
               private router: Router,

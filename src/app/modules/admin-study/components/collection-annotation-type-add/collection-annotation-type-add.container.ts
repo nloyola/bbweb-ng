@@ -7,7 +7,7 @@ import { SpinnerStoreSelectors } from '@app/root-store/spinner';
 import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
+import { filter, takeUntil, tap } from 'rxjs/operators';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -23,10 +23,10 @@ export class CollectionAnnotationTypeAddContainerComponent implements OnInit, On
   study: Study;
   eventTypeSlug: string;
   eventType: CollectionEventType;
+  savedMessage: string;
 
   private parentStateRelativePath = '..';
   private annotationTypeToSave: AnnotationType;
-  private savedMessage: string;
   private unsubscribe$: Subject<void> = new Subject<void>();
 
   constructor(private route: ActivatedRoute,
@@ -54,7 +54,7 @@ export class CollectionAnnotationTypeAddContainerComponent implements OnInit, On
         if (this.route.snapshot.params.annotationTypeId) {
           this.parentStateRelativePath = '../..';
           this.annotationType = this.eventType.annotationTypes
-            .find(at => at.id == this.route.snapshot.params.annotationTypeId);
+            .find(at => at.id === this.route.snapshot.params.annotationTypeId);
         }
 
         if (this.savedMessage) {
@@ -72,7 +72,7 @@ export class CollectionAnnotationTypeAddContainerComponent implements OnInit, On
       .subscribe((error: any) => {
         this.isSaving$.next(false);
         let errMessage = error.error ? error.error.message : error.statusText;
-        if (errMessage.match(/EntityCriteriaError.*name already used/)) {
+        if (errMessage && errMessage.match(/EntityCriteriaError.*name already used/)) {
           errMessage = `The name is already in use: ${this.annotationTypeToSave.name}`;
         }
         this.toastr.error(errMessage, 'Add Error', { disableTimeOut: true });
@@ -98,7 +98,7 @@ export class CollectionAnnotationTypeAddContainerComponent implements OnInit, On
       annotationType: this.annotationTypeToSave
     }));
 
-    this.savedMessage = this.annotationType.isNew() ? 'Annotation Added' : 'Annotation Updated'
+    this.savedMessage = this.annotationType.isNew() ? 'Annotation Added' : 'Annotation Updated';
   }
 
   onCancel(): void {

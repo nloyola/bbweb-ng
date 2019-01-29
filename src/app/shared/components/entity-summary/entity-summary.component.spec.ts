@@ -27,7 +27,7 @@ describe('EntitySummaryComponent', () => {
         EntitySummaryComponent,
         TruncatePipe
       ],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     })
     .compileComponents();
   }));

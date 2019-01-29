@@ -45,8 +45,8 @@ describe('StudySummaryComponent', () => {
           useValue: {
             parent: {
               snapshot: {
-                data: {
-                  study
+                params: {
+                  slug: study.slug
                 }
               }
             },
@@ -77,7 +77,11 @@ describe('StudySummaryComponent', () => {
   });
 
   it('isEnableAllowed resolved correctly', () => {
+    fixture.detectChanges();
     expect(component.isEnableAllowed).toBeUndefined();
+
+    ngZone.run(() => store.dispatch(new StudyStoreActions.GetStudySuccess({ study })));
+    fixture.detectChanges();
 
     [ true, false ].forEach(allowed => {
       store.dispatch(new StudyStoreActions.GetEnableAllowedSuccess({ studyId: study.id, allowed }))
@@ -94,7 +98,7 @@ describe('StudySummaryComponent', () => {
 
     jest.spyOn(router, 'navigate');
 
-    store.dispatch(new StudyStoreActions.GetStudySuccess({ study: studyWithNewName }));
+    ngZone.run(() => store.dispatch(new StudyStoreActions.GetStudySuccess({ study: studyWithNewName })));
     fixture.detectChanges();
 
     expect(router.navigate.mock.calls.length).toBe(1);
@@ -125,7 +129,7 @@ describe('StudySummaryComponent', () => {
       jest.spyOn(store, 'dispatch');
       jest.spyOn(modalService, 'open');
 
-      store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
+      ngZone.run(() => store.dispatch(new StudyStoreActions.GetStudySuccess({ study })));
       fixture.detectChanges();
 
       store.dispatch.mockClear();
@@ -159,7 +163,7 @@ describe('StudySummaryComponent', () => {
         result: Promise.resolve({ confirmed: true, value: 'test' })
       });
 
-      store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
+      ngZone.run(() => store.dispatch(new StudyStoreActions.GetStudySuccess({ study })));
       fixture.detectChanges();
 
       const componentUpdateFuncs = [
@@ -185,7 +189,7 @@ describe('StudySummaryComponent', () => {
     it('functions that change the study state', fakeAsync(() => {
       jest.spyOn(store, 'dispatch');
 
-      store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
+      ngZone.run(() => store.dispatch(new StudyStoreActions.GetStudySuccess({ study })));
       fixture.detectChanges();
 
       const testData = [

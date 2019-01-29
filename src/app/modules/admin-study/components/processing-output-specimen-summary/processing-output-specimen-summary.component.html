@@ -43,7 +43,7 @@
     </small>
   </div>
 </div>
-<div class="row" ng-if="output.specimenDefinition.description">
+<div class="row" *ngIf="output.specimenDefinition.description">
   <div class="col-md-12">
     <p>{{output.specimenDefinition.description | truncate:100}}</p>
   </div>

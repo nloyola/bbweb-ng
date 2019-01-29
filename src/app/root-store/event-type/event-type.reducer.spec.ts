@@ -21,7 +21,9 @@ describe('EventType Reducer', () => {
   });
 
   it('SearchEventTypesRequest', () => {
+    const studyId = factory.stringNext();
     const payload = {
+      studyId,
       studySlug: factory.stringNext(),
       searchParams: new SearchParams()
     };
@@ -30,7 +32,10 @@ describe('EventType Reducer', () => {
 
     expect(state).toEqual({
       ...EventTypeStoreReducer.initialState,
-      lastSearch: payload.searchParams,
+      lastSearch: {
+        studyId,
+        params: payload.searchParams
+      },
       searchActive: true
     });
   });
@@ -45,12 +50,16 @@ describe('EventType Reducer', () => {
     const state = EventTypeStoreReducer.reducer(
       {
         ...EventTypeStoreReducer.initialState,
-        lastSearch: payload.pagedReply.searchParams
+        lastSearch: {
+          studyId: eventType.studyId,
+          params: payload.pagedReply.searchParams
+        }
       },
       action);
 
     const searchReply: { [ key: string]: PagedReplyEntityIds } = {};
-    searchReply[payload.pagedReply.searchParams.queryString()] = {
+    searchReply[eventType.studyId] = {} as  any;
+    searchReply[eventType.studyId][payload.pagedReply.searchParams.queryString()] = {
       searchParams: payload.pagedReply.searchParams,
       offset: payload.pagedReply.offset,
       total: payload.pagedReply.total,
@@ -79,7 +88,10 @@ describe('EventType Reducer', () => {
     expect(state).toEqual({
       ...EventTypeStoreReducer.initialState,
       lastSearch: null,
-      error: payload.error
+      error: {
+        actionType: action.type,
+        error: payload.error
+      }
     });
   });
 
@@ -108,7 +120,10 @@ describe('EventType Reducer', () => {
     expect(state).toEqual({
       ...EventTypeStoreReducer.initialState,
       lastSearch: null,
-      error: payload.error
+      error: {
+        actionType: action.type,
+        error: payload.error
+      }
     });
   });
 
@@ -137,7 +152,10 @@ describe('EventType Reducer', () => {
     expect(state).toEqual({
       ...EventTypeStoreReducer.initialState,
       lastSearch: null,
-      error: payload.error
+      error: {
+        actionType: action.type,
+        error: payload.error
+      }
     });
   });
 
@@ -152,7 +170,7 @@ describe('EventType Reducer', () => {
         ...EventTypeStoreReducer.initialState,
         ids: [ eventType.id ],
         entities: {}
-      }
+      };
       initialState['entities'][eventType.id] = {};
     });
 
@@ -176,7 +194,10 @@ describe('EventType Reducer', () => {
       };
       const action = new EventTypeStoreActions.UpdateEventTypeFailure(payload);
       const state = EventTypeStoreReducer.reducer(initialState, action);
-      expect(state.error).toEqual(payload.error);
+      expect(state.error).toEqual({
+        actionType: action.type,
+        error: payload.error
+      });
     });
 
   });
@@ -192,11 +213,11 @@ describe('EventType Reducer', () => {
         ...EventTypeStoreReducer.initialState,
         ids: [ eventType.id ],
         entities: {}
-      }
+      };
       initialState['entities'][eventType.id] = eventType;
     });
 
-    it('UpdateEventTypeSuccess', () => {
+    it('RemoveEventTypeSuccess', () => {
       const payload = { eventTypeId: eventType.id };
       const action = new EventTypeStoreActions.RemoveEventTypeSuccess(payload);
       const state = EventTypeStoreReducer.reducer(initialState, action);
@@ -205,7 +226,7 @@ describe('EventType Reducer', () => {
       expect(state.entities[eventType.id]).toBeUndefined();
     });
 
-    it('UpdateEventTypeFailure', () => {
+    it('RemoveEventTypeFailure', () => {
       const payload = {
         error: {
           status: 404,
@@ -216,7 +237,10 @@ describe('EventType Reducer', () => {
       };
       const action = new EventTypeStoreActions.RemoveEventTypeFailure(payload);
       const state = EventTypeStoreReducer.reducer(initialState, action);
-      expect(state.error).toEqual(payload.error);
+      expect(state.error).toEqual({
+        actionType: action.type,
+        error: payload.error
+      });
     });
   });
 });

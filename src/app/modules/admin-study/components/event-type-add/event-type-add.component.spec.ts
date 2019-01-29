@@ -19,7 +19,7 @@ describe('EventTypeAddComponent', () => {
   let ngZone: NgZone;
   let router: Router;
   let factory: Factory;
-  let study;
+  let study: Study;
 
   beforeEach(async(() => {
     factory = new Factory();
@@ -104,7 +104,7 @@ describe('EventTypeAddComponent', () => {
       ngZone.run(() => store.dispatch(new EventTypeStoreActions.AddEventTypeSuccess({ eventType })));
       fixture.whenStable().then(() => {
         fixture.detectChanges();
-        expect(store.dispatch.mock.calls.length).toBe(2);
+        expect(store.dispatch.mock.calls.length).toBe(3);
         expect(toastr.success.mock.calls.length).toBe(1);
         expect(router.navigate.mock.calls.length).toBe(1);
         expect(router.navigate.mock.calls[0][0]).toEqual(['..']);

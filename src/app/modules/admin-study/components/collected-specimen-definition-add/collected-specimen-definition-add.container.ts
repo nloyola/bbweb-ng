@@ -8,7 +8,6 @@ import { Subject, BehaviorSubject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 
 @Component({
-  //changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-collected-specimen-definition-add',
   templateUrl: './collected-specimen-definition-add.container.html'
 })
@@ -52,7 +51,7 @@ export class CollectedSpecimenDefinitionAddContainerComponent implements OnInit,
         if (this.route.snapshot.params.specimenDefinitionId) {
           this.parentStateRelativePath = '../..';
           this.specimenDefinition = this.eventType.specimenDefinitions
-            .find(sd => sd.id == this.route.snapshot.params.specimenDefinitionId);
+            .find(sd => sd.id === this.route.snapshot.params.specimenDefinitionId);
         }
 
         if (this.savedMessage) {
@@ -70,7 +69,7 @@ export class CollectedSpecimenDefinitionAddContainerComponent implements OnInit,
       .subscribe((error: any) => {
         this.isSaving$.next(false);
         let errMessage = error.error ? error.error.message : error.statusText;
-        if (errMessage.match(/EntityCriteriaError.*name already used/)) {
+        if (errMessage && errMessage.match(/EntityCriteriaError.*name already used/)) {
           errMessage = `The name is already in use: ${this.specimenDefinitionToSave.name}`;
         }
         this.toastr.error(errMessage, 'Add Error', { disableTimeOut: true });
@@ -91,7 +90,7 @@ export class CollectedSpecimenDefinitionAddContainerComponent implements OnInit,
   onSubmit(specimenDefinition: CollectedSpecimenDefinition): void {
     this.isSaving$.next(true);
     this.specimenDefinitionToSave = specimenDefinition;
-    this.savedMessage = this.specimenDefinition.isNew() ? 'Specimen Added' : 'Specimen Updated'
+    this.savedMessage = this.specimenDefinition.isNew() ? 'Specimen Added' : 'Specimen Updated';
 
     this.store$.dispatch(new EventTypeStoreActions.UpdateEventTypeAddOrUpdateSpecimenDefinitionRequest({
       eventType: this.eventType,

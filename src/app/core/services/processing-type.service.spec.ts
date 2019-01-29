@@ -6,6 +6,7 @@ import { PagedQueryBehaviour } from '@app/test/behaviours/paged-query.behaviour'
 import { Factory } from '@app/test/factory';
 import * as faker from 'faker';
 import { ProcessingTypeService } from '.';
+import { AnnotationType } from '@app/domain/annotations';
 
 describe('ProcessingTypeService', () => {
 
@@ -35,8 +36,8 @@ describe('ProcessingTypeService', () => {
   });
 
   describe('when searching event types', () => {
-    let rawProcessingType;
-    let reply;
+    let rawProcessingType: any;
+    let reply: any;
 
     beforeEach(() => {
       rawProcessingType = factory.processingType();
@@ -98,9 +99,9 @@ describe('ProcessingTypeService', () => {
   });
 
   describe('when requesting an event type', () => {
-    let annotationType;
-    let rawProcessingType;
-    let processingType;
+    let annotationType: AnnotationType;
+    let rawProcessingType: any;
+    let processingType: ProcessingType;
 
     beforeEach(() => {
       annotationType = factory.annotationType();
@@ -150,10 +151,8 @@ describe('ProcessingTypeService', () => {
         name: processingType.name,
         description: processingType.description,
         enabled: processingType.enabled,
-        specimenProcessing: {
-          input: processingType.input,
-          output: processingType.output
-        }
+        input: processingType.input,
+        output: processingType.output
       });
       req.flush({ status: 'success', data: rawProcessingType });
       httpMock.verify();
@@ -177,10 +176,10 @@ describe('ProcessingTypeService', () => {
 
   describe('for updating an event type', () => {
 
-    let rawProcessingType;
-    let processingType;
-    let testData;
-    let url;
+    let rawProcessingType: any;
+    let processingType: ProcessingType;
+    let testData: any[];
+    let url: string;
 
     beforeEach(() => {
       rawProcessingType = factory.processingType();
@@ -212,7 +211,7 @@ describe('ProcessingTypeService', () => {
     });
 
     it('request contains correct JSON and reply is handled correctly', () => {
-      testData.forEach(testInfo => {
+      testData.forEach((testInfo: any) => {
         service.update(processingType, testInfo.property, testInfo.value).subscribe(s => {
           expect(s).toEqual(jasmine.any(Study));
           expect(s).toEqual(study);
@@ -220,13 +219,12 @@ describe('ProcessingTypeService', () => {
 
         let expectedValue = testInfo.value;
         if (testInfo.property === 'description') {
-          expectedValue = !!testInfo.value ? testInfo.value : ''
+          expectedValue = !!testInfo.value ? testInfo.value : '';
         }
 
         const expectedJson = {
           property: testInfo.property,
-          value: expectedValue,
-          studyId: processingType.studyId,
+          newValue: expectedValue,
           expectedVersion: processingType.version
         };
 

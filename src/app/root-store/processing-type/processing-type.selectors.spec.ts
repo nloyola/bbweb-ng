@@ -1,8 +1,7 @@
 import { PagedReplyEntityIds, SearchParams } from '@app/domain';
 import { ProcessingType } from '@app/domain/studies';
-import { ProcessingTypeStoreReducer, ProcessingTypeStoreSelectors, ProcessingTypeStoreReducer } from '@app/root-store';
+import { ProcessingTypeStoreReducer, ProcessingTypeStoreSelectors } from '@app/root-store';
 import { Factory } from '@app/test/factory';
-import { State } from './processing-type.reducer';
 
 describe('ProcessingTypeStore selectors', () => {
 
@@ -14,15 +13,16 @@ describe('ProcessingTypeStore selectors', () => {
 
   describe('selectSearchRepliesAndEntities', () => {
 
-    let processingType;
-    let pagedReply;
+    let processingType: ProcessingType;
+    let pagedReply: PagdeReply<ProcessingType>;
     let searchReplies: { [ key: string]: PagedReplyEntityIds };
 
     beforeEach(() => {
       processingType = factory.processingType();
       pagedReply = factory.pagedReply<ProcessingType>([ processingType ]);
       searchReplies = {};
-      searchReplies[pagedReply.searchParams.queryString()] = {
+      searchReplies[processingType.studyId] = {};
+      searchReplies[processingType.studyId][pagedReply.searchParams.queryString()] = {
         searchParams: pagedReply.searchParams,
         offset:       pagedReply.offset,
         total:        pagedReply.total,
@@ -33,12 +33,15 @@ describe('ProcessingTypeStore selectors', () => {
 
     it('returns entities', () => {
       const state = initialStateWithEntity(processingType, {
-        lastSearch: pagedReply.searchParams,
+        lastSearch: {
+          studyId: processingType.studyId,
+          params: pagedReply.searchParams
+        },
         searchReplies
       });
 
       expect(ProcessingTypeStoreSelectors.selectSearchRepliesAndEntities(state)).toEqual({
-        reply: searchReplies[pagedReply.searchParams.queryString()],
+        reply: searchReplies[processingType.studyId][pagedReply.searchParams.queryString()],
         processingTypes: [ processingType ]
       });
     });
@@ -64,7 +67,10 @@ describe('ProcessingTypeStore selectors', () => {
 
     it('when the search was never completed returns undefined', () => {
       const state = initialStateWithEntity(processingType, {
-        lastSearch: new SearchParams(undefined, 'name'),
+        lastSearch: {
+          studyId: processingType.studyId,
+          params: new SearchParams(undefined, 'name')
+        },
         searchReplies
       });
 
