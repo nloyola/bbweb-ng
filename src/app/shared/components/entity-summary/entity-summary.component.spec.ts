@@ -16,7 +16,6 @@ describe('EntitySummaryComponent', () => {
 
   let component: EntitySummaryComponent<TestDomainEntity>;
   let fixture: ComponentFixture<EntitySummaryComponent<TestDomainEntity>>;
-  let router: Router;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -33,7 +32,6 @@ describe('EntitySummaryComponent', () => {
   }));
 
   beforeEach(() => {
-    router = TestBed.get(Router);
     fixture = TestBed.createComponent<EntitySummaryComponent<TestDomainEntity>>(
       EntitySummaryComponent);
     component = fixture.componentInstance;
@@ -45,7 +43,7 @@ describe('EntitySummaryComponent', () => {
       stateLabel: () => 'test',
       stateIcon: () => 'test',
       stateIconClass: () => 'test'
-    }
+    };
     fixture.detectChanges();
     expect(component).toBeTruthy();
   });
@@ -58,7 +56,7 @@ describe('EntitySummaryComponent', () => {
       stateLabel: () => 'test',
       stateIcon: () => 'test',
       stateIconClass: () => 'test'
-    }
+    };
     fixture.detectChanges();
     expect(component).toBeTruthy();
 

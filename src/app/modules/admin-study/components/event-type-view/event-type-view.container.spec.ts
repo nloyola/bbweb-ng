@@ -1,21 +1,20 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgZone } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { Study, StudyState, CollectionEventType } from '@app/domain/studies';
+import { CollectionEventType, Study, StudyState } from '@app/domain/studies';
+import { ModalInputResult } from '@app/modules/modal-input/models';
+import { EventTypeStoreActions, EventTypeStoreReducer, StudyStoreActions, StudyStoreReducer } from '@app/root-store';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { YesNoPipe } from '@app/shared/pipes/yes-no-pipe';
 import { Factory } from '@app/test/factory';
-import { NgbModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { StoreModule, Store } from '@ngrx/store';
+import { MockActivatedRoute } from '@app/test/mocks';
+import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { Store, StoreModule } from '@ngrx/store';
+import * as faker from 'faker';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { EventTypeViewContainerComponent } from './event-type-view.container';
-import { StudyStoreReducer, EventTypeStoreReducer, StudyStoreActions, EventTypeStoreActions } from '@app/root-store';
-import { ModalInputResult } from '@app/modules/modal-input/models';
-import * as faker from 'faker';
-import { MockActivatedRoute } from '@app/test/mocks';
-import { of as observableOf } from 'rxjs';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('EventTypeViewContainer', () => {
   let component: EventTypeViewContainerComponent;
@@ -107,7 +106,7 @@ describe('EventTypeViewContainer', () => {
       const updatedEventType = new CollectionEventType().deserialize(factory.collectionEventType({
         ...eventType,
         recurring: recurringValue
-      }))
+      }));
 
       store.dispatch(new EventTypeStoreActions.UpdateEventTypeSuccess({ eventType: updatedEventType }));
 
@@ -288,13 +287,11 @@ describe('EventTypeViewContainer', () => {
       it('dispatches an event to update the event type', async(() => {
         const eventType = createEventType();
 
-        const newRecurring = !eventType.recurring;
         const modalService = TestBed.get(NgbModal);
-        const modalResult: ModalInputResult = { confirmed: true, value: newRecurring };
 
         spyOn(modalService, 'open').and.returnValue({
           componentInstance: {},
-          result: Promise.resolve(modalResult)
+          result: Promise.resolve(true)
         });
         spyOn(store, 'dispatch').and.callThrough();
 

@@ -1,16 +1,22 @@
+import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CollectedSpecimenDefinitionName, ProcessedSpecimenDefinitionName, ProcessingType, Study } from '@app/domain/studies';
-import { EventTypeStoreActions, EventTypeStoreSelectors, RootStoreState } from '@app/root-store';
+import { EventTypeStoreActions, EventTypeStoreSelectors, RootStoreState, StudyStoreSelectors } from '@app/root-store';
 import { ProcessingTypeStoreActions, ProcessingTypeStoreSelectors } from '@app/root-store/processing-type';
 import { createSelector, select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
-import { Subject } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
+import { filter, map, take, takeUntil, tap } from 'rxjs/operators';
 import { ProcessingTypeInformationSubformComponent } from '../processing-type-information-subform/processing-type-information-subform.component';
 import { ProcessingTypeInputSubformComponent } from '../processing-type-input-subform/processing-type-input-subform.component';
 import { ProcessingTypeOutputSubformComponent } from '../processing-type-output-subform/processing-type-output-subform.component';
+
+interface EntityNames {
+  processed: ProcessedSpecimenDefinitionName[];
+  collected: CollectedSpecimenDefinitionName[];
+}
 
 @Component({
   selector: 'app-processing-type-add',
@@ -21,13 +27,11 @@ export class ProcessingTypeAddComponent implements OnInit, OnDestroy {
 
   @Input() processingType: ProcessingType;
 
-  study: Study;
   form: FormGroup;
-
-  processedDefinitionNames: ProcessedSpecimenDefinitionName[];
-  collectedDefinitionNames: CollectedSpecimenDefinitionName[];
+  studyId: string;
   inputEntityName: string;
   inputDefinitionName: string;
+  entityNames$: Observable<EntityNames>;
 
   private processingTypeToSave: ProcessingType;
   private unsubscribe$: Subject<void> = new Subject<void>();
@@ -40,7 +44,6 @@ export class ProcessingTypeAddComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.study = this.route.parent.parent.snapshot.data.study;
     if (this.processingType === undefined) {
       this.processingType = new ProcessingType();
     }
@@ -51,7 +54,7 @@ export class ProcessingTypeAddComponent implements OnInit, OnDestroy {
       outputSubForm: ProcessingTypeOutputSubformComponent.buildSubForm(this.processingType)
     });
 
-    // inform the user when after the processing type was added
+    // inform the user after the processing type is added
     this.store$
       .pipe(select(ProcessingTypeStoreSelectors.selectLastAdded),
             filter(et => !!et),
@@ -71,7 +74,7 @@ export class ProcessingTypeAddComponent implements OnInit, OnDestroy {
         takeUntil(this.unsubscribe$))
       .subscribe((error: any) => {
         let errMessage = error.error ? error.error.message : error.statusText;
-        if (errMessage.match(/EntityCriteriaError.*name already used/)) {
+        if (errMessage && errMessage.match(/EntityCriteriaError.*name already used/)) {
           errMessage = `The name is already in use: ${this.processingTypeToSave.name}`;
         }
         this.toastr.error(errMessage, 'Add Error', { disableTimeOut: true });
@@ -89,21 +92,31 @@ export class ProcessingTypeAddComponent implements OnInit, OnDestroy {
          return result;
        });
 
-    this.store$.pipe(
-      select(entitiesSelector),
-      takeUntil(this.unsubscribe$))
-      .subscribe((definitionNames) => {
-        this.processedDefinitionNames = definitionNames.processed;
-        this.collectedDefinitionNames = definitionNames.collected;
+    this.entityNames$ = this.store$.pipe(select(entitiesSelector));
+
+    this.store$
+      .pipe(
+        select(StudyStoreSelectors.selectAllStudies),
+        filter(studies => studies.length > 0),
+        map(studies => studies.find(s => s.slug === this.route.parent.parent.snapshot.params.slug)),
+        filter(study => study !== undefined),
+        map(study => {
+          // have to do the following because of this issue:
+          //
+          // https://github.com/ngrx/platform/issues/976
+          return (study instanceof Study) ? study :  new Study().deserialize(study);
+        }),
+        takeUntil(this.unsubscribe$))
+      .subscribe((study: Study) => {
+        this.studyId = study.id;
+        this.store$.dispatch(new ProcessingTypeStoreActions.GetSpecimenDefinitionNamesRequest({
+          studyId: study.id
+        }));
+
+        this.store$.dispatch(new EventTypeStoreActions.GetSpecimenDefinitionNamesRequest({
+          studySlug: study.slug
+        }));
       });
-
-    this.store$.dispatch(new ProcessingTypeStoreActions.GetSpecimenDefinitionNamesRequest({
-      studyId: this.study.id
-    }));
-
-    this.store$.dispatch(new EventTypeStoreActions.GetSpecimenDefinitionNamesRequest({
-      studySlug: this.study.slug
-    }));
   }
 
   ngOnDestroy() {
@@ -134,27 +147,30 @@ export class ProcessingTypeAddComponent implements OnInit, OnDestroy {
     this.navigateToReturnUrl();
   }
 
-  stepClick(event) {
-    if (event.selectedIndex >= 3) {
-      this.processingTypeToSave = this.formToProcessingType();
+  stepClick(event: StepperSelectionEvent) {
+    if (event.selectedIndex < 3) { return; }
 
-      const entityId = this.inputSubForm.value.entityId;
+    this.processingTypeToSave = this.formToProcessingType();
 
-      if (this.inputSubForm.value.definitionType === 'collected') {
-        const sourceName = this.collectedDefinitionNames.find(cdn => cdn.id === entityId);
-        if (sourceName) {
-          this.inputEntityName = sourceName.name;
+    const entityId = this.inputSubForm.value.entityId;
+    let entityNames: EntityNames;
+    this.entityNames$.pipe(take(1)).subscribe(en => entityNames = en);
 
-          const definitionId = this.inputSubForm.value.definitionId;
-          const sdName =
-            sourceName.specimenDefinitionNames.find(sdn => sdn.id === definitionId);
-          if (sdName) { this.inputDefinitionName = sdName.name; }
-        }
-      } else {
-        const processedName = this.processedDefinitionNames.find(name => name.id === entityId);
-        if (processedName) {
-          this.inputDefinitionName = processedName.specimenDefinitionName.name;
-        }
+    if (this.inputSubForm.value.definitionType === 'collected') {
+      const sourceName = entityNames.collected.find(cdn => cdn.id === entityId);
+      if (sourceName) {
+        this.inputEntityName = sourceName.name;
+
+        const definitionId = this.inputSubForm.value.definitionId;
+        const sdName =
+          sourceName.specimenDefinitionNames.find(sdn => sdn.id === definitionId);
+        if (sdName) { this.inputDefinitionName = sdName.name; }
+      }
+    } else {
+      const processedName = entityNames.processed.find(name => name.id === entityId);
+      if (processedName) {
+        this.inputEntityName = processedName.name;
+        this.inputDefinitionName = processedName.specimenDefinitionName.name;
       }
     }
   }
@@ -167,7 +183,10 @@ export class ProcessingTypeAddComponent implements OnInit, OnDestroy {
     } else {
       input.entityId = this.inputSubForm.value.inputProcessingType;
 
-      const processedName = this.processedDefinitionNames.find(name => name.id === input.entityId);
+      let entityNames: EntityNames;
+      this.entityNames$.pipe(take(1)).subscribe(en => entityNames = en);
+
+      const processedName = entityNames.processed.find(name => name.id === input.entityId);
       if (!processedName) {
         throw new Error('could not find specimen definition id');
       }
@@ -179,7 +198,7 @@ export class ProcessingTypeAddComponent implements OnInit, OnDestroy {
       name:            this.infoSubForm.value.name,
       description:     this.infoSubForm.value.description,
       enabled:         (this.infoSubForm.value.enabled === true),
-      studyId:         this.study.id,
+      studyId:         this.studyId,
       annotationTypes: [],
       input: {
         ...input,

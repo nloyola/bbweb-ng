@@ -84,19 +84,19 @@ describe('EventTypesAddAndSelectComponent', () => {
     it('makes a request from the server', () => {
       const study = new Study().deserialize(factory.study());
       const testData = [
-        { componentFunc: () => component.onFiltersUpdated({ name: 'test' }) },
+        { componentFunc: () => component.onFiltersUpdated('name::test') },
         { componentFunc: () => component.paginationPageChange() }
       ];
-      jest.spyOn(store, 'dispatch');
+      const storeListener = jest.spyOn(store, 'dispatch');
 
       mockActivatedRouteSnapshot(study);
       component.study = study;
       fixture.detectChanges();
-      store.dispatch.mockReset();
+      storeListener.mockReset();
       testData.forEach(testInfo => {
         testInfo.componentFunc();
       });
-      expect(store.dispatch.mock.calls.length).toBe(testData.length);
+      expect(storeListener.mock.calls.length).toBe(testData.length);
     });
 
     it('test for emitters', () => {

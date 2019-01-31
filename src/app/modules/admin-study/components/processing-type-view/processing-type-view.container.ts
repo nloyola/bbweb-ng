@@ -1,17 +1,17 @@
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AnnotationType } from '@app/domain/annotations';
-import { CollectionEventType, ProcessingType, ProcessingTypeInputEntity, Study, InputSpecimenProcessing, ProcessedSpecimenDefinitionName, CollectedSpecimenDefinitionName } from '@app/domain/studies';
+import { CollectionEventType, ProcessingType, ProcessingTypeInputEntity, Study } from '@app/domain/studies';
 import { ModalInputResult, ModalInputTextareaOptions, ModalInputTextOptions } from '@app/modules/modal-input/models';
 import { EventTypeStoreActions, EventTypeStoreSelectors, ProcessingTypeStoreActions, ProcessingTypeStoreSelectors, RootStoreState, StudyStoreSelectors } from '@app/root-store';
 import { AnnotationTypeRemoveComponent } from '@app/shared/components/annotation-type-remove/annotation-type-remove.component';
 import { AnnotationTypeViewComponent } from '@app/shared/components/annotation-type-view/annotation-type-view.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Dictionary } from '@ngrx/entity';
-import { createSelector, select, Store, Action } from '@ngrx/store';
+import { Action, createSelector, select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { ProcessingInputSpecimenModalComponent } from '../processing-input-specimen-modal/processing-input-specimen-modal.component';
 import { ProcessingOutputSpecimenModalComponent } from '../processing-output-specimen-modal/processing-output-specimen-modal.component';
 import { ProcessingTypeRemoveComponent } from '../processing-type-remove/processing-type-remove.component';
@@ -47,8 +47,6 @@ export class ProcessingTypeViewContainerComponent implements OnInit, OnDestroy {
               private toastr: ToastrService) {}
 
   ngOnInit() {
-    this.processingType = this.route.snapshot.data.processingType;
-
     const entitiesSelector = createSelector(
       StudyStoreSelectors.selectAllStudies,
       ProcessingTypeStoreSelectors.selectAllProcessingTypes,
@@ -79,44 +77,46 @@ export class ProcessingTypeViewContainerComponent implements OnInit, OnDestroy {
         const ptEntity = entities.processingTypes.find(
           pt => pt.slug === this.route.parent.snapshot.params.processingTypeSlug);
 
-        if ((entities.processingTypes.length <= 0) || (ptEntity === undefined)) {
+        if (this.processingType && ((entities.processingTypes.length <= 0) || (ptEntity === undefined))) {
           this.router.navigate([ '/admin/studies/view/bbpsp/processing' ]);
           this.toastr.success('Processing step removed', 'Removed');
+          this.processingType = undefined;
           return;
         }
 
-        this.processingType = (ptEntity instanceof ProcessingType)
-          ? ptEntity : new ProcessingType().deserialize(ptEntity);
-        if (this.updatedMessage) {
-          this.toastr.success(this.updatedMessage, 'Update Successfull');
+        if (ptEntity) {
+          this.processingType = (ptEntity instanceof ProcessingType)
+            ? ptEntity : new ProcessingType().deserialize(ptEntity);
         }
 
-        this.inputEntity =
-          (this.processingType.input.definitionType === 'collected')
-          ? entities.eventTypes[this.processingType.input.entityId]
-          : entities.processingTypes[this.processingType.input.entityId];
-
-        if (!this.inputEntity) {
-          let action: Action;
-          // then entity has not been retrieved from the server yet
-          if (this.processingType.input.definitionType === 'collected') {
-            action = new EventTypeStoreActions.GetEventTypeByIdRequest({
-              studyId: this.study.id,
-              eventTypeId: this.processingType.input.entityId
-            });
-          } else {
-            action = new ProcessingTypeStoreActions.GetProcessingTypeByIdRequest({
-              studyId: this.study.id,
-              processingTypeId: this.processingType.input.entityId
-            });
+        if (this.processingType) {
+          if (this.updatedMessage) {
+            this.toastr.success(this.updatedMessage, 'Update Successfull');
           }
-          this.store$.dispatch(action);
+
+          this.inputEntity =
+            (this.processingType.input.definitionType === 'collected')
+            ? entities.eventTypes[this.processingType.input.entityId]
+            : entities.processingTypes.find(pt => pt.id === this.processingType.input.entityId);
+
+          if (!this.inputEntity) {
+            let action: Action;
+            // then entity has not been retrieved from the server yet
+            if (this.processingType.input.definitionType === 'collected') {
+              action = new EventTypeStoreActions.GetEventTypeByIdRequest({
+                studyId: this.processingType.studyId,
+                eventTypeId: this.processingType.input.entityId
+              });
+            } else {
+              action = new ProcessingTypeStoreActions.GetProcessingTypeByIdRequest({
+                studyId: this.processingType.studyId,
+                processingTypeId: this.processingType.input.entityId
+              });
+            }
+            this.store$.dispatch(action);
+          }
         }
       });
-
-    this.route.data.subscribe(data => {
-      this.processingType = data.processingType;
-    });
   }
 
   ngOnDestroy() {
@@ -233,7 +233,7 @@ export class ProcessingTypeViewContainerComponent implements OnInit, OnDestroy {
       .catch(() => undefined);
   }
 
-  editInputSpecimen() {
+  updateInputSpecimen() {
     if (!this.allowChanges) {
       throw new Error('modifications not allowed');
     }
@@ -256,7 +256,7 @@ export class ProcessingTypeViewContainerComponent implements OnInit, OnDestroy {
       .catch(() => undefined);
   }
 
-  editOutputSpecimen() {
+  updateOutputSpecimen() {
     if (!this.allowChanges) {
       throw new Error('modifications not allowed');
     }

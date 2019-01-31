@@ -161,7 +161,9 @@ export class ProcessingTypeInputSubformComponent implements OnInit, OnChanges {
   }
 
   private getCollectedDefinitionNames() {
-    if ((this.definitionType.value !== 'collected') || (this.collectedDefinitionNames.length <= 0)) { return; }
+    if ((this.entityId.value === '') ||
+        (this.definitionType.value !== 'collected')
+        || (this.collectedDefinitionNames.length <= 0)) { return; }
 
     const eventTypeName = this.collectedDefinitionNames.find(et => et.id === this.entityId.value);
     if (eventTypeName) {

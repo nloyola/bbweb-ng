@@ -14,8 +14,8 @@ import { ActivatedRoute } from '@angular/router';
 describe('ProcessingAnnotationTypeAddContainerComponent', () => {
   let component: ProcessingAnnotationTypeAddContainerComponent;
   let fixture: ComponentFixture<ProcessingAnnotationTypeAddContainerComponent>;
-  let mockActivatedRoute = new MockActivatedRoute();
   let factory: Factory;
+  const mockActivatedRoute = new MockActivatedRoute();
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({

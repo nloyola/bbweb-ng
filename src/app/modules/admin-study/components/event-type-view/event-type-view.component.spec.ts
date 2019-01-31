@@ -59,7 +59,7 @@ describe('EventTypeViewComponent', () => {
     fixture.detectChanges();
 
     component.ngOnChanges({
-      eventType: new SimpleChange(null, undefined)
+      eventType: new SimpleChange(null, undefined, false)
     });
 
     expect(component.sortedAnnotationTypes.length).toBe(0);

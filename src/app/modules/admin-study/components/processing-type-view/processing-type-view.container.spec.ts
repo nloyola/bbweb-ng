@@ -1,0 +1,519 @@
+import { CUSTOM_ELEMENTS_SCHEMA, NgZone } from '@angular/core';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ActivatedRoute, Router } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
+import { CollectionEventType, ProcessingType, Study, StudyState } from '@app/domain/studies';
+import { EventTypeStoreActions, EventTypeStoreReducer, ProcessingTypeStoreActions, ProcessingTypeStoreReducer, StudyStoreActions, StudyStoreReducer } from '@app/root-store';
+import { YesNoPipe } from '@app/shared/pipes/yes-no-pipe';
+import { Factory } from '@app/test/factory';
+import { MockActivatedRoute } from '@app/test/mocks';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Store, StoreModule } from '@ngrx/store';
+import * as faker from 'faker';
+import { ToastrModule, ToastrService } from 'ngx-toastr';
+import { ProcessingTypeViewContainerComponent } from './processing-type-view.container';
+import { ProcessingTypeFixture, ProcessingTypeFixtureEntities } from '@app/test/fixtures';
+
+fdescribe('ProcessingTypeViewContainerComponent', () => {
+  let component: ProcessingTypeViewContainerComponent;
+  let fixture: ComponentFixture<ProcessingTypeViewContainerComponent>;
+  const mockActivatedRoute = new MockActivatedRoute();
+  const factory = new Factory();
+  const entityFixture = new ProcessingTypeFixture(factory);
+  let store: Store<ProcessingTypeStoreReducer.State>;
+  let router: Router;
+
+  beforeEach(async(() => {
+    TestBed.configureTestingModule({
+      imports: [
+        BrowserAnimationsModule,
+        RouterTestingModule,
+        StoreModule.forRoot({
+          'study': StudyStoreReducer.reducer,
+          'processing-type': ProcessingTypeStoreReducer.reducer,
+          'event-type': EventTypeStoreReducer.reducer
+        }),
+        ToastrModule.forRoot()
+      ],
+      providers: [
+        {
+          provide: ActivatedRoute,
+          useValue: mockActivatedRoute
+        }
+      ],
+      declarations: [
+        ProcessingTypeViewContainerComponent,
+        YesNoPipe
+      ],
+      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
+    })
+    .compileComponents();
+  }));
+
+  beforeEach(() => {
+    store = TestBed.get(Store);
+    router = TestBed.get(Router);
+    fixture = TestBed.createComponent(ProcessingTypeViewContainerComponent);
+    component = fixture.componentInstance;
+  });
+
+  it('should create', () => {
+    createEntities();
+    fixture.detectChanges();
+    expect(component).toBeTruthy();
+  });
+
+  it('study is retrieved from store', () => {
+    const { study, processingType } = entityFixture.createEntities();
+    createMockActivatedRouteSpies(study, processingType);
+    store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
+    fixture.detectChanges();
+    expect(component.study).toBe(study);
+  });
+
+  it('processing type is retrieved from store', () => {
+    const { study, processingType } = entityFixture.createEntities();
+    createMockActivatedRouteSpies(study, processingType);
+    store.dispatch(new ProcessingTypeStoreActions.GetProcessingTypeSuccess({ processingType }));
+
+    fixture.detectChanges();
+    expect(component.processingType).toBe(processingType);
+  });
+
+  describe('for input entity', () => {
+
+    describe('when already in the store', () => {
+
+      it('when input is from collected, event type is retrieved from store', () => {
+        const { eventType, processingType } = entityFixture.createProcessingTypeFromCollected();
+        const study = new Study().deserialize(factory.defaultStudy());
+        createMockActivatedRouteSpies(study, processingType);
+        store.dispatch(new ProcessingTypeStoreActions.GetProcessingTypeSuccess({ processingType }));
+        store.dispatch(new EventTypeStoreActions.GetEventTypeSuccess({ eventType }));
+
+        fixture.detectChanges();
+        expect(component.inputEntity).toBe(eventType);
+      });
+
+      it('when input is from processed, processing type is retrieved from store', () => {
+        const { input, processingType } = entityFixture.createProcessingTypeFromProcessed();
+        const study = new Study().deserialize(factory.defaultStudy());
+
+        createMockActivatedRouteSpies(study, processingType);
+        store.dispatch(new ProcessingTypeStoreActions.GetProcessingTypeSuccess({
+          processingType: input
+        }));
+        store.dispatch(new ProcessingTypeStoreActions.GetProcessingTypeSuccess({ processingType }));
+
+        fixture.detectChanges();
+        expect(component.inputEntity).toBe(input);
+      });
+
+    });
+
+    describe('when not in the store', () => {
+
+      it('when input is from collected, event type is retrieved from store', () => {
+        const { study, processingType } = entityFixture.createEntities();
+        createMockActivatedRouteSpies(study, processingType);
+        store.dispatch(new ProcessingTypeStoreActions.GetProcessingTypeSuccess({ processingType }));
+        const storeListener = jest.spyOn(store, 'dispatch');
+
+        fixture.detectChanges();
+        expect(storeListener.mock.calls.length).toBe(1);
+        expect(storeListener.mock.calls[0][0]).toEqual(
+          new EventTypeStoreActions.GetEventTypeByIdRequest({
+            studyId: processingType.studyId,
+            eventTypeId: processingType.input.entityId
+          }));
+      });
+
+      it('when input is from processed, processing type is retrieved from store', () => {
+        const { input, processingType } = entityFixture.createProcessingTypeFromProcessed();
+        const study = new Study().deserialize(factory.defaultStudy());
+
+        createMockActivatedRouteSpies(study, processingType);
+        store.dispatch(new ProcessingTypeStoreActions.GetProcessingTypeSuccess({ processingType }));
+
+        const storeListener = jest.spyOn(store, 'dispatch');
+        fixture.detectChanges();
+        expect(storeListener.mock.calls.length).toBe(1);
+        expect(storeListener.mock.calls[0][0]).toEqual(
+          new ProcessingTypeStoreActions.GetProcessingTypeByIdRequest({
+            studyId: processingType.studyId,
+            processingTypeId: processingType.input.entityId
+          }));
+      });
+
+    });
+
+  });
+
+  it('allow changes is updated', () => {
+    const stateValues = [
+      { state: StudyState.Enabled, expectedAllowChanges: false },
+      { state: StudyState.Disabled, expectedAllowChanges: true },
+    ];
+
+    const entities = createEntities();
+    fixture.detectChanges();
+
+    stateValues.forEach(stateValue => {
+      const updatedStudy = new Study().deserialize({
+        ...entities.study,
+        state: stateValue.state
+      });
+      store.dispatch(new StudyStoreActions.UpdateStudySuccess({ study: updatedStudy }));
+
+      fixture.detectChanges();
+      expect(component.allowChanges).toBe(stateValue.expectedAllowChanges);
+    });
+  });
+
+  describe('common behaviour', () => {
+
+    const componentUpdateFuncs = [
+      (component, processingType) => component.updateName(),
+      (component, processingType) => component.updateDescription(),
+      (component, processingType) => component.updateEnabled(),
+      (component, processingType) => component.removeAnnotationType(processingType.annotationTypes[0]),
+      (component, processingType) => component.updateInputSpecimen(),
+      (component, processingType) => component.updateOutputSpecimen(),
+      (component, processingType) => component.removeProcessingType()
+    ];
+
+    it('functions should open a modal', () => {
+      const entities = createEntities();
+      const annotationType = entities.processingType.annotationTypes[0];
+      fixture.detectChanges();
+
+      const modalService = TestBed.get(NgbModal);
+      spyOn(modalService, 'open').and.returnValue({
+        componentInstance: {},
+        result: Promise.resolve('OK')
+      });
+
+      const componentModalFuncs = componentUpdateFuncs.concat([
+        (component, processingType) => component.viewAnnotationType(annotationType)
+      ]);
+
+      componentModalFuncs.forEach(modalFunc => modalFunc(component, entities.processingType));
+      expect(modalService.open.calls.count()).toBe(componentModalFuncs.length);
+    });
+
+    it('functions should throw an error when study is not disabled', () => {
+      const entities = createEntities();
+      const annotationType = entities.processingType.annotationTypes[0];
+      const updatedStudy = new Study().deserialize({
+        ...entities.study,
+        state: StudyState.Enabled
+      });
+      store.dispatch(new StudyStoreActions.UpdateStudySuccess({ study: updatedStudy }));
+      fixture.detectChanges();
+
+      const throwErrFuncs = componentUpdateFuncs.concat([
+        (component, processingType) => component.addAnnotationType(annotationType),
+        (component, processingType) => component.editAnnotationType(annotationType),
+        (component, processingType) => component.addProcessingTypeSelected()
+      ]);
+
+      throwErrFuncs.forEach(modalFunc => {
+        expect(() => modalFunc(component, entities.processingType)).toThrowError('modifications not allowed');
+      });
+    });
+
+    it('functions that should notify the user', async(() => {
+      const toastr = TestBed.get(ToastrService);
+      const modalService = TestBed.get(NgbModal);
+      const modalSpy = spyOn(modalService, 'open');
+      spyOn(toastr, 'success').and.returnValue(null);
+
+      const entities = createEntities();
+      fixture.detectChanges();
+
+      componentUpdateFuncs.forEach(updateFunc => {
+        modalSpy.and.returnValue({
+          componentInstance: {},
+          result: Promise.resolve({ confirmed: true, value: 'test' })
+        });
+
+        updateFunc(component, entities.processingType);
+        fixture.whenStable().then(() => {
+          store.dispatch(new ProcessingTypeStoreActions.UpdateProcessingTypeSuccess({
+            processingType: entities.processingType
+          }));
+        });
+      });
+
+      fixture.whenStable().then(() => {
+        expect(toastr.success.calls.count()).toBe(componentUpdateFuncs.length);
+      });
+    }));
+
+  });
+
+  describe('when updating name, description, enabled, input and output', () => {
+
+    it('dispatches an action to update the processing type', async(() => {
+      const modalService = TestBed.get(NgbModal);
+      const modalSpy = spyOn(modalService, 'open');
+      spyOn(store, 'dispatch').and.callThrough();
+
+      const entities = createEntities();
+      const testData = [
+        {
+          updateFunc: () => component.updateName(),
+          attribute: 'name',
+          newValue: factory.stringNext(),
+          withConfirm: true
+        },
+        {
+          updateFunc: () => component.updateDescription(),
+          attribute: 'description',
+          newValue: faker.lorem.paragraph(),
+          withConfirm: true
+        },
+        {
+          updateFunc: () => component.updateEnabled(),
+          attribute: 'enabled',
+          newValue: !entities.processingType.enabled,
+          withConfirm: true
+        },
+        {
+          updateFunc: () => component.updateInputSpecimen(),
+          attribute: 'inputSpecimenProcessing',
+          newValue: entities.processingType.input
+        },
+        {
+          updateFunc: () => component.updateOutputSpecimen(),
+          attribute: 'outputSpecimenProcessing',
+          newValue: entities.processingType.output
+        }
+      ];
+
+      fixture.detectChanges();
+
+      testData.forEach(testInfo => {
+        const modalResult = testInfo.withConfirm
+          ? Promise.resolve({ confirmed: true, value: testInfo.newValue })
+          : Promise.resolve(testInfo.newValue)
+        modalSpy.and.returnValue({
+          componentInstance: {},
+          result: Promise.resolve(modalResult)
+        });
+
+        testInfo.updateFunc();
+        fixture.whenStable().then(() => {
+          const action = new ProcessingTypeStoreActions.UpdateProcessingTypeRequest({
+            processingType: entities.processingType,
+            attributeName: testInfo.attribute,
+            value: testInfo.newValue
+          });
+
+          expect(store.dispatch).toHaveBeenCalledWith(action);
+        });
+      });
+    }));
+
+  });
+
+  describe('for annotation types', () => {
+
+    it('changes state when adding an annotation type', () => {
+      const ngZone = TestBed.get(NgZone);
+      const router = TestBed.get(Router);
+      ngZone.run(() => router.initialNavigation());
+
+      spyOn(router, 'navigate').and.callThrough();
+
+      createEntities();
+      fixture.detectChanges();
+
+      ngZone.run(() => component.addAnnotationType());
+      expect(router.navigate).toHaveBeenCalled();
+      expect((router.navigate as any).calls.mostRecent().args[0]).toEqual([ 'annotationAdd' ]);
+    });
+
+    it('when an annotation type is edited, a state change is made', () => {
+      const ngZone = TestBed.get(NgZone);
+      const router = TestBed.get(Router);
+      ngZone.run(() => router.initialNavigation());
+
+      spyOn(router, 'navigate').and.callThrough();
+
+      const entities = createEntities();
+      const annotationType = entities.processingType.annotationTypes[0];
+      fixture.detectChanges();
+
+      ngZone.run(() => component.editAnnotationType(annotationType));
+      expect(router.navigate).toHaveBeenCalled();
+      expect((router.navigate as any).calls.mostRecent().args[0])
+        .toEqual([ 'annotation', annotationType.id ]);
+    });
+
+    describe('when removing an annotation type', () => {
+
+      it('dispatches an event to update the event type', async(() => {
+        const modalService = TestBed.get(NgbModal);
+
+        spyOn(modalService, 'open').and.returnValue({
+          componentInstance: {},
+          result: Promise.resolve(true)
+        });
+        spyOn(store, 'dispatch').and.callThrough();
+
+        const entities = createEntities();
+        const annotationType = entities.processingType.annotationTypes[0];
+        fixture.detectChanges();
+
+        component.removeAnnotationType(annotationType);
+        fixture.whenStable().then(() => {
+          const action = new ProcessingTypeStoreActions.UpdateProcessingTypeRemoveAnnotationTypeRequest({
+            processingType: entities.processingType,
+            annotationTypeId: annotationType.id
+          });
+
+          expect(store.dispatch).toHaveBeenCalledWith(action);
+        });
+      }));
+
+    });
+
+  });
+
+  describe('when removing an processing type', () => {
+
+    it('dispatches an event to update the processing type', async(() => {
+      const entities = createEntities();
+      const modalService = TestBed.get(NgbModal);
+
+      spyOn(modalService, 'open').and.returnValue({
+        componentInstance: {},
+        result: Promise.resolve('OK')
+      });
+      spyOn(store, 'dispatch').and.callThrough();
+
+      fixture.detectChanges();
+
+      component.removeProcessingType();
+      fixture.whenStable().then(() => {
+        const action = new ProcessingTypeStoreActions.RemoveProcessingTypeRequest({
+          processingType: entities.processingType
+        });
+
+        expect(store.dispatch).toHaveBeenCalledWith(action);
+      });
+    }));
+
+    it('event type becomes undefined when removed', () => {
+      const entities = createEntities();
+      const spy = jest.spyOn(router, 'navigate').mockReturnValue(true);
+      fixture.detectChanges();
+
+      const action = new ProcessingTypeStoreActions.RemoveProcessingTypeSuccess({
+        processingTypeId: entities.processingType.id
+      });
+      store.dispatch(action);
+      fixture.detectChanges();
+
+      expect(component.processingType).toBeUndefined();
+      expect(spy).toHaveBeenCalled();
+      expect(spy.mock.calls[0][0]).toEqual([ '/admin/studies/view/bbpsp/processing' ]);
+    });
+
+    it('opens a modal if the processing type is in use', () => {
+      const entities = createEntities();
+      const inUseProcessingType = new ProcessingType().deserialize({
+        ...entities.processingType,
+        inUse: true
+      });
+      store.dispatch(new ProcessingTypeStoreActions.UpdateProcessingTypeSuccess({
+        processingType: inUseProcessingType
+      }));
+      fixture.detectChanges();
+
+      const modalService = TestBed.get(NgbModal);
+      const modalListener = spyOn(modalService, 'open').and.returnValue({
+        componentInstance: {},
+        result: Promise.resolve('OK')
+      });
+
+      component.removeProcessingType();
+      fixture.detectChanges();
+
+      expect(modalListener).toHaveBeenCalled();
+      expect(component.processingType).not.toBeUndefined();
+    });
+  });
+
+  describe('when user wants to add a processing type', () => {
+
+    it('changes state if study is disabled', async(() => {
+      const ngZone = TestBed.get(NgZone);
+      const routerListener = jest.spyOn(router, 'navigate').mockReturnValue(true);
+      createEntities();
+      fixture.detectChanges();
+
+      fixture.whenStable().then(() => {
+        ngZone.run(() => component.addProcessingTypeSelected());
+        expect(routerListener.mock.calls.length).toBe(1);
+        expect(routerListener.mock.calls[0][0]).toEqual([ '/admin/studies/view/bbpsp/processing/add' ]);
+      });
+    }));
+
+  });
+
+  it('changes state when user selects a processing type', async(() => {
+    const ngZone = TestBed.get(NgZone);
+    const routerListener = jest.spyOn(router, 'navigate').mockReturnValue(true);
+
+    const entities = createEntities();
+    fixture.detectChanges();
+
+    fixture.whenStable().then(() => {
+      ngZone.run(() => component.processingTypeSelected(entities.processingType));
+      expect(routerListener.mock.calls.length).toBe(1);
+      expect(routerListener.mock.calls[0][0])
+        .toEqual([ `/admin/studies/view/bbpsp/processing/${entities.processingType.slug}` ]);
+    });
+  }));
+
+  function createEntities(): ProcessingTypeFixtureEntities {
+    const { study, processingType } = entityFixture.createEntities();
+
+    createMockActivatedRouteSpies(study, processingType);
+    store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
+    store.dispatch(new ProcessingTypeStoreActions.GetProcessingTypeSuccess({ processingType }));
+
+    return {
+      study,
+      processingType
+    };
+  }
+
+  function createMockActivatedRouteSpies(study: Study, processingType: ProcessingType): void {
+    mockActivatedRoute.spyOnParent(() => ({
+      parent: {
+        parent: {
+          parent: {
+            snapshot: {
+              params: {
+                slug: study.slug
+              }
+            }
+          }
+        }
+      },
+      snapshot: {
+        params: {
+          processingTypeSlug: processingType.slug
+        }
+      }
+    }));
+
+    mockActivatedRoute.spyOnSnapshot(() => ({
+      params: {}
+    }));
+  }
+});

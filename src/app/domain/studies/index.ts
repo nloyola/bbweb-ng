@@ -1,4 +1,4 @@
-export * from './collected-specimen-definition-names.model';
+export * from './collected-specimen-definition-name.model';
 export * from './collected-specimen-definition.model';
 export * from './collection-event-type.model';
 export * from './event-type-search-reply.model';

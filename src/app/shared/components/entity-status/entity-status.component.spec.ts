@@ -74,7 +74,7 @@ describe('EntityStatusComponent', () => {
       });
 
       it('if timeAdded is greater or equal than year 1900, it is not reassigned', () => {
-        const date = new Date('01 Jan 1900')
+        const date = new Date('01 Jan 1900');
         component.timeAdded = date;
         fixture.detectChanges();
         expect(component.timeAdded).toBe(date);

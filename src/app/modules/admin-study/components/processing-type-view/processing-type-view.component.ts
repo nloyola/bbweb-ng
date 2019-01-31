@@ -1,7 +1,6 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { AnnotationType } from '@app/domain/annotations';
-import { ProcessingType, SpecimenDefinition, ProcessingTypeInputEntity } from '@app/domain/studies';
-import { CollectedSpecimenDefinition } from '@app/domain/studies/collected-specimen-definition.model';
+import { ProcessingType, ProcessingTypeInputEntity, SpecimenDefinition } from '@app/domain/studies';
 
 @Component({
   selector: 'app-processing-type-view-ui',
@@ -21,12 +20,8 @@ export class ProcessingTypeViewComponent implements OnInit, OnChanges {
   @Output() viewAnnotationTypeSelected       = new EventEmitter<AnnotationType>();
   @Output() editAnnotationTypeSelected       = new EventEmitter<AnnotationType>();
   @Output() removeAnnotationTypeSelected     = new EventEmitter<AnnotationType>();
-  @Output() addSpecimenDefinitionSelected    = new EventEmitter<CollectedSpecimenDefinition>();
-  @Output() viewSpecimenDefinitionSelected   = new EventEmitter<CollectedSpecimenDefinition>();
-  @Output() editSpecimenDefinitionSelected   = new EventEmitter<CollectedSpecimenDefinition>();
-  @Output() removeSpecimenDefinitionSelected = new EventEmitter<any>();
-  @Output() editInputSpecimenSelected        = new EventEmitter<any>();
-  @Output() editOutputSpecimenSelected       = new EventEmitter<any>();
+  @Output() updateInputSpecimenSelected      = new EventEmitter<any>();
+  @Output() updateOutputSpecimenSelected     = new EventEmitter<any>();
   @Output() removeProcessingTypeSelected     = new EventEmitter<any>();
 
   isPanelCollapsed = false;
@@ -73,16 +68,16 @@ export class ProcessingTypeViewComponent implements OnInit, OnChanges {
     this.removeAnnotationTypeSelected.emit(annotationType);
   }
 
+  updateInputSpecimen() {
+    this.updateInputSpecimenSelected.emit(null);
+  }
+
+  updateOutputSpecimen() {
+    this.updateOutputSpecimenSelected.emit(null);
+  }
+
   removeProcessingType() {
     this.removeProcessingTypeSelected.emit(null);
-  }
-
-  inputSpecimenUpdate() {
-    this.editInputSpecimenSelected.emit(null);
-  }
-
-  outputSpecimenUpdate() {
-    this.editOutputSpecimenSelected.emit(null);
   }
 
   private setProcessingType(processingType: ProcessingType): void {

@@ -41,9 +41,10 @@
             <ng-template matStepLabel>Input specimen</ng-template>
             <form [formGroup]="inputSubForm">
 
-              <app-processing-type-input-subform [processingType]="processingType"
-                                                 [processedDefinitionNames]="processedDefinitionNames"
-                                                 [collectedDefinitionNames]="collectedDefinitionNames"
+              <app-processing-type-input-subform *ngIf="entityNames$ | async as entityNames"
+                                                 [processingType]="processingType"
+                                                 [processedDefinitionNames]="entityNames.processed"
+                                                 [collectedDefinitionNames]="entityNames.collected"
                                                  [subform]="inputSubForm">
               </app-processing-type-input-subform>
 

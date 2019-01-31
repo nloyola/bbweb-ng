@@ -20,7 +20,7 @@ describe('CollectedSpecimenDefinitionAddContainer', () => {
   let fixture: ComponentFixture<CollectedSpecimenDefinitionAddContainerComponent>;
   let ngZone: NgZone;
   let router: Router;
-  let mockActivatedRoute = new MockActivatedRoute();
+  const mockActivatedRoute = new MockActivatedRoute();
   let store: Store<StudyStoreReducer.State>;
   let factory: Factory;
   let study: Study;
@@ -90,10 +90,10 @@ describe('CollectedSpecimenDefinitionAddContainer', () => {
   it('dispatches the action to retrive the event type', () => {
     const eventType = createEventType();
     mockActivatedRouteSnapshot('spcDefAdd', eventType);
-    jest.spyOn(store, 'dispatch');
+    const storeListener = jest.spyOn(store, 'dispatch');
     fixture.detectChanges();
-    expect(store.dispatch.mock.calls.length).toBe(1);
-    expect(store.dispatch.mock.calls[0][0]).toEqual(
+    expect(storeListener.mock.calls.length).toBe(1);
+    expect(storeListener.mock.calls[0][0]).toEqual(
       new EventTypeStoreActions.GetEventTypeRequest({
       studySlug: study.slug,
       eventTypeSlug: eventType.slug

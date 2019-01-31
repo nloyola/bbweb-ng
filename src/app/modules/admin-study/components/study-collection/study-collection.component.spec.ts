@@ -24,8 +24,9 @@ describe('StudyCollectionComponent', () => {
   let ngZone: NgZone;
   let router: Router;
   let store: Store<StudyStoreReducer.State>;
-  let mockActivatedRoute = new MockActivatedRoute();
+  const mockActivatedRoute = new MockActivatedRoute();
   let factory: Factory;
+  let routerListener;
 
   beforeEach(async(() => {
     factory = new Factory();
@@ -66,7 +67,7 @@ describe('StudyCollectionComponent', () => {
     router = TestBed.get(Router);
     store = TestBed.get(Store);
 
-    jest.spyOn(router, 'navigate');
+    routerListener = jest.spyOn(router, 'navigate');
 
     fixture = TestBed.createComponent(StudyCollectionComponent);
     component = fixture.componentInstance;
@@ -93,12 +94,12 @@ describe('StudyCollectionComponent', () => {
 
       fixture.whenStable().then(() => {
         ngZone.run(() => component.addEventTypeSelected());
-        expect(router.navigate.mock.calls.length).toBe(1);
-        expect(router.navigate.mock.calls[0][0]).toEqual([ '../add' ]);
+        expect(routerListener.mock.calls.length).toBe(1);
+        expect(routerListener.mock.calls[0][0]).toEqual([ '../add' ]);
       });
     }));
 
-    it('throws an error if user  ', () => {
+    it('throws an error if is study is not disabled', () => {
       [ StudyState.Enabled, StudyState.Retired ].forEach(state => {
         const studyWrongState = new Study().deserialize({
           ...factory.study(),
