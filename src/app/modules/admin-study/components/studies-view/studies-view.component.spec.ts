@@ -181,7 +181,7 @@ describe('StudiesViewComponent', () => {
     const study = new Study().deserialize(factory.study());
     const action = new StudyStoreActions.SearchStudiesSuccess({
       pagedReply: factory.pagedReply([ study ])
-    })
+    });
     store.dispatch(action);
     fixture.detectChanges();
 

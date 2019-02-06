@@ -58,7 +58,7 @@ describe('AuthGuard', () => {
     fakeLogin();
 
     ngZone.run(() => router.navigate(['/admin'])
-               .then(value => {
+               .then(() => {
                  expect(location.path()).toBe('/admin');
                })
                .catch(() => {
@@ -72,7 +72,7 @@ describe('AuthGuard', () => {
                .then(() => {
                  expect(location.path()).toContain('returnUrl');
                })
-               .catch(err => {
+               .catch(() => {
                  fail('should not be invoked');
                }));
   });

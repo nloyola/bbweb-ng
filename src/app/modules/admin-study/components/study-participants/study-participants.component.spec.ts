@@ -35,7 +35,7 @@ describe('StudyParticipantsComponent', () => {
 
     TestBed.configureTestingModule({
       imports: [
-        NgbModule.forRoot(),
+        NgbModule,
         RouterTestingModule,
         StoreModule.forRoot({
           'spinner': SpinnerStoreReducer.reducer,
@@ -108,6 +108,8 @@ describe('StudyParticipantsComponent', () => {
   it('should change state', () => {
     const spy = jest.spyOn(router, 'navigate');
     const annotationType = study.annotationTypes[0];
+
+    /* tslint:disable:no-shadowed-variable */
     const testData = [
       {
         componentFunc: (component) => component.add(),
@@ -118,6 +120,7 @@ describe('StudyParticipantsComponent', () => {
         relativePath: `../${annotationType.id}`
       }
     ];
+    /* tslint:enable:no-shadowed-variable */
 
     store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
     fixture.detectChanges();
@@ -132,6 +135,8 @@ describe('StudyParticipantsComponent', () => {
   it('should open a modal', () => {
     const spy = jest.spyOn(modalService, 'open');
     const annotationType = study.annotationTypes[0];
+
+    /* tslint:disable:no-shadowed-variable */
     const testData = [
       {
         componentFunc: (component) => component.view(annotationType),
@@ -140,6 +145,7 @@ describe('StudyParticipantsComponent', () => {
         componentFunc: (component) => component.remove(annotationType),
       }
     ];
+    /* tslint:enable:no-shadowed-variable */
 
     store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
     fixture.detectChanges();
@@ -159,11 +165,14 @@ describe('StudyParticipantsComponent', () => {
     });
     jest.spyOn(modalService, 'open');
     const annotationType = study.annotationTypes[0];
+
+    /* tslint:disable:no-shadowed-variable */
     const testData = [
       { componentFunc: (component) => component.add(annotationType) },
       { componentFunc: (component) => component.edit(annotationType) },
       { componentFunc: (component) => component.remove(annotationType) }
     ];
+    /* tslint:enable:no-shadowed-variable */
 
     fixture.detectChanges();
     store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
@@ -183,9 +192,9 @@ describe('StudyParticipantsComponent', () => {
       });
       const annotationType = study.annotationTypes[0];
 
-      jest.spyOn(store, 'dispatch');
-      jest.spyOn(toastr, 'success').mockReturnValue(null);
-      jest.spyOn(modalService, 'open').mockReturnValue({
+      const storeListner = jest.spyOn(store, 'dispatch');
+      const toastrListner = jest.spyOn(toastr, 'success').mockReturnValue(null);
+      const modalListner = jest.spyOn(modalService, 'open').mockReturnValue({
         componentInstance: {},
         result: Promise.resolve('OK')
       });
@@ -199,8 +208,8 @@ describe('StudyParticipantsComponent', () => {
         study,
         annotationTypeId: annotationType.id
       });
-      expect(store.dispatch.mock.calls.length).toBe(2);
-      expect(store.dispatch.mock.calls[1][0]).toEqual(expectedAction);
+      expect(storeListner.mock.calls.length).toBe(2);
+      expect(storeListner.mock.calls[1][0]).toEqual(expectedAction);
       store.dispatch(new StudyStoreActions.UpdateStudySuccess({ study: studyNoAnnotations }));
 
       tick(1000);

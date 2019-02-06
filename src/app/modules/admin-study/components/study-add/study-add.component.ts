@@ -16,7 +16,7 @@ import { filter, takeUntil } from 'rxjs/operators';
 })
 export class StudyAddComponent implements OnInit, OnDestroy {
 
-  @ViewChild("nameInput") nameInput: ElementRef;
+  @ViewChild('nameInput') nameInput: ElementRef;
 
   form: FormGroup;
   isSaving$: Observable<boolean>;

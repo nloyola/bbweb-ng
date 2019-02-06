@@ -1,15 +1,15 @@
-import { HttpClientTestingModule } from "@angular/common/http/testing";
-import { NgZone } from "@angular/core";
-import { TestBed } from "@angular/core/testing";
-import { ActivatedRouteSnapshot } from "@angular/router";
-import { RouterTestingModule } from "@angular/router/testing";
-import { Study } from "@app/domain/studies";
-import { StudyStoreActions, StudyStoreReducer } from "@app/root-store";
-import { Factory } from "@app/test/factory";
-import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
-import { Store, StoreModule } from "@ngrx/store";
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { NgZone } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
+import { ActivatedRouteSnapshot } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
+import { Study } from '@app/domain/studies';
+import { StudyStoreActions, StudyStoreReducer } from '@app/root-store';
+import { Factory } from '@app/test/factory';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { Store, StoreModule } from '@ngrx/store';
 import { cold } from 'jasmine-marbles';
-import { StudyResolver } from "./study-resolver.service";
+import { StudyResolver } from './study-resolver.service';
 
 describe('StudyResolver', () => {
 
@@ -22,7 +22,7 @@ describe('StudyResolver', () => {
     TestBed.configureTestingModule({
       imports: [
         HttpClientTestingModule,
-        NgbModule.forRoot(),
+        NgbModule,
         RouterTestingModule,
         StoreModule.forRoot({
           'study': StudyStoreReducer.reducer

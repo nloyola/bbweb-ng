@@ -83,7 +83,7 @@ describe('EntityStatusComponent', () => {
       it('displayed content', () => {
         [ new Date('31 Dec 1899'), new Date('01 Jan 1900') ].forEach(date => {
           [ true, false ].forEach(useBadges => {
-            let testElement;
+            let testElement: any;
 
             component.state = undefined;
             component.timeAdded = date;
@@ -121,7 +121,7 @@ describe('EntityStatusComponent', () => {
           component.ngOnInit();
           fixture.detectChanges();
 
-          let testElement;
+          let testElement: any;
 
           if (useBadges) {
             testElement = fixture.debugElement.nativeElement.querySelectorAll('span.badge');

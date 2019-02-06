@@ -48,7 +48,6 @@ describe('BreadcrumbService', () => {
   ];
 
   let ngZone: NgZone;
-  let location: Location;
   let router: Router;
   let service: BreadcrumbService;
 
@@ -62,7 +61,6 @@ describe('BreadcrumbService', () => {
     });
 
     ngZone = TestBed.get(NgZone);
-    location = TestBed.get(Location);
     router = TestBed.get(Router);
     service = TestBed.get(BreadcrumbService);
 

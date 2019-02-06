@@ -1,5 +1,3 @@
-import { DomainEntity } from '..';
-
 export class SpecimenProcessing {
 
   /**

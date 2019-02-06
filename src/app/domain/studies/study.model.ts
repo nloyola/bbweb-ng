@@ -39,7 +39,7 @@ export class Study extends ConcurrencySafeEntity implements HasSlug, HasName, Ha
 
     if (input.annotationTypes) {
       this.annotationTypes = input.annotationTypes
-        .map(at => new AnnotationType().deserialize(at));
+        .map((at: any) => new AnnotationType().deserialize(at));
     }
     return this;
   }

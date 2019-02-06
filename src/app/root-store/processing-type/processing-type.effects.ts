@@ -3,7 +3,7 @@ import { ProcessingTypeService } from '@app/core/services';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
 import { Observable, of as observableOf } from 'rxjs';
-import { catchError, delay, map, switchMap } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import * as PtStoreActions from './processing-type.actions';
 
 @Injectable()
@@ -41,7 +41,8 @@ export class ProcessingTypeStoreEffects {
 
   @Effect()
   getByIdRequest$: Observable<Action> = this.actions$.pipe(
-    ofType<PtStoreActions.GetProcessingTypeByIdRequest>(PtStoreActions.ActionTypes.GetProcessingTypeByIdRequest),
+    ofType<PtStoreActions.GetProcessingTypeByIdRequest>(
+      PtStoreActions.ActionTypes.GetProcessingTypeByIdRequest),
     map(action => action.payload),
     switchMap(
       payload =>
@@ -67,7 +68,8 @@ export class ProcessingTypeStoreEffects {
 
   @Effect()
   updateRequest$: Observable<Action> = this.actions$.pipe(
-    ofType<PtStoreActions.UpdateProcessingTypeRequest>(PtStoreActions.ActionTypes.UpdateProcessingTypeRequest),
+    ofType<PtStoreActions.UpdateProcessingTypeRequest>(
+      PtStoreActions.ActionTypes.UpdateProcessingTypeRequest),
     map(action => action.payload),
     switchMap(
       payload =>

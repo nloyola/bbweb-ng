@@ -40,7 +40,7 @@ describe('TruncateToggleComponent', () => {
     expect(component.displayText).toBe(testText);
 
     component.ngOnChanges({
-      text: new SimpleChange(null, updatedText)
+      text: new SimpleChange(null, updatedText, false)
     });
     fixture.detectChanges();
     expect(component.displayText).toBe(updatedText);

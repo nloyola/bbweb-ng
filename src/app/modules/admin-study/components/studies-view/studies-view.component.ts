@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EntityStateInfo, LabelledId, SearchFilterValues, SearchParams } from '@app/domain';
 import { NameFilter, SearchFilter, StateFilter } from '@app/domain/search-filters';
@@ -22,7 +22,7 @@ interface StudyPageInfo {
   templateUrl: './studies-view.component.html',
   styleUrls: ['./studies-view.component.scss']
 })
-export class StudiesViewComponent implements OnInit {
+export class StudiesViewComponent implements OnInit, OnDestroy {
 
   isCountsLoading$: Observable<boolean>;
   isLoading$: Observable<boolean>;
@@ -100,14 +100,14 @@ export class StudiesViewComponent implements OnInit {
     this.applySearchParams();
   }
 
-  public sortFieldSelected(sortChoice) {
+  public sortFieldSelected(sortChoice: string) {
     this.currentPage = 1;
     this.sortField = sortChoice;
     this.applySearchParams();
   }
 
-  public paginationPageChanged($event) {
-    if (isNaN($event)) { return; }
+  public paginationPageChanged(page: number) {
+    if (isNaN(page)) { return; }
     this.applySearchParams();
   }
 

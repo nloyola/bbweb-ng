@@ -18,4 +18,4 @@ export enum AnatomicalSource {
   TOE_NAILS = 'Toe Nails',
   TRANSVERSE_COLON = 'Transverse Colon',
   URINE = 'Urine'
-};
+}

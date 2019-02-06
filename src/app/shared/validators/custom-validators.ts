@@ -1,4 +1,4 @@
-import { FormControl, Validators, ValidatorFn, AbstractControl } from '@angular/forms';
+import { AbstractControl, ValidatorFn, Validators } from '@angular/forms';
 
 export interface NumberValidatorOptions {
   greaterThan?: number;

@@ -3,7 +3,7 @@ import { EventTypeService } from '@app/core/services';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
 import { Observable, of as observableOf } from 'rxjs';
-import { catchError, delay, map, switchMap } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import * as EventTypeStoreActions from './event-type.actions';
 
 @Injectable()
@@ -16,7 +16,7 @@ export class EventTypeStoreEffects {
     ofType<EventTypeStoreActions.SearchEventTypesRequest>(
       EventTypeStoreActions.ActionTypes.SearchEventTypesRequest),
     map(action => action.payload),
-    //delay(2000),
+    // delay(2000),
     switchMap(
       payload =>
         this.eventTypeService.search(payload.studySlug, payload.searchParams)
@@ -41,7 +41,8 @@ export class EventTypeStoreEffects {
 
   @Effect()
   getByIdRequest$: Observable<Action> = this.actions$.pipe(
-    ofType<EventTypeStoreActions.GetEventTypeByIdRequest>(EventTypeStoreActions.ActionTypes.GetEventTypeByIdRequest),
+    ofType<EventTypeStoreActions.GetEventTypeByIdRequest>(
+      EventTypeStoreActions.ActionTypes.GetEventTypeByIdRequest),
     map(action => action.payload),
     switchMap(
       payload =>
@@ -67,7 +68,8 @@ export class EventTypeStoreEffects {
 
   @Effect()
   updateRequest$: Observable<Action> = this.actions$.pipe(
-    ofType<EventTypeStoreActions.UpdateEventTypeRequest>(EventTypeStoreActions.ActionTypes.UpdateEventTypeRequest),
+    ofType<EventTypeStoreActions.UpdateEventTypeRequest>(
+      EventTypeStoreActions.ActionTypes.UpdateEventTypeRequest),
     map(action => action.payload),
     switchMap(
       payload =>
@@ -170,7 +172,8 @@ export class EventTypeStoreEffects {
           map(reply => new EventTypeStoreActions.GetSpecimenDefinitionNamesSuccess({
             specimenDefinitionNames: reply
           })),
-          catchError(error => observableOf(new EventTypeStoreActions.GetSpecimenDefinitionNamesFailure({ error }))))
+          catchError(error => observableOf(
+            new EventTypeStoreActions.GetSpecimenDefinitionNamesFailure({ error }))))
     )
   );
 

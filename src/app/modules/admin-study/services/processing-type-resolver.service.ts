@@ -14,13 +14,14 @@ export class ProcessingTypeResolver implements Resolve<ProcessingType> {
   constructor(private store$: Store<RootStoreState.State>,
               private router: Router) {}
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<ProcessingType> {
+  resolve(route: ActivatedRouteSnapshot, _state: RouterStateSnapshot): Observable<ProcessingType> {
     const studySlug = route.parent.parent.parent.paramMap.get('slug');
     const processingTypeSlug = route.paramMap.get('processingTypeSlug');
 
-    this.store$.dispatch(new ProcessingTypeStoreActions.GetProcessingTypeRequest({ studySlug, processingTypeSlug }));
+    this.store$.dispatch(
+      new ProcessingTypeStoreActions.GetProcessingTypeRequest({ studySlug, processingTypeSlug }));
 
-    return race(
+    return race<any>(
       this.store$.pipe(
         select(ProcessingTypeStoreSelectors.selectError),
         filter(s => !!s),

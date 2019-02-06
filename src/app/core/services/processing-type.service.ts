@@ -1,10 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ApiReply, PagedReply, SearchParams } from '@app/domain';
-import { ProcessingType, ProcessingTypeToAdd, ProcessedSpecimenDefinitionName, InputSpecimenProcessing, OutputSpecimenProcessing } from '@app/domain/studies';
-import { Observable } from 'rxjs';
-import { map, delay } from 'rxjs/operators';
 import { AnnotationType } from '@app/domain/annotations';
+import { InputSpecimenProcessing, OutputSpecimenProcessing, ProcessedSpecimenDefinitionName, ProcessingType, ProcessingTypeToAdd } from '@app/domain/studies';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -42,7 +42,7 @@ export class ProcessingTypeService {
         map((reply: ApiReply) => {
           if (reply && reply.data && reply.data.items) {
             const entities: ProcessingType[] =
-              reply.data.items.map(obj => new ProcessingType().deserialize(obj));
+              reply.data.items.map((obj: any) => new ProcessingType().deserialize(obj));
             return {
               searchParams,
               entities,
@@ -106,7 +106,7 @@ export class ProcessingTypeService {
       .pipe(map((reply: ApiReply) => {
         if (reply && reply.data) {
           return reply.data
-            .map(info => new ProcessedSpecimenDefinitionName().deserialize(info));
+            .map((info: any) => new ProcessedSpecimenDefinitionName().deserialize(info));
         }
         throw new Error('expected a processed specimen definition names array');
       }));
@@ -131,7 +131,7 @@ export class ProcessingTypeService {
     const url = `${this.BASE_URL}/update/${pt.studyId}/${pt.id}`;
 
     if (!this.validUpdateProperties.includes(attributeName)) {
-      throw new Error('invalid attribute name: ' + attributeName)
+      throw new Error('invalid attribute name: ' + attributeName);
     }
 
     if (attributeName === 'description') {
@@ -160,7 +160,7 @@ export class ProcessingTypeService {
       url += '/' + annotationType.id;
     }
     return this.http.post<ApiReply>(url, json).pipe(
-      //delay(2000),
+      // delay(2000),
       map(this.replyToProcessingType));
   }
 

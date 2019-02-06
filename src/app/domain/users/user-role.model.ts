@@ -8,7 +8,7 @@ export class UserRole extends DomainEntity {
   description: string;
   childData: EntityInfo[] = [];
 
-  hasAnyRoleOf(...roleIds) {
+  hasAnyRoleOf(...roleIds: string[]) {
     const ids = Array.of(this.id).concat(this.childData.map(info => info.id));
     return roleIds.filter(id => ids.includes(id)).length > 0;
   }

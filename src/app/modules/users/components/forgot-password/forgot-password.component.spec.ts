@@ -26,7 +26,7 @@ describe('ForgotPasswordComponent', () => {
       imports: [
         FormsModule,
         HttpClientTestingModule,
-        NgbModule.forRoot(),
+        NgbModule,
         ReactiveFormsModule,
         RouterTestingModule
       ],

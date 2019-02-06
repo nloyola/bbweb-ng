@@ -2,8 +2,8 @@ import { AnatomicalSource, ConcurrencySafeEntity, PagedReply, PreservationTemper
 import { MaxValueCount, ValueTypes } from '@app/domain/annotations';
 import { StudyCounts, StudyState } from '@app/domain/studies';
 import { UserState } from '@app/domain/users';
-import * as faker from 'faker';
 import * as _ from 'lodash';
+import faker = require('faker');
 
 enum DomainEntities {
 
@@ -408,9 +408,9 @@ export class Factory {
   // https://gist.github.com/mathewbyrne/1280286
   private slugify(text: string): string {
     return text.toString().toLowerCase().trim()
-      .replace(/[^\w\s-]/g, '') // remove non-word [a-z0-9_], non-whitespace, non-hyphen characters
-      .replace(/[\s_-]+/g, '_') // swap any length of whitespace, underscore, hyphen characters with a single _
-      .replace(/^-+|-+$/g, ''); // remove leading, trailing -
+      .replace(/[^\w\s-]/g, '')
+      .replace(/[\s_-]+/g, '_')
+      .replace(/^-+|-+$/g, '');
   }
 
   private membershipBaseDefaults() {

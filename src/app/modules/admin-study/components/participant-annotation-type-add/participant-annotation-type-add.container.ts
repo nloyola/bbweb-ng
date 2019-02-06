@@ -12,14 +12,14 @@ import { filter, takeUntil } from 'rxjs/operators';
   selector: 'app-participant-annotation-type-add',
   templateUrl: './participant-annotation-type-add.container.html'
 })
-export class ParticipantAnnotationTypeAddContainer implements OnInit, OnDestroy {
+export class ParticipantAnnotationTypeAddContainerComponent implements OnInit, OnDestroy {
 
+  study: Study;
   annotationType: AnnotationType;
   isSaving$ = new BehaviorSubject<boolean>(false);
+  savedMessage: string;
 
-  private study: Study;
   private annotationTypeToSave: AnnotationType;
-  private savedMessage: string;
   private unsubscribe$: Subject<void> = new Subject<void>();
   private parentStateRelativePath = '..';
 
@@ -32,7 +32,7 @@ export class ParticipantAnnotationTypeAddContainer implements OnInit, OnDestroy 
   ngOnInit() {
     this.study = this.route.parent.parent.snapshot.data.study;
     this.annotationType = this.study.annotationTypes
-      .find(at => at.id == this.route.snapshot.params.annotationTypeId);
+      .find(at => at.id === this.route.snapshot.params.annotationTypeId);
     if (!this.annotationType) {
       this.annotationType = new AnnotationType();
     }
@@ -84,8 +84,8 @@ export class ParticipantAnnotationTypeAddContainer implements OnInit, OnDestroy 
         annotationType: this.annotationTypeToSave
       }));
 
-    this.savedMessage = this.annotationType.isNew() ?
-      'Annotation Added' : 'Annotation Updated'
+    this.savedMessage = this.annotationType.isNew()
+      ? 'Annotation Added' : 'Annotation Updated';
   }
 
   onCancel(): void {

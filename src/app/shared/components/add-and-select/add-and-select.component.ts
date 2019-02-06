@@ -63,7 +63,7 @@ export class AddAndSelectComponent<T extends DomainEntity> implements OnInit, On
     return this.filterForm.get('name');
   }
 
-  public paginationPageChange(newPage) {
+  public paginationPageChange(newPage: number) {
     if (isNaN(newPage)) { return; }
     this.pageChange.emit(newPage);
   }

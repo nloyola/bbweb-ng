@@ -13,12 +13,12 @@ export class StudyResolver implements Resolve<Study> {
   constructor(private store$: Store<RootStoreState.State>,
               private router: Router) {}
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Study> {
+  resolve(route: ActivatedRouteSnapshot, _state: RouterStateSnapshot): Observable<Study> {
     const slug = route.paramMap.get('slug');
 
     this.store$.dispatch(new StudyStoreActions.GetStudyRequest({ slug }));
 
-    return race(
+    return race<any>(
       this.store$.pipe(
         select(StudyStoreSelectors.selectStudyError),
         filter(s => !!s),

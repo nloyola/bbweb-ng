@@ -4,11 +4,9 @@ import { Crumb } from '@app/domain/crumb';
 // borrowed from:
 //
 // https://github.com/McNull/ngx-breadcrumbs/blob/master/src/lib/mc-breadcrumbs/src/service/mc-breadcrumbs.service.ts
-import * as template from 'lodash.template';
-import * as templateSettings from 'lodash.templatesettings';
 import { BehaviorSubject, concat, from, Observable, of } from 'rxjs';
 import { distinct, filter, first, flatMap, toArray } from 'rxjs/operators';
-
+import { template, templateSettings } from 'lodash';
 
 const _ = {
   template: template,
@@ -75,7 +73,7 @@ export class BreadcrumbService {
     return crumbs$;
   }
 
-  private resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot)
+  private resolve(route: ActivatedRouteSnapshot, _state: RouterStateSnapshot)
     : Observable<Crumb[]> | Promise<Crumb[]> | Crumb[] {
 
     const data = route.routeConfig.data;
@@ -92,7 +90,8 @@ export class BreadcrumbService {
 
   private getFullPath(route: ActivatedRouteSnapshot): string {
     const relativePath = (segments: UrlSegment[]) => segments.reduce((a, v) => a += '/' + v.path, '');
-    const fullPath = (routes: ActivatedRouteSnapshot[]) => routes.reduce((a, v) => a += relativePath(v.url), '');
+    const fullPath =
+      (routes: ActivatedRouteSnapshot[]) => routes.reduce((a, v) => a += relativePath(v.url), '');
 
     return fullPath(route.pathFromRoot);
   }

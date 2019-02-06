@@ -1,15 +1,9 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Store, select } from '@ngrx/store';
-import { Observable, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import { SharedModule } from '@app/shared/shared.module';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { User } from '@app/domain/users';
-
-import {
-  RootStoreState,
-  AuthStoreActions,
-  AuthStoreSelectors
-} from '@app/root-store';
+import { AuthStoreSelectors, RootStoreState } from '@app/root-store';
+import { select, Store } from '@ngrx/store';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-home',
@@ -17,13 +11,14 @@ import {
 })
 export class HomeComponent implements OnInit, OnDestroy {
 
+  user: User;
+  isUserAuthenticated: boolean;
+  hasRoles: boolean;
+  shippingAllowed: boolean;
+  adminAllowed: boolean;
+  allowCollection: boolean;
+
   private unsubscribe$: Subject<void> = new Subject<void>();
-  private user: User;
-  private isUserAuthenticated: boolean;
-  private hasRoles: boolean;
-  private allowCollection: boolean;
-  private shippingAllowed: boolean;
-  private adminAllowed: boolean;
 
   constructor(private store$: Store<RootStoreState.State>) {
   }

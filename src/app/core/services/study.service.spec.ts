@@ -1,11 +1,12 @@
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { PagedReply, SearchParams } from '@app/domain';
-import { Study, StudyState, StudyCounts } from '@app/domain/studies';
+import { Study, StudyCounts } from '@app/domain/studies';
 import { PagedQueryBehaviour } from '@app/test/behaviours/paged-query.behaviour';
 import { Factory } from '@app/test/factory';
-import { StudyService } from './study.service';
 import * as faker from 'faker';
+import { StudyService } from './study.service';
+import { AnnotationType } from '@app/domain/annotations';
 
 describe('StudyService', () => {
 
@@ -63,9 +64,9 @@ describe('StudyService', () => {
   });
 
   describe('when requesting a study', () => {
-    let annotationType;
-    let rawStudy;
-    let study;
+    let annotationType: AnnotationType;
+    let rawStudy: any;
+    let study: Study;
 
     beforeEach(() => {
       annotationType = factory.annotationType();
@@ -98,8 +99,8 @@ describe('StudyService', () => {
   });
 
   describe('when searching studies', () => {
-    let rawStudy;
-    let reply;
+    let rawStudy: any;
+    let reply: any;
 
     beforeEach(() => {
       rawStudy = factory.study();
@@ -200,9 +201,9 @@ describe('StudyService', () => {
 
   describe('for updating a study', () => {
 
-    let rawStudy;
-    let study;
-    let testData;
+    let rawStudy: any;
+    let study: Study;
+    let testData: any;
 
     beforeEach(() => {
       rawStudy = factory.study();
@@ -248,7 +249,7 @@ describe('StudyService', () => {
     });
 
     it('request contains correct JSON and reply is handled correctly', () => {
-      testData.forEach(testInfo => {
+      testData.forEach((testInfo: any) => {
         service.update(study, testInfo.attribute, testInfo.value).subscribe(s => {
           expect(s).toEqual(jasmine.any(Study));
           expect(s).toEqual(study);
@@ -271,7 +272,7 @@ describe('StudyService', () => {
     });
 
     it('handles an error reply correctly', () => {
-      testData.forEach(testInfo => {
+      testData.forEach((testInfo: any) => {
         service.update(study, testInfo.attribute, testInfo.value).subscribe(
           () => { fail('should have been an error response'); },
           err => { expect(err.message).toContain('expected a study object'); }
@@ -298,9 +299,9 @@ describe('StudyService', () => {
           expectedErrMsg: /invalid state change/
         }
       ];
-      testData.forEach(testInfo => {
+      testData.forEach((testInfo: any) => {
         expect(() => service.update(study, testInfo.attribute, testInfo.value))
-          .toThrowError(testInfo.expectedErrMsg)
+          .toThrowError(testInfo.expectedErrMsg);
       });
     });
   });
@@ -335,7 +336,7 @@ describe('StudyService', () => {
         });
         req.flush({ status: 'success', data: rawStudy });
         httpMock.verify();
-      })
+      });
     });
 
     it('handles an error reply correctly', () => {
@@ -360,7 +361,7 @@ describe('StudyService', () => {
         const req = httpMock.expectOne(url);
         req.flush({ status: 'error', data: undefined });
         httpMock.verify();
-      })
+      });
     });
 
   });

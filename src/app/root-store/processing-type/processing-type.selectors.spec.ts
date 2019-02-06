@@ -1,4 +1,4 @@
-import { PagedReplyEntityIds, SearchParams } from '@app/domain';
+import { PagedReplyEntityIds, SearchParams, PagedReply } from '@app/domain';
 import { ProcessingType } from '@app/domain/studies';
 import { ProcessingTypeStoreReducer, ProcessingTypeStoreSelectors } from '@app/root-store';
 import { Factory } from '@app/test/factory';
@@ -14,19 +14,19 @@ describe('ProcessingTypeStore selectors', () => {
   describe('selectSearchRepliesAndEntities', () => {
 
     let processingType: ProcessingType;
-    let pagedReply: PagdeReply<ProcessingType>;
+    let pagedReply: PagedReply<ProcessingType>;
     let searchReplies: { [ key: string]: PagedReplyEntityIds };
 
     beforeEach(() => {
       processingType = factory.processingType();
       pagedReply = factory.pagedReply<ProcessingType>([ processingType ]);
       searchReplies = {};
-      searchReplies[processingType.studyId] = {};
+      searchReplies[processingType.studyId] = {} as any;
       searchReplies[processingType.studyId][pagedReply.searchParams.queryString()] = {
         searchParams: pagedReply.searchParams,
         offset:       pagedReply.offset,
         total:        pagedReply.total,
-        entityIds:    pagedReply.entities.map(e => e.id),
+        entityIds:    pagedReply.entities.map((e: any) => e.id),
         maxPages:     pagedReply.maxPages
       };
     });

@@ -10,7 +10,7 @@ describe('EventTypeRemoveComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
-        NgbModule.forRoot()
+        NgbModule
       ],
       providers: [
         NgbActiveModal

@@ -8,6 +8,9 @@ import { provideMockActions } from '@ngrx/effects/testing';
 import { cold, hot } from 'jasmine-marbles';
 import { Observable, of, throwError } from 'rxjs';
 import { StudyStoreEffects } from './study.effects';
+import { Study } from '@app/domain/studies';
+import { Action } from '@ngrx/store';
+import { AnnotationType } from '@app/domain/annotations';
 
 describe('study-store effects', () => {
 
@@ -167,8 +170,8 @@ describe('study-store effects', () => {
 
   describe('updateRequestEffect', () => {
 
-    let study;
-    let action;
+    let study: Study;
+    let action: Action;
 
     beforeEach(() => {
       study = factory.study();
@@ -205,9 +208,9 @@ describe('study-store effects', () => {
 
   describe('addOrUpdateAnnotationTypeRequestEffect', () => {
 
-    let annotationType;
-    let study;
-    let action;
+    let annotationType: AnnotationType;
+    let study: Study;
+    let action: Action;
 
     beforeEach(() => {
       annotationType = factory.annotationType();
@@ -244,9 +247,9 @@ describe('study-store effects', () => {
 
   describe('removeAnnotationTypeRequestEffect', () => {
 
-    let annotationType;
-    let study;
-    let action;
+    let annotationType: AnnotationType;
+    let study: Study;
+    let action: Action;
 
     beforeEach(() => {
       annotationType = factory.annotationType();
@@ -283,8 +286,8 @@ describe('study-store effects', () => {
 
   describe('enableAllowedRequestEffect', () => {
 
-    let study;
-    let action;
+    let study: Study;
+    let action: Action;
 
     beforeEach(() => {
       study = factory.study();

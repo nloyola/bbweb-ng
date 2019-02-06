@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve, Router, RouterStateSnapshot } from '@angular/router';
+import { CollectionEventType } from '@app/domain/studies';
 import { RootStoreState } from '@app/root-store';
+import { EventTypeStoreActions, EventTypeStoreSelectors } from '@app/root-store/event-type';
 import { select, Store } from '@ngrx/store';
 import { Observable, race } from 'rxjs';
-import { filter, map, take, tap } from 'rxjs/operators';
-import { CollectionEventType } from '@app/domain/studies';
-import { EventTypeStoreSelectors, EventTypeStoreActions } from '@app/root-store/event-type';
+import { filter, map, tap, take } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -14,13 +14,13 @@ export class EventTypeResolver implements Resolve<CollectionEventType> {
   constructor(private store$: Store<RootStoreState.State>,
               private router: Router) {}
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<CollectionEventType> {
+  resolve(route: ActivatedRouteSnapshot, _state: RouterStateSnapshot): Observable<CollectionEventType> {
     const studySlug = route.parent.parent.parent.paramMap.get('slug');
     const eventTypeSlug = route.paramMap.get('eventTypeSlug');
 
     this.store$.dispatch(new EventTypeStoreActions.GetEventTypeRequest({ studySlug, eventTypeSlug }));
 
-    return race(
+    return race<any>(
       this.store$.pipe(
         select(EventTypeStoreSelectors.selectError),
         filter(s => !!s),

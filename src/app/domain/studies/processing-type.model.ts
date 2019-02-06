@@ -5,7 +5,8 @@ import { InputSpecimenProcessing } from './input-specimen-processing.model';
 import { OutputSpecimenProcessing } from './output-specimen-processing.model';
 import { ProcessingTypeInputEntity } from './processing-type-input-entity.model';
 
-export class ProcessingType extends ConcurrencySafeEntity implements ProcessingTypeInputEntity, HasSlug, HasName, HasDescription {
+export class ProcessingType extends ConcurrencySafeEntity
+implements ProcessingTypeInputEntity, HasSlug, HasName, HasDescription {
 
   slug: string;
 
@@ -65,7 +66,7 @@ export class ProcessingType extends ConcurrencySafeEntity implements ProcessingT
 
     if (obj.annotationTypes) {
       this.annotationTypes = obj.annotationTypes
-        .map(at => new AnnotationType().deserialize(at));
+        .map((at: any) => new AnnotationType().deserialize(at));
     }
 
     if (obj.specimenProcessing) {

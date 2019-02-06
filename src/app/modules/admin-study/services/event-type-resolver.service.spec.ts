@@ -1,15 +1,15 @@
-import { HttpClientTestingModule } from "@angular/common/http/testing";
-import { NgZone } from "@angular/core";
-import { TestBed } from "@angular/core/testing";
-import { ActivatedRouteSnapshot, convertToParamMap } from "@angular/router";
-import { RouterTestingModule } from "@angular/router/testing";
-import { CollectionEventType, Study } from "@app/domain/studies";
-import { EventTypeStoreActions, EventTypeStoreReducer } from "@app/root-store";
-import { Factory } from "@app/test/factory";
-import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
-import { Store, StoreModule } from "@ngrx/store";
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { NgZone } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
+import { ActivatedRouteSnapshot, convertToParamMap } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
+import { CollectionEventType, Study } from '@app/domain/studies';
+import { EventTypeStoreActions, EventTypeStoreReducer } from '@app/root-store';
+import { Factory } from '@app/test/factory';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { Store, StoreModule } from '@ngrx/store';
 import { cold } from 'jasmine-marbles';
-import { EventTypeResolver } from "./event-type-resolver.service";
+import { EventTypeResolver } from './event-type-resolver.service';
 
 describe('EventTypeResolver', () => {
 
@@ -22,7 +22,7 @@ describe('EventTypeResolver', () => {
     TestBed.configureTestingModule({
       imports: [
         HttpClientTestingModule,
-        NgbModule.forRoot(),
+        NgbModule,
         RouterTestingModule,
         StoreModule.forRoot({
           'event-type': EventTypeStoreReducer.reducer

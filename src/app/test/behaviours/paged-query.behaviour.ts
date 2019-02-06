@@ -6,13 +6,9 @@ import { Observable } from 'rxjs';
 export namespace PagedQueryBehaviour {
 
   export interface Context<T extends ConcurrencySafeEntity> {
-
     url?: string;
-
-    search?(searchParams: SearchParams): Observable<PagedReply<T>>;
-
     reply?: any;
-
+    search?(searchParams: SearchParams): Observable<PagedReply<T>>;
   }
 
   export function sharedBehaviour<T extends ConcurrencySafeEntity>(context: Context<T>) {

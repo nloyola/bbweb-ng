@@ -99,7 +99,7 @@ describe('study-store selectors', () => {
   it('selectAllStudies', () => {
     const study = factory.study();
     const adapter: EntityAdapter<Study> = createEntityAdapter<Study>({
-      selectId: (study: Study) => study.id
+      selectId: (s: Study) => s.id
     });
     const state = {
       study: adapter.addAll([ study ], StudyStoreReducer.initialState)
@@ -113,7 +113,7 @@ describe('study-store selectors', () => {
     it('when search has completed', () => {
       const study = factory.study();
       const adapter: EntityAdapter<Study> = createEntityAdapter<Study>({
-        selectId: (study: Study) => study.id
+        selectId: (s: Study) => s.id
       });
       const pagedReply = factory.pagedReply<Study>([ study ]);
       const searchReplies: { [ key: string]: PagedReplyEntityIds } = {};
@@ -160,7 +160,7 @@ describe('study-store selectors', () => {
     it('when reply is missing', () => {
       const study = factory.study();
       const adapter: EntityAdapter<Study> = createEntityAdapter<Study>({
-        selectId: (study: Study) => study.id
+        selectId: (s: Study) => s.id
       });
       const pagedReply = factory.pagedReply<Study>([ study ]);
       const state = {
@@ -180,7 +180,7 @@ describe('study-store selectors', () => {
   it('selectStudyLastAdded', () => {
     const study = factory.study();
     const adapter: EntityAdapter<Study> = createEntityAdapter<Study>({
-      selectId: (study: Study) => study.id
+      selectId: (s: Study) => s.id
     });
     const state = {
       study: adapter.addAll([ study ], {

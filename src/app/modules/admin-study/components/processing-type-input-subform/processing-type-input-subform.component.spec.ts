@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ProcessingTypeInputSubformComponent } from './processing-type-input-subform.component';
-import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ProcessingType, ProcessedSpecimenDefinitionName, CollectedSpecimenDefinitionName } from '@app/domain/studies';
 import { Factory } from '@app/test/factory';
@@ -17,7 +17,7 @@ describe('ProcessingTypeInputSubformComponent', () => {
                    </app-processing-type-input-subform>
                  </form>`
   })
-  class TestComponent {
+  class TestComponent implements OnInit {
 
     form: FormGroup;
     processingType: ProcessingType;

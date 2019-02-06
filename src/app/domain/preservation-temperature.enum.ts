@@ -8,4 +8,4 @@ export enum PreservationTemperature {
     MINUS_80_CELCIUS = '-80 C',
     MINUS_180_CELCIUS = '-180 C',
     ROOM_TEMPERATURE = 'Room Temperature'
-  };
+  }

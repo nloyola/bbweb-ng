@@ -43,7 +43,7 @@ export class ModalInputTextareaComponent implements OnInit {
         confirmed: (source === 'OK'),
         value: trimmedValue.length > 0 ? trimmedValue : undefined,
       });
-    }
+    };
   }
 
 }

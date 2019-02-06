@@ -1,12 +1,20 @@
-import { AnnotationType } from "@app/domain/annotations";
-import { DomainEntityUI } from "@app/domain/entity-ui.model";
-import { StudyStateUIMap } from "@app/domain/studies/study-state-ui-map.model";
-import { StudyState } from "@app/domain/studies/study-state.enum";
-import { Study } from "@app/domain/studies/study.model";
+import { AnnotationType } from '@app/domain/annotations';
+import { DomainEntityUI } from '@app/domain/entity-ui.model';
+import { StudyStateUIMap } from '@app/domain/studies/study-state-ui-map.model';
+import { StudyState } from '@app/domain/studies/study-state.enum';
+import { Study } from '@app/domain/studies/study.model';
 
 export class StudyUI implements DomainEntityUI<Study> {
 
   readonly entity: Study;
+
+  public static getStateIcon(state: StudyState): string {
+    return StudyStateUIMap.get(state).icon;
+  }
+
+  public static getStateIconClass(state: StudyState): string {
+    return StudyStateUIMap.get(state).iconClass;
+  }
 
   constructor(study: Study) {
     this.entity = study;
@@ -62,14 +70,6 @@ export class StudyUI implements DomainEntityUI<Study> {
 
   isRetired(): boolean {
     return this.entity.isRetired();
-  }
-
-  public static getStateIcon(state: StudyState): string {
-    return StudyStateUIMap.get(state).icon;
-  }
-
-  public static getStateIconClass(state: StudyState): string {
-    return StudyStateUIMap.get(state).iconClass;
   }
 
 }

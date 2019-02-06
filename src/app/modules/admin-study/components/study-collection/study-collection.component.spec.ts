@@ -3,8 +3,8 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { CollectionEventType, Study, StudyState } from '@app/domain/studies';
-import { EventTypeStoreActions, EventTypeStoreReducer, StudyStoreReducer, StudyStoreActions } from '@app/root-store';
+import { Study, StudyState } from '@app/domain/studies';
+import { EventTypeStoreReducer, StudyStoreActions, StudyStoreReducer } from '@app/root-store';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { TruncatePipe } from '@app/shared/pipes';
 import { YesNoPipe } from '@app/shared/pipes/yes-no-pipe';
@@ -35,7 +35,7 @@ describe('StudyCollectionComponent', () => {
       imports: [
         FormsModule,
         ReactiveFormsModule,
-        NgbModule.forRoot(),
+        NgbModule,
         RouterTestingModule,
         StoreModule.forRoot({
           'spinner': SpinnerStoreReducer.reducer,

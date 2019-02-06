@@ -8,4 +8,4 @@ export enum PreservationType {
   RNA_LATER = 'RNA Later',
   FRESH_SPECIMEN = 'Fresh Specimen',
   SLIDE = 'Slide'
-};
+}

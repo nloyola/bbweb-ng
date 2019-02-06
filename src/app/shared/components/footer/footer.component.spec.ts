@@ -1,8 +1,7 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FooterComponent } from './footer.component';
 
 describe('FooterComponent', () => {
@@ -12,7 +11,7 @@ describe('FooterComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [
-        NgbModule.forRoot(),
+        NgbModule,
         RouterTestingModule
       ],
       declarations: [FooterComponent],

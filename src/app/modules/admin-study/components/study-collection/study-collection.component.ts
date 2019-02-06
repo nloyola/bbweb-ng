@@ -1,10 +1,10 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CollectionEventType, Study } from '@app/domain/studies';
-import { EventTypeStoreActions, RootStoreState, EventTypeStoreSelectors, StudyStoreSelectors } from '@app/root-store';
-import { Store, select } from '@ngrx/store';
-import { filter, takeUntil, map, tap } from 'rxjs/operators';
-import { Subject, Observable, BehaviorSubject } from 'rxjs';
+import { RootStoreState, StudyStoreSelectors } from '@app/root-store';
+import { select, Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-study-collection',

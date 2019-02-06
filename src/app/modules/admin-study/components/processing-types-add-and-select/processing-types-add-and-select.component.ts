@@ -1,17 +1,13 @@
-import { Component, OnDestroy, OnInit, Output, EventEmitter, Input } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { RootStoreState, StudyStoreSelectors } from '@app/root-store';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { PagedReplyInfo, SearchParams } from '@app/domain';
+import { ProcessingType, ProcessingTypeSearchReply, Study } from '@app/domain/studies';
+import { RootStoreState } from '@app/root-store';
+import { ProcessingTypeStoreActions, ProcessingTypeStoreSelectors } from '@app/root-store/processing-type';
 import { select, Store } from '@ngrx/store';
-import { Observable, Subject, timer } from 'rxjs';
-import { ProcessingTypeStoreSelectors, ProcessingTypeStoreActions } from '@app/root-store/processing-type';
-import { filter, map, takeUntil, debounce, distinct, tap } from 'rxjs/operators';
-import { ProcessingTypeSearchReply, ProcessingType, Study } from '@app/domain/studies';
-import { SearchParams, SearchFilterValues, PagedReplyInfo } from '@app/domain';
-import { SearchFilter, NameFilter } from '@app/domain/search-filters';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { ProcessingTypeAddComponent } from '../processing-type-add/processing-type-add.component';
+import { Observable, Subject } from 'rxjs';
+import { filter, map, takeUntil } from 'rxjs/operators';
 
-interface ProcessingTypePageInfo {
+export interface ProcessingTypePageInfo {
   hasNoEntitiesToDisplay: boolean;
   hasNoResultsToDisplay: boolean;
   hasResultsToDisplay: boolean;
@@ -91,7 +87,7 @@ export class ProcessingTypesAddAndSelectComponent implements OnInit, OnDestroy {
     this.applySearchParams();
   }
 
-  public processingTypeSelected(processingType) {
+  public processingTypeSelected(processingType: ProcessingType) {
     this.selected.emit(processingType);
   }
 
@@ -130,7 +126,7 @@ export class ProcessingTypesAddAndSelectComponent implements OnInit, OnDestroy {
       maxPages: searchReply.reply.maxPages,
       showPagination: searchReply.reply.maxPages > 1
     };
-    //console.log(searchReply, result);
+    // console.log(searchReply, result);
     return result;
   }
 

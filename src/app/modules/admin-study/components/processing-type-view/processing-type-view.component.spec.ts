@@ -1,11 +1,11 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { ProcessingTypeViewComponent } from './processing-type-view.component';
 import { CUSTOM_ELEMENTS_SCHEMA, SimpleChange } from '@angular/core';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ProcessingType } from '@app/domain/studies';
 import { YesNoPipe } from '@app/shared/pipes/yes-no-pipe';
-import { Study, ProcessingType } from '@app/domain/studies';
 import { Factory } from '@app/test/factory';
 import { ProcessingTypeFixture } from '@app/test/fixtures';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { ProcessingTypeViewComponent } from './processing-type-view.component';
 
 describe('ProcessingTypeViewComponent', () => {
   let component: ProcessingTypeViewComponent;
@@ -16,7 +16,7 @@ describe('ProcessingTypeViewComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
-        NgbModule.forRoot()
+        NgbModule
       ],
       declarations: [
         ProcessingTypeViewComponent,

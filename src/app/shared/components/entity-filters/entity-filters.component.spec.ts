@@ -1,13 +1,12 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, Input } from '@angular/core';
-import { ComponentFixture, TestBed, async, fakeAsync, tick } from '@angular/core/testing';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
-import * as faker from 'faker';
-
-import { EntityFiltersComponent } from './entity-filters.component';
 import { EntityStateInfo, SearchFilterValues } from '@app/domain';
 import { SearchFilter } from '@app/domain/search-filters';
 import { Factory } from '@app/test/factory';
+import * as faker from 'faker';
+import { EntityFiltersComponent } from './entity-filters.component';
 
 describe('EntityFiltersComponent', () => {
 

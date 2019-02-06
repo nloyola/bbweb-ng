@@ -53,7 +53,7 @@ export class ProcessingAnnotationTypeAddContainerComponent implements OnInit, On
         if (this.route.snapshot.params.annotationTypeId) {
           this.parentStateRelativePath = '../..';
           this.annotationType = this.processingType.annotationTypes
-            .find(at => at.id == this.route.snapshot.params.annotationTypeId);
+            .find(at => at.id === this.route.snapshot.params.annotationTypeId);
         }
 
         if (this.savedMessage) {
@@ -97,7 +97,7 @@ export class ProcessingAnnotationTypeAddContainerComponent implements OnInit, On
       annotationType: this.annotationTypeToSave
     }));
 
-    this.savedMessage = this.annotationType.isNew() ? 'Annotation Added' : 'Annotation Updated'
+    this.savedMessage = this.annotationType.isNew() ? 'Annotation Added' : 'Annotation Updated';
   }
 
   onCancel(): void {

@@ -1,10 +1,9 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ProcessingType } from '@app/domain/studies';
 import { Factory } from '@app/test/factory';
 import { SpecimenDefinitionAddComponent } from './specimen-definition-add.component';
-import { TestColdObservable } from 'jasmine-marbles/src/test-observables';
 
 describe('SpecimenDefinitionAddComponent', () => {
   @Component({
@@ -14,7 +13,7 @@ describe('SpecimenDefinitionAddComponent', () => {
                    </app-specimen-definition-add>
                  </form>`
   })
-  class TestComponent {
+  class TestComponent implements OnInit {
 
     form: FormGroup;
     processingType: ProcessingType;

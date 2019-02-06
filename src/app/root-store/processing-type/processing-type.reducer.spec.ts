@@ -161,26 +161,36 @@ describe('ProcessingType Reducer', () => {
 
   describe('for updating an processing type', () => {
 
-    let processingType;
-    let initialState;
+    let processingType: ProcessingType;
+    let testInitialState: any;
 
     beforeEach(() => {
       processingType = factory.processingType();
-      initialState = {
+      testInitialState = {
         ...ProcessingTypeStoreReducer.initialState,
         ids: [ processingType.id ],
         entities: {}
       };
-      initialState['entities'][processingType.id] = {};
+      testInitialState['entities'][processingType.id] = {};
     });
 
     it('UpdateProcessingTypeSuccess', () => {
       const payload = { processingType };
-      const action = new ProcessingTypeStoreActions.UpdateProcessingTypeSuccess(payload);
-      const state = ProcessingTypeStoreReducer.reducer(initialState, action);
+      const initialAction = new ProcessingTypeStoreActions.GetProcessingTypeSuccess(payload);
+      let state = ProcessingTypeStoreReducer.reducer(initialState, initialAction);
+
+      const  updatedPt = new ProcessingType().deserialize({
+        ...processingType,
+        enabled: !processingType.enabled
+      });
+      state = ProcessingTypeStoreReducer.reducer(
+        state,
+        new ProcessingTypeStoreActions.UpdateProcessingTypeSuccess({
+          processingType: updatedPt
+        }));
 
       expect(state.ids).toContain(processingType.id);
-      expect(state.entities[processingType.id]).toEqual(processingType);
+      expect(state.entities[processingType.id]).toEqual(updatedPt);
     });
 
     it('UpdateProcessingTypeFailure', () => {
@@ -204,17 +214,17 @@ describe('ProcessingType Reducer', () => {
 
   describe('for removing an processing type', () => {
 
-    let processingType;
-    let initialState;
+    let processingType: ProcessingType;
+    let testInitialState: any;
 
     beforeEach(() => {
       processingType = factory.processingType();
-      initialState = {
+      testInitialState = {
         ...ProcessingTypeStoreReducer.initialState,
         ids: [ processingType.id ],
         entities: {}
       };
-      initialState['entities'][processingType.id] = processingType;
+      testInitialState['entities'][processingType.id] = processingType;
     });
 
     it('RemoveProcessingTypeSuccess', () => {

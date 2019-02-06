@@ -1,26 +1,26 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgZone } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, ActivatedRouteSnapshot, Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Study } from '@app/domain/studies';
 import { StudyStoreActions, StudyStoreReducer } from '@app/root-store';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { AnnotationTypeAddComponent } from '@app/shared/components/annotation-type-add/annotation-type-add.component';
 import { Factory } from '@app/test/factory';
-import { Store, StoreModule } from '@ngrx/store';
-import { ToastrModule, ToastrService } from 'ngx-toastr';
-import { ParticipantAnnotationTypeAddContainer } from './participant-annotation-type-add.container';
-import { cold } from 'jasmine-marbles';
 import { MockActivatedRoute } from '@app/test/mocks';
+import { Store, StoreModule } from '@ngrx/store';
+import { cold } from 'jasmine-marbles';
+import { ToastrModule, ToastrService } from 'ngx-toastr';
+import { ParticipantAnnotationTypeAddContainerComponent } from './participant-annotation-type-add.container';
 
 describe('ParticipantAnnotationTypeAddContainer', () => {
 
-  let component: ParticipantAnnotationTypeAddContainer;
-  let fixture: ComponentFixture<ParticipantAnnotationTypeAddContainer>;
+  let component: ParticipantAnnotationTypeAddContainerComponent;
+  let fixture: ComponentFixture<ParticipantAnnotationTypeAddContainerComponent>;
   let ngZone: NgZone;
   let router: Router;
-  let mockActivatedRoute = new MockActivatedRoute();
+  const mockActivatedRoute = new MockActivatedRoute();
   let store: Store<StudyStoreReducer.State>;
   let toastr: ToastrService;
   let factory: Factory;
@@ -47,7 +47,7 @@ describe('ParticipantAnnotationTypeAddContainer', () => {
       ],
       declarations: [
         AnnotationTypeAddComponent,
-        ParticipantAnnotationTypeAddContainer
+        ParticipantAnnotationTypeAddContainerComponent
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
@@ -60,7 +60,7 @@ describe('ParticipantAnnotationTypeAddContainer', () => {
     router = TestBed.get(Router);
     toastr = TestBed.get(ToastrService);
 
-    fixture = TestBed.createComponent(ParticipantAnnotationTypeAddContainer);
+    fixture = TestBed.createComponent(ParticipantAnnotationTypeAddContainerComponent);
     component = fixture.componentInstance;
     ngZone.run(() => router.initialNavigation());
   });

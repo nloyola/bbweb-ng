@@ -23,7 +23,7 @@ describe('HeaderComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [
-        NgbModule.forRoot(),
+        NgbModule,
         RouterTestingModule,
         StoreModule.forRoot({
           'auth': AuthStoreReducer.reducer

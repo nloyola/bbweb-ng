@@ -1,4 +1,4 @@
-import { SpinnerStoreActions } from "@app/root-store/spinner";
+import { SpinnerStoreActions } from '@app/root-store/spinner';
 
 describe('spinner-store actions', () => {
 

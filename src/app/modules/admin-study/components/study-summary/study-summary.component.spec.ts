@@ -31,7 +31,7 @@ describe('StudySummaryComponent', () => {
       imports: [
         FormsModule,
         ReactiveFormsModule,
-        NgbModule.forRoot(),
+        NgbModule,
         RouterTestingModule,
         StoreModule.forRoot({
           'study': StudyStoreReducer.reducer,
@@ -84,7 +84,7 @@ describe('StudySummaryComponent', () => {
     fixture.detectChanges();
 
     [ true, false ].forEach(allowed => {
-      store.dispatch(new StudyStoreActions.GetEnableAllowedSuccess({ studyId: study.id, allowed }))
+      store.dispatch(new StudyStoreActions.GetEnableAllowedSuccess({ studyId: study.id, allowed }));
       fixture.detectChanges();
       expect(component.isEnableAllowed).toBe(allowed);
     });
@@ -96,21 +96,23 @@ describe('StudySummaryComponent', () => {
       ...factory.nameAndSlug
     });
 
-    jest.spyOn(router, 'navigate');
+    const routerListener = jest.spyOn(router, 'navigate');
 
     ngZone.run(() => store.dispatch(new StudyStoreActions.GetStudySuccess({ study: studyWithNewName })));
     fixture.detectChanges();
 
-    expect(router.navigate.mock.calls.length).toBe(1);
-    expect(router.navigate.mock.calls[0][0]).toEqual([ '../..', studyWithNewName.slug, 'summary' ]);
+    expect(routerListener.mock.calls.length).toBe(1);
+    expect(routerListener.mock.calls[0][0]).toEqual([ '../..', studyWithNewName.slug, 'summary' ]);
   });
 
   describe('common behaviour', () => {
 
+    /* tslint:disable:no-shadowed-variable */
     const componentModalFuncs = [
       (component) => component.updateName(),
       (component) => component.updateDescription()
     ];
+    /* tslint:disable:no-shadowed-variable */
 
     it('functions should open a modal', fakeAsync(() => {
       const testData = [
@@ -126,15 +128,15 @@ describe('StudySummaryComponent', () => {
         }
       ];
 
-      jest.spyOn(store, 'dispatch');
-      jest.spyOn(modalService, 'open');
+      const storeListener = jest.spyOn(store, 'dispatch');
+      const modalListener = jest.spyOn(modalService, 'open');
 
       ngZone.run(() => store.dispatch(new StudyStoreActions.GetStudySuccess({ study })));
       fixture.detectChanges();
 
-      store.dispatch.mockClear();
+      storeListener.mockClear();
       testData.forEach((testInfo, index) => {
-        modalService.open.mockReturnValue({
+        modalListener.mockReturnValue({
           componentInstance: {},
           result: Promise.resolve({ confirmed: true, value: testInfo.value })
         });
@@ -143,14 +145,14 @@ describe('StudySummaryComponent', () => {
         fixture.detectChanges();
         tick(1000);
 
-        expect(store.dispatch.mock.calls.length).toBe(index + 1);
-        expect(store.dispatch.mock.calls[index][0]).toEqual(new StudyStoreActions.UpdateStudyRequest({
+        expect(storeListener.mock.calls.length).toBe(index + 1);
+        expect(storeListener.mock.calls[index][0]).toEqual(new StudyStoreActions.UpdateStudyRequest({
           study,
           attributeName: testInfo.attribute,
           value: testInfo.value
         }));
       });
-      expect(modalService.open.mock.calls.length).toBe(componentModalFuncs.length);
+      expect(modalListener.mock.calls.length).toBe(componentModalFuncs.length);
     }));
 
     it('functions that should notify the user', fakeAsync(() => {

@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ProcessingTypeInformationSubformComponent } from './processing-type-information-subform.component';
-import { CUSTOM_ELEMENTS_SCHEMA, Component } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { StoreModule } from '@ngrx/store';
 import { ProcessingTypeStoreReducer } from '@app/root-store';
@@ -17,7 +17,7 @@ describe('ProcessingTypeInformationSubformComponent', () => {
                    </app-processing-type-information-subform>
                  </form>`
   })
-  class TestComponent {
+  class TestComponent implements OnInit {
 
     form: FormGroup;
     processingType: ProcessingType;

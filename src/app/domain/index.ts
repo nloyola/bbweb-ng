@@ -1,5 +1,5 @@
 export * from './api-reply.model';
-export * from './anatomical-source.enum'
+export * from './anatomical-source.enum';
 export * from './concurrency-safe-entity.model';
 export * from './crumb';
 export * from './deserializable.model';
@@ -13,7 +13,7 @@ export * from './has-slug.model';
 export * from './labelled-id.model';
 export * from './paged-reply.model';
 export * from './preservation-type.enum';
-export * from './preservation-temperature.enum'
+export * from './preservation-temperature.enum';
 export * from './search-filter-values.model';
 export * from './search-params.model';
 export * from './specimen-type.enum';

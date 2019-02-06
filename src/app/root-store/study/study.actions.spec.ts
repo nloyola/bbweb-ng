@@ -1,6 +1,6 @@
-import { Factory } from "@app/test/factory";
-import { StudyStoreActions } from "@app/root-store/study";
-import { SearchParams } from "@app/domain";
+import { Factory } from '@app/test/factory';
+import { StudyStoreActions } from '@app/root-store/study';
+import { SearchParams } from '@app/domain';
 
 describe('study-store actions', () => {
 

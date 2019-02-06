@@ -4,7 +4,7 @@ import { SearchParams } from '@app/domain';
 import { CollectionEventType, ProcessingType, Study } from '@app/domain/studies';
 import { EventTypeStoreActions, EventTypeStoreSelectors, RootStoreState, StudyStoreSelectors } from '@app/root-store';
 import { createSelector, select, Store } from '@ngrx/store';
-import { Observable, Subject } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 interface StudyData {

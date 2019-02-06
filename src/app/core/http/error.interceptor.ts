@@ -18,7 +18,7 @@ export class ErrorInterceptor implements HttpInterceptor {
 
         // if not at the login or forgot password page then reload the page
         if ((location.pathname !== '/login') && (location.pathname !== '/forgot')) {
-          location.reload(true);
+          location.reload();
         }
       }
 

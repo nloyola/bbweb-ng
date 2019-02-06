@@ -11,7 +11,7 @@ import { CollectedSpecimenDefinitionAddContainerComponent } from './components/c
 import { CollectionAnnotationTypeAddContainerComponent } from './components/collection-annotation-type-add/collection-annotation-type-add.container';
 import { EventTypeAddComponent } from './components/event-type-add/event-type-add.component';
 import { EventTypeViewContainerComponent } from './components/event-type-view/event-type-view.container';
-import { ParticipantAnnotationTypeAddContainer } from './components/participant-annotation-type-add/participant-annotation-type-add.container';
+import { ParticipantAnnotationTypeAddContainerComponent } from './components/participant-annotation-type-add/participant-annotation-type-add.container';
 import { ProcessingAnnotationTypeAddContainerComponent } from './components/processing-annotation-type-add/processing-annotation-type-add.container';
 import { ProcessingTypeAddComponent } from './components/processing-type-add/processing-type-add.component';
 import { ProcessingTypeViewContainerComponent } from './components/processing-type-view/processing-type-view.container';
@@ -69,14 +69,14 @@ export const routes: Routes = [
               },
               {
                 path: 'add',
-                component: ParticipantAnnotationTypeAddContainer,
+                component: ParticipantAnnotationTypeAddContainerComponent,
                 data: {
                   breadcrumbs: 'Add'
                 }
               },
               {
                 path: ':annotationTypeId',
-                component: ParticipantAnnotationTypeAddContainer,
+                component: ParticipantAnnotationTypeAddContainerComponent,
                 data: {
                   breadcrumbs: 'Update'
                 }

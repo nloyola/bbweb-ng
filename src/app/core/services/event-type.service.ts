@@ -1,10 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ApiReply, PagedReply, SearchParams } from '@app/domain';
-import { CollectionEventType, CollectionEventTypeToAdd, CollectedSpecimenDefinition, CollectedSpecimenDefinitionName } from '@app/domain/studies';
-import { Observable } from 'rxjs';
-import { map, delay } from 'rxjs/operators';
 import { AnnotationType } from '@app/domain/annotations';
+import { CollectedSpecimenDefinition, CollectedSpecimenDefinitionName, CollectionEventType, CollectionEventTypeToAdd } from '@app/domain/studies';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -31,7 +31,7 @@ export class EventTypeService {
         map((reply: ApiReply) => {
           if (reply && reply.data && reply.data.items) {
             const entities: CollectionEventType[] =
-              reply.data.items.map(obj => new CollectionEventType().deserialize(obj));
+              reply.data.items.map((obj: any) => new CollectionEventType().deserialize(obj));
             return {
               searchParams,
               entities,
@@ -77,7 +77,7 @@ export class EventTypeService {
       .pipe(map((reply: ApiReply) => {
         if (reply && reply.data) {
           return reply.data
-            .map(info => new CollectedSpecimenDefinitionName().deserialize(info));
+            .map((info: any) => new CollectedSpecimenDefinitionName().deserialize(info));
         }
         throw new Error('expected a processed specimen definition names array');
       }));
@@ -96,20 +96,23 @@ export class EventTypeService {
 
   update(eventType: CollectionEventType,
          attributeName: string, value: string): Observable<CollectionEventType> {
-    let json;
-    let url;
+    let url: string;
+    let json = {
+      studyId: eventType.studyId,
+      expectedVersion: eventType.version
+    };
 
     switch (attributeName) {
       case 'name':
-        json = { name: value };
+        json = { ...json, name: value } as  any;
         url = `${this.BASE_URL}/name/${eventType.id}`;
         break;
       case 'description':
-        json = { description: value };
+        json = { ...json, description: value } as  any;
         url = `${this.BASE_URL}/description/${eventType.id}`;
         break;
       case 'recurring':
-        json = { recurring: value };
+        json = { ...json, recurring: value } as  any;
         url = `${this.BASE_URL}/recurring/${eventType.id}`;
         break;
 
@@ -117,13 +120,7 @@ export class EventTypeService {
         throw new Error('invalid attribute name for update: ' + attributeName);
     }
 
-    Object.assign(json, {
-      studyId: eventType.studyId,
-      expectedVersion: eventType.version
-    })
-
-    return this.http.post<ApiReply>(url, json).pipe(
-      map(this.replyToEventType));
+    return this.http.post<ApiReply>(url, json).pipe(map(this.replyToEventType));
   }
 
   addOrUpdateAnnotationType(eventType: CollectionEventType,
@@ -138,13 +135,16 @@ export class EventTypeService {
       url += '/' + annotationType.id;
     }
     return this.http.post<ApiReply>(url, json).pipe(
-      //delay(2000),
+      // delay(2000),
       map(this.replyToEventType));
   }
 
   removeAnnotationType(eventType: CollectionEventType,
                        annotationTypeId: string): Observable<CollectionEventType> {
+      /* tslint:disable:max-line-length */
     const url = `${this.BASE_URL}/annottype/${eventType.studyId}/${eventType.id}/${eventType.version}/${annotationTypeId}`;
+      /* tslint:enable:max-line-length */
+
     return this.http.delete<ApiReply>(url)
       .pipe(map(this.replyToEventType));
   }
@@ -162,13 +162,16 @@ export class EventTypeService {
       url += '/' + specimenDefinition.id;
     }
     return this.http.post<ApiReply>(url, json).pipe(
-      //delay(2000),
+      // delay(2000),
       map(this.replyToEventType));
   }
 
   removeSpecimenDefinition(eventType: CollectionEventType,
                            specimenDefinitionId: string): Observable<CollectionEventType> {
+      /* tslint:disable:max-line-length */
     const url = `${this.BASE_URL}/spcdef/${eventType.studyId}/${eventType.id}/${eventType.version}/${specimenDefinitionId}`;
+      /* tslint:enable:max-line-length */
+
     return this.http.delete<ApiReply>(url)
       .pipe(map(this.replyToEventType));
   }

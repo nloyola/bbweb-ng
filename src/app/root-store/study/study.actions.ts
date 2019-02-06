@@ -5,19 +5,19 @@ import { Study, StudyCounts, StudyToAdd } from '@app/domain/studies';
 import { Action } from '@ngrx/store';
 
 interface StudyUpdateRequestPayload {
-  study: Study,
-  attributeName: string,
-  value: string
+  study: Study;
+  attributeName: string;
+  value: string;
 }
 
 interface StudyAddOrUpdateAnnotationTypeRequestPayload {
-  study: Study,
-  annotationType: AnnotationType
+  study: Study;
+  annotationType: AnnotationType;
 }
 
 interface StudyRemoveAnnotationTypeRequestPayload {
-  study: Study,
-  annotationTypeId: string
+  study: Study;
+  annotationTypeId: string;
 }
 
 export enum ActionTypes {

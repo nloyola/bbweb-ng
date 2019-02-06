@@ -260,7 +260,7 @@ describe('ProcessingTypeService', () => {
       ];
       testData.forEach(testInfo => {
         expect(() => service.update(processingType, testInfo.property, testInfo.value))
-          .toThrowError(testInfo.expectedErrMsg)
+          .toThrowError(testInfo.expectedErrMsg);
       });
     });
   });
@@ -296,7 +296,7 @@ describe('ProcessingTypeService', () => {
         });
         req.flush({ status: 'success', data: rawProcessingType });
         httpMock.verify();
-      })
+      });
     });
 
     it('handles an error reply correctly', () => {
@@ -321,7 +321,7 @@ describe('ProcessingTypeService', () => {
         const req = httpMock.expectOne(url);
         req.flush({ status: 'error', data: undefined });
         httpMock.verify();
-      })
+      });
     });
 
   });
@@ -338,7 +338,10 @@ describe('ProcessingTypeService', () => {
         expect(s).toEqual(study);
       });
 
+      /* tslint:disable:max-line-length */
       const url = `${BASE_URL}/annottype/${processingType.studyId}/${processingType.id}/${processingType.version}/${rawAnnotationType.id}`;
+      /* tslint:enable:max-line-length */
+
       const req = httpMock.expectOne(url);
 
       expect(req.request.method).toBe('DELETE');
@@ -356,7 +359,10 @@ describe('ProcessingTypeService', () => {
         err => { expect(err.message).toContain('expected a study object'); }
       );
 
+      /* tslint:disable:max-line-length */
       const url = `${BASE_URL}/annottype/${processingType.studyId}/${processingType.id}/${processingType.version}/${rawAnnotationType.id}`;
+      /* tslint:enable:max-line-length */
+
       const req = httpMock.expectOne(url);
       req.flush({ status: 'error', data: undefined });
       httpMock.verify();

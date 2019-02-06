@@ -1,10 +1,9 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CollectedSpecimenDefinition } from '@app/domain/studies';
+import { CustomValidators } from '@app/shared/validators';
 import { Observable } from 'rxjs';
 import { SpecimenDefinitionAddComponent } from '../specimen-definition-add/specimen-definition-add.component';
-import { SpecimenDefinitionActionsComponent } from '../specimen-definition-actions/specimen-definition-actions.component';
-import { CustomValidators } from '@app/shared/validators';
 
 @Component({
   selector: 'app-collected-specimen-definition-add-ui',
@@ -13,7 +12,10 @@ import { CustomValidators } from '@app/shared/validators';
 })
 export class CollectedSpecimenDefinitionAddComponent implements OnInit, OnChanges {
 
+  /* tslint:disable-next-line:no-input-rename */
   @Input('isSaving') isSaving$: Observable<boolean>;
+  /* tslint:enable-next-line:no-input-rename */
+
   @Input() entityName: string;
   @Input() specimenDefinition: CollectedSpecimenDefinition;
 

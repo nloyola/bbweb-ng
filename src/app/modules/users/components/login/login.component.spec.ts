@@ -27,7 +27,7 @@ describe('LoginComponent', () => {
       imports: [
         FormsModule,
         ReactiveFormsModule,
-        NgbModule.forRoot(),
+        NgbModule,
         RouterTestingModule,
         StoreModule.forRoot({
           'auth': AuthStoreReducer.reducer,

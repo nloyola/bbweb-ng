@@ -18,7 +18,7 @@ import { EventTypeRemoveComponent } from './components/event-type-remove/event-t
 import { EventTypeViewComponent } from './components/event-type-view/event-type-view.component';
 import { EventTypeViewContainerComponent } from './components/event-type-view/event-type-view.container';
 import { EventTypesAddAndSelectComponent } from './components/event-types-add-and-select/event-types-add-and-select.component';
-import { ParticipantAnnotationTypeAddContainer } from './components/participant-annotation-type-add/participant-annotation-type-add.container';
+import { ParticipantAnnotationTypeAddContainerComponent } from './components/participant-annotation-type-add/participant-annotation-type-add.container';
 import { ProcessingAnnotationTypeAddContainerComponent } from './components/processing-annotation-type-add/processing-annotation-type-add.container';
 import { ProcessingTypeAddComponent } from './components/processing-type-add/processing-type-add.component';
 import { ProcessingTypeInformationSubformComponent } from './components/processing-type-information-subform/processing-type-information-subform.component';
@@ -76,7 +76,7 @@ import { ProcessingTypeCardComponent } from './components/processing-type-card/p
     EventTypeAddComponent,
     EventTypeRemoveComponent,
     StudiesViewComponent,
-    ParticipantAnnotationTypeAddContainer,
+    ParticipantAnnotationTypeAddContainerComponent,
     CollectionAnnotationTypeAddContainerComponent,
     SpecimenDefinitionSummaryComponent,
     SpecimenDefinitionActionsComponent,

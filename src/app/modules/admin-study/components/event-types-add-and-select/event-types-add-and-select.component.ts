@@ -1,13 +1,12 @@
-import { Component, EventEmitter, OnDestroy, OnInit, Output, Input } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { PagedReplyInfo, SearchParams } from '@app/domain';
 import { CollectionEventType, EventTypeSearchReply, Study } from '@app/domain/studies';
 import { RootStoreState } from '@app/root-store';
 import { EventTypeStoreActions, EventTypeStoreSelectors } from '@app/root-store/event-type';
 import { select, Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
-import { map, takeUntil, filter } from 'rxjs/operators';
+import { filter, map, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-event-types-add-and-select',
@@ -78,11 +77,11 @@ export class EventTypesAddAndSelectComponent implements OnInit, OnDestroy {
     this.applySearchParams();
   }
 
-  public getRecurringLabel(eventType) {
+  public getRecurringLabel(eventType: CollectionEventType) {
     return eventType.recurring ? 'Rec' : 'NonRec';
   }
 
-  public eventTypeSelected(eventType) {
+  public eventTypeSelected(eventType: CollectionEventType) {
     this.selected.emit(eventType);
   }
 

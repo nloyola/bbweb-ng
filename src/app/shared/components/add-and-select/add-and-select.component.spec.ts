@@ -16,7 +16,7 @@ describe('AddAndSelectComponent', () => {
       imports: [
         FormsModule,
         ReactiveFormsModule,
-        NgbModule.forRoot()
+        NgbModule
       ],
       declarations: [ AddAndSelectComponent ],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA ]

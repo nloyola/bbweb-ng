@@ -35,8 +35,8 @@ describe('EventTypeService', () => {
   });
 
   describe('when searching event types', () => {
-    let rawEventType;
-    let reply;
+    let rawEventType: any;
+    let reply: any;
 
     beforeEach(() => {
       rawEventType = factory.collectionEventType();
@@ -98,9 +98,9 @@ describe('EventTypeService', () => {
   });
 
   describe('when requesting an event type', () => {
-    let annotationType;
-    let rawEventType;
-    let eventType;
+    let annotationType: any;
+    let rawEventType: any;
+    let eventType: CollectionEventType;
 
     beforeEach(() => {
       annotationType = factory.annotationType();
@@ -174,9 +174,9 @@ describe('EventTypeService', () => {
 
   describe('for updating an event type', () => {
 
-    let rawEventType;
-    let eventType;
-    let testData;
+    let rawEventType: any;
+    let eventType: CollectionEventType;
+    let testData: any;
 
     beforeEach(() => {
       rawEventType = factory.collectionEventType();
@@ -212,7 +212,7 @@ describe('EventTypeService', () => {
     });
 
     it('request contains correct JSON and reply is handled correctly', () => {
-      testData.forEach(testInfo => {
+      testData.forEach((testInfo: any) => {
         service.update(eventType, testInfo.attribute, testInfo.value).subscribe(s => {
           expect(s).toEqual(jasmine.any(Study));
           expect(s).toEqual(study);
@@ -236,7 +236,7 @@ describe('EventTypeService', () => {
     });
 
     it('handles an error reply correctly', () => {
-      testData.forEach(testInfo => {
+      testData.forEach((testInfo: any) => {
         service.update(eventType, testInfo.attribute, testInfo.value).subscribe(
           () => { fail('should have been an error response'); },
           err => { expect(err.message).toContain('expected a study object'); }
@@ -257,9 +257,9 @@ describe('EventTypeService', () => {
           expectedErrMsg: /invalid attribute name/
         }
       ];
-      testData.forEach(testInfo => {
+      testData.forEach((testInfo: any) => {
         expect(() => service.update(eventType, testInfo.attribute, testInfo.value))
-          .toThrowError(testInfo.expectedErrMsg)
+          .toThrowError(testInfo.expectedErrMsg);
       });
     });
   });
@@ -295,7 +295,7 @@ describe('EventTypeService', () => {
         });
         req.flush({ status: 'success', data: rawEventType });
         httpMock.verify();
-      })
+      });
     });
 
     it('handles an error reply correctly', () => {
@@ -320,7 +320,7 @@ describe('EventTypeService', () => {
         const req = httpMock.expectOne(url);
         req.flush({ status: 'error', data: undefined });
         httpMock.verify();
-      })
+      });
     });
 
   });
@@ -337,7 +337,10 @@ describe('EventTypeService', () => {
         expect(s).toEqual(study);
       });
 
+      /* tslint:disable:max-line-length */
       const url = `${BASE_URL}/annottype/${eventType.studyId}/${eventType.id}/${eventType.version}/${rawAnnotationType.id}`;
+      /* tslint:enable:max-line-length */
+
       const req = httpMock.expectOne(url);
 
       expect(req.request.method).toBe('DELETE');
@@ -355,7 +358,10 @@ describe('EventTypeService', () => {
         err => { expect(err.message).toContain('expected a study object'); }
       );
 
+      /* tslint:disable:max-line-length */
       const url = `${BASE_URL}/annottype/${eventType.studyId}/${eventType.id}/${eventType.version}/${rawAnnotationType.id}`;
+      /* tslint:enable:max-line-length */
+
       const req = httpMock.expectOne(url);
       req.flush({ status: 'error', data: undefined });
       httpMock.verify();
@@ -394,7 +400,7 @@ describe('EventTypeService', () => {
         });
         req.flush({ status: 'success', data: rawEventType });
         httpMock.verify();
-      })
+      });
     });
 
     it('handles an error reply correctly', () => {
@@ -419,7 +425,7 @@ describe('EventTypeService', () => {
         const req = httpMock.expectOne(url);
         req.flush({ status: 'error', data: undefined });
         httpMock.verify();
-      })
+      });
     });
 
   });
@@ -433,10 +439,13 @@ describe('EventTypeService', () => {
 
       service.removeSpecimenDefinition(eventType, eventType.specimenDefinitions[0].id).subscribe(s => {
         expect(s).toEqual(jasmine.any(CollectionEventType));
-        expect(s).toEqual(evenType);
+        expect(s).toEqual(eventType);
       });
 
+      /* tslint:disable:max-line-length */
       const url = `${BASE_URL}/spcdef/${eventType.studyId}/${eventType.id}/${eventType.version}/${rawSpecimenDefinition.id}`;
+      /* tslint:enable:max-line-length */
+
       const req = httpMock.expectOne(url);
 
       expect(req.request.method).toBe('DELETE');
@@ -454,7 +463,11 @@ describe('EventTypeService', () => {
         err => { expect(err.message).toContain('expected a study object'); }
       );
 
+      /* tslint:disable:max-line-length */
       const url = `${BASE_URL}/spcdef/${eventType.studyId}/${eventType.id}/${eventType.version}/${rawSpecimenDefinition.id}`;
+      /* tslint:enable:max-line-length */
+
+
       const req = httpMock.expectOne(url);
       req.flush({ status: 'error', data: undefined });
       httpMock.verify();

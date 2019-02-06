@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CollectedSpecimenDefinition, CollectionEventType, Study } from '@app/domain/studies';
 import { EventTypeStoreActions, EventTypeStoreSelectors, RootStoreState } from '@app/root-store';

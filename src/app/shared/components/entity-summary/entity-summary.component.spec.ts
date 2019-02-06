@@ -1,8 +1,7 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
-import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { ConcurrencySafeEntity, EntityUI, DomainEntityUI } from '@app/domain';
+import { ConcurrencySafeEntity, DomainEntityUI } from '@app/domain';
 import { TruncatePipe } from '@app/shared/pipes';
 import { EntitySummaryComponent } from './entity-summary.component';
 

@@ -1,10 +1,11 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Study } from '@app/domain/studies';
-import { filter, map, takeUntil } from 'rxjs/operators';
-import { Store, select } from '@ngrx/store';
-import { RootStoreState, EventTypeStoreActions, StudyStoreSelectors } from '@app/root-store';
+import { RootStoreState, StudyStoreSelectors } from '@app/root-store';
+import { select, Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
+import { filter, map, takeUntil } from 'rxjs/operators';
+import { NgbTabChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 
 interface Tab {
   heading: string;
@@ -72,8 +73,8 @@ export class StudyViewComponent implements OnInit, OnDestroy {
     this.unsubscribe$.complete();
   }
 
-  public tabSelection($event) {
-    this.router.navigate([ '/admin/studies/view', this.route.snapshot.params.slug, $event.nextId ]);
+  public tabSelection(event: NgbTabChangeEvent) {
+    this.router.navigate([ '/admin/studies/view', this.route.snapshot.params.slug, event.nextId ]);
   }
 
   private getActiveTabId(routeUrl: string): string {

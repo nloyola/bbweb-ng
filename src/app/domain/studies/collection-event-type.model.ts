@@ -4,7 +4,8 @@ import { AnnotationType } from '@app/domain/annotations';
 import { CollectedSpecimenDefinition } from './collected-specimen-definition.model';
 import { ProcessingTypeInputEntity } from '.';
 
-export class CollectionEventType extends ConcurrencySafeEntity implements ProcessingTypeInputEntity, HasSlug, HasName, HasDescription {
+export class CollectionEventType extends ConcurrencySafeEntity
+implements ProcessingTypeInputEntity, HasSlug, HasName, HasDescription {
 
   slug: string;
 

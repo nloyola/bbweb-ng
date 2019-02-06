@@ -73,10 +73,10 @@ describe('AnnotationTypeAddComponent', () => {
     });
 
     component.ngOnChanges({
-      annotationType: new SimpleChange(null, newAnnotationType)
+      annotationType: new SimpleChange(null, newAnnotationType, false)
     });
     fixture.detectChanges();
-    expect(component.annotationType).toBe(newAnnotationType)
+    expect(component.annotationType).toBe(newAnnotationType);
     expect(component.title).toBe('Update Annotation');
   });
 

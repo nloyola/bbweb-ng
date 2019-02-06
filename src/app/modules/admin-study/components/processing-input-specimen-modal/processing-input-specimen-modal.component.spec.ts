@@ -18,7 +18,7 @@ describe('ProcessingInputSpecimenModalComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         FormsModule,
-        NgbModule.forRoot(),
+        NgbModule,
         ReactiveFormsModule,
         StoreModule.forRoot({
           'processing-type': ProcessingTypeStoreReducer.reducer

@@ -1,4 +1,4 @@
-import { SpinnerStoreReducer, SpinnerStoreSelectors } from "@app/root-store/spinner";
+import { SpinnerStoreReducer, SpinnerStoreSelectors } from '@app/root-store/spinner';
 
 describe('spinner-store selectors', () => {
 

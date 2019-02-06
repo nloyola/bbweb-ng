@@ -16,7 +16,7 @@ describe('EventTypeViewComponent', () => {
 
     TestBed.configureTestingModule({
       imports: [
-        NgbModule.forRoot()
+        NgbModule
       ],
       declarations: [
         EventTypeViewComponent,
@@ -145,7 +145,7 @@ describe('EventTypeViewComponent', () => {
 
   });
 
-  function createTestEventType(factory): CollectionEventType {
+  function createTestEventType(): CollectionEventType {
     return new CollectionEventType().deserialize({
       ...factory.collectionEventType(),
       annotationTypes: [

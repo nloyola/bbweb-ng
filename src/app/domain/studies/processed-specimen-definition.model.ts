@@ -1,4 +1,4 @@
-import { SpecimenDefinition } from "./specimen-definition.model";
+import { SpecimenDefinition } from './specimen-definition.model';
 
 /**
  * Used to configure a *Specimen Type* used in a processing step for a {@link Study}.

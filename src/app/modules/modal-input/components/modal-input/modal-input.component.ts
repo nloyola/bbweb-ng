@@ -12,7 +12,7 @@ export class ModalInputComponent {
   constructor() { }
 
   close(source: any): void {
-    this.modalClose(source)
+    this.modalClose(source);
   }
 
 }

@@ -1,9 +1,9 @@
-import { TestBed, inject } from '@angular/core/testing';
-import { provideMockActions } from '@ngrx/effects/testing';
-import { Observable } from 'rxjs';
-import { cold, hot } from 'jasmine-marbles';
-import { SpinnerEffects } from './spinner.effects';
+import { TestBed } from '@angular/core/testing';
 import { SpinnerStoreActions } from '@app/root-store/spinner';
+import { provideMockActions } from '@ngrx/effects/testing';
+import { cold, hot } from 'jasmine-marbles';
+import { Observable } from 'rxjs';
+import { SpinnerEffects } from './spinner.effects';
 
 describe('SpinnerEffects', () => {
   let actions$: Observable<any>;
@@ -42,7 +42,6 @@ describe('SpinnerEffects', () => {
         type: 'test-action',
         showLoader: false
       };
-      const completion = new SpinnerStoreActions.ShowSpinner(action);
       actions$ = hot('--a-', { a: action });
       const expected = cold('---');
       expect(effects.showLoader$).toBeObservable(expected);
@@ -72,7 +71,6 @@ describe('SpinnerEffects', () => {
         type: 'test-action',
         triggerAction: null
       };
-      const completion = new SpinnerStoreActions.HideSpinner(action);
       actions$ = hot('--a-', { a: action });
       const expected = cold('---');
       expect(effects.hideLoader$).toBeObservable(expected);

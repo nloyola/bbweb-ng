@@ -1,19 +1,13 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PasswordValidation } from '@app/core/password-validation';
+import { AuthStoreActions, AuthStoreSelectors, RootStoreState } from '@app/root-store';
+import { SpinnerStoreSelectors } from '@app/root-store/spinner';
+import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject } from 'rxjs';
-import { filter, takeUntil, tap } from 'rxjs/operators';
-import { Store, select } from '@ngrx/store';
-import { User } from '@app/domain/users';
-
-import {
-  RootStoreState,
-  AuthStoreActions,
-  AuthStoreSelectors
-} from '@app/root-store';
-import { SpinnerStoreSelectors } from '@app/root-store/spinner';
+import { filter, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-register',
@@ -49,7 +43,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
         select(AuthStoreSelectors.selectAuthRegisteredUser),
         filter(user => user !== null),
         takeUntil(this.unsubscribe$))
-      .subscribe((user: User) => {
+      .subscribe(() => {
         this.toastr.success(
           'Your account was created and is now pending administrator approval.',
           'Registration Successful',
@@ -65,7 +59,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
       .subscribe((err: any) => {
         this.store$.dispatch(new AuthStoreActions.RegisterClearFailureAction());
 
-        let message;
+        let message: string;
         if (err.status) {
           if ((err.status === 403) && (err.error.message === 'email already registered')) {
             message = 'That email address is already registered.';
@@ -74,9 +68,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
           } else {
             message = 'Registration failed.';
           }
-          this.toastr.error(message,
-                            'Registration Error',
-                            { disableTimeOut: true });
+          this.toastr.error(message, 'Registration Error', { disableTimeOut: true });
         }
       });
   }

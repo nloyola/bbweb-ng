@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserService } from '@app/core/services';
@@ -13,8 +13,8 @@ import { catchError, map } from 'rxjs/operators';
 })
 export class ForgotPasswordComponent implements OnInit {
 
-  @ViewChild('successModal') successModal;
-  @ViewChild('failureModal') failureModal;
+  @ViewChild('successModal') successModal: ElementRef;
+  @ViewChild('failureModal') failureModal: ElementRef;
   forgotForm: FormGroup;
 
   constructor(

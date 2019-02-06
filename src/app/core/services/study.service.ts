@@ -61,7 +61,7 @@ export class StudyService {
         // delay(1000),
         map((reply: ApiReply) => {
           if (reply && reply.data && reply.data.items) {
-            const entities: Study[] = reply.data.items.map(obj => new Study().deserialize(obj));
+            const entities: Study[] = reply.data.items.map((obj: any) => new Study().deserialize(obj));
             return {
               searchParams,
               entities,
@@ -86,23 +86,22 @@ export class StudyService {
   }
 
   update(study: Study, attributeName: string, value: string): Observable<Study> {
-    let json;
-    let url;
+    let url: string;
+    let json = { expectedVersion: study.version };
 
     switch (attributeName) {
       case 'name':
-        json = { name: value };
+        json = { ...json, name: value } as any;
         url = `${this.BASE_URL}/name/${study.id}`;
         break;
       case 'description':
-        json = { description: value };
+        json = { ...json, description: value } as any;
         url = `${this.BASE_URL}/description/${study.id}`;
         break;
       case 'state':
         if (!this.stateActions.includes(value)) {
           throw new Error('invalid state change for study: ' + value);
         }
-        json = {};
         url = `${this.BASE_URL}/${value}/${study.id}`;
         break;
 
@@ -110,10 +109,7 @@ export class StudyService {
         throw new Error('invalid attribute name for update: ' + attributeName);
     }
 
-    json['expectedVersion'] = study.version;
-
-    return this.http.post<ApiReply>(url, json).pipe(
-      map(this.replyToStudy));
+    return this.http.post<ApiReply>(url, json).pipe(map(this.replyToStudy));
   }
 
   addOrUpdateAnnotationType(study: Study, annotationType: AnnotationType): Observable<Study> {
@@ -126,7 +122,7 @@ export class StudyService {
       url += '/' + annotationType.id;
     }
     return this.http.post<ApiReply>(url, json).pipe(
-      //delay(2000),
+      // delay(2000),
       map(this.replyToStudy));
   }
 
@@ -139,7 +135,7 @@ export class StudyService {
   enableAllowed(studyId: string): Observable<any> {
     return this.http.get<ApiReply>(`${this.BASE_URL}/enableAllowed/${studyId}`)
       .pipe(
-        //delay(1000),
+        // delay(1000),
         map((reply: ApiReply) => {
           if (reply && (reply.data !== undefined)) {
             return {

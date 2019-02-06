@@ -3,17 +3,17 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { CollectionEventType, ProcessingType, Study, StudyState } from '@app/domain/studies';
+import { ProcessingType, Study, StudyState } from '@app/domain/studies';
 import { EventTypeStoreActions, EventTypeStoreReducer, ProcessingTypeStoreActions, ProcessingTypeStoreReducer, StudyStoreActions, StudyStoreReducer } from '@app/root-store';
 import { YesNoPipe } from '@app/shared/pipes/yes-no-pipe';
 import { Factory } from '@app/test/factory';
+import { ProcessingTypeFixture, ProcessingTypeFixtureEntities } from '@app/test/fixtures';
 import { MockActivatedRoute } from '@app/test/mocks';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
 import * as faker from 'faker';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { ProcessingTypeViewContainerComponent } from './processing-type-view.container';
-import { ProcessingTypeFixture, ProcessingTypeFixtureEntities } from '@app/test/fixtures';
 
 fdescribe('ProcessingTypeViewContainerComponent', () => {
   let component: ProcessingTypeViewContainerComponent;
@@ -173,6 +173,7 @@ fdescribe('ProcessingTypeViewContainerComponent', () => {
 
   describe('common behaviour', () => {
 
+    /* tslint:disable:no-shadowed-variable */
     const componentUpdateFuncs = [
       (component, processingType) => component.updateName(),
       (component, processingType) => component.updateDescription(),
@@ -182,6 +183,7 @@ fdescribe('ProcessingTypeViewContainerComponent', () => {
       (component, processingType) => component.updateOutputSpecimen(),
       (component, processingType) => component.removeProcessingType()
     ];
+    /* tslint:disable:no-shadowed-variable */
 
     it('functions should open a modal', () => {
       const entities = createEntities();
@@ -297,7 +299,7 @@ fdescribe('ProcessingTypeViewContainerComponent', () => {
       testData.forEach(testInfo => {
         const modalResult = testInfo.withConfirm
           ? Promise.resolve({ confirmed: true, value: testInfo.newValue })
-          : Promise.resolve(testInfo.newValue)
+          : Promise.resolve(testInfo.newValue);
         modalSpy.and.returnValue({
           componentInstance: {},
           result: Promise.resolve(modalResult)

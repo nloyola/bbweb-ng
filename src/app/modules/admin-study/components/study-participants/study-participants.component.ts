@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AnnotationType } from '@app/domain/annotations';
 import { Study } from '@app/domain/studies';
@@ -18,7 +18,7 @@ import { filter, map, takeUntil } from 'rxjs/operators';
   templateUrl: './study-participants.component.html',
   styleUrls: ['./study-participants.component.scss']
 })
-export class StudyParticipantsComponent implements OnInit {
+export class StudyParticipantsComponent implements OnInit, OnDestroy {
 
   study: StudyUI;
   isLoading$: Observable<boolean>;
@@ -41,7 +41,8 @@ export class StudyParticipantsComponent implements OnInit {
       .pipe(
         select(StudyStoreSelectors.selectAllStudies),
         filter(s => s.length > 0),
-        map((studies: Study[]) => studies.find(s => s.slug === this.route.parent.parent.snapshot.params.slug)),
+        map((studies: Study[]) =>
+            studies.find(s => s.slug === this.route.parent.parent.snapshot.params.slug)),
         filter(study => study !== undefined),
         map(study => (study instanceof Study) ? study :  new Study().deserialize(study)),
         takeUntil(this.unsubscribe$))

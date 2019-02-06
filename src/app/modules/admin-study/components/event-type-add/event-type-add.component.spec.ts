@@ -3,13 +3,13 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { Study, CollectionEventType, CollectionEventTypeToAdd } from '@app/domain/studies';
-import { EventTypeStoreReducer, EventTypeStoreActions } from '@app/root-store';
+import { CollectionEventType, Study } from '@app/domain/studies';
+import { EventTypeStoreActions, EventTypeStoreReducer } from '@app/root-store';
+import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { Factory } from '@app/test/factory';
 import { Store, StoreModule } from '@ngrx/store';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { EventTypeAddComponent } from './event-type-add.component';
-import { SpinnerStoreReducer } from '@app/root-store/spinner';
 
 describe('EventTypeAddComponent', () => {
 
@@ -86,9 +86,9 @@ describe('EventTypeAddComponent', () => {
         studyId: study.id
       });
 
-      jest.spyOn(store, 'dispatch');
-      jest.spyOn(toastr, 'success').mockReturnValue(null);
-      jest.spyOn(router, 'navigate');
+      const storeListener = jest.spyOn(store, 'dispatch');
+      const toastrListener = jest.spyOn(toastr, 'success').mockReturnValue(null);
+      const routerListener = jest.spyOn(router, 'navigate');
 
       fixture.detectChanges();
 
@@ -98,16 +98,16 @@ describe('EventTypeAddComponent', () => {
       component.onSubmit();
       fixture.detectChanges();
 
-      expect(store.dispatch.mock.calls[0][0]).toEqual(
+      expect(storeListener.mock.calls[0][0]).toEqual(
         new EventTypeStoreActions.AddEventTypeRequest({ eventType: eventTypeToAdd }));
 
       ngZone.run(() => store.dispatch(new EventTypeStoreActions.AddEventTypeSuccess({ eventType })));
       fixture.whenStable().then(() => {
         fixture.detectChanges();
-        expect(store.dispatch.mock.calls.length).toBe(3);
-        expect(toastr.success.mock.calls.length).toBe(1);
-        expect(router.navigate.mock.calls.length).toBe(1);
-        expect(router.navigate.mock.calls[0][0]).toEqual(['..']);
+        expect(storeListener.mock.calls.length).toBe(3);
+        expect(toastrListener.mock.calls.length).toBe(1);
+        expect(routerListener.mock.calls.length).toBe(1);
+        expect(routerListener.mock.calls[0][0]).toEqual(['..']);
       });
     }));
 

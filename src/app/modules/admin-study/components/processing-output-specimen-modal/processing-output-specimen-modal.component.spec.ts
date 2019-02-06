@@ -16,7 +16,7 @@ describe('ProcessingOutputSpecimenModalComponent', () => {
       imports: [
         FormsModule,
         ReactiveFormsModule,
-        NgbModule.forRoot()
+        NgbModule
       ],
       declarations: [
         ProcessingOutputSpecimenModalComponent

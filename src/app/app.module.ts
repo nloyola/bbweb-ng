@@ -26,7 +26,7 @@ import { ToastrModule } from 'ngx-toastr';
     ShippingModule,
     UsersModule,
     AppRoutingModule,
-    NgbModule.forRoot(),
+    NgbModule,
     RootStoreModule,
     BrowserAnimationsModule,
     MaterialModule,

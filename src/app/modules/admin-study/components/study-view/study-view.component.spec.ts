@@ -20,7 +20,7 @@ describe('StudyViewComponent', () => {
 
     TestBed.configureTestingModule({
       imports: [
-        NgbModule.forRoot(),
+        NgbModule,
         RouterTestingModule,
         StoreModule.forRoot({
           'study': StudyStoreReducer.reducer,

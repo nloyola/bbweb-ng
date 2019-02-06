@@ -25,7 +25,7 @@ export interface PagedReplyEntityIds extends PagedReplyBase {
 export interface PagedReply<T extends ConcurrencySafeEntity> extends PagedReplyBase {
 
   /** The items in the page. */
-  entities: T[],
+  entities: T[];
 
 }
 

@@ -53,7 +53,7 @@ export class User extends ConcurrencySafeEntity {
     return (this.roles.length > 0);
   }
 
-  hasRole(roleId) {
+  hasRole(roleId: string) {
     const hasRole = this.roles.find(role => role.id === roleId);
     if (hasRole) {
       return true;
@@ -63,7 +63,7 @@ export class User extends ConcurrencySafeEntity {
       .length > 0;
   }
 
-  hasAnyRoleOf(...roleIds) {
+  hasAnyRoleOf(...roleIds: string[]) {
     return this.roles.reduce((acc, role) => acc || role.hasAnyRoleOf(...roleIds), false);
   }
 
@@ -104,7 +104,7 @@ export class User extends ConcurrencySafeEntity {
   deserialize(input: any) {
     super.deserialize(input);
     if (input.roles) {
-      this.roles = input.roles.map(role => new UserRole().deserialize(role));
+      this.roles = input.roles.map((role: any) => new UserRole().deserialize(role));
     }
 
     if (input.membership) {

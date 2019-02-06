@@ -1,14 +1,13 @@
-import { TestBed, async } from '@angular/core/testing';
-import { provideMockActions } from '@ngrx/effects/testing';
-import { hot, cold } from 'jasmine-marbles';
-import { Observable, of, throwError } from 'rxjs';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-
-import { AuthStoreEffects } from './auth-store.effects';
-import { AuthStoreActions } from '@app/root-store/auth-store';
+import { TestBed } from '@angular/core/testing';
 import { AuthService } from '@app/core/services';
 import { User } from '@app/domain/users';
+import { AuthStoreActions } from '@app/root-store/auth-store';
 import { Factory } from '@app/test/factory';
+import { provideMockActions } from '@ngrx/effects/testing';
+import { cold, hot } from 'jasmine-marbles';
+import { Observable, of, throwError } from 'rxjs';
+import { AuthStoreEffects } from './auth-store.effects';
 
 describe('auth-store effects', () => {
 
@@ -34,8 +33,8 @@ describe('auth-store effects', () => {
   });
 
   describe('loginRequestEffect', () => {
-    let user;
-    let credentials;
+    let user: User;
+    let credentials: any;
 
     beforeEach(() => {
       user = new User().deserialize(factory.user());
@@ -92,8 +91,9 @@ describe('auth-store effects', () => {
   });
 
   describe('registerRequestEffect', () => {
-    let user;
-    let regInfo;
+
+    let user: User;
+    let regInfo: any;
 
     beforeEach(() => {
       user = new User().deserialize(factory.user());

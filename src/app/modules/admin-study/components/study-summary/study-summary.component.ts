@@ -147,7 +147,7 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
     this.changeState('unretire');
   }
 
-  private changeState(action) {
+  private changeState(action: string) {
     this.store$.dispatch(new StudyStoreActions.UpdateStudyRequest({
       study: this.study.entity,
       attributeName: 'state',

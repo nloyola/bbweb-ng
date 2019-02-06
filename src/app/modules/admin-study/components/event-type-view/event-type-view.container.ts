@@ -8,10 +8,10 @@ import { EventTypeStoreActions, EventTypeStoreSelectors, RootStoreState, StudySt
 import { AnnotationTypeRemoveComponent } from '@app/shared/components/annotation-type-remove/annotation-type-remove.component';
 import { AnnotationTypeViewComponent } from '@app/shared/components/annotation-type-view/annotation-type-view.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { select, Store, createSelector } from '@ngrx/store';
+import { createSelector, select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { EventTypeRemoveComponent } from '../event-type-remove/event-type-remove.component';
 import { SpecimenDefinitionRemoveComponent } from '../specimen-definition-remove/specimen-definition-remove.component';
 import { SpecimenDefinitionViewComponent } from '../specimen-definition-view/specimen-definition-view.component';
@@ -55,15 +55,15 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
       takeUntil(this.unsubscribe$))
       .subscribe((entities: any) => {
         const studyEntity = entities.studies
-          .find(s => s.slug === this.route.parent.parent.parent.parent.snapshot.params.slug);
+          .find((s: Study) => s.slug === this.route.parent.parent.parent.parent.snapshot.params.slug);
         if (studyEntity) {
           this.study = (studyEntity instanceof Study)
             ? studyEntity :  new Study().deserialize(studyEntity);
           this.allowChanges = this.study.isDisabled();
         }
 
-        const eventTypeEntity =
-          entities.eventTypes.find(et => et.slug === this.route.snapshot.params.eventTypeSlug);
+        const eventTypeEntity = entities.eventTypes
+          .find((et: CollectionEventType) => et.slug === this.route.snapshot.params.eventTypeSlug);
         if (eventTypeEntity) {
           this.eventType = (eventTypeEntity instanceof CollectionEventType)
             ? eventTypeEntity : new CollectionEventType().deserialize(eventTypeEntity);

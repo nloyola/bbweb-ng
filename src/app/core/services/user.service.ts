@@ -10,7 +10,7 @@ export class UserService {
 
   constructor(private http: HttpClient) {}
 
-  passwordReset(email) {
+  passwordReset(email: string) {
     return this.http.post<any>(this.BASE_URL + '/passreset', { email });
   }
 }

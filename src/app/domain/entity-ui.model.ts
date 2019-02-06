@@ -1,4 +1,4 @@
-import { ConcurrencySafeEntity } from "@app/domain/concurrency-safe-entity.model";
+import { ConcurrencySafeEntity } from '@app/domain/concurrency-safe-entity.model';
 
 export interface EntityUI {
   readonly stateLabel: string;

@@ -9,7 +9,10 @@ import { Observable } from 'rxjs';
 })
 export class AnnotationTypeAddComponent implements OnInit, OnChanges {
 
+  /* tslint:disable-next-line:no-input-rename */
   @Input('isSaving') isSaving$: Observable<boolean>;
+  /* tslint:enable-next-line:no-input-rename */
+
   @Input() entityName: string;
   @Input() annotationType: AnnotationType;
 
@@ -37,7 +40,7 @@ export class AnnotationTypeAddComponent implements OnInit, OnChanges {
 
     const valueType = this.annotationType.valueType ? this.annotationType.valueType : '';
     const maxValueCount = this.annotationType.maxValueCount
-      ? this.annotationType.maxValueCount : MaxValueCount.None
+      ? this.annotationType.maxValueCount : MaxValueCount.None;
 
     this.form = this.formBuilder.group(
       {
@@ -95,7 +98,7 @@ export class AnnotationTypeAddComponent implements OnInit, OnChanges {
   valueTypeSelected() {
     this.maxValueCount.setValue(MaxValueCount.None);
     while (this.options.length > 0) {
-      this.options.removeAt(0)
+      this.options.removeAt(0);
     }
 
     if (this.isValueTypeSelect()) {
@@ -108,12 +111,12 @@ export class AnnotationTypeAddComponent implements OnInit, OnChanges {
     this.options.push(this.formBuilder.control('', Validators.required));
   }
 
-  optionRemove(index) {
+  optionRemove(index: number) {
     this.checkInvalidIndex(index);
     this.options.removeAt(index);
   }
 
-  getOption(index) {
+  getOption(index: number) {
     this.checkInvalidIndex(index);
     return this.options.at(index);
   }
@@ -158,7 +161,7 @@ export class AnnotationTypeAddComponent implements OnInit, OnChanges {
     return annotationType;
   }
 
-  private checkInvalidIndex(index): void {
+  private checkInvalidIndex(index: number): void {
     if ((index < 0) || (index >= this.options.length)) {
       throw new Error('invalid option index: ' + index);
     }

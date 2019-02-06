@@ -11,14 +11,13 @@ import { StoreModule, Store } from '@ngrx/store';
 import { EventTypesAddAndSelectComponent } from './event-types-add-and-select.component';
 import { StudyStoreReducer, EventTypeStoreReducer } from '@app/root-store';
 import { MockActivatedRoute } from '@app/test/mocks';
-import { SearchFilterValues } from '@app/domain';
 
 describe('EventTypesAddAndSelectComponent', () => {
 
   let component: EventTypesAddAndSelectComponent;
   let fixture: ComponentFixture<EventTypesAddAndSelectComponent>;
   let store: Store<StudyStoreReducer.State>;
-  let mockActivatedRoute = new MockActivatedRoute();
+  const mockActivatedRoute = new MockActivatedRoute();
   let factory: Factory;
 
   beforeEach(async(() => {

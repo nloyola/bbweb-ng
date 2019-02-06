@@ -33,7 +33,7 @@ describe('CollectedSpecimenDefinitionAddContainer', () => {
     TestBed.configureTestingModule({
       imports: [
         BrowserAnimationsModule,
-        NgbModule.forRoot(),
+        NgbModule,
         RouterTestingModule,
         StoreModule.forRoot({
           'event-type': EventTypeStoreReducer.reducer,
@@ -133,8 +133,6 @@ describe('CollectedSpecimenDefinitionAddContainer', () => {
   describe('for adding a specimen definition', () => {
 
     it('loading is false by default', () => {
-      debugger;
-
       const eventType = createEventType();
       mockActivatedRouteSnapshot('spcDefAdd', eventType);
       fixture.detectChanges();
@@ -148,7 +146,7 @@ describe('CollectedSpecimenDefinitionAddContainer', () => {
 
   describe('for updating a specimen definition', () => {
 
-    let eventType;
+    let eventType: CollectionEventType;
 
     beforeEach(() => {
       eventType = createEventType();

@@ -8,6 +8,9 @@ import { provideMockActions } from '@ngrx/effects/testing';
 import { cold, hot } from 'jasmine-marbles';
 import { Observable, of, throwError } from 'rxjs';
 import { ProcessingTypeStoreEffects } from './processing-type.effects';
+import { Action } from '@ngrx/store';
+import { ProcessingType } from '@app/domain/studies';
+import { AnnotationType } from '@app/domain/annotations';
 
 describe('processingType-store effects', () => {
 
@@ -40,6 +43,7 @@ describe('processingType-store effects', () => {
       const processingType = factory.processingType();
       const pagedReply = factory.pagedReply([ processingType ]);
       const action = new ProcessingTypeStoreActions.SearchProcessingTypesRequest({
+        studyId: study.id,
         studySlug: study.slug,
         searchParams
       });
@@ -62,6 +66,7 @@ describe('processingType-store effects', () => {
         }
       };
       const action = new ProcessingTypeStoreActions.SearchProcessingTypesRequest({
+        studyId: study.id,
         studySlug: study.slug,
         searchParams
       });
@@ -151,8 +156,8 @@ describe('processingType-store effects', () => {
 
   describe('updateRequestEffect', () => {
 
-    let processingType;
-    let action;
+    let processingType: ProcessingType;
+    let action: Action;
 
     beforeEach(() => {
       processingType = factory.processingType();
@@ -189,9 +194,9 @@ describe('processingType-store effects', () => {
 
   describe('addOrUpdateAnnotationTypeRequestEffect', () => {
 
-    let annotationType;
-    let processingType;
-    let action;
+    let annotationType: AnnotationType;
+    let processingType: ProcessingType;
+    let action: Action;
 
     beforeEach(() => {
       annotationType = factory.annotationType();
@@ -228,9 +233,9 @@ describe('processingType-store effects', () => {
 
   describe('removeAnnotationTypeRequestEffect', () => {
 
-    let annotationType;
-    let processingType;
-    let action;
+    let annotationType: AnnotationType;
+    let processingType: ProcessingType;
+    let action: Action;
 
     beforeEach(() => {
       annotationType = factory.annotationType();
@@ -267,8 +272,8 @@ describe('processingType-store effects', () => {
 
   describe('removeProcessingTypeRequestEffect', () => {
 
-    let processingType;
-    let action;
+    let processingType: ProcessingType;
+    let action: Action;
 
     beforeEach(() => {
       processingType = factory.processingType();
@@ -277,7 +282,9 @@ describe('processingType-store effects', () => {
     });
 
     it('should respond with success', () => {
-      const completion = new ProcessingTypeStoreActions.RemoveProcessingTypeSuccess({ processingTypeId: processingType.id });
+      const completion = new ProcessingTypeStoreActions.RemoveProcessingTypeSuccess({
+        processingTypeId: processingType.id
+      });
 
       processingTypeService.removeProcessingType.mockReturnValue(of(processingType.id));
       actions = hot('--a-', { a: action });

@@ -1,7 +1,7 @@
-import { EntityUI } from "@app/domain";
-import { StudyCounts } from "@app/domain/studies/study-counts.model";
-import { StudyStateUIMap } from "@app/domain/studies/study-state-ui-map.model";
-import { StudyState } from "@app/domain/studies/study-state.enum";
+import { EntityUI } from '@app/domain';
+import { StudyCounts } from '@app/domain/studies/study-counts.model';
+import { StudyStateUIMap } from '@app/domain/studies/study-state-ui-map.model';
+import { StudyState } from '@app/domain/studies/study-state.enum';
 
 export interface StudyCountInfo extends EntityUI {
   readonly count?: number;

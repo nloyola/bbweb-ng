@@ -161,23 +161,23 @@ describe('EventType Reducer', () => {
 
   describe('for updating an event type', () => {
 
-    let eventType;
-    let initialState;
+    let eventType: CollectionEventType;
+    let testInitialState: any;
 
     beforeEach(() => {
       eventType = factory.collectionEventType();
-      initialState = {
+      testInitialState = {
         ...EventTypeStoreReducer.initialState,
         ids: [ eventType.id ],
         entities: {}
       };
-      initialState['entities'][eventType.id] = {};
+      testInitialState['entities'][eventType.id] = {};
     });
 
     it('UpdateEventTypeSuccess', () => {
       const payload = { eventType };
       const action = new EventTypeStoreActions.UpdateEventTypeSuccess(payload);
-      const state = EventTypeStoreReducer.reducer(initialState, action);
+      const state = EventTypeStoreReducer.reducer(testInitialState, action);
 
       expect(state.ids).toContain(eventType.id);
       expect(state.entities[eventType.id]).toEqual(eventType);
@@ -193,7 +193,7 @@ describe('EventType Reducer', () => {
         }
       };
       const action = new EventTypeStoreActions.UpdateEventTypeFailure(payload);
-      const state = EventTypeStoreReducer.reducer(initialState, action);
+      const state = EventTypeStoreReducer.reducer(testInitialState, action);
       expect(state.error).toEqual({
         actionType: action.type,
         error: payload.error
@@ -204,23 +204,23 @@ describe('EventType Reducer', () => {
 
   describe('for removing an event type', () => {
 
-    let eventType;
-    let initialState;
+    let eventType: CollectionEventType;
+    let testInitialState: any;
 
     beforeEach(() => {
       eventType = factory.collectionEventType();
-      initialState = {
+      testInitialState = {
         ...EventTypeStoreReducer.initialState,
         ids: [ eventType.id ],
         entities: {}
       };
-      initialState['entities'][eventType.id] = eventType;
+      testInitialState['entities'][eventType.id] = eventType;
     });
 
     it('RemoveEventTypeSuccess', () => {
       const payload = { eventTypeId: eventType.id };
       const action = new EventTypeStoreActions.RemoveEventTypeSuccess(payload);
-      const state = EventTypeStoreReducer.reducer(initialState, action);
+      const state = EventTypeStoreReducer.reducer(testInitialState, action);
 
       expect(state.ids).not.toContain(eventType.id);
       expect(state.entities[eventType.id]).toBeUndefined();
@@ -236,7 +236,7 @@ describe('EventType Reducer', () => {
         }
       };
       const action = new EventTypeStoreActions.RemoveEventTypeFailure(payload);
-      const state = EventTypeStoreReducer.reducer(initialState, action);
+      const state = EventTypeStoreReducer.reducer(testInitialState, action);
       expect(state.error).toEqual({
         actionType: action.type,
         error: payload.error

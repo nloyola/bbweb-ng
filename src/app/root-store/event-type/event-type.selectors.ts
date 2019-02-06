@@ -1,7 +1,6 @@
-import { SearchParams, PagedReplyEntityIds } from '@app/domain';
-import * as fromEventType from './event-type.reducer';
+import { CollectedSpecimenDefinitionName, CollectionEventType, EventTypeSearchReply } from '@app/domain/studies';
 import { createFeatureSelector, createSelector, MemoizedSelector } from '@ngrx/store';
-import { CollectionEventType, EventTypeSearchReply, CollectedSpecimenDefinitionName } from '@app/domain/studies';
+import * as fromEventType from './event-type.reducer';
 
 export const getSearchActive = (state: fromEventType.State): boolean => state.searchActive;
 

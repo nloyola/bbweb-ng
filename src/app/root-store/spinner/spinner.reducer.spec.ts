@@ -1,5 +1,5 @@
-import { reducer, initialState } from './spinner.reducer';
-import { SpinnerStoreReducer, SpinnerStoreActions } from '@app/root-store/spinner';
+import { SpinnerStoreActions, SpinnerStoreReducer } from '@app/root-store/spinner';
+import { initialState } from './spinner.reducer';
 
 describe('Spinner Reducer', () => {
   it('unknown action should return the initial state', () => {

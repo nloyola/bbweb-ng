@@ -108,12 +108,13 @@ export function reducer(state = initialState, action: ProcessingTypeActions): St
     }
 
     case ActionTypes.UpdateProcessingTypeSuccess: {
-      return adapter.updateOne(
+      const result = adapter.updateOne(
         {
           id: action.payload.processingType.id,
           changes: action.payload.processingType
         },
         state);
+      return result;
     }
 
     case ActionTypes.RemoveProcessingTypeSuccess: {

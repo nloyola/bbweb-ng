@@ -40,6 +40,7 @@ describe('eventType-store effects', () => {
       const eventType = factory.collectionEventType();
       const pagedReply = factory.pagedReply([ eventType ]);
       const action = new EventTypeStoreActions.SearchEventTypesRequest({
+        studyId: study.id,
         studySlug: study.slug,
         searchParams
       });
@@ -62,6 +63,7 @@ describe('eventType-store effects', () => {
         }
       };
       const action = new EventTypeStoreActions.SearchEventTypesRequest({
+        studyId: study.id,
         studySlug: study.slug,
         searchParams
       });

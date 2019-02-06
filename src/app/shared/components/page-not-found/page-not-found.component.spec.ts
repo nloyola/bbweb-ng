@@ -11,7 +11,7 @@ describe('PageNotFoundComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [
-        NgbModule.forRoot(),
+        NgbModule,
         RouterTestingModule
       ],
       declarations: [PageNotFoundComponent],

@@ -34,7 +34,7 @@ describe('AuthService', () => {
   describe('for a login request', () => {
 
     const password = 'fake password';
-    let rawUser;
+    let rawUser: any;
 
     beforeEach(() => {
       rawUser = factory.user();
@@ -126,7 +126,7 @@ describe('AuthService', () => {
     });
 
     it('returns null after user logs out', () => {
-      const user = fakeLogin();
+      fakeLogin();
       service.logout();
       expect(service.getUser()).toEqual(null);
     });

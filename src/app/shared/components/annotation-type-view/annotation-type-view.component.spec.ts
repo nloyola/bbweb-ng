@@ -14,7 +14,7 @@ describe('AnnotationTypeViewComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
-        NgbModule.forRoot()
+        NgbModule
       ],
       providers: [
         NgbActiveModal

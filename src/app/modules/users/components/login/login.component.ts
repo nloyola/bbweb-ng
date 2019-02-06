@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthStoreActions, AuthStoreSelectors, RootStoreState } from '@app/root-store';
@@ -16,7 +16,8 @@ import { filter, takeUntil } from 'rxjs/operators';
 })
 export class LoginComponent implements OnInit, OnDestroy {
 
-  @ViewChild('modal') private modal;
+  @ViewChild('modal') private modal: ElementRef;
+
   private unsubscribe$: Subject<void> = new Subject<void>();
   isLoggingIn$: Observable<boolean>;
   returnUrl: string;

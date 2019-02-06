@@ -1,4 +1,4 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CollectedSpecimenDefinitionName, ProcessedSpecimenDefinitionName, ProcessingType } from '@app/domain/studies';
@@ -14,7 +14,7 @@ describe('ProcessingTypeOutputSubformComponent', () => {
                    </app-processing-type-output-subform>
                  </form>`
   })
-  class TestComponent {
+  class TestComponent implements OnInit {
 
     form: FormGroup;
     processingType: ProcessingType;

@@ -41,7 +41,7 @@ export class ModalInputTextComponent implements OnInit {
       const result = {
         confirmed: (source === 'OK'),
         value: this.textForm.value.text,
-      }
+      };
       this.modalClose(result);
     };
   }

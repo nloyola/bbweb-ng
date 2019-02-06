@@ -35,7 +35,7 @@ describe('EventTypeViewContainer', () => {
     TestBed.configureTestingModule({
       imports: [
         BrowserAnimationsModule,
-        NgbModule.forRoot(),
+        NgbModule,
         RouterTestingModule,
         StoreModule.forRoot({
           'spinner': SpinnerStoreReducer.reducer,
@@ -117,6 +117,7 @@ describe('EventTypeViewContainer', () => {
 
   describe('common behaviour', () => {
 
+    /* tslint:disable:no-shadowed-variable */
     const componentUpdateFuncs = [
       (component, eventType) => component.updateName(),
       (component, eventType) => component.updateDescription(),
@@ -125,6 +126,7 @@ describe('EventTypeViewContainer', () => {
       (component, eventType) => component.removeSpecimenDefinition(eventType.specimenDefinitions[0]),
       (component, eventType) => component.removeEventType()
     ];
+    /* tslint:enable:no-shadowed-variable */
 
     it('functions should open a modal', () => {
       const eventType = createEventType();
@@ -137,10 +139,12 @@ describe('EventTypeViewContainer', () => {
         result: Promise.resolve('OK')
       });
 
+    /* tslint:disable:no-shadowed-variable */
       const componentModalFuncs = componentUpdateFuncs.concat([
         (component, eventType) => component.viewAnnotationType(eventType.annotationTypes[0]),
         (component, eventType) => component.viewSpecimenDefinition(eventType.specimenDefinitions[0])
       ]);
+    /* tslint:enable:no-shadowed-variable */
 
       componentModalFuncs.forEach(modalFunc => modalFunc(component, eventType));
       expect(modalService.open.calls.count()).toBe(componentModalFuncs.length);
@@ -155,12 +159,14 @@ describe('EventTypeViewContainer', () => {
       createMockActivatedRouteSpies(updatedStudy, eventType);
       componentSetup(updatedStudy, eventType);
 
+      /* tslint:disable:no-shadowed-variable */
       const throwErrFuncs = componentUpdateFuncs.concat([
         (component, eventType) => component.addAnnotationType(eventType.annotationTypes[0]),
         (component, eventType) => component.editAnnotationType(eventType.annotationTypes[0]),
         (component, eventType) => component.addSpecimenDefinition(eventType.specimenDefinitions[0]),
         (component, eventType) => component.editSpecimenDefinition(eventType.specimenDefinitions[0])
       ]);
+      /* tslint:enable:no-shadowed-variable */
 
       throwErrFuncs.forEach(modalFunc => {
         expect(() => modalFunc(component, eventType)).toThrowError('modifications not allowed');
@@ -249,7 +255,6 @@ describe('EventTypeViewContainer', () => {
 
     it('changes state when adding an annotation type', () => {
       const ngZone = TestBed.get(NgZone);
-      const router = TestBed.get(Router);
       ngZone.run(() => router.initialNavigation());
       const eventType = createEventType();
 
@@ -265,7 +270,6 @@ describe('EventTypeViewContainer', () => {
 
     it('when an annotation type is edited, a state change is made', () => {
       const ngZone = TestBed.get(NgZone);
-      const router = TestBed.get(Router);
       ngZone.run(() => router.initialNavigation());
 
       const eventType = createEventType();
@@ -317,7 +321,6 @@ describe('EventTypeViewContainer', () => {
 
     it('changes state when adding an specimen definition', () => {
       const ngZone = TestBed.get(NgZone);
-      const router = TestBed.get(Router);
       ngZone.run(() => router.initialNavigation());
 
       const eventType = createEventType();
@@ -334,7 +337,6 @@ describe('EventTypeViewContainer', () => {
 
     it('when an specimen definition is edited, a state change is made', () => {
       const ngZone = TestBed.get(NgZone);
-      const router = TestBed.get(Router);
       ngZone.run(() => router.initialNavigation());
 
       const eventType = createEventType();
@@ -435,6 +437,7 @@ describe('EventTypeViewContainer', () => {
     return eventType;
   }
 
+  /* tslint:disable:no-shadowed-variable */
   function componentSetup(study: Study, eventType: CollectionEventType): void {
     store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
     store.dispatch(new EventTypeStoreActions.GetEventTypeSuccess({ eventType }));
@@ -462,5 +465,6 @@ describe('EventTypeViewContainer', () => {
       }
     }));
   }
+  /* tslint:enable:no-shadowed-variable */
 
 });
