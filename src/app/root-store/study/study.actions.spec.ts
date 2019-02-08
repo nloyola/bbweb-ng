@@ -1,4 +1,4 @@
-import { Factory } from '@app/test/factory';
+import { Factory } from '@test/factory';
 import { StudyStoreActions } from '@app/root-store/study';
 import { SearchParams } from '@app/domain';
 

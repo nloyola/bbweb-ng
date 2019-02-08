@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ProcessingInputSpecimenModalComponent } from './processing-input-specimen-modal.component';
-import { Factory } from '@app/test/factory';
+import { Factory } from '@test/factory';
 import { ProcessingType, Study } from '@app/domain/studies';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { NgbModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';

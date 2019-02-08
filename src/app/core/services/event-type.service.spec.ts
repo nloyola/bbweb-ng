@@ -2,8 +2,8 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { TestBed } from '@angular/core/testing';
 import { PagedReply, SearchParams } from '@app/domain';
 import { CollectionEventType, Study } from '@app/domain/studies';
-import { PagedQueryBehaviour } from '@app/test/behaviours/paged-query.behaviour';
-import { Factory } from '@app/test/factory';
+import { PagedQueryBehaviour } from '@test/behaviours/paged-query.behaviour';
+import { Factory } from '@test/factory';
 import * as faker from 'faker';
 import { EventTypeService } from '.';
 

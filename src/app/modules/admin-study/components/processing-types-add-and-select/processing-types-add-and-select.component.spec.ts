@@ -4,7 +4,7 @@ import { ProcessingTypeStoreReducer } from '@app/root-store';
 import { TruncatePipe } from '@app/shared/pipes';
 import { StoreModule } from '@ngrx/store';
 import { ProcessingTypesAddAndSelectComponent } from './processing-types-add-and-select.component';
-import { Factory } from '@app/test/factory';
+import { Factory } from '@test/factory';
 import { Study } from '@app/domain/studies';
 
 describe('ProcessingTypesAddAndSelectComponent', () => {

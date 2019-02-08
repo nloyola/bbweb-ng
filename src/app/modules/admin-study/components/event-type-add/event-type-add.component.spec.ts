@@ -6,7 +6,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { CollectionEventType, Study } from '@app/domain/studies';
 import { EventTypeStoreActions, EventTypeStoreReducer } from '@app/root-store';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
-import { Factory } from '@app/test/factory';
+import { Factory } from '@test/factory';
 import { Store, StoreModule } from '@ngrx/store';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { EventTypeAddComponent } from './event-type-add.component';

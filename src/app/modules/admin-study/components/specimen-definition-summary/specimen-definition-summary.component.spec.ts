@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { TruncatePipe } from '@app/shared/pipes';
 import { SpecimenDefinitionSummaryComponent } from './specimen-definition-summary.component';
-import { Factory } from '@app/test/factory';
+import { Factory } from '@test/factory';
 import { CollectedSpecimenDefinition } from '@app/domain/studies';
 
 describe('SpecimenDefinitionSummaryComponent', () => {

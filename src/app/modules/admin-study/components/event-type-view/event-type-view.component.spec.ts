@@ -2,7 +2,7 @@ import { CUSTOM_ELEMENTS_SCHEMA, SimpleChange } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { CollectionEventType } from '@app/domain/studies';
 import { YesNoPipe } from '@app/shared/pipes/yes-no-pipe';
-import { Factory } from '@app/test/factory';
+import { Factory } from '@test/factory';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { EventTypeViewComponent } from './event-type-view.component';
 

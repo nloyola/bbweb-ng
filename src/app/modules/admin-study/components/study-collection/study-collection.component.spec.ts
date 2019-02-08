@@ -8,8 +8,8 @@ import { EventTypeStoreReducer, StudyStoreActions, StudyStoreReducer } from '@ap
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { TruncatePipe } from '@app/shared/pipes';
 import { YesNoPipe } from '@app/shared/pipes/yes-no-pipe';
-import { Factory } from '@app/test/factory';
-import { MockActivatedRoute } from '@app/test/mocks';
+import { Factory } from '@test/factory';
+import { MockActivatedRoute } from '@test/mocks';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
 import { ToastrModule } from 'ngx-toastr';

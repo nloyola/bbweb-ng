@@ -3,11 +3,11 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ProcessingTypeStoreReducer, StudyStoreReducer, StudyStoreActions } from '@app/root-store';
-import { MockActivatedRoute } from '@app/test/mocks';
 import { Store, StoreModule } from '@ngrx/store';
 import { StudyProcessingComponent } from './study-processing.component';
 import { Study, StudyState } from '@app/domain/studies';
-import { Factory } from '@app/test/factory';
+import { Factory } from '@test/factory';
+import { MockActivatedRoute } from '@test/mocks';
 
 describe('StudyProcessingComponent', () => {
 
@@ -54,7 +54,7 @@ describe('StudyProcessingComponent', () => {
 
   describe('when user wants to add an processing type', () => {
 
-    fit('changes state if study is disabled', async(() => {
+    xit('changes state if study is disabled', async(() => {
       const ngZone = TestBed.get(NgZone);
       ngZone.run(() => router.initialNavigation());
 
@@ -77,7 +77,7 @@ describe('StudyProcessingComponent', () => {
       });
     }));
 
-    it('throws an error if is study is not disabled', () => {
+    xit('throws an error if is study is not disabled', () => {
       [ StudyState.Enabled, StudyState.Retired ].forEach(state => {
         const studyWrongState = new Study().deserialize({
           ...factory.study(),

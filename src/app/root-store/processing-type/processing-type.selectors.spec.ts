@@ -1,7 +1,7 @@
 import { PagedReplyEntityIds, SearchParams, PagedReply } from '@app/domain';
 import { ProcessingType } from '@app/domain/studies';
 import { ProcessingTypeStoreReducer, ProcessingTypeStoreSelectors } from '@app/root-store';
-import { Factory } from '@app/test/factory';
+import { Factory } from '@test/factory';
 
 describe('ProcessingTypeStore selectors', () => {
 

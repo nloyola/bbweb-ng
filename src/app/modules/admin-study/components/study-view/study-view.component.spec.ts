@@ -4,7 +4,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { Study } from '@app/domain/studies';
 import { StudyStoreReducer } from '@app/root-store';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
-import { Factory } from '@app/test/factory';
+import { Factory } from '@test/factory';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { StoreModule } from '@ngrx/store';
 import { StudyViewComponent } from './study-view.component';

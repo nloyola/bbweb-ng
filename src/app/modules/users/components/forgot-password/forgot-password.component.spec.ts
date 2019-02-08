@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { UserService } from '@app/core/services';
 import { User } from '@app/domain/users';
-import { Factory } from '@app/test/factory';
+import { Factory } from '@test/factory';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ForgotPasswordComponent } from './forgot-password.component';
 

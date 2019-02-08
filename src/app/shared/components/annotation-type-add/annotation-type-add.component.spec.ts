@@ -3,7 +3,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AnnotationTypeAddComponent } from './annotation-type-add.component';
 import { CUSTOM_ELEMENTS_SCHEMA, SimpleChange } from '@angular/core';
 import { AnnotationType, ValueTypes } from '@app/domain/annotations';
-import { Factory } from '@app/test/factory';
+import { Factory } from '@test/factory';
 
 describe('AnnotationTypeAddComponent', () => {
 

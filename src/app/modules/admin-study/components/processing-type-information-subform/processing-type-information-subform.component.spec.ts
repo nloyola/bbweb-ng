@@ -6,7 +6,7 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup } from '@angul
 import { StoreModule } from '@ngrx/store';
 import { ProcessingTypeStoreReducer } from '@app/root-store';
 import { ProcessingType } from '@app/domain/studies';
-import { Factory } from '@app/test/factory';
+import { Factory } from '@test/factory';
 
 describe('ProcessingTypeInformationSubformComponent', () => {
 

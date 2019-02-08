@@ -7,7 +7,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { Study } from '@app/domain/studies';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { StudyStoreActions, StudyStoreReducer } from '@app/root-store/study';
-import { Factory } from '@app/test/factory';
+import { Factory } from '@test/factory';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Store, StoreModule } from '@ngrx/store';
 import { ToastrModule, ToastrService } from 'ngx-toastr';

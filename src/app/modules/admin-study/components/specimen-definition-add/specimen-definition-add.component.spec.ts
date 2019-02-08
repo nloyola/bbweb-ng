@@ -2,7 +2,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ProcessingType } from '@app/domain/studies';
-import { Factory } from '@app/test/factory';
+import { Factory } from '@test/factory';
 import { SpecimenDefinitionAddComponent } from './specimen-definition-add.component';
 
 describe('SpecimenDefinitionAddComponent', () => {

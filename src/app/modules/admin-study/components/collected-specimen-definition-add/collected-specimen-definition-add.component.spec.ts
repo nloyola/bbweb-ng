@@ -5,7 +5,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { CollectedSpecimenDefinition, CollectionEventType } from '@app/domain/studies';
 import { AuthStoreReducer } from '@app/root-store/auth-store';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
-import { Factory } from '@app/test/factory';
+import { Factory } from '@test/factory';
 import { StoreModule } from '@ngrx/store';
 import { ToastrModule } from 'ngx-toastr';
 import { CollectedSpecimenDefinitionAddComponent } from './collected-specimen-definition-add.component';

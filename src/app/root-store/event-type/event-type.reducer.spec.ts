@@ -1,7 +1,7 @@
 import { reducer, initialState } from './event-type.reducer';
 import { SearchParams, PagedReplyEntityIds } from '@app/domain';
 import { EventTypeStoreActions, EventTypeStoreReducer } from '@app/root-store';
-import { Factory } from '@app/test/factory';
+import { Factory } from '@test/factory';
 import { CollectionEventType } from '@app/domain/studies';
 
 describe('EventType Reducer', () => {

@@ -2,7 +2,7 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ProcessingTypeRemoveComponent } from './processing-type-remove.component';
-import { Factory } from '@app/test/factory';
+import { Factory } from '@test/factory';
 import { ProcessingType } from '@app/domain/studies';
 
 describe('ProcessingTypeRemoveComponent', () => {

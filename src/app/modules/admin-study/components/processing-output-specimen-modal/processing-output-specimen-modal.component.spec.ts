@@ -4,7 +4,7 @@ import { ProcessingOutputSpecimenModalComponent } from './processing-output-spec
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ProcessingType } from '@app/domain/studies';
-import { Factory } from '@app/test/factory';
+import { Factory } from '@test/factory';
 
 describe('ProcessingOutputSpecimenModalComponent', () => {
   let component: ProcessingOutputSpecimenModalComponent;

@@ -6,7 +6,7 @@ import { SearchFilterValues, SearchParams } from '@app/domain';
 import { Study, StudyState, StudyCountsUIMap } from '@app/domain/studies';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { StudyStoreActions, StudyStoreReducer } from '@app/root-store/study';
-import { Factory } from '@app/test/factory';
+import { Factory } from '@test/factory';
 import { Store, StoreModule } from '@ngrx/store';
 import { StudiesViewComponent } from './studies-view.component';
 import { StudyUI } from '@app/domain/studies/study-ui.model';

@@ -1,6 +1,6 @@
 import { AuthStoreActions, AuthStoreReducer } from '@app/root-store/auth-store';
 import { User } from '@app/domain/users';
-import { Factory } from '@app/test/factory';
+import { Factory } from '@test/factory';
 
 describe('auth-store-model reducer', () => {
 

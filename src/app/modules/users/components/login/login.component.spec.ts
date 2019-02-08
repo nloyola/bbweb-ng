@@ -7,7 +7,7 @@ import { RoleIds } from '@app/domain/access';
 import { User } from '@app/domain/users';
 import { AuthStoreActions, AuthStoreReducer } from '@app/root-store/auth-store';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
-import { Factory } from '@app/test/factory';
+import { Factory } from '@test/factory';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
 import { LoginComponent } from './login.component';

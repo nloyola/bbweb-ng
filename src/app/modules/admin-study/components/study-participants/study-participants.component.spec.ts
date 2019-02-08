@@ -10,7 +10,7 @@ import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { AnnotationTypeRemoveComponent } from '@app/shared/components/annotation-type-remove/annotation-type-remove.component';
 import { AnnotationTypeViewComponent } from '@app/shared/components/annotation-type-view/annotation-type-view.component';
 import { YesNoPipe } from '@app/shared/pipes/yes-no-pipe';
-import { Factory } from '@app/test/factory';
+import { Factory } from '@test/factory';
 import { NgbActiveModal, NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
 import { ToastrModule, ToastrService } from 'ngx-toastr';

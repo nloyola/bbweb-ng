@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { StudyService } from '@app/core/services';
 import { SearchParams } from '@app/domain';
 import { StudyStoreActions } from '@app/root-store';
-import { Factory } from '@app/test/factory';
+import { Factory } from '@test/factory';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { cold, hot } from 'jasmine-marbles';
 import { Observable, of, throwError } from 'rxjs';

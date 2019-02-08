@@ -7,12 +7,12 @@ import { AnnotationType } from '@app/domain/annotations';
 import { CollectionEventType, Study } from '@app/domain/studies';
 import { EventTypeStoreActions, EventTypeStoreReducer, StudyStoreReducer } from '@app/root-store';
 import { AnnotationTypeAddComponent } from '@app/shared/components/annotation-type-add/annotation-type-add.component';
-import { Factory } from '@app/test/factory';
+import { Factory } from '@test/factory';
 import { Store, StoreModule } from '@ngrx/store';
 import { cold } from 'jasmine-marbles';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { CollectionAnnotationTypeAddContainerComponent } from './collection-annotation-type-add.container';
-import { MockActivatedRoute } from '@app/test/mocks';
+import { MockActivatedRoute } from '@test/mocks';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('CollectionAnnotationTypeAddContainerComponent', () => {

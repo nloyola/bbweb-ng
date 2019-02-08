@@ -5,7 +5,7 @@ import { ActivatedRouteSnapshot } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Study } from '@app/domain/studies';
 import { StudyStoreActions, StudyStoreReducer } from '@app/root-store';
-import { Factory } from '@app/test/factory';
+import { Factory } from '@test/factory';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
 import { cold } from 'jasmine-marbles';

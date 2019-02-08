@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ProcessingInputSpecimenSummaryComponent } from './processing-input-specimen-summary.component';
-import { Factory } from '@app/test/factory';
+import { Factory } from '@test/factory';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { TruncatePipe } from '@app/shared/pipes';
 import { ProcessingType } from '@app/domain/studies';

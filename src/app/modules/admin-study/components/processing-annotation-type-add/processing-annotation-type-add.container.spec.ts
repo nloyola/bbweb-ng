@@ -6,9 +6,9 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { StoreModule } from '@ngrx/store';
 import { ProcessingTypeStoreReducer } from '@app/root-store';
 import { ToastrModule } from 'ngx-toastr';
-import { MockActivatedRoute } from '@app/test/mocks';
+import { MockActivatedRoute } from '@test/mocks';
 import { Study, ProcessingType } from '@app/domain/studies';
-import { Factory } from '@app/test/factory';
+import { Factory } from '@test/factory';
 import { ActivatedRoute } from '@angular/router';
 
 describe('ProcessingAnnotationTypeAddContainerComponent', () => {

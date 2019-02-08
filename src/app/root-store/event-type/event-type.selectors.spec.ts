@@ -1,7 +1,7 @@
 import { PagedReply, PagedReplyEntityIds, SearchParams } from '@app/domain';
 import { CollectionEventType } from '@app/domain/studies';
 import { EventTypeStoreReducer, EventTypeStoreSelectors } from '@app/root-store';
-import { Factory } from '@app/test/factory';
+import { Factory } from '@test/factory';
 
 describe('EventTypeStore selectors', () => {
 

@@ -5,13 +5,13 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ProcessingType, Study } from '@app/domain/studies';
 import { EventTypeStoreActions, EventTypeStoreReducer, ProcessingTypeStoreActions, ProcessingTypeStoreReducer, StudyStoreActions, StudyStoreReducer } from '@app/root-store';
-import { Factory } from '@app/test/factory';
-import { MockActivatedRoute } from '@app/test/mocks';
+import { Factory } from '@test/factory';
+import { MockActivatedRoute } from '@test/mocks';
 import { Store, StoreModule } from '@ngrx/store';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { ProcessingTypeAddComponent } from './processing-type-add.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { ProcessingTypeFixture } from '@app/test/fixtures';
+import { ProcessingTypeFixture } from '@test/fixtures';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 
 describe('ProcessingTypeAddComponent', () => {

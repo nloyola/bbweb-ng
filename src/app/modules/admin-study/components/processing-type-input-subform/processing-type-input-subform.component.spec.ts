@@ -4,7 +4,7 @@ import { ProcessingTypeInputSubformComponent } from './processing-type-input-sub
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ProcessingType, ProcessedSpecimenDefinitionName, CollectedSpecimenDefinitionName } from '@app/domain/studies';
-import { Factory } from '@app/test/factory';
+import { Factory } from '@test/factory';
 
 describe('ProcessingTypeInputSubformComponent', () => {
 

@@ -3,7 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ProcessingOutputSpecimenSummaryComponent } from './processing-output-specimen-summary.component';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { TruncatePipe } from '@app/shared/pipes';
-import { Factory } from '@app/test/factory';
+import { Factory } from '@test/factory';
 import { ProcessingType } from '@app/domain/studies';
 
 describe('ProcessingOutputSpecimenSummaryComponent', () => {

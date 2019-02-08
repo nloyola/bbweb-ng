@@ -1,6 +1,6 @@
 import { AuthStoreActions } from '@app/root-store/auth-store';
 import { User } from '@app/domain/users';
-import { Factory } from '@app/test/factory';
+import { Factory } from '@test/factory';
 import * as faker from 'faker';
 
 describe('auth-store actions', () => {

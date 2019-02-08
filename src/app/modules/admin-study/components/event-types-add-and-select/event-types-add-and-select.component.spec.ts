@@ -6,11 +6,11 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { Study, StudyState, CollectionEventType } from '@app/domain/studies';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { TruncatePipe } from '@app/shared/pipes';
-import { Factory } from '@app/test/factory';
+import { Factory } from '@test/factory';
 import { StoreModule, Store } from '@ngrx/store';
 import { EventTypesAddAndSelectComponent } from './event-types-add-and-select.component';
 import { StudyStoreReducer, EventTypeStoreReducer } from '@app/root-store';
-import { MockActivatedRoute } from '@app/test/mocks';
+import { MockActivatedRoute } from '@test/mocks';
 
 describe('EventTypesAddAndSelectComponent', () => {
 

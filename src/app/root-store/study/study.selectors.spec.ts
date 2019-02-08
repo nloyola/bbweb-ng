@@ -1,5 +1,5 @@
 import { StudyStoreReducer, StudyStoreSelectors } from '@app/root-store';
-import { Factory } from '@app/test/factory';
+import { Factory } from '@test/factory';
 import { SearchParams, PagedReplyEntityIds } from '@app/domain';
 import { Study } from '@app/domain/studies';
 import { EntityAdapter, createEntityAdapter } from '@ngrx/entity';

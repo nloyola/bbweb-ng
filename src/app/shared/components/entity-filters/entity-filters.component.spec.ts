@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { EntityStateInfo, SearchFilterValues } from '@app/domain';
 import { SearchFilter } from '@app/domain/search-filters';
-import { Factory } from '@app/test/factory';
+import { Factory } from '@test/factory';
 import * as faker from 'faker';
 import { EntityFiltersComponent } from './entity-filters.component';
 

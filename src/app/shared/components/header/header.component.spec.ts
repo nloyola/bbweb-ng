@@ -6,7 +6,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { RoleIds } from '@app/domain/access';
 import { User } from '@app/domain/users';
 import { AuthStoreActions, AuthStoreReducer } from '@app/root-store/auth-store';
-import { Factory } from '@app/test/factory';
+import { Factory } from '@test/factory';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
 import { HeaderComponent } from './header.component';
