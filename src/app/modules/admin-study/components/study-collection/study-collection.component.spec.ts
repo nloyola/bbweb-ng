@@ -128,9 +128,7 @@ describe('StudyCollectionComponent', () => {
     }));
 
     mockActivatedRoute.spyOnSnapshot(() => ({
-      params: {
-        slug: study.slug
-      }
+      params: {}
     }));
   }
 });
