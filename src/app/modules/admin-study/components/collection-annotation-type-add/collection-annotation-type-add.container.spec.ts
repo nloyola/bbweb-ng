@@ -234,11 +234,7 @@ describe('CollectionAnnotationTypeAddContainerComponent', () => {
       params: {
         eventTypeSlug: eventType.slug,
         annotationTypeId
-      },
-      url: [
-        { path: '' },
-        { path }
-      ]
+      }
     }));
   }
 });

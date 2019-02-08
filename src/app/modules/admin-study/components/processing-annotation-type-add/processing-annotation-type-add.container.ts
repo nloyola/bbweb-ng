@@ -22,10 +22,10 @@ export class ProcessingAnnotationTypeAddContainerComponent implements OnInit, On
   study: Study;
   processingTypeSlug: string;
   processingType: ProcessingType;
+  savedMessage: string;
 
   private parentStateRelativePath = '..';
   private annotationTypeToSave: AnnotationType;
-  private savedMessage: string;
   private unsubscribe$: Subject<void> = new Subject<void>();
 
   constructor(private route: ActivatedRoute,
@@ -71,7 +71,7 @@ export class ProcessingAnnotationTypeAddContainerComponent implements OnInit, On
       .subscribe((error: any) => {
         this.isSaving$.next(false);
         let errMessage = error.error ? error.error.message : error.statusText;
-        if (errMessage.match(/EntityCriteriaError.*name already used/)) {
+        if (errMessage && errMessage.match(/EntityCriteriaError.*name already used/)) {
           errMessage = `The name is already in use: ${this.annotationTypeToSave.name}`;
         }
         this.toastr.error(errMessage, 'Add Error', { disableTimeOut: true });
@@ -97,6 +97,7 @@ export class ProcessingAnnotationTypeAddContainerComponent implements OnInit, On
       annotationType: this.annotationTypeToSave
     }));
 
+    debugger;
     this.savedMessage = this.annotationType.isNew() ? 'Annotation Added' : 'Annotation Updated';
   }
 

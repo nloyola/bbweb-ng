@@ -87,6 +87,7 @@
     "collectCoverageFrom": [
       "**/*.ts",
       "!**/*.spec.ts",
+      "!**/test/**",
       "!**/node_modules/**"
     ],
     "coverageReporters": [

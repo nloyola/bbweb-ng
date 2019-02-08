@@ -202,6 +202,9 @@ describe('ParticipantAnnotationTypeAddContainer', () => {
         snapshot: {
           data: {
             study
+          },
+          params: {
+            slug: study.slug
           }
         }
       }

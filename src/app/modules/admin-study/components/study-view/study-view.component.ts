@@ -62,7 +62,9 @@ export class StudyViewComponent implements OnInit, OnDestroy {
     this.activeTabId = this.getActiveTabId(this.router.url);
 
     this.router.events
-      .pipe(filter(x => x instanceof NavigationEnd))
+      .pipe(
+        filter(x => x instanceof NavigationEnd),
+        takeUntil(this.unsubscribe$))
       .subscribe((event: NavigationEnd) => {
         this.activeTabId = this.getActiveTabId(event.urlAfterRedirects);
       });

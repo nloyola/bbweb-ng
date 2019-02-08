@@ -15,7 +15,7 @@ import * as faker from 'faker';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { ProcessingTypeViewContainerComponent } from './processing-type-view.container';
 
-fdescribe('ProcessingTypeViewContainerComponent', () => {
+describe('ProcessingTypeViewContainerComponent', () => {
   let component: ProcessingTypeViewContainerComponent;
   let fixture: ComponentFixture<ProcessingTypeViewContainerComponent>;
   const mockActivatedRoute = new MockActivatedRoute();

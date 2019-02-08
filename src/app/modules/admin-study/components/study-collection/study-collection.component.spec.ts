@@ -106,7 +106,8 @@ describe('StudyCollectionComponent', () => {
           state
         });
         mockActivatedRouteSnapshot(studyWrongState);
-        component.ngOnInit();
+        store.dispatch(new StudyStoreActions.GetStudySuccess({ study: studyWrongState }));
+        fixture.detectChanges();
         expect(() => component.addEventTypeSelected()).toThrowError('modifications not allowed');
       });
     });

@@ -7,16 +7,20 @@ export class ProcessingTypeFixture {
 
   createEntities(): { study: Study, processingType: ProcessingType } {
     const study = new Study().deserialize(this.factory.study());
+    return {
+      study,
+      processingType: this.createProcessingTypeWithAnnotations()
+    };
+  }
+
+  createProcessingTypeWithAnnotations(): ProcessingType {
     const annotationType = this.factory.annotationType();
     const processingType = new ProcessingType().deserialize({
       ...this.factory.processingType(),
       annotationTypes: [ annotationType ]
     });
 
-    return {
-      study,
-      processingType
-    };
+    return processingType;
   }
 
   createProcessingTypeFromCollected(): { eventType: CollectionEventType, processingType: ProcessingType } {
@@ -25,8 +29,9 @@ export class ProcessingTypeFixture {
     return { eventType, processingType };
   }
 
-  createProcessingTypeFromProcessed(): { input: ProcessingType, processingType: ProcessingType } {
+  createProcessingTypeFromProcessed(): { eventType: CollectionEventType, input: ProcessingType, processingType: ProcessingType } {
     const inputPt = new ProcessingType().deserialize(this.factory.processingType());
+    const eventType = new CollectionEventType().deserialize(this.factory.defaultCollectionEventType());
     const processingType = new ProcessingType().deserialize(this.factory.processingType({
       input: {
         definitionType: 'processed',
@@ -34,7 +39,7 @@ export class ProcessingTypeFixture {
         specimenDefinitionId: inputPt.output.specimenDefinition.id
       }
     }));
-    return { input: inputPt, processingType };
+    return { eventType, input: inputPt, processingType };
   }
 
   collectedDefinitionNames(eventTypes: CollectionEventType[]): CollectedSpecimenDefinitionName[] {
