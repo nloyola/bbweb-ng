@@ -1,5 +1,6 @@
 <app-annotation-type-add *ngIf="!isLoading; else showLoading"
                          [annotationType]="annotationType"
+                         [entityName]="'Participant'"
                          [isSaving]="isSaving$"
                          (submitted)="onSubmit($event)"
                          (cancelled)="onCancel($event)">

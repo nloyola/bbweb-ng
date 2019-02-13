@@ -65,8 +65,8 @@ describe('ProcessingTypeViewComponent', () => {
       'viewAnnotationType',
       'editAnnotationType',
       'removeAnnotationType',
-      'updateInputSpecimen',
-      'updateOutputSpecimen',
+      'inputSpecimenUpdate',
+      'outputSpecimenUpdate',
       'removeProcessingType'
     ];
 

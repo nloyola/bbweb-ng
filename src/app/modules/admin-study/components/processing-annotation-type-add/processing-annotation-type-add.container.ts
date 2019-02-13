@@ -97,7 +97,6 @@ export class ProcessingAnnotationTypeAddContainerComponent implements OnInit, On
       annotationType: this.annotationTypeToSave
     }));
 
-    debugger;
     this.savedMessage = this.annotationType.isNew() ? 'Annotation Added' : 'Annotation Updated';
   }
 

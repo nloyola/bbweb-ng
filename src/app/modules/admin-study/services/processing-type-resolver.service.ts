@@ -31,6 +31,10 @@ export class ProcessingTypeResolver implements Resolve<ProcessingType> {
         filter(ets => ets.length > 0),
         map((ets: ProcessingType[]) => ets.find(et => et.slug === processingTypeSlug)),
         map(processingType => {
+          if (!processingType) {
+            throw new Error('processing type not found');
+          }
+
           // have to do the following because of this issue:
           //
           // https://github.com/ngrx/platform/issues/976

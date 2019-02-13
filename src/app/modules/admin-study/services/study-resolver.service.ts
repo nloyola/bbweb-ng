@@ -28,6 +28,10 @@ export class StudyResolver implements Resolve<Study> {
         filter(s => s.length > 0),
         map((studies: Study[]) => studies.find(s => s.slug === slug)),
         map(study => {
+          if (!study) {
+            throw new Error('study not found');
+          }
+
           // have to do the following because of this issue:
           //
           // https://github.com/ngrx/platform/issues/976

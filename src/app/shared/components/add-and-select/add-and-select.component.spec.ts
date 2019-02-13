@@ -1,10 +1,10 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { AddAndSelectComponent } from './add-and-select.component';
-import { ConcurrencySafeEntity, PagedReplyInfo } from '@app/domain';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
+import { ConcurrencySafeEntity } from '@app/domain';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { AddAndSelectComponent } from './add-and-select.component';
 
 class TestEntity extends ConcurrencySafeEntity {}
 

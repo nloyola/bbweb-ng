@@ -36,8 +36,11 @@ export class AnnotationTypeAddComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.nameInput.nativeElement.focus();
-    this.title = this.annotationType.isNew() ? 'Add Annotation' : 'Update Annotation';
+    if (!this.annotationType) {
+      throw new Error('annotation type is not defined')
+    }
 
+    this.title = this.annotationType.isNew() ? 'Add Annotation' : 'Update Annotation';
     const valueType = this.annotationType.valueType ? this.annotationType.valueType : '';
     const maxValueCount = this.annotationType.maxValueCount
       ? this.annotationType.maxValueCount : MaxValueCount.None;

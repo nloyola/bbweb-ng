@@ -16,6 +16,12 @@ import { ProcessingInputSpecimenModalComponent } from '../processing-input-speci
 import { ProcessingOutputSpecimenModalComponent } from '../processing-output-specimen-modal/processing-output-specimen-modal.component';
 import { ProcessingTypeRemoveComponent } from '../processing-type-remove/processing-type-remove.component';
 
+interface Entities {
+  studies: Study[];
+  processingTypes: ProcessingType[];
+  eventTypeEntities: Dictionary<CollectionEventType>
+}
+
 @Component({
   selector: 'app-processing-type-view',
   templateUrl: './processing-type-view.container.html'
@@ -53,11 +59,11 @@ export class ProcessingTypeViewContainerComponent implements OnInit, OnDestroy {
       EventTypeStoreSelectors.selectAllEventTypeEntities,
       (studies: Study[],
        processingTypes: ProcessingType[],
-       eventTypeEntities: Dictionary<CollectionEventType>) => {
+       eventTypeEntities: Dictionary<CollectionEventType>): Entities => {
          return {
            studies,
            processingTypes,
-           eventTypes: eventTypeEntities
+           eventTypeEntities
          };
        });
 
@@ -77,45 +83,35 @@ export class ProcessingTypeViewContainerComponent implements OnInit, OnDestroy {
         const ptEntity = entities.processingTypes.find(
           pt => pt.slug === this.route.parent.snapshot.params.processingTypeSlug);
 
-        if (this.processingType && ((entities.processingTypes.length <= 0) || (ptEntity === undefined))) {
-          this.router.navigate([ '/admin/studies/view/bbpsp/processing' ]);
-          this.toastr.success('Processing step removed', 'Removed');
-          this.processingType = undefined;
-          return;
-        }
-
         if (ptEntity) {
           this.processingType = (ptEntity instanceof ProcessingType)
             ? ptEntity : new ProcessingType().deserialize(ptEntity);
-        }
 
-        if (this.processingType) {
           if (this.updatedMessage) {
             this.toastr.success(this.updatedMessage, 'Update Successfull');
           }
 
-          this.inputEntity =
-            (this.processingType.input.definitionType === 'collected')
-            ? entities.eventTypes[this.processingType.input.entityId]
-            : entities.processingTypes.find(pt => pt.id === this.processingType.input.entityId);
-
-          if (!this.inputEntity) {
-            let action: Action;
-            // then entity has not been retrieved from the server yet
-            if (this.processingType.input.definitionType === 'collected') {
-              action = new EventTypeStoreActions.GetEventTypeByIdRequest({
-                studyId: this.processingType.studyId,
-                eventTypeId: this.processingType.input.entityId
-              });
-            } else {
-              action = new ProcessingTypeStoreActions.GetProcessingTypeByIdRequest({
-                studyId: this.processingType.studyId,
-                processingTypeId: this.processingType.input.entityId
-              });
-            }
-            this.store$.dispatch(action);
-          }
+          this.queryForInputEntity(entities);
+          return;
         }
+
+        if (!this.processingType) { return; }
+
+        const ptEntityById = entities.processingTypes.find(pt => pt.id === this.processingType.id);
+
+        if (ptEntityById) {
+          this.processingType = (ptEntityById instanceof ProcessingType)
+            ? ptEntityById : new ProcessingType().deserialize(ptEntityById);
+          this.router.navigate([ `/admin/studies/view/${this.study.slug}/processing/view/${this.processingType.slug}` ]);
+          if (this.updatedMessage) {
+            this.toastr.success(this.updatedMessage, 'Update Successfull');
+          }
+          return;
+        }
+
+        this.processingType = undefined;
+        this.router.navigate([ `/admin/studies/view/${this.study.slug}/processing` ]);
+        this.toastr.success('Processing step removed', 'Removed');
       });
   }
 
@@ -316,6 +312,30 @@ export class ProcessingTypeViewContainerComponent implements OnInit, OnDestroy {
     this.processingType = processingType;
     // relative route does not work here, why?
     this.router.navigate([ `/admin/studies/view/bbpsp/processing/${processingType.slug}` ]);
+  }
+
+  private queryForInputEntity(entities: Entities) {
+    this.inputEntity =
+      (this.processingType.input.definitionType === 'collected')
+      ? entities.eventTypeEntities[this.processingType.input.entityId]
+      : entities.processingTypes.find(pt => pt.id === this.processingType.input.entityId);
+
+    if (!this.inputEntity) {
+      let action: Action;
+      // then entity has not been retrieved from the server yet
+      if (this.processingType.input.definitionType === 'collected') {
+        action = new EventTypeStoreActions.GetEventTypeByIdRequest({
+          studyId: this.processingType.studyId,
+          eventTypeId: this.processingType.input.entityId
+        });
+      } else {
+        action = new ProcessingTypeStoreActions.GetProcessingTypeByIdRequest({
+          studyId: this.processingType.studyId,
+          processingTypeId: this.processingType.input.entityId
+        });
+      }
+      this.store$.dispatch(action);
+    }
   }
 
 }

@@ -30,26 +30,27 @@ export class ParticipantAnnotationTypeAddContainerComponent implements OnInit, O
   }
 
   ngOnInit() {
-    this.study = this.route.parent.parent.snapshot.data.study;
-    this.annotationType = this.study.annotationTypes
-      .find(at => at.id === this.route.snapshot.params.annotationTypeId);
-    if (!this.annotationType) {
-      this.annotationType = new AnnotationType();
-    }
+    this.annotationType = new AnnotationType();
 
     this.store$.pipe(
-      select(StudyStoreSelectors.selectAllStudyEntities),
-      filter((entities: { [key: string]: any }) => Object.keys(entities).length > 0),
+      select(StudyStoreSelectors.selectAllStudies),
       takeUntil(this.unsubscribe$))
-      .subscribe((entities: { [key: string]: any }) => {
-        const entity = entities[this.study.id];
+      .subscribe((studies: Study[]) => {
+        const studyEntity = studies.find(s => s.slug === this.route.parent.parent.snapshot.params.slug);
+        if (studyEntity) {
+          this.study = (studyEntity instanceof Study)
+            ? studyEntity :  new Study().deserialize(studyEntity);
 
-        this.study = (entity instanceof Study) ? entity : new Study().deserialize(entity);
+          if (this.route.snapshot.params.annotationTypeId) {
+            this.annotationType = this.study.annotationTypes
+              .find(at => at.id === this.route.snapshot.params.annotationTypeId);
+          }
 
-        if (this.savedMessage) {
-          this.isSaving$.next(false);
-          this.toastr.success(this.savedMessage, 'Update Successfull');
-          this.router.navigate([ this.parentStateRelativePath ], { relativeTo: this.route });
+          if (this.savedMessage) {
+            this.isSaving$.next(false);
+            this.toastr.success(this.savedMessage, 'Update Successfull');
+            this.router.navigate([ this.parentStateRelativePath ], { relativeTo: this.route });
+          }
         }
       });
 

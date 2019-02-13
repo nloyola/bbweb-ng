@@ -6,11 +6,11 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { ProcessingType, Study, StudyState } from '@app/domain/studies';
 import { EventTypeStoreActions, EventTypeStoreReducer, ProcessingTypeStoreActions, ProcessingTypeStoreReducer, StudyStoreActions, StudyStoreReducer } from '@app/root-store';
 import { YesNoPipe } from '@app/shared/pipes/yes-no-pipe';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
 import { ProcessingTypeFixture, ProcessingTypeFixtureEntities } from '@test/fixtures';
 import { MockActivatedRoute } from '@test/mocks';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Store, StoreModule } from '@ngrx/store';
 import * as faker from 'faker';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { ProcessingTypeViewContainerComponent } from './processing-type-view.container';
@@ -421,7 +421,7 @@ describe('ProcessingTypeViewContainerComponent', () => {
 
       expect(component.processingType).toBeUndefined();
       expect(spy).toHaveBeenCalled();
-      expect(spy.mock.calls[0][0]).toEqual([ '/admin/studies/view/bbpsp/processing' ]);
+      expect(spy.mock.calls[0][0]).toEqual([ `/admin/studies/view/${entities.study.slug}/processing` ]);
     });
 
     it('opens a modal if the processing type is in use', () => {

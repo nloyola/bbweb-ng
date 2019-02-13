@@ -20,8 +20,8 @@ export class ProcessingTypeViewComponent implements OnInit, OnChanges {
   @Output() viewAnnotationTypeSelected       = new EventEmitter<AnnotationType>();
   @Output() editAnnotationTypeSelected       = new EventEmitter<AnnotationType>();
   @Output() removeAnnotationTypeSelected     = new EventEmitter<AnnotationType>();
-  @Output() updateInputSpecimenSelected      = new EventEmitter<any>();
-  @Output() updateOutputSpecimenSelected     = new EventEmitter<any>();
+  @Output() inputSpecimenUpdateSelected      = new EventEmitter<any>();
+  @Output() outputSpecimenUpdateSelected     = new EventEmitter<any>();
   @Output() removeProcessingTypeSelected     = new EventEmitter<any>();
 
   isPanelCollapsed = false;
@@ -68,12 +68,12 @@ export class ProcessingTypeViewComponent implements OnInit, OnChanges {
     this.removeAnnotationTypeSelected.emit(annotationType);
   }
 
-  updateInputSpecimen() {
-    this.updateInputSpecimenSelected.emit(null);
+  inputSpecimenUpdate() {
+    this.inputSpecimenUpdateSelected.emit(null);
   }
 
-  updateOutputSpecimen() {
-    this.updateOutputSpecimenSelected.emit(null);
+  outputSpecimenUpdate() {
+    this.outputSpecimenUpdateSelected.emit(null);
   }
 
   removeProcessingType() {

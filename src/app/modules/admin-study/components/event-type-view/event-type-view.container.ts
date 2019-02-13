@@ -64,17 +64,35 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
 
         const eventTypeEntity = entities.eventTypes
           .find((et: CollectionEventType) => et.slug === this.route.snapshot.params.eventTypeSlug);
+
         if (eventTypeEntity) {
           this.eventType = (eventTypeEntity instanceof CollectionEventType)
             ? eventTypeEntity : new CollectionEventType().deserialize(eventTypeEntity);
           if (this.updatedMessage) {
             this.toastr.success(this.updatedMessage, 'Update Successfull');
           }
-        } else if (this.eventType) {
-          this.eventType = undefined;
-          this.router.navigate([ '/admin/studies/view/bbpsp/collection/view' ]);
-          this.toastr.success('Event removed');
+          return;
         }
+
+        if (!this.eventType) { return; }
+
+        // this only runs if the slug was changed or the was deleted
+        const eventTypeEntityById = entities.eventTypes
+          .find((et: CollectionEventType) => et.id === this.eventType.id);
+
+        if (eventTypeEntityById) {
+          this.eventType = (eventTypeEntityById instanceof CollectionEventType)
+            ? eventTypeEntityById : new CollectionEventType().deserialize(eventTypeEntityById);
+          this.router.navigate([ `/admin/studies/view/bbpsp/collection/view/${eventTypeEntityById.slug}` ]);
+          if (this.updatedMessage) {
+            this.toastr.success(this.updatedMessage, 'Update Successfull');
+          }
+          return;
+        }
+
+        this.eventType = undefined;
+        this.router.navigate([ '/admin/studies/view/bbpsp/collection/view' ]);
+        this.toastr.success('Event removed');
       });
   }
 

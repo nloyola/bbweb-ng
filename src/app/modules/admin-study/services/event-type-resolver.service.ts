@@ -30,6 +30,10 @@ export class EventTypeResolver implements Resolve<CollectionEventType> {
         filter(ets => ets.length > 0),
         map((ets: CollectionEventType[]) => ets.find(et => et.slug === eventTypeSlug)),
         map(eventType => {
+          if (!eventType) {
+            throw new Error('collection event type not found');
+          }
+
           // have to do the following because of this issue:
           //
           // https://github.com/ngrx/platform/issues/976
