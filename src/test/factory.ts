@@ -4,6 +4,7 @@ import { StudyCounts, StudyState } from '@app/domain/studies';
 import { UserState } from '@app/domain/users';
 import * as _ from 'lodash';
 import faker = require('faker');
+import { CentreState, CentreCounts } from '@app/domain/centres';
 
 enum DomainEntities {
 
@@ -235,8 +236,7 @@ export class Factory {
   annotationType(options: any = {
     valueType: ValueTypes.Text,
     maxValueCount: MaxValueCount.None
-  })
-  : any {
+  }): any {
     const defaults = {
       ...{
         id: this.domainEntityIdNext(DomainEntities.ANNOTATION_TYPE),
@@ -368,6 +368,39 @@ export class Factory {
     };
   }
 
+  centreCounts(): CentreCounts {
+    return {
+      total: 2,
+      disabledCount: 1,
+      enabledCount: 1
+    };
+  }
+
+  centre(options?: any): any {
+    const s = {
+      ...{
+        id:              this.domainEntityIdNext(DomainEntities.CENTRE),
+        version:         0,
+        description:     faker.lorem.sentences(4),
+        studyNames:      [],
+        locations:       [],
+        state:           CentreState.Disabled
+      },
+      ...options,
+      ...this.nameAndSlug()
+    };
+    this.defaultEntities.set(DomainEntities.CENTRE, s);
+    return s;
+  }
+
+  /**
+   * Returns the last {@link domain.centres.Centre Centre} plain object created by this factory.
+   */
+  defaultCentre(): any {
+    const dflt = this.defaultEntities.get(DomainEntities.CENTRE);
+    return dflt ? dflt : this.centre();
+  }
+
   pagedReply<T extends ConcurrencySafeEntity>(entities: T[]): PagedReply<T> {
     const searchParams = new SearchParams();
     return {
@@ -379,6 +412,49 @@ export class Factory {
     };
   }
 
+  nameAndSlug(): any {
+    const name = this.stringNext();
+    return {
+      slug: this.slugify(name),
+      name: name
+    };
+  }
+
+  entityNameDto(entity: any, options: any = {}): any {
+    const combined = { ...entity, ...options };
+    return {
+      id: combined.id,
+      slug: combined.slug,
+      name: combined.name
+    };
+  }
+
+  entityNameAndStateDto(entity: any, options: any = {}): any {
+    const combined = { ...entity, ...options };
+    return {
+      ...this.entityNameDto(entity, options),
+      state: combined.state
+    };
+  }
+
+  location(options: any = {}) {
+    const location = {
+      ...{
+        id: this.domainEntityIdNext(DomainEntities.LOCATION),
+        street:         faker.address.streetAddress(),
+        city:           faker.address.city(),
+        province:       faker.address.state(),
+        postalCode:     faker.address.zipCode(),
+        poBoxNumber:    faker.address.zipCode(),
+        countryIsoCode: faker.address.country()
+      },
+      ...options,
+      ...this.nameAndSlug()
+    };
+    return location;
+  }
+
+
   private domainEntityNameNext(domainEntityType?: string) {
     const id = domainEntityType ? domainEntityType : 'string';
     return _.uniqueId(id + '_');
@@ -388,19 +464,11 @@ export class Factory {
     return this.domainEntityNameNext(domainEntityType);
   }
 
-  private commonFields() {
+  private commonFields(): any {
     return {
       version: 0,
       timeAdded: faker.date.recent(10),
       timeModified: faker.date.recent(5)
-    };
-  }
-
-  nameAndSlug() {
-    const name = this.stringNext();
-    return {
-      slug: this.slugify(name),
-      name: name
     };
   }
 

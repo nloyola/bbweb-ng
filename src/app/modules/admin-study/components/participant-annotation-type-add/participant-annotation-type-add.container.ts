@@ -63,7 +63,7 @@ export class ParticipantAnnotationTypeAddContainerComponent implements OnInit, O
         this.isSaving$.next(false);
 
         let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
-        if (errMessage.match(/EntityCriteriaError.*name already used/)) {
+        if (errMessage && errMessage.match(/EntityCriteriaError.*name already used/)) {
           errMessage = `The name is already in use: ${this.annotationTypeToSave.name}`;
         }
         this.toastr.error(errMessage, 'Add Error', { disableTimeOut: true });

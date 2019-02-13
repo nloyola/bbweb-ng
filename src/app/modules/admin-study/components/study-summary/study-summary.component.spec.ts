@@ -189,8 +189,6 @@ describe('StudySummaryComponent', () => {
     }));
 
     it('functions that change the study state', fakeAsync(() => {
-      jest.spyOn(store, 'dispatch');
-
       ngZone.run(() => store.dispatch(new StudyStoreActions.GetStudySuccess({ study })));
       fixture.detectChanges();
 
@@ -201,14 +199,14 @@ describe('StudySummaryComponent', () => {
         { componentFunc: (component) => component.unretire(), value: 'unretire' }
       ];
 
-      store.dispatch.mockClear();
+      const storeListener = jest.spyOn(store, 'dispatch');
       testData.forEach((testInfo, index) => {
         testInfo.componentFunc(component);
         fixture.detectChanges();
         tick(1000);
 
-        expect(store.dispatch.mock.calls.length).toBe(index + 1);
-        expect(store.dispatch.mock.calls[index][0]).toEqual(new StudyStoreActions.UpdateStudyRequest({
+        expect(storeListener.mock.calls.length).toBe(index + 1);
+        expect(storeListener.mock.calls[index][0]).toEqual(new StudyStoreActions.UpdateStudyRequest({
           study,
           attributeName: 'state',
           value: testInfo.value

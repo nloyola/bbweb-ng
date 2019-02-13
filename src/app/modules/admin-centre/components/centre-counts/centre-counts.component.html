@@ -1,0 +1,14 @@
+<ng-container *ngIf="!!countData; else showLoading">
+  <span class="mr-2" *ngFor="let countInfo of getCounts()">
+    <mat-icon [ngClass]="countInfo.iconClass">
+      {{countInfo.icon}}
+    </mat-icon>
+    {{countInfo.stateLabel}}: {{countInfo.count}}
+  </span>
+</ng-container>
+
+<ng-template #showLoading>
+  <app-spinner name="centre-counts" [show]="!countData" i18n>
+    Retrieving counts...
+  </app-spinner>
+</ng-template>

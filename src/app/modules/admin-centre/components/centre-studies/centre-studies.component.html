@@ -1,0 +1,78 @@
+<div class="card mt-2" *ngIf="centre">
+  <div class="card-header bg-primary text-light"
+       *ngIf="!(isLoading$ | async); else showLoading">
+    <mat-icon [ngClass]="centre.stateIconClass()">
+      {{centre.stateIcon()}}
+    </mat-icon>
+    {{centre.name}}: <small i18n>Studies</small>
+  </div>
+
+  <ul class="list-group" *ngIf="!centre.entity.hasStudies()">
+    <li class="list-group-item">
+      <div class="alert alert-warning">
+        <mat-icon>warning</mat-icon>
+        <span i18n>
+          This centre is not participating in any studies.
+        </span>
+      </div>
+    </li>
+  </ul>
+
+  <table class="table table-hover table-condensed"
+         *ngIf="centre.entity.hasStudies()">
+    <thead>
+      <th st-sort="name" i18n>Name</th>
+      <th st-sort="state" i18n>State</th>
+      <th></th>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let study of sortedStudyNames">
+        <td>
+          <span (click)="information(study.id)">
+            <a href>{{study.name}}</a>
+          </span>
+        </td>
+        <td>
+          <span class="badge badge-secondary">{{studyStateLabel(study)}}</span>
+        </td>
+        <td>
+          <div class="btn-group pull-right">
+            <button class="btn btn-sm btn-warning"
+                    *ngIf="centre.isDisabled()"
+                    (click)="remove(study)">
+              <mat-icon class="mr-1">remove_circle</mat-icon>
+              <span i18n>Remove</span>
+            </button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <ul class="list-group" *ngIf="centre.isDisabled()">
+    <li class="list-group-item">
+      <form>
+        <div class="form-group row">
+          <label class="col-md-2 col-form-label">
+            <mat-icon>add_circle</mat-icon>
+            <span class="ml-1" i18n>Add Study</span>
+          </label>
+          <div class="col-md-10">
+            <input type="text"
+                   class="form-control"
+                   [(ngModel)]="selectedStudy"
+                   [ngModelOptions]="{standalone: true}"
+                   [ngbTypeahead]="getStudyNames"
+                   i18-placeholder
+                   placeholder="enter a study's name or partial name"
+                   [inputFormatter]="typeaheadFormatter"
+                   [resultFormatter]="typeaheadFormatter"
+                   (selectItem)="selectedItem($event)"
+                   [editable]="false">
+          </div>
+        </div>
+      </form>
+    </li>
+  </ul>
+</div>

@@ -9,7 +9,7 @@ describe('AnnotationTypeAddComponent', () => {
 
   let component: AnnotationTypeAddComponent;
   let fixture: ComponentFixture<AnnotationTypeAddComponent>;
-  let factory: Factory;
+  const factory = new Factory();
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -24,7 +24,6 @@ describe('AnnotationTypeAddComponent', () => {
   }));
 
   beforeEach(() => {
-    factory = new Factory();
     fixture = TestBed.createComponent(AnnotationTypeAddComponent);
     component = fixture.componentInstance;
   });

@@ -23,10 +23,9 @@ describe('ParticipantAnnotationTypeAddContainer', () => {
   const mockActivatedRoute = new MockActivatedRoute();
   let store: Store<StudyStoreReducer.State>;
   let toastr: ToastrService;
-  let factory: Factory;
+  const factory = new Factory();
 
   beforeEach(async(() => {
-    factory = new Factory();
 
     TestBed.configureTestingModule({
       imports: [

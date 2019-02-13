@@ -23,6 +23,8 @@ import { AnnotationTypeViewComponent } from './components/annotation-type-view/a
 import { AnnotationTypeActionsComponent } from './components/annotation-type-actions/annotation-type-actions.component';
 import { AnnotationTypeAddComponent } from './components/annotation-type-add/annotation-type-add.component';
 import { AddAndSelectComponent } from './components/add-and-select/add-and-select.component';
+import { LocationAddComponent } from './components/location-add/location-add.component';
+import { LocationRemoveComponent } from './components/location-remove/location-remove.component';
 
 @NgModule({
   imports: [
@@ -52,7 +54,9 @@ import { AddAndSelectComponent } from './components/add-and-select/add-and-selec
     AnnotationTypeAddComponent,
     AnnotationTypeViewComponent,
     AnnotationTypeRemoveComponent,
-    AddAndSelectComponent
+    AddAndSelectComponent,
+    LocationAddComponent,
+    LocationRemoveComponent
   ],
   exports: [
     BreadcrumbsComponent,
@@ -72,7 +76,8 @@ import { AddAndSelectComponent } from './components/add-and-select/add-and-selec
     AnnotationTypeAddComponent,
     AnnotationTypeViewComponent,
     AnnotationTypeRemoveComponent,
-    AddAndSelectComponent
+    AddAndSelectComponent,
+    LocationAddComponent
   ]
 })
 export class SharedModule { }

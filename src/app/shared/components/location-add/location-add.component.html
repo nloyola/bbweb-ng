@@ -1,0 +1,168 @@
+<div class="card mt-2">
+  <div class="card-header bg-primary text-light">
+    {{entityName}}: <small>{{ title }}</small>
+  </div>
+  <div class="card-body">
+    <form class="form-horizontal"
+          [formGroup]="form"
+          autocomplete="on"
+          (ngSubmit)="onSubmit()"
+          novalidate>
+
+      <!-- NAME -->
+      <div class="form-group row">
+        <label for="name" class="col-md-3 col-form-label" i18n>Name</label>
+        <div class="col-md-9">
+          <input #nameInput
+                 class="form-control"
+                 type="text"
+                 formControlName="name"
+                 i18n-placeholder
+                 placeholder="This location's name"
+                 ngbAutoFocus>
+        </div>
+        <div class="offset-3 col-md-9" *ngIf="name.invalid && (name.dirty || name.touched)">
+          <div class="text-danger small" *ngIf="name.errors.required" i18n>
+            A name is required
+          </div>
+          <div class="text-danger small" *ngIf="name.errors.minlength" i18n>
+            Name is too short
+          </div>
+        </div>
+      </div>
+
+      <!-- STREET -->
+      <div class="form-group row">
+        <label for="street" class="col-md-3 col-form-label" i18n>Street</label>
+        <div class="col-md-9">
+          <input class="form-control"
+                 type="text"
+                 formControlName="street"
+                 i18n-placeholder
+                 placeholder="This location's street address">
+        </div>
+        <div class="offset-3 col-md-9" *ngIf="street.invalid && (street.dirty || street.touched)">
+          <div class="text-danger small" *ngIf="street.errors.required" i18n>
+            A street is required
+          </div>
+          <div class="text-danger small" *ngIf="street.errors.minlength" i18n>
+            Street is too short
+          </div>
+        </div>
+      </div>
+
+      <!-- CITY -->
+      <div class="form-group row">
+        <label for="city" class="col-md-3 col-form-label" i18n>City</label>
+        <div class="col-md-9">
+          <input class="form-control"
+                 type="text"
+                 formControlName="city"
+                 i18n-placeholder
+                 placeholder="The city location is in">
+        </div>
+        <div class="offset-3 col-md-9" *ngIf="city.invalid && (city.dirty || city.touched)">
+          <div class="text-danger small" *ngIf="city.errors.required" i18n>
+            A city is required
+          </div>
+          <div class="text-danger small" *ngIf="city.errors.minlength" i18n>
+            City name is too short
+          </div>
+        </div>
+      </div>
+
+      <!-- PROVINCE -->
+      <div class="form-group row">
+        <label for="province" class="col-md-3 col-form-label" i18n>Province</label>
+        <div class="col-md-9">
+          <input class="form-control"
+                 type="text"
+                 formControlName="province"
+                 i18n-placeholder
+                 placeholder="The province location is in">
+        </div>
+        <div class="offset-3 col-md-9" *ngIf="province.invalid && (province.dirty || province.touched)">
+          <div class="text-danger small" *ngIf="province.errors.required" i18n>
+            A province is required
+          </div>
+          <div class="text-danger small" *ngIf="province.errors.minlength" i18n>
+            Province name is too short
+          </div>
+        </div>
+      </div>
+
+      <!-- POSTAL CODE -->
+      <div class="form-group row">
+        <label for="postalCode" class="col-md-3 col-form-label" i18n>PostalCode</label>
+        <div class="col-md-9">
+          <input class="form-control"
+                 type="text"
+                 formControlName="postalCode"
+                 i18n-placeholder
+                 placeholder="The postal code for this address">
+        </div>
+        <div class="offset-3 col-md-9" *ngIf="postalCode.invalid && (postalCode.dirty || postalCode.touched)">
+          <div class="text-danger small" *ngIf="postalCode.errors.required" i18n>
+            A Postal Code is required
+          </div>
+          <div class="text-danger small" *ngIf="postalCode.errors.minlength" i18n>
+            Postal Code is too short
+          </div>
+        </div>
+      </div>
+
+      <!-- PO BOX NUMBER -->
+      <div class="form-group row">
+        <label for="poBoxNumber" class="col-md-3 col-form-label" i18n>PoBoxNumber</label>
+        <div class="col-md-9">
+          <input class="form-control"
+                 type="text"
+                 formControlName="poBoxNumber"
+                 i18n-placeholder
+                 placeholder="This location's PO Box Number (optional)">
+        </div>
+      </div>
+
+      <!-- COUNTRY ISO CODE -->
+      <div class="form-group row">
+        <label for="countryIsoCode" class="col-md-3 col-form-label" i18n>Country ISO Code</label>
+        <div class="col-md-9">
+          <input class="form-control"
+                 type="text"
+                 formControlName="countryIsoCode"
+                 i18n-placeholder
+                 placeholder="The country ISO Code for this address">
+        </div>
+        <div class="offset-3 col-md-9" *ngIf="countryIsoCode.invalid && (countryIsoCode.dirty || countryIsoCode.touched)">
+          <div class="text-danger small" *ngIf="countryIsoCode.errors.required" i18n>
+            A country ISO Code is required
+          </div>
+          <div class="text-danger small" *ngIf="countryIsoCode.errors.minlength" i18n>
+            Country ISO Code is too short
+          </div>
+        </div>
+      </div>
+
+      <!-- BUTTONS  -->
+      <div class="form-group row">
+        <div class="col-md-9 offset-3">
+          <button class="btn btn-primary mr-2"
+                  type="submit"
+                  [disabled]="form.invalid || !!(isSaving$ | async)"
+                  i18n>
+            <ng-container *ngIf="!(isSaving$ | async)">
+              Submit
+            </ng-container>
+            <app-spinner name="annotationTypeSaving" [show]="(isSaving$ | async)">
+              Saving
+            </app-spinner>
+          </button>
+          <button class="btn btn-secondary" type="button" (click)="onCancel()" i18n>
+            Cancel
+          </button>
+        </div>
+      </div>
+
+    </form>
+  </div>
+</div>

@@ -1,4 +1,4 @@
 export interface ModalInputResult {
   confirmed: boolean;
-  value: any;
+  value?: any;
 }

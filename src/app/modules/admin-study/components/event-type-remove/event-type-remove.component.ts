@@ -13,4 +13,14 @@ export class EventTypeRemoveComponent {
 
   constructor(public activeModal: NgbActiveModal) {}
 
+  close(): (result: any) => void {
+    return (source: any): void => {
+      const result = {
+        confirmed: (source === 'OK'),
+        value: this.eventType
+      };
+      this.activeModal.close(result);
+    };
+  }
+
 }

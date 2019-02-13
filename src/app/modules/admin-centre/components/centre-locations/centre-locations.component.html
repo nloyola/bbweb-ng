@@ -1,0 +1,94 @@
+<div class="card mt-2" *ngIf="centre">
+  <div class="card-header bg-primary text-light"
+       *ngIf="!(isLoading$ | async); else showLoading">
+    <mat-icon [ngClass]="centre.stateIconClass()">
+      {{centre.stateIcon()}}
+    </mat-icon>
+    {{centre.name}}: <small i18n>Locations</small>
+
+    <span class="float-right d-inline-block"
+          *ngIf="centre.isDisabled()"
+          ngbDropdown
+          placement="bottom-right">
+
+      <button class="btn btn-sm btn-light"
+              type="button"
+              id="centreSummaryMenu"
+              ngbDropdownToggle>
+        <mat-icon>more_vert</mat-icon>
+      </button>
+
+      <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="centreLocationsMenu">
+        <a class="dropdown-item" *ngIf="centre.isDisabled()" (click)="addLocation()">
+          <mat-icon class="success-icon mr-1">add_circle</mat-icon>
+          <ng-container i18n>Add Location</ng-container>
+        </a>
+      </div>
+    </span>
+  </div>
+
+  <ul class="list-group">
+
+    <li class="list-group-item" *ngIf="!centre.entity.hasLocations()">
+      <div class="alert alert-warning">
+        <mat-icon>warning</mat-icon>
+        <span i18n>
+          Locations have not been added.
+        </span>
+      </div>
+    </li>
+
+    <li class="list-group-item" *ngFor="let location of centre.entity.locations">
+      <div class="row">
+        <div class="col-md-10">
+          <strong>{{location.name}}</strong>
+        </div>
+        <div class="col-md-2">
+
+          <span class="float-right d-inline-block"
+                *ngIf="centre.isDisabled()"
+                ngbDropdown
+                placement="bottom-right">
+            <button class="btn btn-sm btn-outline-secondary"
+                    type="button"
+                    id="annotationTypeActions"
+                    ngbDropdownToggle>
+              <mat-icon>more_vert</mat-icon>
+            </button>
+
+            <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="locationActions">
+              <a class="dropdown-item" *ngIf="centre.isDisabled()" (click)="edit(location)">
+                <mat-icon class="success-icon mr-1">edit</mat-icon>
+                <ng-container i18n>Edit</ng-container>
+              </a>
+              <a class="dropdown-item" *ngIf="centre.isDisabled()" (click)="remove(location)">
+                <mat-icon class="danger-icon mr-1">remove_circle</mat-icon>
+                <ng-container i18n>Remove</ng-container>
+              </a>
+            </div>
+          </span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12" *ngIf="location.poBoxNumber">
+          <small>
+            <strong>
+              {{location.street}}<br>
+              {{location.city}}, {{location.province}}, {{location.postalCode}}<br>
+              {{location.poBoxNumber}}, {{location.countryIsoCode}}
+            </strong>
+          </small>
+        </div>
+        <div class="col-md-12" *ngIf="!location.poBoxNumber">
+          <small>
+            <strong>
+              {{location.street}}<br>
+              {{location.city}}, {{location.province}}, {{location.postalCode}}<br>
+              {{location.countryIsoCode}}
+            </strong>
+          </small>
+        </div>
+      </div>
+    </li>
+  </ul>
+</div>

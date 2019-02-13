@@ -16,7 +16,6 @@ import { Store, StoreModule } from '@ngrx/store';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { StudyParticipantsComponent } from './study-participants.component';
 
-
 describe('StudyParticipantsComponent', () => {
 
   let component: StudyParticipantsComponent;
@@ -193,8 +192,8 @@ describe('StudyParticipantsComponent', () => {
       const annotationType = study.annotationTypes[0];
 
       const storeListner = jest.spyOn(store, 'dispatch');
-      const toastrListner = jest.spyOn(toastr, 'success').mockReturnValue(null);
-      const modalListner = jest.spyOn(modalService, 'open').mockReturnValue({
+      jest.spyOn(toastr, 'success').mockReturnValue(null);
+      jest.spyOn(modalService, 'open').mockReturnValue({
         componentInstance: {},
         result: Promise.resolve('OK')
       });

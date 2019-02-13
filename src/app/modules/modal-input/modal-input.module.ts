@@ -27,6 +27,7 @@ import { ModalInputBooleanComponent } from './components/modal-input-boolean/mod
     ModalInputBooleanComponent,
   ],
   exports: [
+    ModalInputComponent,
     ModalInputBooleanComponent,
     ModalInputTextComponent,
     ModalInputTextareaComponent

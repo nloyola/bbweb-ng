@@ -1,0 +1,19 @@
+<div class="pb-2 mt-4 mb-2 border-bottom" *ngIf="centre$ | async as centre">
+  <h1>{{ centre.name }} <small i18n>Administration</small></h1>
+</div>
+<div class="row">
+  <div class="col-sm-12 mt-4">
+    <ngb-tabset [activeId]="activeTabId" (tabChange)="tabSelection($event)">
+      <ngb-tab *ngFor="let tabId of tabIds" [id]="tabId">
+        <ng-template ngbTabTitle>
+          {{tabData[tabId].heading}}
+        </ng-template>
+      </ngb-tab>
+    </ngb-tabset>
+  </div>
+</div>
+<!--
+     Had to move router outlet outside of ng-tab tag because router had trouble displaying the children
+     states.
+-->
+<router-outlet></router-outlet>

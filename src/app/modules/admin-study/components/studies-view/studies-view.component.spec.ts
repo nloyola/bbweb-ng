@@ -14,12 +14,12 @@ import { ToastrModule } from 'ngx-toastr';
 
 describe('StudiesViewComponent', () => {
 
+  let component: StudiesViewComponent;
+  let fixture: ComponentFixture<StudiesViewComponent>;
   let ngZone: NgZone;
   let store: Store<StudyStoreReducer.State>;
   let router: Router;
-  let factory: Factory;
-  let component: StudiesViewComponent;
-  let fixture: ComponentFixture<StudiesViewComponent>;
+  const factory = new Factory();
 
   @Component({ template: 'Test component' })
   class TestComponent { }
@@ -54,7 +54,6 @@ describe('StudiesViewComponent', () => {
     ngZone = TestBed.get(NgZone);
     store = TestBed.get(Store);
     router = TestBed.get(Router);
-    factory = new Factory();
 
     ngZone.run(() => router.initialNavigation());
 

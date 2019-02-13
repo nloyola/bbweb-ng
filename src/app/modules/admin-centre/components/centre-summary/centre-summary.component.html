@@ -1,0 +1,109 @@
+<div class="card mt-2" *ngIf="centre">
+  <div class="card-header bg-primary text-light"
+       *ngIf="!(isLoading$ | async); else showLoading">
+    <mat-icon [ngClass]="centre.stateIconClass()">
+      {{centre.stateIcon()}}
+    </mat-icon>
+    {{centre.name}}
+    <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
+
+      <button class="btn btn-sm btn-light"
+              type="button"
+              id="centreSummaryMenu"
+              ngbDropdownToggle>
+        <mat-icon>more_vert</mat-icon>
+      </button>
+
+      <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="centreSummaryMenu">
+        <a class="dropdown-item" *ngIf="centre.isDisabled()" (click)="updateName()">
+          <mat-icon class="success-icon mr-1">edit</mat-icon>
+          <ng-container i18n>Update name</ng-container>
+        </a>
+        <a class="dropdown-item" *ngIf="centre.isDisabled()" (click)="updateDescription()">
+          <mat-icon class="success-icon mr-1">edit</mat-icon>
+          <ng-container i18n>Update description</ng-container>
+        </a>
+        <a class="dropdown-item" *ngIf="centre.isEnabled()" (click)="disable()">
+          <mat-icon class="mr-1" [ngClass]="getStateIconClass('disabled')">
+            {{getStateIcon('disabled')}}
+          </mat-icon>
+          <ng-container i18n>Disable this centre</ng-container>
+        </a>
+        <a class="dropdown-item" *ngIf="centre.isDisabled() && isEnableAllowed" (click)="enable()">
+          <mat-icon class="mr-1" [ngClass]="getStateIconClass('enabled')">
+            {{getStateIcon('enabled')}}
+          </mat-icon>
+          <ng-container i18n>Enable this centre</ng-container>
+        </a>
+      </div>
+    </span>
+  </div>
+
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item">
+      <div class="row">
+        <div class="col-md-2">
+          <strong i18n>Name:</strong>
+        </div>
+        <div class="col-md-10">
+          {{centre.name}}
+        </div>
+      </div>
+    </li>
+    <li class="list-group-item">
+      <div class="row">
+        <div class="col-md-2">
+          <strong i18n>Description:</strong>
+        </div>
+        <div class="col-md-10">
+          <app-truncate-toggle [text]="centre.description"
+                               [toggleLength]="descriptionToggleLength"
+                               [textEmptyWarning]="'Description not entered yet.'">
+          </app-truncate-toggle>
+        </div>
+      </div>
+    </li>
+    <li class="list-group-item" *ngIf="!isEnableAllowed">
+      <div class="alert alert-warning">
+        <mat-icon color="primary">warning</mat-icon>
+        <ng-container i18n>
+          Centre cannot be enabled until it participates in at least one study.
+        </ng-container>
+      </div>
+    </li>
+    <li class="list-group-item m-0 p-0">
+      <app-entity-status [state]="centre.stateLabel()"
+                         [timeAdded]="centre.timeAdded"
+                         [timeModified]="centre.timeModified"
+                         [useBadges]="false">
+      </app-entity-status>
+    </li>
+
+  </ul>
+</div>
+
+<ng-template #showLoading>
+  <div class="card-header">
+    <app-spinner name="login" [show]="true" i18n>
+      Loading
+    </app-spinner>
+  </div>
+</ng-template>
+
+<ng-template #updateNameModal let-close="close">
+  <app-modal-input-text [title]="'Update Name'"
+                        [label]="'New centre name'"
+                        [value]="centre.name"
+                        [options]="updateNameModalOptions"
+                        [modalClose]="close">
+  </app-modal-input-text>
+</ng-template>
+
+<ng-template #updateDescriptionModal let-close="close">
+  <app-modal-input-textarea [title]="'Update Description'"
+                            [label]="'New centre description'"
+                            [value]="centre.description"
+                            [options]="updateDescriptionModalOptions"
+                            [modalClose]="close">
+  </app-modal-input-textarea>
+</ng-template>
