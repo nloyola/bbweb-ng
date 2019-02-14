@@ -1,5 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { ConcurrencySafeEntity } from '@app/domain';
@@ -51,7 +51,7 @@ describe('AddAndSelectComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('updates to name should emit an event', async(() => {
+  it('updates to name should emit an event', fakeAsync(() => {
     fixture.detectChanges();
     let eventProduced = false;
     component.nameFilterUpdated.subscribe(() => { eventProduced = true; });
@@ -59,11 +59,12 @@ describe('AddAndSelectComponent', () => {
     const inputElem = fixture.debugElement.query(By.css('input'));
     inputElem.nativeElement.value = 'test';
     inputElem.nativeElement.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
 
-    fixture.whenStable().then(() => {
-      fixture.detectChanges();
-      expect(eventProduced).toBe(true);
-    });
+    tick(500);
+
+    fixture.detectChanges();
+    expect(eventProduced).toBe(true);
   }));
 
   it('changes to page should emit an event', async(() => {
