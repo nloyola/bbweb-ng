@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/cbsrbiobank/bbweb-ng.svg?branch=master)](https://travis-ci.org/cbsrbiobank/bbweb-ng)
+[![Coverage Status](https://coveralls.io/repos/github/cbsrbiobank/bbweb-ng/badge.svg?branch=master)](https://coveralls.io/github/cbsrbiobank/bbweb-ng?branch=master)
+
 # BbwebNg
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.0.8.
