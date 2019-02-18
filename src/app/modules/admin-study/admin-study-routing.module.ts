@@ -23,14 +23,20 @@ import { ProcessingTypeResolver } from './services/processing-type-resolver.serv
 export const routes: Routes = [
   {
     path: 'studies',
+<<<<<<< HEAD
     canActivate: [AuthGuard],
     data: {
       breadcrumbs: 'Studies'
     },
+=======
+>>>>>>> fea2536... Fix for breadcrumbs
     children: [
       {
         path: '',
-        component: StudiesAdminComponent
+        component: StudiesAdminComponent,
+        data: {
+          breadcrumbs: 'Studies'
+        }
       },
       {
         path: 'add',

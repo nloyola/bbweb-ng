@@ -7,9 +7,6 @@ export const routes: Routes = [
   {
     path: '',
     canActivate: [AuthGuard],
-    data: {
-      breadcrumbs: 'Admin'
-    },
     children: [
       {
         path: '',

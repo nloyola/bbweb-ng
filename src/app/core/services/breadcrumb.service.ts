@@ -58,10 +58,8 @@ export class BreadcrumbService {
 
     const data = route.routeConfig && route.routeConfig.data;
     if (data && data.breadcrumbs) {
-
       const result = this.resolve(route, this.router.routerState.snapshot);
       crumbs$ = this.wrapIntoObservable<Crumb[]>(result).pipe(first());
-
     } else {
       crumbs$ = of([]);
     }
@@ -73,9 +71,7 @@ export class BreadcrumbService {
     return crumbs$;
   }
 
-  private resolve(route: ActivatedRouteSnapshot, _state: RouterStateSnapshot)
-    : Observable<Crumb[]> | Promise<Crumb[]> | Crumb[] {
-
+  private resolve(route: ActivatedRouteSnapshot, _state: RouterStateSnapshot): Observable<Crumb[]> {
     const data = route.routeConfig.data;
     const path = this.getFullPath(route);
 
@@ -84,7 +80,6 @@ export class BreadcrumbService {
     label = this.stringFormat(label, route.data);
 
     const crumbs: Crumb[] = [{ label: label, path: path }];
-
     return of(crumbs);
   }
 
@@ -96,9 +91,7 @@ export class BreadcrumbService {
     return fullPath(route.pathFromRoot);
   }
 
-  private wrapIntoObservable<T>(value: T | Promise<T> | Observable<T>)
-    : Observable<T> {
-
+  private wrapIntoObservable<T>(value: T | Promise<T> | Observable<T>): Observable<T> {
     if (value instanceof Observable) {
       return value;
     }
