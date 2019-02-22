@@ -17,6 +17,7 @@ import { CentresAdminComponent } from './components/centres-admin/centres-admin.
 import { CentresViewComponent } from './components/centres-view/centres-view.component';
 import { StudyRemoveComponent } from './components/study-remove/study-remove.component';
 import { LocationRemoveComponent } from '@app/shared/components/location-remove/location-remove.component';
+import { CentreAddComponent } from './components/centre-add/centre-add.component';
 
 @NgModule({
   imports: [
@@ -39,7 +40,8 @@ import { LocationRemoveComponent } from '@app/shared/components/location-remove/
     CentreStudiesComponent,
     StudyRemoveComponent,
     CentreLocationsComponent,
-    CentreLocationAddComponent
+    CentreLocationAddComponent,
+    CentreAddComponent
   ],
   exports: [
     CentresAdminComponent

@@ -4,19 +4,19 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { Study } from '@app/domain/studies';
+import { Centre } from '@app/domain/centres';
+import { CentreStoreActions, CentreStoreReducer } from '@app/root-store/centre';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
-import { StudyStoreActions, StudyStoreReducer } from '@app/root-store/study';
 import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
-import { StudyAddComponent } from './study-add.component';
+import { CentreAddComponent } from './centre-add.component';
 
-describe('StudyAddComponent', () => {
+describe('CentreAddComponent', () => {
 
-  let store: Store<StudyStoreReducer.State>;
-  let component: StudyAddComponent;
-  let fixture: ComponentFixture<StudyAddComponent>;
+  let component: CentreAddComponent;
+  let fixture: ComponentFixture<CentreAddComponent>;
+  let store: Store<CentreStoreReducer.State>;
   let ngZone: NgZone;
   let router: Router;
   let toastr: ToastrService;
@@ -30,12 +30,12 @@ describe('StudyAddComponent', () => {
         ReactiveFormsModule,
         RouterTestingModule,
         StoreModule.forRoot({
-          'study': StudyStoreReducer.reducer,
+          'centre': CentreStoreReducer.reducer,
           'spinner': SpinnerStoreReducer.reducer
         }),
         ToastrModule.forRoot()
       ],
-      declarations: [StudyAddComponent],
+      declarations: [CentreAddComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
       .compileComponents();
@@ -43,7 +43,7 @@ describe('StudyAddComponent', () => {
 
   beforeEach(() => {
     store = TestBed.get(Store);
-    fixture = TestBed.createComponent(StudyAddComponent);
+    fixture = TestBed.createComponent(CentreAddComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
     ngZone = TestBed.get(NgZone);
@@ -69,7 +69,7 @@ describe('StudyAddComponent', () => {
     });
 
     it('when valid, form is not errored', () => {
-      component.name.setValue('studyname');
+      component.name.setValue('centrename');
       const errors = component.name.errors || {};
       expect(errors).toEqual({});
     });
@@ -79,26 +79,26 @@ describe('StudyAddComponent', () => {
   describe('when submitting', () => {
 
     it('on valid submission', async(() => {
-      const study = new Study().deserialize(factory.study());
+      const centre = new Centre().deserialize(factory.centre());
       spyOn(store, 'dispatch').and.callThrough();
       spyOn(router, 'navigate').and.callThrough();
       spyOn(toastr, 'success').and.returnValue(null);
 
-      component.name.setValue(study.name);
-      component.description.setValue(study.description);
+      component.name.setValue(centre.name);
+      component.description.setValue(centre.description);
       component.onSubmit();
 
-      const expectedAction = new StudyStoreActions.AddStudyRequest({
-        study: new Study().deserialize({
-          name: study.name,
-          description: study.description
+      const expectedAction = new CentreStoreActions.AddCentreRequest({
+        centre: new Centre().deserialize({
+          name: centre.name,
+          description: centre.description
         })
       });
 
       expect(store.dispatch).toHaveBeenCalledWith(expectedAction);
 
       ngZone.run(() => {
-        const action = new StudyStoreActions.AddStudySuccess({ study });
+        const action = new CentreStoreActions.AddCentreSuccess({ centre });
         store.dispatch(action);
       });
 
@@ -110,7 +110,7 @@ describe('StudyAddComponent', () => {
     }));
 
     it('on submission failure', async(() => {
-      const study = new Study().deserialize(factory.study());
+      const centre = new Centre().deserialize(factory.centre());
       const errors = [
         {
           status: 401,
@@ -133,11 +133,11 @@ describe('StudyAddComponent', () => {
       spyOn(toastr, 'error').and.returnValue(null);
 
       errors.forEach(error => {
-        component.name.setValue(study.name);
-        component.description.setValue(study.description);
+        component.name.setValue(centre.name);
+        component.description.setValue(centre.description);
         component.onSubmit();
 
-        const action = new StudyStoreActions.AddStudyFailure({ error: error });
+        const action = new CentreStoreActions.AddCentreFailure({ error: error });
         store.dispatch(action);
 
         fixture.whenStable().then(() => {

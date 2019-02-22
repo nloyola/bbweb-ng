@@ -5,7 +5,6 @@ import { CollectedSpecimenDefinitionName, ProcessedSpecimenDefinitionName, Proce
 import { Factory } from '@test/factory';
 import { ProcessingTypeOutputSubformComponent } from './processing-type-output-subform.component';
 
-
 describe('ProcessingTypeOutputSubformComponent', () => {
   @Component({
     template  : `<form [formGroup]="form">

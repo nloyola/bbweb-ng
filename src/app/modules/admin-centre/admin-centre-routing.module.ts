@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from '@app/core/guards';
 import { CentreResolver } from '../admin-study/services/centre-resolver.service';
+import { CentreAddComponent } from './components/centre-add/centre-add.component';
 import { CentreLocationAddComponent } from './components/centre-location-add/centre-location-add.component';
 import { CentreLocationsComponent } from './components/centre-locations/centre-locations.component';
 import { CentreStudiesComponent } from './components/centre-studies/centre-studies.component';
@@ -21,13 +22,13 @@ export const routes: Routes = [
         path: '',
         component: CentresAdminComponent
       },
-      // {
-      //   path: 'add',
-      //   component: CentreAddComponent,
-      //   data: {
-      //     breadcrumbs: 'Add'
-      //   }
-      // },
+      {
+        path: 'add',
+        component: CentreAddComponent,
+        data: {
+          breadcrumbs: 'Add'
+        }
+      },
       {
         path: 'view/:slug',
         component: CentreViewComponent,
