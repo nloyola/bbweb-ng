@@ -64,7 +64,7 @@ describe('EventTypesAddAndSelectComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('is allowed assigned correctly', () => {
+  it('is add allowed assigned correctly', () => {
     Object.values(StudyState).forEach(state => {
       const study = new Study().deserialize({
         ...factory.study(),
