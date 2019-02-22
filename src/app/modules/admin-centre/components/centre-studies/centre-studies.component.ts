@@ -65,8 +65,18 @@ export class CentreStudiesComponent implements OnInit, OnDestroy {
 
         if (this.updatedMessage) {
           this.toastr.success(this.updatedMessage, 'Update Successfull');
-          this.selectedStudy = undefined;
+          this.updatedMessage = undefined;
         }
+      });
+
+    this.store$
+      .pipe(
+        select(CentreStoreSelectors.selectCentreError),
+        filter(s => !!s),
+        takeUntil(this.unsubscribe$))
+      .subscribe((error: any) => {
+        const errMessage = error.error ? error.error.message : error.statusText;
+        this.toastr.error(errMessage, 'Update Error', { disableTimeOut: true });
       });
   }
 

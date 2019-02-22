@@ -91,7 +91,7 @@ describe('CentreLocationsComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('assigns the centre when updated', () => {
+  it('assigns the centre when it is added to the store', () => {
     fixture.detectChanges();
     store.dispatch(new CentreStoreActions.GetCentreSuccess({ centre }));
     fixture.detectChanges();
