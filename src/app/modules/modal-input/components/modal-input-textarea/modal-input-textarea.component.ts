@@ -1,49 +1,24 @@
-import { Component, Input, OnInit, ViewChild, TemplateRef } from '@angular/core';
-import { FormBuilder, Validators, FormGroup, AbstractControl } from '@angular/forms';
-import { ModalInputTextareaOptions } from '@app/modules/modal-input/models';
+import { Component, Input } from '@angular/core';
+import { ModalInputTextComponent } from '../modal-input-text/modal-input-text.component';
+import { ModalInputTextareaOptions, ModalInputTextOptions } from '../../models';
+import { FormBuilder } from '@angular/forms';
 
 @Component({
   selector: 'app-modal-input-textarea',
   templateUrl: './modal-input-textarea.component.html',
   styleUrls: ['./modal-input-textarea.component.scss']
 })
-export class ModalInputTextareaComponent implements OnInit {
+export class ModalInputTextareaComponent extends ModalInputTextComponent {
 
-  @Input() title: string;
-  @Input() label: string;
-  @Input() value: string;
   @Input() options: ModalInputTextareaOptions;
-  @Input() modalClose: (result: any) => void;
-  @ViewChild('modalBody') modalBody: TemplateRef<any>;
-
-  private form: FormGroup;
-
-  constructor(private formBuilder: FormBuilder) { }
 
   ngOnInit() {
-    const validators = [];
-    if (this.options.required) {
-      validators.push(Validators.required);
-    }
-
-    if (!this.options.rows) { this.options.rows = 3; }
-    if (!this.options.cols) { this.options.cols = 10; }
-
-    this.form = this.formBuilder.group({ textarea: [this.value, validators] });
-  }
-
-  get textarea(): AbstractControl {
-    return this.form.get('textarea');
-  }
-
-  close(): (result: any) => void {
-    return (source: any): void => {
-      const trimmedValue = this.form.value.textarea.trim();
-      this.modalClose({
-        confirmed: (source === 'OK'),
-        value: trimmedValue.length > 0 ? trimmedValue : undefined,
-      });
+    this.options = {
+      ...this.options,
+      rows: this.options.rows ? this.options.rows : 3,
+      cols: this.options.cols ? this.options.cols : 10
     };
+    super.ngOnInit();
   }
 
 }

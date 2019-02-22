@@ -9,12 +9,12 @@ import * as PtStoreActions from './processing-type.actions';
 @Injectable()
 export class ProcessingTypeStoreEffects {
 
-  constructor(private processingTypeService: ProcessingTypeService, private actions$: Actions) { }
+  constructor(private actions$: Actions<PtStoreActions.ProcessingTypeActions>,
+              private processingTypeService: ProcessingTypeService) { }
 
   @Effect()
   searchRequest$: Observable<Action> = this.actions$.pipe(
-    ofType<PtStoreActions.SearchProcessingTypesRequest>(
-      PtStoreActions.ActionTypes.SearchProcessingTypesRequest),
+    ofType(PtStoreActions.ActionTypes.SearchProcessingTypesRequest),
     map(action => action.payload),
     // delay(2000),
     switchMap(
@@ -28,7 +28,7 @@ export class ProcessingTypeStoreEffects {
 
   @Effect()
   getRequest$: Observable<Action> = this.actions$.pipe(
-    ofType<PtStoreActions.GetProcessingTypeRequest>(PtStoreActions.ActionTypes.GetProcessingTypeRequest),
+    ofType(PtStoreActions.ActionTypes.GetProcessingTypeRequest),
     map(action => action.payload),
     switchMap(
       payload =>
@@ -41,8 +41,7 @@ export class ProcessingTypeStoreEffects {
 
   @Effect()
   getByIdRequest$: Observable<Action> = this.actions$.pipe(
-    ofType<PtStoreActions.GetProcessingTypeByIdRequest>(
-      PtStoreActions.ActionTypes.GetProcessingTypeByIdRequest),
+    ofType(PtStoreActions.ActionTypes.GetProcessingTypeByIdRequest),
     map(action => action.payload),
     switchMap(
       payload =>
@@ -55,7 +54,7 @@ export class ProcessingTypeStoreEffects {
 
   @Effect()
   addRequest$: Observable<Action> = this.actions$.pipe(
-    ofType<PtStoreActions.AddProcessingTypeRequest>(PtStoreActions.ActionTypes.AddProcessingTypeRequest),
+    ofType(PtStoreActions.ActionTypes.AddProcessingTypeRequest),
     map(action => action.payload),
     switchMap(
       payload =>
@@ -68,8 +67,7 @@ export class ProcessingTypeStoreEffects {
 
   @Effect()
   updateRequest$: Observable<Action> = this.actions$.pipe(
-    ofType<PtStoreActions.UpdateProcessingTypeRequest>(
-      PtStoreActions.ActionTypes.UpdateProcessingTypeRequest),
+    ofType(PtStoreActions.ActionTypes.UpdateProcessingTypeRequest),
     map(action => action.payload),
     switchMap(
       payload =>
@@ -83,8 +81,7 @@ export class ProcessingTypeStoreEffects {
   @Effect()
   addOrUpdateAnnotationTypeRequest$: Observable<Action> =
     this.actions$.pipe(
-      ofType<PtStoreActions.UpdateProcessingTypeAddOrUpdateAnnotationTypeRequest>
-        (PtStoreActions.ActionTypes.UpdateProcessingTypeAddOrUpdateAnnotationTypeRequest),
+      ofType(PtStoreActions.ActionTypes.UpdateProcessingTypeAddOrUpdateAnnotationTypeRequest),
       map(action => action.payload),
       switchMap(
         payload =>
@@ -99,8 +96,7 @@ export class ProcessingTypeStoreEffects {
   @Effect()
   removeAnnotationTypeRequest$: Observable<Action> =
     this.actions$.pipe(
-      ofType<PtStoreActions.UpdateProcessingTypeRemoveAnnotationTypeRequest>
-        (PtStoreActions.ActionTypes.UpdateProcessingTypeRemoveAnnotationTypeRequest),
+      ofType(PtStoreActions.ActionTypes.UpdateProcessingTypeRemoveAnnotationTypeRequest),
       map(action => action.payload),
       switchMap(
         payload =>
@@ -115,8 +111,7 @@ export class ProcessingTypeStoreEffects {
   @Effect()
   removeProcessingTypeRequest$: Observable<Action> =
     this.actions$.pipe(
-      ofType<PtStoreActions.RemoveProcessingTypeRequest>
-        (PtStoreActions.ActionTypes.RemoveProcessingTypeRequest),
+      ofType(PtStoreActions.ActionTypes.RemoveProcessingTypeRequest),
       map(action => action.payload),
       switchMap(
         payload =>
@@ -128,8 +123,7 @@ export class ProcessingTypeStoreEffects {
 
   @Effect()
   specimenDefinitionNamesRequest$: Observable<Action> = this.actions$.pipe(
-    ofType<PtStoreActions.GetSpecimenDefinitionNamesRequest>(
-      PtStoreActions.ActionTypes.GetSpecimenDefinitionNamesRequest),
+    ofType(PtStoreActions.ActionTypes.GetSpecimenDefinitionNamesRequest),
     map(action => action.payload),
     // delay(2000),
     switchMap(

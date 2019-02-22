@@ -1,0 +1,27 @@
+<app-modal-input [modalClose]="close()" [modalInputValid]="modalInputValid">
+  <span class="title">{{title}}</span>
+  <form class="body form-horizontal"
+        [formGroup]="modalInputForm"
+        autocomplete="on"
+        novalidate>
+
+    <div class="form-group row">
+      <label for="email" class="col-md-3 col-form-label" i18n>{{label}}</label>
+      <div class="col-md-8">
+        <input class="form-control"
+               type="url"
+               formControlName="text"
+               ngbAutoFocus>
+      </div>
+      <div class="col-md-8 offset-3" *ngIf="text.invalid && text.touched">
+        <div class="text-danger small" *ngIf="text.errors.required" i18n>
+          A web site address is required
+        </div>
+        <div class="text-danger small" *ngIf="text.errors.url" i18n>
+          A valid web site address is required
+        </div>
+      </div>
+    </div>
+  </form>
+  <pre>{{ text.errors | json  }}}}</pre>
+</app-modal-input>

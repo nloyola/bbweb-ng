@@ -1,0 +1,55 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import url('https://fonts.googleapis.com/css?family=Ubuntu');
+@import "~bootstrap/dist/css/bootstrap.css";
+@import '~ngx-toastr/toastr.css';
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+
+body,h1,h2,h3,h4,h5,h6,h7.toplogo,.nav-title {
+  font-family: 'Ubuntu', sans-serif;
+}
+
+body {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.form-control.ng-invalid.ng-touched {
+  border: 2px solid red;
+}
+
+.mat-icon {
+  &.success-icon {
+    color: #1e7e34;
+  }
+
+  &.warning-icon {
+    color: #d39e00;
+  }
+
+  &.danger-icon {
+    color: #bd2130;
+  }
+}
+
+.card {
+  &.bbweb {
+    width: 18rem;
+    margin: 0.5rem !important;
+  }
+
+  /* disable the caret in dropdown menus in cards */
+  .dropdown-toggle::after {
+    display: none;
+  }
+  .mat-icon {
+    vertical-align: middle;
+  }
+}
+
+span.deletable-item { cursor: pointer; }
+
+/* TOASTR BUGFIX */
+#toast-container > div {
+  opacity: 1;
+}

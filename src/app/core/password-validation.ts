@@ -1,15 +1,13 @@
-import { AbstractControl } from '@angular/forms';
+import { AbstractControl, ValidatorFn, ValidationErrors } from '@angular/forms';
 export class PasswordValidation {
 
-  static matchingPasswords(control: AbstractControl) {
-    const password = control.get('password').value; // to get value in input tag
-    const confirmPassword = control.get('confirmPassword').value; // to get value in input tag
-    if (password.length &&
-      confirmPassword.length &&
-      (password === confirmPassword)) {
-      control.get('confirmPassword').setErrors(null);
-    } else {
-      control.get('confirmPassword').setErrors({ passwordsNonMatching: true });
-    }
+  static matchingPasswords(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors => {
+      const password = control.get('password').value;
+      const confirmPassword = control.get('confirmPassword').value;
+
+      return (password.length && confirmPassword.length && (password === confirmPassword))
+        ? null : { 'passwordsNonMatching': 'passwords do not match' };
+    };
   }
 }

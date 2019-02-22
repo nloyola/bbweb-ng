@@ -1,7 +1,8 @@
 import { SearchParams, PagedReplyEntityIds } from '@app/domain';
-import { Study, StudySearchReply, StudyCounts } from '@app/domain/studies';
+import { Study, StudyCounts } from '@app/domain/studies';
 import { createFeatureSelector, createSelector, MemoizedSelector } from '@ngrx/store';
 import * as fromStudy from './study.reducer';
+import { SearchReply } from '@app/domain/search-reply.model';
 
 export const getLastAddedId = (state: fromStudy.State): string => state.lastAddedId;
 
@@ -54,10 +55,12 @@ export const selectStudySearchRepliesAndEntities =
     selectStudyLastSearch,
     selectStudySearchReplies,
     createSelector(selectStudyState, fromStudy.selectEntities),
-    (searchActive: boolean,
-     lastSearch: SearchParams,
-     searchReplies: { [ url: string ]: PagedReplyEntityIds },
-     entities: any): StudySearchReply => {
+    (
+      searchActive: boolean,
+      lastSearch: SearchParams,
+      searchReplies: { [ url: string ]: PagedReplyEntityIds },
+      entities: any
+    ): SearchReply<Study> => {
       if (searchActive || (lastSearch === null)) { return undefined; }
 
       const reply = searchReplies[lastSearch.queryString()];
@@ -65,7 +68,7 @@ export const selectStudySearchRepliesAndEntities =
 
       return {
         reply,
-        studies: reply.entityIds.map(id => entities[id])
+        entities: reply.entityIds.map(id => entities[id])
       };
     });
 

@@ -1,5 +1,6 @@
-import { SearchParams, PagedReplyEntityIds } from '@app/domain';
-import { Centre, CentreSearchReply, CentreCounts } from '@app/domain/centres';
+import { PagedReplyEntityIds, SearchParams } from '@app/domain';
+import { Centre, CentreCounts } from '@app/domain/centres';
+import { SearchReply } from '@app/domain/search-reply.model';
 import { createFeatureSelector, createSelector, MemoizedSelector } from '@ngrx/store';
 import * as fromCentre from './centre.reducer';
 
@@ -51,7 +52,7 @@ export const selectCentreSearchRepliesAndEntities =
     (searchActive: boolean,
      lastSearch: SearchParams,
      searchReplies: { [ url: string ]: PagedReplyEntityIds },
-     entities: any): CentreSearchReply => {
+     entities: any): SearchReply<Centre> => {
       if (searchActive || (lastSearch === null)) { return undefined; }
 
       const reply = searchReplies[lastSearch.queryString()];
@@ -59,7 +60,7 @@ export const selectCentreSearchRepliesAndEntities =
 
       return {
         reply,
-        centres: reply.entityIds.map(id => entities[id])
+        entities: reply.entityIds.map(id => entities[id])
       };
     });
 

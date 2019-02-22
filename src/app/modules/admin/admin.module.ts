@@ -9,6 +9,7 @@ import { AdminRoutingModule } from './admin-routing.module';
 import { AdminComponent } from './components/admin/admin.component';
 import { AdminStudyModule } from '@app/modules/admin-study/admin-study.module';
 import { AdminCentreModule } from '../admin-centre/admin-centre.module';
+import { AdminAccessModule } from '../admin-access/admin-access.module';
 
 @NgModule({
   imports: [
@@ -21,7 +22,8 @@ import { AdminCentreModule } from '../admin-centre/admin-centre.module';
     SharedModule,
     AdminRoutingModule,
     AdminCentreModule,
-    AdminStudyModule
+    AdminStudyModule,
+    AdminAccessModule
   ],
   declarations: [
     AdminComponent

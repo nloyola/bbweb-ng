@@ -8,7 +8,7 @@
               id="processingTypeMenu"
               ngbDropdownToggle
               *ngIf="allowChanges">
-        <mat-icon>more_vert</mat-icon>
+        <mat-icon inline="true">more_vert</mat-icon>
       </button>
 
       <button class="btn btn-sm btn-light"
@@ -16,7 +16,7 @@
               (click)="isPanelCollapsed = !isPanelCollapsed"
               [attr.aria-expanded]="!isCollapsed"
               aria-controls="processingTypeCollapse">
-        <mat-icon *ngIf="!isPanelCollapsed">keyboard_arrow_down</mat-icon>
+        <mat-icon *ngIf="!isPanelCollapsed" inline="true">keyboard_arrow_down</mat-icon>
         <mat-icon *ngIf="isPanelCollapsed">keyboard_arrow_right</mat-icon>
       </button>
 
@@ -117,7 +117,7 @@
               id="inputSpecimenMenu"
               ngbDropdownToggle
               *ngIf="allowChanges">
-        <mat-icon>more_vert</mat-icon>
+        <mat-icon inline="true">more_vert</mat-icon>
       </button>
 
       <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="inputSpecimenMenu">
@@ -148,7 +148,7 @@
               id="outputSpecimenMenu"
               ngbDropdownToggle
               *ngIf="allowChanges">
-        <mat-icon>more_vert</mat-icon>
+        <mat-icon inline="true">more_vert</mat-icon>
       </button>
 
       <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="outputSpecimenMenu">

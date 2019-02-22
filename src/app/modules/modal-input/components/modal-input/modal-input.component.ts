@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 
 @Component({
   selector: 'app-modal-input',
@@ -8,6 +8,7 @@ import { Component, Input } from '@angular/core';
 export class ModalInputComponent {
 
   @Input() modalClose: (result: any) => void;
+  @Input() modalInputValid = true;
 
   constructor() { }
 

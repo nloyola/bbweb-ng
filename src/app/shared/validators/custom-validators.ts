@@ -1,4 +1,4 @@
-import { AbstractControl, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, ValidatorFn, Validators, ValidationErrors } from '@angular/forms';
 
 export interface NumberValidatorOptions {
   greaterThan?: number;
@@ -8,7 +8,7 @@ export interface NumberValidatorOptions {
 export class CustomValidators {
 
   static floatNumber(options: NumberValidatorOptions): ValidatorFn {
-    return (control: AbstractControl) => {
+    return (control: AbstractControl): ValidationErrors => {
       if (Validators.required(control) != null) {
         return null;
       }
@@ -25,6 +25,22 @@ export class CustomValidators {
       } else if (!isNaN(options.lessThan)) {
         return (val >= options.lessThan)
           ? { 'number': `value is not less than ${options.lessThan}` } : null;
+      }
+
+      return null;
+    };
+  }
+
+  static url(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors => {
+      const val = control.value ? control.value.toString() : '';
+
+      if (val !== '') {
+        const regex
+          = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/;
+        if (!regex.test(val)) {
+          return { 'url': 'value is not a valid url' };
+        }
       }
 
       return null;

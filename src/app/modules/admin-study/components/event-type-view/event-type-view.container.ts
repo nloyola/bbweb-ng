@@ -83,7 +83,13 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
         if (eventTypeEntityById) {
           this.eventType = (eventTypeEntityById instanceof CollectionEventType)
             ? eventTypeEntityById : new CollectionEventType().deserialize(eventTypeEntityById);
-          this.router.navigate([ `/admin/studies/view/bbpsp/collection/view/${eventTypeEntityById.slug}` ]);
+          console.log(this.study.slug, eventTypeEntityById.slug);
+          this.eventType = eventTypeEntityById;
+
+          this.router.navigate([
+            `/admin/studies/${this.study.slug}/collection/view/${eventTypeEntityById.slug}`
+          ]);
+
           if (this.updatedMessage) {
             this.toastr.success(this.updatedMessage, 'Update Successfull');
           }
@@ -91,7 +97,7 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
         }
 
         this.eventType = undefined;
-        this.router.navigate([ '/admin/studies/view/bbpsp/collection/view' ]);
+        this.router.navigate([ '/admin/studies/', this.study.slug, 'collection/view' ]);
         this.toastr.success('Event removed');
       });
   }
@@ -276,13 +282,13 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
     }
 
     // relative route does not work here, why?
-    this.router.navigate([ '/admin/studies/view/bbpsp/collection/add' ]);
+    this.router.navigate([ `/admin/studies/${this.study.slug}/collection/add` ]);
   }
 
   eventTypeSelected(eventType: CollectionEventType) {
     this.eventType = eventType;
     // relative route does not work here, why?
-    this.router.navigate([ `/admin/studies/view/bbpsp/collection/${eventType.slug}` ]);
+    this.router.navigate([ `/admin/studies/${this.study.slug}/collection/${eventType.slug}` ]);
   }
 
 }

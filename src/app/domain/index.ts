@@ -5,6 +5,7 @@ export * from './crumb';
 export * from './deserializable.model';
 export * from './domain-entity.model';
 export * from './entity-info.model';
+export * from './entity-set.model';
 export * from './entity-name-and-state.model';
 export * from './entity-state-info.model';
 export * from './entity-ui.model';

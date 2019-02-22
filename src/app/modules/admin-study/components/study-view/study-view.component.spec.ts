@@ -42,10 +42,10 @@ describe('StudyViewComponent', () => {
         {
           provide: Router,
           useValue: {
-            url: 'admin/studies/view',
+            url: 'admin/studies,
             events: of(new NavigationEnd(0,
-                                         `/admin/studies/view/${study.slug}/collection`,
-                                         `/admin/studies/view/${study.slug}/collection`)),
+                                         `/admin/studies/${study.slug}/collection`,
+                                         `/admin/studies/${study.slug}/collection`)),
             navigate: jasmine.createSpy('navigate')
           }
         }
@@ -89,7 +89,7 @@ describe('StudyViewComponent', () => {
     fixture.detectChanges();
 
     expect(routerListener.mock.calls.length).toBe(1);
-    expect(routerListener.mock.calls[0][0]).toEqual([ '/admin/studies/view', study.slug, 'collection' ]);
+    expect(routerListener.mock.calls[0][0]).toEqual([ '/admin/studies, study.slug, 'collection' ]);
   });
 
   function createMockActivatedRouteSpies(study: Study): void {

@@ -1,11 +1,4 @@
-<div class="alert alert-danger mt-2" role="alert" *ngIf="serverError$ | async">
-  <mat-icon>warning</mat-icon>
-  <ng-container i18n>
-    Server error. Please contact your web site administrator.
-  </ng-container>
-</div>
-
-<ng-container *ngIf="!(serverError$ | async)">
+<ng-container *ngIf="!(serverError$ | async); else serverError">
 
   <app-entity-filters class="mb-2"
                       [useNameFilter]="true"
@@ -25,10 +18,19 @@
                     type="button"
                     id="tableMenu"
                     ngbDropdownToggle>
-              <mat-icon>more_vert</mat-icon>
+              <mat-icon inline="true">more_vert</mat-icon>
             </button>
 
             <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="tableMenu">
+
+              <a routerLink="/admin/centres/add"
+                 class="dropdown-item">
+                <mat-icon class="success-icon mr-1">add_circle</mat-icon>
+                <span i18n>Add Centre</span>
+              </a>
+
+              <div class="dropdown-divider"></div>
+
               <h5 class="dropdown-header" i18n>Sort by</h5>
               <a class="dropdown-item"
                  *ngFor="let sortChoice of sortChoices"
@@ -103,3 +105,13 @@
   </div>
 
 </ng-container>
+
+
+<ng-template #serverError>
+  <div class="alert alert-danger mt-2" role="alert">
+    <mat-icon>warning</mat-icon>
+    <ng-container i18n>
+      Server error. Please contact your web site administrator.
+    </ng-container>
+  </div>
+</ng-template>

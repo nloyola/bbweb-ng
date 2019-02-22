@@ -1,0 +1,60 @@
+<div class="pb-2 mt-4 mb-2 border-bottom">
+  <h1 i18n>User Access Administration</h1>
+</div>
+
+<div *ngIf="permissions$ | async as permissions">
+  <div class="d-flex flex-row flex-wrap justify-content-center"
+       *ngIf="permissions.hasUserAdminRole; else notPermitted">
+
+    <!-- MANAGE USERS -->
+    <div class="card bbweb">
+      <h5 class="card-header bg-primary text-light">
+        <ng-container i18n>User Management</ng-container>
+      </h5>
+      <div class="card-body">
+        <p i18n>Activate or lock current users, or change user profiles.</p>
+      </div>
+      <div class="card-footer">
+        <a routerLink="users" class="btn btn-primary" i18n>Select</a>
+      </div>
+    </div>
+
+    <!-- ROLES -->
+    <div class="card bbweb">
+      <h5 class="card-header bg-primary text-light">
+        <ng-container i18n>Roles</ng-container>
+      </h5>
+      <div class="card-body">
+        <p i18n>Add, modify or remove user roles.</p>
+      </div>
+      <div class="card-footer">
+        <a routerLink="roles" class="btn btn-primary" i18n>Select</a>
+      </div>
+    </div>
+
+    <!-- MEMBERSHIPS -->
+    <div class="card bbweb">
+      <h5 class="card-header bg-primary text-light">
+        <ng-container i18n>Memberships</ng-container>
+      </h5>
+      <div class="card-body">
+        <p i18n>Add, modify or remove memberships. Assign users to memberships.</p>
+      </div>
+      <div class="card-footer">
+        <a routerLink="memberships" class="btn btn-primary" i18n>Select</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<ng-template #notPermitted>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="alert alert-warning">
+        <mat-icon>warning</mat-icon>
+        <span i18n>You do not have the correct permissions for this page.</span>
+      </div>
+    </div>
+  </div>
+</ng-template>

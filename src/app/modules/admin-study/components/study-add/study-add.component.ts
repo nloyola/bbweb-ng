@@ -40,17 +40,16 @@ export class StudyAddComponent implements OnInit, OnDestroy {
 
     this.isSaving$ = this.store$.pipe(select(SpinnerStoreSelectors.selectSpinnerIsActive));
 
-    this.store$
-      .pipe(
-        select(StudyStoreSelectors.selectStudyLastAdded),
-        filter(s => !!s),
-        takeUntil(this.unsubscribe$))
-      .subscribe((s: Study) => {
-        this.toastr.success(
-          `Study was added successfully: ${s.name}`,
-          'Add Successfull');
-        this.navigateToReturnUrl();
-      });
+    this.store$.pipe(
+      select(StudyStoreSelectors.selectStudyLastAdded),
+      filter(s => !!s),
+      takeUntil(this.unsubscribe$)
+    ).subscribe((s: Study) => {
+      this.toastr.success(
+        `Study was added successfully: ${s.name}`,
+        'Add Successfull');
+      this.router.navigate([ '../', s.slug ], { relativeTo: this.route });
+    });
 
     this.store$
       .pipe(
@@ -86,10 +85,6 @@ export class StudyAddComponent implements OnInit, OnDestroy {
   }
 
   onCancel() {
-    this.navigateToReturnUrl();
-  }
-
-  private navigateToReturnUrl() {
     this.router.navigate([ '../' ], { relativeTo: this.route });
   }
 

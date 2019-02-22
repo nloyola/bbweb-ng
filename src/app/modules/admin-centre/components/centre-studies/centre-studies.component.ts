@@ -1,18 +1,18 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { EntityNameAndState, SearchParams } from '@app/domain';
 import { Centre } from '@app/domain/centres';
 import { CentreUI } from '@app/domain/centres/centre-ui.model';
-import { StudyState, StudyStateUIMap, Study } from '@app/domain/studies';
+import { Study, StudyState, StudyStateUIMap } from '@app/domain/studies';
 import { ModalInputResult } from '@app/modules/modal-input/models';
 import { CentreStoreActions, CentreStoreSelectors, RootStoreState, StudyStoreActions, StudyStoreSelectors } from '@app/root-store';
 import { NgbModal, NgbTypeaheadSelectItemEvent } from '@ng-bootstrap/ng-bootstrap';
 import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, of as observableOf, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, filter, map, takeUntil, switchMap, catchError, tap } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, map, switchMap, takeUntil } from 'rxjs/operators';
 import { StudyRemoveComponent } from '../study-remove/study-remove.component';
-import { StudyService } from '@app/core/services';
+import { StudyAddTypeahead } from '@app/shared/typeaheads/study-add-typeahead';
 
 @Component({
   selector: 'app-centre-studies',
@@ -27,6 +27,7 @@ export class CentreStudiesComponent implements OnInit, OnDestroy {
   getStudyNames: (text: Observable<string>) => Observable<any[]>;
   typeaheadFormatter: (value: any) => string;
   sortedStudyNames: EntityNameAndState<StudyState>[];
+  studyAddTypeahead: StudyAddTypeahead;
 
   private unsubscribe$: Subject<void> = new Subject<void>();
 
@@ -34,21 +35,24 @@ export class CentreStudiesComponent implements OnInit, OnDestroy {
               private route: ActivatedRoute,
               private modalService: NgbModal,
               private toastr: ToastrService) {
-    this.typeaheadFormatter = (study) => study.name;
+    this.studyAddTypeahead = new StudyAddTypeahead(
+      this.store$,
+      (studies: Study[]) => {
+        // filter out studys already linked to this membership
+        const existingStudyIds = this.centre.entity.studyNames.map(sn => sn.id);
+        return studies.filter(entity => existingStudyIds.indexOf(entity.id) < 0);
+      });
 
-    this.getStudyNames = (text$: Observable<string>) =>
-      text$.pipe(
-        debounceTime(200),
-        distinctUntilChanged(),
-        filter(term => term.length > 0),
-        switchMap(term => {
-          const searchParams = new SearchParams(`name:like:${term}`);
-          this.store$.dispatch(new StudyStoreActions.SearchStudiesRequest({ searchParams }));
-          return this.store$.pipe(
-            select(StudyStoreSelectors.selectStudySearchRepliesAndEntities),
-            filter(x => !!x),
-            map(x => x.studies));
-        }));
+    this.studyAddTypeahead.selected$
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((study: Study) => {
+      this.store$.dispatch(new CentreStoreActions.UpdateCentreAddStudyRequest({
+        centre: this.centre.entity,
+        studyId: study.id
+      }));
+
+      this.updatedMessage = 'Study added';
+    });
   }
 
   ngOnInit() {
@@ -66,6 +70,7 @@ export class CentreStudiesComponent implements OnInit, OnDestroy {
         if (this.updatedMessage) {
           this.toastr.success(this.updatedMessage, 'Update Successfull');
           this.updatedMessage = undefined;
+          this.studyAddTypeahead.clearSelected();
         }
       });
 
@@ -87,15 +92,6 @@ export class CentreStudiesComponent implements OnInit, OnDestroy {
 
   studyStateLabel(study: EntityNameAndState<StudyState>) {
     return StudyStateUIMap.get(study.state).stateLabel;
-  }
-
-  selectedItem(item: NgbTypeaheadSelectItemEvent): void {
-    this.store$.dispatch(new CentreStoreActions.UpdateCentreAddStudyRequest({
-      centre: this.centre.entity,
-      studyId: item.item.id
-    }));
-
-    this.updatedMessage = 'Study added';
   }
 
   remove(study: EntityNameAndState<StudyState>) {

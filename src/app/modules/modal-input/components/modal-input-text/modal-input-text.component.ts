@@ -1,13 +1,15 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ModalInputTextOptions, ModalInputResult } from '@app/modules/modal-input/models';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { ModalInputResult, ModalInputTextOptions } from '@app/modules/modal-input/models';
+import { Subject } from 'rxjs';
+import { debounceTime, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-modal-input-text',
   templateUrl: './modal-input-text.component.html',
   styleUrls: ['./modal-input-text.component.scss']
 })
-export class ModalInputTextComponent implements OnInit {
+export class ModalInputTextComponent implements OnInit, OnDestroy {
 
   @Input() title: string;
   @Input() label: string;
@@ -15,32 +17,47 @@ export class ModalInputTextComponent implements OnInit {
   @Input() options: ModalInputTextOptions;
   @Input() modalClose: (result: ModalInputResult) => void;
 
-  private textForm: FormGroup;
+  modalInputValid = false;
+
+  protected modalInputForm: FormGroup;
+  protected validators: ValidatorFn[] = [];
+  private unsubscribe$: Subject<void> = new Subject<void>();
 
   constructor(private formBuilder: FormBuilder) { }
 
   ngOnInit() {
-    const validators = [];
     if (this.options.required) {
-      validators.push(Validators.required);
+      this.validators.push(Validators.required);
     }
 
     if (this.options.minLength) {
-      validators.push(Validators.min(this.options.minLength));
+      this.validators.push(Validators.minLength(this.options.minLength));
     }
 
-    this.textForm = this.formBuilder.group({ text: [this.value, validators] });
+    this.modalInputForm = this.formBuilder.group({ text: [this.value, this.validators] });
+
+    this.modalInputForm.valueChanges.pipe(
+      debounceTime(300),
+      takeUntil(this.unsubscribe$)
+    ).subscribe(() => {
+      this.modalInputValid = !this.modalInputForm.errors;
+    });
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 
   get text(): AbstractControl {
-    return this.textForm.get('text');
+    return this.modalInputForm.get('text');
   }
 
   close(): (result: any) => void {
     return (source: any): void => {
       const result = {
         confirmed: (source === 'OK'),
-        value: this.textForm.value.text,
+        value: this.modalInputForm.value.text,
       };
       this.modalClose(result);
     };

@@ -102,7 +102,7 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
     };
     this.modalService.open(this.updateNameModal).result
       .then(value => {
-        if (value.value) {
+        if (value.confirmed) {
           this.store$.dispatch(new StudyStoreActions.UpdateStudyRequest({
             study: this.study.entity,
             attributeName: 'name',
@@ -121,12 +121,14 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
     };
     this.modalService.open(this.updateDescriptionModal, { size: 'lg' }).result
       .then(value => {
-        this.store$.dispatch(new StudyStoreActions.UpdateStudyRequest({
-          study: this.study.entity,
-          attributeName: 'description',
-          value: value.value ? value.value : undefined
-        }));
-        this.updatedMessage = 'Study description was updated';
+        if (value.confirmed) {
+          this.store$.dispatch(new StudyStoreActions.UpdateStudyRequest({
+            study: this.study.entity,
+            attributeName: 'description',
+            value: value.value ? value.value : undefined
+          }));
+          this.updatedMessage = 'Study description was updated';
+        }
       })
       .catch(err => console.log('err', err));
   }
@@ -147,7 +149,7 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
     this.changeState('unretire');
   }
 
-  private changeState(action: string) {
+  private changeState(action: 'disable' | 'enable' | 'retire' | 'unretire') {
     this.store$.dispatch(new StudyStoreActions.UpdateStudyRequest({
       study: this.study.entity,
       attributeName: 'state',

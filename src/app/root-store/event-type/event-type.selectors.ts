@@ -1,6 +1,7 @@
-import { CollectedSpecimenDefinitionName, CollectionEventType, EventTypeSearchReply } from '@app/domain/studies';
+import { CollectedSpecimenDefinitionName, CollectionEventType } from '@app/domain/studies';
 import { createFeatureSelector, createSelector, MemoizedSelector } from '@ngrx/store';
 import * as fromEventType from './event-type.reducer';
+import { SearchReply } from '@app/domain/search-reply.model';
 
 export const getSearchActive = (state: fromEventType.State): boolean => state.searchActive;
 
@@ -54,7 +55,7 @@ export const selectSearchRepliesAndEntities =
     (searchActive: boolean,
      lastSearch: fromEventType.LastSearch,
      searchReplies: fromEventType.PagedReplyHash,
-     entities: any): EventTypeSearchReply => {
+     entities: any): SearchReply<CollectionEventType> => {
       if (searchActive || (lastSearch === null)) { return undefined; }
 
       const reply = searchReplies[lastSearch.studyId][lastSearch.params.queryString()];
@@ -62,7 +63,7 @@ export const selectSearchRepliesAndEntities =
 
       return {
         reply,
-        eventTypes: reply.entityIds.map(id => entities[id])
+        entities: reply.entityIds.map(id => entities[id])
       };
     });
 

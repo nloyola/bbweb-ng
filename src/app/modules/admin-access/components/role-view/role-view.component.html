@@ -1,0 +1,132 @@
+<ng-container *ngIf="role$ | async as role; else showLoading">
+  <div class="pb-2 mt-4 mb-2 border-bottom">
+    <h1>{{ role?.name }} <small i18n>Administration</small></h1>
+  </div>
+  <div class="card mt-2">
+    <div class="card-header bg-primary text-light">
+      <mat-icon inline="true" class="warning-icon">settings</mat-icon>
+      {{role?.name}}
+    </div>
+
+    <ul class="list-group">
+      <!-- NAME -->
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-md-3"><strong i18n>Name</strong></div>
+          <div class="col-md-9">{{role?.name}}</div>
+        </div>
+      </li>
+
+      <!-- DESCRIPTION -->
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-md-3">
+            <strong i18n>Description</strong>
+          </div>
+          <div class="col-md-9">
+            <app-truncate-toggle [text]="role?.description"
+                                 [toggleLength]="80"
+                                 [textEmptyWarning]="'Description not entered yet.'">
+            </app-truncate-toggle>
+          </div>
+        </div>
+      </li>
+
+      <!-- USERS -->
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-md-3">
+            <strong i18n>Users</strong>
+          </div>
+          <div class="col-md-9" *ngIf="role.userData.length > 0">
+            <span *ngFor="let userInfo of role?.userData"
+                  class="badge badge-secondary mr-1 mt-1 deletable-item"
+                  (click)="userSelected(userInfo)"
+                  ngbTooltip="Remove user">
+              {{userInfo.name}}
+              <mat-icon class="warning-icon" inline="true">remove_circle_outline</mat-icon>
+            </span>
+          </div>
+          <div class="col-md-9" *ngIf="role.userData.length <= 0">
+            <span i18n>None</span>
+          </div>
+        </div>
+      </li>
+
+      <li class="list-group-item">
+        <form>
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label">
+              <strong>
+                <ng-container i18n>Add User</ng-container>
+                <mat-icon inline="true" class="success-icon ml-1">add_circle</mat-icon>
+              </strong>
+            </label>
+            <div class="col-md-9">
+              <input type="text"
+                     class="form-control"
+                     [(ngModel)]="userAddTypeahead.selectedEntity"
+                     [ngModelOptions]="{standalone: true}"
+                     [ngbTypeahead]="userAddTypeahead.getEntities"
+                     i18-placeholder
+                     placeholder="enter a user's name or partial name"
+                     [inputFormatter]="userAddTypeahead.typeaheadFormatter"
+                     [resultFormatter]="userAddTypeahead.typeaheadFormatter"
+                     (selectItem)="userAddTypeahead.onEntitySelected($event)"
+                     [editable]="false">
+            </div>
+          </div>
+        </form>
+      </li>
+
+      <!-- PARENT ROLES -->
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-md-3">
+            <strong i18n>Parent Roles</strong>
+          </div>
+          <div class="col-md-9" *ngIf="role.parentData.length > 0">
+            <span *ngFor="let parentInfo of role?.parentData"
+                  class="badge badge-secondary mr-1 mt-1">
+              {{parentInfo.name}}
+            </span>
+          </div>
+          <div class="col-md-9" *ngIf="role.parentData.length <= 0">
+            <span i18n>None</span>
+          </div>
+        </div>
+      </li>
+
+      <!-- CHILD ROLES -->
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-md-3">
+            <strong i18n>Child Roles</strong>
+          </div>
+          <div class="col-md-9" *ngIf="role.childData.length > 0">
+            <span *ngFor="let childInfo of role?.childData"
+                  class="badge badge-secondary mr-1 mt-1 mt-1">
+              {{childInfo.name}}
+            </span>
+          </div>
+          <div class="col-md-9" *ngIf="role.childData.length <= 0">
+            <span i18n>None</span>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+    <app-entity-status [timeAdded]="role?.timeAdded"
+                       [timeModified]="role?.timeModified"
+                       [useBadges]="false">
+    </app-entity-status>
+  </div>
+</ng-container>
+
+<ng-template #showLoading>
+  <div class="card-header">
+    <app-spinner name="role" [show]="true" i18n>
+      Loading
+    </app-spinner>
+  </div>
+</ng-template>

@@ -7,10 +7,6 @@ import { Observable, Subject } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
 import { NgbTabChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 
-interface Tab {
-  heading: string;
-}
-
 @Component({
   selector: 'app-study-view',
   templateUrl: './study-view.component.html',
@@ -76,7 +72,7 @@ export class StudyViewComponent implements OnInit, OnDestroy {
   }
 
   public tabSelection(event: NgbTabChangeEvent) {
-    this.router.navigate([ '/admin/studies/view', this.route.snapshot.params.slug, event.nextId ]);
+    this.router.navigate([ '/admin/studies', this.route.snapshot.params.slug, event.nextId ]);
   }
 
   private getActiveTabId(routeUrl: string): string {

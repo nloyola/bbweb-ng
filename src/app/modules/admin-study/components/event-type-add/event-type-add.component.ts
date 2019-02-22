@@ -53,7 +53,7 @@ export class EventTypeAddComponent implements OnInit, OnDestroy {
           `EventType was added successfully: ${eventType.name}`,
           'Add Successfull');
         this.store$.dispatch(new EventTypeStoreActions.ClearLastAdded());
-        this.navigateToReturnUrl();
+        this.router.navigate([ '../view', eventType.slug ], { relativeTo: this.route });
       });
 
     this.store$
@@ -97,10 +97,6 @@ export class EventTypeAddComponent implements OnInit, OnDestroy {
   }
 
   onCancel() {
-    this.navigateToReturnUrl();
-  }
-
-  private navigateToReturnUrl() {
     this.router.navigate([ '..' ], { relativeTo: this.route });
   }
 

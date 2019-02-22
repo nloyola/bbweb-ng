@@ -1,6 +1,6 @@
-import { ModalInputOptions } from './modal-input-options.model';
+import { ModalInputTextOptions } from './modal-input-text-options.model';
 
-export interface ModalInputTextareaOptions extends ModalInputOptions {
+export interface ModalInputTextareaOptions extends ModalInputTextOptions {
   rows?: number;
   cols?: number;
 }

@@ -1,11 +1,12 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { PagedReplyInfo, SearchParams } from '@app/domain';
-import { ProcessingType, ProcessingTypeSearchReply, Study } from '@app/domain/studies';
+import { ProcessingType, Study } from '@app/domain/studies';
 import { RootStoreState } from '@app/root-store';
 import { ProcessingTypeStoreActions, ProcessingTypeStoreSelectors } from '@app/root-store/processing-type';
 import { select, Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
+import { SearchReply } from '@app/domain/search-reply.model';
 
 export interface ProcessingTypePageInfo {
   hasNoEntitiesToDisplay: boolean;
@@ -110,18 +111,18 @@ export class ProcessingTypesAddAndSelectComponent implements OnInit, OnDestroy {
     }));
   }
 
-  private searchReplyToPageInfo(searchReply: ProcessingTypeSearchReply): PagedReplyInfo<ProcessingType> {
+  private searchReplyToPageInfo(searchReply: SearchReply<ProcessingType>): PagedReplyInfo<ProcessingType> {
     if (searchReply === undefined) { return {} as any; }
 
     const result = {
-      hasResultsToDisplay: searchReply.processingTypes.length > 0,
-      hasNoEntitiesToDisplay: ((searchReply.processingTypes.length <= 0)
+      hasResultsToDisplay: searchReply.entities.length > 0,
+      hasNoEntitiesToDisplay: ((searchReply.entities.length <= 0)
                                && (searchReply.reply.searchParams.filter === '')),
 
-      hasNoResultsToDisplay: ((searchReply.processingTypes.length <= 0)
+      hasNoResultsToDisplay: ((searchReply.entities.length <= 0)
                               && (searchReply.reply.searchParams.filter !== '')),
 
-      entities: searchReply.processingTypes,
+      entities: searchReply.entities,
       total: searchReply.reply.total,
       maxPages: searchReply.reply.maxPages,
       showPagination: searchReply.reply.maxPages > 1

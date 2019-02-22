@@ -2,12 +2,13 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EntityStateInfo, LabelledId, SearchFilterValues, SearchParams } from '@app/domain';
 import { NameFilter, SearchFilter, StateFilter } from '@app/domain/search-filters';
-import { studyCountsToUIMap, StudyCountsUIMap, StudySearchReply, StudyState, StudyStateUIMap } from '@app/domain/studies';
+import { studyCountsToUIMap, StudyCountsUIMap, StudyState, StudyStateUIMap, Study } from '@app/domain/studies';
 import { StudyUI } from '@app/domain/studies/study-ui.model';
 import { RootStoreState, StudyStoreActions, StudyStoreSelectors } from '@app/root-store';
 import { select, Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
+import { SearchReply } from '@app/domain/search-reply.model';
 
 interface StudyPageInfo {
   hasNoEntitiesToDisplay?: boolean;
@@ -89,13 +90,13 @@ export class StudiesViewComponent implements OnInit, OnDestroy {
     this.unsubscribe$.complete();
   }
 
-  public onFiltersUpdated($event: SearchFilterValues) {
+  public onFiltersUpdated(values: SearchFilterValues) {
     this.currentPage = 1;
-    if ($event.name) {
-      this.filters.nameFilter.setValue($event.name);
+    if (values.name !== undefined) {
+      this.filters.nameFilter.setValue(values.name);
     }
-    if ($event.stateId) {
-      this.filters.stateFilter.setValue($event.stateId);
+    if (values.stateId !== undefined) {
+      this.filters.stateFilter.setValue(values.stateId);
     }
     this.applySearchParams();
   }
@@ -112,7 +113,7 @@ export class StudiesViewComponent implements OnInit, OnDestroy {
   }
 
   public studySelected(study: StudyUI): void {
-    this.router.navigate([ 'view', study.slug, 'summary' ], { relativeTo: this.route });
+    this.router.navigate([ study.slug, 'summary' ], { relativeTo: this.route });
  }
 
   private getFilters() {
@@ -130,18 +131,18 @@ export class StudiesViewComponent implements OnInit, OnDestroy {
     }));
   }
 
-  private searchReplyToPageInfo(searchReply: StudySearchReply): StudyPageInfo {
+  private searchReplyToPageInfo(searchReply: SearchReply<Study>): StudyPageInfo {
     if (searchReply === undefined) { return {}; }
 
     return {
-      hasResultsToDisplay: searchReply.studies.length > 0,
-      hasNoEntitiesToDisplay: ((searchReply.studies.length <= 0)
+      hasResultsToDisplay: searchReply.entities.length > 0,
+      hasNoEntitiesToDisplay: ((searchReply.entities.length <= 0)
                                && (searchReply.reply.searchParams.filter === '')),
 
-      hasNoResultsToDisplay: ((searchReply.studies.length <= 0)
+      hasNoResultsToDisplay: ((searchReply.entities.length <= 0)
                               && (searchReply.reply.searchParams.filter !== '')),
 
-      studies: searchReply.studies.map(s => new StudyUI(s)),
+      studies: searchReply.entities.map(s => new StudyUI(s)),
       totalStudies: searchReply.reply.total
     };
   }

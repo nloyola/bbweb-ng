@@ -40,7 +40,7 @@ export const routes: Routes = [
         }
       },
       {
-        path: 'view/:slug',
+        path: ':slug',
         component: StudyViewComponent,
         resolve: {
           study: StudyResolver
@@ -91,12 +91,18 @@ export const routes: Routes = [
             children: [
               { path: '', redirectTo: 'view', pathMatch: 'full' },
               {
+                path: 'add',
+                component: EventTypeAddComponent,
+                data: {
+                  breadcrumbs: 'Add Event'
+                }
+              },
+              {
                 path: 'view',
                 component: StudyCollectionComponent,
                 children: [
                   {
                     path: ':eventTypeSlug',
-                    runGuardsAndResolvers: 'always',
                     resolve: {
                       eventType: EventTypeResolver
                     },
@@ -139,13 +145,6 @@ export const routes: Routes = [
                     ]
                   }
                 ]
-              },
-              {
-                path: 'add',
-                component: EventTypeAddComponent,
-                data: {
-                  breadcrumbs: 'Add Event'
-                }
               }
             ]
           },

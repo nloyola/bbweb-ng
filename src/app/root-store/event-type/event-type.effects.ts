@@ -9,12 +9,12 @@ import * as EventTypeStoreActions from './event-type.actions';
 @Injectable()
 export class EventTypeStoreEffects {
 
-  constructor(private eventTypeService: EventTypeService, private actions$: Actions) { }
+  constructor(private actions$: Actions<EventTypeStoreActions.EventTypeActions>,
+              private eventTypeService: EventTypeService) { }
 
   @Effect()
   searchRequest$: Observable<Action> = this.actions$.pipe(
-    ofType<EventTypeStoreActions.SearchEventTypesRequest>(
-      EventTypeStoreActions.ActionTypes.SearchEventTypesRequest),
+    ofType(EventTypeStoreActions.ActionTypes.SearchEventTypesRequest),
     map(action => action.payload),
     // delay(2000),
     switchMap(
@@ -28,7 +28,7 @@ export class EventTypeStoreEffects {
 
   @Effect()
   getRequest$: Observable<Action> = this.actions$.pipe(
-    ofType<EventTypeStoreActions.GetEventTypeRequest>(EventTypeStoreActions.ActionTypes.GetEventTypeRequest),
+    ofType(EventTypeStoreActions.ActionTypes.GetEventTypeRequest),
     map(action => action.payload),
     switchMap(
       payload =>
@@ -41,8 +41,7 @@ export class EventTypeStoreEffects {
 
   @Effect()
   getByIdRequest$: Observable<Action> = this.actions$.pipe(
-    ofType<EventTypeStoreActions.GetEventTypeByIdRequest>(
-      EventTypeStoreActions.ActionTypes.GetEventTypeByIdRequest),
+    ofType(EventTypeStoreActions.ActionTypes.GetEventTypeByIdRequest),
     map(action => action.payload),
     switchMap(
       payload =>
@@ -55,7 +54,7 @@ export class EventTypeStoreEffects {
 
   @Effect()
   addRequest$: Observable<Action> = this.actions$.pipe(
-    ofType<EventTypeStoreActions.AddEventTypeRequest>(EventTypeStoreActions.ActionTypes.AddEventTypeRequest),
+    ofType(EventTypeStoreActions.ActionTypes.AddEventTypeRequest),
     map(action => action.payload),
     switchMap(
       payload =>
@@ -68,8 +67,7 @@ export class EventTypeStoreEffects {
 
   @Effect()
   updateRequest$: Observable<Action> = this.actions$.pipe(
-    ofType<EventTypeStoreActions.UpdateEventTypeRequest>(
-      EventTypeStoreActions.ActionTypes.UpdateEventTypeRequest),
+    ofType(EventTypeStoreActions.ActionTypes.UpdateEventTypeRequest),
     map(action => action.payload),
     switchMap(
       payload =>
@@ -83,8 +81,7 @@ export class EventTypeStoreEffects {
   @Effect()
   addOrUpdateAnnotationTypeRequest$: Observable<Action> =
     this.actions$.pipe(
-      ofType<EventTypeStoreActions.UpdateEventTypeAddOrUpdateAnnotationTypeRequest>
-        (EventTypeStoreActions.ActionTypes.UpdateEventTypeAddOrUpdateAnnotationTypeRequest),
+      ofType(EventTypeStoreActions.ActionTypes.UpdateEventTypeAddOrUpdateAnnotationTypeRequest),
       map(action => action.payload),
       switchMap(
         payload =>
@@ -99,8 +96,7 @@ export class EventTypeStoreEffects {
   @Effect()
   removeAnnotationTypeRequest$: Observable<Action> =
     this.actions$.pipe(
-      ofType<EventTypeStoreActions.UpdateEventTypeRemoveAnnotationTypeRequest>
-        (EventTypeStoreActions.ActionTypes.UpdateEventTypeRemoveAnnotationTypeRequest),
+      ofType(EventTypeStoreActions.ActionTypes.UpdateEventTypeRemoveAnnotationTypeRequest),
       map(action => action.payload),
       switchMap(
         payload =>
@@ -115,8 +111,7 @@ export class EventTypeStoreEffects {
   @Effect()
   addOrUpdateSpecimenDefinitionRequest$: Observable<Action> =
     this.actions$.pipe(
-      ofType<EventTypeStoreActions.UpdateEventTypeAddOrUpdateSpecimenDefinitionRequest>
-        (EventTypeStoreActions.ActionTypes.UpdateEventTypeAddOrUpdateSpecimenDefinitionRequest),
+      ofType(EventTypeStoreActions.ActionTypes.UpdateEventTypeAddOrUpdateSpecimenDefinitionRequest),
       map(action => action.payload),
       switchMap(
         payload =>
@@ -131,8 +126,7 @@ export class EventTypeStoreEffects {
   @Effect()
   removeSpecimenDefinitionRequest$: Observable<Action> =
     this.actions$.pipe(
-      ofType<EventTypeStoreActions.UpdateEventTypeRemoveSpecimenDefinitionRequest>
-        (EventTypeStoreActions.ActionTypes.UpdateEventTypeRemoveSpecimenDefinitionRequest),
+      ofType(EventTypeStoreActions.ActionTypes.UpdateEventTypeRemoveSpecimenDefinitionRequest),
       map(action => action.payload),
       switchMap(
         payload =>
@@ -147,8 +141,7 @@ export class EventTypeStoreEffects {
   @Effect()
   removeEventTypeRequest$: Observable<Action> =
     this.actions$.pipe(
-      ofType<EventTypeStoreActions.RemoveEventTypeRequest>
-        (EventTypeStoreActions.ActionTypes.RemoveEventTypeRequest),
+      ofType(EventTypeStoreActions.ActionTypes.RemoveEventTypeRequest),
       map(action => action.payload),
       switchMap(
         payload =>
@@ -161,8 +154,7 @@ export class EventTypeStoreEffects {
 
   @Effect()
   specimenDefinitionNamesRequest$: Observable<Action> = this.actions$.pipe(
-    ofType<EventTypeStoreActions.GetSpecimenDefinitionNamesRequest>(
-      EventTypeStoreActions.ActionTypes.GetSpecimenDefinitionNamesRequest),
+    ofType(EventTypeStoreActions.ActionTypes.GetSpecimenDefinitionNamesRequest),
     map(action => action.payload),
     // delay(2000),
     switchMap(

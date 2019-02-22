@@ -9,11 +9,12 @@ import * as CentreActions from './centre.actions';
 @Injectable()
 export class CentreStoreEffects {
 
-  constructor(private centreService: CentreService, private actions$: Actions) { }
+  constructor(private actions$: Actions<CentreActions.CentreActions>,
+              private centreService: CentreService) { }
 
   @Effect()
   getRequest$: Observable<Action> = this.actions$.pipe(
-    ofType<CentreActions.GetCentreRequest>(CentreActions.ActionTypes.GetCentreRequest),
+    ofType(CentreActions.ActionTypes.GetCentreRequest),
     map(action => action.payload),
     switchMap(
       payload =>
@@ -26,8 +27,7 @@ export class CentreStoreEffects {
 
   @Effect()
   searchRequest$: Observable<Action> = this.actions$.pipe(
-    ofType<CentreActions.SearchCentresRequest>(
-      CentreActions.ActionTypes.SearchCentresRequest),
+    ofType(CentreActions.ActionTypes.SearchCentresRequest),
     map(action => action.payload),
     switchMap(
       payload =>
@@ -40,7 +40,7 @@ export class CentreStoreEffects {
 
   @Effect()
   addRequest$: Observable<Action> = this.actions$.pipe(
-    ofType<CentreActions.AddCentreRequest>(CentreActions.ActionTypes.AddCentreRequest),
+    ofType(CentreActions.ActionTypes.AddCentreRequest),
     map(action => action.payload),
     switchMap(
       payload =>
@@ -53,7 +53,7 @@ export class CentreStoreEffects {
 
   @Effect()
   updateRequest$: Observable<Action> = this.actions$.pipe(
-    ofType<CentreActions.UpdateCentreRequest>(CentreActions.ActionTypes.UpdateCentreRequest),
+    ofType(CentreActions.ActionTypes.UpdateCentreRequest),
     map(action => action.payload),
     switchMap(
       payload =>
@@ -66,8 +66,7 @@ export class CentreStoreEffects {
 
   @Effect()
   addStudyRequest$: Observable<Action> = this.actions$.pipe(
-    ofType<CentreActions.UpdateCentreAddStudyRequest>(
-      CentreActions.ActionTypes.UpdateCentreAddStudyRequest),
+    ofType(CentreActions.ActionTypes.UpdateCentreAddStudyRequest),
     map(action => action.payload),
     switchMap(
       payload =>
@@ -80,8 +79,7 @@ export class CentreStoreEffects {
 
   @Effect()
   removeStudyRequest$: Observable<Action> = this.actions$.pipe(
-    ofType<CentreActions.UpdateCentreRemoveStudyRequest>(
-      CentreActions.ActionTypes.UpdateCentreRemoveStudyRequest),
+    ofType(CentreActions.ActionTypes.UpdateCentreRemoveStudyRequest),
     map(action => action.payload),
     switchMap(
       payload =>
@@ -94,8 +92,7 @@ export class CentreStoreEffects {
 
   @Effect()
   addLocationRequest$: Observable<Action> = this.actions$.pipe(
-    ofType<CentreActions.UpdateCentreAddOrUpdateLocationRequest>(
-      CentreActions.ActionTypes.UpdateCentreAddOrUpdateLocationRequest),
+    ofType(CentreActions.ActionTypes.UpdateCentreAddOrUpdateLocationRequest),
     map(action => action.payload),
     switchMap(
       payload =>
@@ -108,8 +105,7 @@ export class CentreStoreEffects {
 
   @Effect()
   removeLocationRequest$: Observable<Action> = this.actions$.pipe(
-    ofType<CentreActions.UpdateCentreRemoveLocationRequest>(
-      CentreActions.ActionTypes.UpdateCentreRemoveLocationRequest),
+    ofType(CentreActions.ActionTypes.UpdateCentreRemoveLocationRequest),
     map(action => action.payload),
     switchMap(
       payload =>
@@ -122,8 +118,7 @@ export class CentreStoreEffects {
 
   @Effect()
   countsRequest$: Observable<Action> = this.actions$.pipe(
-    ofType<CentreActions.GetCentreCountsRequest>(
-      CentreActions.ActionTypes.GetCentreCountsRequest),
+    ofType(CentreActions.ActionTypes.GetCentreCountsRequest),
     switchMap(
       () =>
         this.centreService.counts()

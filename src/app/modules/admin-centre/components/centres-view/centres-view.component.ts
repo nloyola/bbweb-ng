@@ -1,13 +1,14 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EntityStateInfo, LabelledId, SearchFilterValues, SearchParams } from '@app/domain';
-import { centreCountsToUIMap, CentreCountsUIMap, CentreSearchReply, CentreState, CentreStateUIMap } from '@app/domain/centres';
+import { centreCountsToUIMap, CentreCountsUIMap, CentreState, CentreStateUIMap, Centre } from '@app/domain/centres';
 import { CentreUI } from '@app/domain/centres/centre-ui.model';
 import { NameFilter, SearchFilter, StateFilter } from '@app/domain/search-filters';
 import { CentreStoreActions, CentreStoreSelectors, RootStoreState } from '@app/root-store';
 import { select, Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
+import { SearchReply } from '@app/domain/search-reply.model';
 
 interface CentrePageInfo {
   hasNoEntitiesToDisplay?: boolean;
@@ -89,13 +90,13 @@ export class CentresViewComponent implements OnInit, OnDestroy {
     this.unsubscribe$.complete();
   }
 
-  public onFiltersUpdated($event: SearchFilterValues) {
+  public onFiltersUpdated(values: SearchFilterValues) {
     this.currentPage = 1;
-    if ($event.name) {
-      this.filters.nameFilter.setValue($event.name);
+    if (values.name !== undefined) {
+      this.filters.nameFilter.setValue(values.name);
     }
-    if ($event.stateId) {
-      this.filters.stateFilter.setValue($event.stateId);
+    if (values.stateId !== undefined) {
+      this.filters.stateFilter.setValue(values.stateId);
     }
     this.applySearchParams();
   }
@@ -130,18 +131,18 @@ export class CentresViewComponent implements OnInit, OnDestroy {
     }));
   }
 
-  private searchReplyToPageInfo(searchReply: CentreSearchReply): CentrePageInfo {
+  private searchReplyToPageInfo(searchReply: SearchReply<Centre>): CentrePageInfo {
     if (searchReply === undefined) { return {}; }
 
     return {
-      hasResultsToDisplay: searchReply.centres.length > 0,
-      hasNoEntitiesToDisplay: ((searchReply.centres.length <= 0)
+      hasResultsToDisplay: searchReply.entities.length > 0,
+      hasNoEntitiesToDisplay: ((searchReply.entities.length <= 0)
                                && (searchReply.reply.searchParams.filter === '')),
 
-      hasNoResultsToDisplay: ((searchReply.centres.length <= 0)
+      hasNoResultsToDisplay: ((searchReply.entities.length <= 0)
                               && (searchReply.reply.searchParams.filter !== '')),
 
-      centres: searchReply.centres.map(s => new CentreUI(s)),
+      centres: searchReply.entities.map(s => new CentreUI(s)),
       totalCentres: searchReply.reply.total
     };
   }

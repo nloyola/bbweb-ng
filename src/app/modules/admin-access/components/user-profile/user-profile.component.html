@@ -1,0 +1,168 @@
+<ng-container *ngIf="user$ | async as user; else showLoading">
+  <div class="pb-2 mt-4 mb-2 border-bottom">
+    <h1>{{ user?.name }} <small i18n>Administration</small></h1>
+  </div>
+  <div class="card mt-2">
+    <div class="card-header bg-primary text-light">
+      <mat-icon [ngClass]="user?.stateIconClass()">
+        {{user?.stateIcon()}}
+      </mat-icon>
+      {{user?.name}}
+      <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
+
+        <button class="btn btn-sm btn-light"
+                type="button"
+                id="userSummaryMenu"
+                ngbDropdownToggle>
+          <mat-icon inline="true">more_vert</mat-icon>
+        </button>
+
+        <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="userSummaryMenu">
+          <a class="dropdown-item" *ngIf="!user?.isLocked()" (click)="updateName()">
+            <mat-icon class="success-icon mr-1">edit</mat-icon>
+            <ng-container i18n>Update name</ng-container>
+          </a>
+          <a class="dropdown-item" *ngIf="!user?.isLocked()" (click)="updateEmail()">
+            <mat-icon class="success-icon mr-1">edit</mat-icon>
+            <ng-container i18n>Update email</ng-container>
+          </a>
+          <a class="dropdown-item" *ngIf="!user?.isLocked()" (click)="updatePassword()">
+            <mat-icon class="success-icon mr-1">edit</mat-icon>
+            <ng-container i18n>Change password</ng-container>
+          </a>
+          <a class="dropdown-item" *ngIf="!user?.isLocked()" (click)="updateAvatarUrl()">
+            <mat-icon class="success-icon mr-1">edit</mat-icon>
+            <ng-container i18n>Change avatar</ng-container>
+          </a>
+          <a class="dropdown-item" *ngIf="user?.isRegistered()" (click)="activate()">
+            <mat-icon class="mr-1" [ngClass]="getStateIconClass('active')">
+              {{getStateIcon('active')}}
+            </mat-icon>
+            <ng-container i18n>Activate this user</ng-container>
+          </a>
+          <a class="dropdown-item" *ngIf="user?.isActive()" (click)="lock()">
+            <mat-icon class="mr-1" [ngClass]="getStateIconClass('locked')">
+              {{getStateIcon('locked')}}
+            </mat-icon>
+            <ng-container i18n>Lock this user</ng-container>
+          </a>
+          <a class="dropdown-item" *ngIf="user?.isLocked()" (click)="unlock()">
+            <mat-icon class="mr-1" [ngClass]="getStateIconClass('active')">
+              {{getStateIcon('active')}}
+            </mat-icon>
+            <ng-container i18n>Unlock this user</ng-container>
+          </a>
+        </div>
+      </span>
+    </div>
+
+    <!-- NAME -->
+    <ul class="list-group">
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-md-3"><strong i18n>Name</strong></div>
+          <div class="col-md-9">{{user?.name}}</div>
+        </div>
+      </li>
+
+      <!-- EMAIL -->
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-md-3"><strong i18n>Email</strong></div>
+          <div class="col-md-9">{{user?.email}}</div>
+        </div>
+      </li>
+
+      <!-- AVATAR URL -->
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-md-3"><strong i18n>Avatar URL</strong></div>
+          <div class="col-md-7">
+            <a target="_blank" [href]="user?.entity.avatarUrl"  *ngIf="user?.entity.avatarUrl">
+              {{user?.entity.avatarUrl}}
+            </a>
+            <span *ngIf="! user?.entity.avatarUrl" i18n>None</span>
+          </div>
+        </div>
+      </li>
+
+      <!-- ROLES-->
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-md-3"><strong i18n>Roles</strong></div>
+          <div class="col-md-7" *ngIf="user?.entity.roles.length > 0">
+            <span *ngFor="let role of user?.entity.roles"
+                  class="badge badge-secondary mr-1 mt-1">
+              {{role.name}}
+            </span>
+          </div>
+          <div class="col-md-7" *ngIf="user?.entity.roles.length <= 0">
+            <span i18n>None</span>
+          </div>
+        </div>
+      </li>
+
+      <!-- MEMBERSHIPS -->
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-md-3"><strong i18n>Memberships</strong></div>
+          <div class="col-md-7" *ngIf="user?.entity.membership">
+            <span class="badge badge-secondary mr-1 mt-1">
+              {{user?.entity.membership?.name}}
+            </span>
+          </div>
+          <div class="col-md-7" *ngIf="!user?.entity.membership">
+            <span i18n>None</span>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+    <app-entity-status [state]="user?.stateLabel()"
+                       [timeAdded]="user?.timeAdded"
+                       [timeModified]="user?.timeModified"
+                       [useBadges]="false">
+    </app-entity-status>
+  </div>
+</ng-container>
+
+<ng-template #showLoading>
+  <div class="card-header">
+    <app-spinner name="user" [show]="true" i18n>
+      Loading
+    </app-spinner>
+  </div>
+</ng-template>
+
+<ng-template #updateNameModal let-close="close">
+  <app-modal-input-text [title]="'Update Name'"
+                        [label]="'New user name'"
+                        [value]="(user$ | async)?.name"
+                        [options]="updateNameModalOptions"
+                        [modalClose]="close">
+  </app-modal-input-text>
+</ng-template>
+
+<ng-template #updateEmailModal let-close="close">
+  <app-modal-input-email [title]="'Update Email'"
+                         [label]="'New user email'"
+                         [value]="(user$ | async)?.email"
+                         [options]="updateEmailModalOptions"
+                         [modalClose]="close">
+  </app-modal-input-email>
+</ng-template>
+
+<ng-template #updatePasswordModal let-close="close">
+  <app-modal-input-password [title]="'Update Password'"
+                            [modalClose]="close">
+  </app-modal-input-password>
+</ng-template>
+
+<ng-template #updateAvatarUrlModal let-close="close">
+  <app-modal-input-url [title]="'Update Avatar URL'"
+                       [label]="'New avatar URL'"
+                       [value]="(user$ | async)?.entity.avatarUrl"
+                       [options]="{}"
+                       [modalClose]="close">
+  </app-modal-input-url>
+</ng-template>

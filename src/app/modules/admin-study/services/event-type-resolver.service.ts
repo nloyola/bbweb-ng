@@ -4,7 +4,7 @@ import { CollectionEventType } from '@app/domain/studies';
 import { RootStoreState } from '@app/root-store';
 import { EventTypeStoreActions, EventTypeStoreSelectors } from '@app/root-store/event-type';
 import { select, Store } from '@ngrx/store';
-import { Observable, race } from 'rxjs';
+import { Observable, race, throwError } from 'rxjs';
 import { filter, map, tap, take } from 'rxjs/operators';
 
 @Injectable({
@@ -31,7 +31,7 @@ export class EventTypeResolver implements Resolve<CollectionEventType> {
         map((ets: CollectionEventType[]) => ets.find(et => et.slug === eventTypeSlug)),
         map(eventType => {
           if (!eventType) {
-            throw new Error('collection event type not found');
+            return throwError('collection event type not found');
           }
 
           // have to do the following because of this issue:

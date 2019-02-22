@@ -102,7 +102,7 @@ export class ProcessingTypeViewContainerComponent implements OnInit, OnDestroy {
         if (ptEntityById) {
           this.processingType = (ptEntityById instanceof ProcessingType)
             ? ptEntityById : new ProcessingType().deserialize(ptEntityById);
-          this.router.navigate([ `/admin/studies/view/${this.study.slug}/processing/view/${this.processingType.slug}` ]);
+          this.router.navigate([ `/admin/studies/${this.study.slug}/processing/view/${this.processingType.slug}` ]);
           if (this.updatedMessage) {
             this.toastr.success(this.updatedMessage, 'Update Successfull');
           }
@@ -110,7 +110,7 @@ export class ProcessingTypeViewContainerComponent implements OnInit, OnDestroy {
         }
 
         this.processingType = undefined;
-        this.router.navigate([ `/admin/studies/view/${this.study.slug}/processing` ]);
+        this.router.navigate([ `/admin/studies/${this.study.slug}/processing` ]);
         this.toastr.success('Processing step removed', 'Removed');
       });
   }
@@ -305,13 +305,13 @@ export class ProcessingTypeViewContainerComponent implements OnInit, OnDestroy {
     }
 
     // relative route does not work here, why?
-    this.router.navigate([ '/admin/studies/view/bbpsp/processing/add' ]);
+    this.router.navigate([ '/admin/studies/${this.study.slug}/processing/add' ]);
   }
 
   processingTypeSelected(processingType: ProcessingType) {
     this.processingType = processingType;
     // relative route does not work here, why?
-    this.router.navigate([ `/admin/studies/view/bbpsp/processing/${processingType.slug}` ]);
+    this.router.navigate([ `/admin/studies/${this.study.slug}/processing/${processingType.slug}` ]);
   }
 
   private queryForInputEntity(entities: Entities) {

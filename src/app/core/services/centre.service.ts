@@ -1,11 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { PagedReply, SearchParams } from '@app/domain';
-import { Location } from '@app/domain';
+import { Location, PagedReply, SearchParams } from '@app/domain';
 import { ApiReply } from '@app/domain/api-reply.model';
 import { Centre, CentreCounts, CentreToAdd } from '@app/domain/centres';
 import { Observable } from 'rxjs';
-import { map, delay } from 'rxjs/operators';
+import { delay, map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -14,10 +13,10 @@ export class CentreService {
 
   readonly BASE_URL = '/api/centres';
 
+  private stateActions = [ 'disable', 'enable' ];
+
   constructor(private http: HttpClient) {
   }
-
-  private stateActions = [ 'disable', 'enable', 'retire', 'unretire' ];
 
   /**
   * Retrieves the counts of all Centres from the server indexed by state.
@@ -81,7 +80,7 @@ export class CentreService {
     };
     return this.http.post<ApiReply>(`${this.BASE_URL}/`, json)
       .pipe(
-        delay(2000),
+        // delay(2000),
         map(this.replyToCentre));
   }
 

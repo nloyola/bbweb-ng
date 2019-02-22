@@ -1,7 +1,7 @@
-<app-modal-input [modalClose]="close()">
+<app-modal-input [modalClose]="close()" [modalInputValid]="modalInputValid">
   <span class="title">{{title}}</span>
   <form class="body form-horizontal"
-        [formGroup]="textForm"
+        [formGroup]="modalInputForm"
         autocomplete="on"
         novalidate>
 

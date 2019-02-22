@@ -9,6 +9,9 @@ import { ModalInputTextComponent } from './components/modal-input-text/modal-inp
 import { ModalInputComponent } from './components/modal-input/modal-input.component';
 import { ModalInputTextareaComponent } from './components/modal-input-textarea/modal-input-textarea.component';
 import { ModalInputBooleanComponent } from './components/modal-input-boolean/modal-input-boolean.component';
+import { ModalInputEmailComponent } from './components/modal-input-email/modal-input-email.component';
+import { ModalInputUrlComponent } from './components/modal-input-url/modal-input-url.component';
+import { ModalInputPasswordComponent } from './components/modal-input-password/modal-input-password.component';
 
 @NgModule({
   imports: [
@@ -25,12 +28,18 @@ import { ModalInputBooleanComponent } from './components/modal-input-boolean/mod
     ModalInputTextComponent,
     ModalInputTextareaComponent,
     ModalInputBooleanComponent,
+    ModalInputEmailComponent,
+    ModalInputUrlComponent,
+    ModalInputPasswordComponent
   ],
   exports: [
     ModalInputComponent,
     ModalInputBooleanComponent,
     ModalInputTextComponent,
-    ModalInputTextareaComponent
+    ModalInputTextareaComponent,
+    ModalInputEmailComponent,
+    ModalInputUrlComponent,
+    ModalInputPasswordComponent
   ]
 })
 export class ModalInputModule { }

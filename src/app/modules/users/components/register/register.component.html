@@ -72,10 +72,9 @@
                      formControlName="confirmPassword">
             </div>
             <div class="col-md-8 offset-4"
-                 *ngIf="registerForm.controls.confirmPassword.errors?.passwordsNonMatching
-                        && password.touched">
+                 *ngIf="registerForm.errors?.passwordsNonMatching && password.touched">
               <div class="text-danger small" i18n>
-                passwords do not match
+                Passwords do not match
               </div>
             </div>
           </div>

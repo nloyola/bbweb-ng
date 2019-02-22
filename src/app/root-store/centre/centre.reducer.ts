@@ -112,17 +112,8 @@ export function reducer(state = initialState, action: CentreActions): State {
       return adapter.addOne(action.payload.centre, state);
     }
 
-    case ActionTypes.GetCentreFailure: {
-      return {
-        ...state,
-        error: {
-          type: ActionTypes.GetCentreFailure,
-          error: action.payload.error
-        }
-      };
-    }
-
     case ActionTypes.GetCentreCountsFailure:
+    case ActionTypes.GetCentreFailure:
     case ActionTypes.AddCentreFailure:
     case ActionTypes.UpdateCentreFailure:
       return {

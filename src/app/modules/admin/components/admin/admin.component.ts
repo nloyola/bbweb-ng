@@ -1,49 +1,52 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { User } from '@app/domain/users';
 import { AuthStoreSelectors, RootStoreState } from '@app/root-store';
 import { select, Store } from '@ngrx/store';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+interface Permissions {
+  user: User;
+  hasStudyAdminRole: boolean;
+  hasCentreAdminRole: boolean;
+  hasUserAdminRole: boolean;
+  hasAdminRole: boolean;
+}
 
 @Component({
   selector: 'app-admin',
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.scss']
 })
-export class AdminComponent implements OnInit, OnDestroy {
+export class AdminComponent implements OnInit {
 
-  private unsubscribe$: Subject<void> = new Subject<void>();
+  permissions$: Observable<Permissions>;
 
-  userHasStudyAdminRole = false;
-  userHasCentreAdminRole = false;
-  userHasUserAdminRole = false;
-  user: User;
-
-  constructor(private store$: Store<RootStoreState.State>) {
-  }
+  constructor(private store$: Store<RootStoreState.State>) { }
 
   public ngOnInit() {
-    this.store$
+    this.permissions$ = this.store$
       .pipe(
         select(AuthStoreSelectors.selectAuthUser),
-        takeUntil(this.unsubscribe$))
-      .subscribe((user: User) => {
-        this.user = user;
-        if (user !== null) {
-          this.userHasStudyAdminRole = user.hasStudyAdminRole();
-          this.userHasCentreAdminRole = user.hasCentreAdminRole();
-          this.userHasUserAdminRole = user.hasUserAdminRole();
-        } else {
-          this.userHasStudyAdminRole = false;
-          this.userHasCentreAdminRole = false;
-          this.userHasUserAdminRole = false;
-        }
-      });
-  }
+        map((user: User) => {
+          if (user === null) {
+            return {
+              user,
+              hasStudyAdminRole: false,
+              hasCentreAdminRole: false,
+              hasUserAdminRole: false,
+              hasAdminRole: false
+            };
+          }
 
-  public ngOnDestroy() {
-    this.unsubscribe$.next();
-    this.unsubscribe$.complete();
+          return {
+              user,
+              hasStudyAdminRole: user.hasStudyAdminRole(),
+              hasCentreAdminRole: user.hasCentreAdminRole(),
+              hasUserAdminRole: user.hasUserAdminRole(),
+              hasAdminRole: user.hasAdminRole()
+          };
+        }));
   }
 
 }

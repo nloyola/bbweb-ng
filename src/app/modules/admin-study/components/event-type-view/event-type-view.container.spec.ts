@@ -422,7 +422,7 @@ describe('EventTypeViewContainer', () => {
 
       expect(component.eventType).toBeUndefined();
       expect(spy).toHaveBeenCalled();
-      expect(spy.mock.calls[0][0]).toEqual([ '/admin/studies/view/bbpsp/collection/view' ]);
+      expect(spy.mock.calls[0][0]).toEqual([ `/admin/studies/${study.slug}/collection/view` ]);
     });
   });
 

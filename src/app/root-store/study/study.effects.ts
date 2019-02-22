@@ -9,11 +9,12 @@ import * as StudyActions from './study.actions';
 @Injectable()
 export class StudyStoreEffects {
 
-  constructor(private studyService: StudyService, private actions$: Actions) { }
+  constructor(private actions$: Actions<StudyActions.StudyActions>,
+              private studyService: StudyService) { }
 
   @Effect()
   getRequest$: Observable<Action> = this.actions$.pipe(
-    ofType<StudyActions.GetStudyRequest>(StudyActions.ActionTypes.GetStudyRequest),
+    ofType(StudyActions.ActionTypes.GetStudyRequest),
     map(action => action.payload),
     switchMap(
       payload =>
@@ -26,8 +27,7 @@ export class StudyStoreEffects {
 
   @Effect()
   searchRequest$: Observable<Action> = this.actions$.pipe(
-    ofType<StudyActions.SearchStudiesRequest>(
-      StudyActions.ActionTypes.SearchStudiesRequest),
+    ofType(StudyActions.ActionTypes.SearchStudiesRequest),
     map(action => action.payload),
     switchMap(
       payload =>
@@ -40,7 +40,7 @@ export class StudyStoreEffects {
 
   @Effect()
   addRequest$: Observable<Action> = this.actions$.pipe(
-    ofType<StudyActions.AddStudyRequest>(StudyActions.ActionTypes.AddStudyRequest),
+    ofType(StudyActions.ActionTypes.AddStudyRequest),
     map(action => action.payload),
     switchMap(
       payload =>
@@ -53,7 +53,7 @@ export class StudyStoreEffects {
 
   @Effect()
   updateRequest$: Observable<Action> = this.actions$.pipe(
-    ofType<StudyActions.UpdateStudyRequest>(StudyActions.ActionTypes.UpdateStudyRequest),
+    ofType(StudyActions.ActionTypes.UpdateStudyRequest),
     map(action => action.payload),
     switchMap(
       payload =>
@@ -67,8 +67,7 @@ export class StudyStoreEffects {
   @Effect()
   addOrUpdateAnnotationTypeRequest$: Observable<Action> =
     this.actions$.pipe(
-      ofType<StudyActions.UpdateStudyAddOrUpdateAnnotationTypeRequest>
-        (StudyActions.ActionTypes.UpdateStudyAddOrUpdateAnnotationTypeRequest),
+      ofType(StudyActions.ActionTypes.UpdateStudyAddOrUpdateAnnotationTypeRequest),
       map(action => action.payload),
       switchMap(
         payload =>
@@ -83,8 +82,7 @@ export class StudyStoreEffects {
   @Effect()
   removeAnnotationTypeRequest$: Observable<Action> =
     this.actions$.pipe(
-      ofType<StudyActions.UpdateStudyRemoveAnnotationTypeRequest>
-        (StudyActions.ActionTypes.UpdateStudyRemoveAnnotationTypeRequest),
+      ofType(StudyActions.ActionTypes.UpdateStudyRemoveAnnotationTypeRequest),
       map(action => action.payload),
       switchMap(
         payload =>
@@ -98,8 +96,7 @@ export class StudyStoreEffects {
 
   @Effect()
   countsRequest$: Observable<Action> = this.actions$.pipe(
-    ofType<StudyActions.GetStudyCountsRequest>(
-      StudyActions.ActionTypes.GetStudyCountsRequest),
+    ofType(StudyActions.ActionTypes.GetStudyCountsRequest),
     switchMap(
       () =>
         this.studyService.counts()
@@ -112,8 +109,7 @@ export class StudyStoreEffects {
 
   @Effect()
   enableAllowedRequest$: Observable<Action> = this.actions$.pipe(
-    ofType<StudyActions.GetEnableAllowedRequest>(
-      StudyActions.ActionTypes.GetEnableAllowedRequest),
+    ofType(StudyActions.ActionTypes.GetEnableAllowedRequest),
     map(action => action.payload),
     switchMap(
       payload =>

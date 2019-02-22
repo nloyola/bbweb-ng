@@ -421,7 +421,7 @@ describe('ProcessingTypeViewContainerComponent', () => {
 
       expect(component.processingType).toBeUndefined();
       expect(spy).toHaveBeenCalled();
-      expect(spy.mock.calls[0][0]).toEqual([ `/admin/studies/view/${entities.study.slug}/processing` ]);
+      expect(spy.mock.calls[0][0]).toEqual([ `/admin/studies/${entities.study.slug}/processing` ]);
     });
 
     it('opens a modal if the processing type is in use', () => {
@@ -460,7 +460,7 @@ describe('ProcessingTypeViewContainerComponent', () => {
       fixture.whenStable().then(() => {
         ngZone.run(() => component.addProcessingTypeSelected());
         expect(routerListener.mock.calls.length).toBe(1);
-        expect(routerListener.mock.calls[0][0]).toEqual([ '/admin/studies/view/bbpsp/processing/add' ]);
+        expect(routerListener.mock.calls[0][0]).toEqual([ '/admin/studies/${study.slug}/processing/add' ]);
       });
     }));
 
@@ -477,7 +477,7 @@ describe('ProcessingTypeViewContainerComponent', () => {
       ngZone.run(() => component.processingTypeSelected(entities.processingType));
       expect(routerListener.mock.calls.length).toBe(1);
       expect(routerListener.mock.calls[0][0])
-        .toEqual([ `/admin/studies/view/bbpsp/processing/${entities.processingType.slug}` ]);
+        .toEqual([ `/admin/studies/${study.slug}/processing/${entities.processingType.slug}` ]);
     });
   }));
 

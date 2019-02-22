@@ -7,10 +7,6 @@ import { Observable, Subject } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
 import { NgbTabChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 
-interface Tab {
-  heading: string;
-}
-
 @Component({
   selector: 'app-centre-view',
   templateUrl: './centre-view.component.html',

@@ -1,6 +1,7 @@
-import { ProcessingType, ProcessingTypeSearchReply, ProcessedSpecimenDefinitionName } from '@app/domain/studies';
+import { ProcessingType, ProcessedSpecimenDefinitionName } from '@app/domain/studies';
 import { createFeatureSelector, createSelector, MemoizedSelector } from '@ngrx/store';
 import * as fromProcessingType from './processing-type.reducer';
+import { SearchReply } from '@app/domain/search-reply.model';
 
 export const getSearchActive = (state: fromProcessingType.State): boolean => state.searchActive;
 
@@ -54,7 +55,7 @@ export const selectSearchRepliesAndEntities =
     (searchActive: boolean,
      lastSearch: fromProcessingType.LastSearch,
      searchReplies: fromProcessingType.PagedReplyHash,
-     entities: any): ProcessingTypeSearchReply => {
+     entities: any): SearchReply<ProcessingType> => {
       if (searchActive || (lastSearch === null)) { return undefined; }
 
       const reply = searchReplies[lastSearch.studyId][lastSearch.params.queryString()];
@@ -62,7 +63,7 @@ export const selectSearchRepliesAndEntities =
 
       return {
         reply,
-        processingTypes: reply.entityIds.map(id => entities[id])
+        entities: reply.entityIds.map(id => entities[id])
       };
     });
 

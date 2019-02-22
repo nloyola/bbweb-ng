@@ -34,15 +34,17 @@
           </span>
         </td>
         <td>
-          <span class="badge badge-secondary">{{studyStateLabel(study)}}</span>
+          <span class="badge badge-secondary mr-1 mt-1">{{studyStateLabel(study)}}</span>
         </td>
         <td>
           <div class="btn-group pull-right">
             <button class="btn btn-sm btn-warning"
                     *ngIf="centre.isDisabled()"
                     (click)="remove(study)">
-              <mat-icon class="mr-1">remove_circle</mat-icon>
-              <span i18n>Remove</span>
+              <span>
+                <mat-icon class="mr-1" inline="true">remove_circle</mat-icon>
+                <ng-container i18n>Remove</ng-container>
+              </span>
             </button>
           </div>
         </td>
@@ -55,20 +57,22 @@
       <form>
         <div class="form-group row">
           <label class="col-md-2 col-form-label">
-            <mat-icon>add_circle</mat-icon>
-            <span class="ml-1" i18n>Add Study</span>
+            <span class="ml-1">
+              <mat-icon inline="true" class="success-icon">add_circle</mat-icon>
+              <ng-container i18n>Add Study</ng-container>
+            </span>
           </label>
           <div class="col-md-10">
             <input type="text"
                    class="form-control"
-                   [(ngModel)]="selectedStudy"
+                   [(ngModel)]="studyAddTypeahead.selectedEntity"
                    [ngModelOptions]="{standalone: true}"
-                   [ngbTypeahead]="getStudyNames"
+                   [ngbTypeahead]="studyAddTypeahead.getEntities"
                    i18-placeholder
                    placeholder="enter a study's name or partial name"
-                   [inputFormatter]="typeaheadFormatter"
-                   [resultFormatter]="typeaheadFormatter"
-                   (selectItem)="selectedItem($event)"
+                   [inputFormatter]="studyAddTypeahead.typeaheadFormatter"
+                   [resultFormatter]="studyAddTypeahead.typeaheadFormatter"
+                   (selectItem)="studyAddTypeahead.onEntitySelected($event)"
                    [editable]="false">
           </div>
         </div>

@@ -1,0 +1,179 @@
+<ng-container *ngIf="membership$ | async as membership; else showLoading">
+  <div class="pb-2 mt-4 mb-2 border-bottom">
+    <h1>{{ membership?.name }} <small i18n>Administration</small></h1>
+  </div>
+  <div class="card mt-2">
+    <div class="card-header bg-primary text-light">
+      <mat-icon inline="true" class="warning-icon">settings</mat-icon>
+      <span i18n>Membership</span>:
+      {{membership?.name}}
+      <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
+
+        <button class="btn btn-sm btn-light"
+                type="button"
+                id="userSummaryMenu"
+                ngbDropdownToggle>
+          <mat-icon inline="true">more_vert</mat-icon>
+        </button>
+
+        <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="membershipActionsMenu">
+          <a class="dropdown-item" *ngIf="changesAllowed" (click)="updateName()">
+            <mat-icon class="success-icon mr-1">edit</mat-icon>
+            <ng-container i18n>Update name</ng-container>
+          </a>
+          <a class="dropdown-item" *ngIf="changesAllowed" (click)="updateDescription()">
+            <mat-icon class="success-icon mr-1">edit</mat-icon>
+            <ng-container i18n>Update description</ng-container>
+          </a>
+        </div>
+      </span>
+    </div>
+
+    <!-- NAME -->
+    <ul class="list-group">
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-md-3"><strong i18n>Name</strong></div>
+          <div class="col-md-9">{{membership?.name}}</div>
+        </div>
+      </li>
+
+      <!-- DESCRIPTION -->
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-md-3">
+            <strong i18n>Description</strong>
+          </div>
+          <div class="col-md-9">
+            <app-truncate-toggle [text]="membership?.description"
+                                 [toggleLength]="80"
+                                 [textEmptyWarning]="'Description not entered yet.'">
+            </app-truncate-toggle>
+          </div>
+        </div>
+      </li>
+
+      <!-- USERS -->
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-md-3">
+            <strong i18n>Users</strong>
+          </div>
+          <div class="col-md-9" *ngIf="membership.userData.length > 0">
+            <span *ngFor="let userInfo of membership?.userData"
+                  class="badge badge-secondary mr-1 mt-1 deletable-item"
+                  (click)="userSelected(userInfo)"
+                  ngbTooltip="Remove user">
+              {{userInfo.name}}
+              <mat-icon class="warning-icon" inline="true">remove_circle_outline</mat-icon>
+            </span>
+          </div>
+          <div class="col-md-9" *ngIf="membership.userData.length <= 0">
+            <span i18n>None</span>
+          </div>
+        </div>
+      </li>
+
+      <li class="list-group-item">
+        <form>
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label">
+              <strong>
+                <ng-container i18n>Add User</ng-container>
+                <mat-icon inline="true" class="success-icon ml-1">add_circle</mat-icon>
+              </strong>
+            </label>
+            <div class="col-md-9">
+              <input type="text"
+                     class="form-control"
+                     [(ngModel)]="userAddTypeahead.selectedEntity"
+                     [ngModelOptions]="{standalone: true}"
+                     [ngbTypeahead]="userAddTypeahead.getEntities"
+                     i18-placeholder
+                     placeholder="enter a user's name or partial name"
+                     [inputFormatter]="userAddTypeahead.typeaheadFormatter"
+                     [resultFormatter]="userAddTypeahead.typeaheadFormatter"
+                     (selectItem)="userAddTypeahead.onEntitySelected($event)"
+                     [editable]="false">
+            </div>
+          </div>
+        </form>
+      </li>
+
+      <!-- STUDIES -->
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-md-3">
+            <strong i18n>Studies</strong>
+          </div>
+          <div class="col-md-9" *ngIf="membership?.studyData.isContentTypeAll()">
+            <span i18n>All Studies</span>
+          </div>
+          <div class="col-md-9" *ngIf="membership?.studyData.isContentTypeSome()">
+            <span *ngFor="let studyInfo of membership?.studyData"
+                  class="badge badge-secondary mr-1 mt-1 deletable-item"
+                  (click)="studySelected(studyInfo)"
+                  ngbTooltip="Remove study">
+              {{studyInfo.name}}
+              <mat-icon class="warning-icon" inline="true">remove_circle_outline</mat-icon>
+            </span>
+          </div>
+          <div class="col-md-9" *ngIf="membership.studyData.isContentTypeNone()">
+            <span i18n>None</span>
+          </div>
+        </div>
+      </li>
+
+      <!-- CENTRES -->
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-md-3">
+            <strong i18n>Centres</strong>
+          </div>
+          <div class="col-md-9" *ngIf="membership?.centreData.isContentTypeAll()">
+            <span i18n>All Centres</span>
+          </div>
+          <div class="col-md-9" *ngIf="membership?.centreData.isContentTypeSome()">
+            <span *ngFor="let centreInfo of membership?.centreData"
+                  class="badge badge-secondary mr-1 mt-1 deletable-item"
+                  (click)="centreSelected(centreInfo)"
+                  ngbTooltip="Remove centre">
+              {{centreInfo.name}}
+              <mat-icon class="warning-icon" inline="true">remove_circle_outline</mat-icon>
+            </span>
+          </div>
+          <div class="col-md-9" *ngIf="membership.centreData.isContentTypeNone()">
+            <span i18n>None</span>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+</ng-container>
+
+<ng-template #showLoading>
+  <div class="card-header">
+    <app-spinner name="membership" [show]="true" i18n>
+      Loading
+    </app-spinner>
+  </div>
+</ng-template>
+
+
+<ng-template #updateNameModal let-close="close">
+  <app-modal-input-text [title]="'Update Name'"
+                        [label]="'New membership name'"
+                        [value]="(membership$ | async)?.name"
+                        [options]="updateNameModalOptions"
+                        [modalClose]="close">
+  </app-modal-input-text>
+</ng-template>
+
+<ng-template #updateDescriptionModal let-close="close">
+  <app-modal-input-textarea [title]="'Update Description'"
+                            [label]="'New membership description'"
+                            [value]="(membership$ | async)?.description"
+                            [options]="updateDescriptionModalOptions"
+                            [modalClose]="close">
+  </app-modal-input-textarea>
+</ng-template>

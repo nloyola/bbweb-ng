@@ -1,12 +1,13 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { PagedReplyInfo, SearchParams } from '@app/domain';
-import { CollectionEventType, EventTypeSearchReply, Study } from '@app/domain/studies';
+import { CollectionEventType, Study } from '@app/domain/studies';
 import { RootStoreState } from '@app/root-store';
 import { EventTypeStoreActions, EventTypeStoreSelectors } from '@app/root-store/event-type';
 import { select, Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
+import { SearchReply } from '@app/domain/search-reply.model';
 
 @Component({
   selector: 'app-event-types-add-and-select',
@@ -104,18 +105,20 @@ export class EventTypesAddAndSelectComponent implements OnInit, OnDestroy {
     }));
   }
 
-  private searchReplyToPageInfo(searchReply: EventTypeSearchReply): PagedReplyInfo<CollectionEventType> {
+  private searchReplyToPageInfo(
+    searchReply: SearchReply<CollectionEventType>
+  ): PagedReplyInfo<CollectionEventType> {
     if (searchReply === undefined) { return {} as any; }
 
     const result = {
-      hasResultsToDisplay: searchReply.eventTypes.length > 0,
-      hasNoEntitiesToDisplay: ((searchReply.eventTypes.length <= 0)
+      hasResultsToDisplay: searchReply.entities.length > 0,
+      hasNoEntitiesToDisplay: ((searchReply.entities.length <= 0)
                                && (searchReply.reply.searchParams.filter === '')),
 
-      hasNoResultsToDisplay: ((searchReply.eventTypes.length <= 0)
+      hasNoResultsToDisplay: ((searchReply.entities.length <= 0)
                               && (searchReply.reply.searchParams.filter !== '')),
 
-      entities: searchReply.eventTypes,
+      entities: searchReply.entities,
       total: searchReply.reply.total,
       maxPages: searchReply.reply.maxPages,
       showPagination: searchReply.reply.maxPages > 1

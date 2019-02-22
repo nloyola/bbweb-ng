@@ -4,45 +4,46 @@ import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
 import { Observable, of as observableOf } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
-import * as authActions from './auth-store.actions';
+import * as AuthActions from './auth-store.actions';
 
 @Injectable()
 export class AuthStoreEffects {
 
-  constructor(private authService: AuthService, private actions$: Actions) { }
+  constructor(private actions$: Actions<AuthActions.Actions>,
+              private authService: AuthService) { }
 
   @Effect()
   loginRequest$: Observable<Action> = this.actions$.pipe(
-    ofType<authActions.LoginRequestAction>(authActions.ActionTypes.LOGIN_REQUEST),
+    ofType(AuthActions.ActionTypes.LOGIN_REQUEST),
     map(action => action.payload),
     switchMap(
       payload =>
         this.authService.login(payload.email, payload.password)
         .pipe(
-          map(user => new authActions.LoginSuccessAction({ user })),
-          catchError(error => observableOf(new authActions.LoginFailureAction({ error }))))
+          map(user => new AuthActions.LoginSuccessAction({ user })),
+          catchError(error => observableOf(new AuthActions.LoginFailureAction({ error }))))
              )
   );
 
   @Effect()
   logoutRequest$: Observable<Action> = this.actions$.pipe(
-    ofType<authActions.LogoutRequestAction>(authActions.ActionTypes.LOGOUT_REQUEST),
+    ofType(AuthActions.ActionTypes.LOGOUT_REQUEST),
     switchMap(() => {
       this.authService.logout();
-      return observableOf(new authActions.LogoutSuccessAction());
+      return observableOf(new AuthActions.LogoutSuccessAction());
     })
   );
 
   @Effect()
   registerRequest$: Observable<Action> = this.actions$.pipe(
-    ofType<authActions.RegisterRequestAction>(authActions.ActionTypes.REGISTER_REQUEST),
+    ofType(AuthActions.ActionTypes.REGISTER_REQUEST),
     map(action => action.payload),
     switchMap(
       payload =>
         this.authService.register(payload.name, payload.email, payload.password)
         .pipe(
-          map(user => new authActions.RegisterSuccessAction({ user })),
-          catchError(error => observableOf(new authActions.RegisterFailureAction({ error }))))
+          map(user => new AuthActions.RegisterSuccessAction({ user })),
+          catchError(error => observableOf(new AuthActions.RegisterFailureAction({ error }))))
     )
   );
 

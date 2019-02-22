@@ -18,7 +18,7 @@
   <div class="d-flex flex-row flex-wrap justify-content-center" *ngIf="hasRoles">
 
     <!-- COLLECTION -->
-    <div class="card m-2" *ngIf="allowCollection" style="width: 18rem;">
+    <div class="card bbweb" *ngIf="allowCollection">
       <h5 class="card-header bg-primary text-light">
         <ng-container i18n>Collection</ng-container>
       </h5>
@@ -31,7 +31,7 @@
     </div>
 
     <!-- SHIPPING -->
-    <div class="card m-2" *ngIf="shippingAllowed" style="width: 18rem;">
+    <div class="card bbweb" *ngIf="shippingAllowed">
       <h5 class="card-header bg-primary text-light">
         <ng-container i18n>Shipping</ng-container>
       </h5>
@@ -44,7 +44,7 @@
     </div>
 
     <!-- ADMINISTRATION -->
-    <div class="card m-2" *ngIf="adminAllowed" style="width: 18rem;">
+    <div class="card bbweb" *ngIf="adminAllowed">
       <h5 class="card-header bg-primary text-light">
         <ng-container i18n>Administration</ng-container>
       </h5>

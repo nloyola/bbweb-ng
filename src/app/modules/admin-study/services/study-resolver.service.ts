@@ -3,7 +3,7 @@ import { ActivatedRouteSnapshot, Resolve, Router, RouterStateSnapshot } from '@a
 import { Study } from '@app/domain/studies';
 import { RootStoreState, StudyStoreActions, StudyStoreSelectors } from '@app/root-store';
 import { select, Store } from '@ngrx/store';
-import { Observable, race } from 'rxjs';
+import { Observable, race, throwError } from 'rxjs';
 import { filter, map, take, tap } from 'rxjs/operators';
 
 @Injectable({
@@ -29,7 +29,7 @@ export class StudyResolver implements Resolve<Study> {
         map((studies: Study[]) => studies.find(s => s.slug === slug)),
         map(study => {
           if (!study) {
-            throw new Error('study not found');
+            return throwError('study not found');
           }
 
           // have to do the following because of this issue:

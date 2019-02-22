@@ -11,5 +11,10 @@
 </div>
 <div class="modal-footer">
   <button type="button" class="btn btn-secondary" (click)="close('Cancel')" i18n>Cancel</button>
-  <button type="button" class="btn btn-primary" (click)="close('OK')" i18n>OK</button>
+  <button type="button"
+          class="btn btn-primary"
+          [disabled]="!modalInputValid"
+          (click)="close('OK')" i18n>
+    OK
+  </button>
 </div>

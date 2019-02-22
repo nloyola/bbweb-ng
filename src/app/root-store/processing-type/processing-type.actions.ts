@@ -11,6 +11,12 @@ interface SearchProcessingTypesRequestPayload {
   searchParams: SearchParams;
 }
 
+interface ProcessingTypeGetRequestPayload {
+  processingType: ProcessingType;
+  attributeName: string;
+  value: string | boolean | InputSpecimenProcessing | OutputSpecimenProcessing;
+}
+
 interface ProcessingTypeUpdateRequestPayload {
   processingType: ProcessingType;
   attributeName: string;
@@ -211,6 +217,7 @@ export type ProcessingTypeActions =
   | SearchProcessingTypesSuccess
   | SearchProcessingTypesFailure
   | GetProcessingTypeRequest
+  | GetProcessingTypeByIdRequest
   | GetProcessingTypeSuccess
   | GetProcessingTypeFailure
   | AddProcessingTypeRequest

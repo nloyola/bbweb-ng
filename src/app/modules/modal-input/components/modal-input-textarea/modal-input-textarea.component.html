@@ -1,7 +1,7 @@
 <app-modal-input [modalClose]="close()">
   <span class="title">{{title}}</span>
   <form class="body form-horizontal"
-        [formGroup]="form"
+        [formGroup]="modalInputForm"
         autocomplete="on"
         novalidate>
 
@@ -9,14 +9,14 @@
       <label for="email" class="col-md-3 col-form-label" i18n>{{label}}</label>
       <div class="col-md-9">
         <textarea class="form-control"
-                  formControlName="textarea"
+                  formControlName="text"
                   [rows]="options.rows"
                   [cols]="options.cols"
                   ngbAutoFocus>
         </textarea>
       </div>
-      <div class="col-md-8 offset-3" *ngIf="textarea.invalid && textarea.touched">
-        <div class="text-danger small" *ngIf="textarea.errors.required" i18n>
+      <div class="col-md-8 offset-3" *ngIf="text.invalid && textarea.touched">
+        <div class="text-danger small" *ngIf="text.errors.required" i18n>
           Some text is required
         </div>
       </div>

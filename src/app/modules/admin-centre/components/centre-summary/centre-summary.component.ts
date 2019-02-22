@@ -93,7 +93,7 @@ export class CentreSummaryComponent implements OnInit, OnDestroy {
     };
     this.modalService.open(this.updateNameModal).result
       .then(value => {
-        if (value.value) {
+        if (value.confirmed) {
           this.store$.dispatch(new CentreStoreActions.UpdateCentreRequest({
             centre: this.centre.entity,
             attributeName: 'name',
@@ -112,12 +112,14 @@ export class CentreSummaryComponent implements OnInit, OnDestroy {
     };
     this.modalService.open(this.updateDescriptionModal, { size: 'lg' }).result
       .then(value => {
-        this.store$.dispatch(new CentreStoreActions.UpdateCentreRequest({
-          centre: this.centre.entity,
-          attributeName: 'description',
-          value: value.value ? value.value : undefined
-        }));
-        this.updatedMessage = 'Centre description was updated';
+        if (value.confirmed) {
+          this.store$.dispatch(new CentreStoreActions.UpdateCentreRequest({
+            centre: this.centre.entity,
+            attributeName: 'description',
+            value: value.value ? value.value : undefined
+          }));
+          this.updatedMessage = 'Centre description was updated';
+        }
       })
       .catch(err => console.log('err', err));
   }

@@ -3,7 +3,7 @@ import { ActivatedRouteSnapshot, Resolve, Router, RouterStateSnapshot } from '@a
 import { Centre } from '@app/domain/centres';
 import { RootStoreState, CentreStoreActions, CentreStoreSelectors } from '@app/root-store';
 import { select, Store } from '@ngrx/store';
-import { Observable, race } from 'rxjs';
+import { Observable, race, throwError } from 'rxjs';
 import { filter, map, take, tap } from 'rxjs/operators';
 
 @Injectable({
@@ -28,7 +28,7 @@ export class CentreResolver implements Resolve<Centre> {
         map((centres: Centre[]) => centres.find(s => s.slug === slug)),
         map(centre => {
           if (!centre) {
-            throw new Error('centre not found');
+            return throwError('centre not found');
           }
 
           // have to do the following because of this issue:

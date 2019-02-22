@@ -33,7 +33,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
         password: ['', [Validators.required]],
         confirmPassword: ['', [Validators.required]],
       },
-      { validator: PasswordValidation.matchingPasswords });
+      { validator: PasswordValidation.matchingPasswords() });
 
     this.isRegistering$ =
       this.store$.pipe(select(SpinnerStoreSelectors.selectSpinnerIsActive));
