@@ -1,12 +1,11 @@
 <ng-container *ngIf="membership$ | async as membership; else showLoading">
   <div class="pb-2 mt-4 mb-2 border-bottom">
-    <h1>{{ membership?.name }} <small i18n>Administration</small></h1>
+    <h1>{{ membership?.name }} <small i18n>Membership</small></h1>
   </div>
   <div class="card mt-2">
     <div class="card-header bg-primary text-light">
       <mat-icon inline="true" class="warning-icon">settings</mat-icon>
-      <span i18n>Membership</span>:
-      {{membership?.name}}
+      {{membership?.name}} <small i18n>Membership</small>
       <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
 
         <button class="btn btn-sm btn-light"
@@ -33,18 +32,18 @@
     <ul class="list-group">
       <li class="list-group-item">
         <div class="row">
-          <div class="col-md-3"><strong i18n>Name</strong></div>
-          <div class="col-md-9">{{membership?.name}}</div>
+          <div class="col-md-2"><strong i18n>Name</strong></div>
+          <div class="col-md-10">{{membership?.name}}</div>
         </div>
       </li>
 
       <!-- DESCRIPTION -->
       <li class="list-group-item">
         <div class="row">
-          <div class="col-md-3">
+          <div class="col-md-2">
             <strong i18n>Description</strong>
           </div>
-          <div class="col-md-9">
+          <div class="col-md-10">
             <app-truncate-toggle [text]="membership?.description"
                                  [toggleLength]="80"
                                  [textEmptyWarning]="'Description not entered yet.'">
@@ -56,10 +55,10 @@
       <!-- USERS -->
       <li class="list-group-item">
         <div class="row">
-          <div class="col-md-3">
+          <div class="col-md-2">
             <strong i18n>Users</strong>
           </div>
-          <div class="col-md-9" *ngIf="membership.userData.length > 0">
+          <div class="col-md-10" *ngIf="membership.userData.length > 0">
             <span *ngFor="let userInfo of membership?.userData"
                   class="badge badge-secondary mr-1 mt-1 deletable-item"
                   (click)="userSelected(userInfo)"
@@ -68,22 +67,23 @@
               <mat-icon class="warning-icon" inline="true">remove_circle_outline</mat-icon>
             </span>
           </div>
-          <div class="col-md-9" *ngIf="membership.userData.length <= 0">
+          <div class="col-md-10" *ngIf="membership.userData.length <= 0">
             <span i18n>None</span>
           </div>
         </div>
       </li>
 
+      <!-- USER ADD -->
       <li class="list-group-item">
         <form>
           <div class="form-group row">
-            <label class="col-md-3 col-form-label">
+            <label class="col-md-2 col-form-label">
               <strong>
                 <ng-container i18n>Add User</ng-container>
                 <mat-icon inline="true" class="success-icon ml-1">add_circle</mat-icon>
               </strong>
             </label>
-            <div class="col-md-9">
+            <div class="col-md-10">
               <input type="text"
                      class="form-control"
                      [(ngModel)]="userAddTypeahead.selectedEntity"
@@ -103,14 +103,14 @@
       <!-- STUDIES -->
       <li class="list-group-item">
         <div class="row">
-          <div class="col-md-3">
+          <div class="col-md-2">
             <strong i18n>Studies</strong>
           </div>
-          <div class="col-md-9" *ngIf="membership?.studyData.isContentTypeAll()">
+          <div class="col-md-10" *ngIf="membership?.studyData.isContentTypeAll()">
             <span i18n>All Studies</span>
           </div>
-          <div class="col-md-9" *ngIf="membership?.studyData.isContentTypeSome()">
-            <span *ngFor="let studyInfo of membership?.studyData"
+          <div class="col-md-10" *ngIf="membership?.studyData.isContentTypeSome()">
+            <span *ngFor="let studyInfo of membership?.studyData.entityData"
                   class="badge badge-secondary mr-1 mt-1 deletable-item"
                   (click)="studySelected(studyInfo)"
                   ngbTooltip="Remove study">
@@ -118,23 +118,50 @@
               <mat-icon class="warning-icon" inline="true">remove_circle_outline</mat-icon>
             </span>
           </div>
-          <div class="col-md-9" *ngIf="membership.studyData.isContentTypeNone()">
+          <div class="col-md-10" *ngIf="membership.studyData.isContentTypeNone()">
             <span i18n>None</span>
           </div>
         </div>
       </li>
 
+      <!-- STUDY ADD -->
+      <li class="list-group-item">
+        <form>
+          <div class="form-group row">
+            <label class="col-md-2 col-form-label">
+              <strong>
+                <ng-container i18n>Add Study</ng-container>
+                <mat-icon inline="true" class="success-icon ml-1">add_circle</mat-icon>
+              </strong>
+            </label>
+            <div class="col-md-10">
+              <input type="text"
+                     class="form-control"
+                     [(ngModel)]="studyAddTypeahead.selectedEntity"
+                     [ngModelOptions]="{standalone: true}"
+                     [ngbTypeahead]="studyAddTypeahead.getEntities"
+                     i18-placeholder
+                     placeholder="enter a study's name or partial name"
+                     [inputFormatter]="studyAddTypeahead.typeaheadFormatter"
+                     [resultFormatter]="studyAddTypeahead.typeaheadFormatter"
+                     (selectItem)="studyAddTypeahead.onEntitySelected($event)"
+                     [editable]="false">
+            </div>
+          </div>
+        </form>
+      </li>
+
       <!-- CENTRES -->
       <li class="list-group-item">
         <div class="row">
-          <div class="col-md-3">
+          <div class="col-md-2">
             <strong i18n>Centres</strong>
           </div>
-          <div class="col-md-9" *ngIf="membership?.centreData.isContentTypeAll()">
+          <div class="col-md-10" *ngIf="membership?.centreData.isContentTypeAll()">
             <span i18n>All Centres</span>
           </div>
-          <div class="col-md-9" *ngIf="membership?.centreData.isContentTypeSome()">
-            <span *ngFor="let centreInfo of membership?.centreData"
+          <div class="col-md-10" *ngIf="membership?.centreData.isContentTypeSome()">
+            <span *ngFor="let centreInfo of membership?.centreData.entityData"
                   class="badge badge-secondary mr-1 mt-1 deletable-item"
                   (click)="centreSelected(centreInfo)"
                   ngbTooltip="Remove centre">
@@ -142,10 +169,37 @@
               <mat-icon class="warning-icon" inline="true">remove_circle_outline</mat-icon>
             </span>
           </div>
-          <div class="col-md-9" *ngIf="membership.centreData.isContentTypeNone()">
+          <div class="col-md-10" *ngIf="membership.centreData.isContentTypeNone()">
             <span i18n>None</span>
           </div>
         </div>
+      </li>
+
+      <!-- CENTRE ADD -->
+      <li class="list-group-item">
+        <form>
+          <div class="form-group row">
+            <label class="col-md-2 col-form-label">
+              <strong>
+                <ng-container i18n>Add Centre</ng-container>
+                <mat-icon inline="true" class="success-icon ml-1">add_circle</mat-icon>
+              </strong>
+            </label>
+            <div class="col-md-10">
+              <input type="text"
+                     class="form-control"
+                     [(ngModel)]="centreAddTypeahead.selectedEntity"
+                     [ngModelOptions]="{standalone: true}"
+                     [ngbTypeahead]="centreAddTypeahead.getEntities"
+                     i18-placeholder
+                     placeholder="enter a centre's name or partial name"
+                     [inputFormatter]="centreAddTypeahead.typeaheadFormatter"
+                     [resultFormatter]="centreAddTypeahead.typeaheadFormatter"
+                     (selectItem)="centreAddTypeahead.onEntitySelected($event)"
+                     [editable]="false">
+            </div>
+          </div>
+        </form>
       </li>
     </ul>
   </div>

@@ -1,13 +1,13 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { NgbModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { StudyRemoveComponent } from './study-remove.component';
+import { StudyRemoveModalComponent } from './study-remove-modal.component';
 import { Study } from '@app/domain/studies';
 import { Factory } from '@test/factory';
 
 describe('StudyRemoveComponent', () => {
-  let component: StudyRemoveComponent;
-  let fixture: ComponentFixture<StudyRemoveComponent>;
+  let component: StudyRemoveModalComponent;
+  let fixture: ComponentFixture<StudyRemoveModalComponent>;
   const factory = new Factory();
 
   beforeEach(async(() => {
@@ -18,14 +18,14 @@ describe('StudyRemoveComponent', () => {
       providers: [
         NgbActiveModal
       ],
-      declarations: [ StudyRemoveComponent ],
+      declarations: [ StudyRemoveModalComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(StudyRemoveComponent);
+    fixture = TestBed.createComponent(StudyRemoveModalComponent);
     component = fixture.componentInstance;
   });
 

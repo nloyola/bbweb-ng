@@ -7,7 +7,7 @@ import { delay, map } from 'rxjs/operators';
 import { Membership } from '@app/domain/access';
 
 export type MembershipUpdateAttribute =
-  'name' | 'description' | 'userAdd' | 'userRemove';
+  'name' | 'description' | 'userAdd' | 'userRemove' | 'studyAdd' | 'studyRemove'  | 'centreAdd' | 'centreRemove';
 
 @Injectable({
   providedIn: 'root'
@@ -100,7 +100,35 @@ export class MembershipService {
       }
 
       case 'userRemove': {
-        const url = `${this.BASE_URL}/user/${membership.version}/${newValue}`;
+        const url = `${this.BASE_URL}/user/${membership.id}/${membership.version}/${newValue}`;
+        return this.http.delete<ApiReply>(url).pipe(map(this.replyToMembership));
+      }
+
+      case 'studyAdd': {
+        const url = `${this.BASE_URL}/study/${membership.id}`;
+        const json = {
+          expectedVersion: membership.version,
+          studyId: newValue
+        };
+        return this.http.post<ApiReply>(url, json).pipe(map(this.replyToMembership));
+      }
+
+      case 'studyRemove': {
+        const url = `${this.BASE_URL}/study/${membership.id}/${membership.version}/${newValue}`;
+        return this.http.delete<ApiReply>(url).pipe(map(this.replyToMembership));
+      }
+
+      case 'centreAdd': {
+        const url = `${this.BASE_URL}/centre/${membership.id}`;
+        const json = {
+          expectedVersion: membership.version,
+          centreId: newValue
+        };
+        return this.http.post<ApiReply>(url, json).pipe(map(this.replyToMembership));
+      }
+
+      case 'centreRemove': {
+        const url = `${this.BASE_URL}/centre/${membership.id}/${membership.version}/${newValue}`;
         return this.http.delete<ApiReply>(url).pipe(map(this.replyToMembership));
       }
 

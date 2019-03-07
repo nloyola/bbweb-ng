@@ -8,23 +8,23 @@ import { TimeagoPipe } from '@app/shared/pipes/timeago.pipe';
 import { TruncatePipe } from '@app/shared/pipes/truncate.pipe';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { AddAndSelectComponent } from './components/add-and-select/add-and-select.component';
+import { AnnotationTypeActionsComponent } from './components/annotation-type-actions/annotation-type-actions.component';
+import { AnnotationTypeAddComponent } from './components/annotation-type-add/annotation-type-add.component';
 import { AnnotationTypeRemoveComponent } from './components/annotation-type-remove/annotation-type-remove.component';
+import { AnnotationTypeViewComponent } from './components/annotation-type-view/annotation-type-view.component';
 import { BreadcrumbsComponent } from './components/breadcrumbs/breadcrumbs.component';
 import { EntityFiltersComponent } from './components/entity-filters/entity-filters.component';
 import { EntityStatusComponent } from './components/entity-status/entity-status.component';
 import { EntitySummaryComponent } from './components/entity-summary/entity-summary.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { HeaderComponent } from './components/header/header.component';
+import { LocationAddComponent } from './components/location-add/location-add.component';
+import { LocationRemoveComponent } from './components/location-remove/location-remove.component';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { SpinnerComponent } from './components/spinner/spinner.component';
 import { TruncateToggleComponent } from './components/truncate-toggle/truncate-toggle.component';
 import { YesNoPipe } from './pipes/yes-no-pipe';
-import { AnnotationTypeViewComponent } from './components/annotation-type-view/annotation-type-view.component';
-import { AnnotationTypeActionsComponent } from './components/annotation-type-actions/annotation-type-actions.component';
-import { AnnotationTypeAddComponent } from './components/annotation-type-add/annotation-type-add.component';
-import { AddAndSelectComponent } from './components/add-and-select/add-and-select.component';
-import { LocationAddComponent } from './components/location-add/location-add.component';
-import { LocationRemoveComponent } from './components/location-remove/location-remove.component';
 
 @NgModule({
   imports: [

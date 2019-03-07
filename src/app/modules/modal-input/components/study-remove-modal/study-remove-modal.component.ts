@@ -1,15 +1,16 @@
 import { Component, Input } from '@angular/core';
-import { EntityInfo } from '@app/domain';
+import { EntityNameAndState } from '@app/domain';
+import { StudyState } from '@app/domain/studies';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: 'app-role-user-remove',
-  templateUrl: './role-user-remove.component.html',
-  styleUrls: ['./role-user-remove.component.scss']
+  selector: 'app-study-remove-modal',
+  templateUrl: './study-remove-modal.component.html',
+  styleUrls: ['./study-remove-modal.component.scss']
 })
-export class RoleUserRemoveComponent {
+export class StudyRemoveModalComponent {
 
-  @Input() user: EntityInfo;
+  @Input() study: EntityNameAndState<StudyState>;
 
   constructor(public activeModal: NgbActiveModal) { }
 
@@ -17,7 +18,7 @@ export class RoleUserRemoveComponent {
     return (source: any): void => {
       const result = {
         confirmed: (source === 'OK'),
-        value: this.user
+        value: this.study
       };
       this.activeModal.close(result);
     };

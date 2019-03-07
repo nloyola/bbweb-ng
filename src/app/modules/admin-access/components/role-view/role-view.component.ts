@@ -1,18 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EntityInfo, SearchParams } from '@app/domain';
+import { EntityInfo } from '@app/domain';
 import { Role } from '@app/domain/access';
 import { User } from '@app/domain/users';
+import { UserRemoveModalComponent } from '@app/modules/modal-input/components/user-remove-modal/user-remove-modal.component';
 import { ModalInputResult } from '@app/modules/modal-input/models';
-import { RoleStoreActions, RoleStoreSelectors, RootStoreState, UserStoreActions, UserStoreSelectors } from '@app/root-store';
+import { RoleStoreActions, RoleStoreSelectors, RootStoreState } from '@app/root-store';
 import { SpinnerStoreSelectors } from '@app/root-store/spinner';
-import { NgbModal, NgbTypeaheadSelectItemEvent } from '@ng-bootstrap/ng-bootstrap';
+import { UserAddTypeahead } from '@app/shared/typeaheads/user-add-typeahead';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, filter, map, switchMap, takeUntil } from 'rxjs/operators';
-import { RoleUserRemoveComponent } from '../role-user-remove/role-user-remove.component';
-import { UserAddTypeahead } from '@app/shared/typeaheads/user-add-typeahead';
+import { filter, map, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-role-view',
@@ -107,7 +107,7 @@ export class RoleViewComponent implements OnInit {
   }
 
   userSelected(userInfo: EntityInfo): void {
-    const modalRef = this.modalService.open(RoleUserRemoveComponent);
+    const modalRef = this.modalService.open(UserRemoveModalComponent);
     modalRef.componentInstance.user = userInfo;
     modalRef.result
       .then((result: ModalInputResult) => {

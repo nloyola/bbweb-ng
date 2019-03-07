@@ -1,17 +1,23 @@
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { EntityInfo } from '@app/domain';
 import { Membership } from '@app/domain/access';
-import { ModalInputTextareaOptions, ModalInputTextOptions } from '@app/modules/modal-input/models';
+import { Study } from '@app/domain/studies';
+import { User } from '@app/domain/users';
+import { ModalInputResult, ModalInputTextareaOptions, ModalInputTextOptions } from '@app/modules/modal-input/models';
 import { MembershipStoreActions, MembershipStoreSelectors, RootStoreState } from '@app/root-store';
 import { SpinnerStoreSelectors } from '@app/root-store/spinner';
+import { CentreAddTypeahead } from '@app/shared/typeaheads/centre-add-typeahead';
+import { StudyAddTypeahead } from '@app/shared/typeaheads/study-add-typeahead';
+import { UserAddTypeahead } from '@app/shared/typeaheads/user-add-typeahead';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
-import { UserAddTypeahead } from '@app/shared/typeaheads/user-add-typeahead';
-import { User } from '@app/domain/users';
-import { EntityInfo } from '@app/domain';
+import { Centre } from '@app/domain/centres';
+import { StudyRemoveModalComponent } from '@app/modules/modal-input/components/study-remove-modal/study-remove-modal.component';
+import { UserRemoveModalComponent } from '@app/modules/modal-input/components/user-remove-modal/user-remove-modal.component';
 
 @Component({
   selector: 'app-membership-view',
@@ -29,6 +35,8 @@ export class MembershipViewComponent implements OnInit {
   updateNameModalOptions: ModalInputTextOptions;
   updateDescriptionModalOptions: ModalInputTextareaOptions;
   userAddTypeahead: UserAddTypeahead;
+  studyAddTypeahead: StudyAddTypeahead;
+  centreAddTypeahead: CentreAddTypeahead;
 
   private membershipEntity: Membership;
   private membershipId: string;
@@ -41,25 +49,9 @@ export class MembershipViewComponent implements OnInit {
               private route: ActivatedRoute,
               private modalService: NgbModal,
               private toastr: ToastrService) {
-    this.userAddTypeahead = new UserAddTypeahead(
-      this.store$,
-      (users: User[]) => {
-        // filter out users already linked to this membership
-        const existingUserIds = this.membershipEntity.userData.map(ud => ud.id);
-        return users.filter(entity => existingUserIds.indexOf(entity.id) < 0);
-      });
-
-    this.userAddTypeahead.selected$
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((user: User) => {
-      this.store$.dispatch(new MembershipStoreActions.UpdateMembershipRequest({
-        membership: this.membershipEntity,
-        attributeName: 'userAdd',
-        value: user.id
-      }));
-
-      this.updatedMessage = 'User added';
-    });
+    this.createUserTypeahead();
+    this.createStudyTypeahead();
+    this.createCentreTypeahead();
 
     this.isLoading$ = this.store$.pipe(select(SpinnerStoreSelectors.selectSpinnerIsActive));
 
@@ -76,6 +68,8 @@ export class MembershipViewComponent implements OnInit {
             this.toastr.success(this.updatedMessage, 'Update Successfull');
             this.updatedMessage = undefined;
             this.userAddTypeahead.clearSelected();
+            this.studyAddTypeahead.clearSelected();
+            this.centreAddTypeahead.clearSelected();
           }
           return this.membershipEntity;
         }
@@ -151,7 +145,105 @@ export class MembershipViewComponent implements OnInit {
   }
 
   userSelected(userInfo: EntityInfo): void {
-    console.log(userInfo);
+    const modalRef = this.modalService.open(UserRemoveModalComponent);
+    modalRef.componentInstance.user = userInfo;
+    modalRef.result
+      .then((result: ModalInputResult) => {
+        if (result.confirmed) {
+          this.store$.dispatch(new MembershipStoreActions.UpdateMembershipRequest({
+            membership: this.membershipEntity,
+            attributeName: 'userRemove',
+            value: userInfo.id
+          }));
+
+          this.updatedMessage = 'User removed';
+        }
+      })
+      .catch(err => console.log('err', err));
+  }
+
+  studySelected(studyInfo: EntityInfo): void {
+    const modalRef = this.modalService.open(StudyRemoveModalComponent);
+    modalRef.componentInstance.study = studyInfo;
+    modalRef.result
+      .then((result: ModalInputResult) => {
+        if (result.confirmed) {
+          this.store$.dispatch(new MembershipStoreActions.UpdateMembershipRequest({
+            membership: this.membershipEntity,
+            attributeName: 'studyRemove',
+            value: studyInfo.id
+          }));
+
+          this.updatedMessage = 'Study removed';
+        }
+      })
+      .catch(err => console.log('err', err));
+  }
+
+  private createUserTypeahead() {
+    this.userAddTypeahead = new UserAddTypeahead(
+      this.store$,
+      (users: User[]) => {
+        // filter out users already linked to this membership
+        const existingUserIds = this.membershipEntity.userData.map(ud => ud.id);
+        return users.filter(entity => existingUserIds.indexOf(entity.id) < 0);
+      });
+
+    this.userAddTypeahead.selected$
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((user: User) => {
+      this.store$.dispatch(new MembershipStoreActions.UpdateMembershipRequest({
+        membership: this.membershipEntity,
+        attributeName: 'userAdd',
+        value: user.id
+      }));
+
+      this.updatedMessage = 'User added';
+    });
+  }
+
+  private createStudyTypeahead() {
+    this.studyAddTypeahead = new StudyAddTypeahead(
+      this.store$,
+      (studys: Study[]) => {
+        // filter out studys already linked to this membership
+        const existingStudyIds = this.membershipEntity.studyData.entityData.map(sd => sd.id);
+        return studys.filter(entity => existingStudyIds.indexOf(entity.id) < 0);
+      });
+
+    this.studyAddTypeahead.selected$
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((study: Study) => {
+      this.store$.dispatch(new MembershipStoreActions.UpdateMembershipRequest({
+        membership: this.membershipEntity,
+        attributeName: 'studyAdd',
+        value: study.id
+      }));
+
+      this.updatedMessage = 'Study added';
+    });
+  }
+
+  private createCentreTypeahead() {
+    this.centreAddTypeahead = new CentreAddTypeahead(
+      this.store$,
+      (centres: Centre[]) => {
+        // filter out centres already linked to this membership
+        const existingCentreIds = this.membershipEntity.centreData.entityData.map(sd => sd.id);
+        return centres.filter(entity => existingCentreIds.indexOf(entity.id) < 0);
+      });
+
+    this.centreAddTypeahead.selected$
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((centre: Centre) => {
+      this.store$.dispatch(new MembershipStoreActions.UpdateMembershipRequest({
+        membership: this.membershipEntity,
+        attributeName: 'centreAdd',
+        value: centre.id
+      }));
+
+      this.updatedMessage = 'Centre added';
+    });
   }
 
 }

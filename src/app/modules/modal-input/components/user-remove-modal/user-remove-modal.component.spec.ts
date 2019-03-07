@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RoleUserRemoveComponent } from './role-user-remove.component';
+import { UserRemoveModalComponent } from './user-remove-modal.component';
 
 describe('RoleUserRemoveComponent', () => {
-  let component: RoleUserRemoveComponent;
-  let fixture: ComponentFixture<RoleUserRemoveComponent>;
+  let component: UserRemoveModalComponent;
+  let fixture: ComponentFixture<UserRemoveModalComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ RoleUserRemoveComponent ]
+      declarations: [ UserRemoveModalComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(RoleUserRemoveComponent);
+    fixture = TestBed.createComponent(UserRemoveModalComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

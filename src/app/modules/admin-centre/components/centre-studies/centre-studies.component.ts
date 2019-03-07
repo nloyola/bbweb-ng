@@ -1,18 +1,18 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { EntityNameAndState, SearchParams } from '@app/domain';
+import { EntityNameAndState } from '@app/domain';
 import { Centre } from '@app/domain/centres';
 import { CentreUI } from '@app/domain/centres/centre-ui.model';
 import { Study, StudyState, StudyStateUIMap } from '@app/domain/studies';
+import { StudyRemoveModalComponent } from '@app/modules/modal-input/components/study-remove-modal/study-remove-modal.component';
 import { ModalInputResult } from '@app/modules/modal-input/models';
-import { CentreStoreActions, CentreStoreSelectors, RootStoreState, StudyStoreActions, StudyStoreSelectors } from '@app/root-store';
-import { NgbModal, NgbTypeaheadSelectItemEvent } from '@ng-bootstrap/ng-bootstrap';
+import { CentreStoreActions, CentreStoreSelectors, RootStoreState } from '@app/root-store';
+import { StudyAddTypeahead } from '@app/shared/typeaheads/study-add-typeahead';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, filter, map, switchMap, takeUntil } from 'rxjs/operators';
-import { StudyRemoveComponent } from '../study-remove/study-remove.component';
-import { StudyAddTypeahead } from '@app/shared/typeaheads/study-add-typeahead';
+import { filter, map, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-centre-studies',
@@ -95,7 +95,7 @@ export class CentreStudiesComponent implements OnInit, OnDestroy {
   }
 
   remove(study: EntityNameAndState<StudyState>) {
-    const modalRef = this.modalService.open(StudyRemoveComponent);
+    const modalRef = this.modalService.open(StudyRemoveModalComponent);
     modalRef.componentInstance.study = study;
     modalRef.result
       .then((result: ModalInputResult) => {
