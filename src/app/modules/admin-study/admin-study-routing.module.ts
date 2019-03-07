@@ -156,6 +156,13 @@ export const routes: Routes = [
             children: [
               { path: '', redirectTo: 'view', pathMatch: 'full' },
               {
+                path: 'add',
+                component: ProcessingTypeAddComponent,
+                data: {
+                  breadcrumbs: 'Add Specimen'
+                }
+              },
+              {
                 path: 'view',
                 component: StudyProcessingComponent,
                 children: [
@@ -190,13 +197,6 @@ export const routes: Routes = [
                     ]
                   }
                 ]
-              },
-              {
-                path: 'add',
-                component: ProcessingTypeAddComponent,
-                data: {
-                  breadcrumbs: 'Add Specimen'
-                }
               }
             ]
           }

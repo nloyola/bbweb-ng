@@ -66,7 +66,7 @@ export class ProcessingTypeAddComponent implements OnInit, OnDestroy {
         `ProcessingType was added successfully: ${processingType.name}`,
         'Add Successfull');
       this.store$.dispatch(new ProcessingTypeStoreActions.ClearLastAdded());
-      this.navigateToReturnUrl();
+      this.router.navigate([ '../view', processingType.slug ], { relativeTo: this.route });
     });
 
     this.store$.pipe(
@@ -145,7 +145,7 @@ export class ProcessingTypeAddComponent implements OnInit, OnDestroy {
   }
 
   onCancel() {
-    this.navigateToReturnUrl();
+    this.router.navigate([ '..' ], { relativeTo: this.route });
   }
 
   stepClick(event: StepperSelectionEvent) {
@@ -221,10 +221,6 @@ export class ProcessingTypeAddComponent implements OnInit, OnDestroy {
         count:          this.outputSubForm.value.count
       }
     });
-  }
-
-  private navigateToReturnUrl() {
-    this.router.navigate([ '..' ], { relativeTo: this.route });
   }
 
 }
