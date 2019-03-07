@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ModalInputComponent } from '../modal-input/modal-input.component';
+import { ModalInputComponent } from '@app/modules/modals/modal-input.component';
 import { ModalInputTextComponent } from './modal-input-text.component';
 
 describe('ModalInputTextComponent', () => {

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ModalInputTextComponent } from '../modal-input-text/modal-input-text.component';
+import { ModalInputTextComponent } from '@app/modules/modals/components/modal-input-text/modal-input-text.component';
 import { CustomValidators } from '@app/shared/validators';
 
 @Component({

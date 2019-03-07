@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { NgbModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { EventTypeRemoveComponent } from './event-type-remove.component';
 import { CollectionEventType } from '@app/domain/studies';
-import { ModalInputComponent } from '@app/modules/modal-input/components/modal-input/modal-input.component';
+import { ModalInputComponent } from '@app/modules/modals/components/modal-input/modal-input.component';
 
 describe('EventTypeRemoveComponent', () => {
   let component: EventTypeRemoveComponent;

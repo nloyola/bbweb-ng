@@ -14,6 +14,7 @@ import { ModalInputUrlComponent } from './components/modal-input-url/modal-input
 import { ModalInputComponent } from './components/modal-input/modal-input.component';
 import { StudyRemoveModalComponent } from './components/study-remove-modal/study-remove-modal.component';
 import { UserRemoveModalComponent } from './components/user-remove-modal/user-remove-modal.component';
+import { CentreRemoveModalComponent } from './components/centre-remove-modal/centre-remove-modal.component';
 
 @NgModule({
   imports: [
@@ -34,7 +35,8 @@ import { UserRemoveModalComponent } from './components/user-remove-modal/user-re
     ModalInputUrlComponent,
     ModalInputPasswordComponent,
     StudyRemoveModalComponent,
-    UserRemoveModalComponent
+    UserRemoveModalComponent,
+    CentreRemoveModalComponent
   ],
   exports: [
     ModalInputComponent,
@@ -45,7 +47,8 @@ import { UserRemoveModalComponent } from './components/user-remove-modal/user-re
     ModalInputUrlComponent,
     ModalInputPasswordComponent,
     StudyRemoveModalComponent,
-    UserRemoveModalComponent
+    UserRemoveModalComponent,
+    CentreRemoveModalComponent
   ]
 })
 export class ModalInputModule { }

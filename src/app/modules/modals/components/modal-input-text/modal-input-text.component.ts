@@ -1,6 +1,6 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
-import { ModalInputResult, ModalInputTextOptions } from '@app/modules/modal-input/models';
+import { ModalInputResult, ModalInputTextOptions } from '@app/modules/modals/models';
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 

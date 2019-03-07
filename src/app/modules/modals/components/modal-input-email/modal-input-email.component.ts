@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { ModalInputTextComponent } from '../modal-input-text/modal-input-text.component';
+import { ModalInputTextComponent } from '@app/modules/modals/components/modal-input-text/modal-input-text.component';
 
 @Component({
   selector: 'app-modal-input-email',

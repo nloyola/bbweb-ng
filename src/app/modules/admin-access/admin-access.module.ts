@@ -1,13 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CentreRemoveModalComponent } from '@app/modules/modals/components/centre-remove-modal/centre-remove-modal.component';
+import { StudyRemoveModalComponent } from '@app/modules/modals/components/study-remove-modal/study-remove-modal.component';
+import { UserRemoveModalComponent } from '@app/modules/modals/components/user-remove-modal/user-remove-modal.component';
+import { ModalInputModule } from '@app/modules/modals/modals.module';
 import { SharedModule } from '@app/shared/shared.module';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MaterialModule } from '../material.module';
-import { StudyRemoveModalComponent } from '../modal-input/components/study-remove-modal/study-remove-modal.component';
-import { UserRemoveModalComponent } from '../modal-input/components/user-remove-modal/user-remove-modal.component';
-import { ModalInputModule } from '../modal-input/modal-input.module';
 import { AdminAccessRoutingModule } from './admin-access-routing.module';
 import { AccessAdminComponent } from './components/access-admin/access-admin.component';
 import { MembershipAddComponent } from './components/membership-add/membership-add.component';
@@ -50,7 +51,8 @@ import { UsersViewComponent } from './components/users-view/users-view.component
   ],
   entryComponents: [
     UserRemoveModalComponent,
-    StudyRemoveModalComponent
+    StudyRemoveModalComponent,
+    CentreRemoveModalComponent
   ]
 })
 export class AdminAccessModule { }

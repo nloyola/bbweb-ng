@@ -8,7 +8,7 @@ import { Observable, throwError } from 'rxjs';
 import { filter, map, tap } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
-import { ModalInputTextOptions } from '@app/modules/modal-input/models';
+import { ModalInputTextOptions } from '@app/modules/modals/models';
 
 @Component({
   selector: 'app-user-profile',

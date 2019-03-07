@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '@app/modules/material.module';
-import { ModalInputModule } from '@app/modules/modal-input/modal-input.module';
+import { ModalInputModule } from '@app/modules/modals/modals.module';
 import { AnnotationTypeRemoveComponent } from '@app/shared/components/annotation-type-remove/annotation-type-remove.component';
 import { AnnotationTypeViewComponent } from '@app/shared/components/annotation-type-view/annotation-type-view.component';
 import { SharedModule } from '@app/shared/shared.module';
@@ -20,7 +20,12 @@ import { EventTypeViewContainerComponent } from './components/event-type-view/ev
 import { EventTypesAddAndSelectComponent } from './components/event-types-add-and-select/event-types-add-and-select.component';
 import { ParticipantAnnotationTypeAddContainerComponent } from './components/participant-annotation-type-add/participant-annotation-type-add.container';
 import { ProcessingAnnotationTypeAddContainerComponent } from './components/processing-annotation-type-add/processing-annotation-type-add.container';
+import { ProcessingInputSpecimenModalComponent } from './components/processing-input-specimen-modal/processing-input-specimen-modal.component';
+import { ProcessingInputSpecimenSummaryComponent } from './components/processing-input-specimen-summary/processing-input-specimen-summary.component';
+import { ProcessingOutputSpecimenModalComponent } from './components/processing-output-specimen-modal/processing-output-specimen-modal.component';
+import { ProcessingOutputSpecimenSummaryComponent } from './components/processing-output-specimen-summary/processing-output-specimen-summary.component';
 import { ProcessingTypeAddComponent } from './components/processing-type-add/processing-type-add.component';
+import { ProcessingTypeCardComponent } from './components/processing-type-card/processing-type-card.component';
 import { ProcessingTypeInformationSubformComponent } from './components/processing-type-information-subform/processing-type-information-subform.component';
 import { ProcessingTypeInputSubformComponent } from './components/processing-type-input-subform/processing-type-input-subform.component';
 import { ProcessingTypeOutputSubformComponent } from './components/processing-type-output-subform/processing-type-output-subform.component';
@@ -42,11 +47,6 @@ import { StudyParticipantsComponent } from './components/study-participants/stud
 import { StudyProcessingComponent } from './components/study-processing/study-processing.component';
 import { StudySummaryComponent } from './components/study-summary/study-summary.component';
 import { StudyViewComponent } from './components/study-view/study-view.component';
-import { ProcessingInputSpecimenSummaryComponent } from './components/processing-input-specimen-summary/processing-input-specimen-summary.component';
-import { ProcessingOutputSpecimenSummaryComponent } from './components/processing-output-specimen-summary/processing-output-specimen-summary.component';
-import { ProcessingInputSpecimenModalComponent } from './components/processing-input-specimen-modal/processing-input-specimen-modal.component';
-import { ProcessingOutputSpecimenModalComponent } from './components/processing-output-specimen-modal/processing-output-specimen-modal.component';
-import { ProcessingTypeCardComponent } from './components/processing-type-card/processing-type-card.component';
 
 @NgModule({
   imports: [
@@ -116,4 +116,5 @@ import { ProcessingTypeCardComponent } from './components/processing-type-card/p
     ProcessingOutputSpecimenModalComponent
   ]
 })
-export class AdminStudyModule { }
+export class AdminStudyModule {
+}

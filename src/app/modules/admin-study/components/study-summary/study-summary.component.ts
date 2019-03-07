@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/c
 import { ActivatedRoute, Router } from '@angular/router';
 import { Study, StudyStateUIMap } from '@app/domain/studies';
 import { StudyUI } from '@app/domain/studies/study-ui.model';
-import { ModalInputTextareaOptions, ModalInputTextOptions } from '@app/modules/modal-input/models';
+import { ModalInputTextareaOptions, ModalInputTextOptions } from '@app/modules/modals/models';
 import { RootStoreState, StudyStoreActions, StudyStoreSelectors } from '@app/root-store';
 import { SpinnerStoreSelectors } from '@app/root-store/spinner';
 import { EnableAllowdIds } from '@app/root-store/study/study.reducer';

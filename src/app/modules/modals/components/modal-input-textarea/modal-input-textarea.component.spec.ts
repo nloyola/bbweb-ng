@@ -1,11 +1,11 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ModalInputComponent } from '../modal-input/modal-input.component';
-import { ModalInputBooleanComponent } from './modal-input-boolean.component';
+import { ModalInputComponent } from '@app/modules/modals/modal-input.component';
+import { ModalInputTextareaComponent } from './modal-input-textarea.component';
 
-describe('ModalInputBooleanComponent', () => {
-  let component: ModalInputBooleanComponent;
-  let fixture: ComponentFixture<ModalInputBooleanComponent>;
+describe('ModalInputTextareaComponent', () => {
+  let component: ModalInputTextareaComponent;
+  let fixture: ComponentFixture<ModalInputTextareaComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -15,14 +15,14 @@ describe('ModalInputBooleanComponent', () => {
       ],
       declarations: [
         ModalInputComponent,
-        ModalInputBooleanComponent
+        ModalInputTextareaComponent
       ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ModalInputBooleanComponent);
+    fixture = TestBed.createComponent(ModalInputTextareaComponent);
     component = fixture.componentInstance;
   });
 

@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AnnotationType } from '@app/domain/annotations';
 import { CollectionEventType, Study } from '@app/domain/studies';
 import { CollectedSpecimenDefinition } from '@app/domain/studies/collected-specimen-definition.model';
-import { ModalInputResult, ModalInputTextareaOptions, ModalInputTextOptions } from '@app/modules/modal-input/models';
+import { ModalInputResult, ModalInputTextareaOptions, ModalInputTextOptions } from '@app/modules/modals/models';
 import { EventTypeStoreActions, EventTypeStoreSelectors, RootStoreState, StudyStoreSelectors } from '@app/root-store';
 import { AnnotationTypeRemoveComponent } from '@app/shared/components/annotation-type-remove/annotation-type-remove.component';
 import { AnnotationTypeViewComponent } from '@app/shared/components/annotation-type-view/annotation-type-view.component';

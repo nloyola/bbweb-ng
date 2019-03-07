@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/c
 import { ActivatedRoute, Router } from '@angular/router';
 import { Centre, CentreStateUIMap } from '@app/domain/centres';
 import { CentreUI } from '@app/domain/centres/centre-ui.model';
-import { ModalInputTextareaOptions, ModalInputTextOptions } from '@app/modules/modal-input/models';
+import { ModalInputTextareaOptions, ModalInputTextOptions } from '@app/modules/modals/models';
 import { RootStoreState, CentreStoreActions, CentreStoreSelectors } from '@app/root-store';
 import { SpinnerStoreSelectors } from '@app/root-store/spinner';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';

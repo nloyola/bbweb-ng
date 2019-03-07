@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { ModalInputTextComponent } from '../modal-input-text/modal-input-text.component';
+import { ModalInputTextComponent } from '@app/modules/modals/components/modal-input-text/modal-input-text.component';
 import { ModalInputTextareaOptions, ModalInputTextOptions } from '../../models';
 import { FormBuilder } from '@angular/forms';
 

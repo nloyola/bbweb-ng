@@ -4,7 +4,7 @@ import { EntityInfo } from '@app/domain';
 import { Membership } from '@app/domain/access';
 import { Study } from '@app/domain/studies';
 import { User } from '@app/domain/users';
-import { ModalInputResult, ModalInputTextareaOptions, ModalInputTextOptions } from '@app/modules/modal-input/models';
+import { ModalInputResult, ModalInputTextareaOptions, ModalInputTextOptions } from '@app/modules/modals/models';
 import { MembershipStoreActions, MembershipStoreSelectors, RootStoreState } from '@app/root-store';
 import { SpinnerStoreSelectors } from '@app/root-store/spinner';
 import { CentreAddTypeahead } from '@app/shared/typeaheads/centre-add-typeahead';
@@ -16,8 +16,9 @@ import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
 import { Centre } from '@app/domain/centres';
-import { StudyRemoveModalComponent } from '@app/modules/modal-input/components/study-remove-modal/study-remove-modal.component';
-import { UserRemoveModalComponent } from '@app/modules/modal-input/components/user-remove-modal/user-remove-modal.component';
+import { StudyRemoveModalComponent } from '@app/modules/modals/components/study-remove-modal/study-remove-modal.component';
+import { UserRemoveModalComponent } from '@app/modules/modals/components/user-remove-modal/user-remove-modal.component';
+import { CentreRemoveModalComponent } from '@app/modules/modals/components/centre-remove-modal/centre-remove-modal.component';
 
 @Component({
   selector: 'app-membership-view',
@@ -175,6 +176,24 @@ export class MembershipViewComponent implements OnInit {
           }));
 
           this.updatedMessage = 'Study removed';
+        }
+      })
+      .catch(err => console.log('err', err));
+  }
+
+  centreSelected(centreInfo: EntityInfo): void {
+    const modalRef = this.modalService.open(CentreRemoveModalComponent);
+    modalRef.componentInstance.centre = centreInfo;
+    modalRef.result
+      .then((result: ModalInputResult) => {
+        if (result.confirmed) {
+          this.store$.dispatch(new MembershipStoreActions.UpdateMembershipRequest({
+            membership: this.membershipEntity,
+            attributeName: 'centreRemove',
+            value: centreInfo.id
+          }));
+
+          this.updatedMessage = 'Centre removed';
         }
       })
       .catch(err => console.log('err', err));
