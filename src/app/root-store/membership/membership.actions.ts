@@ -7,7 +7,7 @@ import { MembershipUpdateAttribute } from '@app/core/services';
 interface MembershipUpdateRequestPayload {
   membership: Membership;
   attributeName: MembershipUpdateAttribute;
-  value: string;
+  value?: string;
 }
 
 export enum MembershipActionTypes {
@@ -27,6 +27,9 @@ export enum MembershipActionTypes {
   UpdateMembershipSuccess = '[Membership] Update Membership Success',
   UpdateMembershipFailure = '[Membership] Update Membership Failure',
 
+  RemoveMembershipRequest = '[Membership] Remove Membership Request',
+  RemoveMembershipSuccess = '[Membership] Remove Membership Success',
+  RemoveMembershipFailure = '[Membership] Remove Membership Failure',
 }
 
 export class SearchMembershipsRequest implements Action {
@@ -110,6 +113,27 @@ export class UpdateMembershipFailure implements Action {
   constructor(public payload: { error: any }) { }
 }
 
+@ShowSpinner()
+export class RemoveMembershipRequest implements Action {
+  readonly type = MembershipActionTypes.RemoveMembershipRequest;
+
+  constructor(public payload: { membership: Membership }) { }
+}
+
+@HideSpinner(MembershipActionTypes.RemoveMembershipRequest)
+export class RemoveMembershipSuccess implements Action {
+  readonly type = MembershipActionTypes.RemoveMembershipSuccess;
+
+  constructor(public payload: { membershipId: string }) { }
+}
+
+@HideSpinner(MembershipActionTypes.RemoveMembershipRequest)
+export class RemoveMembershipFailure implements Action {
+  readonly type = MembershipActionTypes.RemoveMembershipFailure;
+
+  constructor(public payload: { error: any }) { }
+}
+
 export type MembershipActions =
   SearchMembershipsRequest
   | SearchMembershipsSuccess
@@ -122,4 +146,7 @@ export type MembershipActions =
   | GetMembershipFailure
   | UpdateMembershipRequest
   | UpdateMembershipSuccess
-  | UpdateMembershipFailure;
+  | UpdateMembershipFailure
+  | RemoveMembershipRequest
+  | RemoveMembershipSuccess
+  | RemoveMembershipFailure;

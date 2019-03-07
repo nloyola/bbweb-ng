@@ -21,7 +21,7 @@
            role="button"
            data-togggle="dropdown"
            ngbDropdownToggle>
-          <mat-icon>language</mat-icon>
+          <mat-icon inline="true">language</mat-icon>
           <ng-container i18n>
             Language
           </ng-container>
@@ -38,7 +38,7 @@
            role="button"
            data-togggle="dropdown"
            ngbDropdownToggle>
-          <mat-icon>account_box</mat-icon> {{user.name}}<b class="caret"></b>
+          <mat-icon inline="true">account_box</mat-icon> {{user.name}}<b class="caret"></b>
         </a>
         <div class="dropdown-menu" aria-labelledby="user-dropdown" ngbDropdownMenu>
           <a class="dropdown-item"
@@ -55,7 +55,7 @@
       </li>
       <li class="nav-item" routerLinkActive="active" *ngIf="!(user$ | async)">
         <a class="nav-link" routerLink="login">
-          <mat-icon>exit_to_app</mat-icon>
+          <mat-icon inline="true">exit_to_app</mat-icon>
           <ng-container i18n>Login</ng-container>
         </a>
       </li>

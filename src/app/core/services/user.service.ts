@@ -78,16 +78,25 @@ export class UserService {
         }));
   }
 
-  update(user: User, attributeName: string, newValue: string): Observable<User> {
+  update(user: User, attributeName: string, newValue: any): Observable<User> {
     const url = `${this.BASE_URL}/update/${user.id}`;
     let json = { expectedVersion: user.version };
 
     switch (attributeName) {
       case 'name':
       case 'email':
-      case 'password':
       case 'avatarUrl':
         json = { ...json, property: attributeName, newValue } as any;
+        break;
+      case 'password':
+        json = {
+          ...json,
+          property: attributeName,
+          newValue: {
+            currentPassword: newValue.currentPassword,
+            newPassword: newValue.newPassword
+          }
+        } as any;
         break;
       case 'state':
         if (!this.stateActions.includes(newValue)) {

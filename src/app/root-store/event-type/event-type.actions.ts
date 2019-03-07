@@ -47,7 +47,6 @@ export enum ActionTypes {
   GetEventTypeSuccess = '[EventType] Get Event Type Success',
   GetEventTypeFailure = '[EventType] Get Event Type Failure',
 
-
   AddEventTypeRequest = '[EventType] Add Event Type Request',
   AddEventTypeSuccess = '[EventType] Add Event Type Success',
   AddEventTypeFailure = '[EventType] Add Event Type Failure',

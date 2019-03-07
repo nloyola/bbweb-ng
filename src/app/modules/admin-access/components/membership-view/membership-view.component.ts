@@ -4,7 +4,7 @@ import { EntityInfo } from '@app/domain';
 import { Membership } from '@app/domain/access';
 import { Study } from '@app/domain/studies';
 import { User } from '@app/domain/users';
-import { ModalInputResult, ModalInputTextareaOptions, ModalInputTextOptions } from '@app/modules/modals/models';
+import { ModalInputTextareaOptions, ModalInputTextOptions } from '@app/modules/modals/models';
 import { MembershipStoreActions, MembershipStoreSelectors, RootStoreState } from '@app/root-store';
 import { SpinnerStoreSelectors } from '@app/root-store/spinner';
 import { CentreAddTypeahead } from '@app/shared/typeaheads/centre-add-typeahead';
@@ -29,6 +29,9 @@ export class MembershipViewComponent implements OnInit {
 
   @ViewChild('updateNameModal') updateNameModal: TemplateRef<any>;
   @ViewChild('updateDescriptionModal') updateDescriptionModal: TemplateRef<any>;
+  @ViewChild('allStudiesModal') allStudiesModal: TemplateRef<any>;
+  @ViewChild('allCentresModal') allCentresModal: TemplateRef<any>;
+  @ViewChild('removeMembershipModal') removeMembershipModal: TemplateRef<any>;
 
   changesAllowed = true;
   isLoading$: Observable<boolean>;
@@ -38,6 +41,7 @@ export class MembershipViewComponent implements OnInit {
   userAddTypeahead: UserAddTypeahead;
   studyAddTypeahead: StudyAddTypeahead;
   centreAddTypeahead: CentreAddTypeahead;
+  isRemoving = false;
 
   private membershipEntity: Membership;
   private membershipId: string;
@@ -58,7 +62,6 @@ export class MembershipViewComponent implements OnInit {
 
     this.membership$ = this.store$.pipe(
       select(MembershipStoreSelectors.selectAllMemberships),
-      filter(s => s.length > 0),
       map((memberships: Membership[]) => {
         const membershipEntity = memberships.find(u => u.slug === this.route.snapshot.params.slug);
         if (membershipEntity) {
@@ -83,7 +86,8 @@ export class MembershipViewComponent implements OnInit {
         const membershipById = memberships.find(u => u.id === this.membershipId);
         if (membershipById) {
           this.router.navigate([ '..', membershipById.slug ], { relativeTo: this.route });
-          this.membershipEntity = (membershipById instanceof Membership) ? membershipById : new Membership().deserialize(membershipById);
+          this.membershipEntity = (membershipById instanceof Membership)
+            ? membershipById : new Membership().deserialize(membershipById);
           if (this.updatedMessage) {
             this.toastr.success(this.updatedMessage, 'Update Successfull');
           }
@@ -91,6 +95,8 @@ export class MembershipViewComponent implements OnInit {
         }
 
         this.router.navigate([ '..' ], { relativeTo: this.route });
+        this.toastr.success('Membership removed', 'Remove Successfull');
+        this.isRemoving = false;
         return undefined;
       }),
       filter(membership => membership !== undefined));
@@ -113,15 +119,13 @@ export class MembershipViewComponent implements OnInit {
       minLength: 2
     };
     this.modalService.open(this.updateNameModal, { size: 'lg' }).result
-      .then(result => {
-        if (result.confirmed) {
-          this.store$.dispatch(new MembershipStoreActions.UpdateMembershipRequest({
-            membership: this.membershipEntity,
-            attributeName: 'name',
-            value: result.value
-          }));
-          this.updatedMessage = 'User name was updated';
-        }
+      .then(value => {
+        this.store$.dispatch(new MembershipStoreActions.UpdateMembershipRequest({
+          membership: this.membershipEntity,
+          attributeName: 'name',
+          value
+        }));
+        this.updatedMessage = 'User name was updated';
       })
       .catch(err => console.log('err', err));
   }
@@ -133,70 +137,116 @@ export class MembershipViewComponent implements OnInit {
     };
     this.modalService.open(this.updateDescriptionModal, { size: 'lg' }).result
       .then(value => {
-        if (value.confirmed) {
-          this.store$.dispatch(new MembershipStoreActions.UpdateMembershipRequest({
-            membership: this.membershipEntity,
-            attributeName: 'description',
-            value: value.value ? value.value : undefined
-          }));
-          this.updatedMessage = 'Membership description was updated';
-        }
+        this.store$.dispatch(new MembershipStoreActions.UpdateMembershipRequest({
+          membership: this.membershipEntity,
+          attributeName: 'description',
+          value: value ? value : undefined
+        }));
+        this.updatedMessage = 'Membership description was updated';
       })
-      .catch(err => console.log('err', err));
+      .catch(() => undefined);
   }
 
   userSelected(userInfo: EntityInfo): void {
     const modalRef = this.modalService.open(UserRemoveModalComponent);
     modalRef.componentInstance.user = userInfo;
     modalRef.result
-      .then((result: ModalInputResult) => {
-        if (result.confirmed) {
-          this.store$.dispatch(new MembershipStoreActions.UpdateMembershipRequest({
-            membership: this.membershipEntity,
-            attributeName: 'userRemove',
-            value: userInfo.id
-          }));
+      .then(() => {
+        this.store$.dispatch(new MembershipStoreActions.UpdateMembershipRequest({
+          membership: this.membershipEntity,
+          attributeName: 'userRemove',
+          value: userInfo.id
+        }));
 
-          this.updatedMessage = 'User removed';
-        }
+        this.updatedMessage = 'User removed';
       })
-      .catch(err => console.log('err', err));
+      .catch(() => undefined);
   }
 
   studySelected(studyInfo: EntityInfo): void {
+    const removeStudy = () => {
+      this.store$.dispatch(new MembershipStoreActions.UpdateMembershipRequest({
+        membership: this.membershipEntity,
+        attributeName: 'studyRemove',
+        value: studyInfo.id
+      }));
+
+      this.updatedMessage = 'Study removed';
+    };
+
     const modalRef = this.modalService.open(StudyRemoveModalComponent);
     modalRef.componentInstance.study = studyInfo;
     modalRef.result
-      .then((result: ModalInputResult) => {
-        if (result.confirmed) {
-          this.store$.dispatch(new MembershipStoreActions.UpdateMembershipRequest({
-            membership: this.membershipEntity,
-            attributeName: 'studyRemove',
-            value: studyInfo.id
-          }));
-
-          this.updatedMessage = 'Study removed';
+      .then(() => {
+        if (this.membershipEntity.studyData.entityData.length > 1) {
+          removeStudy();
+          return;
         }
+
+        // no more studies in set, ask user if membership should be for all studies?
+        this.modalService.open(this.allStudiesModal).result
+          .then(() => {
+            this.store$.dispatch(new MembershipStoreActions.UpdateMembershipRequest({
+              membership: this.membershipEntity,
+              attributeName: 'allStudies'
+            }));
+
+            this.updatedMessage = 'Membership now applies to all studies';
+          })
+          .catch(() => {
+            removeStudy();
+          });
       })
-      .catch(err => console.log('err', err));
+      .catch(() => undefined);
   }
 
   centreSelected(centreInfo: EntityInfo): void {
+    const removeCentre = () => {
+      this.store$.dispatch(new MembershipStoreActions.UpdateMembershipRequest({
+        membership: this.membershipEntity,
+        attributeName: 'centreRemove',
+        value: centreInfo.id
+      }));
+
+      this.updatedMessage = 'Centre removed';
+    };
+
     const modalRef = this.modalService.open(CentreRemoveModalComponent);
     modalRef.componentInstance.centre = centreInfo;
     modalRef.result
-      .then((result: ModalInputResult) => {
-        if (result.confirmed) {
-          this.store$.dispatch(new MembershipStoreActions.UpdateMembershipRequest({
-            membership: this.membershipEntity,
-            attributeName: 'centreRemove',
-            value: centreInfo.id
-          }));
-
-          this.updatedMessage = 'Centre removed';
+      .then(() => {
+        if (this.membershipEntity.centreData.entityData.length > 1) {
+          removeCentre();
+          return;
         }
+
+        // no more centres in set, ask user if membership should be for all centres?
+        this.modalService.open(this.allCentresModal).result
+          .then(() => {
+            this.store$.dispatch(new MembershipStoreActions.UpdateMembershipRequest({
+              membership: this.membershipEntity,
+              attributeName: 'allCentres'
+            }));
+
+            this.updatedMessage = 'Membership now applies to all centres';
+          })
+          .catch(() => {
+            removeCentre();
+          });
       })
-      .catch(err => console.log('err', err));
+      .catch(() => undefined);
+  }
+
+  removeMembership() {
+    const modalRef = this.modalService.open(this.removeMembershipModal);
+    modalRef.result
+      .then(() => {
+        this.store$.dispatch(new MembershipStoreActions.RemoveMembershipRequest({
+          membership: this.membershipEntity
+        }));
+        this.isRemoving = true;
+      })
+      .catch(() => undefined);
   }
 
   private createUserTypeahead() {

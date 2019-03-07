@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-modal-input',
@@ -7,13 +7,19 @@ import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/cor
 })
 export class ModalInputComponent {
 
-  @Input() modalClose: (result: any) => void;
   @Input() modalInputValid = true;
+
+  @Output() onConfirm = new EventEmitter<any>();
+  @Output() onDismiss = new EventEmitter<any>();
 
   constructor() { }
 
-  close(source: any): void {
-    this.modalClose(source);
+  confirm(): void {
+    this.onConfirm.emit(null);
+  }
+
+  dismiss(): void {
+    this.onDismiss.emit(null);
   }
 
 }

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { PasswordValidation } from '@app/core/password-validation';
 import { ModalInputTextComponent } from '@app/modules/modals/components/modal-input-text/modal-input-text.component';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-modal-input-password',
@@ -32,17 +33,11 @@ export class ModalInputPasswordComponent extends ModalInputTextComponent {
     return this.modalInputForm.get('confirmPassword');
   }
 
-  close(): (result: any) => void {
-    return (source: any): void => {
-      const result = {
-        confirmed: (source === 'OK'),
-        value: {
-          currentPassword: this.modalInputForm.value.text,
-          newPassword: this.modalInputForm.value.password
-        },
-      };
-      this.modalClose(result);
-    };
+  confirm(): void {
+    this.modal.close({
+      currentPassword: this.modalInputForm.value.text,
+      newPassword: this.modalInputForm.value.password
+    });
   }
 
 }

@@ -12,15 +12,9 @@ export class StudyRemoveModalComponent {
 
   @Input() study: EntityNameAndState<StudyState>;
 
-  constructor(public activeModal: NgbActiveModal) { }
+  constructor(private activeModal: NgbActiveModal) { }
 
-  close(): (result: any) => void {
-    return (source: any): void => {
-      const result = {
-        confirmed: (source === 'OK'),
-        value: this.study
-      };
-      this.activeModal.close(result);
-    };
+  confirm(): void {
+    this.activeModal.close(this.study);
   }
 }

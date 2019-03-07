@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/c
 import { ActivatedRoute, Router } from '@angular/router';
 import { AnnotationType } from '@app/domain/annotations';
 import { CollectionEventType, ProcessingType, ProcessingTypeInputEntity, Study } from '@app/domain/studies';
-import { ModalInputResult, ModalInputTextareaOptions, ModalInputTextOptions } from '@app/modules/modals/models';
+import { ModalInputTextareaOptions, ModalInputTextOptions } from '@app/modules/modals/models';
 import { EventTypeStoreActions, EventTypeStoreSelectors, ProcessingTypeStoreActions, ProcessingTypeStoreSelectors, RootStoreState, StudyStoreSelectors } from '@app/root-store';
 import { AnnotationTypeRemoveComponent } from '@app/shared/components/annotation-type-remove/annotation-type-remove.component';
 import { AnnotationTypeViewComponent } from '@app/shared/components/annotation-type-view/annotation-type-view.component';
@@ -130,15 +130,13 @@ export class ProcessingTypeViewContainerComponent implements OnInit, OnDestroy {
       minLength: 2
     };
     this.modalService.open(this.updateNameModal, { size: 'lg' }).result
-      .then((result: ModalInputResult) => {
-        if (result.confirmed) {
-          this.store$.dispatch(new ProcessingTypeStoreActions.UpdateProcessingTypeRequest({
-            processingType: this.processingType,
-            attributeName: 'name',
-            value: result.value
-          }));
-          this.updatedMessage = 'Event name was updated';
-        }
+      .then((value) => {
+        this.store$.dispatch(new ProcessingTypeStoreActions.UpdateProcessingTypeRequest({
+          processingType: this.processingType,
+          attributeName: 'name',
+          value
+        }));
+        this.updatedMessage = 'Event name was updated';
       })
       .catch(err => console.log('err', err));
   }
@@ -153,15 +151,13 @@ export class ProcessingTypeViewContainerComponent implements OnInit, OnDestroy {
       cols: 10
     };
     this.modalService.open(this.updateDescriptionModal, { size: 'lg' }).result
-      .then((result: ModalInputResult) => {
-        if (result.confirmed) {
-          this.store$.dispatch(new ProcessingTypeStoreActions.UpdateProcessingTypeRequest({
-            processingType: this.processingType,
-            attributeName: 'description',
-            value: result.value
-          }));
-          this.updatedMessage = 'Event description was updated';
-        }
+      .then((value) => {
+        this.store$.dispatch(new ProcessingTypeStoreActions.UpdateProcessingTypeRequest({
+          processingType: this.processingType,
+          attributeName: 'description',
+          value: value ? value : undefined
+        }));
+        this.updatedMessage = 'Event description was updated';
       })
       .catch(err => console.log('err', err));
   }
@@ -172,15 +168,13 @@ export class ProcessingTypeViewContainerComponent implements OnInit, OnDestroy {
     }
 
     this.modalService.open(this.updateEnabledModal, { size: 'lg' }).result
-      .then(result => {
-        if (result.confirmed) {
-          this.store$.dispatch(new ProcessingTypeStoreActions.UpdateProcessingTypeRequest({
-            processingType: this.processingType,
-            attributeName: 'enabled',
-            value: result.value
-          }));
-          this.updatedMessage = 'Enabled was updated';
-        }
+      .then(value => {
+        this.store$.dispatch(new ProcessingTypeStoreActions.UpdateProcessingTypeRequest({
+          processingType: this.processingType,
+          attributeName: 'enabled',
+          value
+        }));
+        this.updatedMessage = 'Enabled was updated';
       })
       .catch(err => console.log('err', err));
   }

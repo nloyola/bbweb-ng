@@ -10,11 +10,10 @@
   <ng-content select=".body"></ng-content>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-secondary" (click)="dismiss()" i18n>Cancel</button>
+  <button type="button" class="btn btn-secondary" (click)="dismiss()" i18n>No</button>
   <button type="button"
           class="btn btn-primary"
-          [disabled]="!modalInputValid"
           (click)="confirm()" i18n>
-    OK
+    Yes
   </button>
 </div>

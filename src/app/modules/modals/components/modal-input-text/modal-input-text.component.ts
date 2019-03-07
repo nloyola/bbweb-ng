@@ -1,6 +1,7 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
-import { ModalInputResult, ModalInputTextOptions } from '@app/modules/modals/models';
+import { ModalInputTextOptions } from '@app/modules/modals/models';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 
@@ -11,19 +12,19 @@ import { debounceTime, takeUntil } from 'rxjs/operators';
 })
 export class ModalInputTextComponent implements OnInit, OnDestroy {
 
+  @Input() modal: NgbActiveModal;
   @Input() title: string;
   @Input() label: string;
   @Input() value: string;
   @Input() options: ModalInputTextOptions;
-  @Input() modalClose: (result: ModalInputResult) => void;
 
   modalInputValid = false;
 
   protected modalInputForm: FormGroup;
   protected validators: ValidatorFn[] = [];
-  private unsubscribe$: Subject<void> = new Subject<void>();
+  protected unsubscribe$: Subject<void> = new Subject<void>();
 
-  constructor(private formBuilder: FormBuilder) { }
+  constructor(protected formBuilder: FormBuilder) { }
 
   ngOnInit() {
     if (this.options.required) {
@@ -53,14 +54,12 @@ export class ModalInputTextComponent implements OnInit, OnDestroy {
     return this.modalInputForm.get('text');
   }
 
-  close(): (result: any) => void {
-    return (source: any): void => {
-      const result = {
-        confirmed: (source === 'OK'),
-        value: this.modalInputForm.value.text,
-      };
-      this.modalClose(result);
-    };
+  confirm(): void {
+    this.modal.close(this.modalInputForm.value.text);
+  }
+
+  dismiss(): void {
+    this.modal.dismiss();
   }
 
 }

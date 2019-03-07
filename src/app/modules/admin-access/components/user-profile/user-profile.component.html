@@ -134,35 +134,36 @@
   </div>
 </ng-template>
 
-<ng-template #updateNameModal let-close="close">
+<ng-template #updateNameModal let-modal>
   <app-modal-input-text [title]="'Update Name'"
                         [label]="'New user name'"
                         [value]="(user$ | async)?.name"
                         [options]="updateNameModalOptions"
-                        [modalClose]="close">
+                        [modal]="modal">
   </app-modal-input-text>
 </ng-template>
 
-<ng-template #updateEmailModal let-close="close">
+<ng-template #updateEmailModal let-modal>
   <app-modal-input-email [title]="'Update Email'"
                          [label]="'New user email'"
                          [value]="(user$ | async)?.email"
                          [options]="updateEmailModalOptions"
-                         [modalClose]="close">
+                         [modal]="modal">
   </app-modal-input-email>
 </ng-template>
 
-<ng-template #updatePasswordModal let-close="close">
+<ng-template #updatePasswordModal let-modal>
   <app-modal-input-password [title]="'Update Password'"
-                            [modalClose]="close">
+                            (onConfirm)="confirm($event)"
+                            [modal]="modal">
   </app-modal-input-password>
 </ng-template>
 
-<ng-template #updateAvatarUrlModal let-close="close">
+<ng-template #updateAvatarUrlModal let-modal>
   <app-modal-input-url [title]="'Update Avatar URL'"
                        [label]="'New avatar URL'"
                        [value]="(user$ | async)?.entity.avatarUrl"
                        [options]="{}"
-                       [modalClose]="close">
+                       [modal]="modal">
   </app-modal-input-url>
 </ng-template>

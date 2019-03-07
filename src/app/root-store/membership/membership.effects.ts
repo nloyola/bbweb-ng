@@ -64,4 +64,18 @@ export class MembershipStoreEffects {
     )
   );
 
+  @Effect()
+  removeMembershipRequest$: Observable<Action> =
+    this.actions$.pipe(
+      ofType(MembershipActions.MembershipActionTypes.RemoveMembershipRequest),
+      map(action => action.payload),
+      switchMap(
+        payload =>
+          this.membershipService.removeMembership(payload.membership)
+          .pipe(
+            // delay(2000),
+            map(membershipId => new MembershipActions.RemoveMembershipSuccess({ membershipId })),
+            catchError(error => observableOf(new MembershipActions.RemoveMembershipFailure({ error }))))));
+
+
 }

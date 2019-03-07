@@ -102,9 +102,14 @@ export function reducer(state = initialState, action: MembershipActions): State 
       return adapter.addOne(action.payload.membership, state);
     }
 
+    case MembershipActionTypes.RemoveMembershipSuccess: {
+      return adapter.removeOne(action.payload.membershipId, state);
+    }
+
     case MembershipActionTypes.GetMembershipFailure:
     case MembershipActionTypes.AddMembershipFailure:
     case MembershipActionTypes.UpdateMembershipFailure:
+    case MembershipActionTypes.RemoveMembershipFailure:
       return {
         ...state,
         error: {

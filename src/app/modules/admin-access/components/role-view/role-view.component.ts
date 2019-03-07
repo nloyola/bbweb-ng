@@ -4,7 +4,6 @@ import { EntityInfo } from '@app/domain';
 import { Role } from '@app/domain/access';
 import { User } from '@app/domain/users';
 import { UserRemoveModalComponent } from '@app/modules/modals/components/user-remove-modal/user-remove-modal.component';
-import { ModalInputResult } from '@app/modules/modals/models';
 import { RoleStoreActions, RoleStoreSelectors, RootStoreState } from '@app/root-store';
 import { SpinnerStoreSelectors } from '@app/root-store/spinner';
 import { UserAddTypeahead } from '@app/shared/typeaheads/user-add-typeahead';
@@ -110,18 +109,16 @@ export class RoleViewComponent implements OnInit {
     const modalRef = this.modalService.open(UserRemoveModalComponent);
     modalRef.componentInstance.user = userInfo;
     modalRef.result
-      .then((result: ModalInputResult) => {
-        if (result.confirmed) {
-          this.store$.dispatch(new RoleStoreActions.UpdateRoleRequest({
-            role: this.roleEntity,
-            attributeName: 'userRemove',
-            value: userInfo.id
-          }));
+      .then(result => {
+        this.store$.dispatch(new RoleStoreActions.UpdateRoleRequest({
+          role: this.roleEntity,
+          attributeName: 'userRemove',
+          value: userInfo.id
+        }));
 
-          this.updatedMessage = 'User removed';
-        }
+        this.updatedMessage = 'User removed';
       })
-      .catch(err => console.log('err', err));
+      .catch(() => undefined);
   }
 
 }

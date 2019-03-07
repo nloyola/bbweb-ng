@@ -5,7 +5,6 @@ import { Centre } from '@app/domain/centres';
 import { CentreUI } from '@app/domain/centres/centre-ui.model';
 import { Study, StudyState, StudyStateUIMap } from '@app/domain/studies';
 import { StudyRemoveModalComponent } from '@app/modules/modals/components/study-remove-modal/study-remove-modal.component';
-import { ModalInputResult } from '@app/modules/modals/models';
 import { CentreStoreActions, CentreStoreSelectors, RootStoreState } from '@app/root-store';
 import { StudyAddTypeahead } from '@app/shared/typeaheads/study-add-typeahead';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -98,7 +97,7 @@ export class CentreStudiesComponent implements OnInit, OnDestroy {
     const modalRef = this.modalService.open(StudyRemoveModalComponent);
     modalRef.componentInstance.study = study;
     modalRef.result
-      .then((result: ModalInputResult) => {
+      .then((result) => {
         if (result.confirmed) {
           this.store$.dispatch(new CentreStoreActions.UpdateCentreRemoveStudyRequest({
             centre: this.centre.entity,

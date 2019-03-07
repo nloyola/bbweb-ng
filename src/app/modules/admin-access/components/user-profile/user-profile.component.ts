@@ -55,6 +55,7 @@ export class UserProfileComponent implements OnInit {
           this.userId = userEntity.id;
           if (this.updatedMessage) {
             this.toastr.success(this.updatedMessage, 'Update Successfull');
+            this.updatedMessage = undefined;
           }
           return this.userEntity;
         }
@@ -89,62 +90,54 @@ export class UserProfileComponent implements OnInit {
 
   updateName(): void {
     this.modalService.open(this.updateNameModal, { size: 'lg' }).result
-      .then(result => {
-        if (result.confirmed) {
-          this.store$.dispatch(new UserStoreActions.UpdateUserRequest({
-            user: this.userEntity,
-            attributeName: 'name',
-            value: result.value
-          }));
-          this.updatedMessage = 'User name was updated';
-        }
+      .then(value => {
+        this.store$.dispatch(new UserStoreActions.UpdateUserRequest({
+          user: this.userEntity,
+          attributeName: 'name',
+          value
+        }));
+        this.updatedMessage = 'User name was updated';
       })
-      .catch(err => console.log('err', err));
+      .catch(() => undefined);
   }
 
   updateEmail(): void {
     this.modalService.open(this.updateEmailModal, { size: 'lg' }).result
-      .then(result => {
-        if (result.confirmed) {
-          this.store$.dispatch(new UserStoreActions.UpdateUserRequest({
-            user: this.userEntity,
-            attributeName: 'email',
-            value: result.value
-          }));
-          this.updatedMessage = 'User  email was updated';
-        }
+      .then(value => {
+        this.store$.dispatch(new UserStoreActions.UpdateUserRequest({
+          user: this.userEntity,
+          attributeName: 'email',
+          value
+        }));
+        this.updatedMessage = 'User  email was updated';
       })
-      .catch(err => console.log('err', err));
+      .catch(() => undefined);
   }
 
   updatePassword(): void {
     this.modalService.open(this.updatePasswordModal, { size: 'lg' }).result
-      .then(result => {
-        if (result.confirmed) {
-          this.store$.dispatch(new UserStoreActions.UpdateUserRequest({
-            user: this.userEntity,
-            attributeName: 'password',
-            value: result.value
-          }));
-          this.updatedMessage = 'User password was updated';
-        }
+      .then(value => {
+        this.store$.dispatch(new UserStoreActions.UpdateUserRequest({
+          user: this.userEntity,
+          attributeName: 'password',
+          value
+        }));
+        this.updatedMessage = 'User password was updated';
       })
-      .catch(err => console.log('err', err));
+      .catch(() => undefined);
   }
 
   updateAvatarUrl(): void {
     this.modalService.open(this.updateAvatarUrlModal, { size: 'lg' }).result
-      .then(result => {
-        if (result.confirmed) {
-          this.store$.dispatch(new UserStoreActions.UpdateUserRequest({
-            user: this.userEntity,
-            attributeName: 'avatarUrl',
-            value: result.value
-          }));
-          this.updatedMessage = 'User avatar URL was updated';
-        }
+      .then(value => {
+        this.store$.dispatch(new UserStoreActions.UpdateUserRequest({
+          user: this.userEntity,
+          attributeName: 'avatarUrl',
+          value
+        }));
+        this.updatedMessage = 'User avatar URL was updated';
       })
-      .catch(err => console.log('err', err));
+      .catch(() => undefined);
   }
 
   activate(): void {

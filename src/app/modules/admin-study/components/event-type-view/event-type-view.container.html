@@ -23,29 +23,32 @@
   </div>
 </ng-template>
 
-<ng-template #updateNameModal let-close="close">
+<ng-template #updateNameModal let-modal>
   <app-modal-input-text [title]="'Update Name'"
                         [label]="'New event name'"
                         [value]="eventType.name"
                         [options]="updateNameModalOptions"
-                        [modalClose]="close">
+                        (onConfirm)="confirm($event)"
+                        [modal]="modal">
   </app-modal-input-text>
 </ng-template>
 
-<ng-template #updateDescriptionModal let-close="close">
+<ng-template #updateDescriptionModal let-modal>
   <app-modal-input-textarea [title]="'Update Description'"
                             [label]="'New event description'"
                             [value]="eventType.description"
                             [options]="updateDescriptionModalOptions"
-                            [modalClose]="close">
+                            (onConfirm)="confirm($event)"
+                            [modal]="modal">
   </app-modal-input-textarea>
 </ng-template>
 
-<ng-template #updateRecurringModal let-close="close">
+<ng-template #updateRecurringModal let-modal>
   <app-modal-input-boolean [title]="'Update Recurring'"
                            [label]="'New recurring value'"
                            [value]="eventType.recurring"
                            [options]="{ required: true }"
-                           [modalClose]="close">
+                           (onConfirm)="confirm($event)"
+                           [modal]="modal">
   </app-modal-input-boolean>
 </ng-template>

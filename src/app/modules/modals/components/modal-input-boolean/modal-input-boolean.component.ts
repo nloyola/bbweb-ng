@@ -1,44 +1,36 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalInputOptions, ModalInputResult } from '../../models';
+import { ModalInputOptions } from '../../models';
 import { Validators, FormGroup, FormBuilder, AbstractControl } from '@angular/forms';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { ModalInputTextComponent } from '../modal-input-text/modal-input-text.component';
 
 @Component({
   selector: 'app-modal-input-boolean',
   templateUrl: './modal-input-boolean.component.html',
   styleUrls: ['./modal-input-boolean.component.scss']
 })
-export class ModalInputBooleanComponent implements OnInit {
-
-  @Input() title: string;
-  @Input() label: string;
-  @Input() value: string;
-  @Input() options: ModalInputOptions;
-  @Input() modalClose: (result: ModalInputResult) => void;
-
-  private form: FormGroup;
-
-  constructor(private formBuilder: FormBuilder) { }
+export class ModalInputBooleanComponent extends ModalInputTextComponent {
 
   ngOnInit() {
+    super.ngOnInit();
     const validators = [];
     if (this.options.required) {
       validators.push(Validators.required);
     }
 
-    this.form = this.formBuilder.group({ input: [this.value, validators] });
+    this.modalInputForm = this.formBuilder.group({ input: [this.value, validators] });
+
+    this.modalInputForm.valueChanges.subscribe(() => {
+      this.modalInputValid = true;
+    });
   }
 
   get input(): AbstractControl {
-    return this.form.get('input');
+    return this.modalInputForm.get('input');
   }
 
-  close(): (result: any) => void {
-    return (source: any): void => {
-      this.modalClose({
-        confirmed: (source === 'OK'),
-        value: this.form.value.input,
-      });
-    };
+  confirm(): void {
+    this.modal.close(this.modalInputForm.value.input);
   }
 
 }

@@ -1,4 +1,4 @@
-<app-modal-input [modalClose]="close()">
+<app-modal-input (onConfirm)="confirm($event)">
   <span class="title" i18n>Remove Study</span>
   <div class="body" i18n>
     Are you sure you want to remove the study named <b>{{study.name}}</b>?

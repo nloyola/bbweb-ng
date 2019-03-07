@@ -12,15 +12,9 @@ export class CentreRemoveModalComponent {
 
   @Input() centre: EntityNameAndState<CentreState>;
 
-  constructor(public activeModal: NgbActiveModal) { }
+  constructor(private activeModal: NgbActiveModal) { }
 
-  close(): (result: any) => void {
-    return (source: any): void => {
-      const result = {
-        confirmed: (source === 'OK'),
-        value: this.centre
-      };
-      this.activeModal.close(result);
-    };
+  confirm(): void {
+    this.activeModal.close(this.centre);
   }
 }

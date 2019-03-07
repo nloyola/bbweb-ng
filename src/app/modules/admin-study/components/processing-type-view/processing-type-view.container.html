@@ -22,38 +22,41 @@
   </div>
 </ng-template>
 
-<ng-template #updateNameModal let-close="close">
+<ng-template #updateNameModal let-modal>
   <app-modal-input-text [title]="'Update Name'"
                         [label]="'New event name'"
                         [value]="processingType.name"
                         [options]="updateNameModalOptions"
-                        [modalClose]="close">
+                        (onConfirm)="confirm($event)"
+                        [modal]="modal">
   </app-modal-input-text>
 </ng-template>
 
-<ng-template #updateDescriptionModal let-close="close">
+<ng-template #updateDescriptionModal let-modal>
   <app-modal-input-textarea [title]="'Update Description'"
                             [label]="'New event description'"
                             [value]="processingType.description"
                             [options]="updateDescriptionModalOptions"
-                            [modalClose]="close">
+                            (onConfirm)="confirm($event)"
+                            [modal]="modal">
   </app-modal-input-textarea>
 </ng-template>
 
-<ng-template #updateEnabledModal let-close="close">
+<ng-template #updateEnabledModal let-modal>
   <app-modal-input-boolean [title]="'Update Enabled'"
                            [label]="'New value'"
                            [value]="processingType.enabled"
                            [options]="{ required: true }"
-                           [modalClose]="close">
+                           (onConfirm)="confirm($event)"
+                           [modal]="modal">
   </app-modal-input-boolean>
 </ng-template>
 
 
-<ng-template #processingTypeInUseModal let-close="close">
+<ng-template #processingTypeInUseModal let-modal>
   <div class="modal-header">
     <h4 class="modal-title" id="modal-basic-title" i18n>Processing Step In Use</h4>
-    <button type="button" class="close" aria-label="Close" (click)="dismiss('Cancel')">
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
@@ -65,6 +68,6 @@
     </p>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-primary" (click)="close('OK')" i18n>OK</button>
+    <button type="button" class="btn btn-primary" (click)="modal.close()" i18n>OK</button>
   </div>
 </ng-template>

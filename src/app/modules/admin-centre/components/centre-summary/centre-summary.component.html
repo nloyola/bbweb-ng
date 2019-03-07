@@ -90,20 +90,22 @@
   </div>
 </ng-template>
 
-<ng-template #updateNameModal let-close="close">
+<ng-template #updateNameModal let-modal>
   <app-modal-input-text [title]="'Update Name'"
                         [label]="'New centre name'"
                         [value]="centre.name"
                         [options]="updateNameModalOptions"
-                        [modalClose]="close">
+                        (onConfirm)="confirm($event)"
+                        [modal]="modal">
   </app-modal-input-text>
 </ng-template>
 
-<ng-template #updateDescriptionModal let-close="close">
+<ng-template #updateDescriptionModal let-modal>
   <app-modal-input-textarea [title]="'Update Description'"
                             [label]="'New centre description'"
                             [value]="centre.description"
                             [options]="updateDescriptionModalOptions"
-                            [modalClose]="close">
+                            (onConfirm)="confirm($event)"
+                            [modal]="modal">
   </app-modal-input-textarea>
 </ng-template>

@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AnnotationType } from '@app/domain/annotations';
 import { CollectionEventType, Study } from '@app/domain/studies';
 import { CollectedSpecimenDefinition } from '@app/domain/studies/collected-specimen-definition.model';
-import { ModalInputResult, ModalInputTextareaOptions, ModalInputTextOptions } from '@app/modules/modals/models';
+import { ModalInputTextareaOptions, ModalInputTextOptions } from '@app/modules/modals/models';
 import { EventTypeStoreActions, EventTypeStoreSelectors, RootStoreState, StudyStoreSelectors } from '@app/root-store';
 import { AnnotationTypeRemoveComponent } from '@app/shared/components/annotation-type-remove/annotation-type-remove.component';
 import { AnnotationTypeViewComponent } from '@app/shared/components/annotation-type-view/annotation-type-view.component';
@@ -117,17 +117,15 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
       minLength: 2
     };
     this.modalService.open(this.updateNameModal, { size: 'lg' }).result
-      .then((result: ModalInputResult) => {
-        if (result.confirmed) {
-          this.store$.dispatch(new EventTypeStoreActions.UpdateEventTypeRequest({
-            eventType: this.eventType,
-            attributeName: 'name',
-            value: result.value
-          }));
-          this.updatedMessage = 'Event name was updated';
-        }
+      .then((value) => {
+        this.store$.dispatch(new EventTypeStoreActions.UpdateEventTypeRequest({
+          eventType: this.eventType,
+          attributeName: 'name',
+          value
+        }));
+        this.updatedMessage = 'Event name was updated';
       })
-      .catch(err => console.log('err', err));
+      .catch(() => undefined);
   }
 
   updateDescription() {
@@ -140,17 +138,15 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
       cols: 10
     };
     this.modalService.open(this.updateDescriptionModal, { size: 'lg' }).result
-      .then((result: ModalInputResult) => {
-        if (result.confirmed) {
-          this.store$.dispatch(new EventTypeStoreActions.UpdateEventTypeRequest({
-            eventType: this.eventType,
-            attributeName: 'description',
-            value: result.value
-          }));
-          this.updatedMessage = 'Event description was updated';
-        }
+      .then((value: string) => {
+        this.store$.dispatch(new EventTypeStoreActions.UpdateEventTypeRequest({
+          eventType: this.eventType,
+          attributeName: 'description',
+          value
+        }));
+        this.updatedMessage = 'Event description was updated';
       })
-      .catch(err => console.log('err', err));
+      .catch(() => undefined);
   }
 
   updateRecurring() {
@@ -159,17 +155,15 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
     }
 
     this.modalService.open(this.updateRecurringModal, { size: 'lg' }).result
-      .then(result => {
-        if (result.confirmed) {
-          this.store$.dispatch(new EventTypeStoreActions.UpdateEventTypeRequest({
-            eventType: this.eventType,
-            attributeName: 'recurring',
-            value: result.value.toString()
-          }));
-          this.updatedMessage = 'Recurring was updated';
-        }
+      .then(value => {
+        this.store$.dispatch(new EventTypeStoreActions.UpdateEventTypeRequest({
+          eventType: this.eventType,
+          attributeName: 'recurring',
+          value
+        }));
+        this.updatedMessage = 'Recurring was updated';
       })
-      .catch(err => console.log('err', err));
+      .catch(() => undefined);
   }
 
   addAnnotationType() {

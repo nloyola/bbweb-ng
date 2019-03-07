@@ -4,7 +4,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CollectionEventType, Study, StudyState } from '@app/domain/studies';
-import { ModalInputResult } from '@app/modules/modals/models';
 import { EventTypeStoreActions, EventTypeStoreReducer, StudyStoreActions, StudyStoreReducer } from '@app/root-store';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { YesNoPipe } from '@app/shared/pipes/yes-no-pipe';
@@ -359,7 +358,7 @@ describe('EventTypeViewContainer', () => {
         const eventType = createEventType();
         const newRecurring = !eventType.recurring;
         const modalService = TestBed.get(NgbModal);
-        const modalResult: ModalInputResult = { confirmed: true, value: newRecurring };
+        const modalResult = newRecurring;
 
         spyOn(modalService, 'open').and.returnValue({
           componentInstance: {},

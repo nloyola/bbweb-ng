@@ -1,7 +1,9 @@
-<app-modal-input [modalClose]="close()">
+<app-modal-input [modalInputValid]="modalInputValid"
+                 (onConfirm)="confirm($event)"
+                 (onDismiss)="dismiss($event)">
   <span class="title">{{title}}</span>
   <form class="body form-horizontal"
-        [formGroup]="form"
+        [formGroup]="modalInputForm"
         autocomplete="on"
         novalidate>
 

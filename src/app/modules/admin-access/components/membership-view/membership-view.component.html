@@ -5,7 +5,8 @@
   <div class="card mt-2">
     <div class="card-header bg-primary text-light">
       <mat-icon inline="true" class="warning-icon">settings</mat-icon>
-      {{membership?.name}} <small i18n>Membership</small>
+      {{membership?.name}} <small class="mr-3" i18n>Membership</small>
+
       <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
 
         <button class="btn btn-sm btn-light"
@@ -24,8 +25,18 @@
             <mat-icon class="success-icon mr-1">edit</mat-icon>
             <ng-container i18n>Update description</ng-container>
           </a>
+          <a class="dropdown-item" *ngIf="changesAllowed" (click)="removeMembership()">
+            <mat-icon class="danger-icon mr-1">warning</mat-icon>
+            <ng-container i18n>Remove this membership</ng-container>
+          </a>
         </div>
       </span>
+
+      <p *ngIf="isRemoving">
+        <app-spinner name="membership" [show]="isRemoving" i18n>
+          Removing...
+        </app-spinner>
+      </p>
     </div>
 
     <!-- NAME -->
@@ -213,21 +224,50 @@
   </div>
 </ng-template>
 
-
-<ng-template #updateNameModal let-close="close">
+<ng-template #updateNameModal let-modal>
   <app-modal-input-text [title]="'Update Name'"
                         [label]="'New membership name'"
                         [value]="(membership$ | async)?.name"
                         [options]="updateNameModalOptions"
-                        [modalClose]="close">
+                        [modal]="modal">
   </app-modal-input-text>
 </ng-template>
 
-<ng-template #updateDescriptionModal let-close="close">
+<ng-template #updateDescriptionModal let-modal>
   <app-modal-input-textarea [title]="'Update Description'"
                             [label]="'New membership description'"
                             [value]="(membership$ | async)?.description"
                             [options]="updateDescriptionModalOptions"
-                            [modalClose]="close">
+                            [modal]="modal">
   </app-modal-input-textarea>
+</ng-template>
+
+<ng-template #allStudiesModal let-modal>
+  <app-modal-yes-no [modal]="modal">
+    <span class="title">Membership Studies</span>
+    <div class="body">
+      There are no more studies in this membership.
+      <p>Make this membership applicable to all studies?
+    </div>
+  </app-modal-yes-no>
+</ng-template>
+
+<ng-template #allCentresModal let-modal>
+  <app-modal-yes-no [modal]="modal">
+    <span class="title">Membership Centres</span>
+    <div class="body">
+      There are no more centres in this membership.
+      <p>Make this membership applicable to all centres?
+    </div>
+  </app-modal-yes-no>
+</ng-template>
+
+<ng-template #removeMembershipModal let-modal>
+  <app-modal-input (onConfirm)="modal.close()"
+                   (onDismiss)="modal.dismiss()">
+    <span class="title">Remove Membership</span>
+    <div class="body">
+      Are you sure you want to remove this membership?
+    </div>
+  </app-modal-input>
 </ng-template>

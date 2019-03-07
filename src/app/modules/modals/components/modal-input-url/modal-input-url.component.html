@@ -1,4 +1,6 @@
-<app-modal-input [modalClose]="close()" [modalInputValid]="modalInputValid">
+<app-modal-input [modalInputValid]="modalInputValid"
+                 (onConfirm)="confirm($event)"
+                 (onDismiss)="dismiss($event)">
   <span class="title">{{title}}</span>
   <form class="body form-horizontal"
         [formGroup]="modalInputForm"
@@ -23,5 +25,4 @@
       </div>
     </div>
   </form>
-  <pre>{{ text.errors | json  }}}}</pre>
 </app-modal-input>

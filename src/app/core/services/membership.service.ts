@@ -7,7 +7,16 @@ import { delay, map } from 'rxjs/operators';
 import { Membership } from '@app/domain/access';
 
 export type MembershipUpdateAttribute =
-  'name' | 'description' | 'userAdd' | 'userRemove' | 'studyAdd' | 'studyRemove'  | 'centreAdd' | 'centreRemove';
+  'name'
+  | 'description'
+  | 'userAdd'
+  | 'userRemove'
+  | 'allStudies'
+  | 'studyAdd'
+  | 'studyRemove'
+  | 'allCentres'
+  | 'centreAdd'
+  | 'centreRemove';
 
 @Injectable({
   providedIn: 'root'
@@ -72,14 +81,14 @@ export class MembershipService {
     };
     return this.http.post<ApiReply>(this.BASE_URL, json)
       .pipe(
-        delay(2000),
+        // delay(2000),
         map(this.replyToMembership));
   }
 
   update(
     membership: Membership,
     attributeName: MembershipUpdateAttribute,
-    newValue: string
+    newValue?: string
   ): Observable<Membership> {
     switch (attributeName) {
       case 'name':
@@ -104,6 +113,12 @@ export class MembershipService {
         return this.http.delete<ApiReply>(url).pipe(map(this.replyToMembership));
       }
 
+      case 'allStudies': {
+        const url = `${this.BASE_URL}/allStudies/${membership.id}`;
+        const json = { expectedVersion: membership.version };
+        return this.http.post<ApiReply>(url, json).pipe(map(this.replyToMembership));
+      }
+
       case 'studyAdd': {
         const url = `${this.BASE_URL}/study/${membership.id}`;
         const json = {
@@ -116,6 +131,12 @@ export class MembershipService {
       case 'studyRemove': {
         const url = `${this.BASE_URL}/study/${membership.id}/${membership.version}/${newValue}`;
         return this.http.delete<ApiReply>(url).pipe(map(this.replyToMembership));
+      }
+
+      case 'allCentres': {
+        const url = `${this.BASE_URL}/allCentres/${membership.id}`;
+        const json = { expectedVersion: membership.version };
+        return this.http.post<ApiReply>(url, json).pipe(map(this.replyToMembership));
       }
 
       case 'centreAdd': {
@@ -136,6 +157,19 @@ export class MembershipService {
         throw new Error('invalid attribute name for update: ' + attributeName);
     }
 
+  }
+
+  removeMembership(membership: Membership): Observable<string> {
+    const url = `${this.BASE_URL}/${membership.id}/${membership.version}`;
+    return this.http.delete<ApiReply>(url)
+      .pipe(
+        // delay(5000),
+        map((reply: ApiReply) => {
+          if (reply && reply.data) {
+            return membership.id;
+          }
+          throw new Error('expected a valid reply');
+        }));
   }
 
   private replyToMembership(reply: ApiReply): Membership {
