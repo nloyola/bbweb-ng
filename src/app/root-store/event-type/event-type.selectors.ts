@@ -14,8 +14,7 @@ export const getSearchReplies =
 export const getLastAddedId = (state: fromEventType.State): string => state.lastAddedId;
 
 export const getSpecimenDefinitionNames =
-  (state: fromEventType.State): CollectedSpecimenDefinitionName[] =>
-  state.specimenDefinitionNames;
+  (state: fromEventType.State): fromEventType.SpecimenDefinitionNamesByStudy => state.specimenDefinitionNames;
 
 export const getError =
   (state: fromEventType.State): any => state.error;
@@ -40,7 +39,7 @@ export const selectAllEventTypeEntities =
 export const selectLastAddedId: MemoizedSelector<object, string> =
   createSelector(selectEventTypeState, getLastAddedId);
 
-export const selectSpecimenDefinitionNames: MemoizedSelector<object, CollectedSpecimenDefinitionName[]> =
+export const selectSpecimenDefinitionNames: MemoizedSelector<object, fromEventType.SpecimenDefinitionNamesByStudy> =
   createSelector(selectEventTypeState, getSpecimenDefinitionNames);
 
 export const selectError: MemoizedSelector<object, any> =

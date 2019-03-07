@@ -218,7 +218,10 @@ export class GetSpecimenDefinitionNamesRequest implements Action {
 export class GetSpecimenDefinitionNamesSuccess implements Action {
   readonly type = ActionTypes.GetSpecimenDefinitionNamesSuccess;
 
-  constructor(public payload: { specimenDefinitionNames: CollectedSpecimenDefinitionName[] }) { }
+  constructor(public payload: {
+    studySlug: string,
+    specimenDefinitionNames: CollectedSpecimenDefinitionName[]
+  }) { }
 }
 
 @HideSpinner(ActionTypes.GetSpecimenDefinitionNamesRequest)

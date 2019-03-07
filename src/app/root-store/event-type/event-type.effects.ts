@@ -162,6 +162,7 @@ export class EventTypeStoreEffects {
         this.eventTypeService.getSpecimenDefinitionNames(payload.studySlug)
         .pipe(
           map(reply => new EventTypeStoreActions.GetSpecimenDefinitionNamesSuccess({
+            studySlug: payload.studySlug,
             specimenDefinitionNames: reply
           })),
           catchError(error => observableOf(

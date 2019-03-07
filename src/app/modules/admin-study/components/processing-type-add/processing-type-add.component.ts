@@ -12,6 +12,7 @@ import { filter, map, take, takeUntil } from 'rxjs/operators';
 import { ProcessingTypeInformationSubformComponent } from '../processing-type-information-subform/processing-type-information-subform.component';
 import { ProcessingTypeInputSubformComponent } from '../processing-type-input-subform/processing-type-input-subform.component';
 import { ProcessingTypeOutputSubformComponent } from '../processing-type-output-subform/processing-type-output-subform.component';
+import { SpecimenDefinitionNamesByStudy } from '@app/root-store/event-type/event-type.reducer';
 
 interface EntityNames {
   processed: ProcessedSpecimenDefinitionName[];
@@ -29,6 +30,7 @@ export class ProcessingTypeAddComponent implements OnInit, OnDestroy {
 
   form: FormGroup;
   studyId: string;
+  studySlug: string;
   inputEntityName: string;
   inputDefinitionName: string;
   entityNames$: Observable<EntityNames>;
@@ -55,68 +57,67 @@ export class ProcessingTypeAddComponent implements OnInit, OnDestroy {
     });
 
     // inform the user after the processing type is added
-    this.store$
-      .pipe(select(ProcessingTypeStoreSelectors.selectLastAdded),
-            filter(et => !!et),
-            takeUntil(this.unsubscribe$))
-      .subscribe((processingType: ProcessingType) => {
-        this.toastr.success(
-          `ProcessingType was added successfully: ${processingType.name}`,
-          'Add Successfull');
-        this.store$.dispatch(new ProcessingTypeStoreActions.ClearLastAdded());
-        this.navigateToReturnUrl();
-      });
+    this.store$.pipe(
+      select(ProcessingTypeStoreSelectors.selectLastAdded),
+      filter(et => !!et),
+      takeUntil(this.unsubscribe$)
+    ).subscribe((processingType: ProcessingType) => {
+      this.toastr.success(
+        `ProcessingType was added successfully: ${processingType.name}`,
+        'Add Successfull');
+      this.store$.dispatch(new ProcessingTypeStoreActions.ClearLastAdded());
+      this.navigateToReturnUrl();
+    });
 
-    this.store$
-      .pipe(
-        select(ProcessingTypeStoreSelectors.selectError),
-        filter(et => !!et),
-        takeUntil(this.unsubscribe$))
-      .subscribe((error: any) => {
-        let errMessage = error.error ? error.error.message : error.statusText;
-        if (errMessage && errMessage.match(/EntityCriteriaError.*name already used/)) {
-          errMessage = `The name is already in use: ${this.processingTypeToSave.name}`;
-        }
-        this.toastr.error(errMessage, 'Add Error', { disableTimeOut: true });
-      });
+    this.store$.pipe(
+      select(ProcessingTypeStoreSelectors.selectError),
+      filter(et => !!et),
+      takeUntil(this.unsubscribe$)
+    ).subscribe((error: any) => {
+      let errMessage = error.error ? error.error.message : error.statusText;
+      if (errMessage && errMessage.match(/EntityCriteriaError.*name already used/)) {
+        errMessage = `The name is already in use: ${this.processingTypeToSave.name}`;
+      }
+      this.toastr.error(errMessage, 'Add Error', { disableTimeOut: true });
+    });
 
     const entitiesSelector = createSelector(
       ProcessingTypeStoreSelectors.selectSpecimenDefinitionNames,
       EventTypeStoreSelectors.selectSpecimenDefinitionNames,
       (processedDefinitions: ProcessedSpecimenDefinitionName[],
-       collectedDefinitions: CollectedSpecimenDefinitionName[]) => {
+       collectedDefinitions: SpecimenDefinitionNamesByStudy) => {
          const result = {
            processed: processedDefinitions,
-           collected: collectedDefinitions
+           collected: collectedDefinitions[this.route.parent.parent.snapshot.params.slug]
          };
          return result;
        });
 
     this.entityNames$ = this.store$.pipe(select(entitiesSelector));
 
-    this.store$
-      .pipe(
-        select(StudyStoreSelectors.selectAllStudies),
-        filter(studies => studies.length > 0),
-        map(studies => studies.find(s => s.slug === this.route.parent.parent.snapshot.params.slug)),
-        filter(study => study !== undefined),
-        map(study => {
-          // have to do the following because of this issue:
-          //
-          // https://github.com/ngrx/platform/issues/976
-          return (study instanceof Study) ? study :  new Study().deserialize(study);
-        }),
-        takeUntil(this.unsubscribe$))
-      .subscribe((study: Study) => {
-        this.studyId = study.id;
-        this.store$.dispatch(new ProcessingTypeStoreActions.GetSpecimenDefinitionNamesRequest({
-          studyId: study.id
-        }));
+    this.store$.pipe(
+      select(StudyStoreSelectors.selectAllStudies),
+      filter(studies => studies.length > 0),
+      map(studies => studies.find(s => s.slug === this.route.parent.parent.snapshot.params.slug)),
+      filter(study => study !== undefined),
+      map(study => {
+        // have to do the following because of this issue:
+        //
+        // https://github.com/ngrx/platform/issues/976
+        return (study instanceof Study) ? study :  new Study().deserialize(study);
+      }),
+      takeUntil(this.unsubscribe$)
+    ).subscribe((study: Study) => {
+      this.studyId = study.id;
+      this.studySlug = study.slug;
+      this.store$.dispatch(new ProcessingTypeStoreActions.GetSpecimenDefinitionNamesRequest({
+        studyId: study.id
+      }));
 
-        this.store$.dispatch(new EventTypeStoreActions.GetSpecimenDefinitionNamesRequest({
-          studySlug: study.slug
-        }));
-      });
+      this.store$.dispatch(new EventTypeStoreActions.GetSpecimenDefinitionNamesRequest({
+        studySlug: study.slug
+      }));
+    });
   }
 
   ngOnDestroy() {

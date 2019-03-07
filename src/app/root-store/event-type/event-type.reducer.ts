@@ -12,11 +12,15 @@ export interface PagedReplyHash {
   [ id: string ]: { [ url: string ]: PagedReplyEntityIds };
 }
 
+export interface SpecimenDefinitionNamesByStudy {
+  [ slug: string ]: CollectedSpecimenDefinitionName[];
+}
+
 export interface State extends EntityState<CollectionEventType> {
   lastSearch?: LastSearch;
   searchActive?: boolean;
   searchReplies?: PagedReplyHash;
-  specimenDefinitionNames: CollectedSpecimenDefinitionName[];
+  specimenDefinitionNames: SpecimenDefinitionNamesByStudy;
   lastAddedId: string;
   error?: any;
 }
@@ -28,7 +32,7 @@ export const initialState: State = adapter.getInitialState({
   lastSearch: null,
   searchActive: false,
   searchReplies: {},
-  specimenDefinitionNames: [],
+  specimenDefinitionNames: {},
   lastAddedId: null,
   error: null,
 });
@@ -121,9 +125,14 @@ export function reducer(state = initialState, action: EventTypeActions): State {
     }
 
     case ActionTypes.GetSpecimenDefinitionNamesSuccess: {
+      const studyDefinitions = {};
+      studyDefinitions[action.payload.studySlug] = action.payload.specimenDefinitionNames;
       return {
         ...state,
-        specimenDefinitionNames: action.payload.specimenDefinitionNames
+        specimenDefinitionNames: {
+          ...state.specimenDefinitionNames,
+          ...studyDefinitions
+        }
       };
     }
 

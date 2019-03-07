@@ -7,6 +7,7 @@ import { createSelector, select, Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { ProcessingTypeInputSubformComponent } from '../processing-type-input-subform/processing-type-input-subform.component';
 import { take } from 'rxjs/operators';
+import { SpecimenDefinitionNamesByStudy } from '@app/root-store/event-type/event-type.reducer';
 
 interface EntityNames {
   processed: ProcessedSpecimenDefinitionName[];
@@ -39,10 +40,10 @@ export class ProcessingInputSpecimenModalComponent implements OnInit {
     const entitiesSelector = createSelector(
       ProcessingTypeStoreSelectors.selectSpecimenDefinitionNames,
       EventTypeStoreSelectors.selectSpecimenDefinitionNames,
-      (pd: ProcessedSpecimenDefinitionName[], cd: CollectedSpecimenDefinitionName[]) => {
+      (pd: ProcessedSpecimenDefinitionName[], cd: SpecimenDefinitionNamesByStudy) => {
          const result = {
            processed: pd,
-           collected: cd
+           collected: cd[this.study.slug]
          };
          return result;
        });

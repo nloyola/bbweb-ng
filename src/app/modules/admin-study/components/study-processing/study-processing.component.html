@@ -1,22 +1,29 @@
-<div class="row mt-2" *ngIf="studyData$ | async as studyData">
-  <div class="col-md-3" *ngIf="studyData.hasEventTypes; else noEventTypes">
-    <app-processing-types-add-and-select [study]="studyData.study"
-                                         (addSelected)="addProcessingTypeSelected($event)"
-                                         (selected)="processingTypeSelected($event)">
-    </app-processing-types-add-and-select>
-  </div>
-  <div class="col-md-9">
-    <router-outlet></router-outlet>
-  </div>
-</div>
+<ng-container *ngIf="studyData$ | async as studyData">
+  <ng-container *ngIf="studyData.hasSpecimenDefinitions; else noCollectedSpecimens">
+    <div class="row mt-2">
+      <div class="col-md-3">
+        <app-processing-types-add-and-select [study]="studyData.study"
+                                             (addSelected)="addProcessingTypeSelected($event)"
+                                             (selected)="processingTypeSelected($event)">
+        </app-processing-types-add-and-select>
+      </div>
+    <div class="col-md-9">
+      <router-outlet></router-outlet>
+    </div>
+    </div>
+  </ng-container>
+</ng-container>
 
-<ng-template #noEventTypes>
-  <div class="alert alert-warning mt-2" role="alert">
-    <mat-icon>warning</mat-icon>
-    <span class="sr-only">Error:</span>
-    <ng-container i18n>
-      No events have been defined for this study.<br>
-      Processing steps cannot be added until collection events are added.
-    </ng-container>
+<ng-template #noCollectedSpecimens>
+  <div class="row mt-2">
+    <div class="col-md-12">
+      <div class="alert alert-warning" role="alert">
+        <mat-icon class="warning-icon" inline="true">warning</mat-icon>
+        <span i18n>
+          Error: no collected specimens have been defined for this study.
+          Processing steps cannot be added until specimens are added to events.
+        </span>
+      </div>
+    </div>
   </div>
 </ng-template>
