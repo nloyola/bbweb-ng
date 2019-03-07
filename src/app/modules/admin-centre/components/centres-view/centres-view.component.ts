@@ -113,7 +113,7 @@ export class CentresViewComponent implements OnInit, OnDestroy {
   }
 
   public centreSelected(centre: CentreUI): void {
-    this.router.navigate([ 'view', centre.slug, 'summary' ], { relativeTo: this.route });
+    this.router.navigate([ centre.slug, 'summary' ], { relativeTo: this.route });
  }
 
   private getFilters() {

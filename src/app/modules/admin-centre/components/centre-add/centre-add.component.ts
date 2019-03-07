@@ -45,11 +45,11 @@ export class CentreAddComponent implements OnInit, OnDestroy {
         select(CentreStoreSelectors.selectCentreLastAdded),
         filter(s => !!s),
         takeUntil(this.unsubscribe$))
-      .subscribe((s: Centre) => {
+      .subscribe((centre: Centre) => {
         this.toastr.success(
-          `Centre was added successfully: ${s.name}`,
+          `Centre was added successfully: ${centre.name}`,
           'Add Successfull');
-        this.navigateToReturnUrl();
+        this.router.navigate([ '..', centre.slug ], { relativeTo: this.route });
       });
 
     this.store$
@@ -86,10 +86,6 @@ export class CentreAddComponent implements OnInit, OnDestroy {
   }
 
   onCancel() {
-    this.navigateToReturnUrl();
-  }
-
-  private navigateToReturnUrl() {
     this.router.navigate([ '../' ], { relativeTo: this.route });
   }
 

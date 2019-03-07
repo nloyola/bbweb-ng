@@ -30,7 +30,7 @@ export const routes: Routes = [
         }
       },
       {
-        path: 'view/:slug',
+        path: ':slug',
         component: CentreViewComponent,
         resolve: {
           centre: CentreResolver

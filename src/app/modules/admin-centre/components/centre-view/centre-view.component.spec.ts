@@ -41,10 +41,10 @@ describe('CentreViewComponent', () => {
         {
           provide: Router,
           useValue: {
-            url: 'admin/centres/view',
+            url: 'admin/centres',
             events: of(new NavigationEnd(0,
-                                         `/admin/centres/view/${centre.slug}/studies`,
-                                         `/admin/centres/view/${centre.slug}/studies`)),
+                                         `/admin/centres/${centre.slug}/studies`,
+                                         `/admin/centres/${centre.slug}/studies`)),
             navigate: jasmine.createSpy('navigate')
           }
         }
@@ -88,7 +88,7 @@ describe('CentreViewComponent', () => {
     fixture.detectChanges();
 
     expect(routerListener.mock.calls.length).toBe(1);
-    expect(routerListener.mock.calls[0][0]).toEqual([ '/admin/centres/view', centre.slug, 'locations' ]);
+    expect(routerListener.mock.calls[0][0]).toEqual([ '/admin/centres', centre.slug, 'locations' ]);
   });
 
   function createMockActivatedRouteSpies(centre: Centre): void {

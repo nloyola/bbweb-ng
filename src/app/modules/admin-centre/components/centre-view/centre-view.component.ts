@@ -69,7 +69,7 @@ export class CentreViewComponent implements OnInit, OnDestroy {
   }
 
   public tabSelection(event: NgbTabChangeEvent) {
-    this.router.navigate([ '/admin/centres/view', this.route.snapshot.params.slug, event.nextId ]);
+    this.router.navigate([ '/admin/centres', this.route.snapshot.params.slug, event.nextId ]);
   }
 
   private getActiveTabId(routeUrl: string): string {
