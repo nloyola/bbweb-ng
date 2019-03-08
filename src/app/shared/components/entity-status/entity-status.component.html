@@ -5,13 +5,12 @@
     </span>
     <span class="badge mr-1" [ngClass]="bsClass">
       <span class="mr-1" i18n>Added:</span>
-      <span *ngIf="timeAdded">{{timeAdded | timeago}}</span>
-      <span *ngIf="!timeAdded" i18n>On System Initialization</span>
+      <span *ngIf="timeAdded">{{timeAdded | timeago: 'On System Initialization'}}</span>
     </span>
 
     <span class="badge" [ngClass]="bsClass">
       <span class="mr-1" i18n>Modified:</span>
-      <span *ngIf="timeModified">{{timeModified | timeago}}</span>
+      <span *ngIf="timeModified">{{timeModified | timeago: 'On System Initialization'}}</span>
       <span *ngIf="! timeModified" i18n>Never</span>
     </span>
   </div>
@@ -24,12 +23,11 @@
     </small>
     <small class="mr-1" [ngClass]="bsClass" >
       <strong class="mr-1" i18n>Added:</strong>
-      <span *ngIf="timeAdded" i18n>{{timeAdded | timeago}},</span>
-      <span *ngIf="!timeAdded" i18n>On System Initialization,</span>
+      <span *ngIf="timeAdded" i18n>{{timeAdded | timeago: 'On System Initialization'}},</span>
     </small>
     <small [ngClass]="bsClass" >
       <strong class="mr-1" i18n>Modified:</strong>
-      <span *ngIf="timeModified" i18n>{{timeModified | timeago}}</span>
+      <span *ngIf="timeModified" i18n>{{timeModified | timeago: 'On System Initialization'}}</span>
       <span *ngIf="!timeModified" i18n>Never</span>
     </small>
   </div>

@@ -25,11 +25,6 @@ export class EntityStatusComponent implements OnInit {
     } else if (this.bsClass === undefined) {
       this.bsClass = 'text-info';
     }
-
-    // if time addded is less than year 1900 then timestamp will display as 'on system
-    // initialization'
-    this.timeAdded = (this.timeAdded && (this.timeAdded.getFullYear() < 1900))
-      ? undefined : this.timeAdded;
   }
 
 }
