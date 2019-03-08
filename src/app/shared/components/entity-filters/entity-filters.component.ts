@@ -18,6 +18,7 @@ export class EntityFiltersComponent implements OnInit, OnDestroy {
   @Output() filters = new EventEmitter<SearchFilterValues>();
 
   form: FormGroup;
+  multipleFilters: boolean;
 
   private hasStateFilter: boolean;
   private allStates: EntityStateInfo = {
@@ -38,6 +39,16 @@ export class EntityFiltersComponent implements OnInit, OnDestroy {
       });
 
     this.hasStateFilter = this.stateData && (this.stateData.length > 0);
+
+    const filtersEnabledCount = (this.useNameFilter ? 1 : 0) +
+      (this.useEmailFilter ? 1 : 0) +
+      (this.hasStateFilter ? 1 : 0);
+
+    if (filtersEnabledCount === 0) {
+      throw new Error('no filters are enabled');
+    }
+
+    this.multipleFilters = filtersEnabledCount > 1;
 
     if (this.hasStateFilter) {
       // preppend array with a selection for all states
