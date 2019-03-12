@@ -1,13 +1,19 @@
 import { Deserializable } from './deserializable.model';
 
-/**
- * An abstract class for an entity in the domain.
- */
-export abstract class DomainEntity implements Deserializable {
+export interface IDomainEntity {
 
   /**
    * The unique ID that identifies an object of this type.
    */
+  id: string;
+
+}
+
+/**
+ * An abstract class for an entity in the domain.
+ */
+export abstract class DomainEntity implements IDomainEntity, Deserializable {
+
   id: string = null;
 
   /**

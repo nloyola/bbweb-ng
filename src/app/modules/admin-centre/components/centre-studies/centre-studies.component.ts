@@ -1,9 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { EntityNameAndState } from '@app/domain';
+import { EntityInfoAndState } from '@app/domain';
 import { Centre } from '@app/domain/centres';
 import { CentreUI } from '@app/domain/centres/centre-ui.model';
-import { Study, StudyState, StudyStateUIMap } from '@app/domain/studies';
+import { Study, StudyState, StudyStateUIMap, IStudyInfoAndState } from '@app/domain/studies';
 import { StudyRemoveModalComponent } from '@app/modules/modals/components/study-remove-modal/study-remove-modal.component';
 import { CentreStoreActions, CentreStoreSelectors, RootStoreState } from '@app/root-store';
 import { StudyAddTypeahead } from '@app/shared/typeaheads/study-add-typeahead';
@@ -25,7 +25,7 @@ export class CentreStudiesComponent implements OnInit, OnDestroy {
   selectedStudy: Study;
   getStudyNames: (text: Observable<string>) => Observable<any[]>;
   typeaheadFormatter: (value: any) => string;
-  sortedStudyNames: EntityNameAndState<StudyState>[];
+  sortedStudyNames: IStudyInfoAndState[];
   studyAddTypeahead: StudyAddTypeahead;
 
   private unsubscribe$: Subject<void> = new Subject<void>();
@@ -89,11 +89,11 @@ export class CentreStudiesComponent implements OnInit, OnDestroy {
     this.unsubscribe$.complete();
   }
 
-  studyStateLabel(study: EntityNameAndState<StudyState>) {
+  studyStateLabel(study: IStudyInfoAndState) {
     return StudyStateUIMap.get(study.state).stateLabel;
   }
 
-  remove(study: EntityNameAndState<StudyState>) {
+  remove(study: IStudyInfoAndState) {
     const modalRef = this.modalService.open(StudyRemoveModalComponent);
     modalRef.componentInstance.study = study;
     modalRef.result
@@ -110,10 +110,10 @@ export class CentreStudiesComponent implements OnInit, OnDestroy {
       .catch(err => console.log('err', err));
   }
 
-  private sortStudyNames(studyNames: EntityNameAndState<StudyState>[]): EntityNameAndState<StudyState>[] {
+  private sortStudyNames(studyNames: IStudyInfoAndState[]): IStudyInfoAndState[] {
     const sortedStudyNames = studyNames.slice(0);
     sortedStudyNames
-      .sort((a: EntityNameAndState<StudyState>, b: EntityNameAndState<StudyState>): number => {
+      .sort((a: IStudyInfoAndState, b: IStudyInfoAndState): number => {
         if (a.name < b.name) { return -1; }
         if (a.name > b.name) { return 1; }
         return 0;

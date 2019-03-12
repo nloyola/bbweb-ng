@@ -1,6 +1,10 @@
-import { EntityInfo } from '../entity-info.model';
+import { EntityInfo, IEntityInfo } from '@app/domain';
+import { ISpecimenDefinition, SpecimenDefinition } from './specimen-definition.model';
 
-export class SpecimenDefinitionName extends EntityInfo {
+export type ISpecimenDefinitionName = IEntityInfo<ISpecimenDefinition>;
+
+export class SpecimenDefinitionName extends EntityInfo<SpecimenDefinition>
+  implements ISpecimenDefinitionName {
 
   deserialize(obj: any) {
     super.deserialize(obj);

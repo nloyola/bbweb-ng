@@ -1,28 +1,27 @@
-import { ConcurrencySafeEntity, EntityInfo, HasSlug, HasName } from '@app/domain';
+import { ConcurrencySafeEntity, EntityInfo, HasDescription, HasName, HasSlug, IConcurrencySafeEntity, IEntityInfo } from '@app/domain';
 
-export abstract class AccessItem extends ConcurrencySafeEntity implements HasSlug, HasName {
-
-  slug: string;
-
-  /**
-   * A short identifying name that is unique.
-   */
-  name: string;
-
-  /**
-   * An optional description that can provide additional details on the name.
-   */
-  description: string | null;
+export interface IAccessItem extends IConcurrencySafeEntity, HasSlug, HasName, HasDescription {
 
   /**
    * This AccessItem's parents.
    */
-  parentData: EntityInfo[];
+  parentData: IAccessItemInfo[];
 
   /**
    * This AccessItem's children.
    */
-  childData: EntityInfo[];
+  childData: IAccessItemInfo[];
+}
+
+export type IAccessItemInfo = IEntityInfo<IAccessItem>;
+
+export abstract class AccessItem extends ConcurrencySafeEntity implements IAccessItem {
+
+  slug: string;
+  name: string;
+  description: string | null;
+  parentData: IAccessItemInfo[];
+  childData: IAccessItemInfo[];
 
   deserialize(input: any) {
     super.deserialize(input);

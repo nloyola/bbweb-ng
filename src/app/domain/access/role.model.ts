@@ -1,12 +1,19 @@
-import { AccessItem } from '../access/access-item.model';
-import { EntityInfo } from '..';
+import { AccessItem, IAccessItem } from './access-item.model';
+import { EntityInfo } from '@app/domain';
+import { IUserInfo } from '@app/domain/users';
 
-export class Role extends AccessItem {
+export interface IRole extends IAccessItem {
 
   /**
    * The users that have this role.
    */
-  userData: EntityInfo[];
+  userData: IUserInfo[];
+
+}
+
+export class Role extends AccessItem implements IRole {
+
+  userData: IUserInfo[];
 
   deserialize(input: any) {
     super.deserialize(input);

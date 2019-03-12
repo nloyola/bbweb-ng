@@ -1,39 +1,43 @@
-import { ConcurrencySafeEntity } from '@app/domain/concurrency-safe-entity.model';
-import { StudyState } from './study-state.enum';
+import { IEntityInfo, HasDescription, HasName, HasSlug, IEntitySet } from '@app/domain';
 import { AnnotationType } from '@app/domain/annotations/annotation-type.model';
-import { HasDescription, HasName, HasSlug } from '@app/domain';
+import { ConcurrencySafeEntity, IConcurrencySafeEntity } from '@app/domain/concurrency-safe-entity.model';
+import { StudyState } from './study-state.enum';
+import { IEntityInfoAndState } from '../entity-info-and-state.model';
 
-/*
- * A Study represents a collection of participants and specimens collected for a particular research study.
- */
-export class Study extends ConcurrencySafeEntity implements HasSlug, HasName, HasDescription {
-
-  slug: string;
-
-  /**
-   * A short identifying name that is unique.
-   */
-  name: string;
-
-  /**
-   * An optional description that can provide additional details on the name.
-   */
-  description: string | null;
+export interface IStudy extends IConcurrencySafeEntity, HasSlug, HasName, HasDescription {
 
   /**
    * The annotation types associated with participants of this study.
    */
-  annotationTypes: AnnotationType[] = [];
+  annotationTypes: AnnotationType[];
 
   /**
    * The state can be one of: enabled, disabled, or retired.
    */
   state: StudyState;
+}
+
+export type IStudyInfo = IEntityInfo<IStudy>;
+
+export type IStudyInfoAndState = IEntityInfoAndState<IStudy, StudyState>;
+
+export type IStudyInfoSet = IEntitySet<IStudy>;
+
+/*
+ * A Study represents a collection of participants and specimens collected for a particular research study.
+ */
+export class Study extends ConcurrencySafeEntity implements IStudy {
+
+  slug: string;
+  name: string;
+  description: string | null;
+  annotationTypes: AnnotationType[] = [];
+  state: StudyState;
 
   deserialize(input: any) {
     super.deserialize(input);
 
-    if (input.description === undefined) {
+    if (((input.description === undefined))) {
       this.description = undefined;
     }
 

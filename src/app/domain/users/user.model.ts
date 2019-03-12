@@ -1,18 +1,8 @@
-import { ConcurrencySafeEntity, HasSlug, HasName } from '@app/domain';
+import { ConcurrencySafeEntity, HasSlug, HasName, IConcurrencySafeEntity, IEntityInfo } from '@app/domain';
 import { RoleIds, UserRole, UserMembership } from '@app/domain/access';
 import { UserState } from '@app/domain/users/user-state.enum';
 
-/**
- * Information for a user of the system.
- */
-export class User extends ConcurrencySafeEntity implements HasSlug, HasName {
-
-  slug: string;
-
-  /**
-   * The user's full name.
-   */
-  name: string;
+export interface IUser extends IConcurrencySafeEntity, HasSlug, HasName {
 
   /**
    * The user's email address.
@@ -27,13 +17,30 @@ export class User extends ConcurrencySafeEntity implements HasSlug, HasName {
   /**
    * Information for the roles this user has.
    */
-  roles: UserRole[] = [];
+  roles: UserRole[];
 
   /**
    * The state can be one of: registered, active or locked.
    */
   state: UserState;
 
+  membership: UserMembership | null;
+
+}
+
+export type IUserInfo = IEntityInfo<IUser>;
+
+/**
+ * Information for a user of the system.
+ */
+export class User extends ConcurrencySafeEntity implements IUser {
+
+  slug: string;
+  name: string;
+  email: string;
+  avatarUrl: string;
+  roles: UserRole[] = [];
+  state: UserState;
   membership: UserMembership | null;
 
   isRegistered() {

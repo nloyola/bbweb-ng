@@ -1,11 +1,20 @@
-import { DomainEntity } from './domain-entity.model';
-import { EntityInfo } from './entity-info.model';
+import { DomainEntity, IDomainEntity } from './domain-entity.model';
+import { EntityInfo, IEntityInfo } from './entity-info.model';
+import { HasSlug } from './has-slug.model';
+import { HasName } from './has-name.model';
 
-export class EntitySet extends DomainEntity {
+export interface IEntitySet<T extends IDomainEntity & HasSlug & HasName> {
+
+  entityData: IEntityInfo<T>[];
+
+}
+
+export class EntitySet<T extends IDomainEntity & HasSlug & HasName>
+  extends DomainEntity implements IEntitySet<T> {
 
   allEntities: boolean;
 
-  entityData: EntityInfo[];
+  entityData: IEntityInfo<T>[];
 
   isContentTypeAll(): boolean {
     return this.allEntities;

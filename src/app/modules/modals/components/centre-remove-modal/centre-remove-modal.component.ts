@@ -1,6 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { EntityNameAndState } from '@app/domain';
-import { CentreState } from '@app/domain/centres';
+import { ICentreInfoAndState } from '@app/domain/centres';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -10,7 +9,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 })
 export class CentreRemoveModalComponent {
 
-  @Input() centre: EntityNameAndState<CentreState>;
+  @Input() centre: ICentreInfoAndState;
 
   constructor(private activeModal: NgbActiveModal) { }
 

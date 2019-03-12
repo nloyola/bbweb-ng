@@ -1,6 +1,6 @@
-import { DomainEntity } from './domain-entity.model';
+import { DomainEntity, IDomainEntity } from './domain-entity.model';
 
-export abstract class ConcurrencySafeEntity extends DomainEntity {
+export interface IConcurrencySafeEntity extends IDomainEntity {
 
   /**
    * The current version for the object. Used for optimistic concurrency versioning.
@@ -15,6 +15,14 @@ export abstract class ConcurrencySafeEntity extends DomainEntity {
   /**
    * The date and time, in ISO time format, when this entity was last updated.
    */
+  timeModified: Date | null;
+
+}
+
+export abstract class ConcurrencySafeEntity extends DomainEntity implements IConcurrencySafeEntity {
+
+  version: number;
+  timeAdded: Date;
   timeModified: Date | null;
 
   deserialize(input: any) {

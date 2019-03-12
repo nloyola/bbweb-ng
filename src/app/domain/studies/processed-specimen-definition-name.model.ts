@@ -1,7 +1,14 @@
-import { EntityInfo } from '../entity-info.model';
-import { SpecimenDefinitionName } from './specimen-definition-name.model';
+import { EntityInfo, IEntityInfo } from '../entity-info.model';
+import { SpecimenDefinitionName, ISpecimenDefinitionName } from './specimen-definition-name.model';
+import { ProcessingType, IProcessingType } from './processing-type.model';
 
-export class ProcessedSpecimenDefinitionName extends EntityInfo {
+export interface IProcessedSpecimenDefinitionName extends IEntityInfo<IProcessingType> {
+
+  specimenDefinitionName: ISpecimenDefinitionName;
+
+}
+
+export class ProcessedSpecimenDefinitionName extends EntityInfo<ProcessingType> {
 
   specimenDefinitionName: SpecimenDefinitionName;
 

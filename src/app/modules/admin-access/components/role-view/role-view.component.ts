@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EntityInfo } from '@app/domain';
 import { Role } from '@app/domain/access';
-import { User } from '@app/domain/users';
+import { User, IUserInfo } from '@app/domain/users';
 import { UserRemoveModalComponent } from '@app/modules/modals/components/user-remove-modal/user-remove-modal.component';
 import { RoleStoreActions, RoleStoreSelectors, RootStoreState } from '@app/root-store';
 import { SpinnerStoreSelectors } from '@app/root-store/spinner';
@@ -105,7 +105,7 @@ export class RoleViewComponent implements OnInit {
     this.unsubscribe$.complete();
   }
 
-  userSelected(userInfo: EntityInfo): void {
+  userSelected(userInfo: IUserInfo): void {
     const modalRef = this.modalService.open(UserRemoveModalComponent);
     modalRef.componentInstance.user = userInfo;
     modalRef.result

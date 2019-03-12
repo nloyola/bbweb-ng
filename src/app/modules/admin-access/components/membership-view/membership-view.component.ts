@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { EntityInfo } from '@app/domain';
 import { Membership } from '@app/domain/access';
 import { Study } from '@app/domain/studies';
-import { User } from '@app/domain/users';
+import { User, IUserInfo } from '@app/domain/users';
 import { ModalInputTextareaOptions, ModalInputTextOptions } from '@app/modules/modals/models';
 import { MembershipStoreActions, MembershipStoreSelectors, RootStoreState } from '@app/root-store';
 import { SpinnerStoreSelectors } from '@app/root-store/spinner';
@@ -147,7 +147,7 @@ export class MembershipViewComponent implements OnInit {
       .catch(() => undefined);
   }
 
-  userSelected(userInfo: EntityInfo): void {
+  userSelected(userInfo: IUserInfo): void {
     const modalRef = this.modalService.open(UserRemoveModalComponent);
     modalRef.componentInstance.user = userInfo;
     modalRef.result
@@ -163,7 +163,7 @@ export class MembershipViewComponent implements OnInit {
       .catch(() => undefined);
   }
 
-  studySelected(studyInfo: EntityInfo): void {
+  studySelected(studyInfo: IUserInfo): void {
     const removeStudy = () => {
       this.store$.dispatch(new MembershipStoreActions.UpdateMembershipRequest({
         membership: this.membershipEntity,
@@ -200,7 +200,7 @@ export class MembershipViewComponent implements OnInit {
       .catch(() => undefined);
   }
 
-  centreSelected(centreInfo: EntityInfo): void {
+  centreSelected(centreInfo: IUserInfo): void {
     const removeCentre = () => {
       this.store$.dispatch(new MembershipStoreActions.UpdateMembershipRequest({
         membership: this.membershipEntity,

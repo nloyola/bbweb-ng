@@ -1,32 +1,37 @@
-import { EntityInfo, HasDescription, HasName, HasSlug, Location, EntityNameAndState } from '@app/domain';
-import { ConcurrencySafeEntity } from '@app/domain/concurrency-safe-entity.model';
+import { EntityInfo, HasDescription, HasName, HasSlug, IEntityInfo, IEntitySet, Location } from '@app/domain';
+import { ConcurrencySafeEntity, IConcurrencySafeEntity } from '@app/domain/concurrency-safe-entity.model';
+import { IEntityInfoAndState } from '../entity-info-and-state.model';
+import { IStudyInfoAndState } from '../studies';
 import { CentreState } from './centre-state.enum';
-import { StudyState } from '../studies';
+
+export interface ICentre extends IConcurrencySafeEntity, HasSlug, HasName, HasDescription {
+
+  /**
+   * The state can be one of: enabled or disabled.
+   */
+  state: CentreState;
+
+  studyNames: IStudyInfoAndState[];
+
+  locations: Location[];
+}
+
+export type ICentreInfo = IEntityInfo<ICentre>;
+
+export type ICentreInfoAndState = IEntityInfoAndState<ICentre, CentreState>;
+
+export type ICentreInfoSet = IEntitySet<ICentre>;
 
 /*
  * A Centre represents a collection of participants and specimens collected for a particular research centre.
  */
-export class Centre extends ConcurrencySafeEntity implements HasSlug, HasName, HasDescription {
+export class Centre extends ConcurrencySafeEntity implements ICentre {
 
   slug: string;
-
-  /**
-   * A short identifying name that is unique.
-   */
   name: string;
-
-  /**
-   * An optional description that can provide additional details on the name.
-   */
   description: string | null;
-
-  /**
-   * The state can be one of: enabled, disabled, or retired.
-   */
   state: CentreState;
-
-  studyNames: EntityNameAndState<StudyState>[];
-
+  studyNames: IStudyInfoAndState[];
   locations: Location[];
 
   deserialize(input: any) {

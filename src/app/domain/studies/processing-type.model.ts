@@ -5,20 +5,8 @@ import { InputSpecimenProcessing } from './input-specimen-processing.model';
 import { OutputSpecimenProcessing } from './output-specimen-processing.model';
 import { ProcessingTypeInputEntity } from './processing-type-input-entity.model';
 
-export class ProcessingType extends ConcurrencySafeEntity
-implements ProcessingTypeInputEntity, HasSlug, HasName, HasDescription {
-
-  slug: string;
-
-  /**
-   * A short identifying name that is unique.
-   */
-  name: string;
-
-  /**
-   * An optional description that can provide additional details on the name.
-   */
-  description: string | null;
+export interface IProcessingType
+extends ConcurrencySafeEntity, ProcessingTypeInputEntity, HasSlug, HasName, HasDescription {
 
   /**
    * When TRUE input specimens can be processed for this study.
@@ -33,7 +21,7 @@ implements ProcessingTypeInputEntity, HasSlug, HasName, HasDescription {
   /**
    * The annotation that are collected for this processing type.
    */
-  annotationTypes: AnnotationType[] = [];
+  annotationTypes: AnnotationType[];
 
   /**
    * The input specimen processing information for this processing type.
@@ -48,6 +36,20 @@ implements ProcessingTypeInputEntity, HasSlug, HasName, HasDescription {
   /**
    * TRUE when the specimen in this processing type is the input in a different processing type.
    */
+  inUse: boolean;
+
+}
+
+export class ProcessingType extends ConcurrencySafeEntity implements IProcessingType {
+
+  slug: string;
+  name: string;
+  description: string | null;
+  enabled: boolean;
+  studyId: string;
+  annotationTypes: AnnotationType[] = [];
+  input: InputSpecimenProcessing;
+  output: OutputSpecimenProcessing;
   inUse: boolean;
 
   constructor() {

@@ -3,6 +3,13 @@ import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/fo
 import { CollectedSpecimenDefinitionName, ProcessedSpecimenDefinitionName, ProcessingType, SpecimenDefinitionName } from '@app/domain/studies';
 import { CustomValidators } from '@app/shared/validators';
 
+interface SpecimenDefinitionNameWithCombinedName {
+
+  combinedName: string;
+  specimenDefinitionName: ProcessedSpecimenDefinitionName;
+
+}
+
 @Component({
   selector: 'app-processing-type-input-subform',
   templateUrl: './processing-type-input-subform.component.html',
@@ -160,7 +167,7 @@ export class ProcessingTypeInputSubformComponent implements OnInit, OnChanges {
     }
   }
 
-  private getCollectedDefinitionNames() {
+  private getCollectedDefinitionNames(): SpecimenDefinitionName[] {
     if ((this.entityId.value === '') ||
         (this.definitionType.value !== 'collected')
         || (this.collectedDefinitionNames.length <= 0)) { return; }
@@ -172,16 +179,14 @@ export class ProcessingTypeInputSubformComponent implements OnInit, OnChanges {
     throw new Error('could not find event type name');
   }
 
-  private getProcessedCombinedNames() {
+  private getProcessedCombinedNames(): SpecimenDefinitionNameWithCombinedName[] {
     // cannot have this processing type be an input to itself, therefore filter it out
     return this.processedDefinitionNames
       .filter(definitionName => definitionName.id !== this.processingType.id)
-      .map(definitionName => {
-        const combinedName = `${definitionName.specimenDefinitionName.name} (${definitionName.name})`;
-        return {
-          ...definitionName,
-          combinedName
-        };
+      .map(specimenDefinitionName => {
+        const combinedName =
+          `${specimenDefinitionName.specimenDefinitionName.name} (${specimenDefinitionName.name})`;
+        return { combinedName, specimenDefinitionName };
       });
   }
 

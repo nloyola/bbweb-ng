@@ -1,24 +1,6 @@
 import { AnatomicalSource, DomainEntity, HasDescription, HasName, HasSlug, PreservationTemperature, PreservationType, SpecimenType } from '@app/domain';
 
-/**
- * Used to configure a *Specimen Type* used by a {@link Study}.
- *
- * It records ownership, summary, storage, and classification information that applies to an entire group or
- * collection of {@link Specimens}.
- */
-export abstract class SpecimenDefinition extends DomainEntity implements HasSlug, HasName, HasDescription {
-
-  slug: string;
-
-  /**
-   * A short identifying name that is unique.
-   */
-  name: string;
-
-  /**
-   * An optional description that can provide additional details on the name.
-   */
-  description: string | null;
+export interface ISpecimenDefinition extends DomainEntity, HasSlug, HasName, HasDescription {
 
   anatomicalSourceType: AnatomicalSource;
 
@@ -31,6 +13,24 @@ export abstract class SpecimenDefinition extends DomainEntity implements HasSlug
   /**
    * Specifies how the specimen amount is measured (e.g. volume, weight, length, etc.).
    */
+  units: string;
+}
+
+/**
+ * Used to configure a *Specimen Type* used by a {@link Study}.
+ *
+ * It records ownership, summary, storage, and classification information that applies to an entire group or
+ * collection of {@link Specimens}.
+ */
+export abstract class SpecimenDefinition extends DomainEntity implements ISpecimenDefinition {
+
+  slug: string;
+  name: string;
+  description: string | null;
+  anatomicalSourceType: AnatomicalSource;
+  preservationType: PreservationType;
+  preservationTemperature: PreservationTemperature;
+  specimenType: SpecimenType;
   units: string;
 
   static sortSpecimenDefinitions(specimenDefinitions: SpecimenDefinition[]): SpecimenDefinition[] {

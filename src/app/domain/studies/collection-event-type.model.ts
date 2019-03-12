@@ -1,23 +1,10 @@
 import { HasDescription, HasName, HasSlug } from '@app/domain';
-import { ConcurrencySafeEntity } from '@app/domain/concurrency-safe-entity.model';
-import { AnnotationType } from '@app/domain/annotations';
-import { CollectedSpecimenDefinition } from './collected-specimen-definition.model';
-import { ProcessingTypeInputEntity } from '.';
+import { ConcurrencySafeEntity, IConcurrencySafeEntity } from '@app/domain/concurrency-safe-entity.model';
+import { AnnotationType, IAnnotationType } from '@app/domain/annotations';
+import { CollectedSpecimenDefinition, ProcessingTypeInputEntity } from '@app/domain/studies';
 
-export class CollectionEventType extends ConcurrencySafeEntity
-implements ProcessingTypeInputEntity, HasSlug, HasName, HasDescription {
-
-  slug: string;
-
-  /**
-   * A short identifying name that is unique.
-   */
-  name: string;
-
-  /**
-   * An optional description that can provide additional details on the name.
-   */
-  description: string | null;
+export interface ICollectionEventType
+extends IConcurrencySafeEntity, ProcessingTypeInputEntity, HasSlug, HasName, HasDescription {
 
   /**
    * True if collection events of this type occur more than once for the duration of the study.
@@ -32,12 +19,24 @@ implements ProcessingTypeInputEntity, HasSlug, HasName, HasDescription {
   /**
    * The annotation types associated with participants of this study.
    */
-  annotationTypes: AnnotationType[] = [];
+  annotationTypes: IAnnotationType[];
 
   /**
    * The definitions of the specimens that are collected for this collection event type.
    */
    specimenDefinitions: CollectedSpecimenDefinition[];
+
+}
+
+export class CollectionEventType extends ConcurrencySafeEntity implements ICollectionEventType {
+
+  slug: string;
+  name: string;
+  description: string | null;
+  recurring: boolean;
+  studyId: string;
+  annotationTypes: AnnotationType[] = [];
+  specimenDefinitions: CollectedSpecimenDefinition[];
 
   deserialize(input: any) {
     super.deserialize(input);

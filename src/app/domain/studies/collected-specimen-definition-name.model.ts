@@ -1,7 +1,16 @@
-import { EntityInfo } from '../entity-info.model';
+import { EntityInfo, IEntityInfo } from '@app/domain';
 import { SpecimenDefinitionName } from './specimen-definition-name.model';
+import { CollectionEventType, ICollectionEventType } from './collection-event-type.model';
+import { ISpecimenDefinitionName } from './specimen-definition-name.model';
 
-export class CollectedSpecimenDefinitionName extends EntityInfo {
+export interface ICollectedSpecimenDefinitionName extends IEntityInfo<ICollectionEventType> {
+
+  specimenDefinitionNames: ISpecimenDefinitionName[];
+
+}
+
+export class CollectedSpecimenDefinitionName extends EntityInfo<CollectionEventType>
+  implements ICollectedSpecimenDefinitionName {
 
   specimenDefinitionNames: SpecimenDefinitionName[];
 

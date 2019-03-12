@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { EntityInfo } from '@app/domain';
+import { IUserInfo } from '@app/domain/users';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -9,7 +9,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 })
 export class UserRemoveModalComponent {
 
-  @Input() user: EntityInfo;
+  @Input() user: IUserInfo;
 
   constructor(private activeModal: NgbActiveModal) { }
 

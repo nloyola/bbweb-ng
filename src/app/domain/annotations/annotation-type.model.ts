@@ -1,18 +1,10 @@
-import { DomainEntity } from '@app/domain/domain-entity.model';
+import { DomainEntity, IDomainEntity } from '@app/domain/domain-entity.model';
 import { ValueTypes } from './value-type.enum';
 import { MaxValueCount } from './max-value-count.enum';
+import { HasDescription } from '../has-description.model';
+import { HasName } from '../has-name.model';
 
-export class AnnotationType extends DomainEntity {
-
-  /**
-   * A short identifying name that is unique.
-   */
-  name: string;
-
-  /**
-   * An optional description that can provide additional details on the name.
-   */
-  description: string | null;
+export interface IAnnotationType extends IDomainEntity, HasName, HasDescription {
 
   /**
    * The type of information stored by the annotation.
@@ -33,6 +25,17 @@ export class AnnotationType extends DomainEntity {
   /**
    * When `valueType` is {@link domain.AnnotationValueType.SELECT}, these are the values allowed to be
    */
+  options: string[];
+
+}
+
+export class AnnotationType extends DomainEntity implements IAnnotationType {
+
+  name: string;
+  description: string | null;
+  valueType: ValueTypes;
+  maxValueCount: MaxValueCount;
+  required: boolean;
   options: string[];
 
   static sortAnnotationTypes(annotationTypes: AnnotationType[]): AnnotationType[] {
