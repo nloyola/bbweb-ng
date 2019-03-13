@@ -10,7 +10,7 @@ import { ProcessingTypeFixture } from '@test/fixtures';
 describe('ProcessingInputSpecimenSummaryComponent', () => {
   let component: ProcessingInputSpecimenSummaryComponent;
   let fixture: ComponentFixture<ProcessingInputSpecimenSummaryComponent>;
-  let factory = new Factory();
+  const factory = new Factory();
   const entitiesFixture = new ProcessingTypeFixture(factory);
 
   beforeEach(async(() => {

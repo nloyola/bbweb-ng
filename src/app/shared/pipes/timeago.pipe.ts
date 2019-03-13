@@ -15,7 +15,7 @@ export class TimeagoPipe implements PipeTransform, OnDestroy {
 
   constructor(private changeDetectorRef: ChangeDetectorRef, private ngZone: NgZone) {}
 
-  transform(value: string, labelLongerThan40Years: string) {
+  transform(value: string, labelLongerThan40Years?: string) {
     this.removeTimer();
 
     const d = new Date(value);

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ModalInputTextComponent } from '@app/modules/modals/components/modal-input-text/modal-input-text.component';
 
@@ -7,7 +7,7 @@ import { ModalInputTextComponent } from '@app/modules/modals/components/modal-in
   templateUrl: './modal-input-email.component.html',
   styleUrls: ['./modal-input-email.component.scss']
 })
-export class ModalInputEmailComponent extends ModalInputTextComponent {
+export class ModalInputEmailComponent extends ModalInputTextComponent implements OnInit {
 
   constructor(formBuilder: FormBuilder) {
     super(formBuilder);

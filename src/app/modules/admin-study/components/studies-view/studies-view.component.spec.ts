@@ -26,7 +26,7 @@ describe('StudiesViewComponent', () => {
 
   const routes: Routes = [
     {
-      path: 'view/:slug/summary',
+      path: ':slug/summary',
       component: TestComponent
     },
   ];
@@ -147,7 +147,8 @@ describe('StudiesViewComponent', () => {
     spyOn(router, 'navigate').and.callThrough();
     ngZone.run(() => component.studySelected(study));
     expect(router.navigate).toHaveBeenCalled();
-    expect((router.navigate as any).calls.mostRecent().args[0]).toEqual([ 'view', study.slug, 'summary' ]);
+    expect((router.navigate as any).calls.mostRecent().args[0])
+      .toEqual([ study.slug, 'summary' ]);
   });
 
   it('displays that there are no studies in the system', () => {

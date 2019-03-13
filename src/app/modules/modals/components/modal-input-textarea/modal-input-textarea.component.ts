@@ -8,7 +8,7 @@ import { FormBuilder } from '@angular/forms';
   templateUrl: './modal-input-textarea.component.html',
   styleUrls: ['./modal-input-textarea.component.scss']
 })
-export class ModalInputTextareaComponent extends ModalInputTextComponent {
+export class ModalInputTextareaComponent extends ModalInputTextComponent implements OnInit {
 
   @Input() options: ModalInputTextareaOptions;
 

@@ -1,5 +1,12 @@
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterTestingModule } from '@angular/router/testing';
+import { UserStoreReducer } from '@app/root-store';
+import { SpinnerStoreReducer } from '@app/root-store/spinner';
+import { EntityFiltersComponent } from '@app/shared/components/entity-filters/entity-filters.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { StoreModule } from '@ngrx/store';
 import { UsersViewComponent } from './users-view.component';
 
 describe('UsersViewComponent', () => {
@@ -8,7 +15,21 @@ describe('UsersViewComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ UsersViewComponent ]
+      imports: [
+        FormsModule,
+        ReactiveFormsModule,
+        NgbModule,
+        RouterTestingModule,
+        StoreModule.forRoot({
+          'user': UserStoreReducer.reducer,
+          'spinner': SpinnerStoreReducer.reducer
+        })
+      ],
+      declarations: [
+        EntityFiltersComponent,
+        UsersViewComponent
+      ],
+      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     })
     .compileComponents();
   }));

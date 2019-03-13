@@ -116,7 +116,7 @@ describe('RegisterComponent', () => {
   describe('confirmPassword input validity', () => {
 
     it('is required', () => {
-      const errors = component.confirmPassword.errors || {};
+      const errors = component.registerForm.errors || {};
       expect(errors['passwordsNonMatching']).toBeTruthy();
     });
 
@@ -124,7 +124,7 @@ describe('RegisterComponent', () => {
       const value = 'test';
       component.password.setValue(value);
       component.confirmPassword.setValue(value + 'xxxx');
-      const errors = component.confirmPassword.errors || {};
+      const errors = component.registerForm.errors || {};
       expect(errors['passwordsNonMatching']).toBeTruthy();
     });
 
@@ -132,7 +132,7 @@ describe('RegisterComponent', () => {
       const validValue = 'test';
       component.password.setValue(validValue);
       component.confirmPassword.setValue(validValue);
-      const errors = component.confirmPassword.errors || {};
+      const errors = component.registerForm.errors || {};
       expect(errors).toEqual({});
     });
 

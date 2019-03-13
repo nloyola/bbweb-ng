@@ -8,8 +8,6 @@ import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
-import { EntityInfo } from '@app/domain';
-import { UserAddTypeahead } from '@app/shared/typeaheads/user-add-typeahead';
 
 @Component({
   selector: 'app-membership-add',

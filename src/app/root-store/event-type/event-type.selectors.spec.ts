@@ -42,7 +42,7 @@ describe('EventTypeStore selectors', () => {
 
       expect(EventTypeStoreSelectors.selectSearchRepliesAndEntities(state)).toEqual({
         reply: searchReplies[factory.defaultStudy().id][pagedReply.searchParams.queryString()],
-        eventTypes: [ eventType ]
+        entities: [ eventType ]
       });
     });
 

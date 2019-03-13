@@ -13,7 +13,7 @@ interface EventTypesRequestPayload {
 interface EventTypeUpdateRequestPayload {
   eventType: CollectionEventType;
   attributeName: string;
-  value: string;
+  value: string | boolean;
 }
 
 interface EventTypeAddOrUpdateAnnotationTypeRequestPayload {

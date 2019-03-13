@@ -1,5 +1,7 @@
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { RoleStoreReducer } from '@app/root-store';
+import { StoreModule } from '@ngrx/store';
 import { RolesAdminComponent } from './roles-admin.component';
 
 describe('RolesAdminComponent', () => {
@@ -8,7 +10,13 @@ describe('RolesAdminComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ RolesAdminComponent ]
+      imports: [
+        StoreModule.forRoot({
+          'role': RoleStoreReducer.reducer
+        })
+      ],
+      declarations: [ RolesAdminComponent ],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
     .compileComponents();
   }));

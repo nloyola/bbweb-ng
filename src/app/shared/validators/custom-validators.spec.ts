@@ -1,4 +1,4 @@
-import { CustomValidators } from "./custom-validators";
+import { CustomValidators } from './custom-validators';
 import { FormControl } from '@angular/forms';
 
 describe('CustomValidator', () => {

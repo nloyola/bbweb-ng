@@ -26,7 +26,7 @@ describe('CentresViewComponent', () => {
 
   const routes: Routes = [
     {
-      path: 'view/:slug/summary',
+      path: ':slug/summary',
       component: TestComponent
     },
   ];
@@ -133,7 +133,7 @@ describe('CentresViewComponent', () => {
     spyOn(router, 'navigate').and.callThrough();
     ngZone.run(() => component.centreSelected(centre));
     expect(router.navigate).toHaveBeenCalled();
-    expect((router.navigate as any).calls.mostRecent().args[0]).toEqual([ 'view', centre.slug, 'summary' ]);
+    expect((router.navigate as any).calls.mostRecent().args[0]).toEqual([ centre.slug, 'summary' ]);
   });
 
   it('displays that there are no centres in the system', () => {

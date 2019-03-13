@@ -42,7 +42,7 @@ describe('ProcessingTypeStore selectors', () => {
 
       expect(ProcessingTypeStoreSelectors.selectSearchRepliesAndEntities(state)).toEqual({
         reply: searchReplies[processingType.studyId][pagedReply.searchParams.queryString()],
-        processingTypes: [ processingType ]
+        entities: [ processingType ]
       });
     });
 

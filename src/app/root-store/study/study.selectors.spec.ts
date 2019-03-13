@@ -141,7 +141,7 @@ describe('study-store selectors', () => {
           maxPages: pagedReply.maxPages,
           entityIds: pagedReply.entities.map(e => e.id)
         },
-        studies: [ study ]
+        entities: [ study ]
       });
     });
 

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { User } from '@app/domain/users';
 import { AuthStoreSelectors, RootStoreState } from '@app/root-store';
 import { select, Store } from '@ngrx/store';
@@ -15,7 +15,7 @@ interface Permissions {
   templateUrl: './access-admin.component.html',
   styleUrls: ['./access-admin.component.scss']
 })
-export class AccessAdminComponent {
+export class AccessAdminComponent implements OnInit {
 
   permissions$: Observable<Permissions>;
 

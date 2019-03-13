@@ -1,6 +1,6 @@
 <app-modal-input [modalInputValid]="modalInputValid"
-                 (onConfirm)="confirm($event)"
-                 (onDismiss)="dismiss($event)">
+                 (confirm)="confirm($event)"
+                 (dismiss)="dismiss($event)">
   <span class="title">{{title}}</span>
   <form class="body form-horizontal"
         [formGroup]="modalInputForm"

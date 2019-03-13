@@ -1,7 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ModalInputOptions } from '../../models';
-import { Validators, FormGroup, FormBuilder, AbstractControl } from '@angular/forms';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { Component, OnInit } from '@angular/core';
+import { AbstractControl, Validators } from '@angular/forms';
 import { ModalInputTextComponent } from '../modal-input-text/modal-input-text.component';
 
 @Component({
@@ -9,7 +7,7 @@ import { ModalInputTextComponent } from '../modal-input-text/modal-input-text.co
   templateUrl: './modal-input-boolean.component.html',
   styleUrls: ['./modal-input-boolean.component.scss']
 })
-export class ModalInputBooleanComponent extends ModalInputTextComponent {
+export class ModalInputBooleanComponent extends ModalInputTextComponent implements OnInit {
 
   ngOnInit() {
     super.ngOnInit();

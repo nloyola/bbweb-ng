@@ -205,7 +205,7 @@ describe('Centre Reducer', () => {
       ...CentreStoreReducer.initialState,
       lastSearch: null,
       error: {
-        type: action.type,
+        actionType: action.type,
         error: action.payload.error
       }
     });

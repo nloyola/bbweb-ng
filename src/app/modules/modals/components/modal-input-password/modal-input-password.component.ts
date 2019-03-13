@@ -9,7 +9,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
   templateUrl: './modal-input-password.component.html',
   styleUrls: ['./modal-input-password.component.scss']
 })
-export class ModalInputPasswordComponent extends ModalInputTextComponent {
+export class ModalInputPasswordComponent extends ModalInputTextComponent implements OnInit {
 
   constructor(formBuilder: FormBuilder) {
     super(formBuilder);

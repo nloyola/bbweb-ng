@@ -14,7 +14,7 @@ describe('ProcessingTypesAddAndSelectComponent', () => {
   let fixture: ComponentFixture<ProcessingTypesAddAndSelectComponent>;
   let store: Store<StudyStoreReducer.State>;
   const mockActivatedRoute = new MockActivatedRoute();
-  let factory = new Factory();
+  const factory = new Factory();
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({

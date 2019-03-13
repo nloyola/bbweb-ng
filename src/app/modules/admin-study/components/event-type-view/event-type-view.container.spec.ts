@@ -1,5 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgZone } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed, fakeAsync, flush } from '@angular/core/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -203,7 +203,7 @@ describe('EventTypeViewContainer', () => {
 
   describe('when updating name, description and recurring', () => {
 
-    it('dispatches an action to update the event type', async(() => {
+    it('dispatches an action to update the event type', fakeAsync(() => {
       const eventType = createEventType();
       const testData = [
         {
@@ -224,27 +224,27 @@ describe('EventTypeViewContainer', () => {
       ];
 
       const modalService = TestBed.get(NgbModal);
-      const modalSpy = spyOn(modalService, 'open');
-      spyOn(store, 'dispatch').and.callThrough();
+      const modalListener = jest.spyOn(modalService, 'open');
+      const storeListener = jest.spyOn(store, 'dispatch');
 
       createMockActivatedRouteSpies(study, eventType);
       componentSetup(study, eventType);
 
       testData.forEach(testInfo => {
-        modalSpy.and.returnValue({
-          result: Promise.resolve({ confirmed: true, value: testInfo.newValue })
-        });
+        modalListener.mockReturnValue({ result: Promise.resolve(testInfo.newValue) });
+        storeListener.mockReset();
 
         testInfo.updateFunc();
-        fixture.whenStable().then(() => {
-          const action = new EventTypeStoreActions.UpdateEventTypeRequest({
-            eventType,
-            attributeName: testInfo.attribute,
-            value: testInfo.newValue.toString()
-          });
+        flush();
+        fixture.detectChanges();
 
-          expect(store.dispatch).toHaveBeenCalledWith(action);
+        const action = new EventTypeStoreActions.UpdateEventTypeRequest({
+          eventType,
+          attributeName: testInfo.attribute,
+          value: testInfo.newValue
         });
+
+        expect(storeListener.mock.calls[0][0]).toEqual(action);
       });
     }));
 
@@ -421,7 +421,7 @@ describe('EventTypeViewContainer', () => {
 
       expect(component.eventType).toBeUndefined();
       expect(spy).toHaveBeenCalled();
-      expect(spy.mock.calls[0][0]).toEqual([ `/admin/studies/${study.slug}/collection/view` ]);
+      expect(spy.mock.calls[0][0]).toEqual([ '/admin/studies/', study.slug, 'collection/view' ]);
     });
   });
 

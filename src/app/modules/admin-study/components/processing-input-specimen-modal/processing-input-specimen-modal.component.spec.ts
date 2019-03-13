@@ -16,7 +16,7 @@ describe('ProcessingInputSpecimenModalComponent', () => {
   let component: ProcessingInputSpecimenModalComponent;
   let fixture: ComponentFixture<ProcessingInputSpecimenModalComponent>;
   let store: Store<StudyStoreReducer.State>;
-  let factory = new Factory();
+  const factory = new Factory();
   const entityFixture = new ProcessingTypeFixture(factory);
 
   beforeEach(async(() => {
@@ -193,6 +193,7 @@ describe('ProcessingInputSpecimenModalComponent', () => {
       }));
     store.dispatch(
       new EventTypeStoreActions.GetSpecimenDefinitionNamesSuccess({
+        studySlug: study.slug,
         specimenDefinitionNames: collectedDefinitionNames
       }));
     return { study, eventType, input, processingType, processedDefinitionNames, collectedDefinitionNames };

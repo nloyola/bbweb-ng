@@ -1,5 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ModalInputComponent } from '../modal-input/modal-input.component';
 import { ModalInputPasswordComponent } from './modal-input-password.component';
 
 describe('ModalInputPasswordComponent', () => {
@@ -8,7 +9,14 @@ describe('ModalInputPasswordComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ModalInputPasswordComponent ]
+      imports: [
+        FormsModule,
+        ReactiveFormsModule
+      ],
+      declarations: [
+        ModalInputComponent,
+        ModalInputPasswordComponent
+      ]
     })
     .compileComponents();
   }));

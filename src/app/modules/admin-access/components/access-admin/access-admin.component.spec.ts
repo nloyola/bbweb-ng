@@ -1,20 +1,28 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { AccessAdminComponent } from './access-admin.component';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { StoreModule } from '@ngrx/store';
+import { AuthStoreReducer } from '@app/root-store';
 
-describe('UsersAdminComponent', () => {
-  let component: UsersAdminComponent;
-  let fixture: ComponentFixture<UsersAdminComponent>;
+describe('AccessAdminComponent', () => {
+  let component: AccessAdminComponent;
+  let fixture: ComponentFixture<AccessAdminComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ UsersAdminComponent ]
+      imports: [
+        StoreModule.forRoot({
+          'auth': AuthStoreReducer.reducer
+        })
+      ],
+      declarations: [ AccessAdminComponent ],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(UsersAdminComponent);
+    fixture = TestBed.createComponent(AccessAdminComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

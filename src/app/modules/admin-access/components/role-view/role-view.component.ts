@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EntityInfo } from '@app/domain';
 import { Role } from '@app/domain/access';
@@ -18,7 +18,7 @@ import { filter, map, takeUntil } from 'rxjs/operators';
   templateUrl: './role-view.component.html',
   styleUrls: ['./role-view.component.scss']
 })
-export class RoleViewComponent implements OnInit {
+export class RoleViewComponent implements OnInit, OnDestroy {
 
   isLoading$: Observable<boolean>;
   role$: Observable<Role>;

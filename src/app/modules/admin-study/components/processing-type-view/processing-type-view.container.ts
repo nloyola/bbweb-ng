@@ -19,7 +19,7 @@ import { ProcessingTypeRemoveComponent } from '../processing-type-remove/process
 interface Entities {
   studies: Study[];
   processingTypes: ProcessingType[];
-  eventTypeEntities: Dictionary<CollectionEventType>
+  eventTypeEntities: Dictionary<CollectionEventType>;
 }
 
 @Component({
@@ -102,7 +102,8 @@ export class ProcessingTypeViewContainerComponent implements OnInit, OnDestroy {
         if (ptEntityById) {
           this.processingType = (ptEntityById instanceof ProcessingType)
             ? ptEntityById : new ProcessingType().deserialize(ptEntityById);
-          this.router.navigate([ `/admin/studies/${this.study.slug}/processing/view/${this.processingType.slug}` ]);
+          this.router.navigate(
+            [ `/admin/studies/${this.study.slug}/processing/view/${this.processingType.slug}` ]);
           if (this.updatedMessage) {
             this.toastr.success(this.updatedMessage, 'Update Successfull');
           }
@@ -299,7 +300,7 @@ export class ProcessingTypeViewContainerComponent implements OnInit, OnDestroy {
     }
 
     // relative route does not work here, why?
-    this.router.navigate([ '/admin/studies/${this.study.slug}/processing/add' ]);
+    this.router.navigate([ `/admin/studies/${this.study.slug}/processing/add` ]);
   }
 
   processingTypeSelected(processingType: ProcessingType) {

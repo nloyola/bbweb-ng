@@ -63,7 +63,8 @@ export class MembershipsViewComponent implements OnInit, OnDestroy {
 
     this.serverError$ = this.store$.pipe(
       select(MembershipStoreSelectors.selectMembershipError),
-      filter(e => (e !== null) && (e.type === MembershipStoreActions.MembershipActionTypes.SearchMembershipsFailure)));
+      filter(e => (e !== null)
+             && (e.type === MembershipStoreActions.MembershipActionTypes.SearchMembershipsFailure)));
 
     this.membershipPageInfo$ = this.store$.pipe(
       select(MembershipStoreSelectors.selectMembershipSearchRepliesAndEntities),

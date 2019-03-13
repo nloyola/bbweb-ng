@@ -2,10 +2,9 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { Store, StoreModule } from '@ngrx/store';
-
 import { HomeComponent } from './home.component';
-import { User, UserRole } from '@app/domain/users';
-import { RoleIds } from '@app/domain/access';
+import { User } from '@app/domain/users';
+import { RoleIds, UserRole } from '@app/domain/access';
 import { AuthStoreActions, AuthStoreReducer } from '@app/root-store/auth-store';
 
 describe('HomeComponent', () => {

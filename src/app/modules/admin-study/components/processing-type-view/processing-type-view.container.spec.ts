@@ -1,5 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgZone } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed, fakeAsync, flush } from '@angular/core/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -257,10 +257,10 @@ describe('ProcessingTypeViewContainerComponent', () => {
 
   describe('when updating name, description, enabled, input and output', () => {
 
-    it('dispatches an action to update the processing type', async(() => {
+    it('dispatches an action to update the processing type', fakeAsync(() => {
       const modalService = TestBed.get(NgbModal);
       const modalSpy = spyOn(modalService, 'open');
-      spyOn(store, 'dispatch').and.callThrough();
+      const storeListener = jest.spyOn(store, 'dispatch');
 
       const entities = createEntities();
       const testData = [
@@ -296,25 +296,27 @@ describe('ProcessingTypeViewContainerComponent', () => {
 
       fixture.detectChanges();
 
-      testData.forEach(testInfo => {
+      testData.forEach((testInfo) => {
         const modalResult = testInfo.withConfirm
-          ? Promise.resolve({ confirmed: true, value: testInfo.newValue })
+          ? Promise.resolve(testInfo.newValue)
           : Promise.resolve(testInfo.newValue);
         modalSpy.and.returnValue({
           componentInstance: {},
           result: Promise.resolve(modalResult)
         });
 
+        storeListener.mockReset();
         testInfo.updateFunc();
-        fixture.whenStable().then(() => {
-          const action = new ProcessingTypeStoreActions.UpdateProcessingTypeRequest({
-            processingType: entities.processingType,
-            attributeName: testInfo.attribute,
-            value: testInfo.newValue
-          });
+        flush();
+        fixture.detectChanges();
 
-          expect(store.dispatch).toHaveBeenCalledWith(action);
+        const action = new ProcessingTypeStoreActions.UpdateProcessingTypeRequest({
+          processingType: entities.processingType,
+          attributeName: testInfo.attribute,
+          value: testInfo.newValue
         });
+
+        expect(storeListener.mock.calls[0][0]).toEqual(action);
       });
     }));
 
@@ -451,17 +453,18 @@ describe('ProcessingTypeViewContainerComponent', () => {
 
   describe('when user wants to add a processing type', () => {
 
-    it('changes state if study is disabled', async(() => {
+    it('changes state if study is disabled', fakeAsync(() => {
       const ngZone = TestBed.get(NgZone);
       const routerListener = jest.spyOn(router, 'navigate').mockReturnValue(true);
-      createEntities();
+      const entities = createEntities();
+
+      flush();
       fixture.detectChanges();
 
-      fixture.whenStable().then(() => {
-        ngZone.run(() => component.addProcessingTypeSelected());
-        expect(routerListener.mock.calls.length).toBe(1);
-        expect(routerListener.mock.calls[0][0]).toEqual([ '/admin/studies/${study.slug}/processing/add' ]);
-      });
+      ngZone.run(() => component.addProcessingTypeSelected());
+      expect(routerListener.mock.calls.length).toBe(1);
+      expect(routerListener.mock.calls[0][0])
+        .toEqual([ `/admin/studies/${entities.study.slug}/processing/add` ]);
     }));
 
   });
@@ -477,7 +480,7 @@ describe('ProcessingTypeViewContainerComponent', () => {
       ngZone.run(() => component.processingTypeSelected(entities.processingType));
       expect(routerListener.mock.calls.length).toBe(1);
       expect(routerListener.mock.calls[0][0])
-        .toEqual([ `/admin/studies/${study.slug}/processing/${entities.processingType.slug}` ]);
+        .toEqual([ `/admin/studies/${entities.study.slug}/processing/${entities.processingType.slug}` ]);
     });
   }));
 

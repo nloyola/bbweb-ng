@@ -107,7 +107,7 @@ describe('EventTypeAddComponent', () => {
         expect(storeListener.mock.calls.length).toBe(3);
         expect(toastrListener.mock.calls.length).toBe(1);
         expect(routerListener.mock.calls.length).toBe(1);
-        expect(routerListener.mock.calls[0][0]).toEqual(['..']);
+        expect(routerListener.mock.calls[0][0]).toEqual(['../view', eventType.slug ]);
       });
     }));
 

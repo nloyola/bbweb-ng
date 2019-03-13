@@ -263,8 +263,8 @@
 </ng-template>
 
 <ng-template #removeMembershipModal let-modal>
-  <app-modal-input (onConfirm)="modal.close()"
-                   (onDismiss)="modal.dismiss()">
+  <app-modal-input (confirm)="modal.close()"
+                   (dismiss)="modal.dismiss()">
     <span class="title">Remove Membership</span>
     <div class="body">
       Are you sure you want to remove this membership?

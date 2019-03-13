@@ -454,6 +454,20 @@ export class Factory {
     return location;
   }
 
+  domainEntityName(entity: any): any {
+    return {
+      id: entity.id,
+      slug: entity.slug,
+      name: entity.name
+    };
+  }
+
+  specimenDefinitionNames(eventTypes: any[]): any {
+    return eventTypes.map(et => ({
+      ...this.domainEntityName(et),
+      specimenDefinitionNames: et.specimenDefinitions.map(sd => this.domainEntityName(sd))
+    }));
+  }
 
   private domainEntityNameNext(domainEntityType?: string) {
     const id = domainEntityType ? domainEntityType : 'string';

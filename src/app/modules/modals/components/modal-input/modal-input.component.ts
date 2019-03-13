@@ -9,17 +9,17 @@ export class ModalInputComponent {
 
   @Input() modalInputValid = true;
 
-  @Output() onConfirm = new EventEmitter<any>();
-  @Output() onDismiss = new EventEmitter<any>();
+  @Output() confirm = new EventEmitter<any>();
+  @Output() dismiss = new EventEmitter<any>();
 
   constructor() { }
 
-  confirm(): void {
-    this.onConfirm.emit(null);
+  onConfirm(): void {
+    this.confirm.emit(null);
   }
 
-  dismiss(): void {
-    this.onDismiss.emit(null);
+  onDismiss(): void {
+    this.dismiss.emit(null);
   }
 
 }

@@ -154,8 +154,10 @@ describe('ProcessingTypeInputSubformComponent', () => {
       eventTypes.push(eventType);
 
       component.processingType = input;
-      component.processedDefinitionNames = entitiesFixture.processedDefinitionNames([ input, processingType ]);
-      component.collectedDefinitionNames = entitiesFixture.collectedDefinitionNames(eventTypes);
+      component.processedDefinitionNames =
+        entitiesFixture.processedDefinitionNames([ input, processingType ]);
+      component.collectedDefinitionNames =
+        entitiesFixture.collectedDefinitionNames(eventTypes);
       fixture.detectChanges();
 
       return {
@@ -231,6 +233,7 @@ describe('ProcessingTypeInputSubformComponent', () => {
         fixture.detectChanges();
 
         const selectOption = fixture.debugElement.query(By.css(`option[value="${processingType.id}"]`));
+        expect(selectOption).not.toBeNull();
         selectOption.parent.nativeElement.value = processingType.id;
         selectOption.parent.nativeElement.dispatchEvent(new Event('change'));
         fixture.detectChanges();

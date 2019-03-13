@@ -77,9 +77,9 @@
             (change)="processedDefinitionSelected($event)"
             required>
       <option value="">-- choose specimen --</option>
-      <option *ngFor="let processedDefinitionName of combinedDefinitionNames"
-              [value]="processedDefinitionName.id">
-        {{processedDefinitionName.combinedName}}
+      <option *ngFor="let combinedName of combinedDefinitionNames"
+              [value]="combinedName.specimenDefinitionName.id">
+        {{combinedName.combinedName}}
       </option>
     </select>
   </div>

@@ -122,7 +122,7 @@ describe('CentreSummaryComponent', () => {
       testData.forEach((testInfo, index) => {
         modalListener.mockReturnValue({
           componentInstance: {},
-          result: Promise.resolve({ confirmed: true, value: testInfo.value })
+          result: Promise.resolve(testInfo.value)
         });
 
         testInfo.componentFunc(component);
@@ -146,7 +146,7 @@ describe('CentreSummaryComponent', () => {
       jest.spyOn(store, 'dispatch');
       jest.spyOn(modalService, 'open').mockReturnValue({
         componentInstance: {},
-        result: Promise.resolve({ confirmed: true, value: 'test' })
+        result: Promise.resolve('test')
       });
 
       ngZone.run(() => store.dispatch(new CentreStoreActions.GetCentreSuccess({ centre })));

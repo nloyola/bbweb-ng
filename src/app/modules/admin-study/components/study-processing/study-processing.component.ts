@@ -52,7 +52,7 @@ export class StudyProcessingComponent implements OnInit {
 
           const hasSpecimenDefinitions =
             (entities.specimenDefinitionNames
-             && entities.specimenDefinitionNames[study.slug]
+             && (entities.specimenDefinitionNames[study.slug] !== undefined)
              && (entities.specimenDefinitionNames[study.slug].length > 0));
 
           return { study, hasSpecimenDefinitions };

@@ -91,10 +91,10 @@ describe('CentreViewComponent', () => {
     expect(routerListener.mock.calls[0][0]).toEqual([ '/admin/centres', centre.slug, 'locations' ]);
   });
 
-  function createMockActivatedRouteSpies(centre: Centre): void {
+  function createMockActivatedRouteSpies(c: Centre): void {
     mockActivatedRoute.spyOnSnapshot(() => ({
       params: {
-        slug: centre.slug
+        slug: c.slug
       }
     }));
   }

@@ -1,8 +1,8 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { RoleIds } from '@app/domain/access';
-import { User, UserRole } from '@app/domain/users';
+import { RoleIds, UserRole } from '@app/domain/access';
+import { User } from '@app/domain/users';
 import { AuthStoreActions, AuthStoreReducer } from '@app/root-store/auth-store';
 import { Store, StoreModule } from '@ngrx/store';
 import { AdminComponent } from './admin.component';

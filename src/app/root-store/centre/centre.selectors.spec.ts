@@ -141,7 +141,7 @@ describe('centre-store selectors', () => {
           maxPages: pagedReply.maxPages,
           entityIds: pagedReply.entities.map(e => e.id)
         },
-        centres: [ centre ]
+        entities: [ centre ]
       });
     });
 

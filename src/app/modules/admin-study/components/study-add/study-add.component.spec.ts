@@ -1,6 +1,6 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { CUSTOM_ELEMENTS_SCHEMA, NgZone } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed, fakeAsync, flush } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -36,7 +36,7 @@ describe('StudyAddComponent', () => {
         ToastrModule.forRoot()
       ],
       declarations: [StudyAddComponent],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     })
       .compileComponents();
   }));
@@ -78,11 +78,11 @@ describe('StudyAddComponent', () => {
 
   describe('when submitting', () => {
 
-    it('on valid submission', async(() => {
+    it('on valid submission', fakeAsync(() => {
       const study = new Study().deserialize(factory.study());
-      spyOn(store, 'dispatch').and.callThrough();
-      spyOn(router, 'navigate').and.callThrough();
       spyOn(toastr, 'success').and.returnValue(null);
+      const storeListener = jest.spyOn(store, 'dispatch');
+      const routerListener = jest.spyOn(router, 'navigate').mockReturnValue(true);
 
       component.name.setValue(study.name);
       component.description.setValue(study.description);
@@ -95,18 +95,18 @@ describe('StudyAddComponent', () => {
         })
       });
 
-      expect(store.dispatch).toHaveBeenCalledWith(expectedAction);
+      expect(storeListener.mock.calls.length).toBe(1);
+      expect(storeListener.mock.calls[0][0]).toEqual(expectedAction);
 
-      ngZone.run(() => {
-        const action = new StudyStoreActions.AddStudySuccess({ study });
-        store.dispatch(action);
-      });
+      const action = new StudyStoreActions.AddStudySuccess({ study });
+      store.dispatch(action);
+      fixture.detectChanges();
+      flush();
 
-      fixture.whenStable().then(() => {
-        expect(toastr.success).toHaveBeenCalled();
-        expect(router.navigate).toHaveBeenCalled();
-        expect((router.navigate as any).calls.mostRecent().args[0]).toEqual(['../']);
-      });
+      expect(toastr.success).toHaveBeenCalled();
+      expect(router.navigate).toHaveBeenCalled();
+      expect(routerListener.mock.calls.length).toBe(1);
+      expect(routerListener.mock.calls[0][0]).toEqual(['../', study.slug]);
     }));
 
     it('on submission failure', async(() => {

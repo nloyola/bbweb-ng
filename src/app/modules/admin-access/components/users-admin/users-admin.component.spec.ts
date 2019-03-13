@@ -1,5 +1,7 @@
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { UserStoreReducer } from '@app/root-store';
+import { StoreModule } from '@ngrx/store';
 import { UsersAdminComponent } from './users-admin.component';
 
 describe('UsersAdminComponent', () => {
@@ -8,7 +10,13 @@ describe('UsersAdminComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ UsersAdminComponent ]
+      imports: [
+        StoreModule.forRoot({
+          'user': UserStoreReducer.reducer
+        })
+      ],
+      declarations: [ UsersAdminComponent ],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
     .compileComponents();
   }));

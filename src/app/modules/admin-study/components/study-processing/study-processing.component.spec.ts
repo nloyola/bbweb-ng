@@ -1,5 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgZone } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed, flush, fakeAsync } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ProcessingTypeStoreReducer, StudyStoreReducer, StudyStoreActions, EventTypeStoreReducer, ProcessingTypeStoreActions, EventTypeStoreActions } from '@app/root-store';
@@ -55,26 +55,35 @@ describe('StudyProcessingComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('when study has or does not have event types', () => {
+  it('when study has or does not have event types', fakeAsync(() => {
     const study = new Study().deserialize(factory.study());
-    const eventType = new CollectionEventType().deserialize(factory.collectionEventType());
+
+    const eventType = new CollectionEventType()
+      .deserialize(factory.collectionEventType({ specimenDefinitions: [ factory.collectedSpecimenDefinition() ]}));
+    const eventTypeNoSpecimens = new CollectionEventType().deserialize(factory.collectionEventType());
+
     mockActivatedRouteSnapshot(study);
     store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
+    fixture.detectChanges();
 
-    [ false, true ].forEach((hasEventTypes) => {
-      if (hasEventTypes) {
-        store.dispatch(new EventTypeStoreActions.GetEventTypeSuccess({ eventType }));
+    [ false, true  ].forEach((hasSpecimenDefinitions) => {
+      if (hasSpecimenDefinitions) {
+        store.dispatch(new EventTypeStoreActions.GetSpecimenDefinitionNamesSuccess({
+          studySlug: study.slug,
+          specimenDefinitionNames: factory.specimenDefinitionNames([ eventType ])
+        }));
       }
+      flush();
       fixture.detectChanges();
 
       expect(component.studyData$).toBeObservable(cold('b', {
         b: {
           study,
-          hasEventTypes
+          hasSpecimenDefinitions
         }
       }));
     });
-  });
+  }));
 
   describe('when user wants to add a processing type', () => {
 

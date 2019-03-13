@@ -115,7 +115,7 @@ describe('ProcessingTypeAddComponent', () => {
       fixture.detectChanges();
 
       expect(routerListener.mock.calls.length).toBe(1);
-      expect(routerListener.mock.calls[0][0]).toEqual(['..']);
+      expect(routerListener.mock.calls[0][0]).toEqual(['../view', processingType.slug ]);
     });
 
     it('on submission failure', () => {
@@ -216,14 +216,17 @@ describe('ProcessingTypeAddComponent', () => {
 
     describe('input entity name and specimen definition name are correct', () => {
 
-      it('when adding a processing type with a collected specimen as input', () => {
+      fit('when adding a processing type with a collected specimen as input', () => {
 
         const { eventType, processingType } = entityFixture.createProcessingTypeFromCollected();
-        createEntityFixtures();
+        const study = createEntityFixtures();
         component.processingType = processingType;
         const specimenDefinitionNames = entityFixture.collectedDefinitionNames([ eventType ]);
         store.dispatch(
-          new EventTypeStoreActions.GetSpecimenDefinitionNamesSuccess({ specimenDefinitionNames }));
+          new EventTypeStoreActions.GetSpecimenDefinitionNamesSuccess({
+            studySlug: study.slug,
+            specimenDefinitionNames
+          }));
         fixture.detectChanges();
 
         const event: StepperSelectionEvent = {

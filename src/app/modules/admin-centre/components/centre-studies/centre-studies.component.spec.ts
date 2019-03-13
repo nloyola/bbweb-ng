@@ -83,7 +83,6 @@ describe('CentreStudiesComponent', () => {
     store.dispatch(new CentreStoreActions.GetCentreSuccess({ centre }));
     fixture.detectChanges();
 
-    debugger;
     const storeListener = jest.spyOn(store, 'dispatch');
     const inputElem = fixture.debugElement.query(By.css('input'));
     inputElem.nativeElement.value = 'test';
@@ -109,7 +108,7 @@ describe('CentreStudiesComponent', () => {
         state
       });
       const studyName = factory.entityNameAndStateDto(study);
-      expect(component.studyStateLabel(studyName)).toBe(StudyStateUIMap.get(study.state).stateLabel)
+      expect(component.studyStateLabel(studyName)).toBe(StudyStateUIMap.get(study.state).stateLabel);
     });
   });
 
@@ -120,7 +119,9 @@ describe('CentreStudiesComponent', () => {
 
     const study = new Study().deserialize(factory.study());
     const storeListener = jest.spyOn(store, 'dispatch');
-    component.selectedItem({ item: { id: study.id }} as NgbTypeaheadSelectItemEvent);
+
+    component.studyAddTypeahead.onEntitySelected({ item: { id: study.id }} as NgbTypeaheadSelectItemEvent);
+
     expect(storeListener.mock.calls.length).toBe(1);
     expect(storeListener.mock.calls[0][0]).toEqual(
       new CentreStoreActions.UpdateCentreAddStudyRequest({
@@ -221,11 +222,11 @@ describe('CentreStudiesComponent', () => {
     }));
   });
 
-  function createMockActivatedRouteSpies(centre: Centre): void {
+  function createMockActivatedRouteSpies(c: Centre): void {
     mockActivatedRoute.spyOnParent(() => ({
       snapshot: {
         data: {
-          centre
+          centre: c
         },
         params: {
           slug: centre.slug

@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EntityInfo } from '@app/domain';
 import { Membership } from '@app/domain/access';
@@ -25,7 +25,7 @@ import { CentreRemoveModalComponent } from '@app/modules/modals/components/centr
   templateUrl: './membership-view.component.html',
   styleUrls: ['./membership-view.component.scss']
 })
-export class MembershipViewComponent implements OnInit {
+export class MembershipViewComponent implements OnInit, OnDestroy {
 
   @ViewChild('updateNameModal') updateNameModal: TemplateRef<any>;
   @ViewChild('updateDescriptionModal') updateDescriptionModal: TemplateRef<any>;

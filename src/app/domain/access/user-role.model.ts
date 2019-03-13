@@ -1,6 +1,6 @@
-import { AccessItem } from './access-item.model';
+import { AccessItem, IAccessItem } from './access-item.model';
 
-export class UserRole extends AccessItem {
+export class UserRole extends AccessItem implements IAccessItem {
 
   hasAnyRoleOf(...roleIds: string[]) {
     const ids = Array.of(this.id).concat(this.childData.map(info => info.id));

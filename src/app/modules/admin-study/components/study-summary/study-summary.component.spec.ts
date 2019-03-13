@@ -55,7 +55,7 @@ describe('StudySummaryComponent', () => {
         }
       ],
       declarations: [ StudySummaryComponent ],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     })
     .compileComponents();
   }));
@@ -138,7 +138,7 @@ describe('StudySummaryComponent', () => {
       testData.forEach((testInfo, index) => {
         modalListener.mockReturnValue({
           componentInstance: {},
-          result: Promise.resolve({ confirmed: true, value: testInfo.value })
+          result: Promise.resolve(testInfo.value)
         });
 
         testInfo.componentFunc(component);
@@ -162,7 +162,7 @@ describe('StudySummaryComponent', () => {
       jest.spyOn(store, 'dispatch');
       jest.spyOn(modalService, 'open').mockReturnValue({
         componentInstance: {},
-        result: Promise.resolve({ confirmed: true, value: 'test' })
+        result: Promise.resolve('test')
       });
 
       ngZone.run(() => store.dispatch(new StudyStoreActions.GetStudySuccess({ study })));

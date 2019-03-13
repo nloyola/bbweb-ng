@@ -1,4 +1,4 @@
-import { ModalInputModule } from './modal-input.module';
+import { ModalInputModule } from './modals.module';
 
 describe('ModalInputModule', () => {
   let modalInputModule: ModalInputModule;

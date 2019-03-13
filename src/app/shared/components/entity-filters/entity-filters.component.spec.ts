@@ -12,7 +12,7 @@ describe('EntityFiltersComponent', () => {
 
   let component: EntityFiltersComponent;
   let fixture: ComponentFixture<EntityFiltersComponent>;
-  let factory: Factory;
+  const factory = new Factory();
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -29,7 +29,6 @@ describe('EntityFiltersComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(EntityFiltersComponent);
     component = fixture.componentInstance;
-    factory = new Factory();
   });
 
   it('should create', () => {
@@ -38,21 +37,23 @@ describe('EntityFiltersComponent', () => {
 
   describe('default settings', () => {
 
-    beforeEach(() => {
-      fixture.detectChanges();
-    });
-
     it('should not display name filter', () => {
+      component.useEmailFilter = true;
+      fixture.detectChanges();
       const input = fixture.debugElement.query(By.css('#name'));
       expect(input).toBeNull();
     });
 
     it('should not display email filter', () => {
+      component.useNameFilter = true;
+      fixture.detectChanges();
       const input = fixture.debugElement.query(By.css('#email'));
       expect(input).toBeNull();
     });
 
     it('should not display state filter', () => {
+      component.useNameFilter = true;
+      fixture.detectChanges();
       const select = fixture.debugElement.query(By.css('#state'));
       expect(select).toBeNull();
     });

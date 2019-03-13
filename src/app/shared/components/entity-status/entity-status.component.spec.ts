@@ -67,21 +67,15 @@ describe('EntityStatusComponent', () => {
 
     describe('for timeAdded', () => {
 
-      it('if timeAdded is less than year 1900, it is reassigned to undefined', () => {
-        component.timeAdded = new Date('31 Dec 1899');
-        fixture.detectChanges();
-        expect(component.timeAdded).toBeUndefined();
-      });
-
-      it('if timeAdded is greater or equal than year 1900, it is not reassigned', () => {
-        const date = new Date('01 Jan 1900');
-        component.timeAdded = date;
-        fixture.detectChanges();
-        expect(component.timeAdded).toBe(date);
-      });
-
       it('displayed content', () => {
-        [ new Date('31 Dec 1899'), new Date('01 Jan 1900') ].forEach(date => {
+        const now = new Date();
+        const date40YearsAgo = new Date();
+        const date39YearsAgo = new Date();
+
+        date40YearsAgo.setFullYear(date40YearsAgo.getFullYear() - 40);
+        date39YearsAgo.setFullYear(date39YearsAgo.getFullYear() - 39);
+
+        [ date40YearsAgo, date39YearsAgo ].forEach(date => {
           [ true, false ].forEach(useBadges => {
             let testElement: any;
 
@@ -100,7 +94,7 @@ describe('EntityStatusComponent', () => {
             expect(testElement.length).toBeGreaterThan(1);
             const textContent = testElement[0].textContent;
             expect(textContent).toContain('Added');
-            if (date.getFullYear() < 1900) {
+            if (now.getFullYear() - date.getFullYear() >= 40) {
               expect(textContent).toContain('On System Initialization');
             } else {
               expect(textContent).toContain(pipe.transform(date.toString()));
