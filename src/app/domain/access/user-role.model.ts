@@ -1,4 +1,5 @@
 import { AccessItem, IAccessItem } from './access-item.model';
+import { JSONObject } from '@app/domain';
 
 export class UserRole extends AccessItem implements IAccessItem {
 
@@ -7,7 +8,7 @@ export class UserRole extends AccessItem implements IAccessItem {
     return roleIds.filter(id => ids.includes(id)).length > 0;
   }
 
-  deserialize(input: any) {
+  deserialize(input: JSONObject) {
     super.deserialize(input);
     return this;
   }

@@ -2,7 +2,7 @@ import { Action } from '@ngrx/store';
 import { PagedReply, SearchParams } from '@app/domain';
 import { ShowSpinner, HideSpinner } from '@app/core/decorators';
 import { AnnotationType } from '@app/domain/annotations';
-import { ProcessingType, ProcessingTypeToAdd, OutputSpecimenProcessing, InputSpecimenProcessing } from '@app/domain/studies';
+import { ProcessingType, OutputSpecimenProcessing, InputSpecimenProcessing } from '@app/domain/studies';
 import { ProcessedSpecimenDefinitionName } from '@app/domain/studies/processed-specimen-definition-name.model';
 
 interface SearchProcessingTypesRequestPayload {
@@ -116,7 +116,7 @@ export class GetProcessingTypeFailure implements Action {
 export class AddProcessingTypeRequest implements Action {
   readonly type = ActionTypes.AddProcessingTypeRequest;
 
-  constructor(public payload: { processingType: ProcessingTypeToAdd }) { }
+  constructor(public payload: { processingType: ProcessingType }) { }
 }
 
 @HideSpinner(ActionTypes.AddProcessingTypeRequest)

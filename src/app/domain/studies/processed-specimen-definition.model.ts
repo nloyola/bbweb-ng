@@ -7,10 +7,4 @@ import { SpecimenDefinition } from './specimen-definition.model';
  * entire group or collection of {@link Specimens}. A *Processed Specimen Definition* is defined
  * for specimen types processed from collected specimens.
  */
-export class ProcessedSpecimenDefinition extends SpecimenDefinition {
-
-  deserialize(input: any) {
-    Object.assign(this, input);
-    return this;
-  }
-}
+export class ProcessedSpecimenDefinition extends SpecimenDefinition { }

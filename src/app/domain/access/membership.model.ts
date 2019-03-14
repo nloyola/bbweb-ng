@@ -1,4 +1,4 @@
-import { EntityInfo } from '@app/domain';
+import { EntityInfo, JSONObject, JSONArray } from '@app/domain';
 import { IUserInfo } from '@app/domain/users';
 import { MembershipBase } from './membership-base.model';
 
@@ -9,10 +9,11 @@ export class Membership extends MembershipBase {
    */
   userData: IUserInfo[];
 
-  deserialize(input: any) {
+  deserialize(input: JSONObject) {
     super.deserialize(input);
     if (input.userData) {
-      this.userData = input.userData.map((ui: any) => new EntityInfo().deserialize(ui));
+      this.userData = (input.userData as JSONArray)
+        .map((ui: JSONObject) => new EntityInfo().deserialize(ui));
     }
     return this;
   }

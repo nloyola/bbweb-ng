@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { PagedReply, SearchParams } from '@app/domain';
+import { PagedReply, SearchParams, JSONObject, JSONArray, JSONValue } from '@app/domain';
 import { ApiReply } from '@app/domain/api-reply.model';
 import { Observable } from 'rxjs';
 import { delay, map } from 'rxjs/operators';
@@ -29,8 +29,12 @@ export class UserService {
       .pipe(
         map((reply: ApiReply) => {
           if (reply && reply.data) {
+            const jObj = reply.data as JSONObject;
             return {
-              ...reply.data
+              total: jObj.total as number,
+              registeredCount: jObj.registeredCount as number,
+              activeCount: jObj.activeCount as number,
+              lockedCount: jObj.lockedCount as number
             };
           }
           throw new Error('expected a user object');
@@ -64,14 +68,16 @@ export class UserService {
       .pipe(
         // delay(1000),
         map((reply: ApiReply) => {
-          if (reply && reply.data && reply.data.items) {
-            const entities: User[] = reply.data.items.map((obj: any) => new User().deserialize(obj));
+          const jObj = reply.data as JSONObject;
+          if (reply && reply.data && jObj.items) {
+            const entities: User[] = (jObj.items as JSONArray)
+              .map((obj: JSONObject) => new User().deserialize(obj));
             return {
               searchParams,
               entities,
-              offset: reply.data.offset,
-              total: reply.data.total,
-              maxPages: reply.data.maxPages
+              offset: jObj.offset as number,
+              total: jObj.total as number,
+              maxPages: jObj.maxPages as number
             };
           }
           throw new Error('expected a paged reply');
@@ -114,7 +120,7 @@ export class UserService {
 
   private replyToUser(reply: ApiReply): User {
     if (reply && reply.data) {
-      return new User().deserialize(reply.data);
+      return new User().deserialize(reply.data as JSONObject);
     }
     throw new Error('expected a user object');
   }

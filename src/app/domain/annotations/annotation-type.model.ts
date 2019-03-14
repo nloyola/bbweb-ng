@@ -1,8 +1,6 @@
-import { DomainEntity, IDomainEntity } from '@app/domain/domain-entity.model';
-import { ValueTypes } from './value-type.enum';
+import { DomainEntity, HasDescription, HasName, IDomainEntity, JSONObject } from '@app/domain';
 import { MaxValueCount } from './max-value-count.enum';
-import { HasDescription } from '../has-description.model';
-import { HasName } from '../has-name.model';
+import { ValueTypes } from './value-type.enum';
 
 export interface IAnnotationType extends IDomainEntity, HasName, HasDescription {
 
@@ -48,7 +46,7 @@ export class AnnotationType extends DomainEntity implements IAnnotationType {
     return sortedAnnotationTypes;
   }
 
-  deserialize(input: any) {
+  deserialize(input: JSONObject) {
     Object.assign(this, input);
     return this;
   }
@@ -71,11 +69,3 @@ export class AnnotationType extends DomainEntity implements IAnnotationType {
   }
 
 }
-
-export type AnnotationTypeToAdd =
-  Pick<AnnotationType, 'name'
-  | 'description'
-  | 'valueType'
-  | 'maxValueCount'
-  | 'required'
-  | 'options' >;

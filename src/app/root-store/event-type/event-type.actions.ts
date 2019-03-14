@@ -1,7 +1,7 @@
 import { HideSpinner, ShowSpinner } from '@app/core/decorators';
 import { PagedReply, SearchParams } from '@app/domain';
 import { AnnotationType } from '@app/domain/annotations';
-import { CollectedSpecimenDefinition, CollectedSpecimenDefinitionName, CollectionEventType, CollectionEventTypeToAdd } from '@app/domain/studies';
+import { CollectedSpecimenDefinition, CollectedSpecimenDefinitionName, CollectionEventType } from '@app/domain/studies';
 import { Action } from '@ngrx/store';
 
 interface EventTypesRequestPayload {
@@ -123,7 +123,7 @@ export class GetEventTypeFailure implements Action {
 export class AddEventTypeRequest implements Action {
   readonly type = ActionTypes.AddEventTypeRequest;
 
-  constructor(public payload: { eventType: CollectionEventTypeToAdd }) { }
+  constructor(public payload: { eventType: CollectionEventType }) { }
 }
 
 @HideSpinner(ActionTypes.AddEventTypeRequest)

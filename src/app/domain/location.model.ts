@@ -1,9 +1,8 @@
-import { DomainEntity } from './domain-entity.model';
+import { DomainEntity, IDomainEntity } from './domain-entity.model';
+import { HasName } from './has-name.model';
+import { JSONObject } from './json-object.model';
 
-export class Location extends DomainEntity {
-
-  /** A short identifying name that is unique. */
-  name: string;
+export interface ILocation extends IDomainEntity, HasName {
 
   /** The street address for this location. */
   street: string;
@@ -23,7 +22,19 @@ export class Location extends DomainEntity {
   /** The ISO country code for the country the location is in. */
   countryIsoCode: string;
 
-  deserialize(input: any) {
+}
+
+export class Location extends DomainEntity implements ILocation {
+
+  name: string;
+  street: string;
+  city: string;
+  province: string;
+  postalCode: string;
+  poBoxNumber: string;
+  countryIsoCode: string;
+
+  deserialize(input: JSONObject) {
     Object.assign(this, input);
     return this;
   }

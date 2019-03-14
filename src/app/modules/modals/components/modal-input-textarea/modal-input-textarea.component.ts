@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ModalInputTextComponent } from '@app/modules/modals/components/modal-input-text/modal-input-text.component';
 import { ModalInputTextareaOptions, ModalInputTextOptions } from '../../models';
 import { FormBuilder } from '@angular/forms';

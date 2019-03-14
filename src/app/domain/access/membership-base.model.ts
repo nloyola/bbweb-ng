@@ -1,4 +1,4 @@
-import { ConcurrencySafeEntity, EntitySet, HasName, HasSlug, IConcurrencySafeEntity, IEntityInfo } from '@app/domain';
+import { ConcurrencySafeEntity, EntitySet, HasName, HasSlug, IConcurrencySafeEntity, IEntityInfo, JSONObject } from '@app/domain';
 import { ICentreInfoSet } from '@app/domain/centres';
 import { IStudyInfoSet } from '@app/domain/studies';
 
@@ -24,13 +24,13 @@ export abstract class MembershipBase extends ConcurrencySafeEntity implements Ha
   studyData: IStudyInfoSet;
   centreData: ICentreInfoSet;
 
-  deserialize(input: any) {
+  deserialize(input: JSONObject) {
     super.deserialize(input);
     if (input.studyData) {
-      this.studyData = new EntitySet().deserialize(input.studyData);
+      this.studyData = new EntitySet().deserialize(input.studyData as JSONObject);
     }
     if (input.centreData) {
-      this.centreData = new EntitySet().deserialize(input.centreData);
+      this.centreData = new EntitySet().deserialize(input.centreData as JSONObject);
     }
     return this;
   }

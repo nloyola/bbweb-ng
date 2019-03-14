@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { PagedReply, SearchParams } from '@app/domain';
+import { PagedReply, SearchParams, JSONObject, JSONArray, JSONValue } from '@app/domain';
 import { AnnotationType } from '@app/domain/annotations';
 import { ApiReply } from '@app/domain/api-reply.model';
-import { Study, StudyCounts, StudyToAdd } from '@app/domain/studies';
+import { Study, StudyCounts } from '@app/domain/studies';
 import { Observable } from 'rxjs';
 import { map, delay } from 'rxjs/operators';
 
@@ -27,8 +27,12 @@ export class StudyService {
       .pipe(
         map((reply: ApiReply) => {
           if (reply && reply.data) {
+            const jObj = reply.data as JSONObject;
             return {
-              ...reply.data
+              total: jObj.total as number,
+              disabledCount: jObj.disabledCount as number,
+              enabledCount: jObj.enabledCount as number,
+              retiredCount: jObj.retiredCount as number
             };
           }
           throw new Error('expected a study object');
@@ -60,21 +64,23 @@ export class StudyService {
       .pipe(
         // delay(1000),
         map((reply: ApiReply) => {
-          if (reply && reply.data && reply.data.items) {
-            const entities: Study[] = reply.data.items.map((obj: any) => new Study().deserialize(obj));
+          const jObj = reply.data as JSONObject;
+          if (reply && reply.data && jObj.items) {
+            const entities: Study[] = (jObj.items as JSONArray)
+              .map((obj: JSONObject) => new Study().deserialize(obj));
             return {
               searchParams,
               entities,
-              offset: reply.data.offset,
-              total: reply.data.total,
-              maxPages: reply.data.maxPages
+              offset: jObj.offset as number,
+              total: jObj.total as number,
+              maxPages: jObj.maxPages as number
             };
           }
           throw new Error('expected a paged reply');
         }));
   }
 
-  add(study: StudyToAdd): Observable<Study> {
+  add(study: Study): Observable<Study> {
     const json = {
       name: study.name,
       description: study.description ? study.description : null
@@ -149,7 +155,7 @@ export class StudyService {
 
   private replyToStudy(reply: ApiReply): Study {
     if (reply && reply.data) {
-      return new Study().deserialize(reply.data);
+      return new Study().deserialize(reply.data as JSONObject);
     }
     throw new Error('expected a study object');
   }

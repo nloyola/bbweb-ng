@@ -1,7 +1,5 @@
-import { EntityInfo, HasDescription, HasName, HasSlug, IEntityInfo, IEntitySet, Location } from '@app/domain';
-import { ConcurrencySafeEntity, IConcurrencySafeEntity } from '@app/domain/concurrency-safe-entity.model';
-import { IEntityInfoAndState } from '../entity-info-and-state.model';
-import { IStudyInfoAndState } from '../studies';
+import { ConcurrencySafeEntity, EntityInfoAndState, HasDescription, HasName, HasSlug, IConcurrencySafeEntity, IEntityInfo, IEntityInfoAndState, IEntitySet, JSONArray, JSONObject, Location } from '@app/domain';
+import { IStudyInfoAndState, Study, StudyState } from '@app/domain/studies';
 import { CentreState } from './centre-state.enum';
 
 export interface ICentre extends IConcurrencySafeEntity, HasSlug, HasName, HasDescription {
@@ -34,7 +32,7 @@ export class Centre extends ConcurrencySafeEntity implements ICentre {
   studyNames: IStudyInfoAndState[];
   locations: Location[];
 
-  deserialize(input: any) {
+  deserialize(input: JSONObject) {
     super.deserialize(input);
 
     if (input.description === undefined) {
@@ -42,13 +40,13 @@ export class Centre extends ConcurrencySafeEntity implements ICentre {
     }
 
     if (input.studyNames) {
-      this.studyNames = input.studyNames
-        .map((sn: any) => new EntityInfo().deserialize(sn));
+      this.studyNames = (input.studyNames as JSONArray)
+        .map((sn: JSONObject) => new EntityInfoAndState<Study, StudyState>().deserialize(sn));
     }
 
     if (input.locations) {
-      this.locations = input.locations
-        .map((loc: any) => new Location().deserialize(loc));
+      this.locations = (input.locations as JSONArray)
+        .map((loc: JSONObject) => new Location().deserialize(loc));
     }
     return this;
   }
@@ -80,5 +78,3 @@ export class Centre extends ConcurrencySafeEntity implements ICentre {
   }
 
 }
-
-export type CentreToAdd = Pick<Centre, 'name' | 'description' >;

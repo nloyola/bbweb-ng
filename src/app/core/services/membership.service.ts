@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { PagedReply, SearchParams } from '@app/domain';
+import { PagedReply, SearchParams, JSONObject, JSONArray, JSONValue } from '@app/domain';
 import { ApiReply } from '@app/domain/api-reply.model';
 import { Observable } from 'rxjs';
 import { delay, map } from 'rxjs/operators';
@@ -54,15 +54,16 @@ export class MembershipService {
       .pipe(
         // delay(2000),
         map((reply: ApiReply) => {
-          if (reply && reply.data && reply.data.items) {
-            const entities: Membership[] =
-              reply.data.items.map((obj: any) => new Membership().deserialize(obj));
+          const jObj = reply.data as JSONObject;
+          if (reply && reply.data && jObj.items) {
+            const entities: Membership[] = (jObj.items as JSONArray)
+              .map((obj: JSONObject) => new Membership().deserialize(obj));
             return {
               searchParams,
               entities,
-              offset: reply.data.offset,
-              total: reply.data.total,
-              maxPages: reply.data.maxPages
+              offset: jObj.offset as number,
+              total: jObj.total as number,
+              maxPages: jObj.maxPages as number
             };
           }
           throw new Error('expected a paged reply');
@@ -174,7 +175,7 @@ export class MembershipService {
 
   private replyToMembership(reply: ApiReply): Membership {
     if (reply && reply.data) {
-      return new Membership().deserialize(reply.data);
+      return new Membership().deserialize(reply.data as JSONObject);
     }
     throw new Error('expected a membership object');
   }

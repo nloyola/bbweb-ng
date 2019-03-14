@@ -1,6 +1,6 @@
 import { HideSpinner, ShowSpinner } from '@app/core/decorators';
 import { Location, PagedReply, SearchParams } from '@app/domain';
-import { Centre, CentreCounts, CentreToAdd } from '@app/domain/centres';
+import { Centre, CentreCounts } from '@app/domain/centres';
 import { Action } from '@ngrx/store';
 
 interface CentreUpdateRequestPayload {
@@ -86,7 +86,7 @@ export class SearchCentresFailure implements Action {
 export class AddCentreRequest implements Action {
   readonly type = ActionTypes.AddCentreRequest;
 
-  constructor(public payload: { centre: CentreToAdd }) { }
+  constructor(public payload: { centre: Centre }) { }
 }
 
 @HideSpinner(ActionTypes.AddCentreRequest)

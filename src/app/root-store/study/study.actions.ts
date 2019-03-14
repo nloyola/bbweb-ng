@@ -1,7 +1,7 @@
 import { HideSpinner, ShowSpinner } from '@app/core/decorators';
 import { PagedReply, SearchParams } from '@app/domain';
 import { AnnotationType } from '@app/domain/annotations';
-import { Study, StudyCounts, StudyToAdd } from '@app/domain/studies';
+import { Study, StudyCounts } from '@app/domain/studies';
 import { Action } from '@ngrx/store';
 
 interface StudyUpdateRequestPayload {
@@ -89,7 +89,7 @@ export class SearchStudiesFailure implements Action {
 export class AddStudyRequest implements Action {
   readonly type = ActionTypes.AddStudyRequest;
 
-  constructor(public payload: { study: StudyToAdd }) { }
+  constructor(public payload: { study: Study }) { }
 }
 
 @HideSpinner(ActionTypes.AddStudyRequest)

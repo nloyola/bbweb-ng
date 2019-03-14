@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Location, PagedReply, SearchParams } from '@app/domain';
+import { Location, PagedReply, SearchParams, JSONArray, JSONValue, JSONObject } from '@app/domain';
 import { ApiReply } from '@app/domain/api-reply.model';
-import { Centre, CentreCounts, CentreToAdd } from '@app/domain/centres';
+import { Centre, CentreCounts } from '@app/domain/centres';
 import { Observable } from 'rxjs';
 import { delay, map } from 'rxjs/operators';
 
@@ -26,8 +26,11 @@ export class CentreService {
       .pipe(
         map((reply: ApiReply) => {
           if (reply && reply.data) {
+            const jObj = reply.data as JSONObject;
             return {
-              ...reply.data
+              total: jObj.total as number,
+              disabledCount: jObj.disabledCount as number,
+              enabledCount: jObj.enabledCount as number
             };
           }
           throw new Error('expected a centre object');
@@ -59,21 +62,24 @@ export class CentreService {
       .pipe(
         // delay(1000),
         map((reply: ApiReply) => {
-          if (reply && reply.data && reply.data.items) {
-            const entities: Centre[] = reply.data.items.map((obj: any) => new Centre().deserialize(obj));
+          const jObj = reply.data as JSONObject;
+          if (reply && reply.data && jObj.items) {
+            const entities: Centre[] = (jObj.items as JSONArray)
+              .map((obj: JSONObject) => new Centre().deserialize(obj));
+
             return {
               searchParams,
               entities,
-              offset: reply.data.offset,
-              total: reply.data.total,
-              maxPages: reply.data.maxPages
+              offset: jObj.offset as number,
+              total: jObj.total as number,
+              maxPages: jObj.maxPages as number
             };
           }
           throw new Error('expected a paged reply');
         }));
   }
 
-  add(centre: CentreToAdd): Observable<Centre> {
+  add(centre: Centre): Observable<Centre> {
     const json = {
       name: centre.name,
       description: centre.description ? centre.description : null
@@ -164,7 +170,7 @@ export class CentreService {
 
   private replyToCentre(reply: ApiReply): Centre {
     if (reply && reply.data) {
-      return new Centre().deserialize(reply.data);
+      return new Centre().deserialize(reply.data as JSONObject);
     }
     throw new Error('expected a centre object');
   }

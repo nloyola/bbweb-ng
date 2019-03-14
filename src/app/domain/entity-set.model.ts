@@ -2,6 +2,7 @@ import { DomainEntity, IDomainEntity } from './domain-entity.model';
 import { EntityInfo, IEntityInfo } from './entity-info.model';
 import { HasSlug } from './has-slug.model';
 import { HasName } from './has-name.model';
+import { JSONObject, JSONArray } from './json-object.model';
 
 export interface IEntitySet<T extends IDomainEntity & HasSlug & HasName> {
 
@@ -28,10 +29,11 @@ export class EntitySet<T extends IDomainEntity & HasSlug & HasName>
     return (!this.allEntities && (this.entityData.length > 0));
   }
 
-  deserialize(input: any) {
+  deserialize(input: JSONObject) {
     super.deserialize(input);
     if (input.entityData) {
-      this.entityData = input.entityData.map((ed: any) => new EntityInfo().deserialize(ed));
+      this.entityData = (input.entityData as JSONArray)
+        .map((ed: JSONObject) => new EntityInfo().deserialize(ed));
     }
     return this;
   }

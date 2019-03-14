@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ApiReply, PagedReply, SearchParams } from '@app/domain';
+import { ApiReply, PagedReply, SearchParams, JSONArray, JSONValue, JSONObject } from '@app/domain';
 import { AnnotationType } from '@app/domain/annotations';
-import { InputSpecimenProcessing, OutputSpecimenProcessing, ProcessedSpecimenDefinitionName, ProcessingType, ProcessingTypeToAdd } from '@app/domain/studies';
+import { InputSpecimenProcessing, OutputSpecimenProcessing, ProcessedSpecimenDefinitionName, ProcessingType } from '@app/domain/studies';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -40,15 +40,16 @@ export class ProcessingTypeService {
                                    { params: searchParams.httpParams() })
       .pipe(
         map((reply: ApiReply) => {
-          if (reply && reply.data && reply.data.items) {
-            const entities: ProcessingType[] =
-              reply.data.items.map((obj: any) => new ProcessingType().deserialize(obj));
+          const jObj = reply.data as JSONObject;
+          if (reply && reply.data && jObj.items) {
+            const entities: ProcessingType[] = (jObj.items as JSONArray)
+              .map((obj: JSONObject) => new ProcessingType().deserialize(obj));
             return {
               searchParams,
               entities,
-              offset: reply.data.offset,
-              total: reply.data.total,
-              maxPages: reply.data.maxPages
+              offset: jObj.offset as number,
+              total: jObj.total as number,
+              maxPages: jObj.maxPages as number
             };
           }
           throw new Error('expected a paged reply');
@@ -105,14 +106,14 @@ export class ProcessingTypeService {
     return this.http.get<ApiReply>(`${this.BASE_URL}/spcdefs/${studyId}`)
       .pipe(map((reply: ApiReply) => {
         if (reply && reply.data) {
-          return reply.data
-            .map((info: any) => new ProcessedSpecimenDefinitionName().deserialize(info));
+          return (reply.data as JSONArray)
+            .map((info: JSONObject) => new ProcessedSpecimenDefinitionName().deserialize(info));
         }
         throw new Error('expected a processed specimen definition names array');
       }));
   }
 
-  add(processingType: ProcessingTypeToAdd): Observable<ProcessingType> {
+  add(processingType: ProcessingType): Observable<ProcessingType> {
     const json = {
       name: processingType.name,
       description: processingType.description,
@@ -186,7 +187,7 @@ export class ProcessingTypeService {
 
   private replyToProcessingType(reply: ApiReply): ProcessingType {
     if (reply && reply.data) {
-      return new ProcessingType().deserialize(reply.data);
+      return new ProcessingType().deserialize(reply.data as JSONObject);
     }
     throw new Error('expected a processing type object');
   }

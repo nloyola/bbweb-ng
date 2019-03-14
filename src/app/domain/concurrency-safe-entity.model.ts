@@ -1,4 +1,5 @@
 import { DomainEntity, IDomainEntity } from './domain-entity.model';
+import { JSONObject } from './json-object.model';
 
 export interface IConcurrencySafeEntity extends IDomainEntity {
 
@@ -25,13 +26,13 @@ export abstract class ConcurrencySafeEntity extends DomainEntity implements ICon
   timeAdded: Date;
   timeModified: Date | null;
 
-  deserialize(input: any) {
+  deserialize(input: JSONObject) {
     super.deserialize(input);
     if (input.timeAdded) {
-      this.timeAdded = new Date(input.timeAdded);
+      this.timeAdded = new Date(input.timeAdded as string);
     }
     if (input.timeModified) {
-      this.timeModified = new Date(input.timeModified);
+      this.timeModified = new Date(input.timeModified as string);
     }
     return this;
   }

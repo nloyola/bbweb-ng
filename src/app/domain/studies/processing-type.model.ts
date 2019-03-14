@@ -1,9 +1,10 @@
-import { HasDescription, HasName, HasSlug } from '@app/domain';
+import { HasDescription, HasName, HasSlug, JSONObject } from '@app/domain';
 import { AnnotationType } from '@app/domain/annotations';
 import { ConcurrencySafeEntity } from '@app/domain/concurrency-safe-entity.model';
 import { InputSpecimenProcessing } from './input-specimen-processing.model';
 import { OutputSpecimenProcessing } from './output-specimen-processing.model';
 import { ProcessingTypeInputEntity } from './processing-type-input-entity.model';
+import { JSONArray } from '../json-object.model';
 
 export interface IProcessingType
 extends ConcurrencySafeEntity, ProcessingTypeInputEntity, HasSlug, HasName, HasDescription {
@@ -59,7 +60,7 @@ export class ProcessingType extends ConcurrencySafeEntity implements IProcessing
     this.output = new OutputSpecimenProcessing();
   }
 
-  deserialize(obj: any) {
+  deserialize(obj: JSONObject) {
     super.deserialize(obj);
 
     if (obj.description === undefined) {
@@ -67,16 +68,17 @@ export class ProcessingType extends ConcurrencySafeEntity implements IProcessing
     }
 
     if (obj.annotationTypes) {
-      this.annotationTypes = obj.annotationTypes
-        .map((at: any) => new AnnotationType().deserialize(at));
+      this.annotationTypes = (obj.annotationTypes as JSONArray)
+        .map((at: JSONObject) => new AnnotationType().deserialize(at));
     }
 
     if (obj.specimenProcessing) {
-      if (obj.specimenProcessing.input) {
-        this.input = new InputSpecimenProcessing().deserialize(obj.specimenProcessing.input);
+      const jObj = obj.specimenProcessing as JSONObject;
+      if (jObj.input) {
+        this.input = new InputSpecimenProcessing().deserialize(jObj.input as JSONObject);
       }
-      if (obj.specimenProcessing.output) {
-        this.output = new OutputSpecimenProcessing().deserialize(obj.specimenProcessing.output);
+      if (jObj.output) {
+        this.output = new OutputSpecimenProcessing().deserialize(jObj.output as JSONObject);
       }
     }
 
@@ -84,6 +86,3 @@ export class ProcessingType extends ConcurrencySafeEntity implements IProcessing
   }
 
 }
-
-export type ProcessingTypeToAdd =
-  Pick<ProcessingType, 'name' | 'description' | 'enabled' | 'studyId' | 'input' | 'output' >;

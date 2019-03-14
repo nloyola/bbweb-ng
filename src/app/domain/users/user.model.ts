@@ -1,5 +1,5 @@
-import { ConcurrencySafeEntity, HasSlug, HasName, IConcurrencySafeEntity, IEntityInfo } from '@app/domain';
-import { RoleIds, UserRole, UserMembership } from '@app/domain/access';
+import { ConcurrencySafeEntity, HasName, HasSlug, IConcurrencySafeEntity, IEntityInfo, JSONArray, JSONObject } from '@app/domain';
+import { RoleIds, UserMembership, UserRole } from '@app/domain/access';
 import { UserState } from '@app/domain/users/user-state.enum';
 
 export interface IUser extends IConcurrencySafeEntity, HasSlug, HasName {
@@ -107,14 +107,15 @@ export class User extends ConcurrencySafeEntity implements IUser {
     return this.membership !== undefined;
   }
 
-  deserialize(input: any) {
+  deserialize(input: JSONObject) {
     super.deserialize(input);
     if (input.roles) {
-      this.roles = input.roles.map((role: any) => new UserRole().deserialize(role));
+      this.roles = (input.roles as JSONArray)
+        .map((role: JSONObject) => new UserRole().deserialize(role));
     }
 
     if (input.membership) {
-      this.membership = new UserMembership().deserialize(input.membership);
+      this.membership = new UserMembership().deserialize(input.membership as JSONObject);
     }
     return this;
   }

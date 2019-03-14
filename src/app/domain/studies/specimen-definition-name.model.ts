@@ -4,11 +4,4 @@ import { ISpecimenDefinition, SpecimenDefinition } from './specimen-definition.m
 export type ISpecimenDefinitionName = IEntityInfo<ISpecimenDefinition>;
 
 export class SpecimenDefinitionName extends EntityInfo<SpecimenDefinition>
-  implements ISpecimenDefinitionName {
-
-  deserialize(obj: any) {
-    super.deserialize(obj);
-    return this;
-  }
-
-}
+  implements ISpecimenDefinitionName { }

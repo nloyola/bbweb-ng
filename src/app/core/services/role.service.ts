@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { PagedReply, SearchParams } from '@app/domain';
+import { PagedReply, SearchParams, JSONArray, JSONValue, JSONObject } from '@app/domain';
 import { ApiReply } from '@app/domain/api-reply.model';
 import { Observable } from 'rxjs';
 import { delay, map } from 'rxjs/operators';
@@ -44,14 +44,16 @@ export class RoleService {
       .pipe(
         // delay(1000),
         map((reply: ApiReply) => {
-          if (reply && reply.data && reply.data.items) {
-            const entities: Role[] = reply.data.items.map((obj: any) => new Role().deserialize(obj));
+          const jObj = reply.data as JSONObject;
+          if (reply && reply.data && jObj.items) {
+            const entities: Role[] = (jObj.items as JSONArray)
+              .map((obj: JSONObject) => new Role().deserialize(obj));
             return {
               searchParams,
               entities,
-              offset: reply.data.offset,
-              total: reply.data.total,
-              maxPages: reply.data.maxPages
+              offset: jObj.offset as number,
+              total: jObj.total as number,
+              maxPages: jObj.maxPages as number
             };
           }
           throw new Error('expected a paged reply');
@@ -81,7 +83,7 @@ export class RoleService {
 
   private replyToRole(reply: ApiReply): Role {
     if (reply && reply.data) {
-      return new Role().deserialize(reply.data);
+      return new Role().deserialize(reply.data as JSONObject);
     }
     throw new Error('expected a role object');
   }

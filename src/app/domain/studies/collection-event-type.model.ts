@@ -1,7 +1,8 @@
-import { HasDescription, HasName, HasSlug } from '@app/domain';
+import { JSONArray, HasDescription, HasName, HasSlug, JSONObject } from '@app/domain';
 import { ConcurrencySafeEntity, IConcurrencySafeEntity } from '@app/domain/concurrency-safe-entity.model';
 import { AnnotationType, IAnnotationType } from '@app/domain/annotations';
-import { CollectedSpecimenDefinition, ProcessingTypeInputEntity } from '@app/domain/studies';
+import { ProcessingTypeInputEntity } from './processing-type-input-entity.model';
+import { CollectedSpecimenDefinition } from './collected-specimen-definition.model';
 
 export interface ICollectionEventType
 extends IConcurrencySafeEntity, ProcessingTypeInputEntity, HasSlug, HasName, HasDescription {
@@ -38,7 +39,7 @@ export class CollectionEventType extends ConcurrencySafeEntity implements IColle
   annotationTypes: AnnotationType[] = [];
   specimenDefinitions: CollectedSpecimenDefinition[];
 
-  deserialize(input: any) {
+  deserialize(input: JSONObject) {
     super.deserialize(input);
 
     if (input.description === undefined) {
@@ -46,19 +47,16 @@ export class CollectionEventType extends ConcurrencySafeEntity implements IColle
     }
 
     if (input.annotationTypes) {
-      this.annotationTypes = input.annotationTypes
-        .map((at: AnnotationType) => new AnnotationType().deserialize(at));
+      this.annotationTypes = (input.annotationTypes as JSONArray)
+        .map((at: JSONObject) => new AnnotationType().deserialize(at));
     }
 
     if (input.specimenDefinitions) {
-      this.specimenDefinitions = input.specimenDefinitions
-        .map((sd: CollectedSpecimenDefinition) => new CollectedSpecimenDefinition().deserialize(sd));
+      this.specimenDefinitions = (input.specimenDefinitions as JSONArray)
+        .map((sd: JSONObject) => new CollectedSpecimenDefinition().deserialize(sd));
     }
 
     return this;
   }
 
 }
-
-export type CollectionEventTypeToAdd =
-  Pick<CollectionEventType, 'name' | 'description' | 'recurring' | 'studyId' >;

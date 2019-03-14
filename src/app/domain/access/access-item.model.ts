@@ -1,4 +1,4 @@
-import { ConcurrencySafeEntity, EntityInfo, HasDescription, HasName, HasSlug, IConcurrencySafeEntity, IEntityInfo } from '@app/domain';
+import { ConcurrencySafeEntity, EntityInfo, HasDescription, HasName, HasSlug, IConcurrencySafeEntity, IEntityInfo, JSONArray, JSONObject } from '@app/domain';
 
 export interface IAccessItem extends IConcurrencySafeEntity, HasSlug, HasName, HasDescription {
 
@@ -23,13 +23,15 @@ export abstract class AccessItem extends ConcurrencySafeEntity implements IAcces
   parentData: IAccessItemInfo[];
   childData: IAccessItemInfo[];
 
-  deserialize(input: any) {
+  deserialize(input: JSONObject) {
     super.deserialize(input);
     if (input.parentData) {
-      this.parentData = input.parentData.map((p: any) => new EntityInfo().deserialize(p));
+      this.parentData = (input.parentData as JSONArray)
+        .map((p: JSONObject) => new EntityInfo().deserialize(p));
     }
     if (input.childData) {
-      this.childData = input.childData.map((c: any) => new EntityInfo().deserialize(c));
+      this.childData = (input.childData as JSONArray)
+        .map((c: JSONObject) => new EntityInfo().deserialize(c));
     }
     return this;
   }

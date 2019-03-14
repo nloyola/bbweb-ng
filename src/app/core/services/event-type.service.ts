@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ApiReply, PagedReply, SearchParams } from '@app/domain';
+import { ApiReply, PagedReply, SearchParams, JSONArray, JSONValue, JSONObject } from '@app/domain';
 import { AnnotationType } from '@app/domain/annotations';
-import { CollectedSpecimenDefinition, CollectedSpecimenDefinitionName, CollectionEventType, CollectionEventTypeToAdd } from '@app/domain/studies';
+import { CollectedSpecimenDefinition, CollectedSpecimenDefinitionName, CollectionEventType } from '@app/domain/studies';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -29,15 +29,16 @@ export class EventTypeService {
                                    { params: searchParams.httpParams() })
       .pipe(
         map((reply: ApiReply) => {
-          if (reply && reply.data && reply.data.items) {
-            const entities: CollectionEventType[] =
-              reply.data.items.map((obj: any) => new CollectionEventType().deserialize(obj));
+          const jObj = reply.data as JSONObject;
+          if (reply && reply.data && jObj.items) {
+            const entities: CollectionEventType[] = (jObj.items as JSONArray)
+              .map((obj: JSONObject) => new CollectionEventType().deserialize(obj));
             return {
               searchParams,
               entities,
-              offset: reply.data.offset,
-              total: reply.data.total,
-              maxPages: reply.data.maxPages
+              offset: jObj.offset as number,
+              total: jObj.total as number,
+              maxPages: jObj.maxPages as number
             };
           }
           throw new Error('expected a paged reply');
@@ -76,14 +77,14 @@ export class EventTypeService {
     return this.http.get<ApiReply>(`${this.BASE_URL}/spcdefs/${studySlug}`)
       .pipe(map((reply: ApiReply) => {
         if (reply && reply.data) {
-          return reply.data
-            .map((info: any) => new CollectedSpecimenDefinitionName().deserialize(info));
+          return (reply.data as JSONArray)
+            .map((info: JSONObject) => new CollectedSpecimenDefinitionName().deserialize(info));
         }
         throw new Error('expected a processed specimen definition names array');
       }));
   }
 
-  add(eventType: CollectionEventTypeToAdd): Observable<CollectionEventType> {
+  add(eventType: CollectionEventType): Observable<CollectionEventType> {
     const json = {
       name: eventType.name,
       description: eventType.description,
@@ -94,8 +95,11 @@ export class EventTypeService {
       .pipe(map(this.replyToEventType));
   }
 
-  update(eventType: CollectionEventType,
-         attributeName: string, value: string): Observable<CollectionEventType> {
+  update(
+    eventType: CollectionEventType,
+    attributeName: string,
+    value: string | boolean
+  ): Observable<CollectionEventType> {
     let url: string;
     let json = {
       studyId: eventType.studyId,
@@ -189,7 +193,7 @@ export class EventTypeService {
 
   private replyToEventType(reply: ApiReply): CollectionEventType {
     if (reply && reply.data) {
-      return new CollectionEventType().deserialize(reply.data);
+      return new CollectionEventType().deserialize(reply.data as JSONObject);
     }
     throw new Error('expected a collection event type object');
   }

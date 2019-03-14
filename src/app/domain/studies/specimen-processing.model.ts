@@ -1,4 +1,4 @@
-export class SpecimenProcessing {
+export interface ISpecimenProcessing {
 
   /**
    * The expected amount to be removed / added.

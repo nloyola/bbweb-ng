@@ -1,7 +1,6 @@
-import { EntityInfo, IEntityInfo } from '@app/domain';
-import { SpecimenDefinitionName } from './specimen-definition-name.model';
+import { EntityInfo, IEntityInfo, JSONArray, JSONObject } from '@app/domain';
 import { CollectionEventType, ICollectionEventType } from './collection-event-type.model';
-import { ISpecimenDefinitionName } from './specimen-definition-name.model';
+import { ISpecimenDefinitionName, SpecimenDefinitionName } from './specimen-definition-name.model';
 
 export interface ICollectedSpecimenDefinitionName extends IEntityInfo<ICollectionEventType> {
 
@@ -14,12 +13,12 @@ export class CollectedSpecimenDefinitionName extends EntityInfo<CollectionEventT
 
   specimenDefinitionNames: SpecimenDefinitionName[];
 
-  deserialize(obj: any) {
+  deserialize(obj: JSONObject) {
     super.deserialize(obj);
 
     if (obj.specimenDefinitionNames !== undefined) {
-      this.specimenDefinitionNames =
-        obj.specimenDefinitionNames.map((sdn: any) => new SpecimenDefinitionName().deserialize(sdn));
+      this.specimenDefinitionNames = (obj.specimenDefinitionNames as JSONArray)
+        .map((sdn: JSONObject) => new SpecimenDefinitionName().deserialize(sdn));
     }
 
     return this;

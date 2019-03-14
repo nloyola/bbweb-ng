@@ -1,6 +1,7 @@
-import { SpecimenProcessing } from './specimen-processing.model';
+import { ISpecimenProcessing } from './specimen-processing.model';
+import { JSONObject } from '@app/domain';
 
-export class InputSpecimenProcessing extends SpecimenProcessing {
+export interface IInputSpecimenProcessing extends ISpecimenProcessing {
 
   definitionType: 'collected' | 'processed';
 
@@ -11,13 +12,22 @@ export class InputSpecimenProcessing extends SpecimenProcessing {
   expectedChange: number;
 
   count: number;
+}
+
+export class InputSpecimenProcessing implements IInputSpecimenProcessing {
+
+  definitionType: 'collected' | 'processed';
+  entityId: string;
+  specimenDefinitionId: string;
+  expectedChange: number;
+  count: number;
+  containerTypeId: string | null;
 
   constructor() {
-    super();
     this.definitionType = 'collected';
   }
 
-  deserialize(input: any) {
+  deserialize(input: JSONObject) {
     Object.assign(this, input);
     return this;
   }

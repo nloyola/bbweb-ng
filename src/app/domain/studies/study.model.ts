@@ -1,8 +1,8 @@
-import { IEntityInfo, HasDescription, HasName, HasSlug, IEntitySet } from '@app/domain';
+import { HasDescription, HasName, HasSlug, IEntityInfo, IEntitySet, JSONArray, JSONObject } from '@app/domain';
 import { AnnotationType } from '@app/domain/annotations/annotation-type.model';
 import { ConcurrencySafeEntity, IConcurrencySafeEntity } from '@app/domain/concurrency-safe-entity.model';
-import { StudyState } from './study-state.enum';
 import { IEntityInfoAndState } from '../entity-info-and-state.model';
+import { StudyState } from './study-state.enum';
 
 export interface IStudy extends IConcurrencySafeEntity, HasSlug, HasName, HasDescription {
 
@@ -34,7 +34,7 @@ export class Study extends ConcurrencySafeEntity implements IStudy {
   annotationTypes: AnnotationType[] = [];
   state: StudyState;
 
-  deserialize(input: any) {
+  deserialize(input: JSONObject) {
     super.deserialize(input);
 
     if (((input.description === undefined))) {
@@ -42,8 +42,8 @@ export class Study extends ConcurrencySafeEntity implements IStudy {
     }
 
     if (input.annotationTypes) {
-      this.annotationTypes = input.annotationTypes
-        .map((at: any) => new AnnotationType().deserialize(at));
+      this.annotationTypes = (input.annotationTypes as JSONArray)
+        .map((at: JSONObject) => new AnnotationType().deserialize(at));
     }
     return this;
   }
@@ -77,5 +77,3 @@ export class Study extends ConcurrencySafeEntity implements IStudy {
 
 
 }
-
-export type StudyToAdd = Pick<Study, 'name' | 'description' >;
