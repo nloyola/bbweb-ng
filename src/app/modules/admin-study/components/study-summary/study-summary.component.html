@@ -1,98 +1,122 @@
-<div class="card mt-2" *ngIf="study">
-  <div class="card-header bg-primary text-light"
-       *ngIf="!(isLoading$ | async); else showLoading">
-    <mat-icon [ngClass]="study.stateIconClass()">
-      {{study.stateIcon()}}
-    </mat-icon>
-    {{study.name}}
-    <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
+<ng-container *ngIf="study$ | async as study">
 
-      <button class="btn btn-sm btn-light"
-              type="button"
-              id="studySummaryMenu"
-              ngbDropdownToggle>
-        <mat-icon inline="true">more_vert</mat-icon>
-      </button>
+  <div class="card mt-2">
+    <div class="card-header bg-primary text-light"
+         *ngIf="!(isLoading$ | async); else showLoading">
+      <mat-icon [ngClass]="study.stateIconClass()">
+        {{study.stateIcon()}}
+      </mat-icon>
+      {{study.name}}
+      <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
 
-      <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="studySummaryMenu">
-        <a class="dropdown-item" *ngIf="study.isDisabled()" (click)="updateName()">
-          <mat-icon class="success-icon mr-1">edit</mat-icon>
-          <ng-container i18n>Update name</ng-container>
-        </a>
-        <a class="dropdown-item" *ngIf="study.isDisabled()" (click)="updateDescription()">
-          <mat-icon class="success-icon mr-1">edit</mat-icon>
-          <ng-container i18n>Update description</ng-container>
-        </a>
-        <a class="dropdown-item" *ngIf="study.isEnabled()" (click)="disable()">
-          <mat-icon class="mr-1" [ngClass]="getStateIconClass('disabled')">
-            {{getStateIcon('disabled')}}
-          </mat-icon>
-          <ng-container i18n>Disable this study</ng-container>
-        </a>
-        <a class="dropdown-item" *ngIf="study.isDisabled() && isEnableAllowed" (click)="enable()">
-          <mat-icon class="mr-1" [ngClass]="getStateIconClass('enabled')">
-            {{getStateIcon('enabled')}}
-          </mat-icon>
-          <ng-container i18n>Enable this study</ng-container>
-        </a>
-        <a class="dropdown-item" *ngIf="study.isDisabled()" (click)="retire()">
-          <mat-icon class="mr-1" [ngClass]="getStateIconClass('retired')">
-            {{getStateIcon('retired')}}
-          </mat-icon>
-          <ng-container i18n>Retire this study</ng-container>
-        </a>
-        <a class="dropdown-item" *ngIf="study.isRetired()" (click)="unretire()">
-          <mat-icon class="mr-1" [ngClass]="getStateIconClass('disabled')">
-            {{getStateIcon('disabled')}}
-          </mat-icon>
-          <ng-container i18n>Unretire this study</ng-container>
-        </a>
-      </div>
-    </span>
+        <button class="btn btn-sm btn-light"
+                type="button"
+                id="studySummaryMenu"
+                ngbDropdownToggle>
+          <mat-icon inline="true">more_vert</mat-icon>
+        </button>
+
+        <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="studySummaryMenu">
+          <a class="dropdown-item" *ngIf="study.isDisabled()" (click)="updateName()">
+            <mat-icon class="success-icon mr-1">edit</mat-icon>
+            <ng-container i18n>Update name</ng-container>
+          </a>
+          <a class="dropdown-item" *ngIf="study.isDisabled()" (click)="updateDescription()">
+            <mat-icon class="success-icon mr-1">edit</mat-icon>
+            <ng-container i18n>Update description</ng-container>
+          </a>
+          <a class="dropdown-item" *ngIf="study.isEnabled()" (click)="disable()">
+            <mat-icon class="mr-1" [ngClass]="getStateIconClass('disabled')">
+              {{getStateIcon('disabled')}}
+            </mat-icon>
+            <ng-container i18n>Disable this study</ng-container>
+          </a>
+          <a class="dropdown-item" *ngIf="study.isDisabled() && isEnableAllowed" (click)="enable()">
+            <mat-icon class="mr-1" [ngClass]="getStateIconClass('enabled')">
+              {{getStateIcon('enabled')}}
+            </mat-icon>
+            <ng-container i18n>Enable this study</ng-container>
+          </a>
+          <a class="dropdown-item" *ngIf="study.isDisabled()" (click)="retire()">
+            <mat-icon class="mr-1" [ngClass]="getStateIconClass('retired')">
+              {{getStateIcon('retired')}}
+            </mat-icon>
+            <ng-container i18n>Retire this study</ng-container>
+          </a>
+          <a class="dropdown-item" *ngIf="study.isRetired()" (click)="unretire()">
+            <mat-icon class="mr-1" [ngClass]="getStateIconClass('disabled')">
+              {{getStateIcon('disabled')}}
+            </mat-icon>
+            <ng-container i18n>Unretire this study</ng-container>
+          </a>
+        </div>
+      </span>
+    </div>
+
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-md-2">
+            <strong i18n>Name:</strong>
+          </div>
+          <div class="col-md-10">
+            {{study.name}}
+          </div>
+        </div>
+      </li>
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-md-2">
+            <strong i18n>Description:</strong>
+          </div>
+          <div class="col-md-10">
+            <app-truncate-toggle [text]="study.description"
+                                 [toggleLength]="descriptionToggleLength"
+                                 [textEmptyWarning]="'Description not entered yet.'">
+            </app-truncate-toggle>
+          </div>
+        </div>
+      </li>
+      <li class="list-group-item" *ngIf="!isEnableAllowed">
+        <div class="alert alert-warning">
+          <mat-icon class="warning-icon">warning</mat-icon>
+          <ng-container i18n>
+            Study cannot be enabled until at least one specimen is added to a collection event.
+          </ng-container>
+        </div>
+      </li>
+      <li class="list-group-item m-0 p-0">
+        <app-entity-status [state]="study.stateLabel()"
+                           [timeAdded]="study.timeAdded"
+                           [timeModified]="study.timeModified"
+                           [useBadges]="false">
+        </app-entity-status>
+      </li>
+
+    </ul>
+
+    <ng-template #updateNameModal let-modal>
+      <app-modal-input-text [title]="'Update Name'"
+                            [label]="'New study name'"
+                            [value]="study.name"
+                            [options]="updateNameModalOptions"
+                            (onConfirm)="confirm($event)"
+                            [modal]="modal">
+      </app-modal-input-text>
+    </ng-template>
+
+    <ng-template #updateDescriptionModal let-modal>
+      <app-modal-input-textarea [title]="'Update Description'"
+                                [label]="'New study description'"
+                                [value]="study.description"
+                                [options]="updateDescriptionModalOptions"
+                                (onConfirm)="confirm($event)"
+                                [modal]="modal">
+      </app-modal-input-textarea>
+    </ng-template>
+
   </div>
-
-  <ul class="list-group list-group-flush">
-    <li class="list-group-item">
-      <div class="row">
-        <div class="col-md-2">
-          <strong i18n>Name:</strong>
-        </div>
-        <div class="col-md-10">
-          {{study.name}}
-        </div>
-      </div>
-    </li>
-    <li class="list-group-item">
-      <div class="row">
-        <div class="col-md-2">
-          <strong i18n>Description:</strong>
-        </div>
-        <div class="col-md-10">
-          <app-truncate-toggle [text]="study.description"
-                               [toggleLength]="descriptionToggleLength"
-                               [textEmptyWarning]="'Description not entered yet.'">
-          </app-truncate-toggle>
-        </div>
-      </div>
-    </li>
-    <li class="list-group-item" *ngIf="!isEnableAllowed">
-      <div class="alert alert-warning">
-        <mat-icon color="primary">warning</mat-icon>
-        <ng-container i18n>
-          Study cannot be enabled until at least one specimen is added to a collection event.
-        </ng-container>
-      </div>
-    </li>
-    <li class="list-group-item m-0 p-0">
-      <app-entity-status [state]="study.stateLabel()"
-                         [timeAdded]="study.timeAdded"
-                         [timeModified]="study.timeModified"
-                         [useBadges]="false">
-      </app-entity-status>
-    </li>
-
-  </ul>
-</div>
+</ng-container>
 
 <ng-template #showLoading>
   <div class="card-header">
@@ -100,24 +124,4 @@
       Loading
     </app-spinner>
   </div>
-</ng-template>
-
-<ng-template #updateNameModal let-modal>
-  <app-modal-input-text [title]="'Update Name'"
-                        [label]="'New study name'"
-                        [value]="study.name"
-                        [options]="updateNameModalOptions"
-                        (onConfirm)="confirm($event)"
-                        [modal]="modal">
-  </app-modal-input-text>
-</ng-template>
-
-<ng-template #updateDescriptionModal let-modal>
-  <app-modal-input-textarea [title]="'Update Description'"
-                            [label]="'New study description'"
-                            [value]="study.description"
-                            [options]="updateDescriptionModalOptions"
-                            (onConfirm)="confirm($event)"
-                            [modal]="modal">
-  </app-modal-input-textarea>
 </ng-template>

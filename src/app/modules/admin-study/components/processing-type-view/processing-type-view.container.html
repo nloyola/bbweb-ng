@@ -1,7 +1,7 @@
 <app-processing-type-view-ui *ngIf="!(isLoading$ | async); else showLoading"
                              [processingType]="processingType"
-                             [inputEntity]="inputEntity"
                              [allowChanges]="allowChanges"
+                             [inputEntity]="inputEntity"
                              (updateNameSelected)="updateName($event)"
                              (updateDescriptionSelected)="updateDescription($event)"
                              (updateEnabledSelected)="updateEnabled($event)"

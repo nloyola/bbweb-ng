@@ -168,7 +168,6 @@ export const routes: Routes = [
                 children: [
                   {
                     path: ':processingTypeSlug',
-                    runGuardsAndResolvers: 'always',
                     resolve: {
                       processingType: ProcessingTypeResolver
                     },

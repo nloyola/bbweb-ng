@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { AnnotationType } from '@app/domain/annotations';
 import { CollectionEventType, ProcessingType, ProcessingTypeInputEntity, Study } from '@app/domain/studies';
 import { ModalInputTextareaOptions, ModalInputTextOptions } from '@app/modules/modals/models';
@@ -10,16 +10,23 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Dictionary } from '@ngrx/entity';
 import { Action, createSelector, select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Subject, Observable } from 'rxjs';
+import { takeUntil, tap, map, withLatestFrom, share, filter } from 'rxjs/operators';
 import { ProcessingInputSpecimenModalComponent } from '../processing-input-specimen-modal/processing-input-specimen-modal.component';
 import { ProcessingOutputSpecimenModalComponent } from '../processing-output-specimen-modal/processing-output-specimen-modal.component';
 import { ProcessingTypeRemoveComponent } from '../processing-type-remove/processing-type-remove.component';
+import { SpinnerStoreSelectors } from '@app/root-store/spinner';
+
+interface StoreData {
+  study: Study;
+  processingType: ProcessingType;
+  allowChanges: boolean;
+}
 
 interface Entities {
   studies: Study[];
-  processingTypes: ProcessingType[];
-  eventTypeEntities: Dictionary<CollectionEventType>;
+  processingTypes: Dictionary<ProcessingType>
+  eventTypes: Dictionary<CollectionEventType>;
 }
 
 @Component({
@@ -33,9 +40,12 @@ export class ProcessingTypeViewContainerComponent implements OnInit, OnDestroy {
   @ViewChild('updateEnabledModal') updateEnabledModal: TemplateRef<any>;
   @ViewChild('processingTypeInUseModal') processingTypeInUseModal: TemplateRef<any>;
 
+  isLoading$: Observable<boolean>;
+
+  processingTypeId: string;
   processingType: ProcessingType;
-  eventTypes: CollectionEventType[];
-  processingTypes: ProcessingType[];
+  processingTypes: Dictionary<ProcessingType>;
+  eventTypes: Dictionary<CollectionEventType>;
   study: Study;
   allowChanges: boolean;
   isAddingAnnotation = false;
@@ -43,7 +53,8 @@ export class ProcessingTypeViewContainerComponent implements OnInit, OnDestroy {
   updateDescriptionModalOptions: ModalInputTextareaOptions;
   inputEntity: ProcessingTypeInputEntity;
 
-  private updatedMessage: string;
+  private data$: Observable<StoreData>;
+  private updatedMessage$ = new Subject<string>();
   private unsubscribe$: Subject<void> = new Subject<void>();
 
   constructor(private store$: Store<RootStoreState.State>,
@@ -53,67 +64,106 @@ export class ProcessingTypeViewContainerComponent implements OnInit, OnDestroy {
               private toastr: ToastrService) {}
 
   ngOnInit() {
+    this.isLoading$ = this.store$.pipe(select(SpinnerStoreSelectors.selectSpinnerIsActive));
+
+    this.router.events.pipe(
+      filter(x => x instanceof NavigationEnd),
+      takeUntil(this.unsubscribe$)
+    ).subscribe(() => {
+      if (this.processingTypes === undefined) { return; }
+
+      this.processingType = this.getProcessingType(this.route.parent.snapshot.params.processingTypeSlug,
+                                                   this.processingTypes);
+      this.inputEntity = this.queryForInputEntity(this.processingType,
+                                                  this.eventTypes,
+                                                  this.processingTypes);
+
+      if (!this.processingType) {
+        this.store$.dispatch(new ProcessingTypeStoreActions.GetProcessingTypeRequest({
+          studySlug: this.route.parent.parent.parent.parent.snapshot.params.slug,
+          processingTypeSlug: this.route.snapshot.params.processingTypeSlug
+        }));
+      }
+    });
+
     const entitiesSelector = createSelector(
       StudyStoreSelectors.selectAllStudies,
-      ProcessingTypeStoreSelectors.selectAllProcessingTypes,
+      ProcessingTypeStoreSelectors.selectAllProcessingTypeEntities,
       EventTypeStoreSelectors.selectAllEventTypeEntities,
       (studies: Study[],
-       processingTypes: ProcessingType[],
-       eventTypeEntities: Dictionary<CollectionEventType>): Entities => {
-         return {
-           studies,
-           processingTypes,
-           eventTypeEntities
-         };
-       });
+       processingTypes: Dictionary<ProcessingType>,
+       eventTypes: Dictionary<CollectionEventType>): Entities => ({
+         studies,
+         processingTypes,
+         eventTypes
+       }));
 
-    this.store$.pipe(
+    this.data$ = this.store$.pipe(
       select(entitiesSelector),
-      takeUntil(this.unsubscribe$))
-      .subscribe((entities) => {
+      map((entities) => {
+        let study: Study;
+
         const studyEntity = entities.studies
           .find(s => s.slug === this.route.parent.parent.parent.parent.snapshot.params.slug);
         if (studyEntity) {
-          const study = (studyEntity instanceof Study)
-            ? studyEntity :  new Study().deserialize(studyEntity);
-          this.allowChanges = study.isDisabled();
-          this.study = study;
+          study = (studyEntity instanceof Study) ? studyEntity :  new Study().deserialize(studyEntity);
         }
 
-        const ptEntity = entities.processingTypes.find(
-          pt => pt.slug === this.route.parent.snapshot.params.processingTypeSlug);
+        let processingType = this.getProcessingType(this.route.parent.snapshot.params.processingTypeSlug,
+                                                      entities.processingTypes);
 
-        if (ptEntity) {
-          this.processingType = (ptEntity instanceof ProcessingType)
-            ? ptEntity : new ProcessingType().deserialize(ptEntity);
+        if (processingType) {
+          this.processingTypeId = processingType.id;
+          this.inputEntity = this.queryForInputEntity(processingType,
+                                                      entities.eventTypes,
+                                                      entities.processingTypes);
+        } else if (this.processingTypeId) {
+          const ptEntityById = entities.processingTypes[this.processingType.id];
 
-          if (this.updatedMessage) {
-            this.toastr.success(this.updatedMessage, 'Update Successfull');
+          if (ptEntityById) {
+            processingType = (ptEntityById instanceof ProcessingType)
+              ? ptEntityById : new ProcessingType().deserialize(ptEntityById);
           }
-
-          this.queryForInputEntity(entities);
-          return;
         }
 
-        if (!this.processingType) { return; }
+        return {
+          study,
+          processingType,
+          processingTypes: entities.processingTypes,
+          eventTypes: entities.eventTypes,
+          allowChanges: study ? study.isDisabled() : undefined
+        };
+      }),
+      tap(data => {
+        this.study = data.study;
+        this.processingType = data.processingType;
+        this.processingTypes = data.processingTypes;
+        this.eventTypes = data.eventTypes;
+        this.allowChanges = data.allowChanges;
+      }),
+      share());
 
-        const ptEntityById = entities.processingTypes.find(pt => pt.id === this.processingType.id);
+    this.data$.pipe(
+      withLatestFrom(this.updatedMessage$),
+      takeUntil(this.unsubscribe$)
+    ).subscribe(([ data, msg ]) => {
+      this.toastr.success(msg, 'Update Successfull');
 
-        if (ptEntityById) {
-          this.processingType = (ptEntityById instanceof ProcessingType)
-            ? ptEntityById : new ProcessingType().deserialize(ptEntityById);
-          this.router.navigate(
-            [ `/admin/studies/${this.study.slug}/processing/view/${this.processingType.slug}` ]);
-          if (this.updatedMessage) {
-            this.toastr.success(this.updatedMessage, 'Update Successfull');
-          }
-          return;
+      if (data.processingType !== undefined) {
+        if (data.processingType.slug !== this.route.parent.snapshot.params.processingTypeSlug) {
+          // name was changed and new slug was assigned
+          //
+          // need to change state since slug is used in URL and by breadcrumbs
+          this.router.navigate([
+            `/admin/studies/${data.study.slug}/processing/view/${data.processingType.slug}`
+          ]);
         }
-
+      } else {
+        this.router.navigate([ `/admin/studies/${data.study.slug}/processing` ]);
         this.processingType = undefined;
-        this.router.navigate([ `/admin/studies/${this.study.slug}/processing` ]);
-        this.toastr.success('Processing step removed', 'Removed');
-      });
+        this.processingTypeId = undefined;
+      }
+    });
   }
 
   ngOnDestroy() {
@@ -137,7 +187,7 @@ export class ProcessingTypeViewContainerComponent implements OnInit, OnDestroy {
           attributeName: 'name',
           value
         }));
-        this.updatedMessage = 'Event name was updated';
+        this.updatedMessage$.next('Event name was updated');
       })
       .catch(err => console.log('err', err));
   }
@@ -158,7 +208,7 @@ export class ProcessingTypeViewContainerComponent implements OnInit, OnDestroy {
           attributeName: 'description',
           value: value ? value : undefined
         }));
-        this.updatedMessage = 'Event description was updated';
+        this.updatedMessage$.next('Event description was updated');
       })
       .catch(err => console.log('err', err));
   }
@@ -175,7 +225,7 @@ export class ProcessingTypeViewContainerComponent implements OnInit, OnDestroy {
           attributeName: 'enabled',
           value
         }));
-        this.updatedMessage = 'Enabled was updated';
+        this.updatedMessage$.next('Enabled was updated');
       })
       .catch(err => console.log('err', err));
   }
@@ -219,7 +269,7 @@ export class ProcessingTypeViewContainerComponent implements OnInit, OnDestroy {
             annotationTypeId: annotationType.id
           }));
 
-        this.updatedMessage = 'Annotation removed';
+        this.updatedMessage$.next('Annotation removed');
       })
       .catch(() => undefined);
   }
@@ -242,7 +292,7 @@ export class ProcessingTypeViewContainerComponent implements OnInit, OnDestroy {
           value: input
         }));
 
-        this.updatedMessage = 'Input specimen updated';
+        this.updatedMessage$.next('Input specimen updated');
       })
       .catch(() => undefined);
   }
@@ -268,7 +318,7 @@ export class ProcessingTypeViewContainerComponent implements OnInit, OnDestroy {
           value: output
         }));
 
-        this.updatedMessage = 'Output specimen updated';
+        this.updatedMessage$.next('Output specimen updated');
       })
       .catch(() => undefined);
   }
@@ -290,6 +340,7 @@ export class ProcessingTypeViewContainerComponent implements OnInit, OnDestroy {
         this.store$.dispatch(new ProcessingTypeStoreActions.RemoveProcessingTypeRequest({
           processingType: this.processingType
         }));
+        this.updatedMessage$.next('Processing step removed');
       })
       .catch(() => undefined);
   }
@@ -309,28 +360,42 @@ export class ProcessingTypeViewContainerComponent implements OnInit, OnDestroy {
     this.router.navigate([ `/admin/studies/${this.study.slug}/processing/${processingType.slug}` ]);
   }
 
-  private queryForInputEntity(entities: Entities) {
-    this.inputEntity =
-      (this.processingType.input.definitionType === 'collected')
-      ? entities.eventTypeEntities[this.processingType.input.entityId]
-      : entities.processingTypes.find(pt => pt.id === this.processingType.input.entityId);
+  private queryForInputEntity(
+    processingType: ProcessingType,
+    eventTypes: Dictionary<CollectionEventType>,
+    processingTypes: Dictionary<ProcessingType>
+  ): ProcessingTypeInputEntity {
+    const inputEntity =
+      (processingType.input.definitionType === 'collected')
+      ? eventTypes[processingType.input.entityId]
+      : processingTypes[processingType.input.entityId];
 
-    if (!this.inputEntity) {
-      let action: Action;
-      // then entity has not been retrieved from the server yet
-      if (this.processingType.input.definitionType === 'collected') {
-        action = new EventTypeStoreActions.GetEventTypeByIdRequest({
-          studyId: this.processingType.studyId,
-          eventTypeId: this.processingType.input.entityId
-        });
-      } else {
-        action = new ProcessingTypeStoreActions.GetProcessingTypeByIdRequest({
-          studyId: this.processingType.studyId,
-          processingTypeId: this.processingType.input.entityId
-        });
-      }
-      this.store$.dispatch(action);
+    if (inputEntity) { return inputEntity; }
+
+    let action: Action;
+    // then entity has not been retrieved from the server yet
+    if (processingType.input.definitionType === 'collected') {
+      action = new EventTypeStoreActions.GetEventTypeByIdRequest({
+        studyId: processingType.studyId,
+        eventTypeId: processingType.input.entityId
+      });
+    } else {
+      action = new ProcessingTypeStoreActions.GetProcessingTypeByIdRequest({
+        studyId: processingType.studyId,
+        processingTypeId: processingType.input.entityId
+      });
     }
+    this.store$.dispatch(action);
+    return undefined;
+  }
+
+  private getProcessingType(slug: string, processingTypes: Dictionary<ProcessingType>): ProcessingType {
+    const ptEntity = Object.values(processingTypes).find((pt: ProcessingType) => pt.slug === slug);
+    if (ptEntity) {
+      return (ptEntity instanceof ProcessingType)
+        ? ptEntity : new ProcessingType().deserialize(ptEntity);
+    }
+    return undefined;
   }
 
 }

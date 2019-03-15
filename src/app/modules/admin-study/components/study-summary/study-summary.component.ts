@@ -7,11 +7,15 @@ import { RootStoreState, StudyStoreActions, StudyStoreSelectors } from '@app/roo
 import { SpinnerStoreSelectors } from '@app/root-store/spinner';
 import { EnableAllowdIds } from '@app/root-store/study/study.reducer';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { select, Store } from '@ngrx/store';
+import { createSelector, select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject } from 'rxjs';
-import { filter, map, takeUntil } from 'rxjs/operators';
-import { Dictionary } from '@ngrx/entity';
+import { map, takeUntil, tap, withLatestFrom, share } from 'rxjs/operators';
+
+interface StoreData {
+  study: StudyUI;
+  isEnableAllowed: boolean;
+}
 
 @Component({
   selector: 'app-study-summary',
@@ -24,6 +28,7 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
   @ViewChild('updateDescriptionModal') updateDescriptionModal: TemplateRef<any>;
 
   isLoading$: Observable<boolean>;
+  study$: Observable<StudyUI>;
   isEnableAllowed: boolean;
   studyStateUIMap = StudyStateUIMap;
   descriptionToggleLength = 80;
@@ -32,62 +37,80 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
   updateNameModalOptions: ModalInputTextOptions;
   updateDescriptionModalOptions: ModalInputTextareaOptions;
 
+  private data$: Observable<StoreData>;
   private studyId: string;
   private study: StudyUI;
-  private updatedMessage: string;
-  private unsubscribe$: Subject<void> = new Subject<void>();
+  private updatedMessage$ = new Subject<string>();
+  private unsubscribe$ = new Subject<void>();
 
   constructor(private store$: Store<RootStoreState.State>,
               private modalService: NgbModal,
               private router: Router,
               private route: ActivatedRoute,
-              private toastr: ToastrService) {}
+              private toastr: ToastrService) {
+  }
 
   ngOnInit() {
     this.isLoading$ = this.store$.pipe(select(SpinnerStoreSelectors.selectSpinnerIsActive));
 
-    this.store$.pipe(
-      select(StudyStoreSelectors.selectStudyEnableAllowedIds),
-      takeUntil(this.unsubscribe$))
-      .subscribe((enableAllowedIds: EnableAllowdIds) => {
-        if (this.studyId === undefined) { return; }
-        this.isEnableAllowed = (enableAllowedIds[this.studyId] === true);
-      });
+    const selector = createSelector(
+      StudyStoreSelectors.selectAllStudies,
+      StudyStoreSelectors.selectStudyEnableAllowedIds,
+      (studies: Study[], enableAllowedIds: EnableAllowdIds) =>
+        ({ studies, enableAllowedIds }));
 
-    this.store$.pipe(
-      select(StudyStoreSelectors.selectAllStudies),
-      filter(s => s.length > 0),
-      map((studies: Study[]) => studies.find(s => s.slug === this.route.parent.snapshot.params.slug)),
-      filter(study => study !== undefined),
-      map(study => (study instanceof Study) ? study :  new Study().deserialize(study)),
-      takeUntil(this.unsubscribe$))
-      .subscribe(study => {
-        this.study = new StudyUI(study);
-        this.studyId = study.id;
-        this.store$.dispatch(new StudyStoreActions.GetEnableAllowedRequest({ studyId: study.id }));
-      });
-
-    this.store$.pipe(
-      select(StudyStoreSelectors.selectAllStudyEntities),
-      filter((entities: Dictionary<Study>) => Object.keys(entities).length > 0),
-      takeUntil(this.unsubscribe$))
-      .subscribe((entities: any) => {
-        if (this.studyId === undefined) { return; }
-
-        const entity = entities[this.studyId];
-        const updatedStudy = (entity instanceof Study) ? entity : new Study().deserialize(entity);
-        this.study = new StudyUI(updatedStudy);
-
-        // when study name is changed, the route must be updated because the slug used in the route,
-        // and the slug is derived from the name
-        if (this.studyId && !location.pathname.endsWith(`/${entity.slug}`)) {
-          this.router.navigate([ '../..', entity.slug, 'summary' ], { relativeTo: this.route });
+    this.data$ = this.store$.pipe(
+      select(selector),
+      map(data => {
+        const studyEntity = data.studies.find(s => s.slug === this.route.parent.snapshot.params.slug);
+        if (studyEntity) {
+          const study = this.studyEntityToUI(studyEntity);
+          const isEnableAllowed = data.enableAllowedIds[this.studyId];
+          return { study, isEnableAllowed };
         }
 
-        if (this.updatedMessage) {
-          this.toastr.success(this.updatedMessage, 'Update Successfull');
+        if (this.studyId) {
+          const studyById = data.studies.find(s => s.id === this.studyId);
+          if (!studyById) {
+            throw new Error('could not find study by ID');
+          }
+          const study = this.studyEntityToUI(studyById);
+          const isEnableAllowed = data.enableAllowedIds[this.studyId];
+          return { study, isEnableAllowed };
         }
-      });
+
+        return undefined;
+      }),
+      tap(data => {
+        if (data === undefined) { return; }
+
+        if (this.studyId === undefined) {
+          this.studyId = data.study.id;
+          this.store$.dispatch(new StudyStoreActions.GetEnableAllowedRequest({ studyId: data.study.id }));
+        }
+
+        this.study = data.study;
+        this.isEnableAllowed = data.isEnableAllowed;
+      }),
+      share());
+
+    this.study$ = this.data$.pipe(map(data => data ? data.study : undefined));
+
+    this.data$.pipe(
+      withLatestFrom(this.updatedMessage$),
+      takeUntil(this.unsubscribe$)
+    ).subscribe(([ data, msg ]) => {
+      if (data === undefined) { return; }
+
+      this.toastr.success(msg, 'Update Successfull');
+
+      if (data.study.slug !== this.route.parent.snapshot.params.slug) {
+        // name was changed and new slug was assigned
+        //
+        // need to change state since slug is used in URL and by breadcrumbs
+        this.router.navigate([ '../..', data.study.slug, 'summary' ], { relativeTo: this.route });
+      }
+    });
   }
 
   ngOnDestroy() {
@@ -107,7 +130,7 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
           attributeName: 'name',
           value
         }));
-        this.updatedMessage = 'Study name was updated';
+        this.updatedMessage$.next('Study name was updated');
       })
       .catch(err => console.log('err', err));
   }
@@ -124,7 +147,7 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
           attributeName: 'description',
           value: value ? value : undefined
         }));
-        this.updatedMessage = 'Study description was updated';
+        this.updatedMessage$.next('Study description was updated');
       })
       .catch(err => console.log('err', err));
   }
@@ -151,7 +174,12 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
       attributeName: 'state',
       value: action
     }));
-    this.updatedMessage = 'Study state was updated';
+    this.updatedMessage$.next('Study state was updated');
+  }
+
+  private studyEntityToUI(entity: any): StudyUI {
+    const study = (entity instanceof Study) ? entity : new Study().deserialize(entity);
+    return new StudyUI(study);
   }
 
 }

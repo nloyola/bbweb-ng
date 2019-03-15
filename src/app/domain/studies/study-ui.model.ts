@@ -8,11 +8,11 @@ export class StudyUI implements DomainEntityUI<Study> {
 
   readonly entity: Study;
 
-  public static getStateIcon(state: StudyState): string {
+  static getStateIcon(state: StudyState): string {
     return StudyStateUIMap.get(state).icon;
   }
 
-  public static getStateIconClass(state: StudyState): string {
+  static getStateIconClass(state: StudyState): string {
     return StudyStateUIMap.get(state).iconClass;
   }
 

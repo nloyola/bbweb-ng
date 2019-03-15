@@ -1,5 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgZone } from '@angular/core';
-import { async, ComponentFixture, TestBed, fakeAsync, flush } from '@angular/core/testing';
+import { async, ComponentFixture, fakeAsync, flush, TestBed } from '@angular/core/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -7,13 +7,16 @@ import { CollectionEventType, Study, StudyState } from '@app/domain/studies';
 import { EventTypeStoreActions, EventTypeStoreReducer, StudyStoreActions, StudyStoreReducer } from '@app/root-store';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { YesNoPipe } from '@app/shared/pipes/yes-no-pipe';
-import { Factory } from '@test/factory';
-import { MockActivatedRoute } from '@test/mocks';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
+import { Factory } from '@test/factory';
+import { MockActivatedRoute } from '@test/mocks';
 import * as faker from 'faker';
+import { cold } from 'jasmine-marbles';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
+import { EventTypeRemoveComponent } from '../event-type-remove/event-type-remove.component';
 import { EventTypeViewContainerComponent } from './event-type-view.container';
+import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 
 describe('EventTypeViewContainer', () => {
   let component: EventTypeViewContainerComponent;
@@ -51,11 +54,19 @@ describe('EventTypeViewContainer', () => {
       ],
       declarations: [
         EventTypeViewContainerComponent,
+        EventTypeRemoveComponent,
         YesNoPipe
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
-    })
-      .compileComponents();
+    });
+
+    TestBed.overrideModule(BrowserDynamicTestingModule, {
+      set: {
+        entryComponents: [
+          EventTypeRemoveComponent
+        ]
+      }
+    });
   }));
 
   beforeEach(() => {
@@ -72,7 +83,7 @@ describe('EventTypeViewContainer', () => {
     expect(component).toBeTruthy();
   });
 
-  it('allow changes is updated', () => {
+  it('allow changes is resolved', () => {
     const eventType = createEventType();
     createMockActivatedRouteSpies(study, eventType);
     componentSetup(study, eventType);
@@ -85,7 +96,7 @@ describe('EventTypeViewContainer', () => {
 
     stateValues.forEach(stateValue => {
       const updatedStudy = new Study().deserialize({
-        ...study,
+        ...study as any,
         state: stateValue.state
       });
       store.dispatch(new StudyStoreActions.UpdateStudySuccess({ study: updatedStudy }));
@@ -102,10 +113,10 @@ describe('EventTypeViewContainer', () => {
     const recurringValues = [ !eventType.recurring, eventType.recurring ];
 
     recurringValues.forEach(recurringValue => {
-      const updatedEventType = new CollectionEventType().deserialize(factory.collectionEventType({
-        ...eventType,
+      const updatedEventType = new CollectionEventType().deserialize({
+        ...eventType as any,
         recurring: recurringValue
-      }));
+      });
 
       store.dispatch(new EventTypeStoreActions.UpdateEventTypeSuccess({ eventType: updatedEventType }));
 
@@ -114,18 +125,45 @@ describe('EventTypeViewContainer', () => {
     });
   });
 
+  it('navigates to new path when name is changed', fakeAsync(() => {
+    const eventType = createEventType();
+    createMockActivatedRouteSpies(study, eventType);
+    componentSetup(study, eventType);
+
+    const newName = factory.stringNext();
+    const etWithNewName = new CollectionEventType().deserialize({
+      ...eventType as any,
+      ...factory.nameAndSlug()
+    });
+
+    const modalService = TestBed.get(NgbModal);
+    jest.spyOn(modalService, 'open').mockReturnValue({ result: Promise.resolve(newName) });
+    const routerListener = jest.spyOn(router, 'navigate').mockResolvedValue(true);
+    component.updateName();
+    flush();
+    fixture.detectChanges();
+
+    store.dispatch(new EventTypeStoreActions.UpdateEventTypeSuccess({
+      eventType: etWithNewName
+    }));
+    flush();
+    fixture.detectChanges();
+
+    expect(routerListener.mock.calls.length).toBe(1);
+    expect(routerListener.mock.calls[0][0]).toEqual([
+      `/admin/studies/${study.slug}/collection/view/${etWithNewName.slug}`]);
+  }));
+
   describe('common behaviour', () => {
 
-    /* tslint:disable:no-shadowed-variable */
     const componentUpdateFuncs = [
-      (component, eventType) => component.updateName(),
-      (component, eventType) => component.updateDescription(),
-      (component, eventType) => component.updateRecurring(),
-      (component, eventType) => component.removeAnnotationType(eventType.annotationTypes[0]),
-      (component, eventType) => component.removeSpecimenDefinition(eventType.specimenDefinitions[0]),
-      (component, eventType) => component.removeEventType()
+      (c, et) => c.updateName(),
+      (c, et) => c.updateDescription(),
+      (c, et) => c.updateRecurring(),
+      (c, et) => c.removeAnnotationType(et.annotationTypes[0]),
+      (c, et) => c.removeSpecimenDefinition(et.specimenDefinitions[0]),
+      (c, et) => c.removeEventType()
     ];
-    /* tslint:enable:no-shadowed-variable */
 
     it('functions should open a modal', () => {
       const eventType = createEventType();
@@ -138,12 +176,10 @@ describe('EventTypeViewContainer', () => {
         result: Promise.resolve('OK')
       });
 
-    /* tslint:disable:no-shadowed-variable */
       const componentModalFuncs = componentUpdateFuncs.concat([
-        (component, eventType) => component.viewAnnotationType(eventType.annotationTypes[0]),
-        (component, eventType) => component.viewSpecimenDefinition(eventType.specimenDefinitions[0])
+        (c, et) => c.viewAnnotationType(et.annotationTypes[0]),
+        (c, et) => c.viewSpecimenDefinition(et.specimenDefinitions[0])
       ]);
-    /* tslint:enable:no-shadowed-variable */
 
       componentModalFuncs.forEach(modalFunc => modalFunc(component, eventType));
       expect(modalService.open.calls.count()).toBe(componentModalFuncs.length);
@@ -151,32 +187,31 @@ describe('EventTypeViewContainer', () => {
 
     it('functions should throw an error when study is not disabled', () => {
       const updatedStudy = new Study().deserialize({
-        ...study,
+        ...study as any,
         state: StudyState.Enabled
       });
       const eventType = createEventType();
       createMockActivatedRouteSpies(updatedStudy, eventType);
       componentSetup(updatedStudy, eventType);
 
-      /* tslint:disable:no-shadowed-variable */
       const throwErrFuncs = componentUpdateFuncs.concat([
-        (component, eventType) => component.addAnnotationType(eventType.annotationTypes[0]),
-        (component, eventType) => component.editAnnotationType(eventType.annotationTypes[0]),
-        (component, eventType) => component.addSpecimenDefinition(eventType.specimenDefinitions[0]),
-        (component, eventType) => component.editSpecimenDefinition(eventType.specimenDefinitions[0])
+        (c, et) => c.addAnnotationType(et.annotationTypes[0]),
+        (c, et) => c.editAnnotationType(et.annotationTypes[0]),
+        (c, et) => c.addSpecimenDefinition(et.specimenDefinitions[0]),
+        (c, et) => c.editSpecimenDefinition(et.specimenDefinitions[0])
       ]);
-      /* tslint:enable:no-shadowed-variable */
 
       throwErrFuncs.forEach(modalFunc => {
         expect(() => modalFunc(component, eventType)).toThrowError('modifications not allowed');
       });
     });
 
-    it('functions that should notify the user', async(() => {
+    it('functions that should notify the user', fakeAsync(() => {
       const toastr = TestBed.get(ToastrService);
       const modalService = TestBed.get(NgbModal);
       const modalSpy = spyOn(modalService, 'open');
-      spyOn(toastr, 'success').and.returnValue(null);
+      jest.spyOn(router, 'navigate').mockResolvedValue(true);
+      const toastrListener = jest.spyOn(toastr, 'success').mockReturnValue(null);
 
       const eventType = createEventType();
       createMockActivatedRouteSpies(study, eventType);
@@ -185,18 +220,18 @@ describe('EventTypeViewContainer', () => {
       componentUpdateFuncs.forEach(updateFunc => {
         modalSpy.and.returnValue({
           componentInstance: {},
-          result: Promise.resolve({ confirmed: true, value: 'test' })
+          result: Promise.resolve('test')
         });
 
         updateFunc(component, eventType);
-        fixture.whenStable().then(() => {
-          store.dispatch(new EventTypeStoreActions.UpdateEventTypeSuccess({ eventType }));
-        });
+        flush();
+        fixture.detectChanges();
+        store.dispatch(new EventTypeStoreActions.UpdateEventTypeSuccess({ eventType }));
       });
 
-      fixture.whenStable().then(() => {
-        expect(toastr.success.calls.count()).toBe(componentUpdateFuncs.length);
-      });
+      flush();
+      fixture.detectChanges();
+      expect(toastrListener.mock.calls.length).toBe(componentUpdateFuncs.length);
     }));
 
   });
@@ -231,8 +266,8 @@ describe('EventTypeViewContainer', () => {
       componentSetup(study, eventType);
 
       testData.forEach(testInfo => {
-        modalListener.mockReturnValue({ result: Promise.resolve(testInfo.newValue) });
         storeListener.mockReset();
+        modalListener.mockReturnValue({ result: Promise.resolve(testInfo.newValue) });
 
         testInfo.updateFunc();
         flush();
@@ -409,20 +444,30 @@ describe('EventTypeViewContainer', () => {
       });
     }));
 
-    it('event type becomes undefined when removed', () => {
+    it('event type becomes undefined when removed', fakeAsync(() => {
       const eventType = createEventType();
-      const spy = jest.spyOn(router, 'navigate').mockReturnValue(true);
+      const routerListener = jest.spyOn(router, 'navigate').mockResolvedValue(true);
+      const modalService = TestBed.get(NgbModal);
+
+      jest.spyOn(modalService, 'open').mockReturnValue({
+        componentInstance: {},
+        result: Promise.resolve('OK')
+      });
       createMockActivatedRouteSpies(study, eventType);
       componentSetup(study, eventType);
 
-      const action = new EventTypeStoreActions.RemoveEventTypeSuccess({ eventTypeId: eventType.id });
-      store.dispatch(action);
+      component.removeEventType();
+      flush();
       fixture.detectChanges();
 
-      expect(component.eventType).toBeUndefined();
-      expect(spy).toHaveBeenCalled();
-      expect(spy.mock.calls[0][0]).toEqual([ '/admin/studies/', study.slug, 'collection/view' ]);
-    });
+      const action = new EventTypeStoreActions.RemoveEventTypeSuccess({ eventTypeId: eventType.id });
+      store.dispatch(action);
+      flush();
+      fixture.detectChanges();
+
+      expect(routerListener).toHaveBeenCalled();
+      expect(routerListener.mock.calls[0][0]).toEqual([ `/admin/studies/${study.slug}/collection/view` ]);
+    }));
   });
 
   function createEventType(): CollectionEventType {

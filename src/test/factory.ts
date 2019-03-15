@@ -1,10 +1,10 @@
 import { AnatomicalSource, ConcurrencySafeEntity, PagedReply, PreservationTemperature, PreservationType, SearchParams, SpecimenType } from '@app/domain';
 import { MaxValueCount, ValueTypes } from '@app/domain/annotations';
+import { CentreCounts, CentreState } from '@app/domain/centres';
 import { StudyCounts, StudyState } from '@app/domain/studies';
 import { UserState } from '@app/domain/users';
 import * as _ from 'lodash';
 import faker = require('faker');
-import { CentreState, CentreCounts } from '@app/domain/centres';
 
 enum DomainEntities {
 

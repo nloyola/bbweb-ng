@@ -1,24 +1,25 @@
 <div class="pb-2 mt-4 mb-2 border-bottom">
   <h1 i18n>Welcome to Biobank</h1>
 </div>
-<ng-container *ngIf="isUserAuthenticated; else notLoggedIn">
-  <div class="alert alert-warning" *ngIf="!hasRoles">
+<ng-container *ngIf="user$ | async as user; else notLoggedIn">
+
+  <div class="alert alert-warning" *ngIf="!user.hasRoles()">
     <mat-icon>warning</mat-icon>
     <ng-container i18n>
       Your user permissions are not valid. Please contact your website administrator.
     </ng-container>
   </div>
 
-  <div class="row" *ngIf="hasRoles">
+  <div class="row" *ngIf="user.hasRoles()">
     <div class="col-md-12">
       <h2 i18n>Select a task</h2>
     </div>
   </div>
 
-  <div class="d-flex flex-row flex-wrap justify-content-center" *ngIf="hasRoles">
+  <div class="d-flex flex-row flex-wrap justify-content-center" *ngIf="user.hasRoles()">
 
     <!-- COLLECTION -->
-    <div class="card bbweb" *ngIf="allowCollection">
+    <div class="card bbweb" *ngIf="user.hasSpecimenCollectorRole()">
       <h5 class="card-header bg-primary text-light">
         <ng-container i18n>Collection</ng-container>
       </h5>
@@ -31,7 +32,7 @@
     </div>
 
     <!-- SHIPPING -->
-    <div class="card bbweb" *ngIf="shippingAllowed">
+    <div class="card bbweb" *ngIf="user.hasShippingUserRole()">
       <h5 class="card-header bg-primary text-light">
         <ng-container i18n>Shipping</ng-container>
       </h5>
@@ -44,7 +45,7 @@
     </div>
 
     <!-- ADMINISTRATION -->
-    <div class="card bbweb" *ngIf="adminAllowed">
+    <div class="card bbweb" *ngIf="user.hasAdminRole()">
       <h5 class="card-header bg-primary text-light">
         <ng-container i18n>Administration</ng-container>
       </h5>

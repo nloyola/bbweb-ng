@@ -1,16 +1,18 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgZone } from '@angular/core';
-import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { async, ComponentFixture, fakeAsync, TestBed, tick, flush } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Study } from '@app/domain/studies';
 import { StudyStoreActions, StudyStoreReducer } from '@app/root-store';
-import { Factory } from '@test/factory';
+import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
+import { Factory } from '@test/factory';
+import { cold } from 'jasmine-marbles';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { StudySummaryComponent } from './study-summary.component';
-import { SpinnerStoreReducer } from '@app/root-store/spinner';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('StudySummaryComponent', () => {
 
@@ -29,6 +31,7 @@ describe('StudySummaryComponent', () => {
 
     TestBed.configureTestingModule({
       imports: [
+        BrowserAnimationsModule,
         FormsModule,
         ReactiveFormsModule,
         NgbModule,
@@ -76,53 +79,54 @@ describe('StudySummaryComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('isEnableAllowed resolved correctly', () => {
-    fixture.detectChanges();
-    expect(component.isEnableAllowed).toBeUndefined();
-
-    ngZone.run(() => store.dispatch(new StudyStoreActions.GetStudySuccess({ study })));
+  it('isEnableAllowed resolved correctly', fakeAsync(() => {
+    store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
     fixture.detectChanges();
 
-    [ true, false ].forEach(allowed => {
+    [ false, true ].forEach(allowed => {
       store.dispatch(new StudyStoreActions.GetEnableAllowedSuccess({ studyId: study.id, allowed }));
+      flush();
       fixture.detectChanges();
       expect(component.isEnableAllowed).toBe(allowed);
     });
-  });
+  }));
 
-  it('navigates to new path when study name is changed', () => {
+  it('navigates to new path when study name is changed', fakeAsync(() => {
+    store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
+    flush();
+    fixture.detectChanges();
+
+    const newName = factory.stringNext();
     const studyWithNewName = new Study().deserialize({
-      ...study,
-      ...factory.nameAndSlug
+      ...study as any,
+      ...factory.nameAndSlug()
     });
 
     const routerListener = jest.spyOn(router, 'navigate');
+    jest.spyOn(modalService, 'open').mockReturnValue({ result: Promise.resolve(newName) });
+    component.updateName();
+    flush();
+    fixture.detectChanges();
 
-    ngZone.run(() => store.dispatch(new StudyStoreActions.GetStudySuccess({ study: studyWithNewName })));
+    ngZone.run(() => store.dispatch(new StudyStoreActions.UpdateStudySuccess({ study: studyWithNewName })));
+    flush();
     fixture.detectChanges();
 
     expect(routerListener.mock.calls.length).toBe(1);
     expect(routerListener.mock.calls[0][0]).toEqual([ '../..', studyWithNewName.slug, 'summary' ]);
-  });
+  }));
 
   describe('common behaviour', () => {
-
-    /* tslint:disable:no-shadowed-variable */
-    const componentModalFuncs = [
-      (component) => component.updateName(),
-      (component) => component.updateDescription()
-    ];
-    /* tslint:disable:no-shadowed-variable */
 
     it('functions should open a modal', fakeAsync(() => {
       const testData = [
         {
-          componentFunc: (component) => component.updateName(),
+          componentFunc: (c) => c.updateName(),
           attribute: 'name',
           value: 'test'
         },
         {
-          componentFunc: (component) => component.updateDescription(),
+          componentFunc: (c) => c.updateDescription(),
           attribute: 'description',
           value: 'test'
         }
@@ -152,7 +156,7 @@ describe('StudySummaryComponent', () => {
           value: testInfo.value
         }));
       });
-      expect(modalListener.mock.calls.length).toBe(componentModalFuncs.length);
+      expect(modalListener.mock.calls.length).toBe(testData.length);
     }));
 
     it('functions that should notify the user', fakeAsync(() => {
@@ -169,11 +173,13 @@ describe('StudySummaryComponent', () => {
       fixture.detectChanges();
 
       const componentUpdateFuncs = [
-        (component) => component.disable(),
-        (component) => component.enable(),
-        (component) => component.retire(),
-        (component) => component.unretire()
-      ].concat(componentModalFuncs);
+        (c) => c.updateName(),
+        (c) => c.updateDescription(),
+        (c) => c.disable(),
+        (c) => c.enable(),
+        (c) => c.retire(),
+        (c) => c.unretire()
+      ];
 
       componentUpdateFuncs.forEach(updateFunc => {
         updateFunc(component);
@@ -193,10 +199,10 @@ describe('StudySummaryComponent', () => {
       fixture.detectChanges();
 
       const testData = [
-        { componentFunc: (component) => component.disable(),  value: 'disable' },
-        { componentFunc: (component) => component.enable(),   value: 'enable' },
-        { componentFunc: (component) => component.retire(),   value: 'retire' },
-        { componentFunc: (component) => component.unretire(), value: 'unretire' }
+        { componentFunc: (c) => c.disable(),  value: 'disable' },
+        { componentFunc: (c) => c.enable(),   value: 'enable' },
+        { componentFunc: (c) => c.retire(),   value: 'retire' },
+        { componentFunc: (c) => c.unretire(), value: 'unretire' }
       ];
 
       const storeListener = jest.spyOn(store, 'dispatch');

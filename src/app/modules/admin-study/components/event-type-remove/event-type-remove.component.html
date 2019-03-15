@@ -1,4 +1,4 @@
-<app-modal-input (confirm)="confirm($event)">
+<app-modal-input (confirm)="activeModal.close()" (dismiss)="activeModal.dismiss()">
   <span class="title" i18n>Remove Event</span>
   <div class="body" i18n>
     Are you sure you want to remove the event named <b>{{eventType.name}}</b>?
