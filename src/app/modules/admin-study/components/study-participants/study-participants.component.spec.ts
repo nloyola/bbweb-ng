@@ -159,7 +159,7 @@ describe('StudyParticipantsComponent', () => {
 
   it('should throw an error when study is not disabled', () => {
     study = new Study().deserialize({
-      ...study,
+      ...study as any,
       state: StudyState.Enabled
     });
     jest.spyOn(modalService, 'open');
@@ -186,7 +186,7 @@ describe('StudyParticipantsComponent', () => {
 
     it('on valid removal', fakeAsync(() => {
       const studyNoAnnotations = new Study().deserialize({
-        ...study,
+        ...study as any,
         annotationTypes: []
       });
       const annotationType = study.annotationTypes[0];
@@ -196,7 +196,7 @@ describe('StudyParticipantsComponent', () => {
       jest.spyOn(modalService, 'open').mockReturnValue({
         componentInstance: {},
         result: Promise.resolve('OK')
-      });
+      } as any);
 
       store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
       fixture.detectChanges();
@@ -239,7 +239,7 @@ describe('StudyParticipantsComponent', () => {
       jest.spyOn(modalService, 'open').mockReturnValue({
         componentInstance: {},
         result: Promise.resolve('OK')
-      });
+      } as any);
       jest.spyOn(toastr, 'error').mockReturnValue(null);
 
       store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));

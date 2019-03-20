@@ -44,7 +44,7 @@ describe('ProcessingTypeViewComponent', () => {
     expect(component.processingType).toBeDefined();
 
     const inUseProcessingType = new ProcessingType().deserialize({
-      ...entities.processingType,
+      ...entities.processingType as any,
       inUse: true
     });
 

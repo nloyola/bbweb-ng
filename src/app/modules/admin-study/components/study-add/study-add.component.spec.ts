@@ -82,7 +82,7 @@ describe('StudyAddComponent', () => {
       const study = new Study().deserialize(factory.study());
       spyOn(toastr, 'success').and.returnValue(null);
       const storeListener = jest.spyOn(store, 'dispatch');
-      const routerListener = jest.spyOn(router, 'navigate').mockReturnValue(true);
+      const routerListener = jest.spyOn(router, 'navigate').mockResolvedValue(true);
 
       component.name.setValue(study.name);
       component.description.setValue(study.description);

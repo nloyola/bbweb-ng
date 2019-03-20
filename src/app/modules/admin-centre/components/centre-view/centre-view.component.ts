@@ -6,6 +6,7 @@ import { select, Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
 import { NgbTabChangeEvent } from '@ng-bootstrap/ng-bootstrap';
+import { Tab } from '@app/domain';
 
 @Component({
   selector: 'app-centre-view',

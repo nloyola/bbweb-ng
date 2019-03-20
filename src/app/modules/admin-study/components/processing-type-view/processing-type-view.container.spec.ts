@@ -9,7 +9,7 @@ import { YesNoPipe } from '@app/shared/pipes/yes-no-pipe';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
-import { ProcessingTypeFixture } from '@test/fixtures';
+import { ProcessingTypeFixture, ProcessingTypeFixtureEntities } from '@test/fixtures';
 import { MockActivatedRoute } from '@test/mocks';
 import * as faker from 'faker';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
@@ -98,7 +98,7 @@ describe('ProcessingTypeViewContainerComponent', () => {
       ...factory.nameAndSlug()
     });
 
-    const routerListener = jest.spyOn(router, 'navigate').mockReturnValue(true);
+    const routerListener = jest.spyOn(router, 'navigate').mockResolvedValue(true);
     jest.spyOn(modalService, 'open').mockReturnValue({ result: Promise.resolve(newName) });
     component.updateName();
     flush();
@@ -195,7 +195,7 @@ describe('ProcessingTypeViewContainerComponent', () => {
 
     stateValues.forEach(stateValue => {
       const updatedStudy = new Study().deserialize({
-        ...entities.study,
+        ...entities.study as any,
         state: stateValue.state
       });
       store.dispatch(new StudyStoreActions.UpdateStudySuccess({ study: updatedStudy }));
@@ -242,7 +242,7 @@ describe('ProcessingTypeViewContainerComponent', () => {
       const entities = createEntities();
       const annotationType = entities.processingType.annotationTypes[0];
       const updatedStudy = new Study().deserialize({
-        ...entities.study,
+        ...entities.study as any,
         state: StudyState.Enabled
       });
       store.dispatch(new StudyStoreActions.UpdateStudySuccess({ study: updatedStudy }));
@@ -451,7 +451,7 @@ describe('ProcessingTypeViewContainerComponent', () => {
       const entities = createEntities();
       fixture.detectChanges();
 
-      const routerListener = jest.spyOn(router, 'navigate').mockReturnValue(true);
+      const routerListener = jest.spyOn(router, 'navigate').mockResolvedValue(true);
       const modalService = TestBed.get(NgbModal);
       jest.spyOn(modalService, 'open').mockReturnValue({
         componentInstance: {},
@@ -477,7 +477,7 @@ describe('ProcessingTypeViewContainerComponent', () => {
     it('opens a modal if the processing type is in use', () => {
       const entities = createEntities();
       const inUseProcessingType = new ProcessingType().deserialize({
-        ...entities.processingType,
+        ...entities.processingType as any,
         inUse: true
       });
 
@@ -504,7 +504,7 @@ describe('ProcessingTypeViewContainerComponent', () => {
 
     it('changes state if study is disabled', fakeAsync(() => {
       const ngZone = TestBed.get(NgZone);
-      const routerListener = jest.spyOn(router, 'navigate').mockReturnValue(true);
+      const routerListener = jest.spyOn(router, 'navigate').mockResolvedValue(true);
       const entities = createEntities();
 
       flush();
@@ -520,7 +520,7 @@ describe('ProcessingTypeViewContainerComponent', () => {
 
   it('changes state when user selects a processing type', async(() => {
     const ngZone = TestBed.get(NgZone);
-    const routerListener = jest.spyOn(router, 'navigate').mockReturnValue(true);
+    const routerListener = jest.spyOn(router, 'navigate').mockResolvedValue(true);
 
     const entities = createEntities();
     fixture.detectChanges();

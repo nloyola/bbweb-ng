@@ -77,7 +77,7 @@ describe('CentreSummaryComponent', () => {
 
   it('navigates to new path when centre name is changed', () => {
     const centreWithNewName = new Centre().deserialize({
-      ...centre,
+      ...centre as any,
       ...factory.nameAndSlug
     });
 
@@ -123,7 +123,7 @@ describe('CentreSummaryComponent', () => {
         modalListener.mockReturnValue({
           componentInstance: {},
           result: Promise.resolve(testInfo.value)
-        });
+        } as any);
 
         testInfo.componentFunc(component);
         fixture.detectChanges();
@@ -147,7 +147,7 @@ describe('CentreSummaryComponent', () => {
       jest.spyOn(modalService, 'open').mockReturnValue({
         componentInstance: {},
         result: Promise.resolve('test')
-      });
+      } as any);
 
       ngZone.run(() => store.dispatch(new CentreStoreActions.GetCentreSuccess({ centre })));
       fixture.detectChanges();

@@ -1,18 +1,18 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgZone } from '@angular/core';
-import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { CentreStoreReducer, CentreStoreActions } from '@app/root-store';
+import { Centre } from '@app/domain/centres';
+import { CentreStoreActions, CentreStoreReducer } from '@app/root-store';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
 import { MockActivatedRoute } from '@test/mocks';
+import { cold } from 'jasmine-marbles';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { CentreLocationAddComponent } from './centre-location-add.component';
-import { Centre } from '@app/domain/centres';
-import { cold } from 'jasmine-marbles';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('CentreLocationAddComponent', () => {
   let component: CentreLocationAddComponent;

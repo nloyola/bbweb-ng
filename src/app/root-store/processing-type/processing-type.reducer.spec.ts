@@ -180,7 +180,7 @@ describe('ProcessingType Reducer', () => {
       let state = ProcessingTypeStoreReducer.reducer(initialState, initialAction);
 
       const  updatedPt = new ProcessingType().deserialize({
-        ...processingType,
+        ...processingType as any,
         enabled: !processingType.enabled
       });
       state = ProcessingTypeStoreReducer.reducer(

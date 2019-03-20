@@ -42,7 +42,7 @@ describe('AdminComponent', () => {
     ];
 
     roles.forEach(role => {
-      const user = new User().deserialize({ roles: [role] });
+      const user = new User().deserialize({ roles: [ role ] } as any);
       const action = new AuthStoreActions.LoginSuccessAction({ user });
       store.dispatch(action);
 

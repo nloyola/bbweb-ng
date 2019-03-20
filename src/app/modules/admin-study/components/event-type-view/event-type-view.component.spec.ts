@@ -41,7 +41,7 @@ describe('EventTypeViewComponent', () => {
   });
 
   it('should sort annotationTypes and specimenDefinitions types on initialization', () => {
-    const eventType = createTestEventType(factory);
+    const eventType = createTestEventType();
     component.eventType = eventType;
     component.allowChanges = false;
     fixture.detectChanges();
@@ -53,7 +53,7 @@ describe('EventTypeViewComponent', () => {
   });
 
   it('sorted annotationTypes and specimenDefinitions are empty when event type is undefined', () => {
-    const eventType = createTestEventType(factory);
+    const eventType = createTestEventType();
     component.eventType = eventType;
     component.allowChanges = false;
     fixture.detectChanges();
@@ -67,7 +67,7 @@ describe('EventTypeViewComponent', () => {
   });
 
   it('test for emitters', () => {
-    const eventType = createTestEventType(factory);
+    const eventType = createTestEventType();
     const annotationType = eventType.annotationTypes[0];
     const specimenDefinition = eventType.specimenDefinitions[0];
     const testData = [
@@ -133,7 +133,7 @@ describe('EventTypeViewComponent', () => {
       }
     ];
 
-    component.eventType = createTestEventType(factory);
+    component.eventType = createTestEventType();
     component.allowChanges = false;
     fixture.detectChanges();
 

@@ -82,7 +82,7 @@ describe('CentreAddComponent', () => {
       const centre = new Centre().deserialize(factory.centre());
       spyOn(toastr, 'success').and.returnValue(null);
       const storeListener = jest.spyOn(store, 'dispatch');
-      const routerListener = jest.spyOn(router, 'navigate').mockReturnValue(true);
+      const routerListener = jest.spyOn(router, 'navigate').mockResolvedValue(true);
 
       component.name.setValue(centre.name);
       component.description.setValue(centre.description);

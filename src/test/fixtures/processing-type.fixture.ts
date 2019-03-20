@@ -1,11 +1,16 @@
 import { Study, ProcessingType, CollectionEventType, ProcessedSpecimenDefinitionName, CollectedSpecimenDefinitionName, SpecimenDefinitionName } from '@app/domain/studies';
 import { Factory } from '../factory';
 
+export interface ProcessingTypeFixtureEntities {
+  study: Study;
+  processingType: ProcessingType;
+}
+
 export class ProcessingTypeFixture {
 
   constructor(protected factory: Factory) {}
 
-  createEntities(): { study: Study, processingType: ProcessingType } {
+  createEntities(): ProcessingTypeFixtureEntities {
     const study = new Study().deserialize(this.factory.study());
     return {
       study,
@@ -51,7 +56,7 @@ export class ProcessingTypeFixture {
         id: sd.id,
         slug: sd.slug,
         name: sd.name,
-      }))
+      })) as any
     }));
   }
 

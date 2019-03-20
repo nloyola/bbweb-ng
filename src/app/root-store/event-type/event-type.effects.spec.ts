@@ -169,7 +169,7 @@ describe('eventType-store effects', () => {
     it('should respond with success', () => {
       const completion = new EventTypeStoreActions.UpdateEventTypeSuccess({ eventType });
 
-      eventTypeService.update.mockReturnValue(of(eventType));
+      jest.spyOn(eventTypeService, 'update').mockReturnValue(of(eventType));
       actions = hot('--a-', { a: action });
       expect(effects.updateRequest$).toBeObservable(cold('--b', { b: completion }));
     });
@@ -183,7 +183,7 @@ describe('eventType-store effects', () => {
       };
       const completion = new EventTypeStoreActions.UpdateEventTypeFailure({ error });
 
-      eventTypeService.update.mockReturnValue(throwError(error));
+      jest.spyOn(eventTypeService, 'update').mockReturnValue(throwError(error));
       actions = hot('--a-', { a: action });
       expect(effects.updateRequest$).toBeObservable(cold('--b', { b: completion }));
     });
@@ -208,7 +208,7 @@ describe('eventType-store effects', () => {
     it('should respond with success', () => {
       const completion = new EventTypeStoreActions.UpdateEventTypeSuccess({ eventType });
 
-      eventTypeService.addOrUpdateAnnotationType.mockReturnValue(of(eventType));
+      jest.spyOn(eventTypeService, 'addOrUpdateAnnotationType').mockReturnValue(of(eventType));
       actions = hot('--a-', { a: action });
       expect(effects.addOrUpdateAnnotationTypeRequest$).toBeObservable(cold('--b', { b: completion }));
     });
@@ -222,7 +222,7 @@ describe('eventType-store effects', () => {
       };
       const completion = new EventTypeStoreActions.UpdateEventTypeFailure({ error });
 
-      eventTypeService.addOrUpdateAnnotationType.mockReturnValue(throwError(error));
+      jest.spyOn(eventTypeService, 'addOrUpdateAnnotationType').mockReturnValue(throwError(error));
       actions = hot('--a-', { a: action });
       expect(effects.addOrUpdateAnnotationTypeRequest$).toBeObservable(cold('--b', { b: completion }));
     });
@@ -247,7 +247,7 @@ describe('eventType-store effects', () => {
     it('should respond with success', () => {
       const completion = new EventTypeStoreActions.UpdateEventTypeSuccess({ eventType });
 
-      eventTypeService.removeAnnotationType.mockReturnValue(of(eventType));
+      jest.spyOn(eventTypeService, 'removeAnnotationType').mockReturnValue(of(eventType));
       actions = hot('--a-', { a: action });
       expect(effects.removeAnnotationTypeRequest$).toBeObservable(cold('--b', { b: completion }));
     });
@@ -261,7 +261,7 @@ describe('eventType-store effects', () => {
       };
       const completion = new EventTypeStoreActions.UpdateEventTypeFailure({ error });
 
-      eventTypeService.removeAnnotationType.mockReturnValue(throwError(error));
+      jest.spyOn(eventTypeService, 'removeAnnotationType').mockReturnValue(throwError(error));
       actions = hot('--a-', { a: action });
       expect(effects.removeAnnotationTypeRequest$).toBeObservable(cold('--b', { b: completion }));
     });
@@ -286,7 +286,7 @@ describe('eventType-store effects', () => {
     it('should respond with success', () => {
       const completion = new EventTypeStoreActions.UpdateEventTypeSuccess({ eventType });
 
-      eventTypeService.addOrUpdateSpecimenDefinition.mockReturnValue(of(eventType));
+      jest.spyOn(eventTypeService, 'addOrUpdateSpecimenDefinition').mockReturnValue(of(eventType));
       actions = hot('--a-', { a: action });
       expect(effects.addOrUpdateSpecimenDefinitionRequest$).toBeObservable(cold('--b', { b: completion }));
     });
@@ -300,7 +300,7 @@ describe('eventType-store effects', () => {
       };
       const completion = new EventTypeStoreActions.UpdateEventTypeFailure({ error });
 
-      eventTypeService.addOrUpdateSpecimenDefinition.mockReturnValue(throwError(error));
+      jest.spyOn(eventTypeService, 'addOrUpdateSpecimenDefinition').mockReturnValue(throwError(error));
       actions = hot('--a-', { a: action });
       expect(effects.addOrUpdateSpecimenDefinitionRequest$).toBeObservable(cold('--b', { b: completion }));
     });
@@ -325,7 +325,7 @@ describe('eventType-store effects', () => {
     it('should respond with success', () => {
       const completion = new EventTypeStoreActions.UpdateEventTypeSuccess({ eventType });
 
-      eventTypeService.removeSpecimenDefinition.mockReturnValue(of(eventType));
+      jest.spyOn(eventTypeService, 'removeSpecimenDefinition').mockReturnValue(of(eventType));
       actions = hot('--a-', { a: action });
       expect(effects.removeSpecimenDefinitionRequest$).toBeObservable(cold('--b', { b: completion }));
     });
@@ -339,7 +339,7 @@ describe('eventType-store effects', () => {
       };
       const completion = new EventTypeStoreActions.UpdateEventTypeFailure({ error });
 
-      eventTypeService.removeSpecimenDefinition.mockReturnValue(throwError(error));
+      jest.spyOn(eventTypeService, 'removeSpecimenDefinition').mockReturnValue(throwError(error));
       actions = hot('--a-', { a: action });
       expect(effects.removeSpecimenDefinitionRequest$).toBeObservable(cold('--b', { b: completion }));
     });
@@ -359,7 +359,7 @@ describe('eventType-store effects', () => {
     it('should respond with success', () => {
       const completion = new EventTypeStoreActions.RemoveEventTypeSuccess({ eventTypeId: eventType.id });
 
-      eventTypeService.removeEventType.mockReturnValue(of(eventType.id));
+      jest.spyOn(eventTypeService, 'removeEventType').mockReturnValue(of(eventType.id));
       actions = hot('--a-', { a: action });
       expect(effects.removeEventTypeRequest$).toBeObservable(cold('--b', { b: completion }));
     });
@@ -373,7 +373,7 @@ describe('eventType-store effects', () => {
       };
       const completion = new EventTypeStoreActions.RemoveEventTypeFailure({ error });
 
-      eventTypeService.removeEventType.mockReturnValue(throwError(error));
+      jest.spyOn(eventTypeService, 'removeEventType').mockReturnValue(throwError(error));
       actions = hot('--a-', { a: action });
       expect(effects.removeEventTypeRequest$).toBeObservable(cold('--b', { b: completion }));
     });

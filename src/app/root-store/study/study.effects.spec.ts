@@ -186,7 +186,7 @@ describe('study-store effects', () => {
     it('should respond with success', () => {
       const completion = new StudyStoreActions.UpdateStudySuccess({ study });
 
-      studyService.update.mockReturnValue(of(study));
+      jest.spyOn(studyService, 'update').mockReturnValue(of(study));
       actions = hot('--a-', { a: action });
       expect(effects.updateRequest$).toBeObservable(cold('--b', { b: completion }));
     });
@@ -200,7 +200,7 @@ describe('study-store effects', () => {
       };
       const completion = new StudyStoreActions.UpdateStudyFailure({ error });
 
-      studyService.update.mockReturnValue(throwError(error));
+      jest.spyOn(studyService, 'update').mockReturnValue(throwError(error));
       actions = hot('--a-', { a: action });
       expect(effects.updateRequest$).toBeObservable(cold('--b', { b: completion }));
     });
@@ -225,7 +225,7 @@ describe('study-store effects', () => {
     it('should respond with success', () => {
       const completion = new StudyStoreActions.UpdateStudySuccess({ study });
 
-      studyService.addOrUpdateAnnotationType.mockReturnValue(of(study));
+      jest.spyOn(studyService, 'addOrUpdateAnnotationType').mockReturnValue(of(study));
       actions = hot('--a-', { a: action });
       expect(effects.addOrUpdateAnnotationTypeRequest$).toBeObservable(cold('--b', { b: completion }));
     });
@@ -239,7 +239,7 @@ describe('study-store effects', () => {
       };
       const completion = new StudyStoreActions.UpdateStudyFailure({ error });
 
-      studyService.addOrUpdateAnnotationType.mockReturnValue(throwError(error));
+      jest.spyOn(studyService, 'addOrUpdateAnnotationType').mockReturnValue(throwError(error));
       actions = hot('--a-', { a: action });
       expect(effects.addOrUpdateAnnotationTypeRequest$).toBeObservable(cold('--b', { b: completion }));
     });
@@ -264,7 +264,7 @@ describe('study-store effects', () => {
     it('should respond with success', () => {
       const completion = new StudyStoreActions.UpdateStudySuccess({ study });
 
-      studyService.removeAnnotationType.mockReturnValue(of(study));
+      jest.spyOn(studyService, 'removeAnnotationType').mockReturnValue(of(study));
       actions = hot('--a-', { a: action });
       expect(effects.removeAnnotationTypeRequest$).toBeObservable(cold('--b', { b: completion }));
     });
@@ -278,7 +278,7 @@ describe('study-store effects', () => {
       };
       const completion = new StudyStoreActions.UpdateStudyFailure({ error });
 
-      studyService.removeAnnotationType.mockReturnValue(throwError(error));
+      jest.spyOn(studyService, 'removeAnnotationType').mockReturnValue(throwError(error));
       actions = hot('--a-', { a: action });
       expect(effects.removeAnnotationTypeRequest$).toBeObservable(cold('--b', { b: completion }));
     });
@@ -302,7 +302,7 @@ describe('study-store effects', () => {
       };
       const completion = new StudyStoreActions.GetEnableAllowedSuccess(reply);
 
-      studyService.enableAllowed.mockReturnValue(of(reply));
+      jest.spyOn(studyService, 'enableAllowed').mockReturnValue(of(reply));
       actions = hot('--a-', { a: action });
       expect(effects.enableAllowedRequest$).toBeObservable(cold('--b', { b: completion }));
     });
@@ -316,7 +316,7 @@ describe('study-store effects', () => {
       };
       const completion = new StudyStoreActions.GetEnableAllowedFailure({ error });
 
-      studyService.enableAllowed.mockReturnValue(throwError(error));
+      jest.spyOn(studyService, 'enableAllowed').mockReturnValue(throwError(error));
       actions = hot('--a-', { a: action });
       expect(effects.enableAllowedRequest$).toBeObservable(cold('--b', { b: completion }));
     });

@@ -103,7 +103,7 @@ describe('StudySummaryComponent', () => {
     });
 
     const routerListener = jest.spyOn(router, 'navigate');
-    jest.spyOn(modalService, 'open').mockReturnValue({ result: Promise.resolve(newName) });
+    jest.spyOn(modalService, 'open').mockReturnValue({ result: Promise.resolve(newName) } as any);
     component.updateName();
     flush();
     fixture.detectChanges();
@@ -143,7 +143,7 @@ describe('StudySummaryComponent', () => {
         modalListener.mockReturnValue({
           componentInstance: {},
           result: Promise.resolve(testInfo.value)
-        });
+        } as any);
 
         testInfo.componentFunc(component);
         fixture.detectChanges();
@@ -167,7 +167,7 @@ describe('StudySummaryComponent', () => {
       jest.spyOn(modalService, 'open').mockReturnValue({
         componentInstance: {},
         result: Promise.resolve('test')
-      });
+      } as any);
 
       ngZone.run(() => store.dispatch(new StudyStoreActions.GetStudySuccess({ study })));
       fixture.detectChanges();

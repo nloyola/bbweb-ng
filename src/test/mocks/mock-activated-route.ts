@@ -12,10 +12,10 @@ export class MockActivatedRoute extends ActivatedRoute {
   get snapshot(): ActivatedRouteSnapshot { return null; }
 
   spyOnParent(func: () => void): void {
-    jest.spyOn(this, 'parent', 'get').mockImplementation(func);
+    Object.defineProperty(this, 'parent', { get: () => func() });
   }
 
   spyOnSnapshot(func: () => void): void {
-    jest.spyOn(this, 'snapshot', 'get').mockImplementation(func);
+    Object.defineProperty(this, 'snapshot', { get: () => func() });
   }
 }

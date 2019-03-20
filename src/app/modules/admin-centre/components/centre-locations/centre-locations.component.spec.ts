@@ -150,7 +150,7 @@ describe('CentreLocationsComponent', () => {
 
   it('should throw an error when centre is not disabled', () => {
     centre = new Centre().deserialize({
-      ...centre,
+      ...centre as any,
       state: CentreState.Enabled
     });
     jest.spyOn(modalService, 'open');
@@ -177,7 +177,7 @@ describe('CentreLocationsComponent', () => {
 
     it('on valid removal', fakeAsync(() => {
       const centreNoLocations = new Centre().deserialize({
-        ...centre,
+        ...centre as any,
         locations: []
       });
       const location = centre.locations[0];
@@ -187,7 +187,7 @@ describe('CentreLocationsComponent', () => {
       jest.spyOn(modalService, 'open').mockReturnValue({
         componentInstance: {},
         result: Promise.resolve('OK')
-      });
+      } as any);
 
       store.dispatch(new CentreStoreActions.GetCentreSuccess({ centre }));
       fixture.detectChanges();
@@ -230,7 +230,7 @@ describe('CentreLocationsComponent', () => {
       jest.spyOn(modalService, 'open').mockReturnValue({
         componentInstance: {},
         result: Promise.resolve('OK')
-      });
+      } as any);
       jest.spyOn(toastr, 'error').mockReturnValue(null);
 
       store.dispatch(new CentreStoreActions.GetCentreSuccess({ centre }));

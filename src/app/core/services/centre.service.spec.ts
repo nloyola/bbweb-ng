@@ -6,7 +6,7 @@ import { PagedQueryBehaviour } from '@test/behaviours/paged-query.behaviour';
 import { Factory } from '@test/factory';
 import * as faker from 'faker';
 import { CentreService } from './centre.service';
-import { Location } from '@app/domain/annotations';
+import { Location } from '@app/domain';
 import { Study } from '@app/domain/studies';
 
 describe('CentreService', () => {
@@ -322,7 +322,10 @@ describe('CentreService', () => {
 
     it('can remove a study', () => {
       const studyName = factory.entityNameAndStateDto(study);
-      const centreWithStudy = new Centre().deserialize({ ...centre, studyNames: [ studyName ] });
+      const centreWithStudy = new Centre().deserialize({
+        ...centre as any,
+        studyNames: [ studyName ]
+      });
 
       service.removeStudy(centreWithStudy, study.id).subscribe(c => {
         expect(c).toEqual(jasmine.any(Centre));
@@ -336,7 +339,10 @@ describe('CentreService', () => {
 
     it('should not add a study that centre is already associated with', function() {
       const studyName = factory.entityNameAndStateDto(study);
-      const centreWithStudy = new Centre().deserialize({ ...centre, studyNames: [ studyName ] });
+      const centreWithStudy = new Centre().deserialize({
+        ...centre as any,
+        studyNames: [ studyName ]
+      });
 
       expect(() => {
         service.addStudy(centreWithStudy, study.id);

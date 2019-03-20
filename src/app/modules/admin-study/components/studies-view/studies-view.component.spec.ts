@@ -135,7 +135,7 @@ describe('StudiesViewComponent', () => {
 
     it('update is ignored if the event is NaN', () => {
       spyOn(store, 'dispatch').and.callThrough();
-      component.paginationPageChanged('test');
+      component.paginationPageChanged('test' as any);
       expect(store.dispatch).not.toHaveBeenCalled();
 
     });

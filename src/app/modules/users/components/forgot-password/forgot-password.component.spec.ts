@@ -84,7 +84,7 @@ describe('ForgotPasswordComponent', () => {
   describe('when submitted', () => {
 
     it('form submission sends a request to the server', async(() => {
-      const user = new User().deserialize(factory.user);
+      const user = new User().deserialize(factory.user());
       spyOn(modalService, 'open').and
         .returnValue({ result: Promise.resolve('OK') });
 

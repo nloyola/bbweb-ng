@@ -170,11 +170,13 @@ describe('ProcessingTypeAddComponent', () => {
 
     it('input entity name and specimen definition name are correct', () => {
       const { eventType, processingType } = entityFixture.createProcessingTypeFromCollected();
-      createEntityFixtures();
+      const study = createEntityFixtures();
       component.processingType = processingType;
       const specimenDefinitionNames = entityFixture.collectedDefinitionNames([ eventType ]);
-      store.dispatch(
-        new EventTypeStoreActions.GetSpecimenDefinitionNamesSuccess({ specimenDefinitionNames }));
+      store.dispatch(new EventTypeStoreActions.GetSpecimenDefinitionNamesSuccess({
+        studySlug: study.slug,
+        specimenDefinitionNames
+      }));
       fixture.detectChanges();
 
       const processingTypeToSave = component.formToProcessingType();

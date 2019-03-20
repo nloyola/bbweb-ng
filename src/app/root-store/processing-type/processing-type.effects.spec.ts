@@ -172,7 +172,7 @@ describe('processingType-store effects', () => {
     it('should respond with success', () => {
       const completion = new ProcessingTypeStoreActions.UpdateProcessingTypeSuccess({ processingType });
 
-      processingTypeService.update.mockReturnValue(of(processingType));
+      jest.spyOn(processingTypeService, 'update').mockReturnValue(of(processingType));
       actions = hot('--a-', { a: action });
       expect(effects.updateRequest$).toBeObservable(cold('--b', { b: completion }));
     });
@@ -186,7 +186,7 @@ describe('processingType-store effects', () => {
       };
       const completion = new ProcessingTypeStoreActions.UpdateProcessingTypeFailure({ error });
 
-      processingTypeService.update.mockReturnValue(throwError(error));
+      jest.spyOn(processingTypeService, 'update').mockReturnValue(throwError(error));
       actions = hot('--a-', { a: action });
       expect(effects.updateRequest$).toBeObservable(cold('--b', { b: completion }));
     });
@@ -211,7 +211,7 @@ describe('processingType-store effects', () => {
     it('should respond with success', () => {
       const completion = new ProcessingTypeStoreActions.UpdateProcessingTypeSuccess({ processingType });
 
-      processingTypeService.addOrUpdateAnnotationType.mockReturnValue(of(processingType));
+      jest.spyOn(processingTypeService, 'addOrUpdateAnnotationType').mockReturnValue(of(processingType));
       actions = hot('--a-', { a: action });
       expect(effects.addOrUpdateAnnotationTypeRequest$).toBeObservable(cold('--b', { b: completion }));
     });
@@ -225,7 +225,7 @@ describe('processingType-store effects', () => {
       };
       const completion = new ProcessingTypeStoreActions.UpdateProcessingTypeFailure({ error });
 
-      processingTypeService.addOrUpdateAnnotationType.mockReturnValue(throwError(error));
+      jest.spyOn(processingTypeService, 'addOrUpdateAnnotationType').mockReturnValue(throwError(error));
       actions = hot('--a-', { a: action });
       expect(effects.addOrUpdateAnnotationTypeRequest$).toBeObservable(cold('--b', { b: completion }));
     });
@@ -250,7 +250,7 @@ describe('processingType-store effects', () => {
     it('should respond with success', () => {
       const completion = new ProcessingTypeStoreActions.UpdateProcessingTypeSuccess({ processingType });
 
-      processingTypeService.removeAnnotationType.mockReturnValue(of(processingType));
+      jest.spyOn(processingTypeService, 'removeAnnotationType').mockReturnValue(of(processingType));
       actions = hot('--a-', { a: action });
       expect(effects.removeAnnotationTypeRequest$).toBeObservable(cold('--b', { b: completion }));
     });
@@ -264,7 +264,7 @@ describe('processingType-store effects', () => {
       };
       const completion = new ProcessingTypeStoreActions.UpdateProcessingTypeFailure({ error });
 
-      processingTypeService.removeAnnotationType.mockReturnValue(throwError(error));
+      jest.spyOn(processingTypeService, 'removeAnnotationType').mockReturnValue(throwError(error));
       actions = hot('--a-', { a: action });
       expect(effects.removeAnnotationTypeRequest$).toBeObservable(cold('--b', { b: completion }));
     });
@@ -286,7 +286,7 @@ describe('processingType-store effects', () => {
         processingTypeId: processingType.id
       });
 
-      processingTypeService.removeProcessingType.mockReturnValue(of(processingType.id));
+      jest.spyOn(processingTypeService, 'removeProcessingType').mockReturnValue(of(processingType.id));
       actions = hot('--a-', { a: action });
       expect(effects.removeProcessingTypeRequest$).toBeObservable(cold('--b', { b: completion }));
     });
@@ -300,7 +300,7 @@ describe('processingType-store effects', () => {
       };
       const completion = new ProcessingTypeStoreActions.RemoveProcessingTypeFailure({ error });
 
-      processingTypeService.removeProcessingType.mockReturnValue(throwError(error));
+      jest.spyOn(processingTypeService, 'removeProcessingType').mockReturnValue(throwError(error));
       actions = hot('--a-', { a: action });
       expect(effects.removeProcessingTypeRequest$).toBeObservable(cold('--b', { b: completion }));
     });
