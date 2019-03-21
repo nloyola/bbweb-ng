@@ -1,11 +1,18 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CollectedSpecimenDefinition, CollectionEventType, Study } from '@app/domain/studies';
-import { EventTypeStoreActions, EventTypeStoreSelectors, RootStoreState } from '@app/root-store';
-import { select, Store } from '@ngrx/store';
+import { EventTypeStoreActions, EventTypeStoreSelectors, RootStoreState, StudyStoreSelectors } from '@app/root-store';
+import { select, Store, createSelector } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
-import { Subject, BehaviorSubject } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
+import { Subject, BehaviorSubject, Observable } from 'rxjs';
+import { filter, takeUntil, map, tap, shareReplay, withLatestFrom } from 'rxjs/operators';
+import { SpinnerStoreSelectors } from '@app/root-store/spinner';
+
+interface StoreData {
+  study: Study;
+  eventType: CollectionEventType;
+  specimenDefinition: CollectedSpecimenDefinition;
+}
 
 @Component({
   selector: 'app-collected-specimen-definition-add',
@@ -13,16 +20,16 @@ import { filter, takeUntil } from 'rxjs/operators';
 })
 export class CollectedSpecimenDefinitionAddContainerComponent implements OnInit, OnDestroy {
 
-  study: Study;
-  eventTypeSlug: string;
+  isLoading$: Observable<boolean>;
+  data$: Observable<StoreData>;
   eventType: CollectionEventType;
-  loading: boolean;
-  specimenDefinition: CollectedSpecimenDefinition;
+  specimenDefinition$: Observable<CollectedSpecimenDefinition>;
   isSaving$ = new BehaviorSubject<boolean>(false);
-  savedMessage: string;
 
   private parentStateRelativePath = '..';
+  private specimenDefinition: CollectedSpecimenDefinition;
   private specimenDefinitionToSave: CollectedSpecimenDefinition;
+  private updatedMessage$ = new Subject<string>();
   private unsubscribe$: Subject<void> = new Subject<void>();
 
   constructor(private route: ActivatedRoute,
@@ -32,34 +39,58 @@ export class CollectedSpecimenDefinitionAddContainerComponent implements OnInit,
   }
 
   ngOnInit() {
-    this.specimenDefinition = new CollectedSpecimenDefinition();
-    this.loading = (this.route.snapshot.url[0].path !== 'spcDefAdd');
-    this.study = this.route.parent.parent.parent.parent.snapshot.data.study;
-    this.eventTypeSlug = this.route.snapshot.params.eventTypeSlug;
+    this.isLoading$ = this.store$.pipe(select(SpinnerStoreSelectors.selectSpinnerIsActive));
 
-    this.store$.pipe(
-      select(EventTypeStoreSelectors.selectAllEventTypes),
-      filter((eventTypes: CollectionEventType[]) => eventTypes.length > 0),
-      takeUntil(this.unsubscribe$))
-      .subscribe((eventTypes: CollectionEventType[]) => {
-        const entity = eventTypes.find(et => et.slug === this.route.snapshot.params.eventTypeSlug);
-        this.eventType = (entity instanceof CollectionEventType)
-          ? entity : new CollectionEventType().deserialize(entity);
+    const entitiesSelector = createSelector(
+      StudyStoreSelectors.selectAllStudies,
+      EventTypeStoreSelectors.selectAllEventTypes,
+      (studies: Study[], eventTypes: CollectionEventType[]) => ({ studies, eventTypes }));
 
-        this.loading = false;
+    this.data$ = this.store$.pipe(
+      select(entitiesSelector),
+      map(data => {
+        let study: Study;
+        let eventType: CollectionEventType;
+        let specimenDefinition: CollectedSpecimenDefinition;
 
-        if (this.route.snapshot.params.specimenDefinitionId) {
-          this.parentStateRelativePath = '../..';
-          this.specimenDefinition = this.eventType.specimenDefinitions
-            .find(sd => sd.id === this.route.snapshot.params.specimenDefinitionId);
+        const studyEntity = data.studies
+          .find(s => s.slug === this.route.parent.parent.parent.parent.snapshot.params.slug);
+
+        if (studyEntity) {
+          study = (studyEntity instanceof Study) ? studyEntity :  new Study().deserialize(studyEntity);
         }
 
-        if (this.savedMessage) {
-          this.isSaving$.next(false);
-          this.toastr.success(this.savedMessage, 'Update Successfull');
-          this.router.navigate([ this.parentStateRelativePath ], { relativeTo: this.route });
+        const etEntity = data.eventTypes.find(et => et.slug === this.route.snapshot.params.eventTypeSlug);
+        if (etEntity) {
+          eventType = (etEntity instanceof CollectionEventType)
+            ? etEntity : new CollectionEventType().deserialize(etEntity);
+          specimenDefinition = this.route.snapshot.params.specimenDefinitionId
+            ? eventType.specimenDefinitions.find(at => at.id === this.route.snapshot.params.specimenDefinitionId)
+            : new CollectedSpecimenDefinition();
         }
-      });
+
+        return {
+          study,
+          eventType,
+          specimenDefinition
+        };
+      }),
+      tap(data => {
+        this.eventType = data.eventType;
+        this.specimenDefinition = data.specimenDefinition;
+      }),
+      shareReplay());
+
+    this.specimenDefinition$ = this.data$.pipe(map(data => data.specimenDefinition));
+
+    this.data$.pipe(
+      withLatestFrom(this.updatedMessage$),
+      takeUntil(this.unsubscribe$)
+    ).subscribe(([ _data, msg ]) => {
+      this.isSaving$.next(false);
+      this.toastr.success(msg, 'Update Successfull');
+      this.router.navigate([ this.parentStateRelativePath ], { relativeTo: this.route });
+    });
 
     this.store$
       .pipe(
@@ -73,12 +104,11 @@ export class CollectedSpecimenDefinitionAddContainerComponent implements OnInit,
           errMessage = `The name is already in use: ${this.specimenDefinitionToSave.name}`;
         }
         this.toastr.error(errMessage, 'Add Error', { disableTimeOut: true });
-        this.savedMessage = undefined;
       });
 
     this.store$.dispatch(new EventTypeStoreActions.GetEventTypeRequest({
-      studySlug: this.study.slug,
-      eventTypeSlug: this.eventTypeSlug
+      studySlug: this.route.parent.parent.parent.parent.snapshot.params.slug,
+      eventTypeSlug: this.route.snapshot.params.eventTypeSlug
     }));
   }
 
@@ -90,12 +120,13 @@ export class CollectedSpecimenDefinitionAddContainerComponent implements OnInit,
   onSubmit(specimenDefinition: CollectedSpecimenDefinition): void {
     this.isSaving$.next(true);
     this.specimenDefinitionToSave = specimenDefinition;
-    this.savedMessage = this.specimenDefinition.isNew() ? 'Specimen Added' : 'Specimen Updated';
 
     this.store$.dispatch(new EventTypeStoreActions.UpdateEventTypeAddOrUpdateSpecimenDefinitionRequest({
       eventType: this.eventType,
       specimenDefinition: this.specimenDefinitionToSave
     }));
+
+    this.updatedMessage$.next(this.specimenDefinition.isNew() ? 'Specimen Added' : 'Specimen Updated');
   }
 
   onCancel(): void {

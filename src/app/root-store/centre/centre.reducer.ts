@@ -88,7 +88,8 @@ export function reducer(state = initialState, action: CentreActions): State {
     case ActionTypes.AddCentreRequest: {
       return {
         ...state,
-        lastAddedId: null
+        lastAddedId: null,
+        error: null
       };
     }
 
@@ -97,6 +98,17 @@ export function reducer(state = initialState, action: CentreActions): State {
         ...state,
         lastAddedId: action.payload.centre.id
       });
+    }
+
+    case ActionTypes.UpdateCentreAddStudyRequest:
+    case ActionTypes.UpdateCentreRemoveStudyRequest:
+    case ActionTypes.UpdateCentreAddOrUpdateLocationRequest:
+    case ActionTypes.UpdateCentreRemoveLocationRequest:
+    case ActionTypes.UpdateCentreRequest: {
+      return {
+        ...state,
+        error: null
+      };
     }
 
     case ActionTypes.UpdateCentreSuccess: {

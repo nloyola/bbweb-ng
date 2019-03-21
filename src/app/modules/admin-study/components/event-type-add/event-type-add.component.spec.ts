@@ -1,5 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgZone } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed, flush, fakeAsync } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -111,7 +111,7 @@ describe('EventTypeAddComponent', () => {
       });
     }));
 
-    it('on submission failure', async(() => {
+    it('on submission failure', fakeAsync(() => {
       const toastr = TestBed.get(ToastrService);
       const eventType = createEventType();
       const errors = [
@@ -122,7 +122,7 @@ describe('EventTypeAddComponent', () => {
         {
           status: 404,
           error: {
-              message: 'simulated error'
+            message: 'simulated error'
           }
         },
         {
@@ -142,12 +142,10 @@ describe('EventTypeAddComponent', () => {
         component.description.setValue(eventType.description);
         component.recurring.setValue(eventType.recurring);
         component.onSubmit();
-        store.dispatch(new EventTypeStoreActions.GetEventTypeFailure({ error }));
+        store.dispatch(new EventTypeStoreActions.AddEventTypeFailure({ error }));
+        flush();
         fixture.detectChanges();
-
-        fixture.whenStable().then(() => {
-          expect(toastr.error).toHaveBeenCalled();
-        });
+        expect(toastr.error).toHaveBeenCalled();
       });
     }));
 

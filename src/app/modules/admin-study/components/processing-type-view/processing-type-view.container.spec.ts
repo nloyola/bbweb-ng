@@ -112,7 +112,7 @@ describe('ProcessingTypeViewContainerComponent', () => {
 
     expect(routerListener.mock.calls.length).toBe(1);
     expect(routerListener.mock.calls[0][0]).toEqual([
-      `/admin/studies/${study.slug}/processing/view/${ptWithNewName.slug}`]);
+      '/admin/studies', study.slug, 'processing', 'view', ptWithNewName.slug]);
   }));
 
   describe('for input entity', () => {
@@ -447,7 +447,7 @@ describe('ProcessingTypeViewContainerComponent', () => {
       });
     }));
 
-    it('event type becomes undefined when removed', fakeAsync(() => {
+    it('processing type becomes undefined when removed', fakeAsync(() => {
       const entities = createEntities();
       fixture.detectChanges();
 
@@ -458,7 +458,7 @@ describe('ProcessingTypeViewContainerComponent', () => {
         result: Promise.resolve('OK')
       });
 
-      component.removeProcessingType()
+      component.removeProcessingType();
       flush();
       fixture.detectChanges();
 
@@ -471,7 +471,7 @@ describe('ProcessingTypeViewContainerComponent', () => {
 
       expect(component.processingType).toBeUndefined();
       expect(routerListener).toHaveBeenCalled();
-      expect(routerListener.mock.calls[0][0]).toEqual([ `/admin/studies/${entities.study.slug}/processing` ]);
+      expect(routerListener.mock.calls[0][0]).toEqual([ '/admin/studies', entities.study.slug, 'processing' ]);
     }));
 
     it('opens a modal if the processing type is in use', () => {
@@ -547,6 +547,8 @@ describe('ProcessingTypeViewContainerComponent', () => {
   }
 
   function createMockActivatedRouteSpies(study: Study, processingType: ProcessingType): void {
+    mockActivatedRoute.spyOnParams(() => processingType);
+
     mockActivatedRoute.spyOnParent(() => ({
       parent: {
         parent: {

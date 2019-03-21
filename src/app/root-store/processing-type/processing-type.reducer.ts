@@ -18,6 +18,7 @@ export interface State extends EntityState<ProcessingType> {
   searchReplies?: PagedReplyHash;
   specimenDefinitionNames: ProcessedSpecimenDefinitionName[];
   lastAddedId?: string;
+  lastRemovedId?: string;
   error?: any;
 }
 
@@ -29,6 +30,7 @@ export const initialState: State = adapter.getInitialState({
   searchReplies: {},
   specimenDefinitionNames: [],
   lastAddedId: null,
+  lastRemovedId: null,
   slugsInUse: {},
   error: null,
 });
@@ -79,7 +81,7 @@ export function reducer(state = initialState, action: ProcessingTypeActions): St
         ...newReply
       };
 
-      return adapter.addMany(pagedReply.entities, {
+      return adapter.upsertMany(pagedReply.entities, {
         ...state,
         searchReplies: {
           ...state.searchReplies,
@@ -88,6 +90,13 @@ export function reducer(state = initialState, action: ProcessingTypeActions): St
         searchActive: false
       });
     }
+
+    case ActionTypes.GetProcessingTypeRequest:
+    case ActionTypes.GetProcessingTypeByIdRequest:
+      return {
+        ...state,
+        error: null
+      };
 
     case ActionTypes.GetProcessingTypeSuccess: {
       return adapter.addOne(action.payload.processingType, state);
@@ -107,6 +116,11 @@ export function reducer(state = initialState, action: ProcessingTypeActions): St
       });
     }
 
+    case ActionTypes.UpdateProcessingTypeRequest:
+    case ActionTypes.UpdateProcessingTypeAddOrUpdateAnnotationTypeRequest:
+    case ActionTypes.UpdateProcessingTypeRemoveAnnotationTypeRequest:
+      return { ...state, error: null };
+
     case ActionTypes.UpdateProcessingTypeSuccess: {
       const result = adapter.updateOne(
         {
@@ -117,9 +131,27 @@ export function reducer(state = initialState, action: ProcessingTypeActions): St
       return result;
     }
 
-    case ActionTypes.RemoveProcessingTypeSuccess: {
-      return adapter.removeOne(action.payload.processingTypeId, state);
-    }
+    case ActionTypes.RemoveProcessingTypeRequest:
+      return {
+        ...state,
+        lastRemovedId: null
+      };
+
+    case ActionTypes.RemoveProcessingTypeSuccess:
+      return adapter.removeOne(action.payload.processingTypeId, {
+        ...state,
+        lastRemovedId: action.payload.processingTypeId
+      });
+
+    case ActionTypes.RemoveProcessingTypeFailure:
+      return {
+        ...state,
+        lastRemovedId: null,
+        error: {
+          error: action.payload.error,
+          actionType: action.type
+        }
+      };
 
     case ActionTypes.GetSpecimenDefinitionNamesSuccess: {
       return {
@@ -138,7 +170,6 @@ export function reducer(state = initialState, action: ProcessingTypeActions): St
     case ActionTypes.GetProcessingTypeFailure:
     case ActionTypes.AddProcessingTypeFailure:
     case ActionTypes.UpdateProcessingTypeFailure:
-    case ActionTypes.RemoveProcessingTypeFailure:
     case ActionTypes.GetSpecimenDefinitionNamesFailure:
       return {
         ...state,

@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { PasswordValidation } from '@app/core/password-validation';
 import { ModalInputTextComponent } from '@app/modules/modals/components/modal-input-text/modal-input-text.component';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { User } from '@app/domain/users';
 
 @Component({
   selector: 'app-modal-input-password',
@@ -11,12 +11,18 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 })
 export class ModalInputPasswordComponent extends ModalInputTextComponent implements OnInit {
 
+  @Input() user: User;
+
   constructor(formBuilder: FormBuilder) {
     super(formBuilder);
   }
 
   ngOnInit() {
-    this.options = { required: true, minLength: 8 };
+    this.options = {
+      ...this.options,
+      required: true,
+      minLength: 8
+    };
     super.ngOnInit();
     this.modalInputForm.addControl('password',
                                    new FormControl('', [ Validators.required, Validators.minLength(8) ]));

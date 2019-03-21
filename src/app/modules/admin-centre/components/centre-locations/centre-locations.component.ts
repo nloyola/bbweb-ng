@@ -3,13 +3,14 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@app/domain';
 import { Centre } from '@app/domain/centres';
 import { CentreUI } from '@app/domain/centres/centre-ui.model';
-import { CentreStoreSelectors, RootStoreState, CentreStoreActions } from '@app/root-store';
+import { CentreStoreActions, CentreStoreSelectors, RootStoreState } from '@app/root-store';
+import { SpinnerStoreSelectors } from '@app/root-store/spinner';
+import { LocationRemoveComponent } from '@app/shared/components/location-remove/location-remove.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
-import { Subject } from 'rxjs';
-import { filter, map, takeUntil } from 'rxjs/operators';
-import { LocationRemoveComponent } from '@app/shared/components/location-remove/location-remove.component';
+import { Observable, Subject } from 'rxjs';
+import { filter, map, shareReplay, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
 
 @Component({
   selector: 'app-centre-locations',
@@ -18,10 +19,12 @@ import { LocationRemoveComponent } from '@app/shared/components/location-remove/
 })
 export class CentreLocationsComponent implements OnInit, OnDestroy {
 
+  isLoading$: Observable<boolean>;
+  centre$: Observable<CentreUI>;
   centre: CentreUI;
-  updatedMessage: string;
 
-  private unsubscribe$: Subject<void> = new Subject<void>();
+  private updatedMessage$ = new Subject<string>();
+  private unsubscribe$ = new Subject<void>();
 
   constructor(private store$: Store<RootStoreState.State>,
               private route: ActivatedRoute,
@@ -30,30 +33,41 @@ export class CentreLocationsComponent implements OnInit, OnDestroy {
               private toastr: ToastrService) { }
 
   ngOnInit() {
-    this.store$.pipe(
+    this.isLoading$ = this.store$.pipe(select(SpinnerStoreSelectors.selectSpinnerIsActive));
+
+    this.centre$ = this.store$.pipe(
       select(CentreStoreSelectors.selectAllCentres),
       filter(s => s.length > 0),
-      map((centres: Centre[]) => centres.find(s => s.slug === this.route.parent.parent.snapshot.params.slug)),
-      filter(centre => centre !== undefined),
-      map(centre => (centre instanceof Centre) ? centre :  new Centre().deserialize(centre)),
-      takeUntil(this.unsubscribe$))
-      .subscribe(centre => {
-        this.centre = new CentreUI(centre);
-
-        if (this.updatedMessage) {
-          this.toastr.success(this.updatedMessage, 'Update Successfull');
+      map((centres: Centre[]) => {
+        const centreEntity = centres.find(s => s.slug === this.route.parent.parent.snapshot.params.slug);
+        if (centreEntity) {
+          const centre = (centreEntity instanceof Centre)
+            ? centreEntity :  new Centre().deserialize(centreEntity);
+          return new CentreUI(centre);
         }
-      });
+        return undefined;
+      }),
+      tap(centre => {
+        this.centre = centre;
+      }),
+      shareReplay());
 
-    this.store$
-      .pipe(
-        select(CentreStoreSelectors.selectCentreError),
-        filter(s => !!s),
-        takeUntil(this.unsubscribe$))
-      .subscribe((error: any) => {
-        const errMessage = error.error ? error.error.message : error.statusText;
-        this.toastr.error(errMessage, 'Update Error', { disableTimeOut: true });
-      });
+    this.store$.pipe(
+      select(CentreStoreSelectors.selectCentreError),
+      filter(error => !!error),
+      withLatestFrom(this.updatedMessage$),
+      takeUntil(this.unsubscribe$)
+    ).subscribe(([ error, _msg ]) => {
+      const errMessage = error.error.error ? error.error.error.message : error.error.statusText;
+      this.toastr.error(errMessage, 'Update Error', { disableTimeOut: true });
+    });
+
+    this.centre$.pipe(
+      withLatestFrom(this.updatedMessage$),
+      takeUntil(this.unsubscribe$)
+    ).subscribe(([ centre, msg ]) => {
+      this.toastr.success(msg, 'Update Successfull');
+    });
   }
 
   ngOnDestroy() {
@@ -89,7 +103,7 @@ export class CentreLocationsComponent implements OnInit, OnDestroy {
           locationId: location.id
         }));
 
-        this.updatedMessage = 'Location removed';
+        this.updatedMessage$.next('Location removed');
       })
       .catch(() => undefined);
   }

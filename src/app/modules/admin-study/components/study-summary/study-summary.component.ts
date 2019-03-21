@@ -10,7 +10,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { createSelector, select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject } from 'rxjs';
-import { map, takeUntil, tap, withLatestFrom, share } from 'rxjs/operators';
+import { filter, map, share, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
 
 interface StoreData {
   study: StudyUI;
@@ -34,8 +34,14 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
   descriptionToggleLength = 80;
   getStateIcon = StudyUI.getStateIcon;
   getStateIconClass = StudyUI.getStateIconClass;
-  updateNameModalOptions: ModalInputTextOptions;
-  updateDescriptionModalOptions: ModalInputTextareaOptions;
+  updateNameModalOptions: ModalInputTextOptions = {
+    required: true,
+    minLength: 2
+  };
+  updateDescriptionModalOptions: ModalInputTextareaOptions = {
+    rows: 20,
+    cols: 10
+  };
 
   private data$: Observable<StoreData>;
   private studyId: string;
@@ -111,6 +117,19 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
         this.router.navigate([ '../..', data.study.slug, 'summary' ], { relativeTo: this.route });
       }
     });
+
+    this.store$.pipe(
+      select(StudyStoreSelectors.selectStudyError),
+      filter(error => !!error),
+      withLatestFrom(this.updatedMessage$),
+      takeUntil(this.unsubscribe$)
+    ).subscribe(([error, _msg]) => {
+      let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
+      if (errMessage.indexOf('name already used') > -1) {
+        errMessage = 'A study with that name already exists. Please use another name.';
+      }
+      this.toastr.error(errMessage, 'Update Error', { disableTimeOut: true });
+    });
   }
 
   ngOnDestroy() {
@@ -119,10 +138,6 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
   }
 
   updateName() {
-    this.updateNameModalOptions = {
-      required: true,
-      minLength: 2
-    };
     this.modalService.open(this.updateNameModal).result
       .then(value => {
         this.store$.dispatch(new StudyStoreActions.UpdateStudyRequest({
@@ -136,10 +151,6 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
   }
 
   updateDescription() {
-    this.updateDescriptionModalOptions = {
-      rows: 20,
-      cols: 10
-    };
     this.modalService.open(this.updateDescriptionModal, { size: 'lg' }).result
       .then(value => {
         this.store$.dispatch(new StudyStoreActions.UpdateStudyRequest({

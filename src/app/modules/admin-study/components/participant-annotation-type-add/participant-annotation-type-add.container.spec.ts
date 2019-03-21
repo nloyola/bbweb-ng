@@ -66,6 +66,7 @@ describe('ParticipantAnnotationTypeAddContainer', () => {
 
   it('should create', () => {
     const study = createStudy();
+    store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
     mockActivatedRouteSnapshot('add', study);
     fixture.detectChanges();
     expect(component).toBeTruthy();
@@ -73,6 +74,7 @@ describe('ParticipantAnnotationTypeAddContainer', () => {
 
   it('assigns the study when it is changed in the store', () => {
     const study = createStudy();
+    store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
     mockActivatedRouteSnapshot('add', study);
 
     store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
@@ -105,6 +107,10 @@ describe('ParticipantAnnotationTypeAddContainer', () => {
 
     it('on valid submission', async(() => {
       const study = createStudy();
+      store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
+      mockActivatedRouteSnapshot('add', study);
+      fixture.detectChanges();
+
       const expectedAction = new StudyStoreActions.UpdateStudyAddOrUpdateAnnotationTypeRequest({
         study,
         annotationType: study.annotationTypes[0]
@@ -112,11 +118,7 @@ describe('ParticipantAnnotationTypeAddContainer', () => {
 
       jest.spyOn(store, 'dispatch');
       jest.spyOn(toastr, 'success').mockReturnValue(null);
-      const spy = jest.spyOn(router, 'navigate');
-
-      mockActivatedRouteSnapshot('add', study);
-      store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
-      fixture.detectChanges();
+      const routerListener = jest.spyOn(router, 'navigate');
 
       component.onSubmit(study.annotationTypes[0]);
       expect(store.dispatch).toHaveBeenCalledWith(expectedAction);
@@ -129,7 +131,7 @@ describe('ParticipantAnnotationTypeAddContainer', () => {
         expect(component.isSaving$).toBeObservable(cold('b', { b: false }));
         expect(store.dispatch).toHaveBeenCalled();
         expect(toastr.success).toHaveBeenCalled();
-        expect(spy.mock.calls[0][0]).toEqual(['..']);
+        expect(routerListener.mock.calls[0][0]).toEqual(['..']);
       });
     }));
 
@@ -163,14 +165,12 @@ describe('ParticipantAnnotationTypeAddContainer', () => {
 
       testData.forEach(testInfo => {
         mockActivatedRouteSnapshot(testInfo.path, study);
-        component.ngOnInit();
-
         store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
+        component.ngOnInit();
         fixture.detectChanges();
 
         errors.forEach(error => {
           component.onSubmit(study.annotationTypes[0]);
-          expect(component.savedMessage).toBe(testInfo.savedMessage);
           expect(component.isSaving$).toBeObservable(cold('b', { b: true }));
           store.dispatch(new StudyStoreActions.GetStudyFailure({ error }));
           fixture.detectChanges();

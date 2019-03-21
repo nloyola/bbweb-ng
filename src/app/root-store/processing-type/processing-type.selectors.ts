@@ -13,6 +13,8 @@ export const getSearchReplies =
 
 export const getLastAddedId = (state: fromProcessingType.State): string => state.lastAddedId;
 
+export const getLastRemovedId = (state: fromProcessingType.State): string => state.lastRemovedId;
+
 export const getSpecimenDefinitionNames =
   (state: fromProcessingType.State): ProcessedSpecimenDefinitionName[] =>
   state.specimenDefinitionNames;
@@ -40,6 +42,9 @@ export const selectAllProcessingTypeEntities =
 export const selectLastAddedId: MemoizedSelector<object, string> =
   createSelector(selectProcessingTypeState, getLastAddedId);
 
+export const selectLastRemovedId: MemoizedSelector<object, string> =
+  createSelector(selectProcessingTypeState, getLastRemovedId);
+
 export const selectSpecimenDefinitionNames: MemoizedSelector<object, ProcessedSpecimenDefinitionName[]> =
   createSelector(selectProcessingTypeState, getSpecimenDefinitionNames);
 
@@ -51,7 +56,7 @@ export const selectSearchRepliesAndEntities =
     selectSearchActive,
     selectLastSearch,
     selectSearchReplies,
-    createSelector(selectProcessingTypeState, fromProcessingType.selectEntities),
+    selectAllProcessingTypeEntities,
     (searchActive: boolean,
      lastSearch: fromProcessingType.LastSearch,
      searchReplies: fromProcessingType.PagedReplyHash,

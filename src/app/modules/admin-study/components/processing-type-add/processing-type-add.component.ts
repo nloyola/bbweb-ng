@@ -66,19 +66,7 @@ export class ProcessingTypeAddComponent implements OnInit, OnDestroy {
         `ProcessingType was added successfully: ${processingType.name}`,
         'Add Successfull');
       this.store$.dispatch(new ProcessingTypeStoreActions.ClearLastAdded());
-      this.router.navigate([ '../view', processingType.slug ], { relativeTo: this.route });
-    });
-
-    this.store$.pipe(
-      select(ProcessingTypeStoreSelectors.selectError),
-      filter(et => !!et),
-      takeUntil(this.unsubscribe$)
-    ).subscribe((error: any) => {
-      let errMessage = error.error ? error.error.message : error.statusText;
-      if (errMessage && errMessage.match(/EntityCriteriaError.*name already used/)) {
-        errMessage = `The name is already in use: ${this.processingTypeToSave.name}`;
-      }
-      this.toastr.error(errMessage, 'Add Error', { disableTimeOut: true });
+      this.router.navigate([ '/admin/studies', this.studySlug, 'processing', 'view', processingType.slug ]);
     });
 
     const entitiesSelector = createSelector(
@@ -117,6 +105,18 @@ export class ProcessingTypeAddComponent implements OnInit, OnDestroy {
       this.store$.dispatch(new EventTypeStoreActions.GetSpecimenDefinitionNamesRequest({
         studySlug: study.slug
       }));
+    });
+
+    this.store$.pipe(
+      select(ProcessingTypeStoreSelectors.selectError),
+      filter(et => !!et),
+      takeUntil(this.unsubscribe$)
+    ).subscribe((error: any) => {
+      let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
+      if (errMessage && errMessage.match(/EntityCriteriaError.*name already exists/)) {
+        errMessage = `A processing step with name ${this.processingTypeToSave.name} already exists. Please use a different one.`;
+      }
+      this.toastr.error(errMessage, 'Add Error', { disableTimeOut: true });
     });
   }
 

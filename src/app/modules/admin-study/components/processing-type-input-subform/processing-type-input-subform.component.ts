@@ -125,6 +125,7 @@ export class ProcessingTypeInputSubformComponent implements OnInit, OnChanges {
     if (this.definitionType.value === 'collected') {
       this.entityId.enable();
       this.entityId.setValue('');
+      this.inputProcessingType.disable();
     } else {
       this.entityId.disable();
       this.definitionId.disable();

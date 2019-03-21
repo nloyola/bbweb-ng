@@ -5,7 +5,7 @@ import { RootStoreState } from '@app/root-store';
 import { ProcessingTypeStoreActions, ProcessingTypeStoreSelectors } from '@app/root-store/processing-type';
 import { select, Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
-import { filter, map, takeUntil } from 'rxjs/operators';
+import { filter, map, takeUntil, tap } from 'rxjs/operators';
 import { SearchReply } from '@app/domain/search-reply.model';
 
 export interface ProcessingTypePageInfo {
@@ -47,8 +47,6 @@ export class ProcessingTypesAddAndSelectComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.isAddAllowed = this.study.isDisabled();
 
-    this.serverError$ = this.store$.pipe(select(ProcessingTypeStoreSelectors.selectError));
-
     this.isLoading$ =
       this.store$.pipe(select(ProcessingTypeStoreSelectors.selectSearchActive));
 
@@ -57,25 +55,26 @@ export class ProcessingTypesAddAndSelectComponent implements OnInit, OnDestroy {
       takeUntil(this.unsubscribe$),
       map(reply => this.searchReplyToPageInfo(reply)));
 
-    this.store$.pipe(
+    this.serverError$ = this.store$.pipe(
       select(ProcessingTypeStoreSelectors.selectError),
       filter(error => error !== null),
-      takeUntil(this.unsubscribe$))
-      .subscribe(error => {
-        if (error.actionType === ProcessingTypeStoreActions.ActionTypes.SearchProcessingTypesFailure) {
+      map(error => (error.actionType === ProcessingTypeStoreActions.ActionTypes.SearchProcessingTypesFailure)),
+      tap(error => {
+        if (error) {
           this.currentPage = 1;
           this.applySearchParams();
         }
-      });
+      }));
 
-    // if processing types change, then reload the current page
     this.store$.pipe(
-      select(ProcessingTypeStoreSelectors.selectAllProcessingTypes),
-      takeUntil(this.unsubscribe$))
-      .subscribe(() => {
-        // do this even if there are no event types in the store
-        this.applySearchParams();
-      });
+      select(ProcessingTypeStoreSelectors.selectLastRemovedId),
+      filter(id => id !== null),
+      takeUntil(this.unsubscribe$)
+    ).subscribe(() => {
+      this.applySearchParams();
+    });
+
+    this.applySearchParams();
   }
 
   public ngOnDestroy() {
@@ -114,7 +113,7 @@ export class ProcessingTypesAddAndSelectComponent implements OnInit, OnDestroy {
   private searchReplyToPageInfo(searchReply: SearchReply<ProcessingType>): PagedReplyInfo<ProcessingType> {
     if (searchReply === undefined) { return {} as any; }
 
-    const result = {
+    return {
       hasResultsToDisplay: searchReply.entities.length > 0,
       hasNoEntitiesToDisplay: ((searchReply.entities.length <= 0)
                                && (searchReply.reply.searchParams.filter === '')),
@@ -127,8 +126,6 @@ export class ProcessingTypesAddAndSelectComponent implements OnInit, OnDestroy {
       maxPages: searchReply.reply.maxPages,
       showPagination: searchReply.reply.maxPages > 1
     };
-    // console.log(searchReply, result);
-    return result;
   }
 
 }

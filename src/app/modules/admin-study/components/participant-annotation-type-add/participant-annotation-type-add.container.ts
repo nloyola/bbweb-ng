@@ -5,8 +5,13 @@ import { Study } from '@app/domain/studies';
 import { RootStoreState, StudyStoreActions, StudyStoreSelectors } from '@app/root-store';
 import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
-import { Subject, BehaviorSubject } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
+import { Subject, BehaviorSubject, Observable } from 'rxjs';
+import { filter, takeUntil, map, withLatestFrom, tap, shareReplay } from 'rxjs/operators';
+
+interface StoreData {
+  study: Study;
+  annotationType: AnnotationType;
+}
 
 @Component({
   selector: 'app-participant-annotation-type-add',
@@ -14,14 +19,16 @@ import { filter, takeUntil } from 'rxjs/operators';
 })
 export class ParticipantAnnotationTypeAddContainerComponent implements OnInit, OnDestroy {
 
-  study: Study;
-  annotationType: AnnotationType;
+  data$: Observable<StoreData>;
+  annotationType$: Observable<AnnotationType>;
   isSaving$ = new BehaviorSubject<boolean>(false);
-  savedMessage: string;
+  study: Study;
+  updatedMessage$ = new Subject<string>();
 
+  private annotationType: AnnotationType;
   private annotationTypeToSave: AnnotationType;
-  private unsubscribe$: Subject<void> = new Subject<void>();
   private parentStateRelativePath = '..';
+  private unsubscribe$ = new Subject<void>();
 
   constructor(private route: ActivatedRoute,
               private router: Router,
@@ -30,45 +37,55 @@ export class ParticipantAnnotationTypeAddContainerComponent implements OnInit, O
   }
 
   ngOnInit() {
-    this.annotationType = new AnnotationType();
+    this.data$ = this.store$.pipe(
+      select(StudyStoreSelectors.selectAllStudies),
+      map((studies: Study[]) => {
+        const studyEntity = studies.find(s => s.slug === this.route.parent.parent.snapshot.params.slug);
+
+        if (!studyEntity) {
+          throw new Error('study not found');
+        }
+
+        const study = (studyEntity instanceof Study)
+          ? studyEntity :  new Study().deserialize(studyEntity);
+
+        const annotationType = study.annotationTypes.find(at => at.id === this.route.snapshot.params.annotationTypeId)
+        return {
+          study,
+          annotationType: annotationType ? annotationType : new AnnotationType()
+        };
+      }),
+      tap(data => {
+        this.study = data.study;
+        this.annotationType = data.annotationType;
+      }),
+      shareReplay());
+
+    this.annotationType$ = this.data$.pipe(map(data => data.annotationType));
+
+    this.data$.pipe(
+      withLatestFrom(this.updatedMessage$),
+      takeUntil(this.unsubscribe$)
+    ).subscribe(([ _data, msg ]) => {
+      this.isSaving$.next(false);
+      this.toastr.success(msg, 'Update Successfull');
+      this.router.navigate([ this.parentStateRelativePath ], { relativeTo: this.route });
+    });
 
     this.store$.pipe(
-      select(StudyStoreSelectors.selectAllStudies),
-      takeUntil(this.unsubscribe$))
-      .subscribe((studies: Study[]) => {
-        const studyEntity = studies.find(s => s.slug === this.route.parent.parent.snapshot.params.slug);
-        if (studyEntity) {
-          this.study = (studyEntity instanceof Study)
-            ? studyEntity :  new Study().deserialize(studyEntity);
+      select(StudyStoreSelectors.selectStudyError),
+      filter(s => !!s),
+      withLatestFrom(this.updatedMessage$),
+      takeUntil(this.unsubscribe$)
+    ).subscribe(([error, _msg]) => {
+      this.isSaving$.next(false);
 
-          if (this.route.snapshot.params.annotationTypeId) {
-            this.annotationType = this.study.annotationTypes
-              .find(at => at.id === this.route.snapshot.params.annotationTypeId);
-          }
-
-          if (this.savedMessage) {
-            this.isSaving$.next(false);
-            this.toastr.success(this.savedMessage, 'Update Successfull');
-            this.router.navigate([ this.parentStateRelativePath ], { relativeTo: this.route });
-          }
-        }
-      });
-
-    this.store$
-      .pipe(
-        select(StudyStoreSelectors.selectStudyError),
-        filter(s => !!s),
-        takeUntil(this.unsubscribe$))
-      .subscribe((error: any) => {
-        this.isSaving$.next(false);
-
-        let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
-        if (errMessage && errMessage.match(/EntityCriteriaError.*name already used/)) {
-          errMessage = `The name is already in use: ${this.annotationTypeToSave.name}`;
-        }
-        this.toastr.error(errMessage, 'Add Error', { disableTimeOut: true });
-        this.savedMessage = undefined;
-      });
+      let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
+      if (errMessage && errMessage.match(/EntityCriteriaError.*name already used/)) {
+        errMessage = `The name is already in use: ${this.annotationTypeToSave.name}`;
+      }
+      this.toastr.error(errMessage, 'Add Error', { disableTimeOut: true });
+    });
   }
 
   ngOnDestroy() {
@@ -85,8 +102,8 @@ export class ParticipantAnnotationTypeAddContainerComponent implements OnInit, O
         annotationType: this.annotationTypeToSave
       }));
 
-    this.savedMessage = this.annotationType.isNew()
-      ? 'Annotation Added' : 'Annotation Updated';
+    this.updatedMessage$.next(
+      this.annotationType.isNew() ? 'Annotation Added' : 'Annotation Updated');
   }
 
   onCancel(): void {

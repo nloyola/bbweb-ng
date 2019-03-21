@@ -1,5 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgZone } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed, flush, fakeAsync } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -95,19 +95,16 @@ describe('CentreLocationAddComponent', () => {
       component.onSubmit(centre.locations[0]);
       expect(store.dispatch).toHaveBeenCalledWith(expectedAction);
 
-      expect(component.isSaving$).toBeObservable(cold('b', { b: true }));
-
       ngZone.run(() => store.dispatch(new CentreStoreActions.UpdateCentreSuccess({ centre })));
 
       fixture.whenStable().then(() => {
-        expect(component.isSaving$).toBeObservable(cold('b', { b: false }));
         expect(store.dispatch).toHaveBeenCalled();
         expect(toastr.success).toHaveBeenCalled();
         expect(spy.mock.calls[0][0]).toEqual(['..']);
       });
     }));
 
-    it('on submission failure', async(() => {
+    it('on submission failure', fakeAsync(() => {
       const centre = createCentre();
       const testData = [
         { path: 'add', savedMessage: 'Location Added' },
@@ -145,16 +142,13 @@ describe('CentreLocationAddComponent', () => {
 
         errors.forEach(error => {
           component.onSubmit(centre.locations[0]);
-          expect(component.savedMessage).toBe(testInfo.savedMessage);
-          expect(component.isSaving$).toBeObservable(cold('b', { b: true }));
-          store.dispatch(new CentreStoreActions.GetCentreFailure({ error }));
 
-          fixture.whenStable().then(() => {
-            fixture.detectChanges();
-            expect(component.isSaving$).toBeObservable(cold('b', { b: false }));
-            expect(toastr.error).toHaveBeenCalled();
-            expect(router.navigate).not.toHaveBeenCalled();
-          });
+          store.dispatch(new CentreStoreActions.GetCentreFailure({ error }));
+          flush();
+          fixture.detectChanges();
+
+          expect(toastr.error).toHaveBeenCalled();
+          expect(router.navigate).not.toHaveBeenCalled();
         });
       });
     }));

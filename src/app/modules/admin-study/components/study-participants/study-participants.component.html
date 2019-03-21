@@ -22,12 +22,6 @@
 
   </div>
   <ul class="list-group list-group-flush">
-    <li class="list-group-item">
-      <span class="text-primary" i18n>
-        Participant annotations allow a study to collect custom named and defined pieces of data for each
-        participant. Annotations are optional and are not required to be defined.
-      </span>
-    </li>
 
     <li class="list-group-item" *ngIf="study.annotationTypes.length <= 0">
       <div class="alert alert-warning">
@@ -69,6 +63,18 @@
       </div>
     </li>
   </ul>
+</div>
+
+<div class="row mt-5">
+  <div class="col-md-12">
+    <div class="alert alert-warning" role="alert">
+      <mat-icon class="warning-icon">info</mat-icon>
+      <span i18n>
+        Participant annotations allow a study to collect custom named and defined pieces of data for each
+        participant. Annotations are optional and are not required to be defined.
+      </span>
+    </div>
+  </div>
 </div>
 
 <ng-template #showLoading>

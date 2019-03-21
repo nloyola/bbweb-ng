@@ -58,9 +58,8 @@ export class CentreAddComponent implements OnInit, OnDestroy {
         filter(s => !!s),
         takeUntil(this.unsubscribe$))
       .subscribe((error: any) => {
-        let errMessage = error.error.error
-          ? error.error.error.message : error.error.statusText;
-        if (errMessage.match(/EntityCriteriaError: name already used/)) {
+        let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
+        if (errMessage.match(/EntityCriteriaError: centre with name already exists/)) {
           errMessage = `The name is already in use: ${this.form.value.name}`;
         }
         this.toastr.error(errMessage, 'Add Error', { disableTimeOut: true });

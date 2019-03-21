@@ -22,6 +22,7 @@ export interface State extends EntityState<CollectionEventType> {
   searchReplies?: PagedReplyHash;
   specimenDefinitionNames: SpecimenDefinitionNamesByStudy;
   lastAddedId: string;
+  lastRemovedId: string;
   error?: any;
 }
 
@@ -34,6 +35,7 @@ export const initialState: State = adapter.getInitialState({
   searchReplies: {},
   specimenDefinitionNames: {},
   lastAddedId: null,
+  lastRemovedId: null,
   error: null,
 });
 
@@ -83,7 +85,7 @@ export function reducer(state = initialState, action: EventTypeActions): State {
         ...newReply
       };
 
-      return adapter.addMany(pagedReply.entities, {
+      return adapter.upsertMany(pagedReply.entities, {
         ...state,
         searchReplies: {
           ...state.searchReplies,
@@ -111,6 +113,13 @@ export function reducer(state = initialState, action: EventTypeActions): State {
       });
     }
 
+    case ActionTypes.UpdateEventTypeRequest:
+    case ActionTypes.UpdateEventTypeAddOrUpdateAnnotationTypeRequest:
+    case ActionTypes.UpdateEventTypeAddOrUpdateSpecimenDefinitionRequest:
+    case ActionTypes.UpdateEventTypeRemoveAnnotationTypeRequest:
+    case ActionTypes.UpdateEventTypeRemoveSpecimenDefinitionRequest:
+      return { ...state, error: null };
+
     case ActionTypes.UpdateEventTypeSuccess: {
       return adapter.updateOne(
         {
@@ -120,9 +129,27 @@ export function reducer(state = initialState, action: EventTypeActions): State {
         state);
     }
 
-    case ActionTypes.RemoveEventTypeSuccess: {
-      return adapter.removeOne(action.payload.eventTypeId, state);
-    }
+    case ActionTypes.RemoveEventTypeRequest:
+      return {
+        ...state,
+        lastRemovedId: null
+      };
+
+    case ActionTypes.RemoveEventTypeSuccess:
+      return adapter.removeOne(action.payload.eventTypeId, {
+        ...state,
+        lastRemovedId: action.payload.eventTypeId
+      });
+
+    case ActionTypes.RemoveEventTypeFailure:
+      return {
+        ...state,
+        lastRemovedId: null,
+        error: {
+          error: action.payload.error,
+          actionType: action.type
+        },
+      };
 
     case ActionTypes.GetSpecimenDefinitionNamesSuccess: {
       const studyDefinitions = {};

@@ -95,7 +95,8 @@ export function reducer(state = initialState, action: StudyActions): State {
     case ActionTypes.AddStudyRequest: {
       return {
         ...state,
-        lastAddedId: null
+        lastAddedId: null,
+        error: null
       };
     }
 
@@ -104,6 +105,15 @@ export function reducer(state = initialState, action: StudyActions): State {
         ...state,
         lastAddedId: action.payload.study.id
       });
+    }
+
+    case ActionTypes.UpdateStudyRequest:
+    case ActionTypes.UpdateStudyAddOrUpdateAnnotationTypeRequest:
+    case ActionTypes.UpdateStudyRemoveAnnotationTypeRequest: {
+      return {
+        ...state,
+        error: null
+      };
     }
 
     case ActionTypes.UpdateStudySuccess: {

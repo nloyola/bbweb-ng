@@ -1,4 +1,4 @@
-<div class="card mt-2" *ngIf="centre">
+<div class="card mt-2" *ngIf="(centre$ | async) as centre">
   <div class="card-header bg-primary text-light"
        *ngIf="!(isLoading$ | async); else showLoading">
     <mat-icon [ngClass]="centre.stateIconClass()">

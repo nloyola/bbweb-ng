@@ -1,7 +1,7 @@
-import { CollectedSpecimenDefinitionName, CollectionEventType } from '@app/domain/studies';
+import { SearchReply } from '@app/domain/search-reply.model';
+import { CollectionEventType } from '@app/domain/studies';
 import { createFeatureSelector, createSelector, MemoizedSelector } from '@ngrx/store';
 import * as fromEventType from './event-type.reducer';
-import { SearchReply } from '@app/domain/search-reply.model';
 
 export const getSearchActive = (state: fromEventType.State): boolean => state.searchActive;
 
@@ -12,6 +12,8 @@ export const getSearchReplies =
   (state: fromEventType.State): fromEventType.PagedReplyHash => state.searchReplies;
 
 export const getLastAddedId = (state: fromEventType.State): string => state.lastAddedId;
+
+export const getLastRemovedId = (state: fromEventType.State): string => state.lastRemovedId;
 
 export const getSpecimenDefinitionNames =
   (state: fromEventType.State): fromEventType.SpecimenDefinitionNamesByStudy => state.specimenDefinitionNames;
@@ -39,7 +41,11 @@ export const selectAllEventTypeEntities =
 export const selectLastAddedId: MemoizedSelector<object, string> =
   createSelector(selectEventTypeState, getLastAddedId);
 
-export const selectSpecimenDefinitionNames: MemoizedSelector<object, fromEventType.SpecimenDefinitionNamesByStudy> =
+export const selectLastRemovedId: MemoizedSelector<object, string> =
+  createSelector(selectEventTypeState, getLastRemovedId);
+
+export const selectSpecimenDefinitionNames:
+MemoizedSelector<object, fromEventType.SpecimenDefinitionNamesByStudy> =
   createSelector(selectEventTypeState, getSpecimenDefinitionNames);
 
 export const selectError: MemoizedSelector<object, any> =
@@ -50,7 +56,7 @@ export const selectSearchRepliesAndEntities =
     selectSearchActive,
     selectLastSearch,
     selectSearchReplies,
-    createSelector(selectEventTypeState, fromEventType.selectEntities),
+    selectAllEventTypeEntities,
     (searchActive: boolean,
      lastSearch: fromEventType.LastSearch,
      searchReplies: fromEventType.PagedReplyHash,

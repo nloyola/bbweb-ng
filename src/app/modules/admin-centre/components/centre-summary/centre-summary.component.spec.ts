@@ -1,5 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgZone } from '@angular/core';
-import { async, ComponentFixture, TestBed, tick, fakeAsync } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed, tick, fakeAsync, flush } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -11,6 +11,7 @@ import { Factory } from '@test/factory';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { CentreSummaryComponent } from './centre-summary.component';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('CentreSummaryComponent', () => {
 
@@ -28,6 +29,7 @@ describe('CentreSummaryComponent', () => {
 
     TestBed.configureTestingModule({
       imports: [
+        BrowserAnimationsModule,
         FormsModule,
         ReactiveFormsModule,
         NgbModule,
@@ -75,39 +77,47 @@ describe('CentreSummaryComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('navigates to new path when centre name is changed', () => {
+  it('navigates to new path when centre name is changed', fakeAsync(() => {
+    store.dispatch(new CentreStoreActions.GetCentreSuccess({ centre }));
+    flush();
+    fixture.detectChanges();
+
+    const newNameAndSlug = factory.nameAndSlug();
     const centreWithNewName = new Centre().deserialize({
       ...centre as any,
-      ...factory.nameAndSlug
+      ...newNameAndSlug
     });
 
-    const routerListener = jest.spyOn(router, 'navigate');
+    const routerListener = jest.spyOn(router, 'navigate').mockResolvedValue(true);
+    jest.spyOn(modalService, 'open').mockReturnValue({ result: Promise.resolve(newNameAndSlug.name) } as any);
+    component.updateName();
+    flush();
+    fixture.detectChanges();
 
-    ngZone.run(() => store.dispatch(new CentreStoreActions.GetCentreSuccess({ centre: centreWithNewName })));
+    store.dispatch(new CentreStoreActions.UpdateCentreSuccess({ centre: centreWithNewName }));
+    flush();
     fixture.detectChanges();
 
     expect(routerListener.mock.calls.length).toBe(1);
     expect(routerListener.mock.calls[0][0]).toEqual([ '../..', centreWithNewName.slug, 'summary' ]);
-  });
+  }));
 
   describe('common behaviour', () => {
 
-    /* tslint:disable:no-shadowed-variable */
     const componentModalFuncs = [
-      (component) => component.updateName(),
-      (component) => component.updateDescription()
+      (c) => c.updateName(),
+      (c) => c.updateDescription()
     ];
-    /* tslint:disable:no-shadowed-variable */
 
     it('functions should open a modal', fakeAsync(() => {
       const testData = [
         {
-          componentFunc: (component) => component.updateName(),
+          componentFunc: (c) => c.updateName(),
           attribute: 'name',
           value: 'test'
         },
         {
-          componentFunc: (component) => component.updateDescription(),
+          componentFunc: (c) => c.updateDescription(),
           attribute: 'description',
           value: 'test'
         }

@@ -1,8 +1,7 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EntityInfo } from '@app/domain';
 import { Role } from '@app/domain/access';
-import { User, IUserInfo } from '@app/domain/users';
+import { IUserInfo, User } from '@app/domain/users';
 import { UserRemoveModalComponent } from '@app/modules/modals/components/user-remove-modal/user-remove-modal.component';
 import { RoleStoreActions, RoleStoreSelectors, RootStoreState } from '@app/root-store';
 import { SpinnerStoreSelectors } from '@app/root-store/spinner';
@@ -11,7 +10,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject } from 'rxjs';
-import { filter, map, takeUntil } from 'rxjs/operators';
+import { filter, map, shareReplay, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
 
 @Component({
   selector: 'app-role-view',
@@ -26,8 +25,8 @@ export class RoleViewComponent implements OnInit, OnDestroy {
 
   private roleEntity: Role;
   private roleId: string;
-  private updatedMessage: string;
 
+  private updatedMessage$ = new Subject<string>();
   private unsubscribe$: Subject<void> = new Subject<void>();
 
   constructor(private store$: Store<RootStoreState.State>,
@@ -52,7 +51,7 @@ export class RoleViewComponent implements OnInit, OnDestroy {
           value: user.id
         }));
 
-        this.updatedMessage = 'User added';
+        this.updatedMessage$.next('User added');
       });
 
     this.isLoading$ = this.store$.pipe(select(SpinnerStoreSelectors.selectSpinnerIsActive));
@@ -63,35 +62,43 @@ export class RoleViewComponent implements OnInit, OnDestroy {
       map((roles: Role[]) => {
         const roleEntity = roles.find(u => u.slug === this.route.snapshot.params.slug);
         if (roleEntity) {
-          this.roleEntity = (roleEntity instanceof Role) ? roleEntity : new Role().deserialize(roleEntity);
-          this.roleId = roleEntity.id;
-          if (this.updatedMessage) {
-            this.toastr.success(this.updatedMessage, 'Update Successfull');
-            this.updatedMessage = undefined;
-            this.userAddTypeahead.clearSelected();
+          return (roleEntity instanceof Role) ? roleEntity : new Role().deserialize(roleEntity);
+        }
+
+        if (this.roleId) {
+          const roleById = roles.find(u => u.id === this.roleId);
+          if (roleById) {
+            return (roleById instanceof Role) ? roleById : new Role().deserialize(roleById);
           }
-          return this.roleEntity;
         }
 
-        if (!this.roleId) {
-          return undefined;
-        }
-
-        this.roleEntity = undefined;
-        const roleById = roles.find(u => u.id === this.roleId);
-        if (roleById) {
-          this.router.navigate([ '..', roleById.slug ], { relativeTo: this.route });
-          this.roleEntity = (roleById instanceof Role) ? roleById : new Role().deserialize(roleById);
-          if (this.updatedMessage) {
-            this.toastr.success(this.updatedMessage, 'Update Successfull');
-          }
-          return this.roleEntity;
-        }
-
-        this.router.navigate([ '..' ], { relativeTo: this.route });
         return undefined;
       }),
-      filter(role => role !== undefined));
+      tap(role => {
+        this.roleEntity = role;
+        this.roleId = role.id;
+      }),
+      shareReplay());
+
+    this.role$.pipe(
+      withLatestFrom(this.updatedMessage$),
+      takeUntil(this.unsubscribe$)
+    ).subscribe(([ role, msg ]) => {
+      if (role !== undefined) {
+        this.toastr.success(msg, 'Update Successfull');
+        this.userAddTypeahead.clearSelected();
+
+        if (role.slug !== this.route.snapshot.params.slug) {
+          // name was changed and new slug was assigned
+          //
+          // need to change state since slug is used in URL and by breadcrumbs
+          this.router.navigate([ '..', role.slug ], { relativeTo: this.route });
+        }
+      } else {
+        this.router.navigate([ '..' ], { relativeTo: this.route });
+        this.toastr.success('Role removed', 'Remove Successfull');
+      }
+    });
   }
 
   ngOnInit() {
@@ -109,14 +116,14 @@ export class RoleViewComponent implements OnInit, OnDestroy {
     const modalRef = this.modalService.open(UserRemoveModalComponent);
     modalRef.componentInstance.user = userInfo;
     modalRef.result
-      .then(result => {
+      .then(() => {
         this.store$.dispatch(new RoleStoreActions.UpdateRoleRequest({
           role: this.roleEntity,
           attributeName: 'userRemove',
           value: userInfo.id
         }));
 
-        this.updatedMessage = 'User removed';
+        this.updatedMessage$.next('User removed');
       })
       .catch(() => undefined);
   }

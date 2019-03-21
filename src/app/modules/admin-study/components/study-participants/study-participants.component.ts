@@ -11,7 +11,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject } from 'rxjs';
-import { filter, map, takeUntil } from 'rxjs/operators';
+import { filter, map, takeUntil, withLatestFrom, shareReplay, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-study-participants',
@@ -20,13 +20,14 @@ import { filter, map, takeUntil } from 'rxjs/operators';
 })
 export class StudyParticipantsComponent implements OnInit, OnDestroy {
 
-  study: StudyUI;
   isLoading$: Observable<boolean>;
+  study$: Observable<Study>;
+  study: StudyUI;
   isAddingAnnotation = false;
   sortedAnnotationTypes: AnnotationType[];
-  updatedMessage: string;
+  updatedMessage$ = new Subject<string>();
 
-  private unsubscribe$: Subject<void> = new Subject<void>();
+  private unsubscribe$ = new Subject<void>();
 
   constructor(private store$: Store<RootStoreState.State>,
               private router: Router,
@@ -37,33 +38,38 @@ export class StudyParticipantsComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.isLoading$ = this.store$.pipe(select(SpinnerStoreSelectors.selectSpinnerIsActive));
 
-    this.store$
-      .pipe(
-        select(StudyStoreSelectors.selectAllStudies),
-        filter(s => s.length > 0),
-        map((studies: Study[]) =>
-            studies.find(s => s.slug === this.route.parent.parent.snapshot.params.slug)),
-        filter(study => study !== undefined),
-        map(study => (study instanceof Study) ? study :  new Study().deserialize(study)),
-        takeUntil(this.unsubscribe$))
-      .subscribe((study: Study) => {
+    this.study$ = this.store$.pipe(
+      select(StudyStoreSelectors.selectAllStudies),
+      filter(s => s.length > 0),
+      map((studies: Study[]) => {
+        const studyEntity = studies.find(s => s.slug === this.route.parent.parent.snapshot.params.slug);
+        if (studyEntity) {
+          return (studyEntity instanceof Study) ? studyEntity :  new Study().deserialize(studyEntity);
+        }
+        return undefined;
+      }),
+      tap(study => {
         this.study = new StudyUI(study);
         this.setAnnotations();
+      }),
+      shareReplay());
 
-        if (this.updatedMessage) {
-          this.toastr.success(this.updatedMessage, 'Update Successfull');
-        }
-      });
+    this.store$.pipe(
+      select(StudyStoreSelectors.selectStudyError),
+      filter(error => !!error),
+      withLatestFrom(this.updatedMessage$),
+      takeUntil(this.unsubscribe$)
+    ).subscribe(([error, _msg]) => {
+      const errMessage = error.error.error ? error.error.error.message : error.error.statusText;
+      this.toastr.error(errMessage, 'Update Error', { disableTimeOut: true });
+    });
 
-    this.store$
-      .pipe(
-        select(StudyStoreSelectors.selectStudyError),
-        filter(s => !!s),
-        takeUntil(this.unsubscribe$))
-      .subscribe((error: any) => {
-        const errMessage = error.error ? error.error.message : error.statusText;
-        this.toastr.error(errMessage, 'Update Error', { disableTimeOut: true });
-      });
+    this.study$.pipe(
+      withLatestFrom(this.updatedMessage$),
+      takeUntil(this.unsubscribe$)
+    ).subscribe(([ _study, msg ]) => {
+      this.toastr.success(msg, 'Update Successfull');
+    });
   }
 
   ngOnDestroy() {
@@ -104,8 +110,7 @@ export class StudyParticipantsComponent implements OnInit, OnDestroy {
           study: this.study.entity,
           annotationTypeId: annotationType.id
         }));
-
-        this.updatedMessage = 'Annotation removed';
+        this.updatedMessage$.next('Annotation removed');
       })
       .catch(() => undefined);
   }

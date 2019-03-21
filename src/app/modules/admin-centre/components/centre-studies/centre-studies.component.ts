@@ -1,9 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { EntityInfoAndState } from '@app/domain';
 import { Centre } from '@app/domain/centres';
 import { CentreUI } from '@app/domain/centres/centre-ui.model';
-import { Study, StudyState, StudyStateUIMap, IStudyInfoAndState } from '@app/domain/studies';
+import { IStudyInfoAndState, Study, StudyStateUIMap } from '@app/domain/studies';
 import { StudyRemoveModalComponent } from '@app/modules/modals/components/study-remove-modal/study-remove-modal.component';
 import { CentreStoreActions, CentreStoreSelectors, RootStoreState } from '@app/root-store';
 import { StudyAddTypeahead } from '@app/shared/typeaheads/study-add-typeahead';
@@ -11,7 +10,8 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject } from 'rxjs';
-import { filter, map, takeUntil } from 'rxjs/operators';
+import { filter, map, shareReplay, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
+import { SpinnerStoreSelectors } from '@app/root-store/spinner';
 
 @Component({
   selector: 'app-centre-studies',
@@ -20,6 +20,8 @@ import { filter, map, takeUntil } from 'rxjs/operators';
 })
 export class CentreStudiesComponent implements OnInit, OnDestroy {
 
+  isLoading$: Observable<boolean>;
+  centre$: Observable<CentreUI>;
   centre: CentreUI;
   updatedMessage: string;
   selectedStudy: Study;
@@ -28,7 +30,8 @@ export class CentreStudiesComponent implements OnInit, OnDestroy {
   sortedStudyNames: IStudyInfoAndState[];
   studyAddTypeahead: StudyAddTypeahead;
 
-  private unsubscribe$: Subject<void> = new Subject<void>();
+  private updatedMessage$ = new Subject<string>();
+  private unsubscribe$ = new Subject<void>();
 
   constructor(private store$: Store<RootStoreState.State>,
               private route: ActivatedRoute,
@@ -42,46 +45,60 @@ export class CentreStudiesComponent implements OnInit, OnDestroy {
         return studies.filter(entity => existingStudyIds.indexOf(entity.id) < 0);
       });
 
-    this.studyAddTypeahead.selected$
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((study: Study) => {
+    this.studyAddTypeahead.selected$.pipe(
+      takeUntil(this.unsubscribe$)
+    ).subscribe((study: Study) => {
       this.store$.dispatch(new CentreStoreActions.UpdateCentreAddStudyRequest({
         centre: this.centre.entity,
         studyId: study.id
       }));
 
-      this.updatedMessage = 'Study added';
+      this.updatedMessage$.next('Study added');
     });
   }
 
   ngOnInit() {
-    this.store$.pipe(
+    this.store$.dispatch(new CentreStoreActions.GetCentreRequest({
+      slug: this.route.parent.snapshot.params.slug
+    }));
+    this.isLoading$ = this.store$.pipe(select(SpinnerStoreSelectors.selectSpinnerIsActive));
+
+    this.centre$ = this.store$.pipe(
       select(CentreStoreSelectors.selectAllCentres),
       filter(s => s.length > 0),
-      map((centres: Centre[]) => centres.find(s => s.slug === this.route.parent.snapshot.params.slug)),
-      filter(centre => centre !== undefined),
-      map(centre => (centre instanceof Centre) ? centre :  new Centre().deserialize(centre)),
-      takeUntil(this.unsubscribe$))
-      .subscribe(centre => {
-        this.centre = new CentreUI(centre);
-        this.sortedStudyNames = this.sortStudyNames(centre.studyNames);
-
-        if (this.updatedMessage) {
-          this.toastr.success(this.updatedMessage, 'Update Successfull');
-          this.updatedMessage = undefined;
-          this.studyAddTypeahead.clearSelected();
+      map((centres: Centre[]) => {
+        const centreEntity = centres.find(s => s.slug === this.route.parent.snapshot.params.slug);
+        if (centreEntity) {
+          const centre = (centreEntity instanceof Centre)
+            ? centreEntity :  new Centre().deserialize(centreEntity);
+          return new CentreUI(centre);
         }
-      });
+        return undefined;
+      }),
+      tap(centre => {
+        this.centre = centre;
+        if (centre) {
+          this.sortedStudyNames = this.sortStudyNames(centre.entity.studyNames);
+        }
+      }),
+      shareReplay());
 
-    this.store$
-      .pipe(
-        select(CentreStoreSelectors.selectCentreError),
-        filter(s => !!s),
-        takeUntil(this.unsubscribe$))
-      .subscribe((error: any) => {
-        const errMessage = error.error ? error.error.message : error.statusText;
-        this.toastr.error(errMessage, 'Update Error', { disableTimeOut: true });
-      });
+    this.store$.pipe(
+      select(CentreStoreSelectors.selectCentreError),
+      filter(error => !!error),
+      withLatestFrom(this.updatedMessage$),
+      takeUntil(this.unsubscribe$)
+    ).subscribe(([ error, _msg ]) => {
+      const errMessage = error.error.error ? error.error.error.message : error.error.statusText;
+      this.toastr.error(errMessage, 'Update Error', { disableTimeOut: true });
+    });
+
+    this.centre$.pipe(
+      withLatestFrom(this.updatedMessage$),
+      takeUntil(this.unsubscribe$)
+    ).subscribe(([ centre, msg ]) => {
+      this.toastr.success(msg, 'Update Successfull');
+    });
   }
 
   ngOnDestroy() {
@@ -97,15 +114,13 @@ export class CentreStudiesComponent implements OnInit, OnDestroy {
     const modalRef = this.modalService.open(StudyRemoveModalComponent);
     modalRef.componentInstance.study = study;
     modalRef.result
-      .then((result) => {
-        if (result.confirmed) {
-          this.store$.dispatch(new CentreStoreActions.UpdateCentreRemoveStudyRequest({
-            centre: this.centre.entity,
-            studyId: study.id
-          }));
+      .then(() => {
+        this.store$.dispatch(new CentreStoreActions.UpdateCentreRemoveStudyRequest({
+          centre: this.centre.entity,
+          studyId: study.id
+        }));
 
-          this.updatedMessage = 'Study removed';
-        }
+        this.updatedMessage$.next('Study removed');
       })
       .catch(err => console.log('err', err));
   }

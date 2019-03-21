@@ -1,22 +1,22 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed, fakeAsync, tick, flush } from '@angular/core/testing';
+import { async, ComponentFixture, fakeAsync, flush, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { By } from '@angular/platform-browser';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute } from '@angular/router';
+import { SearchParams } from '@app/domain';
 import { Centre } from '@app/domain/centres';
 import { CentreUI } from '@app/domain/centres/centre-ui.model';
-import { CentreStoreActions, CentreStoreReducer, StudyStoreReducer, StudyStoreActions } from '@app/root-store';
+import { Study, StudyState, StudyStateUIMap } from '@app/domain/studies';
+import { CentreStoreActions, CentreStoreReducer, StudyStoreActions, StudyStoreReducer } from '@app/root-store';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
-import { NgbModule, NgbTypeahead, NgbTypeaheadSelectItemEvent, NgbModal, NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModule, NgbTypeaheadModule, NgbTypeaheadSelectItemEvent } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
 import { MockActivatedRoute } from '@test/mocks';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { CentreStudiesComponent } from './centre-studies.component';
-import { StudyStateUIMap, StudyState, Study } from '@app/domain/studies';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { By } from '@angular/platform-browser';
-import { SearchParams } from '@app/domain';
 
 describe('CentreStudiesComponent', () => {
   let component: CentreStudiesComponent;
@@ -165,7 +165,7 @@ describe('CentreStudiesComponent', () => {
       });
     }));
 
-    it('notifies the user', fakeAsync(() => {
+    it('notifies the user on success', fakeAsync(() => {
       const toastrListener = jest.spyOn(toastr, 'success');
 
       createMockActivatedRouteSpies(centre);
@@ -183,7 +183,7 @@ describe('CentreStudiesComponent', () => {
       expect(toastrListener.mock.calls.length).toBe(1);
     }));
 
-    it('notifies the user', fakeAsync(() => {
+    it('notifies the user on failure', fakeAsync(() => {
       const errors = [
         {
           status: 401,
@@ -193,12 +193,6 @@ describe('CentreStudiesComponent', () => {
           status: 404,
           error: {
             message: 'simulated error'
-          }
-        },
-        {
-          status: 404,
-          error: {
-            message: 'EntityCriteriaError: name already used'
           }
         }
       ];

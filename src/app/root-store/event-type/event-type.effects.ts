@@ -115,8 +115,7 @@ export class EventTypeStoreEffects {
       map(action => action.payload),
       switchMap(
         payload =>
-          this.eventTypeService.addOrUpdateSpecimenDefinition(payload.eventType,
-                                                      payload.specimenDefinition)
+          this.eventTypeService.addOrUpdateSpecimenDefinition(payload.eventType, payload.specimenDefinition)
           .pipe(
             // delay(2000),
             map(eventType => new EventTypeStoreActions.UpdateEventTypeSuccess({ eventType })),

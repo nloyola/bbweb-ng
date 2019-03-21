@@ -1,5 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgZone } from '@angular/core';
-import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed, fakeAsync, tick, flush } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Centre, CentreState } from '@app/domain/centres';
@@ -102,18 +102,16 @@ describe('CentreLocationsComponent', () => {
     const spy = jest.spyOn(router, 'navigate');
     const location = centre.locations[0];
 
-    /* tslint:disable:no-shadowed-variable */
     const testData = [
       {
-        componentFunc: (component) => component.addLocation(),
+        componentFunc: (c) => c.addLocation(),
         relativePath: 'add'
       },
       {
-        componentFunc: (component) => component.edit(location),
+        componentFunc: (c) => c.edit(location),
         relativePath: `${location.id}`
       }
     ];
-    /* tslint:enable:no-shadowed-variable */
 
     store.dispatch(new CentreStoreActions.GetCentreSuccess({ centre }));
     fixture.detectChanges();
@@ -238,13 +236,11 @@ describe('CentreLocationsComponent', () => {
 
       errors.forEach(error => {
         component.remove(centre.locations[0]);
-
-        tick(1000);
+        flush();
         fixture.detectChanges();
-        expect(component.updatedMessage).toBe('Location removed');
         store.dispatch(new CentreStoreActions.UpdateCentreFailure({ error }));
 
-        tick(1000);
+        flush();
         fixture.detectChanges();
         expect(toastr.error).toHaveBeenCalled();
       });

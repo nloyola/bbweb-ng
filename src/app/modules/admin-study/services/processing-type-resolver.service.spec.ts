@@ -1,6 +1,6 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { NgZone } from '@angular/core';
-import { TestBed } from '@angular/core/testing';
+import { TestBed, flush, fakeAsync } from '@angular/core/testing';
 import { ActivatedRouteSnapshot, convertToParamMap } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ProcessingType, Study } from '@app/domain/studies';
@@ -65,6 +65,10 @@ describe('ProcessingTypeResolver', () => {
 
     const action = new ProcessingTypeStoreActions.GetProcessingTypeFailure({ error });
     store.dispatch(action);
+
+    // prevent reducer from clearing out the failure
+    jest.spyOn(store, 'dispatch').mockReturnValue(null);
+
     const expected = cold('(b|)', {
       b: {
         actionType: ProcessingTypeStoreActions.ActionTypes.GetProcessingTypeFailure,

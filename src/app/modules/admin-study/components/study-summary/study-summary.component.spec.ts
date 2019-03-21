@@ -1,6 +1,7 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgZone } from '@angular/core';
-import { async, ComponentFixture, fakeAsync, TestBed, tick, flush } from '@angular/core/testing';
+import { async, ComponentFixture, fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Study } from '@app/domain/studies';
@@ -9,10 +10,8 @@ import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
-import { cold } from 'jasmine-marbles';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { StudySummaryComponent } from './study-summary.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('StudySummaryComponent', () => {
 
@@ -96,14 +95,14 @@ describe('StudySummaryComponent', () => {
     flush();
     fixture.detectChanges();
 
-    const newName = factory.stringNext();
+    const newNameAndSlug = factory.nameAndSlug();
     const studyWithNewName = new Study().deserialize({
       ...study as any,
-      ...factory.nameAndSlug()
+      ...newNameAndSlug
     });
 
     const routerListener = jest.spyOn(router, 'navigate');
-    jest.spyOn(modalService, 'open').mockReturnValue({ result: Promise.resolve(newName) } as any);
+    jest.spyOn(modalService, 'open').mockReturnValue({ result: Promise.resolve(newNameAndSlug.name) } as any);
     component.updateName();
     flush();
     fixture.detectChanges();

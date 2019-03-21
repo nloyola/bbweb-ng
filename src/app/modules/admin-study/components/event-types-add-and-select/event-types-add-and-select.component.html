@@ -10,7 +10,7 @@
                     (nameFilterUpdated)="onFiltersUpdated($event)"
                     (pageChange)="paginationPageChange($event)">
   <ng-template let-entity>
-    <li class="list-group-item">
+    <li class="list-group-item" *ngIf="entity">
       <a href="#" (click)="!!eventTypeSelected(entity)">
         <small>{{entity.name | truncate:18}}</small>
       </a>

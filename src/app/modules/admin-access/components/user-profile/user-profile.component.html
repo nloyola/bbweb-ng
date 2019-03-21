@@ -154,6 +154,7 @@
 
 <ng-template #updatePasswordModal let-modal>
   <app-modal-input-password [title]="'Update Password'"
+                            [user]="user"
                             (onConfirm)="confirm($event)"
                             [modal]="modal">
   </app-modal-input-password>

@@ -62,8 +62,8 @@ export class EventTypeAddComponent implements OnInit, OnDestroy {
         filter(et => !!et),
         takeUntil(this.unsubscribe$))
       .subscribe((error: any) => {
-        let errMessage = error.error ? error.error.message : error.statusText;
-        if (errMessage && errMessage.match(/EntityCriteriaError.*name already used/)) {
+        let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
+        if (errMessage && errMessage.match(/EntityCriteriaError.*name already exists/)) {
           errMessage = `The name is already in use: ${this.eventTypeToSave.name}`;
         }
         this.toastr.error(errMessage, 'Add Error', { disableTimeOut: true });

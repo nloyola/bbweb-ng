@@ -151,7 +151,7 @@ describe('EventTypeViewContainer', () => {
 
     expect(routerListener.mock.calls.length).toBe(1);
     expect(routerListener.mock.calls[0][0]).toEqual([
-      `/admin/studies/${study.slug}/collection/view/${etWithNewName.slug}`]);
+      '/admin/studies', study.slug, 'collection', 'view', etWithNewName.slug]);
   }));
 
   describe('common behaviour', () => {
@@ -466,7 +466,8 @@ describe('EventTypeViewContainer', () => {
       fixture.detectChanges();
 
       expect(routerListener).toHaveBeenCalled();
-      expect(routerListener.mock.calls[0][0]).toEqual([ `/admin/studies/${study.slug}/collection/view` ]);
+      expect(routerListener.mock.calls[0][0]).toEqual([
+        '/admin/studies', study.slug, 'collection', 'view' ]);
     }));
   });
 
@@ -489,6 +490,8 @@ describe('EventTypeViewContainer', () => {
   }
 
   function createMockActivatedRouteSpies(study: Study, eventType: CollectionEventType): void {
+    mockActivatedRoute.spyOnParams(() => eventType);
+
     mockActivatedRoute.spyOnParent(() => ({
       parent: {
         parent: {

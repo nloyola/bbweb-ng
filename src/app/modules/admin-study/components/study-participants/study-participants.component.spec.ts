@@ -1,5 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgZone } from '@angular/core';
-import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { async, ComponentFixture, fakeAsync, TestBed, tick, flush } from '@angular/core/testing';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -247,13 +247,11 @@ describe('StudyParticipantsComponent', () => {
 
       errors.forEach(error => {
         component.remove(study.annotationTypes[0]);
-
-        tick(1000);
+        flush();
         fixture.detectChanges();
-        expect(component.updatedMessage).toBe('Annotation removed');
-        store.dispatch(new StudyStoreActions.UpdateStudyFailure({ error }));
 
-        tick(1000);
+        store.dispatch(new StudyStoreActions.UpdateStudyFailure({ error }));
+        flush();
         fixture.detectChanges();
         expect(toastr.error).toHaveBeenCalled();
       });

@@ -6,7 +6,7 @@ import { RootStoreState } from '@app/root-store';
 import { EventTypeStoreActions, EventTypeStoreSelectors } from '@app/root-store/event-type';
 import { select, Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
-import { filter, map, takeUntil } from 'rxjs/operators';
+import { filter, map, takeUntil, tap } from 'rxjs/operators';
 import { SearchReply } from '@app/domain/search-reply.model';
 
 @Component({
@@ -38,7 +38,6 @@ export class EventTypesAddAndSelectComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.isAddAllowed = this.study.isDisabled();
-    this.serverError$ = this.store$.pipe(select(EventTypeStoreSelectors.selectError));
     this.isLoading$ =
       this.store$.pipe(select(EventTypeStoreSelectors.selectSearchActive));
 
@@ -47,25 +46,26 @@ export class EventTypesAddAndSelectComponent implements OnInit, OnDestroy {
       takeUntil(this.unsubscribe$),
       map(reply => this.searchReplyToPageInfo(reply)));
 
-    this.store$.pipe(
+    this.serverError$ = this.store$.pipe(
       select(EventTypeStoreSelectors.selectError),
       filter(error => error !== null),
-      takeUntil(this.unsubscribe$))
-      .subscribe(error => {
-        if (error.actionType === EventTypeStoreActions.ActionTypes.SearchEventTypesFailure) {
+      map(error => (error.actionType === EventTypeStoreActions.ActionTypes.SearchEventTypesFailure)),
+      tap(error => {
+        if (error) {
           this.currentPage = 1;
           this.applySearchParams();
         }
-      });
+      }));
 
-    // if event types change, then reload the current page
     this.store$.pipe(
-      select(EventTypeStoreSelectors.selectAllEventTypes),
-      takeUntil(this.unsubscribe$))
-      .subscribe(() => {
-        // do this even if there are no event types in the store
-        this.applySearchParams();
-      });
+      select(EventTypeStoreSelectors.selectLastRemovedId),
+      filter(id => id !== null),
+      takeUntil(this.unsubscribe$)
+    ).subscribe(() => {
+      this.applySearchParams();
+    });
+
+   this.applySearchParams();
   }
 
   public ngOnDestroy() {

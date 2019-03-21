@@ -103,7 +103,7 @@ describe('ProcessingTypeAddComponent', () => {
     });
 
     it('returns to the correct URL after the processing type is added', () => {
-      createEntityFixtures();
+      const study = createEntityFixtures();
       fixture.detectChanges();
 
       const processingType = new ProcessingType().deserialize(factory.processingType());
@@ -115,7 +115,8 @@ describe('ProcessingTypeAddComponent', () => {
       fixture.detectChanges();
 
       expect(routerListener.mock.calls.length).toBe(1);
-      expect(routerListener.mock.calls[0][0]).toEqual(['../view', processingType.slug ]);
+      expect(routerListener.mock.calls[0][0]).toEqual([
+        '/admin/studies',  study.slug, 'processing', 'view', processingType.slug ]);
     });
 
     it('on submission failure', () => {
@@ -218,7 +219,7 @@ describe('ProcessingTypeAddComponent', () => {
 
     describe('input entity name and specimen definition name are correct', () => {
 
-      fit('when adding a processing type with a collected specimen as input', () => {
+      it('when adding a processing type with a collected specimen as input', () => {
 
         const { eventType, processingType } = entityFixture.createProcessingTypeFromCollected();
         const study = createEntityFixtures();

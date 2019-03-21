@@ -1,21 +1,21 @@
-import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { User, UserUI } from '@app/domain/users';
+import { ModalInputTextOptions } from '@app/modules/modals/models';
 import { RootStoreState, UserStoreActions, UserStoreSelectors } from '@app/root-store';
 import { SpinnerStoreSelectors } from '@app/root-store/spinner';
-import { select, Store } from '@ngrx/store';
-import { Observable, throwError } from 'rxjs';
-import { filter, map, tap } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
-import { ModalInputTextOptions } from '@app/modules/modals/models';
+import { Observable, Subject } from 'rxjs';
+import { filter, map, shareReplay, takeUntil, withLatestFrom, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-user-profile',
   templateUrl: './user-profile.component.html',
   styleUrls: ['./user-profile.component.scss']
 })
-export class UserProfileComponent implements OnInit {
+export class UserProfileComponent implements OnInit, OnDestroy {
 
   @ViewChild('updateNameModal') updateNameModal: TemplateRef<any>;
   @ViewChild('updateEmailModal') updateEmailModal: TemplateRef<any>;
@@ -36,7 +36,8 @@ export class UserProfileComponent implements OnInit {
 
   private userEntity: User;
   private userId: string;
-  private updatedMessage: string;
+  private updatedMessage$ = new Subject<string>();
+  private unsubscribe$ = new Subject<void>();
 
   constructor(private store$: Store<RootStoreState.State>,
               private router: Router,
@@ -51,41 +52,66 @@ export class UserProfileComponent implements OnInit {
       map((users: User[]) => {
         const userEntity = users.find(u => u.slug === this.route.snapshot.params.slug);
         if (userEntity) {
-          this.userEntity = (userEntity instanceof User) ? userEntity : new User().deserialize(userEntity);
-          this.userId = userEntity.id;
-          if (this.updatedMessage) {
-            this.toastr.success(this.updatedMessage, 'Update Successfull');
-            this.updatedMessage = undefined;
+          return (userEntity instanceof User) ? userEntity : new User().deserialize(userEntity);
+        }
+
+        if (this.userId) {
+          const userById = users.find(u => u.id === this.userId);
+          if (userById) {
+            return (userById instanceof User) ? userById : new User().deserialize(userById);
           }
-          return this.userEntity;
         }
 
-        if (!this.userId) {
-          return undefined;
-        }
-
-        this.userEntity = undefined;
-        const userById = users.find(u => u.id === this.userId);
-        if (userById) {
-          this.router.navigate([ '..', userById.slug ], { relativeTo: this.route });
-          this.userEntity = (userById instanceof User) ? userById : new User().deserialize(userById);
-          if (this.updatedMessage) {
-            this.toastr.success(this.updatedMessage, 'Update Successfull');
-          }
-          return this.userEntity;
-        }
-
-        this.router.navigate([ '..' ], { relativeTo: this.route });
         return undefined;
       }),
-      filter(user => user !== undefined),
-      map(user => new UserUI(user)));
+      tap(user => {
+        if (user) {
+          this.userEntity = user;
+          this.userId = user.id;
+        }
+      }),
+      map(user => user ? new UserUI(user) : undefined),
+      shareReplay());
+
+    this.user$.pipe(
+      withLatestFrom(this.updatedMessage$),
+      takeUntil(this.unsubscribe$)
+    ).subscribe(([ user, msg ]) => {
+      if (user !== undefined) {
+        this.toastr.success(msg, 'Update Successfull');
+
+        if (user.slug !== this.route.snapshot.params.slug) {
+          // name was changed and new slug was assigned
+          //
+          // need to change state since slug is used in URL and by breadcrumbs
+          this.router.navigate([ '..', user.slug ], { relativeTo: this.route });
+        }
+      }
+    });
+
+    this.store$.pipe(
+      select(UserStoreSelectors.selectUserError),
+      filter(error => !!error),
+      withLatestFrom(this.updatedMessage$),
+      takeUntil(this.unsubscribe$)
+    ).subscribe(([ error, _msg ]) => {
+      let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
+      if (errMessage.match(/EmailNotAvailable: user with email already exists/)) {
+        errMessage = `That email address is in use by another user.`;
+      }
+      this.toastr.error(errMessage, 'Update Error', { disableTimeOut: true });
+    });
   }
 
   ngOnInit() {
     this.store$.dispatch(new UserStoreActions.GetUserRequest({
       slug: this.route.snapshot.params.slug
     }));
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 
   updateName(): void {
@@ -96,7 +122,7 @@ export class UserProfileComponent implements OnInit {
           attributeName: 'name',
           value
         }));
-        this.updatedMessage = 'User name was updated';
+        this.updatedMessage$.next('User name was updated');
       })
       .catch(() => undefined);
   }
@@ -109,7 +135,7 @@ export class UserProfileComponent implements OnInit {
           attributeName: 'email',
           value
         }));
-        this.updatedMessage = 'User  email was updated';
+        this.updatedMessage$.next('User  email was updated');
       })
       .catch(() => undefined);
   }
@@ -122,7 +148,7 @@ export class UserProfileComponent implements OnInit {
           attributeName: 'password',
           value
         }));
-        this.updatedMessage = 'User password was updated';
+        this.updatedMessage$.next('User password was updated');
       })
       .catch(() => undefined);
   }
@@ -135,7 +161,7 @@ export class UserProfileComponent implements OnInit {
           attributeName: 'avatarUrl',
           value
         }));
-        this.updatedMessage = 'User avatar URL was updated';
+        this.updatedMessage$.next('User avatar URL was updated');
       })
       .catch(() => undefined);
   }
@@ -158,7 +184,7 @@ export class UserProfileComponent implements OnInit {
       attributeName: 'state',
       value: action
     }));
-    this.updatedMessage = 'User state was updated';
+    this.updatedMessage$.next('User state was updated');
   }
 
 }

@@ -1,4 +1,4 @@
-<div class="card mt-2" *ngIf="centre">
+<div class="card mt-2" *ngIf="(centre$ | async) as centre">
   <div class="card-header bg-primary text-light"
        *ngIf="!(isLoading$ | async); else showLoading">
     <mat-icon [ngClass]="centre.stateIconClass()">
@@ -93,7 +93,7 @@
 <ng-template #updateNameModal let-modal>
   <app-modal-input-text [title]="'Update Name'"
                         [label]="'New centre name'"
-                        [value]="centre.name"
+                        [value]="(centre$ | async)?.name"
                         [options]="updateNameModalOptions"
                         (onConfirm)="confirm($event)"
                         [modal]="modal">
@@ -103,7 +103,7 @@
 <ng-template #updateDescriptionModal let-modal>
   <app-modal-input-textarea [title]="'Update Description'"
                             [label]="'New centre description'"
-                            [value]="centre.description"
+                            [value]="(centre$ | async)?.description"
                             [options]="updateDescriptionModalOptions"
                             (onConfirm)="confirm($event)"
                             [modal]="modal">

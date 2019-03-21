@@ -108,7 +108,7 @@ describe('CentreAddComponent', () => {
       expect(routerListener.mock.calls[0][0]).toEqual(['..', centre.slug]);
     }));
 
-    it('on submission failure', async(() => {
+    it('on submission failure', fakeAsync(() => {
       const centre = new Centre().deserialize(factory.centre());
       const errors = [
         {
@@ -118,7 +118,7 @@ describe('CentreAddComponent', () => {
         {
           status: 404,
           error: {
-              message: 'simulated error'
+            message: 'simulated error'
           }
         },
         {
@@ -136,12 +136,11 @@ describe('CentreAddComponent', () => {
         component.description.setValue(centre.description);
         component.onSubmit();
 
-        const action = new CentreStoreActions.AddCentreFailure({ error: error });
+        const action = new CentreStoreActions.AddCentreFailure({ error } as any );
         store.dispatch(action);
-
-        fixture.whenStable().then(() => {
-          expect(toastr.error).toHaveBeenCalled();
-        });
+        flush();
+        fixture.detectChanges();
+        expect(toastr.error).toHaveBeenCalled();
       });
     }));
 

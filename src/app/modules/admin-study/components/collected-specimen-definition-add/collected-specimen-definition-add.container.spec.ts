@@ -1,9 +1,9 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgZone } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed, fakeAsync, flush } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CollectionEventType, Study } from '@app/domain/studies';
-import { EventTypeStoreActions, EventTypeStoreReducer, StudyStoreReducer } from '@app/root-store';
+import { EventTypeStoreActions, EventTypeStoreReducer, StudyStoreReducer, StudyStoreActions } from '@app/root-store';
 import { YesNoPipe } from '@app/shared/pipes/yes-no-pipe';
 import { Factory } from '@test/factory';
 import { MockActivatedRoute } from '@test/mocks';
@@ -36,6 +36,7 @@ describe('CollectedSpecimenDefinitionAddContainer', () => {
         NgbModule,
         RouterTestingModule,
         StoreModule.forRoot({
+          'study': StudyStoreReducer.reducer,
           'event-type': EventTypeStoreReducer.reducer,
         }),
         ToastrModule.forRoot()
@@ -88,10 +89,10 @@ describe('CollectedSpecimenDefinitionAddContainer', () => {
   });
 
   it('dispatches the action to retrive the event type', () => {
-    const eventType = createEventType();
-    mockActivatedRouteSnapshot('spcDefAdd', eventType);
+    const eventType = initializeComponent();
     const storeListener = jest.spyOn(store, 'dispatch');
     fixture.detectChanges();
+
     expect(storeListener.mock.calls.length).toBe(1);
     expect(storeListener.mock.calls[0][0]).toEqual(
       new EventTypeStoreActions.GetEventTypeRequest({
@@ -100,22 +101,19 @@ describe('CollectedSpecimenDefinitionAddContainer', () => {
     }));
   });
 
-  it('assigns the event type when it is added to the store', () => {
-    const eventType = createEventType();
-    mockActivatedRouteSnapshot('spcDefAdd', eventType);
-    store.dispatch(new EventTypeStoreActions.GetEventTypeSuccess({ eventType }));
-
+  it('assigns the event type after it is added to the store', () => {
+    const eventType = initializeComponent();
     fixture.detectChanges();
     expect(component.eventType).toEqual(eventType);
   });
 
   it('returns to the correct state when Cancel button is pressed', () => {
-    const eventType = createEventType();
+    const eventType = initializeComponent();
     const spy = jest.spyOn(router, 'navigate');
 
     const testData = [
       { path: 'spcDefAdd', returnPath: '..' },
-      { path: 'spcDef', returnPath: '../..' }
+      { path: 'spcDef', returnPath: '..' }
     ];
 
     testData.forEach((testInfo, index) => {
@@ -130,46 +128,10 @@ describe('CollectedSpecimenDefinitionAddContainer', () => {
     });
   });
 
-  describe('for adding a specimen definition', () => {
-
-    it('loading is false by default', () => {
-      const eventType = createEventType();
-      mockActivatedRouteSnapshot('spcDefAdd', eventType);
-      fixture.detectChanges();
-
-      expect(component.study).toBe(study);
-      expect(component.eventTypeSlug).toBe(eventType.slug);
-      expect(component.loading).toBe(false);
-    });
-
-  });
-
-  describe('for updating a specimen definition', () => {
-
-    let eventType: CollectionEventType;
-
-    beforeEach(() => {
-      eventType = createEventType();
-      mockActivatedRouteSnapshot('spcDef', eventType);
-    });
-
-    it('shows loading animation', () => {
-      fixture.detectChanges();
-      expect(component.loading).toBe(true);
-    });
-
-    it('loading is cleared after event type is received', () => {
-      store.dispatch(new EventTypeStoreActions.GetEventTypeSuccess({ eventType }));
-      fixture.detectChanges();
-      expect(component.loading).toBe(false);
-    });
-
-  });
-
   describe('when submitting', () => {
 
     it('on valid submission', async(() => {
-      const eventType = createEventType();
+      const eventType = initializeComponent();
       const expectedAction = new EventTypeStoreActions.UpdateEventTypeAddOrUpdateSpecimenDefinitionRequest({
         eventType,
         specimenDefinition: eventType.specimenDefinitions[0]
@@ -198,8 +160,7 @@ describe('CollectedSpecimenDefinitionAddContainer', () => {
       });
     }));
 
-    it('on submission failure', async(() => {
-      const eventType = createEventType();
+    it('on submission failure', fakeAsync(() => {
       const testData = [
         { path: 'spcDefAdd', savedMessage: 'Specimen Added' },
         { path: 'spcDef', savedMessage: 'Specimen Updated' },
@@ -226,25 +187,24 @@ describe('CollectedSpecimenDefinitionAddContainer', () => {
       jest.spyOn(toastr, 'error').mockReturnValue(null);
       jest.spyOn(router, 'navigate');
 
-      testData.forEach(testInfo => {
-        mockActivatedRouteSnapshot(testInfo.path, eventType);
-        component.ngOnInit();
+      const eventType = initializeComponent();
+      store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
+      store.dispatch(new EventTypeStoreActions.GetEventTypeSuccess({ eventType }));
+      fixture.detectChanges();
 
-        store.dispatch(new EventTypeStoreActions.GetEventTypeSuccess({ eventType }));
-        fixture.detectChanges();
+      testData.forEach(testInfo => {
+        component.ngOnInit();
 
         errors.forEach(error => {
           component.onSubmit(eventType.specimenDefinitions[0]);
-          expect(component.savedMessage).toBe(testInfo.savedMessage);
           expect(component.isSaving$).toBeObservable(cold('b', { b: true }));
           store.dispatch(new EventTypeStoreActions.GetEventTypeFailure({ error }));
+          flush();
           fixture.detectChanges();
 
-          fixture.whenStable().then(() => {
-            expect(component.isSaving$).toBeObservable(cold('b', { b: false }));
-            expect(toastr.error).toHaveBeenCalled();
-            expect(router.navigate).not.toHaveBeenCalled();
-          });
+          expect(component.isSaving$).toBeObservable(cold('b', { b: false }));
+          expect(toastr.error).toHaveBeenCalled();
+          expect(router.navigate).not.toHaveBeenCalled();
         });
       });
     }));
@@ -253,13 +213,26 @@ describe('CollectedSpecimenDefinitionAddContainer', () => {
 
   function createEventType(): CollectionEventType {
     return new CollectionEventType().deserialize(factory.collectionEventType({
-      specimenDefinitions: [factory.collectedSpecimenDefinition() ]
+      specimenDefinitions: [ factory.collectedSpecimenDefinition() ]
     }));
   }
 
-  function mockActivatedRouteSnapshot(path: string,
-                                      eventType: CollectionEventType): void {
+  function mockActivatedRouteSnapshot(path: string, eventType: CollectionEventType): void {
     const specimenDefinitionId = (path === 'spcDefAdd') ? undefined : eventType.specimenDefinitions[0].id;
+    mockActivatedRoute.spyOnParent(() => ({
+      parent: {
+        parent: {
+          parent: {
+            snapshot: {
+              params: {
+                slug: study.slug
+              }
+            }
+          }
+        }
+      }
+    }));
+
     mockActivatedRoute.spyOnSnapshot(() => ({
       params: {
         eventTypeSlug: eventType.slug,
@@ -269,6 +242,14 @@ describe('CollectedSpecimenDefinitionAddContainer', () => {
         { path }
       ]
     }));
+  }
+
+  function initializeComponent(): CollectionEventType {
+    const eventType = createEventType();
+    mockActivatedRouteSnapshot('spcDefAdd', eventType);
+    store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
+    store.dispatch(new EventTypeStoreActions.GetEventTypeSuccess({ eventType }));
+    return eventType;
   }
 
 });

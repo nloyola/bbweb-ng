@@ -109,7 +109,7 @@ describe('StudyAddComponent', () => {
       expect(routerListener.mock.calls[0][0]).toEqual(['../', study.slug]);
     }));
 
-    it('on submission failure', async(() => {
+    it('on submission failure', fakeAsync(() => {
       const study = new Study().deserialize(factory.study());
       const errors = [
         {
@@ -137,12 +137,11 @@ describe('StudyAddComponent', () => {
         component.description.setValue(study.description);
         component.onSubmit();
 
-        const action = new StudyStoreActions.AddStudyFailure({ error: error });
+        const action = new StudyStoreActions.AddStudyFailure({ error });
         store.dispatch(action);
-
-        fixture.whenStable().then(() => {
-          expect(toastr.error).toHaveBeenCalled();
-        });
+        flush();
+        fixture.detectChanges();
+        expect(toastr.error).toHaveBeenCalled();
       });
     }));
 

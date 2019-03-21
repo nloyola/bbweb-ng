@@ -1,6 +1,6 @@
 <app-processing-type-view-ui *ngIf="!(isLoading$ | async); else showLoading"
                              [processingType]="processingType"
-                             [allowChanges]="allowChanges"
+                             [allowChanges]="(allowChanges$ | async)"
                              [inputEntity]="inputEntity"
                              (updateNameSelected)="updateName($event)"
                              (updateDescriptionSelected)="updateDescription($event)"
@@ -25,7 +25,7 @@
 <ng-template #updateNameModal let-modal>
   <app-modal-input-text [title]="'Update Name'"
                         [label]="'New event name'"
-                        [value]="processingType.name"
+                        [value]="processingType?.name"
                         [options]="updateNameModalOptions"
                         (onConfirm)="confirm($event)"
                         [modal]="modal">
@@ -35,7 +35,7 @@
 <ng-template #updateDescriptionModal let-modal>
   <app-modal-input-textarea [title]="'Update Description'"
                             [label]="'New event description'"
-                            [value]="processingType.description"
+                            [value]="processingType?.description"
                             [options]="updateDescriptionModalOptions"
                             (onConfirm)="confirm($event)"
                             [modal]="modal">
@@ -45,7 +45,7 @@
 <ng-template #updateEnabledModal let-modal>
   <app-modal-input-boolean [title]="'Update Enabled'"
                            [label]="'New value'"
-                           [value]="processingType.enabled"
+                           [value]="processingType?.enabled"
                            [options]="{ required: true }"
                            (onConfirm)="confirm($event)"
                            [modal]="modal">

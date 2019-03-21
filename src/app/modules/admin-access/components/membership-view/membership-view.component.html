@@ -11,12 +11,13 @@
 
         <button class="btn btn-sm btn-light"
                 type="button"
-                id="userSummaryMenu"
+                id="membershipActionsMenu"
                 ngbDropdownToggle>
           <mat-icon inline="true">more_vert</mat-icon>
         </button>
 
         <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="membershipActionsMenu">
+
           <a class="dropdown-item" *ngIf="changesAllowed" (click)="updateName()">
             <mat-icon class="success-icon mr-1">edit</mat-icon>
             <ng-container i18n>Update name</ng-container>

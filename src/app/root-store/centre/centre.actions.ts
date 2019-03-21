@@ -2,6 +2,7 @@ import { HideSpinner, ShowSpinner } from '@app/core/decorators';
 import { Location, PagedReply, SearchParams } from '@app/domain';
 import { Centre, CentreCounts } from '@app/domain/centres';
 import { Action } from '@ngrx/store';
+import { HttpErrorResponse } from '@angular/common/http';
 
 interface CentreUpdateRequestPayload {
   centre: Centre;
