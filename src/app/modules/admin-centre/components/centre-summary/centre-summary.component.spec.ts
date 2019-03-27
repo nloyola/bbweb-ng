@@ -12,6 +12,8 @@ import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { CentreSummaryComponent } from './centre-summary.component';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { EntityUpdateComponentBehaviour } from '@test/behaviours/entity-update-component.behaviour';
+import * as faker from 'faker';
 
 describe('CentreSummaryComponent', () => {
 
@@ -101,6 +103,101 @@ describe('CentreSummaryComponent', () => {
     expect(routerListener.mock.calls.length).toBe(1);
     expect(routerListener.mock.calls[0][0]).toEqual([ '../..', centreWithNewName.slug, 'summary' ]);
   }));
+
+  describe('when updating attributes', () => {
+
+    const context: EntityUpdateComponentBehaviour.Context<CentreSummaryComponent> = {} as any;
+
+    beforeEach(() => {
+      context.fixture = fixture;
+      context.componentInitialize =
+        () => { store.dispatch(new CentreStoreActions.GetCentreSuccess({ centre })); };
+      context.componentValidateInitialization = () => { expect(component.centreEntity).toEqual(centre); };
+      context.dispatchSuccessAction =
+        () => { store.dispatch(new CentreStoreActions.UpdateCentreSuccess({ centre })); };
+      context.createExpectedFailureAction =
+        (error) => new CentreStoreActions.UpdateCentreFailure({ error });
+      context.duplicateNameError = 'name already used';
+    });
+
+    describe('when updating name', () => {
+
+      beforeEach(() => {
+        const newName = factory.stringNext();
+        context.modalReturnValue = { result: Promise.resolve(newName) };
+        context.updateEntity = () => { component.updateName(); };
+
+        const centreWithUpdatedSlug = new Centre().deserialize({
+          ...centre as any,
+          slug: factory.slugify(newName),
+          name: newName
+        });
+
+        context.expectedSuccessAction = new CentreStoreActions.UpdateCentreRequest({
+          centre,
+          attributeName: 'name',
+          value: newName
+        });
+        context.dispatchSuccessAction = () => {
+          store.dispatch(new CentreStoreActions.UpdateCentreSuccess({ centre: centreWithUpdatedSlug }));
+        };
+      });
+
+      EntityUpdateComponentBehaviour.sharedBehaviour(context);
+
+    });
+
+    describe('when updating description', () => {
+
+      beforeEach(() => {
+        const newValue = faker.lorem.paragraphs();
+        context.modalReturnValue = { result: Promise.resolve(newValue) };
+        context.updateEntity = () => { component.updateDescription(); };
+
+        context.expectedSuccessAction = new CentreStoreActions.UpdateCentreRequest({
+          centre,
+          attributeName: 'description',
+          value: newValue
+        });
+      });
+
+      EntityUpdateComponentBehaviour.sharedBehaviour(context);
+
+    });
+
+    describe('when DISABLING a centre', () => {
+
+      beforeEach(() => {
+        const newValue = 'disable';
+        context.updateEntity = () => { component.disable(); };
+        context.expectedSuccessAction = new CentreStoreActions.UpdateCentreRequest({
+          centre,
+          attributeName: 'state',
+          value: newValue
+        });
+      });
+
+      EntityUpdateComponentBehaviour.sharedBehaviour(context);
+
+    });
+
+    describe('when ENABLING a centre', () => {
+
+      beforeEach(() => {
+        const newValue = 'enable';
+        context.updateEntity = () => { component.enable(); };
+        context.expectedSuccessAction = new CentreStoreActions.UpdateCentreRequest({
+          centre,
+          attributeName: 'state',
+          value: newValue
+        });
+      });
+
+      EntityUpdateComponentBehaviour.sharedBehaviour(context);
+
+    });
+
+  });
 
   describe('common behaviour', () => {
 

@@ -35,15 +35,14 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
   changesAllowed = true;
   isLoading$: Observable<boolean>;
   membership$: Observable<Membership>;
+  membershipEntity: Membership;
+  membershipId: string;
   updateNameModalOptions: ModalInputTextOptions;
   updateDescriptionModalOptions: ModalInputTextareaOptions;
   userAddTypeahead: UserAddTypeahead;
   studyAddTypeahead: StudyAddTypeahead;
   centreAddTypeahead: CentreAddTypeahead;
   isRemoving = false;
-
-  private membershipEntity: Membership;
-  private membershipId: string;
 
   private updatedMessage$ = new Subject<string>();
   private unsubscribe$: Subject<void> = new Subject<void>();
@@ -106,7 +105,6 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
       } else {
         this.router.navigate([ '..' ], { relativeTo: this.route });
         this.toastr.success('Membership removed', 'Remove Successfull');
-        this.isRemoving = false;
       }
     });
 
@@ -266,7 +264,7 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
         this.store$.dispatch(new MembershipStoreActions.RemoveMembershipRequest({
           membership: this.membershipEntity
         }));
-        this.isRemoving = true;
+        this.updatedMessage$.next('Memberhsip Removed');
       })
       .catch(() => undefined);
   }

@@ -3,11 +3,12 @@ import { Action } from '@ngrx/store';
 import { UserCounts } from '@app/domain/users/user-counts.model';
 import { SearchParams, PagedReply } from '@app/domain';
 import { User } from '@app/domain/users';
+import { UserUpdateAttribute, PasswordUpdateValues } from '@app/core/services';
 
 interface UserUpdateRequestPayload {
   user: User;
-  attributeName: string;
-  value: string;
+  attributeName: UserUpdateAttribute;
+  value: string | PasswordUpdateValues;
 }
 
 export enum UserActionTypes {

@@ -15,6 +15,7 @@ import * as faker from 'faker';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { ProcessingTypeViewContainerComponent } from './processing-type-view.container';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
+import { EntityUpdateComponentBehaviour } from '@test/behaviours/entity-update-component.behaviour';
 
 describe('ProcessingTypeViewContainerComponent', () => {
   let component: ProcessingTypeViewContainerComponent;
@@ -114,6 +115,97 @@ describe('ProcessingTypeViewContainerComponent', () => {
     expect(routerListener.mock.calls[0][0]).toEqual([
       '/admin/studies', study.slug, 'processing', 'view', ptWithNewName.slug]);
   }));
+
+  describe('when updating attributes', () => {
+
+    let study: Study;
+    let processingType: ProcessingType;
+    const context: EntityUpdateComponentBehaviour.Context<ProcessingTypeViewContainerComponent> = {} as any;
+
+    beforeEach(() => {
+      const entities = entityFixture.createEntities();
+      study = entities.study;
+      processingType = entities.processingType;
+      context.fixture = fixture;
+      context.componentInitialize = () => {
+        createMockActivatedRouteSpies(study, processingType);
+        store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
+        store.dispatch(new ProcessingTypeStoreActions.GetProcessingTypeSuccess({ processingType }));
+      };
+      context.componentValidateInitialization = () => { expect(component.processingType).toEqual(processingType); };
+      context.dispatchSuccessAction =
+        () => { store.dispatch(new ProcessingTypeStoreActions.UpdateProcessingTypeSuccess({ processingType })); };
+      context.createExpectedFailureAction =
+        (error) => new ProcessingTypeStoreActions.UpdateProcessingTypeFailure({ error });
+      context.duplicateNameError = 'already exists';
+    });
+
+    describe('when updating name', () => {
+
+      beforeEach(() => {
+        const newName = factory.stringNext();
+        context.modalReturnValue = { result: Promise.resolve(newName) };
+        context.updateEntity = () => { component.updateName(); };
+
+        const processingTypeWithUpdatedSlug = new ProcessingType().deserialize({
+          ...processingType as any,
+          slug: factory.slugify(newName),
+          name: newName
+        });
+
+        context.expectedSuccessAction = new ProcessingTypeStoreActions.UpdateProcessingTypeRequest({
+          processingType,
+          attributeName: 'name',
+          value: newName
+        });
+        context.dispatchSuccessAction = () => {
+          store.dispatch(new ProcessingTypeStoreActions.UpdateProcessingTypeSuccess({
+            processingType: processingTypeWithUpdatedSlug
+          }));
+        };
+      });
+
+      EntityUpdateComponentBehaviour.sharedBehaviour(context);
+
+    });
+
+    describe('when updating description', () => {
+
+      beforeEach(() => {
+        const newValue = faker.lorem.paragraphs();
+        context.modalReturnValue = { result: Promise.resolve(newValue) };
+        context.updateEntity = () => { component.updateDescription(); };
+
+        context.expectedSuccessAction = new ProcessingTypeStoreActions.UpdateProcessingTypeRequest({
+          processingType,
+          attributeName: 'description',
+          value: newValue
+        });
+      });
+
+      EntityUpdateComponentBehaviour.sharedBehaviour(context);
+
+    });
+
+    describe('when updating enabled', () => {
+
+      beforeEach(() => {
+        const newValue = true;
+        context.modalReturnValue = { result: Promise.resolve(newValue) };
+        context.updateEntity = () => { component.updateEnabled(); };
+
+        context.expectedSuccessAction = new ProcessingTypeStoreActions.UpdateProcessingTypeRequest({
+          processingType,
+          attributeName: 'enabled',
+          value: newValue
+        });
+      });
+
+      EntityUpdateComponentBehaviour.sharedBehaviour(context);
+
+    });
+
+  });
 
   describe('for input entity', () => {
 

@@ -43,13 +43,13 @@ describe('CentreAddComponent', () => {
 
   beforeEach(() => {
     store = TestBed.get(Store);
-    fixture = TestBed.createComponent(CentreAddComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
     ngZone = TestBed.get(NgZone);
     router = TestBed.get(Router);
     toastr = TestBed.get(ToastrService);
 
+    fixture = TestBed.createComponent(CentreAddComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
     ngZone.run(() => router.initialNavigation());
   });
 
@@ -146,11 +146,11 @@ describe('CentreAddComponent', () => {
 
   });
 
-  it('on cancel', async(() => {
+  it('on cancel', () => {
     spyOn(router, 'navigate').and.callThrough();
     ngZone.run(() => component.onCancel());
     expect(router.navigate).toHaveBeenCalled();
     expect((router.navigate as any).calls.mostRecent().args[0]).toEqual(['../']);
-  }));
+  });
 
 });

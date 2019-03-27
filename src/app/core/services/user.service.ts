@@ -6,6 +6,18 @@ import { Observable } from 'rxjs';
 import { delay, map } from 'rxjs/operators';
 import { User, UserCounts } from '@app/domain/users';
 
+export type UserUpdateAttribute =
+  'name'
+  | 'email'
+  | 'password'
+  | 'avatarUrl'
+  | 'state';
+
+export interface PasswordUpdateValues {
+  currentPassword: string;
+  newPassword: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -84,7 +96,7 @@ export class UserService {
         }));
   }
 
-  update(user: User, attributeName: string, newValue: any): Observable<User> {
+  update(user: User, attributeName: string, newValue: string | PasswordUpdateValues): Observable<User> {
     const url = `${this.BASE_URL}/update/${user.id}`;
     let json = { expectedVersion: user.version };
 
@@ -98,14 +110,11 @@ export class UserService {
         json = {
           ...json,
           property: attributeName,
-          newValue: {
-            currentPassword: newValue.currentPassword,
-            newPassword: newValue.newPassword
-          }
+          newValue
         } as any;
         break;
       case 'state':
-        if (!this.stateActions.includes(newValue)) {
+        if (!this.stateActions.includes(newValue as string)) {
           throw new Error('invalid state change for user: ' + newValue);
         }
         json = { ...json, property: 'state', newValue } as any;

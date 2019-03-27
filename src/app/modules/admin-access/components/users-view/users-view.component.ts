@@ -94,9 +94,14 @@ export class UsersViewComponent implements OnInit, OnDestroy {
     this.currentPage = 1;
     if (values.name !== undefined) {
       this.filters.nameFilter.setValue(values.name);
+    } else {
+      this.filters.nameFilter.clearValue();
     }
+
     if (values.stateId !== undefined) {
       this.filters.stateFilter.setValue(values.stateId);
+    } else {
+      this.filters.stateFilter.clearValue();
     }
     this.applySearchParams();
   }

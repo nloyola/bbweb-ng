@@ -499,7 +499,7 @@ describe('EventTypeService', () => {
 
       service.removeEventType(eventType).subscribe(
         () => { fail('should have been an error response'); },
-        err => { expect(err.message).toContain('expected a study object'); }
+        err => { expect(err.message).toContain('expected an event type object'); }
       );
 
       const url = `${BASE_URL}/${eventType.studyId}/${eventType.id}/${eventType.version}`;

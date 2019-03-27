@@ -2,7 +2,7 @@ import { AnatomicalSource, ConcurrencySafeEntity, PagedReply, PreservationTemper
 import { MaxValueCount, ValueTypes } from '@app/domain/annotations';
 import { CentreCounts, CentreState } from '@app/domain/centres';
 import { StudyCounts, StudyState } from '@app/domain/studies';
-import { UserState } from '@app/domain/users';
+import { UserState, UserCounts } from '@app/domain/users';
 import * as _ from 'lodash';
 import faker = require('faker');
 
@@ -88,6 +88,18 @@ export class Factory {
 
   userMembership(options?: any): any {
     return this.membershipBase(options);
+  }
+
+  membership(options?: any): any {
+    return this.membershipBase({
+      ...options,
+      userData: []
+    });
+  }
+
+  defaultMembership(): any {
+    const dflt = this.defaultEntities.get(DomainEntities.MEMBERSHIP);
+    return dflt ? dflt : this.membership();
   }
 
   accessItem(options: any = {}): any {
@@ -376,6 +388,15 @@ export class Factory {
     };
   }
 
+  userCounts(): UserCounts {
+    return {
+      total: 3,
+      registeredCount: 1,
+      activeCount: 1,
+      lockedCount: 1
+    };
+  }
+
   centre(options?: any): any {
     const s = {
       ...{
@@ -469,6 +490,15 @@ export class Factory {
     }));
   }
 
+  // this function taken from here:
+  // https://gist.github.com/mathewbyrne/1280286
+  slugify(text: string): string {
+    return text.toString().toLowerCase().trim()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/[\s_-]+/g, '_')
+      .replace(/^-+|-+$/g, '');
+  }
+
   private domainEntityNameNext(domainEntityType?: string) {
     const id = domainEntityType ? domainEntityType : 'string';
     return _.uniqueId(id + '_');
@@ -484,15 +514,6 @@ export class Factory {
       timeAdded: faker.date.recent(10),
       timeModified: faker.date.recent(5)
     };
-  }
-
-  // this function taken from here:
-  // https://gist.github.com/mathewbyrne/1280286
-  private slugify(text: string): string {
-    return text.toString().toLowerCase().trim()
-      .replace(/[^\w\s-]/g, '')
-      .replace(/[\s_-]+/g, '_')
-      .replace(/^-+|-+$/g, '');
   }
 
   private membershipBaseDefaults() {

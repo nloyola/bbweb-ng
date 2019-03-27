@@ -22,9 +22,8 @@ export class RoleViewComponent implements OnInit, OnDestroy {
   isLoading$: Observable<boolean>;
   role$: Observable<Role>;
   userAddTypeahead: UserAddTypeahead;
-
-  private roleEntity: Role;
-  private roleId: string;
+  roleEntity: Role;
+  roleId: string;
 
   private updatedMessage$ = new Subject<string>();
   private unsubscribe$: Subject<void> = new Subject<void>();
@@ -64,15 +63,7 @@ export class RoleViewComponent implements OnInit, OnDestroy {
         if (roleEntity) {
           return (roleEntity instanceof Role) ? roleEntity : new Role().deserialize(roleEntity);
         }
-
-        if (this.roleId) {
-          const roleById = roles.find(u => u.id === this.roleId);
-          if (roleById) {
-            return (roleById instanceof Role) ? roleById : new Role().deserialize(roleById);
-          }
-        }
-
-        return undefined;
+        throw new Error('role not found');
       }),
       tap(role => {
         this.roleEntity = role;
@@ -84,20 +75,22 @@ export class RoleViewComponent implements OnInit, OnDestroy {
       withLatestFrom(this.updatedMessage$),
       takeUntil(this.unsubscribe$)
     ).subscribe(([ role, msg ]) => {
-      if (role !== undefined) {
-        this.toastr.success(msg, 'Update Successfull');
-        this.userAddTypeahead.clearSelected();
-
-        if (role.slug !== this.route.snapshot.params.slug) {
-          // name was changed and new slug was assigned
-          //
-          // need to change state since slug is used in URL and by breadcrumbs
-          this.router.navigate([ '..', role.slug ], { relativeTo: this.route });
-        }
-      } else {
-        this.router.navigate([ '..' ], { relativeTo: this.route });
-        this.toastr.success('Role removed', 'Remove Successfull');
+      if (role === undefined) {
+        throw new Error('role is undefined');
       }
+
+      this.toastr.success(msg, 'Update Successfull');
+      this.userAddTypeahead.clearSelected();
+    });
+
+    this.store$.pipe(
+      select(RoleStoreSelectors.selectRoleError),
+      filter(error => !!error),
+      withLatestFrom(this.updatedMessage$),
+      takeUntil(this.unsubscribe$)
+    ).subscribe(([ error, _msg ]) => {
+      const errMessage = error.error ? error.error.message : error.statusText;
+      this.toastr.error(errMessage, 'Update Error', { disableTimeOut: true });
     });
   }
 

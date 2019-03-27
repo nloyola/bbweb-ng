@@ -24,6 +24,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
 
   isLoading$: Observable<boolean>;
   user$: Observable<UserUI>;
+  userEntity: User;
   getStateIcon = UserUI.getStateIcon;
   getStateIconClass = UserUI.getStateIconClass;
   updateNameModalOptions: ModalInputTextOptions = {
@@ -34,7 +35,6 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     required: true
   };
 
-  private userEntity: User;
   private userId: string;
   private updatedMessage$ = new Subject<string>();
   private unsubscribe$ = new Subject<void>();

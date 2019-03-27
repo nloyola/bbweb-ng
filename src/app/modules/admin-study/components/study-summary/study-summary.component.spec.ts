@@ -12,6 +12,8 @@ import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { StudySummaryComponent } from './study-summary.component';
+import { EntityUpdateComponentBehaviour } from '@test/behaviours/entity-update-component.behaviour';
+import * as faker from 'faker';
 
 describe('StudySummaryComponent', () => {
 
@@ -115,6 +117,133 @@ describe('StudySummaryComponent', () => {
     expect(routerListener.mock.calls[0][0]).toEqual([ '../..', studyWithNewName.slug, 'summary' ]);
   }));
 
+  describe('when updating attributes', () => {
+
+    const context: EntityUpdateComponentBehaviour.Context<StudySummaryComponent> = {} as any;
+
+    beforeEach(() => {
+      context.fixture = fixture;
+      context.componentInitialize =
+        () => { store.dispatch(new StudyStoreActions.GetStudySuccess({ study })); };
+      context.componentValidateInitialization = () => { expect(component.study.entity).toEqual(study); };
+      context.dispatchSuccessAction =
+        () => { store.dispatch(new StudyStoreActions.UpdateStudySuccess({ study })); };
+      context.createExpectedFailureAction =
+        (error) => new StudyStoreActions.UpdateStudyFailure({ error });
+      context.duplicateNameError = 'name already used';
+    });
+
+    describe('when updating name', () => {
+
+      beforeEach(() => {
+        const newName = factory.stringNext();
+        context.modalReturnValue = { result: Promise.resolve(newName) };
+        context.updateEntity = () => { component.updateName(); };
+
+        const studyWithUpdatedSlug = new Study().deserialize({
+          ...study as any,
+          slug: factory.slugify(newName),
+          name: newName
+        });
+
+        context.expectedSuccessAction = new StudyStoreActions.UpdateStudyRequest({
+          study,
+          attributeName: 'name',
+          value: newName
+        });
+        context.dispatchSuccessAction = () => {
+          store.dispatch(new StudyStoreActions.UpdateStudySuccess({ study: studyWithUpdatedSlug }));
+        };
+      });
+
+      EntityUpdateComponentBehaviour.sharedBehaviour(context);
+
+    });
+
+    describe('when updating description', () => {
+
+      beforeEach(() => {
+        const newValue = faker.lorem.paragraphs();
+        context.modalReturnValue = { result: Promise.resolve(newValue) };
+        context.updateEntity = () => { component.updateDescription(); };
+
+        context.expectedSuccessAction = new StudyStoreActions.UpdateStudyRequest({
+          study,
+          attributeName: 'description',
+          value: newValue
+        });
+      });
+
+      EntityUpdateComponentBehaviour.sharedBehaviour(context);
+
+    });
+
+    describe('when DISABLING a study', () => {
+
+      beforeEach(() => {
+        const newValue = 'disable';
+        context.updateEntity = () => { component.disable(); };
+        context.expectedSuccessAction = new StudyStoreActions.UpdateStudyRequest({
+          study,
+          attributeName: 'state',
+          value: newValue
+        });
+      });
+
+      EntityUpdateComponentBehaviour.sharedBehaviour(context);
+
+    });
+
+    describe('when ENABLING a study', () => {
+
+      beforeEach(() => {
+        const newValue = 'enable';
+        context.updateEntity = () => { component.enable(); };
+        context.expectedSuccessAction = new StudyStoreActions.UpdateStudyRequest({
+          study,
+          attributeName: 'state',
+          value: newValue
+        });
+      });
+
+      EntityUpdateComponentBehaviour.sharedBehaviour(context);
+
+    });
+
+    describe('when RETIRING a study', () => {
+
+      beforeEach(() => {
+        const newValue = 'retire';
+        context.updateEntity = () => { component.retire(); };
+        context.expectedSuccessAction = new StudyStoreActions.UpdateStudyRequest({
+          study,
+          attributeName: 'state',
+          value: newValue
+        });
+      });
+
+      EntityUpdateComponentBehaviour.sharedBehaviour(context);
+
+    });
+
+    describe('when UNRETIRING a study', () => {
+
+      beforeEach(() => {
+        const newValue = 'unretire';
+        context.updateEntity = () => { component.unretire(); };
+        context.expectedSuccessAction = new StudyStoreActions.UpdateStudyRequest({
+          study,
+          attributeName: 'state',
+          value: newValue
+        });
+      });
+
+      EntityUpdateComponentBehaviour.sharedBehaviour(context);
+
+    });
+
+  });
+
   describe('common behaviour', () => {
 
     it('functions should open a modal', fakeAsync(() => {
@@ -183,13 +312,13 @@ describe('StudySummaryComponent', () => {
       componentUpdateFuncs.forEach(updateFunc => {
         updateFunc(component);
         fixture.detectChanges();
-        tick(1000);
+        flush();
         expect(store.dispatch).toHaveBeenCalled();
         ngZone.run(() => store.dispatch(new StudyStoreActions.UpdateStudySuccess({ study })));
-        tick(1000);
+        flush();
       });
 
-      tick(1000);
+      flush();
       expect(toastr.success.mock.calls.length).toBe(componentUpdateFuncs.length);
     }));
 

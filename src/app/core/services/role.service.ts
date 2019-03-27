@@ -1,10 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { PagedReply, SearchParams, JSONArray, JSONValue, JSONObject } from '@app/domain';
+import { JSONArray, JSONObject, PagedReply, SearchParams } from '@app/domain';
+import { Role } from '@app/domain/access';
 import { ApiReply } from '@app/domain/api-reply.model';
 import { Observable } from 'rxjs';
 import { delay, map } from 'rxjs/operators';
-import { Role } from '@app/domain/access';
 
 export type RoleUpdateAttribute = 'userAdd' | 'userRemove';
 

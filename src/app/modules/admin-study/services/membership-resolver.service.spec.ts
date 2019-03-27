@@ -3,19 +3,19 @@ import { NgZone } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRouteSnapshot } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { Study } from '@app/domain/studies';
-import { StudyStoreActions, StudyStoreReducer } from '@app/root-store';
+import { Membership } from '@app/domain/access';
+import { MembershipStoreActions, MembershipStoreReducer } from '@app/root-store';
 import { Factory } from '@test/factory';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
 import { cold } from 'jasmine-marbles';
-import { StudyResolver } from './study-resolver.service';
+import { MembershipResolver } from './membership-resolver.service';
 
-describe('StudyResolver', () => {
+describe('MembershipResolver', () => {
 
   let ngZone: NgZone;
-  let resolver: StudyResolver;
-  let store: Store<StudyStoreReducer.State>;
+  let resolver: MembershipResolver;
+  let store: Store<MembershipStoreReducer.State>;
   let factory: Factory;
 
   beforeEach(() => {
@@ -25,13 +25,13 @@ describe('StudyResolver', () => {
         NgbModule,
         RouterTestingModule,
         StoreModule.forRoot({
-          'study': StudyStoreReducer.reducer
+          'membership': MembershipStoreReducer.reducer
         })
       ]
     });
 
     ngZone = TestBed.get(NgZone);
-    resolver = TestBed.get(StudyResolver);
+    resolver = TestBed.get(MembershipResolver);
     store = TestBed.get(Store);
     factory = new Factory();
   });
@@ -40,13 +40,13 @@ describe('StudyResolver', () => {
     expect(resolver).toBeTruthy();
   });
 
-  it('should return a study', () => {
-    const study = new Study().deserialize(factory.study());
+  it('should return a membership', () => {
+    const membership = new Membership().deserialize(factory.membership());
     const route = new ActivatedRouteSnapshot();
-    route.params = { slug: study.slug };
-    const action = new StudyStoreActions.GetStudySuccess({ study });
+    route.params = { slug: membership.slug };
+    const action = new MembershipStoreActions.GetMembershipSuccess({ membership });
     store.dispatch(action);
-    const expected = cold('(b|)', { b: study });
+    const expected = cold('(b|)', { b: membership });
     expect(resolver.resolve(route, null)).toBeObservable(expected);
   });
 
@@ -59,12 +59,12 @@ describe('StudyResolver', () => {
     };
     const route = new ActivatedRouteSnapshot();
     route.params = { slug: 'test' };
-    const action = new StudyStoreActions.GetStudyFailure({ error });
+    const action = new MembershipStoreActions.GetMembershipFailure({ error });
     store.dispatch(action);
     const expected = cold('(b|)', {
       b: {
         error,
-        type: StudyStoreActions.ActionTypes.GetStudyFailure
+        actionType: MembershipStoreActions.MembershipActionTypes.GetMembershipFailure
       }
     });
     ngZone.run(() => {

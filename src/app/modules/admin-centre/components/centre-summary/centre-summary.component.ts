@@ -24,6 +24,7 @@ export class CentreSummaryComponent implements OnInit, OnDestroy {
 
   isLoading$: Observable<boolean>;
   centre$: Observable<CentreUI>;
+  centreEntity: Centre;
   isEnableAllowed: boolean;
   centreStateUIMap = CentreStateUIMap;
   descriptionToggleLength = 80;
@@ -33,7 +34,6 @@ export class CentreSummaryComponent implements OnInit, OnDestroy {
   updateDescriptionModalOptions: ModalInputTextareaOptions;
 
   private centreId: string;
-  private centreEntity: Centre;
   private updatedMessage$ = new Subject<string>();
   private unsubscribe$ = new Subject<void>();
 

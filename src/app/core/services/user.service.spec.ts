@@ -1,8 +1,11 @@
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { User } from '@app/domain/users';
+import { User, UserCounts } from '@app/domain/users';
 import { Factory } from '@test/factory';
 import { UserService } from './user.service';
+import * as faker from 'faker';
+import { SearchParams, PagedReply } from '@app/domain';
+import { PagedQueryBehaviour } from '@test/behaviours/paged-query.behaviour';
 
 describe('UserService', () => {
 
@@ -43,4 +46,238 @@ describe('UserService', () => {
     expect(req.request.method).toBe('POST');
     req.flush(user);
   });
+
+  describe('for user counts', () => {
+
+    it('reply is handled correctly', () => {
+      const counts = factory.userCounts();
+      service.counts().subscribe((s: UserCounts) => {
+        expect(s.total).toBe(counts.total);
+        expect(s.registeredCount).toBe(counts.registeredCount);
+        expect(s.activeCount).toBe(counts.activeCount);
+        expect(s.lockedCount).toBe(counts.lockedCount);
+      });
+
+      const req = httpMock.expectOne(`${BASE_URL}/counts`);
+      expect(req.request.method).toBe('GET');
+      req.flush({ status: 'success', data: counts });
+      httpMock.verify();
+    });
+
+    it('handles an error reply correctly', () => {
+      service.counts().subscribe(
+        () => { fail('should have been an error response'); },
+        err => { expect(err.message).toContain('expected a user object'); }
+      );
+
+      const req = httpMock.expectOne(`${BASE_URL}/counts`);
+      req.flush({ status: 'error', data: undefined });
+      httpMock.verify();
+    });
+
+  });  describe('when requesting a user', () => {
+    let rawUser: any;
+    let user: User;
+
+    beforeEach(() => {
+      rawUser = factory.user();
+      user = new User().deserialize(rawUser);
+    });
+
+    it('reply is handled correctly', () => {
+      service.get(user.slug).subscribe(s => {
+        expect(s).toEqual(jasmine.any(User));
+      });
+
+      const req = httpMock.expectOne(`${BASE_URL}/${user.slug}`);
+      expect(req.request.method).toBe('GET');
+      req.flush({ status: 'success', data: rawUser });
+      httpMock.verify();
+    });
+
+    it('handles an error reply correctly', () => {
+      service.get(user.slug).subscribe(
+        () => { fail('should have been an error response'); },
+        err => { expect(err.message).toContain('expected a user object'); }
+      );
+
+      const req = httpMock.expectOne(`${BASE_URL}/${user.slug}`);
+      req.flush({ status: 'error', data: undefined });
+      httpMock.verify();
+    });
+
+  });
+
+  describe('when searching users', () => {
+    let rawUser: any;
+    let reply: any;
+
+    beforeEach(() => {
+      rawUser = factory.user();
+      reply = {
+        items: [ rawUser ],
+        page: 1,
+        limit: 10,
+        offset: 0,
+        total: 1
+      };
+    });
+
+    it('can retrieve users', () => {
+      const params = new SearchParams();
+      service.search(params).subscribe((pr: PagedReply<User>) => {
+        expect(pr.entities.length).toBe(1);
+        expect(pr.entities[0]).toEqual(jasmine.any(User));
+        expect(pr.offset).toBe(reply.offset);
+        expect(pr.total).toBe(reply.total);
+      });
+
+      const req = httpMock.expectOne(r => r.url === `${BASE_URL}/search`);
+      expect(req.request.method).toBe('GET');
+      expect(req.request.params.keys()).toEqual([]);
+      req.flush({
+        status: 'success',
+        data: reply
+      });
+      httpMock.verify();
+    });
+
+    describe('uses valid query parameters', function () {
+
+      const context: PagedQueryBehaviour.Context<User> = {};
+
+      beforeEach(() => {
+        context.search = (searchParams: SearchParams) => service.search(searchParams);
+        context.url = `${BASE_URL}/search`;
+        context.reply = reply;
+      });
+
+      PagedQueryBehaviour.sharedBehaviour(context);
+
+    });
+
+    it('handles an error reply correctly', () => {
+      const params = new SearchParams();
+      service.search(params).subscribe(
+        u => { fail('should have been an error response'); },
+        err => { expect(err.message).toContain('expected a paged reply'); }
+      );
+
+      const req = httpMock.expectOne(`${BASE_URL}/search`);
+      expect(req.request.method).toBe('GET');
+      req.flush({ status: 'error', data: undefined });
+      httpMock.verify();
+    });
+
+  });
+
+  describe('for updating a user', () => {
+
+    let rawUser: any;
+    let user: User;
+    let testData: any;
+
+    beforeEach(() => {
+      rawUser = factory.user();
+      user = new User().deserialize(rawUser);
+      testData = [
+        {
+          attribute: 'name',
+          value: factory.stringNext(),
+          url: `${BASE_URL}/update/${user.id}`
+        },
+        {
+          attribute: 'email',
+          value: faker.internet.email(),
+          url: `${BASE_URL}/update/${user.id}`
+        },
+        {
+          attribute: 'password',
+          value: {
+            currentPassword: factory.stringNext(),
+            newPassword: factory.stringNext()
+          },
+          url: `${BASE_URL}/update/${user.id}`
+        },
+        {
+          attribute: 'avatarUrl',
+          value: faker.internet.url(),
+          url: `${BASE_URL}/update/${user.id}`
+        },
+        {
+          attribute: 'state',
+          value: 'activate',
+          url: `${BASE_URL}/update/${user.id}`
+        },
+        {
+          attribute: 'state',
+          value: 'lock',
+          url: `${BASE_URL}/update/${user.id}`
+        },
+        {
+          attribute: 'state',
+          value: 'unlock',
+          url: `${BASE_URL}/update/${user.id}`
+        }
+      ];
+
+    });
+
+    it('request contains correct JSON and reply is handled correctly', () => {
+      testData.forEach((testInfo: any) => {
+        service.update(user, testInfo.attribute, testInfo.value).subscribe(s => {
+          expect(s).toEqual(jasmine.any(User));
+          expect(s).toEqual(user);
+        });
+
+        const expectedJson = {
+          expectedVersion: user.version,
+          property: testInfo.attribute,
+          newValue: testInfo.value
+        };
+
+        const req = httpMock.expectOne(testInfo.url);
+        expect(req.request.method).toBe('POST');
+        expect(req.request.body).toEqual(expectedJson);
+        req.flush({ status: 'success', data: rawUser });
+        httpMock.verify();
+      });
+    });
+
+    it('handles an error reply correctly', () => {
+      testData.forEach((testInfo: any) => {
+        service.update(user, testInfo.attribute, testInfo.value).subscribe(
+          () => { fail('should have been an error response'); },
+          err => { expect(err.message).toContain('expected a user object'); }
+        );
+
+        const req = httpMock.expectOne(testInfo.url);
+        req.flush({ status: 'error', data: undefined });
+        httpMock.verify();
+      });
+    });
+
+    it('throws an exception for invalid input', () => {
+      testData = [
+        {
+          attribute: factory.stringNext(),
+          value: factory.stringNext(),
+          url: `${BASE_URL}/name/${user.id}`,
+          expectedErrMsg: /invalid attribute name/
+        },
+        {
+          attribute: 'state',
+          value: factory.stringNext(),
+          url: `${BASE_URL}/unretire/${user.id}`,
+          expectedErrMsg: /invalid state change/
+        }
+      ];
+      testData.forEach((testInfo: any) => {
+        expect(() => service.update(user, testInfo.attribute, testInfo.value))
+          .toThrowError(testInfo.expectedErrMsg);
+      });
+    });
+  });
+
+
 });

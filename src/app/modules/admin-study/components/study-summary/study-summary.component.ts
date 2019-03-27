@@ -29,6 +29,7 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
 
   isLoading$: Observable<boolean>;
   study$: Observable<StudyUI>;
+  study: StudyUI;
   isEnableAllowed: boolean;
   studyStateUIMap = StudyStateUIMap;
   descriptionToggleLength = 80;
@@ -45,7 +46,6 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
 
   private data$: Observable<StoreData>;
   private studyId: string;
-  private study: StudyUI;
   private updatedMessage$ = new Subject<string>();
   private unsubscribe$ = new Subject<void>();
 

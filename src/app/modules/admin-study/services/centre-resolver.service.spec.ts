@@ -3,19 +3,19 @@ import { NgZone } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRouteSnapshot } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { Study } from '@app/domain/studies';
-import { StudyStoreActions, StudyStoreReducer } from '@app/root-store';
+import { Centre } from '@app/domain/centres';
+import { CentreStoreActions, CentreStoreReducer } from '@app/root-store';
 import { Factory } from '@test/factory';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
 import { cold } from 'jasmine-marbles';
-import { StudyResolver } from './study-resolver.service';
+import { CentreResolver } from './centre-resolver.service';
 
-describe('StudyResolver', () => {
+describe('CentreResolver', () => {
 
   let ngZone: NgZone;
-  let resolver: StudyResolver;
-  let store: Store<StudyStoreReducer.State>;
+  let resolver: CentreResolver;
+  let store: Store<CentreStoreReducer.State>;
   let factory: Factory;
 
   beforeEach(() => {
@@ -25,13 +25,13 @@ describe('StudyResolver', () => {
         NgbModule,
         RouterTestingModule,
         StoreModule.forRoot({
-          'study': StudyStoreReducer.reducer
+          'centre': CentreStoreReducer.reducer
         })
       ]
     });
 
     ngZone = TestBed.get(NgZone);
-    resolver = TestBed.get(StudyResolver);
+    resolver = TestBed.get(CentreResolver);
     store = TestBed.get(Store);
     factory = new Factory();
   });
@@ -40,13 +40,13 @@ describe('StudyResolver', () => {
     expect(resolver).toBeTruthy();
   });
 
-  it('should return a study', () => {
-    const study = new Study().deserialize(factory.study());
+  it('should return a centre', () => {
+    const centre = new Centre().deserialize(factory.centre());
     const route = new ActivatedRouteSnapshot();
-    route.params = { slug: study.slug };
-    const action = new StudyStoreActions.GetStudySuccess({ study });
+    route.params = { slug: centre.slug };
+    const action = new CentreStoreActions.GetCentreSuccess({ centre });
     store.dispatch(action);
-    const expected = cold('(b|)', { b: study });
+    const expected = cold('(b|)', { b: centre });
     expect(resolver.resolve(route, null)).toBeObservable(expected);
   });
 
@@ -59,12 +59,12 @@ describe('StudyResolver', () => {
     };
     const route = new ActivatedRouteSnapshot();
     route.params = { slug: 'test' };
-    const action = new StudyStoreActions.GetStudyFailure({ error });
+    const action = new CentreStoreActions.GetCentreFailure({ error });
     store.dispatch(action);
     const expected = cold('(b|)', {
       b: {
         error,
-        type: StudyStoreActions.ActionTypes.GetStudyFailure
+        actionType: CentreStoreActions.ActionTypes.GetCentreFailure
       }
     });
     ngZone.run(() => {

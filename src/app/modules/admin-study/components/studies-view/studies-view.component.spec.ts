@@ -16,7 +16,6 @@ describe('StudiesViewComponent', () => {
 
   let component: StudiesViewComponent;
   let fixture: ComponentFixture<StudiesViewComponent>;
-  let ngZone: NgZone;
   let store: Store<StudyStoreReducer.State>;
   let router: Router;
   const factory = new Factory();
@@ -51,11 +50,8 @@ describe('StudiesViewComponent', () => {
   }));
 
   beforeEach(() => {
-    ngZone = TestBed.get(NgZone);
     store = TestBed.get(Store);
     router = TestBed.get(Router);
-
-    ngZone.run(() => router.initialNavigation());
 
     fixture = TestBed.createComponent(StudiesViewComponent);
     component = fixture.componentInstance;
@@ -144,11 +140,10 @@ describe('StudiesViewComponent', () => {
 
   it('route is changed when a study is selected', () => {
     const study = new StudyUI(new Study().deserialize(factory.study()));
-    spyOn(router, 'navigate').and.callThrough();
-    ngZone.run(() => component.studySelected(study));
-    expect(router.navigate).toHaveBeenCalled();
-    expect((router.navigate as any).calls.mostRecent().args[0])
-      .toEqual([ study.slug, 'summary' ]);
+    const routerListener = jest.spyOn(router, 'navigate').mockResolvedValue(true);
+    component.studySelected(study);
+    expect(routerListener.mock.calls.length).toBe(1);
+    expect(routerListener.mock.calls[0][0]).toEqual([ study.slug, 'summary' ]);
   });
 
   it('displays that there are no studies in the system', () => {
@@ -164,7 +159,7 @@ describe('StudiesViewComponent', () => {
       .toContain('No studies have been added yet.');
   });
 
-  it('displays that there are no results for the filters', () => {
+  it('displays that there are no matches for the filters', () => {
     const pagedReply = factory.pagedReply([]);
     pagedReply.searchParams.filter = 'name:like:test';
     const action = new StudyStoreActions.SearchStudiesSuccess({ pagedReply });

@@ -51,19 +51,18 @@ export class MembershipAddComponent implements OnInit, OnDestroy {
       this.router.navigate([ '../', s.slug ], { relativeTo: this.route });
     });
 
-    this.store$
-      .pipe(
-        select(MembershipStoreSelectors.selectMembershipError),
-        filter(s => !!s),
-        takeUntil(this.unsubscribe$))
-      .subscribe((error: any) => {
-        let errMessage = error.error.error
-          ? error.error.error.message : error.error.statusText;
-        if (errMessage.match(/EntityCriteriaError: name already used/)) {
-          errMessage = `The name is already in use: ${this.form.value.name}`;
-        }
-        this.toastr.error(errMessage, 'Add Error', { disableTimeOut: true });
-      });
+    this.store$.pipe(
+      select(MembershipStoreSelectors.selectMembershipError),
+      filter(s => !!s),
+      takeUntil(this.unsubscribe$)
+    ).subscribe((error: any) => {
+      let errMessage = error.error.error
+        ? error.error.error.message : error.error.statusText;
+      if (errMessage.match(/EntityCriteriaError: name already used/)) {
+        errMessage = `The name is already in use: ${this.form.value.name}`;
+      }
+      this.toastr.error(errMessage, 'Add Error', { disableTimeOut: true });
+    });
   }
 
   public ngOnDestroy() {

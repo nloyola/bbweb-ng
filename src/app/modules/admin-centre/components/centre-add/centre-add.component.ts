@@ -40,17 +40,16 @@ export class CentreAddComponent implements OnInit, OnDestroy {
 
     this.isSaving$ = this.store$.pipe(select(SpinnerStoreSelectors.selectSpinnerIsActive));
 
-    this.store$
-      .pipe(
-        select(CentreStoreSelectors.selectCentreLastAdded),
-        filter(s => !!s),
-        takeUntil(this.unsubscribe$))
-      .subscribe((centre: Centre) => {
-        this.toastr.success(
-          `Centre was added successfully: ${centre.name}`,
-          'Add Successfull');
-        this.router.navigate([ '..', centre.slug ], { relativeTo: this.route });
-      });
+    this.store$.pipe(
+      select(CentreStoreSelectors.selectCentreLastAdded),
+      filter(s => !!s),
+      takeUntil(this.unsubscribe$)
+    ).subscribe((centre: Centre) => {
+      this.toastr.success(
+        `Centre was added successfully: ${centre.name}`,
+        'Add Successfull');
+      this.router.navigate([ '..', centre.slug ], { relativeTo: this.route });
+    });
 
     this.store$
       .pipe(

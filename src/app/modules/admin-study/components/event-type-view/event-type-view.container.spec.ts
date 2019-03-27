@@ -1,5 +1,6 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgZone } from '@angular/core';
 import { async, ComponentFixture, fakeAsync, flush, TestBed } from '@angular/core/testing';
+import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -12,11 +13,10 @@ import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
 import { MockActivatedRoute } from '@test/mocks';
 import * as faker from 'faker';
-import { cold } from 'jasmine-marbles';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { EventTypeRemoveComponent } from '../event-type-remove/event-type-remove.component';
 import { EventTypeViewContainerComponent } from './event-type-view.container';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
+import { EntityUpdateComponentBehaviour } from '@test/behaviours/entity-update-component.behaviour';
 
 describe('EventTypeViewContainer', () => {
   let component: EventTypeViewContainerComponent;
@@ -154,6 +154,94 @@ describe('EventTypeViewContainer', () => {
       '/admin/studies', study.slug, 'collection', 'view', etWithNewName.slug]);
   }));
 
+  describe('when updating attributes', () => {
+
+    let eventType: CollectionEventType;
+    const context: EntityUpdateComponentBehaviour.Context<EventTypeViewContainerComponent> = {} as any;
+
+    beforeEach(() => {
+      eventType = createEventType();
+      context.fixture = fixture;
+      context.componentInitialize = () => {
+        createMockActivatedRouteSpies(study, eventType);
+        componentSetup(study, eventType);
+        store.dispatch(new EventTypeStoreActions.GetEventTypeSuccess({ eventType }));
+      };
+      context.componentValidateInitialization = () => { expect(component.eventType).toEqual(eventType); };
+      context.dispatchSuccessAction =
+        () => { store.dispatch(new EventTypeStoreActions.UpdateEventTypeSuccess({ eventType })); };
+      context.createExpectedFailureAction =
+        (error) => new EventTypeStoreActions.UpdateEventTypeFailure({ error });
+      context.duplicateNameError = 'already exists';
+    });
+
+    describe('when updating name', () => {
+
+      beforeEach(() => {
+        const newName = factory.stringNext();
+        context.modalReturnValue = { result: Promise.resolve(newName) };
+        context.updateEntity = () => { component.updateName(); };
+
+        const eventTypeWithUpdatedSlug = new CollectionEventType().deserialize({
+          ...eventType as any,
+          slug: factory.slugify(newName),
+          name: newName
+        });
+
+        context.expectedSuccessAction = new EventTypeStoreActions.UpdateEventTypeRequest({
+          eventType,
+          attributeName: 'name',
+          value: newName
+        });
+        context.dispatchSuccessAction = () => {
+          store.dispatch(new EventTypeStoreActions.UpdateEventTypeSuccess({
+            eventType: eventTypeWithUpdatedSlug
+          }));
+        };
+      });
+
+      EntityUpdateComponentBehaviour.sharedBehaviour(context);
+
+    });
+
+    describe('when updating description', () => {
+
+      beforeEach(() => {
+        const newValue = faker.lorem.paragraphs();
+        context.modalReturnValue = { result: Promise.resolve(newValue) };
+        context.updateEntity = () => { component.updateDescription(); };
+
+        context.expectedSuccessAction = new EventTypeStoreActions.UpdateEventTypeRequest({
+          eventType,
+          attributeName: 'description',
+          value: newValue
+        });
+      });
+
+      EntityUpdateComponentBehaviour.sharedBehaviour(context);
+
+    });
+
+    describe('when updating recurring', () => {
+
+      beforeEach(() => {
+        const newValue = true;
+        context.modalReturnValue = { result: Promise.resolve(newValue) };
+        context.updateEntity = () => { component.updateRecurring(); };
+
+        context.expectedSuccessAction = new EventTypeStoreActions.UpdateEventTypeRequest({
+          eventType,
+          attributeName: 'recurring',
+          value: newValue
+        });
+      });
+
+      EntityUpdateComponentBehaviour.sharedBehaviour(context);
+
+    });
+
+  });
+
   describe('common behaviour', () => {
 
     const componentUpdateFuncs = [
@@ -232,55 +320,6 @@ describe('EventTypeViewContainer', () => {
       flush();
       fixture.detectChanges();
       expect(toastrListener.mock.calls.length).toBe(componentUpdateFuncs.length);
-    }));
-
-  });
-
-  describe('when updating name, description and recurring', () => {
-
-    it('dispatches an action to update the event type', fakeAsync(() => {
-      const eventType = createEventType();
-      const testData = [
-        {
-          updateFunc: () => component.updateName(),
-          attribute: 'name',
-          newValue: factory.stringNext()
-        },
-        {
-          updateFunc: () => component.updateDescription(),
-          attribute: 'description',
-          newValue: faker.lorem.paragraph()
-        },
-        {
-          updateFunc: () => component.updateRecurring(),
-          attribute: 'recurring',
-          newValue: !eventType.recurring
-        }
-      ];
-
-      const modalService = TestBed.get(NgbModal);
-      const modalListener = jest.spyOn(modalService, 'open');
-      const storeListener = jest.spyOn(store, 'dispatch');
-
-      createMockActivatedRouteSpies(study, eventType);
-      componentSetup(study, eventType);
-
-      testData.forEach(testInfo => {
-        storeListener.mockReset();
-        modalListener.mockReturnValue({ result: Promise.resolve(testInfo.newValue) });
-
-        testInfo.updateFunc();
-        flush();
-        fixture.detectChanges();
-
-        const action = new EventTypeStoreActions.UpdateEventTypeRequest({
-          eventType,
-          attributeName: testInfo.attribute,
-          value: testInfo.newValue
-        });
-
-        expect(storeListener.mock.calls[0][0]).toEqual(action);
-      });
     }));
 
   });
@@ -421,7 +460,7 @@ describe('EventTypeViewContainer', () => {
 
   describe('when removing an event type', () => {
 
-    it('dispatches an event to update the event type', async(() => {
+    it('dispatches an event', async(() => {
       const eventType = createEventType();
       const modalService = TestBed.get(NgbModal);
 

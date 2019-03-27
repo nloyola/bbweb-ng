@@ -44,7 +44,7 @@
         <div class="card-body" *ngIf="isLoading$ | async">
           <div class="card-text">
             <div class="alert alert-warning" role="alert">
-              <app-spinner name="studies" [show]="isLoading$ | async" i18n>
+              <app-spinner name="studies" [show]="true" i18n>
                 Loading...
               </app-spinner>
             </div>

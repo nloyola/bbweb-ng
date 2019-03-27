@@ -3,12 +3,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { EntityStateInfo, LabelledId, SearchFilterValues, SearchParams } from '@app/domain';
 import { Membership } from '@app/domain/access';
 import { NameFilter, SearchFilter, StateFilter } from '@app/domain/search-filters';
+import { SearchReply } from '@app/domain/search-reply.model';
 import { RootStoreState } from '@app/root-store';
+import { MembershipStoreActions, MembershipStoreSelectors } from '@app/root-store/membership';
 import { select, Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
-import { filter, map, takeUntil, tap } from 'rxjs/operators';
-import { MembershipStoreSelectors, MembershipStoreActions } from '@app/root-store/membership';
-import { SearchReply } from '@app/domain/search-reply.model';
+import { filter, map, takeUntil } from 'rxjs/operators';
 
 interface MembershipPageInfo {
   hasNoEntitiesToDisplay?: boolean;
@@ -83,9 +83,6 @@ export class MembershipsViewComponent implements OnInit, OnDestroy {
     this.currentPage = 1;
     if (values.name !== undefined) {
       this.filters.nameFilter.setValue(values.name);
-    }
-    if (values.stateId !== undefined) {
-      this.filters.stateFilter.setValue(values.stateId);
     }
     this.applySearchParams();
   }

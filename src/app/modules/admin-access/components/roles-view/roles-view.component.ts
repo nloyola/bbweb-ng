@@ -83,9 +83,6 @@ export class RolesViewComponent implements OnInit, OnDestroy {
     if (values.name !== undefined) {
       this.filters.nameFilter.setValue(values.name);
     }
-    if (values.stateId !== undefined) {
-      this.filters.stateFilter.setValue(values.stateId);
-    }
     this.applySearchParams();
   }
 
