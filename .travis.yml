@@ -12,6 +12,7 @@ matrix:
           - node_modules
       script:
         - npm install
+        - ng lint
         - npm run test:cov
       after_success:
         - cat coverage/lcov.info | node_modules/coveralls/bin/coveralls.js
