@@ -4,9 +4,9 @@
     <div class="card-header bg-primary text-light"
          *ngIf="!(isLoading$ | async); else showLoading">
       <mat-icon [ngClass]="study.stateIconClass()">
-        {{study.stateIcon()}}
+        {{ study.stateIcon() }}
       </mat-icon>
-      {{study.name}}
+      {{ study.name }}
       <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
 
         <button class="btn btn-sm btn-light"
@@ -27,25 +27,25 @@
           </a>
           <a class="dropdown-item" *ngIf="study.isEnabled()" (click)="disable()">
             <mat-icon class="mr-1" [ngClass]="getStateIconClass('disabled')">
-              {{getStateIcon('disabled')}}
+              {{ getStateIcon('disabled') }}
             </mat-icon>
             <ng-container i18n>Disable this study</ng-container>
           </a>
           <a class="dropdown-item" *ngIf="study.isDisabled() && isEnableAllowed" (click)="enable()">
             <mat-icon class="mr-1" [ngClass]="getStateIconClass('enabled')">
-              {{getStateIcon('enabled')}}
+              {{ getStateIcon('enabled') }}
             </mat-icon>
             <ng-container i18n>Enable this study</ng-container>
           </a>
           <a class="dropdown-item" *ngIf="study.isDisabled()" (click)="retire()">
             <mat-icon class="mr-1" [ngClass]="getStateIconClass('retired')">
-              {{getStateIcon('retired')}}
+              {{ getStateIcon('retired') }}
             </mat-icon>
             <ng-container i18n>Retire this study</ng-container>
           </a>
           <a class="dropdown-item" *ngIf="study.isRetired()" (click)="unretire()">
             <mat-icon class="mr-1" [ngClass]="getStateIconClass('disabled')">
-              {{getStateIcon('disabled')}}
+              {{ getStateIcon('disabled') }}
             </mat-icon>
             <ng-container i18n>Unretire this study</ng-container>
           </a>
@@ -60,7 +60,7 @@
             <strong i18n>Name:</strong>
           </div>
           <div class="col-md-10">
-            {{study.name}}
+            {{ study.name }}
           </div>
         </div>
       </li>

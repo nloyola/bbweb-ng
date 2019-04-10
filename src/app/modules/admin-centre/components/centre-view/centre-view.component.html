@@ -6,7 +6,7 @@
     <ngb-tabset [activeId]="activeTabId" (tabChange)="tabSelection($event)">
       <ngb-tab *ngFor="let tabId of tabIds" [id]="tabId">
         <ng-template ngbTabTitle>
-          {{tabData[tabId].heading}}
+          {{ tabData[tabId].heading }}
         </ng-template>
       </ngb-tab>
     </ngb-tabset>

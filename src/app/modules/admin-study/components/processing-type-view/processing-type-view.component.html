@@ -1,6 +1,6 @@
 <div class="card mt-2" *ngIf="processingType">
   <div class="card-header bg-primary text-light">
-    <ng-container i18>Processing Step:</ng-container> {{processingType.name}}
+    <ng-container i18>Processing Step:</ng-container> {{ processingType.name }}
     <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
 
       <button class="btn btn-sm btn-light mr-1"
@@ -53,7 +53,7 @@
             <strong i18n>Name</strong>
           </div>
           <div class="col-md-9">
-            {{processingType.name}}
+            {{ processingType.name }}
           </div>
         </div>
       </li>
@@ -74,7 +74,7 @@
           <div class="col-md-3">
             <strong i18n>Enabled</strong>
           </div>
-          <div class="col-md-9">{{processingType.enabled | yesNo}}</div>
+          <div class="col-md-9">{{ processingType.enabled | yesNo }}</div>
         </div>
       </li>
       <li class="list-group-item" *ngFor="let annotationType of sortedAnnotationTypes">

@@ -73,6 +73,7 @@ export class SearchProcessingTypesRequest implements Action {
   constructor(public payload: SearchProcessingTypesRequestPayload) { }
 }
 
+/* tslint:disable:max-classes-per-file */
 export class SearchProcessingTypesSuccess implements Action {
   readonly type = ActionTypes.SearchProcessingTypesSuccess;
 

@@ -58,6 +58,7 @@ export class ProcessingTypesAddAndSelectComponent implements OnInit, OnDestroy {
     this.serverError$ = this.store$.pipe(
       select(ProcessingTypeStoreSelectors.selectError),
       filter(error => error !== null),
+      /* tslint:disable-next-line:max-line-length */
       map(error => (error.actionType === ProcessingTypeStoreActions.ActionTypes.SearchProcessingTypesFailure)),
       tap(error => {
         if (error) {

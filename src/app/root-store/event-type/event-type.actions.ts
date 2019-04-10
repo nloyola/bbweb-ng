@@ -80,6 +80,7 @@ export class SearchEventTypesRequest implements Action {
   constructor(public payload: EventTypesRequestPayload) { }
 }
 
+/* tslint:disable:max-classes-per-file */
 export class SearchEventTypesSuccess implements Action {
   readonly type = ActionTypes.SearchEventTypesSuccess;
 

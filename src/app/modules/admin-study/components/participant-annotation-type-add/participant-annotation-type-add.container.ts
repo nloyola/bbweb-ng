@@ -49,7 +49,8 @@ export class ParticipantAnnotationTypeAddContainerComponent implements OnInit, O
         const study = (studyEntity instanceof Study)
           ? studyEntity :  new Study().deserialize(studyEntity);
 
-        const annotationType = study.annotationTypes.find(at => at.id === this.route.snapshot.params.annotationTypeId)
+        const annotationType = study.annotationTypes
+          .find(at => at.id === this.route.snapshot.params.annotationTypeId);
         return {
           study,
           annotationType: annotationType ? annotationType : new AnnotationType()

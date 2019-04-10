@@ -6,7 +6,6 @@ import { PagedQueryBehaviour } from '@test/behaviours/paged-query.behaviour';
 import { Factory } from '@test/factory';
 import * as faker from 'faker';
 import { MembershipService } from './membership.service';
-import { AnnotationType } from '@app/domain/annotations';
 
 describe('MembershipService', () => {
 

@@ -2,9 +2,9 @@
   <div class="card-header bg-primary text-light"
        *ngIf="!(isLoading$ | async); else showLoading">
     <mat-icon [ngClass]="centre.stateIconClass()">
-      {{centre.stateIcon()}}
+      {{ centre.stateIcon() }}
     </mat-icon>
-    {{centre.name}}: <small i18n>Locations</small>
+    {{ centre.name }}: <small i18n>Locations</small>
 
     <span class="float-right d-inline-block"
           *ngIf="centre.isDisabled()"
@@ -41,7 +41,7 @@
     <li class="list-group-item" *ngFor="let location of centre.entity.locations">
       <div class="row">
         <div class="col-md-10">
-          <strong>{{location.name}}</strong>
+          <strong>{{ location.name }}</strong>
         </div>
         <div class="col-md-2">
 
@@ -73,18 +73,18 @@
         <div class="col-md-12" *ngIf="location.poBoxNumber">
           <small>
             <strong>
-              {{location.street}}<br>
-              {{location.city}}, {{location.province}}, {{location.postalCode}}<br>
-              {{location.poBoxNumber}}, {{location.countryIsoCode}}
+              {{ location.street }}<br>
+              {{ location.city }}, {{ location.province }}, {{ location.postalCode }}<br>
+              {{ location.poBoxNumber }}, {{ location.countryIsoCode }}
             </strong>
           </small>
         </div>
         <div class="col-md-12" *ngIf="!location.poBoxNumber">
           <small>
             <strong>
-              {{location.street}}<br>
-              {{location.city}}, {{location.province}}, {{location.postalCode}}<br>
-              {{location.countryIsoCode}}
+              {{ location.street }}<br>
+              {{ location.city }}, {{ location.province }}, {{ location.postalCode }}<br>
+              {{ location.countryIsoCode }}
             </strong>
           </small>
         </div>

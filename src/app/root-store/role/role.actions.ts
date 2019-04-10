@@ -31,6 +31,7 @@ export class SearchRolesRequest implements Action {
   constructor(public payload: { searchParams: SearchParams }) { }
 }
 
+/* tslint:disable:max-classes-per-file */
 export class SearchRolesSuccess implements Action {
   readonly type = RoleActionTypes.SearchRolesSuccess;
 

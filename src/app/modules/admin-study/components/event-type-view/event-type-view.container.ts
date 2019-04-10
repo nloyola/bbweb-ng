@@ -129,7 +129,13 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
           // name was changed and new slug was assigned
           //
           // need to change state since slug is used in URL and by breadcrumbs
-          this.router.navigate(['/admin/studies', data.study.slug, 'collection', 'view', data.eventType.slug]);
+          this.router.navigate([
+            '/admin/studies',
+            data.study.slug,
+            'collection',
+            'view',
+            data.eventType.slug
+          ]);
         }
       } else {
         this.toastr.success(msg, 'Remove Successfull');

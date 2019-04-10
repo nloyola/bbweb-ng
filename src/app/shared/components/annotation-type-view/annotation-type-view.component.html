@@ -13,7 +13,7 @@
             <strong i18n>Name</strong>
           </div>
           <div class="col-md-10" ngbAutoFocus>
-            {{annotationType.name}}
+            {{ annotationType.name }}
           </div>
         </div>
       </li>
@@ -36,7 +36,7 @@
             <strong i18n>Required</strong>
           </div>
           <div class="col-md-10">
-            {{annotationType.required | yesNo}}
+            {{ annotationType.required | yesNo }}
           </div>
         </div>
       </li>
@@ -46,7 +46,7 @@
             <strong i18n>Type</strong>
           </div>
           <div class="col-md-10">
-            {{annotationType.valueTypeToLabel()}}
+            {{ annotationType.valueTypeToLabel() }}
           </div>
         </div>
       </li>
@@ -58,7 +58,7 @@
           <div class="col-md-10">
             <ul class="annotation-options">
               <li *ngFor="let option of annotationType.options">
-                {{option}}
+                {{ option }}
               </li>
             </ul>
           </div>

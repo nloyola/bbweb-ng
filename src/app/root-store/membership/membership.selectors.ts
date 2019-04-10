@@ -29,7 +29,8 @@ export const selectMembershipLastSearch: MemoizedSelector<object, SearchParams> 
 export const selectMembershipError: MemoizedSelector<object, any> =
   createSelector(selectMembershipState, getError);
 
-export const selectMembershipSearchReplies: MemoizedSelector<object, { [ url: string ]: PagedReplyEntityIds }> =
+export const selectMembershipSearchReplies:
+MemoizedSelector<object, { [ url: string ]: PagedReplyEntityIds }> =
   createSelector(selectMembershipState, getSearchReplies);
 
 export const selectAllMemberships: MemoizedSelector<object, Membership[]> =

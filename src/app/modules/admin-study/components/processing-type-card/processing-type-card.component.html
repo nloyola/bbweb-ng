@@ -10,7 +10,7 @@
             <strong i18n>Name</strong>
           </div>
           <div class="col-md-9">
-            {{processingType.name}}
+            {{ processingType.name }}
           </div>
         </div>
       </li>
@@ -31,7 +31,7 @@
           <div class="col-md-3">
             <strong i18n>Enabled</strong>
           </div>
-          <div class="col-md-9">{{processingType.enabled | yesNo}}</div>
+          <div class="col-md-9">{{ processingType.enabled | yesNo }}</div>
         </div>
       </li>
       <li class="list-group-item" *ngFor="let annotationType of sortedAnnotationTypes">
@@ -73,7 +73,7 @@
             <strong *ngIf="processingType.input.definitionType === 'processed'" i18n>Processing Step</strong>
           </div>
           <div class="col-md-9">
-            {{inputEntityName}}
+            {{ inputEntityName }}
           </div>
         </div>
       </li>
@@ -83,7 +83,7 @@
             <strong i18n>Specimen</strong>
           </div>
           <div class="col-md-9">
-            {{inputDefinitionName}}
+            {{ inputDefinitionName }}
           </div>
         </div>
       </li>
@@ -93,7 +93,7 @@
             <strong i18n>Expected Change</strong>
           </div>
           <div class="col-md-9">
-            {{processingType.input.expectedChange}}
+            {{ processingType.input.expectedChange }}
           </div>
         </div>
       </li>
@@ -103,7 +103,7 @@
             <strong i18n>Count</strong>
           </div>
           <div class="col-md-9">
-            {{processingType.input.count}}
+            {{ processingType.input.count }}
           </div>
         </div>
       </li>
@@ -121,7 +121,7 @@
             <strong i18n>Name</strong>
           </div>
           <div class="col-md-9">
-            {{processingType.output.specimenDefinition.name}}
+            {{ processingType.output.specimenDefinition.name }}
           </div>
         </div>
       </li>
@@ -163,7 +163,7 @@
             <strong i18n>Preservation</strong>
           </div>
           <div class="col-md-9">
-            {{ processingType.output.specimenDefinition.preservationType }} ({{processingType.output.specimenDefinition.preservationTemperature}})
+            {{ processingType.output.specimenDefinition.preservationType }} ({{ processingType.output.specimenDefinition.preservationTemperature }})
           </div>
         </div>
       </li>

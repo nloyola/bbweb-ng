@@ -132,9 +132,12 @@ describe('ProcessingTypeViewContainerComponent', () => {
         store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
         store.dispatch(new ProcessingTypeStoreActions.GetProcessingTypeSuccess({ processingType }));
       };
-      context.componentValidateInitialization = () => { expect(component.processingType).toEqual(processingType); };
+      context.componentValidateInitialization =
+        () => { expect(component.processingType).toEqual(processingType); };
       context.dispatchSuccessAction =
-        () => { store.dispatch(new ProcessingTypeStoreActions.UpdateProcessingTypeSuccess({ processingType })); };
+        () => { store.dispatch(new ProcessingTypeStoreActions.UpdateProcessingTypeSuccess({
+          processingType
+        })); };
       context.createExpectedFailureAction =
         (error) => new ProcessingTypeStoreActions.UpdateProcessingTypeFailure({ error });
       context.duplicateNameError = 'already exists';
@@ -563,7 +566,8 @@ describe('ProcessingTypeViewContainerComponent', () => {
 
       expect(component.processingType).toBeUndefined();
       expect(routerListener).toHaveBeenCalled();
-      expect(routerListener.mock.calls[0][0]).toEqual([ '/admin/studies', entities.study.slug, 'processing' ]);
+      expect(routerListener.mock.calls[0][0])
+        .toEqual([ '/admin/studies', entities.study.slug, 'processing' ]);
     }));
 
     it('opens a modal if the processing type is in use', () => {

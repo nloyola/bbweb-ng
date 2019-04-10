@@ -65,7 +65,8 @@ export class CollectedSpecimenDefinitionAddContainerComponent implements OnInit,
           eventType = (etEntity instanceof CollectionEventType)
             ? etEntity : new CollectionEventType().deserialize(etEntity);
           specimenDefinition = this.route.snapshot.params.specimenDefinitionId
-            ? eventType.specimenDefinitions.find(at => at.id === this.route.snapshot.params.specimenDefinitionId)
+            ? eventType.specimenDefinitions.find(
+              at => at.id === this.route.snapshot.params.specimenDefinitionId)
             : new CollectedSpecimenDefinition();
         }
 

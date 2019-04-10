@@ -14,6 +14,7 @@ describe('AuthGuard', () => {
   @Component({ template: '<router-outlet></router-outlet>' })
   class TestRootComponent { }
 
+  /* tslint:disable-next-line:max-classes-per-file */
   @Component({ template: 'Test component' })
   class TestComponent { }
 

@@ -31,7 +31,7 @@
             (change)="eventTypeSelected($event)">
       <option value="">-- choose event --</option>
       <option *ngFor="let eventType of collectedDefinitionNames" [value]="eventType.id">
-        {{eventType.name}}
+        {{ eventType.name }}
       </option>
     </select>
   </div>
@@ -55,7 +55,7 @@
       <option value="">-- choose specimen --</option>
       <option *ngFor="let specimenDefinition of specimenDefinitions"
               [value]="specimenDefinition.id">
-        {{specimenDefinition.name}}
+        {{ specimenDefinition.name }}
       </option>
     </select>
   </div>
@@ -79,7 +79,7 @@
       <option value="">-- choose specimen --</option>
       <option *ngFor="let combinedName of combinedDefinitionNames"
               [value]="combinedName.specimenDefinitionName.id">
-        {{combinedName.combinedName}}
+        {{ combinedName.combinedName }}
       </option>
     </select>
   </div>

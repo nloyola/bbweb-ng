@@ -41,7 +41,7 @@
             formControlName="anatomicalSource">
       <option value="" i18n>-- make a selection --</option>
       <option *ngFor="let anatomicalSource of anatomicalSources" [value]="anatomicalSource">
-        {{anatomicalSourceLabels[anatomicalSource]}}
+        {{ anatomicalSourceLabels[anatomicalSource] }}
       </option>
     </select>
   </div>
@@ -62,7 +62,7 @@
             formControlName="preservation">
       <option value="" i18n>-- make a selection --</option>
       <option *ngFor="let preservation of preservationTypes" [value]="preservation">
-        {{preservationTypeLabels[preservation]}}
+        {{ preservationTypeLabels[preservation] }}
       </option>
     </select>
   </div>
@@ -83,7 +83,7 @@
             formControlName="temperature">
       <option value="" i18n>-- make a selection --</option>
       <option *ngFor="let temperature of preservationTemperatures" [value]="temperature">
-        {{preservationTemperatureLabels[temperature]}}
+        {{ preservationTemperatureLabels[temperature] }}
       </option>
     </select>
   </div>
@@ -104,7 +104,7 @@
             formControlName="specimenType">
       <option value="" i18n>-- make a selection --</option>
       <option *ngFor="let specimenType of specimenTypes" [value]="specimenType">
-        {{specimenTypeLabels[specimenType]}}
+        {{ specimenTypeLabels[specimenType] }}
       </option>
     </select>
   </div>

@@ -34,7 +34,11 @@ export class ProcessingTypeFixture {
     return { eventType, processingType };
   }
 
-  createProcessingTypeFromProcessed(): { eventType: CollectionEventType, input: ProcessingType, processingType: ProcessingType } {
+  createProcessingTypeFromProcessed(): {
+    eventType: CollectionEventType,
+    input: ProcessingType,
+    processingType: ProcessingType
+  } {
     const inputPt = new ProcessingType().deserialize(this.factory.processingType());
     const eventType = new CollectionEventType().deserialize(this.factory.defaultCollectionEventType());
     const processingType = new ProcessingType().deserialize(this.factory.processingType({

@@ -3,13 +3,13 @@
     <button *ngIf="toggleRequired"
             class="btn btn-sm btn-secondary"
             (click)="toggleText()">
-      {{buttonLabel}}
+      {{ buttonLabel }}
     </button>
   </div>
   <div class="col-md-12" *ngIf="!text">
     <div class="alert alert-warning" role="alert">
       <mat-icon>warning</mat-icon>
-      {{textEmptyWarning}}
+      {{ textEmptyWarning }}
     </div>
   </div>
 </div>

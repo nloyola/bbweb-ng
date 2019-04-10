@@ -1,14 +1,14 @@
 <app-modal-input [modalInputValid]="modalInputValid"
                  (confirm)="confirm($event)"
                  (dismiss)="dismiss($event)">
-  <span class="title">{{title}}</span>
+  <span class="title">{{ title }}</span>
   <form class="body form-horizontal"
         [formGroup]="modalInputForm"
         autocomplete="on"
         novalidate>
 
     <div class="form-group row">
-      <label for="email" class="col-md-3 col-form-label" i18n>{{label}}</label>
+      <label for="email" class="col-md-3 col-form-label" i18n>{{ label }}</label>
       <div class="col-md-9">
         <textarea class="form-control"
                   formControlName="text"

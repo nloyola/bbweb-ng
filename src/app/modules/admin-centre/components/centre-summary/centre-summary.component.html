@@ -2,9 +2,9 @@
   <div class="card-header bg-primary text-light"
        *ngIf="!(isLoading$ | async); else showLoading">
     <mat-icon [ngClass]="centre.stateIconClass()">
-      {{centre.stateIcon()}}
+      {{ centre.stateIcon() }}
     </mat-icon>
-    {{centre.name}}
+    {{ centre.name }}
     <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
 
       <button class="btn btn-sm btn-light"
@@ -25,13 +25,13 @@
         </a>
         <a class="dropdown-item" *ngIf="centre.isEnabled()" (click)="disable()">
           <mat-icon class="mr-1" [ngClass]="getStateIconClass('disabled')">
-            {{getStateIcon('disabled')}}
+            {{ getStateIcon('disabled') }}
           </mat-icon>
           <ng-container i18n>Disable this centre</ng-container>
         </a>
         <a class="dropdown-item" *ngIf="centre.isDisabled() && isEnableAllowed" (click)="enable()">
           <mat-icon class="mr-1" [ngClass]="getStateIconClass('enabled')">
-            {{getStateIcon('enabled')}}
+            {{ getStateIcon('enabled') }}
           </mat-icon>
           <ng-container i18n>Enable this centre</ng-container>
         </a>
@@ -46,7 +46,7 @@
           <strong i18n>Name:</strong>
         </div>
         <div class="col-md-10">
-          {{centre.name}}
+          {{ centre.name }}
         </div>
       </div>
     </li>

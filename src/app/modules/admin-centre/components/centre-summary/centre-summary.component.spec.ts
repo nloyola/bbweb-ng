@@ -260,10 +260,10 @@ describe('CentreSummaryComponent', () => {
       fixture.detectChanges();
 
       const componentUpdateFuncs = [
-        (component) => component.disable(),
-        (component) => component.enable(),
-        (component) => component.retire(),
-        (component) => component.unretire()
+        (c) => c.disable(),
+        (c) => c.enable(),
+        (c) => c.retire(),
+        (c) => c.unretire()
       ].concat(componentModalFuncs);
 
       componentUpdateFuncs.forEach(updateFunc => {
@@ -284,8 +284,8 @@ describe('CentreSummaryComponent', () => {
       fixture.detectChanges();
 
       const testData = [
-        { componentFunc: (component) => component.disable(),  value: 'disable' },
-        { componentFunc: (component) => component.enable(),   value: 'enable' }
+        { componentFunc: (c) => c.disable(),  value: 'disable' },
+        { componentFunc: (c) => c.enable(),   value: 'enable' }
       ];
 
       const storeListener = jest.spyOn(store, 'dispatch');

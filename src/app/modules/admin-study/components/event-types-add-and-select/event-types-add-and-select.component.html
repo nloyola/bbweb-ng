@@ -12,7 +12,7 @@
   <ng-template let-entity>
     <li class="list-group-item" *ngIf="entity">
       <a href="#" (click)="!!eventTypeSelected(entity)">
-        <small>{{entity.name | truncate:18}}</small>
+        <small>{{ entity.name | truncate:18 }}</small>
       </a>
       <span class="float-right badge badge-secondary">{{ getRecurringLabel(entity) }}</span>
     </li>

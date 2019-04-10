@@ -53,6 +53,7 @@ export class GetStudyCountsRequest implements Action {
   readonly type = ActionTypes.GetStudyCountsRequest;
 }
 
+/* tslint:disable:max-classes-per-file */
 @HideSpinner(ActionTypes.GetStudyCountsRequest)
 export class GetStudyCountsSuccess implements Action {
   readonly type = ActionTypes.GetStudyCountsSuccess;

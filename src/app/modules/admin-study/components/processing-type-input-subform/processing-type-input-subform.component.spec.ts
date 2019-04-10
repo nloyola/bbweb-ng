@@ -193,6 +193,7 @@ describe('ProcessingTypeInputSubformComponent', () => {
         expect(component.inputSubForm.get('count').enabled).toBe(false);
       });
 
+      /* tslint:disable-next-line:max-line-length */
       it('when a specimen from an event type is selected, the correct inputs are enabled and disabled', () => {
         const { eventTypes, input, processingType } = commonSetup();
         const specimenDefinitionId = eventTypes[2].specimenDefinitions[0].id;
@@ -207,6 +208,7 @@ describe('ProcessingTypeInputSubformComponent', () => {
         expect(component.inputSubForm.get('count').enabled).toBe(true);
       });
 
+      /* tslint:disable-next-line:max-line-length */
       it('when a specimen from an event type is UNSELECTED, the correct inputs are enabled and disabled', () => {
         const { eventTypes, input, processingType } = commonSetup();
         const specimenDefinitionId = eventTypes[2].specimenDefinitions[0].id;

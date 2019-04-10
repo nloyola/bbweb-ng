@@ -38,6 +38,7 @@ export class SearchMembershipsRequest implements Action {
   constructor(public payload: { searchParams: SearchParams }) { }
 }
 
+/* tslint:disable:max-classes-per-file */
 export class SearchMembershipsSuccess implements Action {
   readonly type = MembershipActionTypes.SearchMembershipsSuccess;
 

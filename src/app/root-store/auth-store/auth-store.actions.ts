@@ -24,6 +24,7 @@ export class LoginRequestAction implements Action {
   constructor(public payload: { email: string, password: string }) { }
 }
 
+/* tslint:disable:max-classes-per-file */
 @HideSpinner(ActionTypes.LOGIN_REQUEST)
 export class LoginFailureAction implements Action {
   readonly type = ActionTypes.LOGIN_FAILURE;

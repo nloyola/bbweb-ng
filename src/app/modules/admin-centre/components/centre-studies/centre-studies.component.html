@@ -2,9 +2,9 @@
   <div class="card-header bg-primary text-light"
        *ngIf="!(isLoading$ | async); else showLoading">
     <mat-icon [ngClass]="centre.stateIconClass()">
-      {{centre.stateIcon()}}
+      {{ centre.stateIcon() }}
     </mat-icon>
-    {{centre.name}}: <small i18n>Studies</small>
+    {{ centre.name }}: <small i18n>Studies</small>
   </div>
 
   <ul class="list-group" *ngIf="!centre.entity.hasStudies()">
@@ -30,11 +30,11 @@
       <tr *ngFor="let study of sortedStudyNames">
         <td>
           <span (click)="information(study.id)">
-            <a href>{{study.name}}</a>
+            <a href>{{ study.name }}</a>
           </span>
         </td>
         <td>
-          <span class="badge badge-secondary mr-1 mt-1">{{studyStateLabel(study)}}</span>
+          <span class="badge badge-secondary mr-1 mt-1">{{ studyStateLabel(study) }}</span>
         </td>
         <td>
           <div class="btn-group pull-right">

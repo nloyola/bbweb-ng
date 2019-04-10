@@ -15,6 +15,7 @@ export class ShowSpinner implements Action {
   constructor(public payload?: any) { }
 }
 
+/* tslint:disable:max-classes-per-file */
 export class HideSpinner implements Action {
   readonly type = SpinnerActionTypes.HideSpinner;
 

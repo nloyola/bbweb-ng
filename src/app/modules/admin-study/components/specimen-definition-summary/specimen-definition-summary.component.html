@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col-md-12">
     <strong>
-      {{specimenDefinition.name}}
+      {{ specimenDefinition.name }}
     </strong>
   </div>
 </div>
@@ -38,13 +38,13 @@
     <small class="text-muted">
       <ng-container i18n>Preservation Type:</ng-container>
       <strong>
-        {{ specimenDefinition.preservationType }} ({{specimenDefinition.preservationTemperature}})
+        {{ specimenDefinition.preservationType }} ({{ specimenDefinition.preservationTemperature }})
       </strong>
     </small>
   </div>
 </div>
 <div class="row" *ngIf="!!specimenDefinition.description">
   <div class="col-md-12">
-    <p>{{specimenDefinition.description | truncate:100}}</p>
+    <p>{{ specimenDefinition.description | truncate:100 }}</p>
   </div>
 </div>

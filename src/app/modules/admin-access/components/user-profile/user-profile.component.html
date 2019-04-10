@@ -5,9 +5,9 @@
   <div class="card mt-2">
     <div class="card-header bg-primary text-light">
       <mat-icon [ngClass]="user?.stateIconClass()">
-        {{user?.stateIcon()}}
+        {{ user?.stateIcon() }}
       </mat-icon>
-      {{user?.name}}
+      {{ user?.name }}
       <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
 
         <button class="btn btn-sm btn-light"
@@ -36,19 +36,19 @@
           </a>
           <a class="dropdown-item" *ngIf="user?.isRegistered()" (click)="activate()">
             <mat-icon class="mr-1" [ngClass]="getStateIconClass('active')">
-              {{getStateIcon('active')}}
+              {{ getStateIcon('active') }}
             </mat-icon>
             <ng-container i18n>Activate this user</ng-container>
           </a>
           <a class="dropdown-item" *ngIf="user?.isActive()" (click)="lock()">
             <mat-icon class="mr-1" [ngClass]="getStateIconClass('locked')">
-              {{getStateIcon('locked')}}
+              {{ getStateIcon('locked') }}
             </mat-icon>
             <ng-container i18n>Lock this user</ng-container>
           </a>
           <a class="dropdown-item" *ngIf="user?.isLocked()" (click)="unlock()">
             <mat-icon class="mr-1" [ngClass]="getStateIconClass('active')">
-              {{getStateIcon('active')}}
+              {{ getStateIcon('active') }}
             </mat-icon>
             <ng-container i18n>Unlock this user</ng-container>
           </a>
@@ -61,7 +61,7 @@
       <li class="list-group-item">
         <div class="row">
           <div class="col-md-3"><strong i18n>Name</strong></div>
-          <div class="col-md-9">{{user?.name}}</div>
+          <div class="col-md-9">{{ user?.name }}</div>
         </div>
       </li>
 
@@ -69,7 +69,7 @@
       <li class="list-group-item">
         <div class="row">
           <div class="col-md-3"><strong i18n>Email</strong></div>
-          <div class="col-md-9">{{user?.email}}</div>
+          <div class="col-md-9">{{ user?.email }}</div>
         </div>
       </li>
 
@@ -79,7 +79,7 @@
           <div class="col-md-3"><strong i18n>Avatar URL</strong></div>
           <div class="col-md-7">
             <a target="_blank" [href]="user?.entity.avatarUrl"  *ngIf="user?.entity.avatarUrl">
-              {{user?.entity.avatarUrl}}
+              {{ user?.entity.avatarUrl }}
             </a>
             <span *ngIf="! user?.entity.avatarUrl" i18n>None</span>
           </div>
@@ -93,7 +93,7 @@
           <div class="col-md-7" *ngIf="user?.entity.roles.length > 0">
             <span *ngFor="let role of user?.entity.roles"
                   class="badge badge-secondary mr-1 mt-1">
-              {{role.name}}
+              {{ role.name }}
             </span>
           </div>
           <div class="col-md-7" *ngIf="user?.entity.roles.length <= 0">
@@ -108,7 +108,7 @@
           <div class="col-md-3"><strong i18n>Memberships</strong></div>
           <div class="col-md-7" *ngIf="user?.entity.membership">
             <span class="badge badge-secondary mr-1 mt-1">
-              {{user?.entity.membership?.name}}
+              {{ user?.entity.membership?.name }}
             </span>
           </div>
           <div class="col-md-7" *ngIf="!user?.entity.membership">

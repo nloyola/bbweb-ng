@@ -113,7 +113,8 @@ describe('MembershipViewComponent', () => {
       context.componentInitialize = () => {
         store.dispatch(new MembershipStoreActions.GetMembershipSuccess({ membership }));
       };
-      context.componentValidateInitialization = () => { expect(component.membershipEntity).toEqual(membership); };
+      context.componentValidateInitialization =
+        () => { expect(component.membershipEntity).toEqual(membership); };
       context.dispatchSuccessAction = () => {
         store.dispatch(new MembershipStoreActions.UpdateMembershipSuccess({ membership }));
       };
@@ -141,7 +142,9 @@ describe('MembershipViewComponent', () => {
           value: newName
         });
         context.dispatchSuccessAction = () => {
-          store.dispatch(new MembershipStoreActions.UpdateMembershipSuccess({ membership: membershipWithUpdatedSlug }));
+          store.dispatch(new MembershipStoreActions.UpdateMembershipSuccess({
+            membership: membershipWithUpdatedSlug
+          }));
         };
       });
 
@@ -200,7 +203,7 @@ describe('MembershipViewComponent', () => {
 
       describe('when adding', () => {
 
-        let context: EntityWithSubEntityBehaviour.AddContext = {} as any;
+        const context: EntityWithSubEntityBehaviour.AddContext = {} as any;
 
         beforeEach(() => {
           Object.assign(context, baseContext, {
@@ -225,7 +228,7 @@ describe('MembershipViewComponent', () => {
 
       describe('when removing', () => {
 
-        let context: EntityWithSubEntityBehaviour.RemoveContext = {} as any;
+        const context: EntityWithSubEntityBehaviour.RemoveContext = {} as any;
 
         beforeEach(() => {
           Object.assign(context, baseContext, {
@@ -235,11 +238,12 @@ describe('MembershipViewComponent', () => {
             },
             checkRemoveUpdateRequest: (storeListener: any) => {
               expect(storeListener.mock.calls.length).toBe(1);
-              expect(storeListener.mock.calls[0][0]).toEqual(new MembershipStoreActions.UpdateMembershipRequest({
-                membership,
-                attributeName: 'userRemove',
-                value: user.id
-              }));
+              expect(storeListener.mock.calls[0][0])
+                .toEqual(new MembershipStoreActions.UpdateMembershipRequest({
+                  membership,
+                  attributeName: 'userRemove',
+                  value: user.id
+                }));
             }
           });
         });
@@ -255,7 +259,7 @@ describe('MembershipViewComponent', () => {
 
       describe('when adding', () => {
 
-        let context: EntityWithSubEntityBehaviour.AddContext = {} as any;
+        const context: EntityWithSubEntityBehaviour.AddContext = {} as any;
 
         beforeEach(() => {
           Object.assign(context, baseContext, {
@@ -265,11 +269,12 @@ describe('MembershipViewComponent', () => {
             },
             checkAddUpdateRequest: (storeListener: any) => {
               expect(storeListener.mock.calls.length).toBe(1);
-              expect(storeListener.mock.calls[0][0]).toEqual(new MembershipStoreActions.UpdateMembershipRequest({
-                membership,
-                attributeName: 'studyAdd',
-                value: study.id
-              }));
+              expect(storeListener.mock.calls[0][0])
+                .toEqual(new MembershipStoreActions.UpdateMembershipRequest({
+                  membership,
+                  attributeName: 'studyAdd',
+                  value: study.id
+                }));
             }
           });
 
@@ -280,7 +285,7 @@ describe('MembershipViewComponent', () => {
 
       describe('when removing', () => {
 
-        let context: EntityWithSubEntityBehaviour.RemoveContext = {} as any;
+        const context: EntityWithSubEntityBehaviour.RemoveContext = {} as any;
 
         beforeEach(() => {
           Object.assign(context, baseContext, {
@@ -293,7 +298,7 @@ describe('MembershipViewComponent', () => {
 
         describe('and membership has a study', () => {
 
-          let subContext: EntityWithSubEntityBehaviour.RemoveContext = {} as any;
+          const subContext: EntityWithSubEntityBehaviour.RemoveContext = {} as any;
 
           beforeEach(() => {
             membership = new Membership().deserialize({
@@ -313,11 +318,12 @@ describe('MembershipViewComponent', () => {
             Object.assign(subContext, context, {
               checkRemoveUpdateRequest: (storeListener: any) => {
                 expect(storeListener.mock.calls.length).toBe(1);
-                expect(storeListener.mock.calls[0][0]).toEqual(new MembershipStoreActions.UpdateMembershipRequest({
-                  membership,
-                  attributeName: 'studyRemove',
-                  value: study.id
-                }));
+                expect(storeListener.mock.calls[0][0])
+                  .toEqual(new MembershipStoreActions.UpdateMembershipRequest({
+                    membership,
+                    attributeName: 'studyRemove',
+                    value: study.id
+                  }));
               }
             });
           });
@@ -328,7 +334,7 @@ describe('MembershipViewComponent', () => {
 
         describe('and membership has NO studies', () => {
 
-          let subContext: EntityWithSubEntityBehaviour.RemoveContext = {} as any;
+          const subContext: EntityWithSubEntityBehaviour.RemoveContext = {} as any;
 
           beforeEach(() => {
             membership = new Membership().deserialize({
@@ -341,10 +347,11 @@ describe('MembershipViewComponent', () => {
             Object.assign(subContext, context, {
               checkRemoveUpdateRequest: (storeListener: any) => {
                 expect(storeListener.mock.calls.length).toBe(1);
-                expect(storeListener.mock.calls[0][0]).toEqual(new MembershipStoreActions.UpdateMembershipRequest({
-                  membership,
-                  attributeName: 'allStudies'
-                }));
+                expect(storeListener.mock.calls[0][0])
+                  .toEqual(new MembershipStoreActions.UpdateMembershipRequest({
+                    membership,
+                    attributeName: 'allStudies'
+                  }));
               }
             });
           });
@@ -363,7 +370,7 @@ describe('MembershipViewComponent', () => {
 
       describe('when adding', () => {
 
-        let context: EntityWithSubEntityBehaviour.AddContext = {} as any;
+        const context: EntityWithSubEntityBehaviour.AddContext = {} as any;
 
         beforeEach(() => {
           Object.assign(context, baseContext, {
@@ -373,11 +380,12 @@ describe('MembershipViewComponent', () => {
             },
             checkAddUpdateRequest: (storeListener: any) => {
               expect(storeListener.mock.calls.length).toBe(1);
-              expect(storeListener.mock.calls[0][0]).toEqual(new MembershipStoreActions.UpdateMembershipRequest({
-                membership,
-                attributeName: 'centreAdd',
-                value: centre.id
-              }));
+              expect(storeListener.mock.calls[0][0])
+                .toEqual(new MembershipStoreActions.UpdateMembershipRequest({
+                  membership,
+                  attributeName: 'centreAdd',
+                  value: centre.id
+                }));
             }
           });
 
@@ -388,7 +396,7 @@ describe('MembershipViewComponent', () => {
 
       describe('when removing', () => {
 
-        let context: EntityWithSubEntityBehaviour.RemoveContext = {} as any;
+        const context: EntityWithSubEntityBehaviour.RemoveContext = {} as any;
 
         beforeEach(() => {
           Object.assign(context, baseContext, {
@@ -401,7 +409,7 @@ describe('MembershipViewComponent', () => {
 
         describe('and membership has a centre', () => {
 
-          let subContext: EntityWithSubEntityBehaviour.RemoveContext = {} as any;
+          const subContext: EntityWithSubEntityBehaviour.RemoveContext = {} as any;
 
           beforeEach(() => {
             membership = new Membership().deserialize({
@@ -421,11 +429,12 @@ describe('MembershipViewComponent', () => {
             Object.assign(subContext, context, {
               checkRemoveUpdateRequest: (storeListener: any) => {
                 expect(storeListener.mock.calls.length).toBe(1);
-                expect(storeListener.mock.calls[0][0]).toEqual(new MembershipStoreActions.UpdateMembershipRequest({
-                  membership,
-                  attributeName: 'centreRemove',
-                  value: centre.id
-                }));
+                expect(storeListener.mock.calls[0][0])
+                  .toEqual(new MembershipStoreActions.UpdateMembershipRequest({
+                    membership,
+                    attributeName: 'centreRemove',
+                    value: centre.id
+                  }));
               }
             });
           });
@@ -436,7 +445,7 @@ describe('MembershipViewComponent', () => {
 
         describe('and membership has NO studies', () => {
 
-          let subContext: EntityWithSubEntityBehaviour.RemoveContext = {} as any;
+          const subContext: EntityWithSubEntityBehaviour.RemoveContext = {} as any;
 
           beforeEach(() => {
             membership = new Membership().deserialize({
@@ -449,10 +458,11 @@ describe('MembershipViewComponent', () => {
             Object.assign(subContext, context, {
               checkRemoveUpdateRequest: (storeListener: any) => {
                 expect(storeListener.mock.calls.length).toBe(1);
-                expect(storeListener.mock.calls[0][0]).toEqual(new MembershipStoreActions.UpdateMembershipRequest({
-                  membership,
-                  attributeName: 'allCentres'
-                }));
+                expect(storeListener.mock.calls[0][0])
+                  .toEqual(new MembershipStoreActions.UpdateMembershipRequest({
+                    membership,
+                    attributeName: 'allCentres'
+                  }));
               }
             });
           });

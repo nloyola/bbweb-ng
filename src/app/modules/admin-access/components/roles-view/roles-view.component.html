@@ -12,7 +12,7 @@
         <div class="card">
           <div class="card-header bg-default">
             <mat-icon class="warning-icon">settings</mat-icon>
-            {{rolePageInfo.total}} <span i18n>Roles</span>
+            {{ rolePageInfo.total }} <span i18n>Roles</span>
           </div>
 
           <div class="card-body" *ngIf="isLoading$ | async">
@@ -53,14 +53,14 @@
                 <div class="col-md-12">
                   <a [routerLink]="[ '/admin/access/roles', role.slug ]">
                     <mat-icon class="warning-icon">settings</mat-icon>
-                    <strong>{{role.name}}</strong>
+                    <strong>{{ role.name }}</strong>
                   </a>
                 </div>
               </div>
               <div class="row" *ngIf="role.description">
                 <div class="col-md-12">
                   <small class="text-info">
-                    {{role.description | truncate:100}}
+                    {{ role.description | truncate:100 }}
                   </small>
                 </div>
               </div>
@@ -95,11 +95,11 @@
 
 </ng-container>
 
-  <ng-template #serverError>
-    <div class="alert alert-danger mt-2" role="alert">
-      <mat-icon>warning</mat-icon>
-      <ng-container i18n>
-        Server error. Please contact your web site administrator.
-      </ng-container>
-    </div>
-  </ng-template>
+<ng-template #serverError>
+  <div class="alert alert-danger mt-2" role="alert">
+    <mat-icon>warning</mat-icon>
+    <ng-container i18n>
+      Server error. Please contact your web site administrator.
+    </ng-container>
+  </div>
+</ng-template>

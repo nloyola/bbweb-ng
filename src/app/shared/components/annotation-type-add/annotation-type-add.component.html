@@ -1,6 +1,6 @@
 <div class="card mt-2">
   <div class="card-header bg-primary text-light">
-    {{entityName}}: <small>{{ title }}</small>
+    {{ entityName }}: <small>{{ title }}</small>
   </div>
   <div class="card-body">
     <form class="form-horizontal"
@@ -61,7 +61,7 @@
                   (change)="valueTypeSelected($event)">
             <option value="" i18n>-- make a selection --</option>
             <option *ngFor="let valueType of valueTypes" [value]="valueType">
-              {{valueTypeLabels[valueType]}}
+              {{ valueTypeLabels[valueType] }}
             </option>
           </select>
         </div>
@@ -113,10 +113,10 @@
       <ng-container *ngIf="isValueTypeSelect()">
         <div class="form-group row" *ngFor="let option of options.controls; let i = index"
              formArrayName="optionsGroup">
-          <label class="col-md-3 col-form-label" i18n>Selection Option {{i + 1}}</label>
+          <label class="col-md-3 col-form-label" i18n>Selection Option {{ i + 1 }}</label>
           <div class="col-md-7">
             <input class="form-control"
-                   formControlName="{{i}}"
+                   formControlName="{{ i }}"
                    type="text"
                    i18placeholder
                    placeholder="Enter an option">

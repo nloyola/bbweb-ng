@@ -1,9 +1,9 @@
 <ng-container *ngIf="!!countData; else showLoading">
   <span class="mr-2" *ngFor="let countInfo of getCounts()">
     <mat-icon [ngClass]="countInfo.iconClass">
-      {{countInfo.icon}}
+      {{ countInfo.icon }}
     </mat-icon>
-    {{countInfo.stateLabel}}: {{countInfo.count}}
+    {{ countInfo.stateLabel }}: {{ countInfo.count }}
   </span>
 </ng-container>
 

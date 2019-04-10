@@ -101,7 +101,7 @@ describe('RoleViewComponent', () => {
 
     describe('when adding', () => {
 
-      let context: EntityWithSubEntityBehaviour.AddContext = {} as any;
+      const context: EntityWithSubEntityBehaviour.AddContext = {} as any;
 
       beforeEach(() => {
         Object.assign(context, baseContext, {
@@ -126,7 +126,7 @@ describe('RoleViewComponent', () => {
 
     describe('when removing', () => {
 
-      let context: EntityWithSubEntityBehaviour.RemoveContext = {} as any;
+      const context: EntityWithSubEntityBehaviour.RemoveContext = {} as any;
 
       beforeEach(() => {
         Object.assign(context, baseContext, {

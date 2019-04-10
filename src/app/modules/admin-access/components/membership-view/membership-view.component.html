@@ -5,7 +5,7 @@
   <div class="card mt-2">
     <div class="card-header bg-primary text-light">
       <mat-icon inline="true" class="warning-icon">settings</mat-icon>
-      {{membership?.name}} <small class="mr-3" i18n>Membership</small>
+      {{ membership?.name }} <small class="mr-3" i18n>Membership</small>
 
       <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
 
@@ -45,7 +45,7 @@
       <li class="list-group-item">
         <div class="row">
           <div class="col-md-2"><strong i18n>Name</strong></div>
-          <div class="col-md-10">{{membership?.name}}</div>
+          <div class="col-md-10">{{ membership?.name }}</div>
         </div>
       </li>
 
@@ -75,7 +75,7 @@
                   class="badge badge-secondary mr-1 mt-1 deletable-item"
                   (click)="userSelected(userInfo)"
                   ngbTooltip="Remove user">
-              {{userInfo.name}}
+              {{ userInfo.name }}
               <mat-icon class="warning-icon" inline="true">remove_circle_outline</mat-icon>
             </span>
           </div>
@@ -126,7 +126,7 @@
                   class="badge badge-secondary mr-1 mt-1 deletable-item"
                   (click)="studySelected(studyInfo)"
                   ngbTooltip="Remove study">
-              {{studyInfo.name}}
+              {{ studyInfo.name }}
               <mat-icon class="warning-icon" inline="true">remove_circle_outline</mat-icon>
             </span>
           </div>
@@ -177,7 +177,7 @@
                   class="badge badge-secondary mr-1 mt-1 deletable-item"
                   (click)="centreSelected(centreInfo)"
                   ngbTooltip="Remove centre">
-              {{centreInfo.name}}
+              {{ centreInfo.name }}
               <mat-icon class="warning-icon" inline="true">remove_circle_outline</mat-icon>
             </span>
           </div>

@@ -70,9 +70,9 @@
             <li class="list-group-item" *ngFor="let user of userPageInfo.users">
               <div class="row">
                 <div class="col-md-12">
-                  <mat-icon class="mr-1" [ngClass]="user.stateIconClass()">{{user.stateIcon()}}</mat-icon>
+                  <mat-icon class="mr-1" [ngClass]="user.stateIconClass()">{{ user.stateIcon() }}</mat-icon>
                   <a [routerLink]="[ '/admin/access/users', user.slug ]">
-                    <strong>{{user.name}}</strong>
+                    <strong>{{ user.name }}</strong>
                   </a>
                 </div>
               </div>
@@ -80,16 +80,16 @@
                 <div class="col-md-6">
                   <small class="text-info">
                     <span i18n>Email:</span>
-                    <a href="mailto:{{user.email}}" target="_top">
-                      {{user.email}}
+                    <a href="mailto:{{ user.email }}" target="_top">
+                      {{ user.email }}
                     </a>
                   </small>
                 </div>
                 <div class="col-md-6" *ngIf="user.entity.avatarUrl">
                   <small class="text-info">
                     <span i18n>Avatar:</span>
-                    <a href="{{user.entity.avatarUrl}}" target="_top">
-                      {{user.entity.avatarUrl}}
+                    <a href="{{ user.entity.avatarUrl }}" target="_top">
+                      {{ user.entity.avatarUrl }}
                     </a>
                   </small>
                 </div>

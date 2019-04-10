@@ -58,8 +58,8 @@ describe('StudyProcessingComponent', () => {
   it('when study has or does not have event types', fakeAsync(() => {
     const study = new Study().deserialize(factory.study());
 
-    const eventType = new CollectionEventType()
-      .deserialize(factory.collectionEventType({ specimenDefinitions: [ factory.collectedSpecimenDefinition() ]}));
+    const eventType = new CollectionEventType().deserialize(
+      factory.collectionEventType({ specimenDefinitions: [ factory.collectedSpecimenDefinition() ]}));
     const eventTypeNoSpecimens = new CollectionEventType().deserialize(factory.collectionEventType());
 
     mockActivatedRouteSnapshot(study);

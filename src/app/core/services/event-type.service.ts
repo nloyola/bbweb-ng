@@ -145,9 +145,9 @@ export class EventTypeService {
 
   removeAnnotationType(eventType: CollectionEventType,
                        annotationTypeId: string): Observable<CollectionEventType> {
-      /* tslint:disable:max-line-length */
+    /* tslint:disable:max-line-length */
     const url = `${this.BASE_URL}/annottype/${eventType.studyId}/${eventType.id}/${eventType.version}/${annotationTypeId}`;
-      /* tslint:enable:max-line-length */
+    /* tslint:enable:max-line-length */
 
     return this.http.delete<ApiReply>(url)
       .pipe(map(this.replyToEventType));

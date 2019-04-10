@@ -51,6 +51,7 @@ export class GetCentreCountsRequest implements Action {
   readonly type = ActionTypes.GetCentreCountsRequest;
 }
 
+/* tslint:disable:max-classes-per-file */
 @HideSpinner(ActionTypes.GetCentreCountsRequest)
 export class GetCentreCountsSuccess implements Action {
   readonly type = ActionTypes.GetCentreCountsSuccess;

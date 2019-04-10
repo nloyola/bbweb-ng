@@ -114,6 +114,7 @@ export class ProcessingTypeAddComponent implements OnInit, OnDestroy {
     ).subscribe((error: any) => {
       let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
       if (errMessage && errMessage.match(/EntityCriteriaError.*name already exists/)) {
+        /* tslint:disable-next-line:max-line-length */
         errMessage = `A processing step with name ${this.processingTypeToSave.name} already exists. Please use a different one.`;
       }
       this.toastr.error(errMessage, 'Add Error', { disableTimeOut: true });

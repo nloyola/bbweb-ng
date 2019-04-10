@@ -5,7 +5,7 @@
   <div class="card mt-2">
     <div class="card-header bg-primary text-light">
       <mat-icon inline="true" class="warning-icon">settings</mat-icon>
-      {{role?.name}} <span i18n>Role</span>
+      {{ role?.name }} <span i18n>Role</span>
     </div>
 
     <ul class="list-group">
@@ -13,7 +13,7 @@
       <li class="list-group-item">
         <div class="row">
           <div class="col-md-3"><strong i18n>Name</strong></div>
-          <div class="col-md-9">{{role?.name}}</div>
+          <div class="col-md-9">{{ role?.name }}</div>
         </div>
       </li>
 
@@ -43,7 +43,7 @@
                   class="badge badge-secondary mr-1 mt-1 deletable-item"
                   (click)="userSelected(userInfo)"
                   ngbTooltip="Remove user">
-              {{userInfo.name}}
+              {{ userInfo.name }}
               <mat-icon class="warning-icon" inline="true">remove_circle_outline</mat-icon>
             </span>
           </div>
@@ -88,7 +88,7 @@
           <div class="col-md-9" *ngIf="role.parentData.length > 0">
             <span *ngFor="let parentInfo of role?.parentData"
                   class="badge badge-secondary mr-1 mt-1">
-              {{parentInfo.name}}
+              {{ parentInfo.name }}
             </span>
           </div>
           <div class="col-md-9" *ngIf="role.parentData.length <= 0">
@@ -106,7 +106,7 @@
           <div class="col-md-9" *ngIf="role.childData.length > 0">
             <span *ngFor="let childInfo of role?.childData"
                   class="badge badge-secondary mr-1 mt-1 mt-1">
-              {{childInfo.name}}
+              {{ childInfo.name }}
             </span>
           </div>
           <div class="col-md-9" *ngIf="role.childData.length <= 0">
