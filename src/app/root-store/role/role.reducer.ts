@@ -54,7 +54,7 @@ export function reducer(state = initialState, action: RoleActions): State {
         maxPages: pagedReply.maxPages
       };
 
-      return adapter.addMany(pagedReply.entities, {
+      return adapter.upsertMany(pagedReply.entities, {
         ...state,
         searchReplies: {
           ...state.searchReplies,
