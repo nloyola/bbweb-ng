@@ -5,6 +5,7 @@ import { StudyCounts, StudyState } from '@app/domain/studies';
 import { UserState, UserCounts } from '@app/domain/users';
 import * as _ from 'lodash';
 import faker = require('faker');
+import { ShipmentState } from '@app/domain/shipments';
 
 enum DomainEntities {
 
@@ -27,7 +28,7 @@ enum DomainEntities {
   MEMBERSHIP = 'membership',
   ACCESS_ITEM = 'accessItem',
   ROLE = 'role',
-  PERMISSION = 'permission',
+  PERMISSION = 'permission'
 }
 
 /**
@@ -488,6 +489,30 @@ export class Factory {
       ...this.domainEntityName(et),
       specimenDefinitionNames: et.specimenDefinitions.map(sd => this.domainEntityName(sd))
     }));
+  }
+
+  shipment(options?: any): any {
+    const loc = this.location();
+    const ctr = this.centre({ locations: [ loc ]});
+    const locationInfo = {
+      centreId: ctr.id,
+      locationId: loc.id,
+      name: ctr.name + ': ' + loc.name
+    };
+    const s = {
+      ...{
+        id:               this.domainEntityIdNext(DomainEntities.SHIPMENT),
+        state:            ShipmentState.CREATED,
+        courierName:      this.stringNext(),
+        trackingNumber:   this.stringNext(),
+        fromLocationInfo: locationInfo,
+        toLocationInfo:   locationInfo,
+        specimenCount:    0
+      },
+      ...options,
+    };
+    this.defaultEntities.set(DomainEntities.SHIPMENT, s);
+    return s;
   }
 
   // this function taken from here:

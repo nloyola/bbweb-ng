@@ -104,7 +104,7 @@ export function reducer(state = initialState, action: UserActions): State {
     }
 
     case UserActionTypes.GetUserSuccess: {
-      return adapter.addOne(action.payload.user, state);
+      return adapter.upsertOne(action.payload.user, state);
     }
 
     case UserActionTypes.GetUserCountsFailure:

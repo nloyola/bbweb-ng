@@ -1,10 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Location, PagedReply, SearchParams, JSONArray, JSONValue, JSONObject } from '@app/domain';
+import { JSONArray, JSONObject, Location, PagedReply, SearchParams } from '@app/domain';
 import { ApiReply } from '@app/domain/api-reply.model';
 import { Centre, CentreCounts } from '@app/domain/centres';
 import { Observable } from 'rxjs';
-import { delay, map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 export type CentreUpdateAttribute =
   'name'

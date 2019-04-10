@@ -4,6 +4,7 @@ export * from './event-type.service';
 export * from './membership.service';
 export * from './processing-type.service';
 export * from './role.service';
+export * from './shipment.service';
 export * from './spinner.service';
 export * from './study.service';
 export * from './user.service';
