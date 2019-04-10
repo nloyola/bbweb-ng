@@ -25,16 +25,9 @@ export class CentreResolver implements Resolve<Centre> {
       this.store$.pipe(
         select(CentreStoreSelectors.selectAllCentres),
         filter(s => s.length > 0),
-        map((centres: Centre[]) => centres.find(s => s.slug === slug)),
-        map(centre => {
-          if (!centre) {
-            return throwError('centre not found');
-          }
-
-          // have to do the following because of this issue:
-          //
-          // https://github.com/ngrx/platform/issues/976
-          return (centre instanceof Centre) ? centre :  new Centre().deserialize(centre);
+        map((centres: Centre[]) => {
+          const centre = centres.find(s => s.slug === slug);
+          return centre ? centre : throwError('centre not found');
         })))
       .pipe(take(1));
   }

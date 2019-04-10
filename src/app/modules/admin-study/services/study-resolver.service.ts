@@ -26,16 +26,9 @@ export class StudyResolver implements Resolve<Study> {
       this.store$.pipe(
         select(StudyStoreSelectors.selectAllStudies),
         filter(s => s.length > 0),
-        map((studies: Study[]) => studies.find(s => s.slug === slug)),
-        map(study => {
-          if (!study) {
-            return throwError('study not found');
-          }
-
-          // have to do the following because of this issue:
-          //
-          // https://github.com/ngrx/platform/issues/976
-          return (study instanceof Study) ? study :  new Study().deserialize(study);
+        map((studies: Study[]) => {
+          const study = studies.find(s => s.slug === slug);
+          return study ? study : throwError('study not found');
         })))
       .pipe(take(1));
   }

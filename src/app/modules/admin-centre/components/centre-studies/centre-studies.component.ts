@@ -48,9 +48,10 @@ export class CentreStudiesComponent implements OnInit, OnDestroy {
     this.studyAddTypeahead.selected$.pipe(
       takeUntil(this.unsubscribe$)
     ).subscribe((study: Study) => {
-      this.store$.dispatch(new CentreStoreActions.UpdateCentreAddStudyRequest({
+      this.store$.dispatch(new CentreStoreActions.UpdateCentreRequest({
         centre: this.centre.entity,
-        studyId: study.id
+        attributeName: 'studyAdd',
+        value: study.id
       }));
 
       this.updatedMessage$.next('Study added');
@@ -115,9 +116,10 @@ export class CentreStudiesComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.study = study;
     modalRef.result
       .then(() => {
-        this.store$.dispatch(new CentreStoreActions.UpdateCentreRemoveStudyRequest({
+        this.store$.dispatch(new CentreStoreActions.UpdateCentreRequest({
           centre: this.centre.entity,
-          studyId: study.id
+          attributeName: 'studyRemove',
+          value: study.id
         }));
 
         this.updatedMessage$.next('Study removed');

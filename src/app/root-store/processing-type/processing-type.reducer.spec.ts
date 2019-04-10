@@ -127,39 +127,42 @@ describe('ProcessingType Reducer', () => {
     });
   });
 
-  it('AddProcessingTypeSuccess', () => {
-    const processingType = factory.processingType();
-    const payload = { processingType };
-    const action = new ProcessingTypeStoreActions.AddProcessingTypeSuccess(payload);
-    const state = ProcessingTypeStoreReducer.reducer(undefined, action);
+  describe('for adding a processing type', () => {
 
-    expect(state.ids).toContain(processingType.id);
-    expect(state.entities[processingType.id]).toEqual(processingType);
-  });
+    it('AddProcessingTypeSuccess', () => {
+      const processingType = factory.processingType();
+      const payload = { processingType };
+      const action = new ProcessingTypeStoreActions.AddProcessingTypeSuccess(payload);
+      const state = ProcessingTypeStoreReducer.reducer(undefined, action);
 
-  it('AddProcessingTypeFailure', () => {
-    const payload = {
-      error: {
-        status: 404,
+      expect(state.ids).toContain(processingType.id);
+      expect(state.entities[processingType.id]).toEqual(processingType);
+    });
+
+    it('AddProcessingTypeFailure', () => {
+      const payload = {
         error: {
-          message: 'simulated error'
+          status: 404,
+          error: {
+            message: 'simulated error'
+          }
         }
-      }
-    };
-    const action = new ProcessingTypeStoreActions.AddProcessingTypeFailure(payload);
-    const state = ProcessingTypeStoreReducer.reducer(undefined, action);
+      };
+      const action = new ProcessingTypeStoreActions.AddProcessingTypeFailure(payload);
+      const state = ProcessingTypeStoreReducer.reducer(undefined, action);
 
-    expect(state).toEqual({
-      ...ProcessingTypeStoreReducer.initialState,
-      lastSearch: null,
-      error: {
-        actionType: action.type,
-        error: payload.error
-      }
+      expect(state).toEqual({
+        ...ProcessingTypeStoreReducer.initialState,
+        lastSearch: null,
+        error: {
+          actionType: action.type,
+          error: payload.error
+        }
+      });
     });
   });
 
-  describe('for updating an processing type', () => {
+  describe('for updating a processing type', () => {
 
     let processingType: ProcessingType;
     let testInitialState: any;

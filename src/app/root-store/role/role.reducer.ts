@@ -65,14 +65,7 @@ export function reducer(state = initialState, action: RoleActions): State {
     }
 
     case RoleActionTypes.UpdateRoleSuccess: {
-      return adapter.updateOne(
-        {
-          id: action.payload.role.id,
-          changes: {
-            ...action.payload.role
-          }
-        },
-        state);
+      return adapter.upsertOne(action.payload.role, state);
     }
 
     case RoleActionTypes.GetRoleSuccess: {

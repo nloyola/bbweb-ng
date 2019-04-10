@@ -124,9 +124,10 @@ describe('CentreStudiesComponent', () => {
 
     expect(storeListener.mock.calls.length).toBe(1);
     expect(storeListener.mock.calls[0][0]).toEqual(
-      new CentreStoreActions.UpdateCentreAddStudyRequest({
+      new CentreStoreActions.UpdateCentreRequest({
         centre,
-        studyId: study.id
+        attributeName: 'studyAdd',
+        value: study.id
       }));
   });
 
@@ -158,9 +159,10 @@ describe('CentreStudiesComponent', () => {
 
         expect(storeListener.mock.calls.length).toBe(1);
         expect(storeListener.mock.calls[0][0]).toEqual(
-          new CentreStoreActions.UpdateCentreRemoveStudyRequest({
+          new CentreStoreActions.UpdateCentreRequest({
             centre,
-            studyId: study.id
+            attributeName: 'studyRemove',
+            value: study.id
           }));
       });
     }));

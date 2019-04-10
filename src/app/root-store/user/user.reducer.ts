@@ -5,7 +5,6 @@ import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity';
 import { UserActions, UserActionTypes } from './user.actions';
 
 export interface State extends EntityState<User> {
-  lastAddedId: string;
   lastSearch?: SearchParams;
   searchActive?: boolean;
   searchReplies?: { [ url: string ]: PagedReplyEntityIds };
@@ -16,7 +15,6 @@ export interface State extends EntityState<User> {
 export const adapter: EntityAdapter<User> = createEntityAdapter<User>();
 
 export const initialState: State = adapter.getInitialState({
-  lastAddedId: null,
   lastSearch: null,
   error: null,
   searchActive: false,
@@ -26,8 +24,7 @@ export const initialState: State = adapter.getInitialState({
 
 export function reducer(state = initialState, action: UserActions): State {
   switch (action.type) {
-    case UserActionTypes.GetUserCountsRequest:
-    case UserActionTypes.AddUserRequest: {
+    case UserActionTypes.GetUserCountsRequest: {
       return {
         ...state,
         error: null
@@ -84,30 +81,19 @@ export function reducer(state = initialState, action: UserActions): State {
       });
     }
 
-    case UserActionTypes.AddUserRequest: {
+    case UserActionTypes.UpdateUserRequest: {
       return {
         ...state,
-        lastAddedId: null
+        error: null
       };
     }
 
-    case UserActionTypes.AddUserSuccess: {
-      return adapter.addOne(action.payload.user, {
-        ...state,
-        lastAddedId: action.payload.user.id
-      });
-    }
-
     case UserActionTypes.UpdateUserSuccess: {
-      return adapter.updateOne(
-        {
-          id: action.payload.user.id,
-          changes: {
-            ...action.payload.user,
-            avatarUrl: action.payload.user.avatarUrl ? action.payload.user.avatarUrl : undefined
-          }
-        },
-        state);
+      const user: User = new User().deserialize({
+        ...action.payload.user as any,
+        avatarUrl: action.payload.user.avatarUrl ? action.payload.user.avatarUrl : undefined
+      });
+      return adapter.upsertOne(user, state);
     }
 
     case UserActionTypes.GetUserSuccess: {
@@ -116,8 +102,8 @@ export function reducer(state = initialState, action: UserActions): State {
 
     case UserActionTypes.GetUserCountsFailure:
     case UserActionTypes.GetUserFailure:
-    case UserActionTypes.AddUserFailure:
     case UserActionTypes.UpdateUserFailure:
+      debugger;
       return {
         ...state,
         error: {

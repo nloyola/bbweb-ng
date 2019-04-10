@@ -98,9 +98,10 @@ export class CentreLocationsComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.location = location;
     modalRef.result
       .then(() => {
-        this.store$.dispatch(new CentreStoreActions.UpdateCentreRemoveLocationRequest({
+        this.store$.dispatch(new CentreStoreActions.UpdateCentreRequest({
           centre: this.centre.entity,
-          locationId: location.id
+          attributeName: 'locationRemove',
+          value: location
         }));
 
         this.updatedMessage$.next('Location removed');

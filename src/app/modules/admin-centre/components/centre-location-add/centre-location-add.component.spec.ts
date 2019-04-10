@@ -79,9 +79,10 @@ describe('CentreLocationAddComponent', () => {
 
     it('on valid submission', async(() => {
       const centre = createCentre();
-      const expectedAction = new CentreStoreActions.UpdateCentreAddOrUpdateLocationRequest({
+      const expectedAction = new CentreStoreActions.UpdateCentreRequest({
         centre,
-        location: centre.locations[0]
+        attributeName: 'locationAdd',
+        value: centre.locations[0]
       });
 
       jest.spyOn(store, 'dispatch');

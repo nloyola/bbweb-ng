@@ -28,17 +28,9 @@ export class EventTypeResolver implements Resolve<CollectionEventType> {
       this.store$.pipe(
         select(EventTypeStoreSelectors.selectAllEventTypes),
         filter(ets => ets.length > 0),
-        map((ets: CollectionEventType[]) => ets.find(et => et.slug === eventTypeSlug)),
-        map(eventType => {
-          if (!eventType) {
-            return throwError('collection event type not found');
-          }
-
-          // have to do the following because of this issue:
-          //
-          // https://github.com/ngrx/platform/issues/976
-          return (eventType instanceof CollectionEventType)
-            ? eventType :  new CollectionEventType().deserialize(eventType);
+        map((ets: CollectionEventType[]) => {
+          const eventType = ets.find(et => et.slug === eventTypeSlug);
+          return eventType ? eventType : throwError('collection event type not found');
         })))
       .pipe(take(1));
   }

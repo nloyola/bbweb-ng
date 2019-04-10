@@ -7,7 +7,7 @@ import { Factory } from '@test/factory';
 import * as faker from 'faker';
 import { CentreService } from './centre.service';
 import { Location } from '@app/domain';
-import { Study } from '@app/domain/studies';
+import { Study, IStudy } from '@app/domain/studies';
 
 describe('CentreService', () => {
 
@@ -202,6 +202,8 @@ describe('CentreService', () => {
 
     let rawCentre: any;
     let centre: Centre;
+    const study = factory.study();
+    const location = new Location().deserialize(factory.location());
     let testData: any;
 
     beforeEach(() => {
@@ -232,6 +234,26 @@ describe('CentreService', () => {
           attribute: 'state',
           value: 'disable',
           url: `${BASE_URL}/disable/${centre.id}`
+        },
+        {
+          attribute: 'studyAdd',
+          value: study.id,
+          url: `${BASE_URL}/studies/${centre.id}`
+        },
+        {
+          attribute: 'studyRemove',
+          value: study.id,
+          url: `${BASE_URL}/studies/${centre.id}/${centre.version}/${study.id}`
+        },
+        {
+          attribute: 'locationAdd',
+          value: location,
+          url: `${BASE_URL}/locations/${centre.id}/${location.id}`
+        },
+        {
+          attribute: 'locationRemove',
+          value: location,
+          url: `${BASE_URL}/locations/${centre.id}/${centre.version}/${location.id}`
         }
       ];
 
@@ -244,17 +266,33 @@ describe('CentreService', () => {
           expect(s).toEqual(centre);
         });
 
-        const expectedJson = {
-          expectedVersion: centre.version
-        };
+        const expectedJson = { expectedVersion: centre.version };
 
-        if (testInfo.attribute !== 'state') {
-          expectedJson[testInfo.attribute] = testInfo.value;
+        switch (testInfo.attribute) {
+          case 'studyAdd':
+            expectedJson['studyId'] = testInfo.value;
+            break;
+
+          case 'locationAdd':
+            expectedJson['location'] = location;
+            break;
+
+          case 'state':
+            // empty on purpose
+            break;
+
+          default:
+            expectedJson[testInfo.attribute] = testInfo.value;
         }
 
         const req = httpMock.expectOne(testInfo.url);
-        expect(req.request.method).toBe('POST');
-        expect(req.request.body).toEqual(expectedJson);
+
+        if (['studyRemove', 'locationRemove'].includes(testInfo.attribute)) {
+          expect(req.request.method).toBe('DELETE');
+        } else {
+          expect(req.request.method).toBe('POST');
+          expect(req.request.body).toEqual(expectedJson);
+        }
         req.flush({ status: 'success', data: rawCentre });
         httpMock.verify();
       });
@@ -293,174 +331,6 @@ describe('CentreService', () => {
           .toThrowError(testInfo.expectedErrMsg);
       });
     });
-  });
-
-  describe('for studies', () => {
-
-    let centre: Centre;
-    let study: Study;
-
-    beforeEach(() => {
-      study = new Study().deserialize(factory.study());
-      centre = new Centre().deserialize(factory.centre());
-    });
-
-    it('can add a study', () => {
-      service.addStudy(centre, study.id).subscribe(c => {
-        expect(c).toEqual(jasmine.any(Centre));
-      });
-
-      const req = httpMock.expectOne(`${BASE_URL}/studies/${centre.id}`);
-      expect(req.request.method).toBe('POST');
-      expect(req.request.body).toEqual({
-        studyId: study.id,
-        expectedVersion: centre.version
-      });
-      req.flush({ status: 'success', data: centre });
-      httpMock.verify();
-    });
-
-    it('can remove a study', () => {
-      const studyName = factory.entityNameAndStateDto(study);
-      const centreWithStudy = new Centre().deserialize({
-        ...centre as any,
-        studyNames: [ studyName ]
-      });
-
-      service.removeStudy(centreWithStudy, study.id).subscribe(c => {
-        expect(c).toEqual(jasmine.any(Centre));
-      });
-
-      const req = httpMock.expectOne(`${BASE_URL}/studies/${centre.id}/${centre.version}/${study.id}`);
-      expect(req.request.method).toBe('DELETE');
-      req.flush({ status: 'success', data: centre });
-      httpMock.verify();
-    });
-
-    it('should not add a study that centre is already associated with', function() {
-      const studyName = factory.entityNameAndStateDto(study);
-      const centreWithStudy = new Centre().deserialize({
-        ...centre as any,
-        studyNames: [ studyName ]
-      });
-
-      expect(() => {
-        service.addStudy(centreWithStudy, study.id);
-      }).toThrowError(/study ID already present/);
-    });
-
-    it('should not remove a study that does not exist', function() {
-      expect(() => {
-        service.removeStudy(centre, study.id);
-      }).toThrowError(/study ID not present/);
-    });
-
-  });
-
-  describe('for adding or updating a location', () => {
-
-    it('request contains correct JSON and reply is handled correctly', () => {
-      const locationIds = [ null, factory.stringNext() ];
-      locationIds.forEach(locationId => {
-        const rawLocation = {
-          ...factory.location(),
-          id: locationId
-        };
-        const rawCentre = factory.centre({ locations: [ rawLocation ]});
-        const centre = new Centre().deserialize(rawCentre);
-
-        service.addOrUpdateLocation(centre, centre.locations[0]).subscribe(s => {
-          expect(s).toEqual(jasmine.any(Centre));
-          expect(s).toEqual(centre);
-        });
-
-        let url = `${BASE_URL}/locations/${centre.id}`;
-        if (locationId !== null) {
-          url += `/${locationId}`;
-        }
-        const req = httpMock.expectOne(url);
-
-        expect(req.request.method).toBe('POST');
-        expect(req.request.body).toEqual({
-          ...centre.locations[0],
-          expectedVersion: 0
-        });
-        req.flush({ status: 'success', data: rawCentre });
-        httpMock.verify();
-      });
-    });
-
-    it('handles an error reply correctly', () => {
-      const locationIds = [ null, factory.stringNext() ];
-      locationIds.forEach(locationId => {
-        const rawLocation = {
-          ...factory.location(),
-          id: locationId
-        };
-        const rawCentre = factory.centre({ locations: [ rawLocation ]});
-        const centre = new Centre().deserialize(rawCentre);
-
-        service.addOrUpdateLocation(centre, centre.locations[0]).subscribe(
-          () => { fail('should have been an error response'); },
-          err => { expect(err.message).toContain('expected a centre object'); }
-        );
-
-        let url = `${BASE_URL}/locations/${centre.id}`;
-        if (locationId !== null) {
-          url += `/${locationId}`;
-        }
-        const req = httpMock.expectOne(url);
-        req.flush({ status: 'error', data: undefined });
-        httpMock.verify();
-      });
-    });
-
-  });
-
-  describe('for removing a location', () => {
-
-    let rawLocation: any;
-    let rawCentre: any;
-    let centre: Centre;
-
-    beforeEach(() => {
-      rawLocation = factory.location();
-      rawCentre = factory.centre({ locations: [ rawLocation ]});
-      centre = new Centre().deserialize(rawCentre);
-    });
-
-    it('request contains correct JSON and reply is handled correctly', () => {
-      service.removeLocation(centre, centre.locations[0].id).subscribe(s => {
-        expect(s).toEqual(jasmine.any(Centre));
-        expect(s).toEqual(centre);
-      });
-
-      const url = `${BASE_URL}/locations/${centre.id}/${centre.version}/${rawLocation.id}`;
-      const req = httpMock.expectOne(url);
-
-      expect(req.request.method).toBe('DELETE');
-      req.flush({ status: 'success', data: rawCentre });
-      httpMock.verify();
-    });
-
-    it('handles an error reply correctly', () => {
-      service.removeLocation(centre, centre.locations[0].id).subscribe(
-        () => { fail('should have been an error response'); },
-        err => { expect(err.message).toContain('expected a centre object'); }
-      );
-
-      const url = `${BASE_URL}/locations/${centre.id}/${centre.version}/${rawLocation.id}`;
-      const req = httpMock.expectOne(url);
-      req.flush({ status: 'error', data: undefined });
-      httpMock.verify();
-    });
-
-    it('should not remove a location that does not exist', function() {
-      expect(() => {
-        service.removeLocation(centre, factory.stringNext());
-      }).toThrowError(/location ID not present/);
-    });
-
   });
 
 });

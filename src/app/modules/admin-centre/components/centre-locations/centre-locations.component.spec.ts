@@ -154,13 +154,11 @@ describe('CentreLocationsComponent', () => {
     jest.spyOn(modalService, 'open');
     const location = centre.locations[0];
 
-    /* tslint:disable:no-shadowed-variable */
     const testData = [
-      { componentFunc: (component) => component.addLocation() },
-      { componentFunc: (component) => component.edit(location) },
-      { componentFunc: (component) => component.remove(location) }
+      { componentFunc: (c) => c.addLocation() },
+      { componentFunc: (c) => c.edit(location) },
+      { componentFunc: (c) => c.remove(location) }
     ];
-    /* tslint:enable:no-shadowed-variable */
 
     fixture.detectChanges();
     store.dispatch(new CentreStoreActions.GetCentreSuccess({ centre }));
@@ -171,7 +169,7 @@ describe('CentreLocationsComponent', () => {
     });
   });
 
-  describe('when removing an location', () => {
+  describe('when removing a location', () => {
 
     it('on valid removal', fakeAsync(() => {
       const centreNoLocations = new Centre().deserialize({
@@ -180,7 +178,6 @@ describe('CentreLocationsComponent', () => {
       });
       const location = centre.locations[0];
 
-      const storeListner = jest.spyOn(store, 'dispatch');
       jest.spyOn(toastr, 'success').mockReturnValue(null);
       jest.spyOn(modalService, 'open').mockReturnValue({
         componentInstance: {},
@@ -189,18 +186,20 @@ describe('CentreLocationsComponent', () => {
 
       store.dispatch(new CentreStoreActions.GetCentreSuccess({ centre }));
       fixture.detectChanges();
+      const storeListner = jest.spyOn(store, 'dispatch');
       component.remove(location);
 
-      tick(1000);
-      const expectedAction = new CentreStoreActions.UpdateCentreRemoveLocationRequest({
+      flush();
+      const expectedAction = new CentreStoreActions.UpdateCentreRequest({
         centre,
-        locationId: location.id
+        attributeName: 'locationRemove',
+        value: location
       });
-      expect(storeListner.mock.calls.length).toBe(2);
-      expect(storeListner.mock.calls[1][0]).toEqual(expectedAction);
+      expect(storeListner.mock.calls.length).toBe(1);
+      expect(storeListner.mock.calls[0][0]).toEqual(expectedAction);
       store.dispatch(new CentreStoreActions.UpdateCentreSuccess({ centre: centreNoLocations }));
 
-      tick(1000);
+      flush();
       fixture.detectChanges();
       expect(toastr.success).toHaveBeenCalled();
     }));

@@ -20,22 +20,17 @@ export class UserResolver implements Resolve<User> {
     return race<any>(
       this.store$.pipe(
         select(UserStoreSelectors.selectUserError),
-        filter(s => !!s),
-        tap(() => this.router.navigateByUrl('/404'))),
+        filter(e => !!e),
+        tap(() => {
+          this.router.navigateByUrl('/404');
+        })),
       this.store$.pipe(
         select(UserStoreSelectors.selectAllUsers),
         filter(s => s.length > 0),
-        map((users: User[]) => users.find(s => s.slug === slug)),
-        map(user => {
-          if (!user) {
-            return throwError('user not found');
-          }
-
-          // have to do the following because of this issue:
-          //
-          // https://github.com/ngrx/platform/issues/976
-          return (user instanceof User) ? user :  new User().deserialize(user);
-        })))
-      .pipe(take(1));
+        map((users: User[]) => {
+          const user = users.find(s => s.slug === slug);
+          return user ? user : throwError('user not found');
+        }))
+    ).pipe(take(1));
   }
 }

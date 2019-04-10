@@ -25,16 +25,9 @@ export class RoleResolver implements Resolve<Role> {
       this.store$.pipe(
         select(RoleStoreSelectors.selectAllRoles),
         filter(s => s.length > 0),
-        map((roles: Role[]) => roles.find(s => s.slug === slug)),
-        map(role => {
-          if (!role) {
-            return throwError('role not found');
-          }
-
-          // have to do the following because of this issue:
-          //
-          // https://github.com/ngrx/platform/issues/976
-          return (role instanceof Role) ? role :  new Role().deserialize(role);
+        map((roles: Role[]) => {
+          const role =roles.find(s => s.slug === slug);
+          return role ? role : throwError('role not found');
         })))
       .pipe(take(1));
   }

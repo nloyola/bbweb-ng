@@ -20,9 +20,9 @@ export enum UserActionTypes {
   SearchUsersSuccess = '[User] Search Users Success',
   SearchUsersFailure = '[Users] Search Users Failure',
 
-  AddUserRequest = '[User] Add User Request',
-  AddUserSuccess = '[User] Add User Success',
-  AddUserFailure = '[User] Add User Failure',
+  /*
+   * Adding users done with auth-store
+   */
 
   GetUserRequest = '[User] Get User Request',
   GetUserSuccess = '[User] Get User Success',
@@ -68,27 +68,6 @@ export class SearchUsersSuccess implements Action {
 
 export class SearchUsersFailure implements Action {
   readonly type = UserActionTypes.SearchUsersFailure;
-
-  constructor(public payload: { error: any }) { }
-}
-
-@ShowSpinner()
-export class AddUserRequest implements Action {
-  readonly type = UserActionTypes.AddUserRequest;
-
-  constructor(public payload: { user: User }) { }
-}
-
-@HideSpinner(UserActionTypes.AddUserRequest)
-export class AddUserSuccess implements Action {
-  readonly type = UserActionTypes.AddUserSuccess;
-
-  constructor(public payload: { user: User }) { }
-}
-
-@HideSpinner(UserActionTypes.AddUserRequest)
-export class AddUserFailure implements Action {
-  readonly type = UserActionTypes.AddUserFailure;
 
   constructor(public payload: { error: any }) { }
 }
@@ -142,9 +121,6 @@ export type UserActions =
   | SearchUsersRequest
   | SearchUsersSuccess
   | SearchUsersFailure
-  | AddUserRequest
-  | AddUserSuccess
-  | AddUserFailure
   | GetUserRequest
   | GetUserSuccess
   | GetUserFailure

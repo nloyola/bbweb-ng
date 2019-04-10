@@ -45,12 +45,6 @@ export class CentreViewComponent implements OnInit, OnDestroy {
       filter(s => s.length > 0),
       map((centres: Centre[]) => centres.find(s => s.slug === this.route.snapshot.params.slug)),
       filter(centre => centre !== undefined),
-      map(centre => {
-        // have to do the following because of this issue:
-        //
-        // https://github.com/ngrx/platform/issues/976
-        return (centre instanceof Centre) ? centre :  new Centre().deserialize(centre);
-      }),
       takeUntil(this.unsubscribe$));
 
     this.activeTabId = this.getActiveTabId(this.router.url);

@@ -3,21 +3,12 @@ import { Location, PagedReply, SearchParams } from '@app/domain';
 import { Centre, CentreCounts } from '@app/domain/centres';
 import { Action } from '@ngrx/store';
 import { HttpErrorResponse } from '@angular/common/http';
+import { CentreUpdateAttribute } from '@app/core/services';
 
 interface CentreUpdateRequestPayload {
   centre: Centre;
-  attributeName: string;
-  value: string;
-}
-
-interface CentreStudyIdPayload {
-  centre: Centre;
-  studyId: string;
-}
-
-interface CentreLocationPayload {
-  centre: Centre;
-  location: Location;
+  attributeName: CentreUpdateAttribute;
+  value: string | Location;
 }
 
 export enum ActionTypes {
@@ -37,13 +28,9 @@ export enum ActionTypes {
   GetCentreSuccess = '[Centre] Get Centre Success',
   GetCentreFailure = '[Centre] Get Centre Failure',
 
-  UpdateCentreRequest                    = '[Centre] Update Centre Request',
-  UpdateCentreAddStudyRequest            = '[Centre] Update Centre Add Study Request',
-  UpdateCentreRemoveStudyRequest         = '[Centre] Update Centre Remove Study Request',
-  UpdateCentreAddOrUpdateLocationRequest = '[Centre] Update Centre Add or Update Location Request',
-  UpdateCentreRemoveLocationRequest      = '[Centre] Update Centre Remove Location Request',
-  UpdateCentreSuccess                    = '[Centre] Update Centre Success',
-  UpdateCentreFailure                    = '[Centre] Update Centre Failure',
+  UpdateCentreRequest = '[Centre] Update Centre Request',
+  UpdateCentreSuccess = '[Centre] Update Centre Success',
+  UpdateCentreFailure = '[Centre] Update Centre Failure',
 }
 
 @ShowSpinner()
@@ -133,30 +120,6 @@ export class UpdateCentreRequest implements Action {
   constructor(public payload: CentreUpdateRequestPayload) { }
 }
 
-export class UpdateCentreAddStudyRequest implements Action {
-  readonly type = ActionTypes.UpdateCentreAddStudyRequest;
-
-  constructor(public payload: CentreStudyIdPayload) { }
-}
-
-export class UpdateCentreRemoveStudyRequest implements Action {
-  readonly type = ActionTypes.UpdateCentreRemoveStudyRequest;
-
-  constructor(public payload: CentreStudyIdPayload) { }
-}
-
-export class UpdateCentreAddOrUpdateLocationRequest implements Action {
-  readonly type = ActionTypes.UpdateCentreAddOrUpdateLocationRequest;
-
-  constructor(public payload: CentreLocationPayload) { }
-}
-
-export class UpdateCentreRemoveLocationRequest implements Action {
-  readonly type = ActionTypes.UpdateCentreRemoveLocationRequest;
-
-  constructor(public payload: { centre: Centre, locationId: string }) { }
-}
-
 @HideSpinner(ActionTypes.UpdateCentreRequest)
 export class UpdateCentreSuccess implements Action {
   readonly type = ActionTypes.UpdateCentreSuccess;
@@ -185,9 +148,5 @@ export type CentreActions =
   | GetCentreSuccess
   | GetCentreFailure
   | UpdateCentreRequest
-  | UpdateCentreAddStudyRequest
-  | UpdateCentreRemoveStudyRequest
-  | UpdateCentreAddOrUpdateLocationRequest
-  | UpdateCentreRemoveLocationRequest
   | UpdateCentreSuccess
   | UpdateCentreFailure;

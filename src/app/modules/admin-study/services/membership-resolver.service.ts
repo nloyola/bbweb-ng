@@ -25,16 +25,9 @@ export class MembershipResolver implements Resolve<Membership> {
       this.store$.pipe(
         select(MembershipStoreSelectors.selectAllMemberships),
         filter(s => s.length > 0),
-        map((memberships: Membership[]) => memberships.find(s => s.slug === slug)),
-        map(membership => {
-          if (!membership) {
-            return throwError('membership not found');
-          }
-
-          // have to do the following because of this issue:
-          //
-          // https://github.com/ngrx/platform/issues/976
-          return (membership instanceof Membership) ? membership :  new Membership().deserialize(membership);
+        map((memberships: Membership[]) => {
+          const membership =  memberships.find(s => s.slug === slug);
+          return membership ? membership : throwError('membership not found');
         })))
       .pipe(take(1));
   }

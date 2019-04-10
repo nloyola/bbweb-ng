@@ -1,19 +1,18 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { NgZone } from '@angular/core';
-import { TestBed } from '@angular/core/testing';
-import { ActivatedRouteSnapshot } from '@angular/router';
+import { TestBed, flush, fakeAsync } from '@angular/core/testing';
+import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { User } from '@app/domain/users';
 import { UserStoreActions, UserStoreReducer } from '@app/root-store';
 import { Factory } from '@test/factory';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
-import { cold } from 'jasmine-marbles';
+import { cold, getTestScheduler } from 'jasmine-marbles';
 import { UserResolver } from './user-resolver.service';
 
 describe('UserResolver', () => {
 
-  let ngZone: NgZone;
   let resolver: UserResolver;
   let store: Store<UserStoreReducer.State>;
   let factory: Factory;
@@ -21,8 +20,6 @@ describe('UserResolver', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [
-        HttpClientTestingModule,
-        NgbModule,
         RouterTestingModule,
         StoreModule.forRoot({
           'user': UserStoreReducer.reducer
@@ -30,7 +27,6 @@ describe('UserResolver', () => {
       ]
     });
 
-    ngZone = TestBed.get(NgZone);
     resolver = TestBed.get(UserResolver);
     store = TestBed.get(Store);
     factory = new Factory();
@@ -44,32 +40,34 @@ describe('UserResolver', () => {
     const user = new User().deserialize(factory.user());
     const route = new ActivatedRouteSnapshot();
     route.params = { slug: user.slug };
-    const action = new UserStoreActions.GetUserSuccess({ user });
-    store.dispatch(action);
+    store.dispatch(new UserStoreActions.GetUserSuccess({ user }));
     const expected = cold('(b|)', { b: user });
     expect(resolver.resolve(route, null)).toBeObservable(expected);
   });
 
   it('should handle an error response', () => {
-    const error = {
-      error: {
-        message: 'simulated error'
-      },
-      status: 404
-    };
+    const router = TestBed.get(Router);
+    const routerListener = jest.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
+
     const route = new ActivatedRouteSnapshot();
     route.params = { slug: 'test' };
-    const action = new UserStoreActions.GetUserFailure({ error });
-    store.dispatch(action);
+    resolver.resolve(route, null);
+
+    const error = {
+      error: { message: 'simulated error' },
+      status: 404
+    };
+    store.dispatch(new UserStoreActions.GetUserFailure({ error }));
+    jest.spyOn(store, 'dispatch').mockImplementationOnce(() => {});
     const expected = cold('(b|)', {
       b: {
-        error,
-        actionType: UserStoreActions.UserActionTypes.GetUserFailure
+        actionType: UserStoreActions.UserActionTypes.GetUserFailure,
+        error
       }
     });
-    ngZone.run(() => {
-      expect(resolver.resolve(route, null)).toBeObservable(expected);
-    });
+    expect(resolver.resolve(route, null)).toBeObservable(expected);
+
+    expect(routerListener.mock.calls.length).toBe(1);
   });
 
 });

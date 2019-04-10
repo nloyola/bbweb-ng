@@ -65,58 +65,6 @@ export class CentreStoreEffects {
   );
 
   @Effect()
-  addStudyRequest$: Observable<Action> = this.actions$.pipe(
-    ofType(CentreActions.ActionTypes.UpdateCentreAddStudyRequest),
-    map(action => action.payload),
-    switchMap(
-      payload =>
-        this.centreService.addStudy(payload.centre, payload.studyId)
-        .pipe(
-          map(centre => new CentreActions.UpdateCentreSuccess({ centre })),
-          catchError(error => observableOf(new CentreActions.UpdateCentreFailure({ error }))))
-    )
-  );
-
-  @Effect()
-  removeStudyRequest$: Observable<Action> = this.actions$.pipe(
-    ofType(CentreActions.ActionTypes.UpdateCentreRemoveStudyRequest),
-    map(action => action.payload),
-    switchMap(
-      payload =>
-        this.centreService.removeStudy(payload.centre, payload.studyId)
-        .pipe(
-          map(centre => new CentreActions.UpdateCentreSuccess({ centre })),
-          catchError(error => observableOf(new CentreActions.UpdateCentreFailure({ error }))))
-    )
-  );
-
-  @Effect()
-  addLocationRequest$: Observable<Action> = this.actions$.pipe(
-    ofType(CentreActions.ActionTypes.UpdateCentreAddOrUpdateLocationRequest),
-    map(action => action.payload),
-    switchMap(
-      payload =>
-        this.centreService.addOrUpdateLocation(payload.centre, payload.location)
-        .pipe(
-          map(centre => new CentreActions.UpdateCentreSuccess({ centre })),
-          catchError(error => observableOf(new CentreActions.UpdateCentreFailure({ error }))))
-    )
-  );
-
-  @Effect()
-  removeLocationRequest$: Observable<Action> = this.actions$.pipe(
-    ofType(CentreActions.ActionTypes.UpdateCentreRemoveLocationRequest),
-    map(action => action.payload),
-    switchMap(
-      payload =>
-        this.centreService.removeLocation(payload.centre, payload.locationId)
-        .pipe(
-          map(centre => new CentreActions.UpdateCentreSuccess({ centre })),
-          catchError(error => observableOf(new CentreActions.UpdateCentreFailure({ error }))))
-    )
-  );
-
-  @Effect()
   countsRequest$: Observable<Action> = this.actions$.pipe(
     ofType(CentreActions.ActionTypes.GetCentreCountsRequest),
     switchMap(

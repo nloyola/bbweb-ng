@@ -6,6 +6,15 @@ import { Centre, CentreCounts } from '@app/domain/centres';
 import { Observable } from 'rxjs';
 import { delay, map } from 'rxjs/operators';
 
+export type CentreUpdateAttribute =
+  'name'
+  | 'description'
+  | 'studyAdd'
+  | 'studyRemove'
+  | 'locationAdd'
+  | 'locationRemove'
+  | 'state';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -90,7 +99,11 @@ export class CentreService {
         map(this.replyToCentre));
   }
 
-  update(centre: Centre, attributeName: string, value: string): Observable<Centre> {
+  update(
+    centre: Centre,
+    attributeName: CentreUpdateAttribute,
+    value: string | Location
+  ): Observable<Centre> {
     let url: string;
     let json = { expectedVersion: centre.version };
 
@@ -99,73 +112,53 @@ export class CentreService {
         json = { ...json, name: value } as any;
         url = `${this.BASE_URL}/name/${centre.id}`;
         break;
+
       case 'description':
         json = { ...json, description: value } as any;
         url = `${this.BASE_URL}/description/${centre.id}`;
         break;
-      case 'state':
-        if (!this.stateActions.includes(value)) {
-          throw new Error('invalid state change for centre: ' + value);
+
+      case 'studyAdd':
+        json['studyId'] = value;
+        url = `${this.BASE_URL}/studies/${centre.id}`;
+        break;
+
+      case 'studyRemove':
+        url = `${this.BASE_URL}/studies/${centre.id}/${centre.version}/${value}`;
+        break;
+
+      case 'locationAdd': {
+        const location = value as Location;
+        json['location'] = location;
+        url = `${this.BASE_URL}/locations/${centre.id}`;
+        if (!location.isNew()) {
+          url += '/' + location.id;
         }
-        url = `${this.BASE_URL}/${value}/${centre.id}`;
+        break;
+      }
+
+      case 'locationRemove': {
+        const location = value as Location;
+        url = `${this.BASE_URL}/locations/${centre.id}/${centre.version}/${location.id}`;
+        break;
+      }
+
+      case 'state':
+        const stateAction = value as string;
+        if (!this.stateActions.includes(stateAction)) {
+          throw new Error('invalid state change for centre: ' + stateAction);
+        }
+        url = `${this.BASE_URL}/${stateAction}/${centre.id}`;
         break;
 
       default:
         throw new Error('invalid attribute name for update: ' + attributeName);
     }
 
+    if (['studyRemove', 'locationRemove'].includes(attributeName)) {
+      return this.http.delete<ApiReply>(url).pipe(map(this.replyToCentre));
+    }
     return this.http.post<ApiReply>(url, json).pipe(map(this.replyToCentre));
-  }
-
-  addStudy(centre: Centre, studyId: string): Observable<Centre> {
-    const studyName = centre.studyNames.find(sn => sn.id === studyId);
-    if (studyName !== undefined) {
-      throw new Error(`study ID already present: ${studyId}`);
-    }
-
-    const json = {
-      studyId,
-      expectedVersion: centre.version
-    };
-
-    return this.http.post<ApiReply>(`${this.BASE_URL}/studies/${centre.id}`, json)
-      .pipe(map(this.replyToCentre));
-  }
-
-  removeStudy(centre: Centre, studyId: string): Observable<Centre> {
-    const studyName = centre.studyNames.find(sn => sn.id === studyId);
-    if (studyName === undefined) {
-      throw new Error(`study ID not present: ${studyId}`);
-    }
-
-    return this.http.delete<ApiReply>(
-      `${this.BASE_URL}/studies/${centre.id}/${centre.version}/${studyId}`)
-      .pipe(map(this.replyToCentre));
-  }
-
-  addOrUpdateLocation(centre: Centre, location: Location): Observable<Centre> {
-    const json = {
-      ...location,
-      expectedVersion: centre.version
-    };
-    let url = `${this.BASE_URL}/locations/${centre.id}`;
-    if (!location.isNew()) {
-      url += '/' + location.id;
-    }
-    return this.http.post<ApiReply>(url, json).pipe(
-      // delay(2000),
-      map(this.replyToCentre));
-  }
-
-  removeLocation(centre: Centre, locationId: string): Observable<Centre> {
-    const location = centre.locations.find(loc => loc.id === locationId);
-    if (location === undefined) {
-      throw new Error(`location ID not present: ${locationId}`);
-    }
-
-    const url = `${this.BASE_URL}/locations/${centre.id}/${centre.version}/${locationId}`;
-    return this.http.delete<ApiReply>(url)
-      .pipe(map(this.replyToCentre));
   }
 
   private replyToCentre(reply: ApiReply): Centre {

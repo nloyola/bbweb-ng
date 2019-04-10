@@ -88,12 +88,6 @@ export class ProcessingTypeAddComponent implements OnInit, OnDestroy {
       filter(studies => studies.length > 0),
       map(studies => studies.find(s => s.slug === this.route.parent.parent.snapshot.params.slug)),
       filter(study => study !== undefined),
-      map(study => {
-        // have to do the following because of this issue:
-        //
-        // https://github.com/ngrx/platform/issues/976
-        return (study instanceof Study) ? study :  new Study().deserialize(study);
-      }),
       takeUntil(this.unsubscribe$)
     ).subscribe((study: Study) => {
       this.studyId = study.id;

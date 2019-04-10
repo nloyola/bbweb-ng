@@ -5,17 +5,13 @@ import { Centre } from '@app/domain/centres';
 
 describe('Centre Reducer', () => {
 
-  let factory: Factory;
-
-  beforeEach(() => {
-    factory = new Factory();
-  });
+  const factory = new Factory();
 
   describe('unknown action', () => {
     it('should return the initial state', () => {
       const action = {} as any;
       const result = CentreStoreReducer.reducer(CentreStoreReducer.initialState, action);
-      expect(result).toBe(CentreStoreReducer.initialState);
+      expect(result).toEqual(CentreStoreReducer.initialState);
     });
   });
 

@@ -48,12 +48,6 @@ export class StudyViewComponent implements OnInit, OnDestroy {
       filter(s => s.length > 0),
       map((studies: Study[]) => studies.find(s => s.slug === this.route.snapshot.params.slug)),
       filter(study => study !== undefined),
-      map(study => {
-        // have to do the following because of this issue:
-        //
-        // https://github.com/ngrx/platform/issues/976
-        return (study instanceof Study) ? study :  new Study().deserialize(study);
-      }),
       takeUntil(this.unsubscribe$));
 
     this.activeTabId = this.getActiveTabId(this.router.url);

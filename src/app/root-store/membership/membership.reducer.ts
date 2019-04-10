@@ -76,7 +76,8 @@ export function reducer(state = initialState, action: MembershipActions): State 
     case MembershipActionTypes.AddMembershipRequest: {
       return {
         ...state,
-        lastAddedId: null
+        lastAddedId: null,
+        error: null
       };
     }
 
@@ -88,14 +89,14 @@ export function reducer(state = initialState, action: MembershipActions): State 
     }
 
     case MembershipActionTypes.UpdateMembershipSuccess: {
-      return adapter.updateOne(
-        {
-          id: action.payload.membership.id,
-          changes: {
-            ...action.payload.membership
-          }
-        },
-        state);
+      return adapter.upsertOne(action.payload.membership, state);
+    }
+
+    case MembershipActionTypes.GetMembershipRequest: {
+      return {
+        ...state,
+        lastAddedId: null
+      };
     }
 
     case MembershipActionTypes.GetMembershipSuccess: {
