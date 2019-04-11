@@ -96,6 +96,13 @@ export function reducer(state = initialState, action: UserActions): State {
       return adapter.upsertOne(user, state);
     }
 
+    case UserActionTypes.GetUserRequest: {
+      return {
+        ...state,
+        error: null
+      };
+    }
+
     case UserActionTypes.GetUserSuccess: {
       return adapter.addOne(action.payload.user, state);
     }
