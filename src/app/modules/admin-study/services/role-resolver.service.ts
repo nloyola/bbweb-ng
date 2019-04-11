@@ -26,7 +26,7 @@ export class RoleResolver implements Resolve<Role> {
         select(RoleStoreSelectors.selectAllRoles),
         filter(s => s.length > 0),
         map((roles: Role[]) => {
-          const role =roles.find(s => s.slug === slug);
+          const role = roles.find(s => s.slug === slug);
           return role ? role : throwError('role not found');
         })))
       .pipe(take(1));

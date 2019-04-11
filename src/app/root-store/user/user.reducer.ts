@@ -103,7 +103,6 @@ export function reducer(state = initialState, action: UserActions): State {
     case UserActionTypes.GetUserCountsFailure:
     case UserActionTypes.GetUserFailure:
     case UserActionTypes.UpdateUserFailure:
-      debugger;
       return {
         ...state,
         error: {
