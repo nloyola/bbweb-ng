@@ -100,10 +100,6 @@ export function reducer(state = initialState, action: CentreActions): State {
       });
     }
 
-    case ActionTypes.UpdateCentreAddStudyRequest:
-    case ActionTypes.UpdateCentreRemoveStudyRequest:
-    case ActionTypes.UpdateCentreAddOrUpdateLocationRequest:
-    case ActionTypes.UpdateCentreRemoveLocationRequest:
     case ActionTypes.UpdateCentreRequest: {
       return {
         ...state,
