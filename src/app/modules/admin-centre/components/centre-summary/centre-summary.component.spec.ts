@@ -14,6 +14,7 @@ import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { EntityUpdateComponentBehaviour } from '@test/behaviours/entity-update-component.behaviour';
 import * as faker from 'faker';
+import { CentreUpdateAttribute } from '@app/core/services';
 
 describe('CentreSummaryComponent', () => {
 
@@ -239,7 +240,7 @@ describe('CentreSummaryComponent', () => {
         expect(storeListener.mock.calls.length).toBe(index + 1);
         expect(storeListener.mock.calls[index][0]).toEqual(new CentreStoreActions.UpdateCentreRequest({
           centre,
-          attributeName: testInfo.attribute,
+          attributeName: testInfo.attribute as CentreUpdateAttribute,
           value: testInfo.value
         }));
       });
