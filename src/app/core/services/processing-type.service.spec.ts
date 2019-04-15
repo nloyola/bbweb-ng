@@ -4,9 +4,9 @@ import { PagedReply, SearchParams } from '@app/domain';
 import { ProcessingType, Study } from '@app/domain/studies';
 import { PagedQueryBehaviour } from '@test/behaviours/paged-query.behaviour';
 import { Factory } from '@test/factory';
+import '@test/matchers/server-api.matchers';
 import * as faker from 'faker';
 import { ProcessingTypeService } from '.';
-import { AnnotationType } from '@app/domain/annotations';
 
 describe('ProcessingTypeService', () => {
 
@@ -99,36 +99,106 @@ describe('ProcessingTypeService', () => {
   });
 
   describe('when requesting an event type', () => {
-    let annotationType: AnnotationType;
-    let rawProcessingType: any;
-    let processingType: ProcessingType;
 
-    beforeEach(() => {
-      annotationType = factory.annotationType();
-      rawProcessingType = factory.processingType({ annotationTypes: [annotationType] });
-      processingType = new ProcessingType().deserialize(rawProcessingType);
-    });
+    describe('when using SLUG', () => {
 
-    it('reply is handled correctly', () => {
-      service.get(study.slug, processingType.slug).subscribe(et => {
-        expect(et).toEqual(jasmine.any(ProcessingType));
+      it('reply is handled correctly', () => {
+        const { rawAnnotationType, rawProcessingType, processingType } = createEntities();
+        const obs = service.get(study.slug, processingType.slug);
+        obs.subscribe(et => {
+          expect(et).toEqual(jasmine.any(ProcessingType));
+        });
+        expect(obs).toBeHttpSuccess(httpMock,
+                                    'GET',
+                                    `${BASE_URL}/${study.slug}/${processingType.slug}`,
+                                    rawProcessingType);
       });
 
-      const req = httpMock.expectOne(`${BASE_URL}/${study.slug}/${processingType.slug}`);
-      expect(req.request.method).toBe('GET');
-      req.flush({ status: 'success', data: rawProcessingType });
-      httpMock.verify();
+      it('handles an error reply correctly', () => {
+        const { rawAnnotationType, rawProcessingType, processingType } = createEntities();
+        const obs = service.get(study.slug, processingType.slug);
+        expect(obs).toBeHttpError(httpMock,
+                                  'GET',
+                                  `${BASE_URL}/${study.slug}/${processingType.slug}`,
+                                  'should have been an error response');
+      });
+
+    });
+
+    describe('when using ID', () => {
+
+      it('reply is handled correctly', () => {
+        const { rawAnnotationType, rawProcessingType, processingType } = createEntities();
+        const obs = service.getById(study.id, processingType.id);
+        obs.subscribe(et => {
+          expect(et).toEqual(jasmine.any(ProcessingType));
+        });
+        expect(obs).toBeHttpSuccess(httpMock,
+                                    'GET',
+                                    `${BASE_URL}/id/${study.id}/${processingType.id}`,
+                                    rawProcessingType);
+      });
+
+      it('handles an error reply correctly', () => {
+        const { rawAnnotationType, rawProcessingType, processingType } = createEntities();
+        const obs = service.getById(study.id, processingType.id);
+        expect(obs).toBeHttpError(httpMock,
+                                  'GET',
+                                  `${BASE_URL}/id/${study.id}/${processingType.id}`,
+                                  'should have been an error response');
+      });
+
+    });
+
+  });
+
+  describe('when querying if it is in use', () => {
+
+    it('reply is handled correctly', () => {
+      const { rawAnnotationType, rawProcessingType, processingType } = createEntities();
+      const obs = service.getInUse(processingType.slug);
+      obs.subscribe(et => {
+        expect(et).toEqual(jasmine.any(ProcessingType));
+      });
+      expect(obs).toBeHttpSuccess(httpMock,
+                                  'GET',
+                                  `${BASE_URL}/inuse/${processingType.slug}`,
+                                  rawProcessingType);
     });
 
     it('handles an error reply correctly', () => {
-      service.get(study.slug, processingType.slug).subscribe(
-        () => { fail('should have been an error response'); },
-        err => { expect(err.message).toContain('expected a study object'); }
-      );
+      const { rawAnnotationType, rawProcessingType, processingType } = createEntities();
+      const obs = service.getInUse(processingType.slug);
+      expect(obs).toBeHttpError(httpMock,
+                                'GET',
+                                `${BASE_URL}/inuse/${processingType.slug}`,
+                                'should have been an error response');
+    });
 
-      const req = httpMock.expectOne(`${BASE_URL}/${study.slug}/${processingType.slug}`);
-      req.flush({ status: 'error', data: undefined });
-      httpMock.verify();
+  });
+
+  describe('when querying for the processed specimen definition names', () => {
+
+    it('reply is handled correctly', () => {
+      const { rawAnnotationType, rawProcessingType, processingType } = createEntities();
+      const specimenDefinitionNames = factory.processedSpecimenDefinitionNames([ rawProcessingType ]);
+      const obs = service.getSpecimenDefinitionNames(study.id);
+      obs.subscribe(et => {
+        expect(et).toEqual(jasmine.any(ProcessingType));
+      });
+      expect(obs).toBeHttpSuccess(httpMock,
+                                  'GET',
+                                  `${BASE_URL}/spcdefs/${study.id}`,
+                                  specimenDefinitionNames);
+    });
+
+    it('handles an error reply correctly', () => {
+      const { rawAnnotationType, rawProcessingType, processingType } = createEntities();
+      const obs = service.getSpecimenDefinitionNames(study.id);
+      expect(obs).toBeHttpError(httpMock,
+                                'GET',
+                                `${BASE_URL}/spcdefs/${study.id}`,
+                                'expected a processed specimen definition names array');
     });
 
   });
@@ -136,9 +206,7 @@ describe('ProcessingTypeService', () => {
   describe('when adding an event type', () => {
 
     it('request contains correct JSON and reply is handled correctly', () => {
-      const rawProcessingType = factory.processingType();
-      const processingType = new ProcessingType().deserialize(rawProcessingType);
-
+      const { rawAnnotationType, rawProcessingType, processingType } = createEntities();
       service.add(processingType).subscribe(s => {
         expect(s).toEqual(jasmine.any(ProcessingType));
         expect(s).toEqual(processingType);
@@ -159,9 +227,7 @@ describe('ProcessingTypeService', () => {
     });
 
     it('handles an error reply correctly', () => {
-      const rawProcessingType = factory.processingType();
-      const processingType = new ProcessingType().deserialize(rawProcessingType);
-
+      const { rawAnnotationType, rawProcessingType, processingType } = createEntities();
       service.add(processingType).subscribe(
         () => { fail('should have been an error response'); },
         err => { expect(err.message).toContain('expected a study object'); }
@@ -176,35 +242,51 @@ describe('ProcessingTypeService', () => {
 
   describe('for updating an event type', () => {
 
-    let rawProcessingType: any;
-    let processingType: ProcessingType;
-    let testData: any[];
-    let url: string;
+    let testData;
 
     beforeEach(() => {
-      rawProcessingType = factory.processingType();
-      processingType = new ProcessingType().deserialize(rawProcessingType);
-      url = `${BASE_URL}/update/${processingType.studyId}/${processingType.id}`;
+      const { rawAnnotationType, rawProcessingType, processingType } = createEntities();
+      const url = `${BASE_URL}/update/${processingType.studyId}/${processingType.id}`;
       testData = [
         {
+          rawAnnotationType,
+          rawProcessingType,
+          processingType,
           property: 'name',
-          value: factory.stringNext()
+          value: factory.stringNext(),
+          url
         },
         {
+          rawAnnotationType,
+          rawProcessingType,
+          processingType,
           property: 'description',
-          value: faker.lorem.paragraph()
+          value: faker.lorem.paragraph(),
+          url
         },
         {
+          rawAnnotationType,
+          rawProcessingType,
+          processingType,
           property: 'description',
-          value: undefined
+          value: undefined,
+          url
         },
         {
+          rawAnnotationType,
+          rawProcessingType,
+          processingType,
           property: 'enabled',
-          value: true
+          value: true,
+          url
         },
         {
+          rawAnnotationType,
+          rawProcessingType,
+          processingType,
           property: 'enabled',
-          value: false
+          value: false,
+          url
         }
       ];
 
@@ -212,7 +294,7 @@ describe('ProcessingTypeService', () => {
 
     it('request contains correct JSON and reply is handled correctly', () => {
       testData.forEach((testInfo: any) => {
-        service.update(processingType, testInfo.property, testInfo.value).subscribe(s => {
+        service.update(testInfo.processingType, testInfo.property, testInfo.value).subscribe(s => {
           expect(s).toEqual(jasmine.any(Study));
           expect(s).toEqual(study);
         });
@@ -225,33 +307,37 @@ describe('ProcessingTypeService', () => {
         const expectedJson = {
           property: testInfo.property,
           newValue: expectedValue,
-          expectedVersion: processingType.version
+          expectedVersion: testInfo.processingType.version
         };
 
-        const req = httpMock.expectOne(url);
+        const req = httpMock.expectOne(testInfo.url);
         expect(req.request.method).toBe('POST');
         expect(req.request.body).toEqual(expectedJson);
-        req.flush({ status: 'success', data: rawProcessingType });
+        req.flush({ status: 'success', data: testInfo.rawProcessingType });
         httpMock.verify();
       });
     });
 
     it('handles an error reply correctly', () => {
       testData.forEach(testInfo => {
-        service.update(processingType, testInfo.property, testInfo.value).subscribe(
+        service.update(testInfo.processingType, testInfo.property, testInfo.value).subscribe(
           () => { fail('should have been an error response'); },
           err => { expect(err.message).toContain('expected a study object'); }
         );
 
-        const req = httpMock.expectOne(url);
+        const req = httpMock.expectOne(testInfo.url);
         req.flush({ status: 'error', data: undefined });
         httpMock.verify();
       });
     });
 
     it('throws an exception for invalid input', () => {
+      const { rawAnnotationType, rawProcessingType, processingType } = createEntities();
       testData = [
         {
+          rawAnnotationType,
+          rawProcessingType,
+          processingType,
           property: factory.stringNext(),
           value: factory.stringNext(),
           url: `${BASE_URL}/update/${study.id}`,
@@ -259,7 +345,7 @@ describe('ProcessingTypeService', () => {
         }
       ];
       testData.forEach(testInfo => {
-        expect(() => service.update(processingType, testInfo.property, testInfo.value))
+        expect(() => service.update(testInfo.processingType, testInfo.property, testInfo.value))
           .toThrowError(testInfo.expectedErrMsg);
       });
     });
@@ -329,10 +415,7 @@ describe('ProcessingTypeService', () => {
   describe('for removing an annotation type', () => {
 
     it('request contains correct JSON and reply is handled correctly', () => {
-      const rawAnnotationType = factory.annotationType();
-      const rawProcessingType = factory.processingType({ annotationTypes: [ rawAnnotationType ]});
-      const processingType = new ProcessingType().deserialize(rawProcessingType);
-
+      const { rawAnnotationType, rawProcessingType, processingType } = createEntities();
       service.removeAnnotationType(processingType, processingType.annotationTypes[0].id).subscribe(s => {
         expect(s).toEqual(jasmine.any(Study));
         expect(s).toEqual(study);
@@ -350,10 +433,7 @@ describe('ProcessingTypeService', () => {
     });
 
     it('handles an error reply correctly', () => {
-      const rawAnnotationType = factory.annotationType();
-      const rawProcessingType = factory.processingType({ annotationTypes: [ rawAnnotationType ]});
-      const processingType = new ProcessingType().deserialize(rawProcessingType);
-
+      const { rawAnnotationType, rawProcessingType, processingType } = createEntities();
       service.removeAnnotationType(processingType, processingType.annotationTypes[0].id).subscribe(
         () => { fail('should have been an error response'); },
         err => { expect(err.message).toContain('expected a study object'); }
@@ -373,9 +453,7 @@ describe('ProcessingTypeService', () => {
   describe('for removing an event type', () => {
 
     it('request contains correct JSON and reply is handled correctly', () => {
-      const rawProcessingType = factory.processingType();
-      const processingType = new ProcessingType().deserialize(rawProcessingType);
-
+      const { rawAnnotationType, rawProcessingType, processingType } = createEntities();
       service.removeProcessingType(processingType).subscribe(id => {
         expect(id).toEqual(processingType.id);
       });
@@ -389,9 +467,7 @@ describe('ProcessingTypeService', () => {
     });
 
     it('handles an error reply correctly', () => {
-      const rawProcessingType = factory.processingType();
-      const processingType = new ProcessingType().deserialize(rawProcessingType);
-
+      const { rawAnnotationType, rawProcessingType, processingType } = createEntities();
       service.removeProcessingType(processingType).subscribe(
         () => { fail('should have been an error response'); },
         err => { expect(err.message).toContain('expected a study object'); }
@@ -404,5 +480,16 @@ describe('ProcessingTypeService', () => {
     });
 
   });
+
+  function createEntities() {
+    const rawAnnotationType = factory.annotationType();
+    const rawProcessingType = factory.processingType({ annotationTypes: [rawAnnotationType] });
+    const processingType = new ProcessingType().deserialize(rawProcessingType);
+    return {
+      rawAnnotationType,
+      rawProcessingType,
+      processingType
+    };
+  }
 
 });

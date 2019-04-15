@@ -106,7 +106,7 @@ describe('shipment-store effects', () => {
 
     it('should respond with success', () => {
       const shipment = factory.shipment();
-      const action = ShipmentActions.getShipmentRequest({ slug: shipment.slug });
+      const action = ShipmentActions.getShipmentRequest({ id: shipment.id });
       const completion = ShipmentActions.getShipmentSuccess({ shipment });
       spyOn(shipmentService, 'get').and.returnValue(of(shipment));
 
@@ -124,7 +124,7 @@ describe('shipment-store effects', () => {
           message: 'simulated error'
         }
       };
-      const action = ShipmentActions.getShipmentRequest({ slug: shipment.slug });
+      const action = ShipmentActions.getShipmentRequest({ id: shipment.id });
       const completion = ShipmentActions.getShipmentFailure({ error });
       spyOn(shipmentService, 'get').and.returnValue(throwError(error));
 

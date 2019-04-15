@@ -80,7 +80,7 @@ export class EventTypeService {
           return (reply.data as JSONArray)
             .map((info: JSONObject) => new CollectedSpecimenDefinitionName().deserialize(info));
         }
-        throw new Error('expected a processed specimen definition names array');
+        throw new Error('expected a collected specimen definition names array');
       }));
   }
 

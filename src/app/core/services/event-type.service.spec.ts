@@ -6,6 +6,7 @@ import { PagedQueryBehaviour } from '@test/behaviours/paged-query.behaviour';
 import { Factory } from '@test/factory';
 import * as faker from 'faker';
 import { EventTypeService } from '.';
+import '@test/matchers/server-api.matchers';
 
 describe('EventTypeService', () => {
 
@@ -98,36 +99,81 @@ describe('EventTypeService', () => {
   });
 
   describe('when requesting an event type', () => {
-    let annotationType: any;
-    let rawEventType: any;
-    let eventType: CollectionEventType;
 
-    beforeEach(() => {
-      annotationType = factory.annotationType();
-      rawEventType = factory.collectionEventType({ annotationTypes: [annotationType] });
-      eventType = new CollectionEventType().deserialize(rawEventType);
-    });
+    describe('using a SLUG', () => {
 
-    it('reply is handled correctly', () => {
-      service.get(study.slug, eventType.slug).subscribe(et => {
-        expect(et).toEqual(jasmine.any(CollectionEventType));
+      it('reply is handled correctly', () => {
+        const { rawAnnotationType, rawEventType, eventType } = createEntities();
+        const obs = service.get(study.slug, eventType.slug);
+        obs.subscribe(et => {
+          expect(et).toEqual(jasmine.any(CollectionEventType));
+        });
+        expect(obs).toBeHttpSuccess(httpMock,
+                                    'GET',
+                                    `${BASE_URL}/${study.slug}/${eventType.slug}`,
+                                    rawEventType);
       });
 
-      const req = httpMock.expectOne(`${BASE_URL}/${study.slug}/${eventType.slug}`);
-      expect(req.request.method).toBe('GET');
-      req.flush({ status: 'success', data: rawEventType });
-      httpMock.verify();
+      it('handles an error reply correctly', () => {
+        const { rawAnnotationType, rawEventType, eventType } = createEntities();
+        const obs = service.get(study.slug, eventType.slug);
+        expect(obs).toBeHttpError(httpMock,
+                                  'GET',
+                                  `${BASE_URL}/${study.slug}/${eventType.slug}`,
+                                  'should have been an error response');
+      });
+
+    });
+
+    describe('using an ID', () => {
+
+      it('reply is handled correctly', () => {
+        const { rawAnnotationType, rawEventType, eventType } = createEntities();
+        const obs = service.getById(study.id, eventType.id);
+        obs.subscribe(et => {
+          expect(et).toEqual(jasmine.any(CollectionEventType));
+        });
+        expect(obs).toBeHttpSuccess(httpMock,
+                                    'GET',
+                                    `${BASE_URL}/id/${study.id}/${eventType.id}`,
+                                    rawEventType);
+      });
+
+      it('handles an error reply correctly', () => {
+        const { rawAnnotationType, rawEventType, eventType } = createEntities();
+        const obs = service.getById(study.id, eventType.id);
+        expect(obs).toBeHttpError(httpMock,
+                                  'GET',
+                                  `${BASE_URL}/id/${study.id}/${eventType.id}`,
+                                  'should have been an error response');
+      });
+
+    });
+
+  });
+
+  describe('when querying for the collected specimen definition names', () => {
+
+    it('reply is handled correctly', () => {
+      const { rawAnnotationType, rawEventType, eventType } = createEntities();
+      const specimenDefinitionNames = factory.collectedSpecimenDefinitionNames([ rawEventType ]);
+      const obs = service.getSpecimenDefinitionNames(study.id);
+      obs.subscribe(et => {
+        expect(et).toEqual(jasmine.any(CollectionEventType));
+      });
+      expect(obs).toBeHttpSuccess(httpMock,
+                                  'GET',
+                                  `${BASE_URL}/spcdefs/${study.id}`,
+                                  specimenDefinitionNames);
     });
 
     it('handles an error reply correctly', () => {
-      service.get(study.slug, eventType.slug).subscribe(
-        () => { fail('should have been an error response'); },
-        err => { expect(err.message).toContain('expected a study object'); }
-      );
-
-      const req = httpMock.expectOne(`${BASE_URL}/${study.slug}/${eventType.slug}`);
-      req.flush({ status: 'error', data: undefined });
-      httpMock.verify();
+      const { rawAnnotationType, rawEventType, eventType } = createEntities();
+      const obs = service.getSpecimenDefinitionNames(study.id);
+      expect(obs).toBeHttpError(httpMock,
+                                'GET',
+                                `${BASE_URL}/spcdefs/${study.id}`,
+                                'expected a collected specimen definition names array');
     });
 
   });
@@ -509,5 +555,13 @@ describe('EventTypeService', () => {
     });
 
   });
+
+  function createEntities() {
+    const rawAnnotationType = factory.annotationType();
+    const rawEventType = factory.collectionEventType({ annotationTypes: [rawAnnotationType] });
+    const eventType = new CollectionEventType().deserialize(rawEventType);
+
+    return { rawAnnotationType, rawEventType, eventType };
+  }
 
 });

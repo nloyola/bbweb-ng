@@ -6,6 +6,7 @@ import { UserState, UserCounts } from '@app/domain/users';
 import * as _ from 'lodash';
 import faker = require('faker');
 import { ShipmentState } from '@app/domain/shipments';
+import { SpecimenState } from '@app/domain/participants';
 
 enum DomainEntities {
 
@@ -71,7 +72,7 @@ export class Factory {
     return dflt ? dflt : this.user();
   }
 
-  membershipBase(options?: any): any {
+  membershipBase(options: any = {}): any {
     const defaults = this.membershipBaseDefaults();
     const m = {
       ...defaults,
@@ -87,11 +88,11 @@ export class Factory {
     return dflt ? dflt : this.membershipBase();
   }
 
-  userMembership(options?: any): any {
+  userMembership(options: any = {}): any {
     return this.membershipBase(options);
   }
 
-  membership(options?: any): any {
+  membership(options: any = {}): any {
     return this.membershipBase({
       ...options,
       userData: []
@@ -114,7 +115,7 @@ export class Factory {
     return item;
   }
 
-  role(options?: any): any {
+  role(options: any = {}): any {
     const role = {
       ...{ userData: [this.entityInfo()] },
       ...this.accessItem(options),
@@ -135,7 +136,7 @@ export class Factory {
     return userRole;
   }
 
-  study(options?: any): any {
+  study(options: any = {}): any {
     const defaults = {
       ...{
         id:              this.domainEntityIdNext(DomainEntities.STUDY),
@@ -398,7 +399,7 @@ export class Factory {
     };
   }
 
-  centre(options?: any): any {
+  centre(options: any = {}): any {
     const s = {
       ...{
         id:              this.domainEntityIdNext(DomainEntities.CENTRE),
@@ -484,14 +485,21 @@ export class Factory {
     };
   }
 
-  specimenDefinitionNames(eventTypes: any[]): any {
+  collectedSpecimenDefinitionNames(eventTypes: any[]): any {
     return eventTypes.map(et => ({
       ...this.domainEntityName(et),
       specimenDefinitionNames: et.specimenDefinitions.map(sd => this.domainEntityName(sd))
     }));
   }
 
-  shipment(options?: any): any {
+  processedSpecimenDefinitionNames(processingTypes: any[]): any {
+    return processingTypes.map(pt => ({
+      ...this.domainEntityName(pt),
+      specimenDefinitionName: this.domainEntityName(pt.output.specimenDefinition)
+    }));
+  }
+
+  shipment(options: any = {}): any {
     const loc = this.location();
     const ctr = this.centre({ locations: [ loc ]});
     const locationInfo = {
@@ -514,6 +522,214 @@ export class Factory {
     this.defaultEntities.set(DomainEntities.SHIPMENT, s);
     return s;
   }
+
+  defaultShipment(): any {
+    const dflt = this.defaultEntities.get(DomainEntities.SHIPMENT);
+    return dflt ? dflt : this.shipment();
+  }
+
+  /**
+   * If {@link test.services.Factory#defaultStudy defaultStudy} has annotation types, then participant will
+   * have annotations based on the study's, unless options.annotationTypes is defined.
+   */
+  participant(options: any = {}) {
+    const study = this.defaultStudy();
+    const uniqueId = this.domainEntityIdNext(DomainEntities.PARTICIPANT);
+    const p = {
+      ...{
+        id:          this.domainEntityIdNext(DomainEntities.PARTICIPANT),
+        version:     0,
+        studyId:     study.id,
+        uniqueId,
+        annotations: []
+      },
+      slug: this.slugify(uniqueId),
+      ...options
+    };
+    this.defaultEntities.set(DomainEntities.PARTICIPANT, p);
+    return p;
+  }
+
+  defaultParticipant(): any {
+    const dflt = this.defaultEntities.get(DomainEntities.PARTICIPANT);
+    return dflt ? dflt : this.participant();
+  }
+
+  /**
+   * @param options.value The value for the annotation.
+   */
+  annotation(options: any = {}, annotationType?: any) {
+    const annotationTypeId = annotationType ? annotationType.id : undefined;
+    const valueType = annotationType ? annotationType.valueType : undefined;
+    const annotation = {
+      ...{
+        annotationTypeId: null,
+        stringValue:      null,
+        numberValue:      null,
+        selectedValues:   []
+      },
+      annotationTypeId,
+      valueType,
+      ...options
+    };
+
+    const value = options ? options.value : undefined;
+    if ((value !== undefined) && (valueType !== undefined)) {
+      switch (valueType) {
+      case ValueTypes.Text:
+      case ValueTypes.DateTime:
+        annotation.stringValue = options.value;
+        break;
+
+      case ValueTypes.Number:
+        annotation.numberValue = options.value;
+        break;
+
+        case ValueTypes.Select:
+          if ((value !== undefined) && (value !== '')) {
+            const maxValueCount = annotationType ? annotationType.maxValueCount : undefined;
+            if (maxValueCount === 1) {
+              annotation.selectedValues =  [ options.value ];
+            } else if (maxValueCount === 2) {
+              annotation.selectedValues = options.value;
+            } else {
+              throw new Error('invalid max value count for annotation: ' + annotationType.maxValueCount);
+            }
+          }
+          break;
+
+        default:
+          throw new Error('invalid annotation value type: ' + annotationType.valueType);
+      }
+    }
+
+    return annotation;
+  }
+
+  centreLocationInfo(centre: any) {
+    if (!centre.locations || (centre.locations.length < 1)) {
+      throw new Error('centre does not have any locations');
+    }
+    return {
+      centreId:   centre.id,
+      locationId: centre.locations[0].id,
+      name:       centre.name + ': ' + centre.locations[0].name
+    };
+  }
+
+
+  specimen(options: any = {}) {
+    const eventType = this.collectionEventType({
+      specimenDefinitions: [ this.collectedSpecimenDefinition() ]
+    });
+    const ctr = this.centre({ locations: [ this.location() ]});
+    const inventoryId = this.domainEntityNameNext(DomainEntities.SPECIMEN);
+    const specimen = {
+      ...{
+        id:                    this.domainEntityIdNext(DomainEntities.SPECIMEN),
+        version:         0,
+        slug:                  this.slugify(inventoryId),
+        inventoryId:           inventoryId,
+        specimenDefinitionId:  null,
+        originLocationInfo:    null,
+        locationInfo:          null,
+        timeCreated:           faker.date.recent(10),
+        amount:                1,
+        state:                 SpecimenState.USABLE,
+        eventTypeName:         eventType.name
+      },
+      ...options
+    };
+
+    if (eventType.specimenDefinitions && (eventType.specimenDefinitions.length > 0)) {
+      specimen.specimenDefinitionId = eventType.specimenDefinitions[0].id;
+    }
+
+    if (ctr.locations && (ctr.locations.length > 0)) {
+      specimen.originLocationInfo = this.centreLocationInfo(ctr);
+      specimen.locationInfo = specimen.originLocationInfo;
+    }
+
+    this.defaultEntities.set(DomainEntities.SPECIMEN, specimen);
+    return specimen;
+  }
+
+  defaultSpecimen() {
+    const dflt = this.defaultEntities.get(DomainEntities.SPECIMEN);
+    return dflt ? dflt : this.specimen();
+  }
+
+  collectionEvent(options: any = {}) {
+    const participant = this.defaultParticipant();
+    const collectionEventType = this.defaultCollectionEventType();
+    const visitNumber = 1;
+    const ce = {
+      ...{
+        id:              this.domainEntityIdNext(DomainEntities.COLLECTION_EVENT),
+        version:         0,
+        participantId:   participant.id,
+        participantSlug: participant.slug,
+        eventTypeId:     collectionEventType.id,
+        eventTypeSlug:   collectionEventType.slug,
+        timeCompleted:   faker.date.recent(10),
+        slug:            this.slugify('visit-number-' + visitNumber),
+        visitNumber:     visitNumber,
+        annotations:     []
+      },
+      ...options
+    };
+
+    if (!options.annotations) {
+      // assign annotation types
+      if (options.annotationTypes) {
+        ce.annotations = this.annotations(options.annotationTypes);
+      } else if (collectionEventType.annotationTypes) {
+        ce.annotations = this.annotations(collectionEventType.annotationTypes);
+      }
+    }
+
+    this.defaultEntities.set(DomainEntities.COLLECTION_EVENT,  ce);
+    return ce;
+  }
+
+  defaultCollectionEvent() {
+    const dflt = this.defaultEntities.get(DomainEntities.COLLECTION_EVENT);
+    return dflt ? dflt : this.collectionEvent();
+  }
+
+  annotations(annotationTypes: any[]) {
+    return annotationTypes.map(annotationType => {
+      const value = this.valueForAnnotation(annotationType);
+      return this.annotation({ value: value }, annotationType);
+    });
+  }
+
+  valueForAnnotation(annotationType: any) {
+    switch (annotationType.valueType) {
+
+      case ValueTypes.Text:
+        return this.stringNext();
+
+      case ValueTypes.Number:
+        return faker.random.number({precision: 0.05}).toString();
+
+      case ValueTypes.DateTime:
+        // has to be in UTC format, with no seconds or milliseconds
+        return faker.date.past(1);
+
+      case ValueTypes.Select:
+        if (annotationType.maxValueCount === 1) {
+          return annotationType.options[0];
+        } else if (annotationType.maxValueCount > 1) {
+          return annotationType.options;
+        } else {
+          throw new Error('invalid max value count: ' + annotationType.maxValueCount);
+        }
+    }
+
+    throw new Error('invalid value type: ' + annotationType.valueType);
+  }
+
 
   // this function taken from here:
   // https://gist.github.com/mathewbyrne/1280286

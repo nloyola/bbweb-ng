@@ -15,9 +15,9 @@ export class ShipmentStoreEffects {
   @Effect()
   getRequest$ = this.actions$.pipe(
     ofType(ShipmentActions.getShipmentRequest.type),
-    map(action => action.slug),
+    map(action => action.id),
     switchMap(
-      slug => this.shipmentService.get(slug).pipe(
+      id => this.shipmentService.get(id).pipe(
         map(shipment => ShipmentActions.getShipmentSuccess({ shipment })),
         catchError(error => observableOf(ShipmentActions.getShipmentFailure({ error }))))
     )
@@ -40,8 +40,8 @@ export class ShipmentStoreEffects {
     ofType(ShipmentActions.addShipmentRequest.type),
     map(action => action.shipment),
     switchMap(
-      shipment =>
-        this.shipmentService.add(shipment).pipe(
+      sh =>
+        this.shipmentService.add(sh).pipe(
           map(shipment => ShipmentActions.addShipmentSuccess({ shipment })),
           catchError(error => observableOf(ShipmentActions.addShipmentFailure({ error }))))
     )

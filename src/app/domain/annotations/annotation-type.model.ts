@@ -68,4 +68,12 @@ export class AnnotationType extends DomainEntity implements IAnnotationType {
     return this.valueType === ValueTypes.Select;
   }
 
+  isSingleSelect() {
+    return (this.valueType === ValueTypes.Select) && (this.maxValueCount === 1);
+  }
+
+  isMultipleSelect() {
+    return (this.valueType === ValueTypes.Select) && (this.maxValueCount !== 1);
+  }
+
 }

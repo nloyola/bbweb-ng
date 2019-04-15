@@ -70,7 +70,7 @@ describe('StudyProcessingComponent', () => {
       if (hasSpecimenDefinitions) {
         store.dispatch(new EventTypeStoreActions.GetSpecimenDefinitionNamesSuccess({
           studySlug: study.slug,
-          specimenDefinitionNames: factory.specimenDefinitionNames([ eventType ])
+          specimenDefinitionNames: factory.collectedSpecimenDefinitionNames([ eventType ])
         }));
       }
       flush();

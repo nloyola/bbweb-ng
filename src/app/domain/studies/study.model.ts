@@ -1,9 +1,11 @@
-import { HasDescription, HasName, HasSlug, IEntityInfo, IEntitySet, JSONArray, JSONObject } from '@app/domain';
+import { ConcurrencySafeEntity, IConcurrencySafeEntity, HasDescription, HasName, HasSlug, IEntityInfo, IEntitySet, JSONArray, JSONObject } from '@app/domain';
 import { AnnotationType } from '@app/domain/annotations/annotation-type.model';
-import { ConcurrencySafeEntity, IConcurrencySafeEntity } from '@app/domain/concurrency-safe-entity.model';
 import { IEntityInfoAndState } from '../entity-info-and-state.model';
 import { StudyState } from './study-state.enum';
 
+/**
+ * A Study represents a collection of participants and specimens collected for a particular research study.
+ */
 export interface IStudy extends IConcurrencySafeEntity, HasSlug, HasName, HasDescription {
 
   /**
@@ -23,9 +25,6 @@ export type IStudyInfoAndState = IEntityInfoAndState<IStudy, StudyState>;
 
 export type IStudyInfoSet = IEntitySet<IStudy>;
 
-/*
- * A Study represents a collection of participants and specimens collected for a particular research study.
- */
 export class Study extends ConcurrencySafeEntity implements IStudy {
 
   slug: string;

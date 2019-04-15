@@ -49,6 +49,43 @@ export class Shipment extends ConcurrencySafeEntity {
   timeUpacked?: Date;
   timeCompleted?: Date;
 
+  /**
+   * A predicate to test if the shipment's state is CREATED.
+   */
+  isCreated() {
+    return this.state === ShipmentState.CREATED;
+  }
+
+  /**
+   * A predicate to test if the shipment's state is PACKED.
+   */
+  isPacked() {
+    return this.state === ShipmentState.PACKED;
+  }
+
+  /**
+   * A predicate to test if the shipment's state is SENT.
+   */
+  isSent() {
+    return this.state === ShipmentState.SENT;
+  }
+
+  /**
+   * A predicate to test if the shipment's state is UNPACKED.
+   */
+  isUnpacked() {
+    return this.state === ShipmentState.UNPACKED;
+  }
+
+  /**
+   * A predicate to test if the shipment's state is NOT CREATED or UNPACKED.
+   *
+   * @returns {boolean} TRUE if the state is NOT CREATED or UNPACKED.
+   */
+  isNotCreatedNorUnpacked() {
+    return (this.state !== ShipmentState.CREATED) && (this.state !== ShipmentState.UNPACKED);
+  }
+
   deserialize(input: JSONObject) {
     super.deserialize(input);
     if (input.fromLocationInfo) {
@@ -59,6 +96,14 @@ export class Shipment extends ConcurrencySafeEntity {
       this.toLocationInfo =
         new CentreLocationInfo().deserialize(input.toLocationInfo as JSONObject);
     }
+
+    [ 'timePacked', 'timeSent', 'timeReceived', 'timeUpacked', 'timeCompleted' ]
+      .forEach(time => {
+        if (input[time]) {
+          this[time] = new Date(input[time] as string);
+        }
+      });
+
     return this;
   }
 }
