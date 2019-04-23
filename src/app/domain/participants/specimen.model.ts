@@ -1,6 +1,7 @@
 import { ConcurrencySafeEntity, HasSlug, IConcurrencySafeEntity, JSONArray, JSONObject } from '@app/domain';
 import { SpecimenState } from './specimen-state.enum';
 import { ICentreLocationInfo, CentreLocationInfo } from '../centres';
+import { SpecimenDefinition, CollectedSpecimenDefinition } from '../studies';
 
 export interface ISpecimen extends IConcurrencySafeEntity, HasSlug {
   /**
@@ -92,6 +93,31 @@ export class Specimen extends ConcurrencySafeEntity implements ISpecimen {
   isDefaultAmount?: boolean;
   state: SpecimenState;
   eventTypeName: string;
+  _specimenDefinition: SpecimenDefinition;
+
+
+  set specimenDefinition(specimenDefinition: SpecimenDefinition) {
+    this._specimenDefinition = specimenDefinition;
+  }
+ /**
+  * Returns the name for a specimen of this type.
+  */
+  name(): string {
+    this.checkSpecimenDefinitionDefined();
+    return this._specimenDefinition.name;
+  }
+
+
+  /**
+   * Returns the default amount that should be collected for a specimen of this type.
+   */
+  defaultAmount(): number {
+    this.checkSpecimenDefinitionDefined();
+    if (this._specimenDefinition instanceof CollectedSpecimenDefinition) {
+      return (this._specimenDefinition as CollectedSpecimenDefinition).amount;
+    }
+    throw new Error('specimen definition is not for a collected specimen');
+  }
 
   deserialize(input: JSONObject) {
     super.deserialize(input);
@@ -109,5 +135,11 @@ export class Specimen extends ConcurrencySafeEntity implements ISpecimen {
     }
 
     return this;
+  }
+
+  private checkSpecimenDefinitionDefined() {
+    if (this._specimenDefinition === undefined) {
+      throw new Error('specimen spec not assigned');
+    }
   }
 }
