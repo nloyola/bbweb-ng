@@ -5,7 +5,7 @@ import { StudyCounts, StudyState } from '@app/domain/studies';
 import { UserState, UserCounts } from '@app/domain/users';
 import * as _ from 'lodash';
 import faker = require('faker');
-import { ShipmentState } from '@app/domain/shipments';
+import { ShipmentState, ShipmentItemState } from '@app/domain/shipments';
 import { SpecimenState } from '@app/domain/participants';
 
 enum DomainEntities {
@@ -510,7 +510,7 @@ export class Factory {
     const s = {
       ...{
         id:               this.domainEntityIdNext(DomainEntities.SHIPMENT),
-        state:            ShipmentState.CREATED,
+        state:            ShipmentState.Created,
         courierName:      this.stringNext(),
         trackingNumber:   this.stringNext(),
         fromLocationInfo: locationInfo,
@@ -525,6 +525,25 @@ export class Factory {
 
   defaultShipment(): any {
     const dflt = this.defaultEntities.get(DomainEntities.SHIPMENT);
+    return dflt ? dflt : this.shipment();
+  }
+
+  shipmentSpecimen(options: any = {}): any {
+    const ss = {
+      ...{
+        id:         this.domainEntityIdNext(DomainEntities.SHIPMENT_SPECIMEN),
+        state:      ShipmentItemState.Present,
+        shipmentId: this.defaultShipment().id,
+        specimenId: this.defaultSpecimen().id
+      },
+      ...options,
+    };
+    this.defaultEntities.set(DomainEntities.SHIPMENT_SPECIMEN, ss);
+    return ss;
+  }
+
+  defaultShipmentSpecimen(): any {
+    const dflt = this.defaultEntities.get(DomainEntities.SHIPMENT_SPECIMEN);
     return dflt ? dflt : this.shipment();
   }
 
@@ -616,7 +635,6 @@ export class Factory {
       name:       centre.name + ': ' + centre.locations[0].name
     };
   }
-
 
   specimen(options: any = {}) {
     const eventType = this.collectionEventType({

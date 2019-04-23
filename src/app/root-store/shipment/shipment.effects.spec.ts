@@ -2,14 +2,15 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { ShipmentService } from '@app/core/services';
 import { SearchParams } from '@app/domain';
-import { Factory } from '@test/factory';
+import { Specimen } from '@app/domain/participants';
+import { Shipment, ShipmentItemState } from '@app/domain/shipments';
 import { provideMockActions } from '@ngrx/effects/testing';
-import { cold, hot } from 'jasmine-marbles';
-import { Observable, of, throwError } from 'rxjs';
-import { ShipmentStoreEffects } from './shipment.effects';
-import { Shipment } from '@app/domain/shipments';
 import { Action } from '@ngrx/store';
+import { Factory } from '@test/factory';
+import { cold, hot, initTestScheduler, getTestScheduler, resetTestScheduler } from 'jasmine-marbles';
+import { Observable, of, throwError } from 'rxjs';
 import * as ShipmentActions from './shipment.actions';
+import { ShipmentStoreEffects } from './shipment.effects';
 
 describe('shipment-store effects', () => {
 
@@ -144,11 +145,9 @@ describe('shipment-store effects', () => {
     beforeEach(() => {
       shipment = factory.shipment();
       action = ShipmentActions.updateShipmentRequest({
-        request: {
-          shipment,
-          attributeName: 'courierName',
-          value: factory.stringNext()
-        }
+        shipment,
+        attributeName: 'courierName',
+        value: factory.stringNext()
       });
       shipmentListener = jest.spyOn(shipmentService, 'update');
     });
@@ -173,6 +172,185 @@ describe('shipment-store effects', () => {
       shipmentListener.mockReturnValue(throwError(error));
       actions = hot('--a-', { a: action });
       expect(effects.updateRequest$).toBeObservable(cold('--b', { b: completion }));
+    });
+  });
+
+  describe('addSpecimensEffect', () => {
+
+    let specimens: Specimen[];
+    let shipment: Shipment;
+    let action: Action;
+    let shipmentListener: any;
+
+    beforeEach(() => {
+      specimens = [ factory.specimen() ];
+      shipment = factory.shipment();
+      action = ShipmentActions.addSpecimensRequest({
+        shipment,
+        specimenInventoryIds: specimens.map(s => s.inventoryId)
+      });
+      shipmentListener = jest.spyOn(shipmentService, 'addSpecimens');
+    });
+
+    it('should respond with success', () => {
+      const completion = ShipmentActions.addSpecimensSuccess({ shipment });
+
+      shipmentListener.mockReturnValue(of(shipment));
+      actions = hot('--a-', { a: action });
+      expect(effects.addSpecimensRequest$).toBeObservable(cold('--b', { b: completion }));
+    });
+
+    it('should respond with failure', () => {
+      const error = {
+        status: 404,
+        error: {
+          message: 'simulated error'
+        }
+      };
+      const completion = ShipmentActions.addSpecimensFailure({ error });
+
+      shipmentListener.mockReturnValue(throwError(error));
+      actions = hot('--a-', { a: action });
+      expect(effects.addSpecimensRequest$).toBeObservable(cold('--b', { b: completion }));
+    });
+  });
+
+  describe('canAddSpecimenEffect', () => {
+
+    let specimen: Specimen;
+    let action: Action;
+    let shipmentListener: any;
+
+    beforeEach(() => {
+      specimen = factory.specimen();
+      action = ShipmentActions.canAddSpecimenRequest({ inventoryId: specimen.inventoryId });
+      shipmentListener = jest.spyOn(shipmentService, 'canAddSpecimen');
+    });
+
+    it('should respond with success', () => {
+      const completion = ShipmentActions.canAddSpecimenSuccess({ specimen });
+
+      shipmentListener.mockReturnValue(of(specimen));
+      actions = hot('--a-', { a: action });
+      expect(effects.canAddSpecimenRequest$).toBeObservable(cold('--b', { b: completion }));
+    });
+
+    it('should respond with failure', () => {
+      const error = {
+        status: 404,
+        error: {
+          message: 'simulated error'
+        }
+      };
+      const completion = ShipmentActions.canAddSpecimenFailure({ error });
+
+      shipmentListener.mockReturnValue(throwError(error));
+      actions = hot('--a-', { a: action });
+      expect(effects.canAddSpecimenRequest$).toBeObservable(cold('--b', { b: completion }));
+    });
+  });
+
+  describe('tagSpecimensEffect', () => {
+
+    let specimens: Specimen[];
+    let shipment: Shipment;
+    let action: Action;
+    const tagData = {};
+
+    beforeEach(() => {
+      specimens = [ factory.specimen() ];
+      shipment = factory.shipment();
+
+      tagData[ShipmentItemState.Present]  = {
+        methodName: 'tagSpecimensAsPresent',
+        listener: jest.spyOn(shipmentService, 'tagSpecimensAsPresent')
+      };
+      tagData[ShipmentItemState.Received] = {
+        methodName: 'tagSpecimensAsReceived',
+        listener: jest.spyOn(shipmentService, 'tagSpecimensAsReceived')
+      };
+      tagData[ShipmentItemState.Missing]  = {
+        methodName: 'tagSpecimensAsMissing',
+        listener: jest.spyOn(shipmentService, 'tagSpecimensAsMissing')
+      };
+      tagData[ShipmentItemState.Extra]    = {
+        methodName: 'tagSpecimensAsExtra',
+        listener: jest.spyOn(shipmentService, 'tagSpecimensAsExtra')
+      };
+    });
+
+    it('should respond with success', () => {
+      Object.keys(tagData).forEach(tag => {
+        initTestScheduler();
+        action = ShipmentActions.tagSpecimensRequest({
+          shipment,
+          specimenInventoryIds: specimens.map(s => s.inventoryId),
+          specimenTag: tag as ShipmentItemState
+        });
+
+        tagData[tag].listener.mockReturnValue(of(shipment));
+        actions = hot('--a-', { a: action });
+
+        const completion = ShipmentActions.tagSpecimensSuccess({ shipment });
+        expect(effects.tagSpecimensRequest$).toBeObservable(cold('--b', { b: completion }));
+        getTestScheduler().flush();
+      });
+    });
+
+    it('should respond with failure', () => {
+      const error = {
+        status: 404,
+        error: {
+          message: 'simulated error'
+        }
+      };
+      Object.keys(tagData).forEach(tag => {
+        initTestScheduler();
+        action = ShipmentActions.tagSpecimensRequest({
+          shipment,
+          specimenInventoryIds: specimens.map(s => s.inventoryId),
+          specimenTag: tag as ShipmentItemState
+        });
+        const completion = ShipmentActions.tagSpecimensFailure({ error });
+
+        tagData[tag].listener.mockReturnValue(throwError(error));
+        actions = hot('--a-', { a: action });
+        expect(effects.tagSpecimensRequest$).toBeObservable(cold('--b', { b: completion }));
+        getTestScheduler().flush();
+      });
+    });
+  });
+
+  describe('removeShipmentRequestEffect', () => {
+
+    let shipment: Shipment;
+    let action: Action;
+
+    beforeEach(() => {
+      shipment = factory.shipment();
+      action = ShipmentActions.removeShipmentRequest({ shipment });
+    });
+
+    it('should respond with success', () => {
+      const completion = ShipmentActions.removeShipmentSuccess({ shipmentId: shipment.id });
+
+      jest.spyOn(shipmentService, 'remove').mockReturnValue(of(shipment.id));
+      actions = hot('--a-', { a: action });
+      expect(effects.removeShipmentRequest$).toBeObservable(cold('--b', { b: completion }));
+    });
+
+    it('should respond with failure', () => {
+      const error = {
+        status: 404,
+        error: {
+          message: 'simulated error'
+        }
+      };
+      const completion = ShipmentActions.removeShipmentFailure({ error });
+
+      jest.spyOn(shipmentService, 'remove').mockReturnValue(throwError(error));
+      actions = hot('--a-', { a: action });
+      expect(effects.removeShipmentRequest$).toBeObservable(cold('--b', { b: completion }));
     });
   });
 

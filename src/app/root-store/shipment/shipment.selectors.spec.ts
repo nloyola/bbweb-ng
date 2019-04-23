@@ -6,11 +6,7 @@ import { EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 
 describe('shipment-store selectors', () => {
 
-  let factory: Factory;
-
-  beforeEach(() => {
-    factory = new Factory();
-  });
+  const factory = new Factory();
 
   it('selectShipmentLastAdded', () => {
     const shipment = factory.shipment();
@@ -22,6 +18,18 @@ describe('shipment-store selectors', () => {
     };
 
     expect(ShipmentStoreSelectors.selectShipmentLastAddedId(state)).toBe(shipment.id);
+  });
+
+  it('selectShipmentLastRemoved', () => {
+    const shipment = factory.shipment();
+    const state = {
+      shipment: {
+        ...ShipmentStoreReducer.initialState,
+        lastRemovedId: shipment.id
+      }
+    };
+
+    expect(ShipmentStoreSelectors.selectShipmentLastRemovedId(state)).toBe(shipment.id);
   });
 
   it('selectShipmentSearchActive', () => {
@@ -45,22 +53,6 @@ describe('shipment-store selectors', () => {
     };
 
     expect(ShipmentStoreSelectors.selectShipmentLastSearch(state)).toBe(searchParams);
-  });
-
-  it('selectShipmentLastAdded', () => {
-    const state = {
-      shipment: {
-        ...ShipmentStoreReducer.initialState,
-        error: {
-          status: 404,
-          error: {
-            message: 'error'
-          }
-        }
-      }
-    };
-
-    expect(ShipmentStoreSelectors.selectShipmentError(state)).toBeTruthy();
   });
 
   it('selectShipmentSearchReplies', () => {
@@ -178,6 +170,17 @@ describe('shipment-store selectors', () => {
     };
 
     expect(ShipmentStoreSelectors.selectShipmentLastAdded(state)).toEqual(shipment);
+  });
+
+  it('selectCanAddInventoryId', () => {
+    const specimen = factory.specimen();
+    const state = {
+      shipment: {
+        ...ShipmentStoreReducer.initialState,
+        canAddSpecimenInventoryIds: [ specimen.inventoryId as string ]
+      }
+    };
+    expect(ShipmentStoreSelectors.selectCanAddInventoryId(state)).toEqual([ specimen.inventoryId ]);
   });
 
 });

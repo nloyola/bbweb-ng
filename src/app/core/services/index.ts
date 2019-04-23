@@ -6,6 +6,7 @@ export * from './participant.service';
 export * from './processing-type.service';
 export * from './role.service';
 export * from './shipment.service';
+export * from './shipment-specimen.service';
 export * from './spinner.service';
 export * from './study.service';
 export * from './user.service';

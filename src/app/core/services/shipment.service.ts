@@ -1,11 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { JSONArray, JSONObject, Location, PagedReply, SearchParams } from '@app/domain';
+import { JSONArray, JSONObject, PagedReply, SearchParams } from '@app/domain';
 import { ApiReply } from '@app/domain/api-reply.model';
+import { Specimen } from '@app/domain/participants';
 import { Shipment, ShipmentItemState } from '@app/domain/shipments';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Specimen } from '@app/domain/participants';
 
 export type ShipmentUpdateAttribute =
   'courierName'
@@ -70,24 +70,6 @@ export class ShipmentService {
       map(this.replyToShipment));
   }
 
-  /**
-   * Checks if a Specimen inventory ID can be added to a shipment. It can be added if:
-   *
-   *  - it belongs to a valid specimen
-   *  - the specimen is located at the same location that the shipment is coming from
-   *  - the specimen is not already part of the shipment
-   */
-  canAddSpecimen(inventoryId: string): Observable<Specimen> {
-    return this.http.get<ApiReply>(`${this.BASE_URL}/specimens/canadd/${inventoryId}`).pipe(
-      // delay(2000),
-      map(reply => {
-        if (reply && reply.data) {
-          return new Specimen().deserialize(reply.data as JSONObject);
-        }
-        throw new Error('expected a specimen object');
-      }));
-  }
-
   update(
     shipment: Shipment,
     attributeName: ShipmentUpdateAttribute,
@@ -150,6 +132,24 @@ export class ShipmentService {
   }
 
   /**
+   * Checks if a Specimen inventory ID can be added to a shipment. It can be added if:
+   *
+   *  - it belongs to a valid specimen
+   *  - the specimen is located at the same location that the shipment is coming from
+   *  - the specimen is not already part of the shipment
+   */
+  canAddSpecimen(inventoryId: string): Observable<Specimen> {
+    return this.http.get<ApiReply>(`${this.BASE_URL}/specimens/canadd/${inventoryId}`).pipe(
+      // delay(2000),
+      map(reply => {
+        if (reply && reply.data) {
+          return new Specimen().deserialize(reply.data as JSONObject);
+        }
+        throw new Error('expected a specimen object');
+      }));
+  }
+
+  /**
    * Adds Specimens to a Shipment.
    */
   addSpecimens(
@@ -171,7 +171,7 @@ export class ShipmentService {
    * <p>Note that only specimens in unpacked shipments can have the state updated.
    */
   tagSpecimensAsPresent(shipment: Shipment, inventoryIds: string[]): Observable<Shipment> {
-    return this.tagSpecimens(shipment, inventoryIds, ShipmentItemState.PRESENT);
+    return this.tagSpecimens(shipment, inventoryIds, ShipmentItemState.Present);
   }
 
   /**
@@ -180,7 +180,7 @@ export class ShipmentService {
    * <p>Note that only specimens in unpacked shipments can have the state updated.
    */
   tagSpecimensAsReceived(shipment: Shipment, inventoryIds: string[]): Observable<Shipment> {
-    return this.tagSpecimens(shipment, inventoryIds, ShipmentItemState.RECEIVED);
+    return this.tagSpecimens(shipment, inventoryIds, ShipmentItemState.Received);
   }
 
   /**
@@ -189,7 +189,7 @@ export class ShipmentService {
    * <p>Note that only specimens in unpacked shipments can have the state updated.
    */
   tagSpecimensAsMissing(shipment: Shipment, inventoryIds: string[]): Observable<Shipment> {
-    return this.tagSpecimens(shipment, inventoryIds, ShipmentItemState.MISSING);
+    return this.tagSpecimens(shipment, inventoryIds, ShipmentItemState.Missing);
   }
 
   /**
@@ -198,7 +198,7 @@ export class ShipmentService {
    * <p>Note that only specimens in unpacked shipments can have the state updated.
    */
   tagSpecimensAsExtra(shipment: Shipment, inventoryIds: string[]): Observable<Shipment> {
-    return this.tagSpecimens(shipment, inventoryIds, ShipmentItemState.EXTRA);
+    return this.tagSpecimens(shipment, inventoryIds, ShipmentItemState.Extra);
   }
 
 

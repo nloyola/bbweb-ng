@@ -5,6 +5,8 @@ import { Observable, of as observableOf } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import * as ShipmentActions from './shipment.actions';
 import { ShipmentService, ShipmentUpdateAttribute } from '@app/core/services';
+import { ShipmentItemState, Shipment } from '@app/domain/shipments';
+import { Specimen } from '@app/domain/participants';
 
 @Injectable()
 export class ShipmentStoreEffects {
@@ -50,13 +52,68 @@ export class ShipmentStoreEffects {
   @Effect()
   updateRequest$ = this.actions$.pipe(
     ofType(ShipmentActions.updateShipmentRequest.type),
-    map(action => action.request),
     switchMap(
-      request =>
-        this.shipmentService.update(request.shipment, request.attributeName, request.value).pipe(
+      action =>
+        this.shipmentService.update(action.shipment, action.attributeName, action.value).pipe(
           map(shipment => ShipmentActions.updateShipmentSuccess({ shipment })),
           catchError(error => observableOf(ShipmentActions.updateShipmentFailure({ error }))))
     )
   );
+
+  @Effect()
+  addSpecimensRequest$ = this.actions$.pipe(
+    ofType(ShipmentActions.addSpecimensRequest.type),
+    switchMap(
+      action =>
+        this.shipmentService.addSpecimens(
+          action.shipment,
+          action.specimenInventoryIds,
+          action.shipmentContainerId
+        ).pipe(
+          map(shipment => ShipmentActions.addSpecimensSuccess({ shipment })),
+          catchError(error => observableOf(ShipmentActions.addSpecimensFailure({ error }))))
+    )
+  );
+
+  @Effect()
+  canAddSpecimenRequest$ = this.actions$.pipe(
+    ofType(ShipmentActions.canAddSpecimenRequest.type),
+    switchMap(
+      action =>
+        this.shipmentService.canAddSpecimen(action.inventoryId).pipe(
+          map((specimen: Specimen) => ShipmentActions.canAddSpecimenSuccess({ specimen })),
+          catchError(error => observableOf(ShipmentActions.canAddSpecimenFailure({ error }))))
+    )
+  );
+
+  @Effect()
+  tagSpecimensRequest$ = this.actions$.pipe(
+    ofType(ShipmentActions.tagSpecimensRequest.type),
+    switchMap(
+      action => {
+        let methodName: string;
+        switch (action.specimenTag) {
+          case ShipmentItemState.Present:  methodName = 'tagSpecimensAsPresent'; break;
+          case ShipmentItemState.Received: methodName = 'tagSpecimensAsReceived'; break;
+          case ShipmentItemState.Missing:  methodName = 'tagSpecimensAsMissing'; break;
+          case ShipmentItemState.Extra:    methodName = 'tagSpecimensAsExtra'; break;
+        }
+
+        return this.shipmentService[methodName](action.shipment, action.specimenInventoryIds).pipe(
+          map((shipment: Shipment) => ShipmentActions.tagSpecimensSuccess({ shipment })),
+          catchError(error => observableOf(ShipmentActions.tagSpecimensFailure({ error }))));
+      })
+  );
+
+  @Effect()
+  removeShipmentRequest$: Observable<Action> =
+    this.actions$.pipe(
+      ofType(ShipmentActions.removeShipmentRequest.type),
+      switchMap(
+        action =>
+          this.shipmentService.remove(action.shipment).pipe(
+            // delay(2000),
+            map(shipmentId => ShipmentActions.removeShipmentSuccess({ shipmentId })),
+            catchError(error => observableOf(ShipmentActions.removeShipmentFailure({ error }))))));
 
 }

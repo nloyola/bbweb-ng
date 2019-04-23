@@ -53,28 +53,28 @@ export class Shipment extends ConcurrencySafeEntity {
    * A predicate to test if the shipment's state is CREATED.
    */
   isCreated() {
-    return this.state === ShipmentState.CREATED;
+    return this.state === ShipmentState.Created;
   }
 
   /**
    * A predicate to test if the shipment's state is PACKED.
    */
   isPacked() {
-    return this.state === ShipmentState.PACKED;
+    return this.state === ShipmentState.Packed;
   }
 
   /**
    * A predicate to test if the shipment's state is SENT.
    */
   isSent() {
-    return this.state === ShipmentState.SENT;
+    return this.state === ShipmentState.Sent;
   }
 
   /**
    * A predicate to test if the shipment's state is UNPACKED.
    */
   isUnpacked() {
-    return this.state === ShipmentState.UNPACKED;
+    return this.state === ShipmentState.Unpacked;
   }
 
   /**
@@ -83,7 +83,7 @@ export class Shipment extends ConcurrencySafeEntity {
    * @returns {boolean} TRUE if the state is NOT CREATED or UNPACKED.
    */
   isNotCreatedNorUnpacked() {
-    return (this.state !== ShipmentState.CREATED) && (this.state !== ShipmentState.UNPACKED);
+    return (this.state !== ShipmentState.Created) && (this.state !== ShipmentState.Unpacked);
   }
 
   deserialize(input: JSONObject) {

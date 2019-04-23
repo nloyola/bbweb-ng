@@ -5,9 +5,11 @@ import { SearchParams, PagedReplyEntityIds } from '@app/domain';
 
 export interface State extends EntityState<Shipment> {
   lastAddedId: string;
+  lastRemovedId: string;
   lastSearch?: SearchParams;
   searchActive?: boolean;
   searchReplies?: { [ url: string ]: PagedReplyEntityIds };
+  canAddSpecimenInventoryIds: string[];
   error?: any;
 }
 
@@ -15,9 +17,11 @@ export const adapter: EntityAdapter<Shipment> = createEntityAdapter<Shipment>();
 
 export const initialState: State = adapter.getInitialState({
   lastAddedId: null,
+  lastRemovedId: null,
   lastSearch: null,
   searchActive: false,
   searchReplies: {},
+  canAddSpecimenInventoryIds: [],
   error: null,
 });
 
@@ -128,6 +132,105 @@ export function reducer(
     }
 
     case ShipmentActions.updateShipmentFailure.type: {
+      return {
+        ...state,
+        error: {
+          error: action.error,
+          actionType: action.type
+        }
+      };
+    }
+
+    case ShipmentActions.addSpecimensRequest.type: {
+      return {
+        ...state,
+        error: null
+      };
+    }
+
+    case ShipmentActions.addSpecimensSuccess.type: {
+      return adapter.upsertOne(action.shipment, state);
+    }
+
+    case ShipmentActions.addSpecimensFailure.type: {
+      return {
+        ...state,
+        error: {
+          error: action.error,
+          actionType: action.type
+        }
+      };
+    }
+
+    case ShipmentActions.canAddSpecimenRequest.type: {
+      return {
+        ...state,
+        canAddSpecimenInventoryIds: [
+          ...state.canAddSpecimenInventoryIds.filter(id => id !== action.inventoryId)
+        ],
+        error: null
+      };
+    }
+
+    case ShipmentActions.canAddSpecimenSuccess.type: {
+      return {
+        ...state,
+        canAddSpecimenInventoryIds: [
+          ...state.canAddSpecimenInventoryIds,
+          action.specimen.inventoryId
+        ]
+      };
+    }
+
+    case ShipmentActions.canAddSpecimenFailure.type: {
+      return {
+        ...state,
+        error: {
+          error: action.error,
+          actionType: action.type
+        }
+      };
+    }
+
+    case ShipmentActions.tagSpecimensRequest.type: {
+      return {
+        ...state,
+        error: null
+      };
+    }
+
+    case ShipmentActions.tagSpecimensSuccess.type: {
+      return adapter.upsertOne(action.shipment, state);
+    }
+
+    case ShipmentActions.tagSpecimensFailure.type: {
+      return {
+        ...state,
+        error: {
+          error: action.error,
+          actionType: action.type
+        }
+      };
+    }
+
+    case ShipmentActions.removeShipmentRequest.type: {
+      return {
+        ...state,
+        lastRemovedId: null,
+        error: null
+      };
+    }
+
+    case ShipmentActions.removeShipmentSuccess.type: {
+      return adapter.removeOne(
+        action.shipmentId,
+        {
+          ...state,
+          lastRemovedId: action.shipmentId
+        });
+    }
+
+    case ShipmentActions.removeShipmentFailure.type: {
       return {
         ...state,
         error: {

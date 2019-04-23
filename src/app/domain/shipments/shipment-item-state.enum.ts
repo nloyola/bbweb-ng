@@ -4,15 +4,15 @@
 export enum ShipmentItemState {
 
   /** The item in the shipment is present in the physical package. */
-  PRESENT = 'present',
+  Present = 'present',
 
   /** The item in the shipment is was present in the physical package and removed. */
-  RECEIVED = 'received',
+  Received = 'received',
 
   /** The item in the shipment is was missing from the physical package. */
-  MISSING = 'missing',
+  Missing = 'missing',
 
   /** The physical package contained an item that was not in the manifest. */
-EXTRA = 'extra'
+  Extra = 'extra'
 
 }

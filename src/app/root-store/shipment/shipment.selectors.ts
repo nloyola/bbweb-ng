@@ -6,9 +6,14 @@ import * as fromShipment from './shipment.reducer';
 
 export const getLastAddedId = (state: fromShipment.State): string => state.lastAddedId;
 
+export const getLastRemovedId = (state: fromShipment.State): string => state.lastRemovedId;
+
 export const getSearchActive = (state: fromShipment.State): boolean => state.searchActive;
 
 export const getLastSearch = (state: fromShipment.State): SearchParams => state.lastSearch;
+
+export const getCanAddInventoryId = (state: fromShipment.State): string[] =>
+  state.canAddSpecimenInventoryIds;
 
 export const getError = (state: fromShipment.State): any => state.error;
 
@@ -20,11 +25,17 @@ export const selectShipmentState = createFeatureSelector<fromShipment.State>('sh
 export const selectShipmentLastAddedId: MemoizedSelector<object, string> =
   createSelector(selectShipmentState, getLastAddedId);
 
+export const selectShipmentLastRemovedId: MemoizedSelector<object, string> =
+  createSelector(selectShipmentState, getLastRemovedId);
+
 export const selectShipmentSearchActive: MemoizedSelector<object, boolean> =
   createSelector(selectShipmentState, getSearchActive);
 
 export const selectShipmentLastSearch: MemoizedSelector<object, SearchParams> =
   createSelector(selectShipmentState, getLastSearch);
+
+export const selectCanAddInventoryId: MemoizedSelector<object, string[]> =
+  createSelector(selectShipmentState, getCanAddInventoryId);
 
 export const selectShipmentError: MemoizedSelector<object, any> =
   createSelector(selectShipmentState, getError);

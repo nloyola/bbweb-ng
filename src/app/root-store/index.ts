@@ -10,6 +10,7 @@ export * from './membership';
 export * from './processing-type';
 export * from './role';
 export * from './shipment';
+export * from './shipment-specimen';
 export * from './spinner';
 export * from './study';
 export * from './user';
