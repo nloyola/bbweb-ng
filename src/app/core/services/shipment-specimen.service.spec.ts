@@ -2,13 +2,11 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { TestBed } from '@angular/core/testing';
 import { PagedReply, SearchParams } from '@app/domain';
 import { Specimen } from '@app/domain/participants';
-import { Shipment, ShipmentItemState, ShipmentState, ShipmentSpecimen } from '@app/domain/shipments';
+import { Shipment, ShipmentSpecimen } from '@app/domain/shipments';
 import { PagedQueryBehaviour } from '@test/behaviours/paged-query.behaviour';
 import { Factory } from '@test/factory';
 import '@test/matchers/server-api.matchers';
-import { TestUtils } from '@test/utils';
 import { ShipmentSpecimenService } from './shipment-specimen.service';
-import { ShipmentService } from './shipment.service';
 
 interface SpecimenInfo {
   rawSpecimen: any;

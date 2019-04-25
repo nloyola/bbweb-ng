@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { JSONArray, JSONObject, SearchParams, PagedReply } from '@app/domain';
 import { ApiReply } from '@app/domain/api-reply.model';
-import { CollectionEvent } from '@app/domain/participants';
+import { CollectionEvent, Participant } from '@app/domain/participants';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -32,8 +32,8 @@ export class CollectionEventService {
   /**
    * Used to search for CollectionEvents.
    */
-  search(searchParams: SearchParams): Observable<PagedReply<CollectionEvent>> {
-    return this.http.get<ApiReply>(`${this.BASE_URL}/list`,
+  search(participant: Participant, searchParams: SearchParams): Observable<PagedReply<CollectionEvent>> {
+    return this.http.get<ApiReply>(`${this.BASE_URL}/list/${participant.id}`,
                                    { params: searchParams.httpParams() })
       .pipe(
         // delay(1000),

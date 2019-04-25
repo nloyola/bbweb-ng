@@ -1,11 +1,17 @@
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { PagedReply, SearchParams } from '@app/domain';
-import { CollectionEvent } from '@app/domain/participants';
+import { CollectionEvent, Participant } from '@app/domain/participants';
 import { PagedQueryBehaviour } from '@test/behaviours/paged-query.behaviour';
 import { Factory } from '@test/factory';
 import '@test/matchers/server-api.matchers';
 import { CollectionEventService } from './collection-event.service';
+
+interface TestEntities {
+  participant?: Participant;
+  rawEvent?: any;
+  event?: CollectionEvent;
+}
 
 describe('CollectionEventService', () => {
 
@@ -54,31 +60,19 @@ describe('CollectionEventService', () => {
   });
 
   describe('when searching collection events', () => {
-    let rawCollectionEvent: any;
-    let reply: any;
-
-    beforeEach(() => {
-      const { rawEvent, event } = createEntities();
-      rawCollectionEvent = rawEvent;
-      reply = {
-        items: [ rawCollectionEvent ],
-        page: 1,
-        limit: 10,
-        offset: 0,
-        total: 1
-      };
-    });
 
     it('can retrieve collectionEvents', () => {
+      const { participant, rawEvent } = createEntities();
       const params = new SearchParams();
-      service.search(params).subscribe((pr: PagedReply<CollectionEvent>) => {
-        expect(pr.entities.length).toBe(1);
+      const reply = createPagedReply([ rawEvent ]);
+      service.search(participant, params).subscribe((pr: PagedReply<CollectionEvent>) => {
+        expect(pr.entities.length).toBe(reply.total);
         expect(pr.entities[0]).toEqual(jasmine.any(CollectionEvent));
         expect(pr.offset).toBe(reply.offset);
         expect(pr.total).toBe(reply.total);
       });
 
-      const req = httpMock.expectOne(r => r.url === `${BASE_URL}/list`);
+      const req = httpMock.expectOne(r => r.url === `${BASE_URL}/list/${participant.id}`);
       expect(req.request.method).toBe('GET');
       expect(req.request.params.keys()).toEqual([]);
       req.flush({ status: 'success', data: reply });
@@ -90,8 +84,10 @@ describe('CollectionEventService', () => {
       const context: PagedQueryBehaviour.Context<CollectionEvent> = {};
 
       beforeEach(() => {
-        context.search = (searchParams: SearchParams) => service.search(searchParams);
-        context.url = `${BASE_URL}/list`;
+        const { participant, rawEvent } = createEntities();
+        const reply = createPagedReply([ rawEvent ]);
+        context.search = (searchParams: SearchParams) => service.search(participant, searchParams);
+        context.url = `${BASE_URL}/list/${participant.id}`;
         context.reply = reply;
       });
 
@@ -100,9 +96,11 @@ describe('CollectionEventService', () => {
     });
 
     it('handles an error reply correctly', () => {
+      const { participant, rawEvent } = createEntities();
       const params = new SearchParams();
-      const obs = service.search(params);
-      expect(obs).toBeHttpError(httpMock, 'GET', `${BASE_URL}/list`, 'expected a paged reply');
+      const reply = createPagedReply([ rawEvent ]);
+      const obs = service.search(participant, params);
+      expect(obs).toBeHttpError(httpMock, 'GET', `${BASE_URL}/list/${participant.id}`, 'expected a paged reply');
     });
 
   });
@@ -268,9 +266,20 @@ describe('CollectionEventService', () => {
   });
 
   function createEntities() {
+    const participant = new Participant().deserialize(factory.participant());
     const rawEvent = factory.collectionEvent();
     const event = new CollectionEvent().deserialize(rawEvent);
-    return { rawEvent, event };
+    return { participant, rawEvent, event };
+  }
+
+  function createPagedReply(rawEvent: any[]): any {
+    return {
+      items: [ rawEvent ],
+      page: 1,
+      limit: 10,
+      offset: 0,
+      total: 1
+    };
   }
 
 });

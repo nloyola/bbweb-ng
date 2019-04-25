@@ -9,19 +9,27 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { AuthStoreEffects } from './auth-store/auth-store.effects';
 import { CentreStoreReducer } from './centre';
 import { CentreStoreEffects } from './centre/centre.effects';
+import { EventStoreReducer } from './event';
 import { EventTypeStoreReducer } from './event-type';
 import { EventTypeStoreEffects } from './event-type/event-type.effects';
+import { EventStoreEffects } from './event/event.effects';
+import { MembershipStoreReducer } from './membership';
+import { MembershipStoreEffects } from './membership/membership.effects';
+import { ParticipantStoreReducer } from './participant';
+import { ParticipantStoreEffects } from './participant/participant.effects';
 import { ProcessingTypeStoreReducer } from './processing-type';
 import { ProcessingTypeStoreEffects } from './processing-type/processing-type.effects';
+import { RoleStoreReducer } from './role';
+import { RoleStoreEffects } from './role/role.effects';
+import { ShipmentStoreReducer } from './shipment';
+import { ShipmentSpecimenStoreReducer } from './shipment-specimen';
+import { ShipmentSpecimenStoreEffects } from './shipment-specimen/shipment-specimen.effects';
+import { ShipmentStoreEffects } from './shipment/shipment.effects';
 import { SpinnerStoreReducer } from './spinner';
 import { SpinnerEffects } from './spinner/spinner.effects';
 import { StudyStoreEffects } from './study/study.effects';
 import { UserStoreReducer } from './user';
 import { UserStoreEffects } from './user/user.effects';
-import { RoleStoreReducer } from './role';
-import { RoleStoreEffects } from './role/role.effects';
-import { MembershipStoreEffects } from './membership/membership.effects';
-import { MembershipStoreReducer } from './membership';
 
 @NgModule({
   imports: [
@@ -29,10 +37,14 @@ import { MembershipStoreReducer } from './membership';
     StoreModule.forRoot({}),
     StoreModule.forFeature('auth', AuthStoreReducer.reducer),
     StoreModule.forFeature('centre', CentreStoreReducer.reducer),
+    StoreModule.forFeature('event', EventStoreReducer.reducer),
     StoreModule.forFeature('event-type', EventTypeStoreReducer.reducer),
     StoreModule.forFeature('membership', MembershipStoreReducer.reducer),
+    StoreModule.forFeature('participant', ParticipantStoreReducer.reducer),
     StoreModule.forFeature('processing-type', ProcessingTypeStoreReducer.reducer),
     StoreModule.forFeature('role', RoleStoreReducer.reducer),
+    StoreModule.forFeature('shipment', ShipmentStoreReducer.reducer),
+    StoreModule.forFeature('shipment-specimen', ShipmentSpecimenStoreReducer.reducer),
     StoreModule.forFeature('spinner', SpinnerStoreReducer.reducer),
     StoreModule.forFeature('study', StudyStoreReducer.reducer),
     StoreModule.forFeature('user', UserStoreReducer.reducer),
@@ -40,10 +52,14 @@ import { MembershipStoreReducer } from './membership';
     EffectsModule.forFeature([
       AuthStoreEffects,
       CentreStoreEffects,
+      EventStoreEffects,
       EventTypeStoreEffects,
       MembershipStoreEffects,
+      ParticipantStoreEffects,
       ProcessingTypeStoreEffects,
       RoleStoreEffects,
+      ShipmentStoreEffects,
+      ShipmentSpecimenStoreEffects,
       SpinnerEffects,
       StudyStoreEffects,
       UserStoreEffects

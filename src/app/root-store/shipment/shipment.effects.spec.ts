@@ -7,7 +7,7 @@ import { Shipment, ShipmentItemState } from '@app/domain/shipments';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
 import { Factory } from '@test/factory';
-import { cold, hot, initTestScheduler, getTestScheduler, resetTestScheduler } from 'jasmine-marbles';
+import { cold, getTestScheduler, hot, initTestScheduler } from 'jasmine-marbles';
 import { Observable, of, throwError } from 'rxjs';
 import * as ShipmentActions from './shipment.actions';
 import { ShipmentStoreEffects } from './shipment.effects';
