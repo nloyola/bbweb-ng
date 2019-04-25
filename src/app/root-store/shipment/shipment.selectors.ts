@@ -77,3 +77,11 @@ export const selectShipmentLastAdded =
     (id: string, entities: { [id: string]: Shipment }): Shipment => {
       return entities[id];
     });
+
+export const selectShipmentLastRemoved =
+  createSelector(
+    selectShipmentLastRemovedId,
+    selectAllShipmentEntities,
+    (id: string, entities: { [id: string]: Shipment }): Shipment => {
+      return entities[id];
+    });

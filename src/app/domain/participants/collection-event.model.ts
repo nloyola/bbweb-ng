@@ -1,5 +1,6 @@
-import { ConcurrencySafeEntity, HasSlug, IConcurrencySafeEntity, JSONArray, JSONObject } from '@app/domain';
-import { Annotation, annotationFactory, IAnnotation } from '../annotations';
+import { ConcurrencySafeEntity, HasSlug, IConcurrencySafeEntity, JSONArray, JSONObject, applyMixins } from '@app/domain';
+import { Annotation, annotationFactory, IAnnotation, HasAnnotations, AnnotationType } from '../annotations';
+import { CollectionEventType } from '../studies';
 
 /**
  * The subject for which a set of Specimens were collected from. The subject can be human or
@@ -47,7 +48,7 @@ export interface ICollectionEvent extends IConcurrencySafeEntity, HasSlug {
   annotations: IAnnotation[];
 }
 
-export class CollectionEvent extends ConcurrencySafeEntity implements ICollectionEvent {
+export class CollectionEvent extends ConcurrencySafeEntity implements ICollectionEvent, HasAnnotations {
 
   slug: string;
   participantId: string;
@@ -57,6 +58,18 @@ export class CollectionEvent extends ConcurrencySafeEntity implements ICollectio
   visitNumber: number;
   timeCompleted: Date;
   annotations: Annotation[];
+  setAnnotationTypes: (at: AnnotationType[]) => void;
+
+  private _eventType: CollectionEventType;
+
+  set eventType(eventType: CollectionEventType) {
+    if (this.eventTypeId && (this.eventTypeId !== eventType.id)) {
+      throw new Error('collection event types do not match');
+    }
+    this.eventTypeId = eventType.id;
+    this._eventType = eventType;
+    this.setAnnotationTypes(eventType.annotationTypes);
+  }
 
   deserialize(input: JSONObject) {
     if (input.collectionEventTypeId) {
@@ -83,3 +96,5 @@ export class CollectionEvent extends ConcurrencySafeEntity implements ICollectio
   }
 
 }
+
+applyMixins(CollectionEvent, [ HasAnnotations ]);

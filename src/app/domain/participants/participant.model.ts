@@ -1,5 +1,6 @@
-import { ConcurrencySafeEntity, HasSlug, IConcurrencySafeEntity, JSONArray, JSONObject } from '@app/domain';
-import { Annotation, annotationFactory, IAnnotation } from '../annotations';
+import { ConcurrencySafeEntity, HasSlug, IConcurrencySafeEntity, JSONArray, JSONObject, applyMixins } from '@app/domain';
+import { Annotation, annotationFactory, IAnnotation, HasAnnotations, AnnotationType } from '@app/domain/annotations';
+import { Study } from '@app/domain/studies';
 
 /**
  * The subject for which a set of Specimens were collected from. The subject can be human or
@@ -24,12 +25,21 @@ export interface IParticipant extends IConcurrencySafeEntity, HasSlug {
   annotations: IAnnotation[];
 }
 
-export class Participant extends ConcurrencySafeEntity implements IParticipant {
+export class Participant extends ConcurrencySafeEntity implements IParticipant, HasAnnotations {
 
   slug: string;
   uniqueId: string;
   studyId: string;
+
   annotations: Annotation[];
+  setAnnotationTypes: (at: AnnotationType[]) => void;
+
+  private _study: Study;
+
+  set study(s: Study) {
+    this._study = s;
+    this.setAnnotationTypes(s.annotationTypes);
+  }
 
   deserialize(input: JSONObject) {
     super.deserialize(input);
@@ -42,3 +52,5 @@ export class Participant extends ConcurrencySafeEntity implements IParticipant {
   }
 
 }
+
+applyMixins(Participant, [ HasAnnotations ]);

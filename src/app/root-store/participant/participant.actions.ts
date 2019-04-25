@@ -3,12 +3,6 @@ import { SearchParams, PagedReply } from '@app/domain';
 import { Participant } from '@app/domain/participants';
 import { ParticipantUpdateAttribute } from '@app/core/services';
 
-export interface ParticipantUpdateRequestProp {
-  participant: Participant;
-  attributeName: ParticipantUpdateAttribute;
-  value: string | Date;
-}
-
 export const searchParticipantsRequest = createAction(
   '[Participant] Search Participant Request',
   props<{ searchParams: SearchParams }>()
@@ -56,7 +50,11 @@ export const getParticipantFailure = createAction(
 
 export const updateParticipantRequest = createAction(
   '[Participant] Update Participant Request',
-  props<{ request: ParticipantUpdateRequestProp }>()
+  props<{
+    participant: Participant,
+    attributeName: ParticipantUpdateAttribute,
+    value: string | Date
+  }>()
 );
 
 export const updateParticipantSuccess = createAction(

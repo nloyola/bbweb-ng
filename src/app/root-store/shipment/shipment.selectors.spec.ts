@@ -157,7 +157,7 @@ describe('shipment-store selectors', () => {
 
   });
 
-  it('selectShipmentLastAdded', () => {
+  it('selectShipmentLastRemoved', () => {
     const shipment = factory.shipment();
     const adapter: EntityAdapter<Shipment> = createEntityAdapter<Shipment>({
       selectId: (s: Shipment) => s.id
@@ -165,11 +165,11 @@ describe('shipment-store selectors', () => {
     const state = {
       shipment: adapter.addAll([ shipment ], {
         ...ShipmentStoreReducer.initialState,
-        lastAddedId: shipment.id
+        lastRemovedId: shipment.id
       })
     };
 
-    expect(ShipmentStoreSelectors.selectShipmentLastAdded(state)).toEqual(shipment);
+    expect(ShipmentStoreSelectors.selectShipmentLastRemoved(state)).toEqual(shipment);
   });
 
   it('selectCanAddInventoryId', () => {

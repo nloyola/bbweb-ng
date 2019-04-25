@@ -22,3 +22,4 @@ export * from './search-filter-values.model';
 export * from './search-params.model';
 export * from './specimen-type.enum';
 export * from './tab.model';
+export * from './utils';

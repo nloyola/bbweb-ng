@@ -9,6 +9,7 @@ export * from './event-type';
 export * from './membership';
 export * from './processing-type';
 export * from './role';
+export * from './participant';
 export * from './shipment';
 export * from './shipment-specimen';
 export * from './spinner';
