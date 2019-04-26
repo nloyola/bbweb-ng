@@ -68,15 +68,16 @@ describe('SpecimenService', () => {
     });
 
     it('can retrieve specimens', () => {
+      const event = new CollectionEvent().deserialize(factory.collectionEvent());
       const params = new SearchParams();
-      service.search(params).subscribe((pr: PagedReply<Specimen>) => {
+      service.search(event, params).subscribe((pr: PagedReply<Specimen>) => {
         expect(pr.entities.length).toBe(1);
         expect(pr.entities[0]).toEqual(jasmine.any(Specimen));
         expect(pr.offset).toBe(reply.offset);
         expect(pr.total).toBe(reply.total);
       });
 
-      const req = httpMock.expectOne(r => r.url === `${BASE_URL}/list`);
+      const req = httpMock.expectOne(r => r.url === `${BASE_URL}/list/${event.slug}`);
       expect(req.request.method).toBe('GET');
       expect(req.request.params.keys()).toEqual([]);
       req.flush({ status: 'success', data: reply });
@@ -88,8 +89,9 @@ describe('SpecimenService', () => {
       const context: PagedQueryBehaviour.Context<Specimen> = {};
 
       beforeEach(() => {
-        context.search = (searchParams: SearchParams) => service.search(searchParams);
-        context.url = `${BASE_URL}/list`;
+        const event = new CollectionEvent().deserialize(factory.collectionEvent());
+        context.search = (searchParams: SearchParams) => service.search(event, searchParams);
+        context.url = `${BASE_URL}/list/${event.slug}`;
         context.reply = reply;
       });
 
@@ -98,9 +100,13 @@ describe('SpecimenService', () => {
     });
 
     it('handles an error reply correctly', () => {
+      const event = new CollectionEvent().deserialize(factory.collectionEvent());
       const params = new SearchParams();
-      const obs = service.search(params);
-      expect(obs).toBeHttpError(httpMock, 'GET', `${BASE_URL}/list`, 'expected a paged reply');
+      const obs = service.search(event, params);
+      expect(obs).toBeHttpError(httpMock,
+                                'GET',
+                                `${BASE_URL}/list/${event.slug}`,
+                                'expected a paged reply');
     });
 
   });

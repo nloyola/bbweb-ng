@@ -95,18 +95,13 @@ export class Specimen extends ConcurrencySafeEntity implements ISpecimen {
   eventTypeName: string;
   _specimenDefinition: SpecimenDefinition;
 
-
-  set specimenDefinition(specimenDefinition: SpecimenDefinition) {
-    this._specimenDefinition = specimenDefinition;
-  }
- /**
-  * Returns the name for a specimen of this type.
-  */
+  /**
+   * Returns the name for a specimen of this type.
+   */
   name(): string {
     this.checkSpecimenDefinitionDefined();
     return this._specimenDefinition.name;
   }
-
 
   /**
    * Returns the default amount that should be collected for a specimen of this type.
@@ -117,6 +112,13 @@ export class Specimen extends ConcurrencySafeEntity implements ISpecimen {
       return (this._specimenDefinition as CollectedSpecimenDefinition).amount;
     }
     throw new Error('specimen definition is not for a collected specimen');
+  }
+
+  set specimenDefinition(specimenDefinition: SpecimenDefinition) {
+    if (this.specimenDefinitionId && (this.specimenDefinitionId !== specimenDefinition.id)) {
+      throw new Error('specimen definitions do not match');
+    }
+    this._specimenDefinition = specimenDefinition;
   }
 
   deserialize(input: JSONObject) {

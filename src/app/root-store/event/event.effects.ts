@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
 import { CollectionEventService } from '@app/core/services';
-import { Specimen } from '@app/domain/participants';
-import { CollectionEvent } from '@app/domain/participants';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
 import { Observable, of as observableOf } from 'rxjs';

@@ -25,6 +25,8 @@ import { ShipmentStoreReducer } from './shipment';
 import { ShipmentSpecimenStoreReducer } from './shipment-specimen';
 import { ShipmentSpecimenStoreEffects } from './shipment-specimen/shipment-specimen.effects';
 import { ShipmentStoreEffects } from './shipment/shipment.effects';
+import { SpecimenStoreReducer } from './specimen';
+import { SpecimenStoreEffects } from './specimen/specimen.effects';
 import { SpinnerStoreReducer } from './spinner';
 import { SpinnerEffects } from './spinner/spinner.effects';
 import { StudyStoreEffects } from './study/study.effects';
@@ -45,6 +47,7 @@ import { UserStoreEffects } from './user/user.effects';
     StoreModule.forFeature('role', RoleStoreReducer.reducer),
     StoreModule.forFeature('shipment', ShipmentStoreReducer.reducer),
     StoreModule.forFeature('shipment-specimen', ShipmentSpecimenStoreReducer.reducer),
+    StoreModule.forFeature('specimen', SpecimenStoreReducer.reducer),
     StoreModule.forFeature('spinner', SpinnerStoreReducer.reducer),
     StoreModule.forFeature('study', StudyStoreReducer.reducer),
     StoreModule.forFeature('user', UserStoreReducer.reducer),
@@ -60,6 +63,7 @@ import { UserStoreEffects } from './user/user.effects';
       RoleStoreEffects,
       ShipmentStoreEffects,
       ShipmentSpecimenStoreEffects,
+      SpecimenStoreEffects,
       SpinnerEffects,
       StudyStoreEffects,
       UserStoreEffects

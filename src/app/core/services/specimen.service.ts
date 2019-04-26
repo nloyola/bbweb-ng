@@ -26,8 +26,8 @@ export class SpecimenService {
   /**
    * Used to search for Specimens.
    */
-  search(searchParams: SearchParams): Observable<PagedReply<Specimen>> {
-    return this.http.get<ApiReply>(`${this.BASE_URL}/list`,
+  search(event: CollectionEvent, searchParams: SearchParams): Observable<PagedReply<Specimen>> {
+    return this.http.get<ApiReply>(`${this.BASE_URL}/list/${event.slug}`,
                                    { params: searchParams.httpParams() })
       .pipe(
         // delay(1000),

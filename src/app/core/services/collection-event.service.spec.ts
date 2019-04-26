@@ -100,7 +100,10 @@ describe('CollectionEventService', () => {
       const params = new SearchParams();
       const reply = createPagedReply([ rawEvent ]);
       const obs = service.search(participant, params);
-      expect(obs).toBeHttpError(httpMock, 'GET', `${BASE_URL}/list/${participant.id}`, 'expected a paged reply');
+      expect(obs).toBeHttpError(httpMock,
+                                'GET',
+                                `${BASE_URL}/list/${participant.id}`,
+                                'expected a paged reply');
     });
 
   });

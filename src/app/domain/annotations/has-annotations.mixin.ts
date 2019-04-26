@@ -1,4 +1,4 @@
-import { ConcurrencySafeEntity } from "@app/domain/concurrency-safe-entity.model";
+import { ConcurrencySafeEntity } from '@app/domain/concurrency-safe-entity.model';
 import { AnnotationType } from './annotation-type.model';
 import { Annotation } from './annotation.model';
 import { annotationFactory } from './annotation-factory';
@@ -34,7 +34,7 @@ export class HasAnnotations {
     }
 
     this.annotations = annotationTypes.map((annotationType: AnnotationType) => {
-      var annotation = this.annotations.find(a => a.annotationTypeId === annotationType.id);
+      const annotation = this.annotations.find(a => a.annotationTypeId === annotationType.id);
       if (!annotation) {
         throw new Error('annotation not found for id: ' + annotationType.id);
       }
