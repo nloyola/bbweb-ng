@@ -4,6 +4,8 @@ import { SearchParams, PagedReply } from '@app/domain';
 import { Role } from '@app/domain/access';
 import { RoleUpdateAttribute } from '@app/core/services';
 
+// TODO: Update to use createAction introduced in NGRX 7.4
+
 interface RoleUpdateRequestPayload {
   role: Role;
   attributeName: RoleUpdateAttribute;

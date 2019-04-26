@@ -11,6 +11,8 @@ interface CentreUpdateRequestPayload {
   value: string | Location;
 }
 
+// TODO: Update to use createAction introduced in NGRX 7.4
+
 export enum ActionTypes {
   GetCentreCountsRequest = '[Centre] Get Centre Count Request',
   GetCentreCountsSuccess = '[Centre] Get Centre Count Success',

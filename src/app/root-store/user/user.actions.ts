@@ -5,6 +5,8 @@ import { SearchParams, PagedReply } from '@app/domain';
 import { User } from '@app/domain/users';
 import { UserUpdateAttribute, PasswordUpdateValues } from '@app/core/services';
 
+// TODO: Update to use createAction introduced in NGRX 7.4
+
 interface UserUpdateRequestPayload {
   user: User;
   attributeName: UserUpdateAttribute;

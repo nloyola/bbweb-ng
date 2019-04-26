@@ -33,6 +33,8 @@ interface ProcessingTypeRemoveAnnotationTypeRequestPayload {
   annotationTypeId: string;
 }
 
+// TODO: Update to use createAction introduced in NGRX 7.4
+
 export enum ActionTypes {
 
   SearchProcessingTypesRequest = '[ProcessingType] Search Processing Types Request',

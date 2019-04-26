@@ -34,7 +34,8 @@ export const selectCollectionEventLastSearch: MemoizedSelector<object, SearchPar
 export const selectCollectionEventError: MemoizedSelector<object, any> =
   createSelector(selectCollectionEventState, getError);
 
-export const selectCollectionEventSearchReplies: MemoizedSelector<object, { [ url: string ]: PagedReplyEntityIds }> =
+export const selectCollectionEventSearchReplies:
+MemoizedSelector<object, { [ url: string ]: PagedReplyEntityIds }> =
   createSelector(selectCollectionEventState, getSearchReplies);
 
 export const selectAllCollectionEvents: MemoizedSelector<object, CollectionEvent[]> =

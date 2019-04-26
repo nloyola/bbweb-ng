@@ -1,5 +1,7 @@
 import { Action } from '@ngrx/store';
 
+// TODO: Update to use createAction introduced in NGRX 7.4
+
 // borrowed from here:
 //
 // https://itnext.io/angular-tutorial-create-loading-indicator-using-ngrx-687f8a66be0d

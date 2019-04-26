@@ -2,6 +2,8 @@ import { Action } from '@ngrx/store';
 import { User } from '@app/domain/users';
 import { ShowSpinner, HideSpinner } from '@app/core/decorators';
 
+// TODO: Update to use createAction introduced in NGRX 7.4
+
 export enum ActionTypes {
   LOGIN_REQUEST = '[User Login] Login Request',
   LOGIN_FAILURE = '[User Login] Login Failure',

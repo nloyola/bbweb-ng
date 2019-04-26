@@ -4,6 +4,8 @@ import { AnnotationType } from '@app/domain/annotations';
 import { Study, StudyCounts } from '@app/domain/studies';
 import { Action } from '@ngrx/store';
 
+// TODO: Update to use createAction introduced in NGRX 7.4
+
 interface StudyUpdateRequestPayload {
   study: Study;
   attributeName: string;

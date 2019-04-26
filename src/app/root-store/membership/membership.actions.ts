@@ -4,6 +4,8 @@ import { SearchParams, PagedReply } from '@app/domain';
 import { Membership } from '@app/domain/access';
 import { MembershipUpdateAttribute } from '@app/core/services';
 
+// TODO: Update to use createAction introduced in NGRX 7.4
+
 interface MembershipUpdateRequestPayload {
   membership: Membership;
   attributeName: MembershipUpdateAttribute;

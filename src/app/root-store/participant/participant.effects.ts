@@ -28,10 +28,9 @@ export class ParticipantStoreEffects {
   @Effect()
   addRequest$ = this.actions$.pipe(
     ofType(ParticipantActions.addParticipantRequest.type),
-    map(action => action.participant),
     switchMap(
-      participant =>
-        this.participantService.add(participant).pipe(
+      action =>
+        this.participantService.add(action.participant).pipe(
           map(participant => ParticipantActions.addParticipantSuccess({ participant })),
           catchError(error => observableOf(ParticipantActions.addParticipantFailure({ error }))))
     )
