@@ -89,7 +89,7 @@ describe('StudyCollectionComponent', () => {
       const study = new Study().deserialize(factory.study());
       expect(study.state).toBe(StudyState.Disabled);
       mockActivatedRouteSnapshot(study);
-      store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
+      store.dispatch(StudyStoreActions.getStudySuccess({ study }));
       fixture.detectChanges();
 
       fixture.whenStable().then(() => {
@@ -106,7 +106,7 @@ describe('StudyCollectionComponent', () => {
           state
         });
         mockActivatedRouteSnapshot(studyWrongState);
-        store.dispatch(new StudyStoreActions.GetStudySuccess({ study: studyWrongState }));
+        store.dispatch(StudyStoreActions.getStudySuccess({ study: studyWrongState }));
         fixture.detectChanges();
         expect(() => component.addEventTypeSelected()).toThrowError('modifications not allowed');
       });

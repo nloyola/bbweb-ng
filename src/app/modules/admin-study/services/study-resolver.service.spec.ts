@@ -44,7 +44,7 @@ describe('StudyResolver', () => {
     const study = new Study().deserialize(factory.study());
     const route = new ActivatedRouteSnapshot();
     route.params = { slug: study.slug };
-    const action = new StudyStoreActions.GetStudySuccess({ study });
+    const action = StudyStoreActions.getStudySuccess({ study });
     store.dispatch(action);
     const expected = cold('(b|)', { b: study });
     expect(resolver.resolve(route, null)).toBeObservable(expected);
@@ -59,12 +59,12 @@ describe('StudyResolver', () => {
     };
     const route = new ActivatedRouteSnapshot();
     route.params = { slug: 'test' };
-    const action = new StudyStoreActions.GetStudyFailure({ error });
+    const action = StudyStoreActions.getStudyFailure({ error });
     store.dispatch(action);
     const expected = cold('(b|)', {
       b: {
         error,
-        type: StudyStoreActions.ActionTypes.GetStudyFailure
+        actionType: StudyStoreActions.getStudyFailure.type
       }
     });
     ngZone.run(() => {

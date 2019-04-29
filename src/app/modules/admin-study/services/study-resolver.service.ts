@@ -16,7 +16,7 @@ export class StudyResolver implements Resolve<Study> {
   resolve(route: ActivatedRouteSnapshot, _state: RouterStateSnapshot): Observable<Study> {
     const slug = route.paramMap.get('slug');
 
-    this.store$.dispatch(new StudyStoreActions.GetStudyRequest({ slug }));
+    this.store$.dispatch(StudyStoreActions.getStudyRequest({ slug }));
 
     return race<any>(
       this.store$.pipe(

@@ -106,7 +106,7 @@ export class StudyParticipantsComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.annotationType = annotationType;
     modalRef.result
       .then(() => {
-        this.store$.dispatch(new StudyStoreActions.UpdateStudyRemoveAnnotationTypeRequest({
+        this.store$.dispatch(StudyStoreActions.updateStudyRemoveAnnotationTypeRequest({
           study: this.study.entity,
           annotationTypeId: annotationType.id
         }));

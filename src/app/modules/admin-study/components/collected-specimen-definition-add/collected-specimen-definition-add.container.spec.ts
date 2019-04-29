@@ -188,7 +188,7 @@ describe('CollectedSpecimenDefinitionAddContainer', () => {
       jest.spyOn(router, 'navigate');
 
       const eventType = initializeComponent();
-      store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
+      store.dispatch(StudyStoreActions.getStudySuccess({ study }));
       store.dispatch(new EventTypeStoreActions.GetEventTypeSuccess({ eventType }));
       fixture.detectChanges();
 
@@ -247,7 +247,7 @@ describe('CollectedSpecimenDefinitionAddContainer', () => {
   function initializeComponent(): CollectionEventType {
     const eventType = createEventType();
     mockActivatedRouteSnapshot('spcDefAdd', eventType);
-    store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
+    store.dispatch(StudyStoreActions.getStudySuccess({ study }));
     store.dispatch(new EventTypeStoreActions.GetEventTypeSuccess({ eventType }));
     return eventType;
   }

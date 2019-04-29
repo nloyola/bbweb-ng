@@ -15,7 +15,7 @@ export class StudyAddTypeahead extends EntityTypeahead<Study> {
 
   protected termMapper(term: string): Observable<Study[]> {
     const searchParams = new SearchParams(`name:like:${term}`);
-    this.store$.dispatch(new StudyStoreActions.SearchStudiesRequest({ searchParams }));
+    this.store$.dispatch(StudyStoreActions.searchStudiesRequest({ searchParams }));
 
     return this.store$.pipe(
       select(StudyStoreSelectors.selectStudySearchRepliesAndEntities),

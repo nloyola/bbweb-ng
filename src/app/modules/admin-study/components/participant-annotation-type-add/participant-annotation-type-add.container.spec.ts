@@ -66,7 +66,7 @@ describe('ParticipantAnnotationTypeAddContainer', () => {
 
   it('should create', () => {
     const study = createStudy();
-    store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
+    store.dispatch(StudyStoreActions.getStudySuccess({ study }));
     mockActivatedRouteSnapshot('add', study);
     fixture.detectChanges();
     expect(component).toBeTruthy();
@@ -74,10 +74,10 @@ describe('ParticipantAnnotationTypeAddContainer', () => {
 
   it('assigns the study when it is changed in the store', () => {
     const study = createStudy();
-    store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
+    store.dispatch(StudyStoreActions.getStudySuccess({ study }));
     mockActivatedRouteSnapshot('add', study);
 
-    store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
+    store.dispatch(StudyStoreActions.getStudySuccess({ study }));
 
     fixture.detectChanges();
     expect(component.study).toEqual(study);
@@ -93,7 +93,7 @@ describe('ParticipantAnnotationTypeAddContainer', () => {
 
     testData.forEach((testInfo, index) => {
       mockActivatedRouteSnapshot(testInfo.path, study);
-      store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
+      store.dispatch(StudyStoreActions.getStudySuccess({ study }));
       component.ngOnInit();
       fixture.detectChanges();
 
@@ -107,11 +107,11 @@ describe('ParticipantAnnotationTypeAddContainer', () => {
 
     it('on valid submission', async(() => {
       const study = createStudy();
-      store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
+      store.dispatch(StudyStoreActions.getStudySuccess({ study }));
       mockActivatedRouteSnapshot('add', study);
       fixture.detectChanges();
 
-      const expectedAction = new StudyStoreActions.UpdateStudyAddOrUpdateAnnotationTypeRequest({
+      const expectedAction = StudyStoreActions.updateStudyAddOrUpdateAnnotationTypeRequest({
         study,
         annotationType: study.annotationTypes[0]
       });
@@ -125,7 +125,7 @@ describe('ParticipantAnnotationTypeAddContainer', () => {
 
       expect(component.isSaving$).toBeObservable(cold('b', { b: true }));
 
-      ngZone.run(() => store.dispatch(new StudyStoreActions.UpdateStudySuccess({ study })));
+      ngZone.run(() => store.dispatch(StudyStoreActions.updateStudySuccess({ study })));
 
       fixture.whenStable().then(() => {
         expect(component.isSaving$).toBeObservable(cold('b', { b: false }));
@@ -165,14 +165,14 @@ describe('ParticipantAnnotationTypeAddContainer', () => {
 
       testData.forEach(testInfo => {
         mockActivatedRouteSnapshot(testInfo.path, study);
-        store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
+        store.dispatch(StudyStoreActions.getStudySuccess({ study }));
         component.ngOnInit();
         fixture.detectChanges();
 
         errors.forEach(error => {
           component.onSubmit(study.annotationTypes[0]);
           expect(component.isSaving$).toBeObservable(cold('b', { b: true }));
-          store.dispatch(new StudyStoreActions.GetStudyFailure({ error }));
+          store.dispatch(StudyStoreActions.getStudyFailure({ error }));
           fixture.detectChanges();
 
           fixture.whenStable().then(() => {

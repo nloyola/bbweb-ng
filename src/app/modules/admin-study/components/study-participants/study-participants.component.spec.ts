@@ -99,7 +99,7 @@ describe('StudyParticipantsComponent', () => {
 
   it('assigns the study when updated', () => {
     fixture.detectChanges();
-    store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
+    store.dispatch(StudyStoreActions.getStudySuccess({ study }));
     fixture.detectChanges();
     expect(component.study).toEqual(new StudyUI(study));
   });
@@ -121,7 +121,7 @@ describe('StudyParticipantsComponent', () => {
     ];
     /* tslint:enable:no-shadowed-variable */
 
-    store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
+    store.dispatch(StudyStoreActions.getStudySuccess({ study }));
     fixture.detectChanges();
 
     testData.forEach((testInfo, index) => {
@@ -146,7 +146,7 @@ describe('StudyParticipantsComponent', () => {
     ];
     /* tslint:enable:no-shadowed-variable */
 
-    store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
+    store.dispatch(StudyStoreActions.getStudySuccess({ study }));
     fixture.detectChanges();
 
     testData.forEach((testInfo, index) => {
@@ -174,7 +174,7 @@ describe('StudyParticipantsComponent', () => {
     /* tslint:enable:no-shadowed-variable */
 
     fixture.detectChanges();
-    store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
+    store.dispatch(StudyStoreActions.getStudySuccess({ study }));
     fixture.detectChanges();
 
     testData.forEach(testInfo => {
@@ -198,18 +198,18 @@ describe('StudyParticipantsComponent', () => {
         result: Promise.resolve('OK')
       } as any);
 
-      store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
+      store.dispatch(StudyStoreActions.getStudySuccess({ study }));
       fixture.detectChanges();
       component.remove(annotationType);
 
       tick(1000);
-      const expectedAction = new StudyStoreActions.UpdateStudyRemoveAnnotationTypeRequest({
+      const expectedAction = StudyStoreActions.updateStudyRemoveAnnotationTypeRequest({
         study,
         annotationTypeId: annotationType.id
       });
       expect(storeListner.mock.calls.length).toBe(2);
       expect(storeListner.mock.calls[1][0]).toEqual(expectedAction);
-      store.dispatch(new StudyStoreActions.UpdateStudySuccess({ study: studyNoAnnotations }));
+      store.dispatch(StudyStoreActions.updateStudySuccess({ study: studyNoAnnotations }));
 
       tick(1000);
       fixture.detectChanges();
@@ -242,7 +242,7 @@ describe('StudyParticipantsComponent', () => {
       } as any);
       jest.spyOn(toastr, 'error').mockReturnValue(null);
 
-      store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
+      store.dispatch(StudyStoreActions.getStudySuccess({ study }));
       fixture.detectChanges();
 
       errors.forEach(error => {
@@ -250,7 +250,7 @@ describe('StudyParticipantsComponent', () => {
         flush();
         fixture.detectChanges();
 
-        store.dispatch(new StudyStoreActions.UpdateStudyFailure({ error }));
+        store.dispatch(StudyStoreActions.updateStudyFailure({ error }));
         flush();
         fixture.detectChanges();
         expect(toastr.error).toHaveBeenCalled();

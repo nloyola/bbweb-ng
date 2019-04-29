@@ -64,7 +64,7 @@ describe('StudiesViewComponent', () => {
 
   it('study counts are mapped correctly', () => {
     const studyCounts = factory.studyCounts();
-    const action = new StudyStoreActions.GetStudyCountsSuccess({ studyCounts });
+    const action = StudyStoreActions.getStudyCountsSuccess({ studyCounts });
     store.dispatch(action);
 
     component['studyCountData$'].subscribe((countMap: StudyCountsUIMap) => {
@@ -78,7 +78,7 @@ describe('StudiesViewComponent', () => {
     const de = fixture.debugElement;
     expect(de.nativeElement.querySelector('.card-body').textContent).toContain('Loading');
 
-    const action = new StudyStoreActions.SearchStudiesSuccess({
+    const action = StudyStoreActions.searchStudiesSuccess({
       pagedReply: factory.pagedReply([])
     });
     store.dispatch(action);
@@ -97,7 +97,7 @@ describe('StudiesViewComponent', () => {
     filters.forEach(value => {
       component.onFiltersUpdated(value);
 
-      const action = new StudyStoreActions.SearchStudiesRequest({
+      const action = StudyStoreActions.searchStudiesRequest({
         searchParams: new SearchParams('name:like:test', undefined, 1, 5)
       });
 
@@ -109,7 +109,7 @@ describe('StudiesViewComponent', () => {
     spyOn(store, 'dispatch').and.callThrough();
     component.sortFieldSelected('name');
 
-    const action = new StudyStoreActions.SearchStudiesRequest({
+    const action = StudyStoreActions.searchStudiesRequest({
       searchParams: new SearchParams('', 'name', 1, 5)
     });
 
@@ -122,7 +122,7 @@ describe('StudiesViewComponent', () => {
       spyOn(store, 'dispatch').and.callThrough();
       component.paginationPageChanged(1);
 
-      const action = new StudyStoreActions.SearchStudiesRequest({
+      const action = StudyStoreActions.searchStudiesRequest({
         searchParams: new SearchParams('', undefined, 1, 5)
       });
 
@@ -149,7 +149,7 @@ describe('StudiesViewComponent', () => {
   it('displays that there are no studies in the system', () => {
     const pagedReply = factory.pagedReply([]);
     pagedReply.searchParams.filter = '';
-    const action = new StudyStoreActions.SearchStudiesSuccess({ pagedReply });
+    const action = StudyStoreActions.searchStudiesSuccess({ pagedReply });
     store.dispatch(action);
     fixture.detectChanges();
 
@@ -162,7 +162,7 @@ describe('StudiesViewComponent', () => {
   it('displays that there are no matches for the filters', () => {
     const pagedReply = factory.pagedReply([]);
     pagedReply.searchParams.filter = 'name:like:test';
-    const action = new StudyStoreActions.SearchStudiesSuccess({ pagedReply });
+    const action = StudyStoreActions.searchStudiesSuccess({ pagedReply });
     store.dispatch(action);
     fixture.detectChanges();
 
@@ -174,7 +174,7 @@ describe('StudiesViewComponent', () => {
 
   it('displays studies', () => {
     const study = new Study().deserialize(factory.study());
-    const action = new StudyStoreActions.SearchStudiesSuccess({
+    const action = StudyStoreActions.searchStudiesSuccess({
       pagedReply: factory.pagedReply([ study ])
     });
     store.dispatch(action);

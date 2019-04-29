@@ -98,7 +98,7 @@ export class ParticipantAnnotationTypeAddContainerComponent implements OnInit, O
     this.isSaving$.next(true);
     this.annotationTypeToSave = annotationType;
     this.store$.dispatch(
-      new StudyStoreActions.UpdateStudyAddOrUpdateAnnotationTypeRequest({
+      StudyStoreActions.updateStudyAddOrUpdateAnnotationTypeRequest({
         study: this.study,
         annotationType: this.annotationTypeToSave
       }));

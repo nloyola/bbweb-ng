@@ -81,11 +81,11 @@ describe('StudySummaryComponent', () => {
   });
 
   it('isEnableAllowed resolved correctly', fakeAsync(() => {
-    store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
+    store.dispatch(StudyStoreActions.getStudySuccess({ study }));
     fixture.detectChanges();
 
     [ false, true ].forEach(allowed => {
-      store.dispatch(new StudyStoreActions.GetEnableAllowedSuccess({ studyId: study.id, allowed }));
+      store.dispatch(StudyStoreActions.getEnableAllowedSuccess({ studyId: study.id, allowed }));
       flush();
       fixture.detectChanges();
       expect(component.isEnableAllowed).toBe(allowed);
@@ -93,7 +93,7 @@ describe('StudySummaryComponent', () => {
   }));
 
   it('navigates to new path when study name is changed', fakeAsync(() => {
-    store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
+    store.dispatch(StudyStoreActions.getStudySuccess({ study }));
     flush();
     fixture.detectChanges();
 
@@ -109,7 +109,7 @@ describe('StudySummaryComponent', () => {
     flush();
     fixture.detectChanges();
 
-    ngZone.run(() => store.dispatch(new StudyStoreActions.UpdateStudySuccess({ study: studyWithNewName })));
+    ngZone.run(() => store.dispatch(StudyStoreActions.updateStudySuccess({ study: studyWithNewName })));
     flush();
     fixture.detectChanges();
 
@@ -124,12 +124,12 @@ describe('StudySummaryComponent', () => {
     beforeEach(() => {
       context.fixture = fixture;
       context.componentInitialize =
-        () => { store.dispatch(new StudyStoreActions.GetStudySuccess({ study })); };
+        () => { store.dispatch(StudyStoreActions.getStudySuccess({ study })); };
       context.componentValidateInitialization = () => { expect(component.study.entity).toEqual(study); };
       context.dispatchSuccessAction =
-        () => { store.dispatch(new StudyStoreActions.UpdateStudySuccess({ study })); };
+        () => { store.dispatch(StudyStoreActions.updateStudySuccess({ study })); };
       context.createExpectedFailureAction =
-        (error) => new StudyStoreActions.UpdateStudyFailure({ error });
+        (error) => StudyStoreActions.updateStudyFailure({ error });
       context.duplicateNameError = 'name already used';
     });
 
@@ -146,13 +146,13 @@ describe('StudySummaryComponent', () => {
           name: newName
         });
 
-        context.expectedSuccessAction = new StudyStoreActions.UpdateStudyRequest({
+        context.expectedSuccessAction = StudyStoreActions.updateStudyRequest({
           study,
           attributeName: 'name',
           value: newName
         });
         context.dispatchSuccessAction = () => {
-          store.dispatch(new StudyStoreActions.UpdateStudySuccess({ study: studyWithUpdatedSlug }));
+          store.dispatch(StudyStoreActions.updateStudySuccess({ study: studyWithUpdatedSlug }));
         };
       });
 
@@ -167,7 +167,7 @@ describe('StudySummaryComponent', () => {
         context.modalReturnValue = { result: Promise.resolve(newValue) };
         context.updateEntity = () => { component.updateDescription(); };
 
-        context.expectedSuccessAction = new StudyStoreActions.UpdateStudyRequest({
+        context.expectedSuccessAction = StudyStoreActions.updateStudyRequest({
           study,
           attributeName: 'description',
           value: newValue
@@ -183,7 +183,7 @@ describe('StudySummaryComponent', () => {
       beforeEach(() => {
         const newValue = 'disable';
         context.updateEntity = () => { component.disable(); };
-        context.expectedSuccessAction = new StudyStoreActions.UpdateStudyRequest({
+        context.expectedSuccessAction = StudyStoreActions.updateStudyRequest({
           study,
           attributeName: 'state',
           value: newValue
@@ -199,7 +199,7 @@ describe('StudySummaryComponent', () => {
       beforeEach(() => {
         const newValue = 'enable';
         context.updateEntity = () => { component.enable(); };
-        context.expectedSuccessAction = new StudyStoreActions.UpdateStudyRequest({
+        context.expectedSuccessAction = StudyStoreActions.updateStudyRequest({
           study,
           attributeName: 'state',
           value: newValue
@@ -215,7 +215,7 @@ describe('StudySummaryComponent', () => {
       beforeEach(() => {
         const newValue = 'retire';
         context.updateEntity = () => { component.retire(); };
-        context.expectedSuccessAction = new StudyStoreActions.UpdateStudyRequest({
+        context.expectedSuccessAction = StudyStoreActions.updateStudyRequest({
           study,
           attributeName: 'state',
           value: newValue
@@ -231,7 +231,7 @@ describe('StudySummaryComponent', () => {
       beforeEach(() => {
         const newValue = 'unretire';
         context.updateEntity = () => { component.unretire(); };
-        context.expectedSuccessAction = new StudyStoreActions.UpdateStudyRequest({
+        context.expectedSuccessAction = StudyStoreActions.updateStudyRequest({
           study,
           attributeName: 'state',
           value: newValue
@@ -263,7 +263,7 @@ describe('StudySummaryComponent', () => {
       const storeListener = jest.spyOn(store, 'dispatch');
       const modalListener = jest.spyOn(modalService, 'open');
 
-      ngZone.run(() => store.dispatch(new StudyStoreActions.GetStudySuccess({ study })));
+      ngZone.run(() => store.dispatch(StudyStoreActions.getStudySuccess({ study })));
       fixture.detectChanges();
 
       storeListener.mockClear();
@@ -278,7 +278,7 @@ describe('StudySummaryComponent', () => {
         tick(1000);
 
         expect(storeListener.mock.calls.length).toBe(index + 1);
-        expect(storeListener.mock.calls[index][0]).toEqual(new StudyStoreActions.UpdateStudyRequest({
+        expect(storeListener.mock.calls[index][0]).toEqual(StudyStoreActions.updateStudyRequest({
           study,
           attributeName: testInfo.attribute,
           value: testInfo.value
@@ -297,7 +297,7 @@ describe('StudySummaryComponent', () => {
         result: Promise.resolve('test')
       } as any);
 
-      ngZone.run(() => store.dispatch(new StudyStoreActions.GetStudySuccess({ study })));
+      ngZone.run(() => store.dispatch(StudyStoreActions.getStudySuccess({ study })));
       fixture.detectChanges();
 
       const componentUpdateFuncs = [
@@ -314,7 +314,7 @@ describe('StudySummaryComponent', () => {
         fixture.detectChanges();
         flush();
         expect(store.dispatch).toHaveBeenCalled();
-        ngZone.run(() => store.dispatch(new StudyStoreActions.UpdateStudySuccess({ study })));
+        ngZone.run(() => store.dispatch(StudyStoreActions.updateStudySuccess({ study })));
         flush();
       });
 
@@ -323,7 +323,7 @@ describe('StudySummaryComponent', () => {
     }));
 
     it('functions that change the study state', fakeAsync(() => {
-      ngZone.run(() => store.dispatch(new StudyStoreActions.GetStudySuccess({ study })));
+      ngZone.run(() => store.dispatch(StudyStoreActions.getStudySuccess({ study })));
       fixture.detectChanges();
 
       const testData = [
@@ -340,7 +340,7 @@ describe('StudySummaryComponent', () => {
         tick(1000);
 
         expect(storeListener.mock.calls.length).toBe(index + 1);
-        expect(storeListener.mock.calls[index][0]).toEqual(new StudyStoreActions.UpdateStudyRequest({
+        expect(storeListener.mock.calls[index][0]).toEqual(StudyStoreActions.updateStudyRequest({
           study,
           attributeName: 'state',
           value: testInfo.value

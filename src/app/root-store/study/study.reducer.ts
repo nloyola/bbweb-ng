@@ -1,9 +1,8 @@
 import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
-
 import { Study } from '@app/domain/studies';
-import { StudyActions, ActionTypes } from './study.actions';
 import { SearchParams, PagedReplyEntityIds } from '@app/domain';
 import { StudyCounts } from '@app/domain/studies/study-counts.model';
+import * as StudyActions from './study.actions';
 
 export interface EnableAllowdIds {
   [ slug: string ]: boolean;
@@ -31,47 +30,50 @@ export const initialState: State = adapter.getInitialState({
   enableAllowedIds: {}
 });
 
-export function reducer(state = initialState, action: StudyActions): State {
+export function reducer(
+  state = initialState,
+  action: StudyActions.StudyActionsUnion
+): State {
   switch (action.type) {
-    case ActionTypes.GetStudyCountsRequest:
-    case ActionTypes.AddStudyRequest:
-    case ActionTypes.GetEnableAllowedRequest: {
+    case StudyActions.getStudyCountsRequest.type:
+    case StudyActions.addStudyRequest.type:
+    case StudyActions.getEnableAllowedRequest.type: {
       return {
         ...state,
         error: null
       };
     }
 
-    case ActionTypes.GetStudyCountsSuccess: {
+    case StudyActions.getStudyCountsSuccess.type: {
       return {
         ...state,
-        studyCounts: action.payload.studyCounts
+        studyCounts: action.studyCounts
       };
     }
 
-    case ActionTypes.SearchStudiesRequest: {
+    case StudyActions.searchStudiesRequest.type: {
       return {
         ...state,
-        lastSearch: action.payload.searchParams,
+        lastSearch: action.searchParams,
         searchActive: true,
         error: null
       };
     }
 
-    case ActionTypes.SearchStudiesFailure: {
+    case StudyActions.searchStudiesFailure.type: {
       return {
         ...state,
         lastSearch: null,
         searchActive: false,
         error: {
-          type: ActionTypes.SearchStudiesFailure,
-          error: action.payload.error
+          actionType: action.type,
+          error: action.error
         }
       };
     }
 
-    case ActionTypes.SearchStudiesSuccess: {
-      const pagedReply = action.payload.pagedReply;
+    case StudyActions.searchStudiesSuccess.type: {
+      const pagedReply = action.pagedReply;
       const queryString = state.lastSearch.queryString();
       const newReply = {};
       newReply[queryString] = {
@@ -92,7 +94,7 @@ export function reducer(state = initialState, action: StudyActions): State {
       });
     }
 
-    case ActionTypes.AddStudyRequest: {
+    case StudyActions.addStudyRequest.type: {
       return {
         ...state,
         lastAddedId: null,
@@ -100,63 +102,63 @@ export function reducer(state = initialState, action: StudyActions): State {
       };
     }
 
-    case ActionTypes.AddStudySuccess: {
-      return adapter.addOne(action.payload.study, {
+    case StudyActions.addStudySuccess.type: {
+      return adapter.addOne(action.study, {
         ...state,
-        lastAddedId: action.payload.study.id
+        lastAddedId: action.study.id
       });
     }
 
-    case ActionTypes.UpdateStudyRequest:
-    case ActionTypes.UpdateStudyAddOrUpdateAnnotationTypeRequest:
-    case ActionTypes.UpdateStudyRemoveAnnotationTypeRequest: {
+    case StudyActions.updateStudyRequest.type:
+    case StudyActions.updateStudyAddOrUpdateAnnotationTypeRequest.type:
+    case StudyActions.updateStudyRemoveAnnotationTypeRequest.type: {
       return {
         ...state,
         error: null
       };
     }
 
-    case ActionTypes.UpdateStudySuccess: {
+    case StudyActions.updateStudySuccess.type: {
       return adapter.updateOne(
         {
-          id: action.payload.study.id,
-          changes: action.payload.study
+          id: action.study.id,
+          changes: action.study
         },
         state);
     }
 
-    case ActionTypes.GetStudySuccess: {
-      return adapter.addOne(action.payload.study, state);
+    case StudyActions.getStudySuccess.type: {
+      return adapter.addOne(action.study, state);
     }
 
-    case ActionTypes.GetStudyFailure: {
+    case StudyActions.getStudyFailure.type: {
       return {
         ...state,
         error: {
-          type: ActionTypes.GetStudyFailure,
-          error: action.payload.error
+          actionType: action.type,
+          error: action.error
         }
       };
     }
 
-    case ActionTypes.GetEnableAllowedSuccess: {
+    case StudyActions.getEnableAllowedSuccess.type: {
       const enableAllowedIds = { ...state.enableAllowedIds };
-      enableAllowedIds[action.payload.studyId] = action.payload.allowed;
+      enableAllowedIds[action.studyId] = action.allowed;
       return {
         ...state,
         enableAllowedIds
       };
     }
 
-    case ActionTypes.GetStudyCountsFailure:
-    case ActionTypes.AddStudyFailure:
-    case ActionTypes.UpdateStudyFailure:
-    case ActionTypes.GetEnableAllowedFailure:
+    case StudyActions.getStudyCountsFailure.type:
+    case StudyActions.addStudyFailure.type:
+    case StudyActions.updateStudyFailure.type:
+    case StudyActions.getEnableAllowedFailure.type:
       return {
         ...state,
         error: {
-          error: action.payload.error,
-          actionType: action.type
+          error: action.error,
+          actionType: action.type,
         }
       };
   }

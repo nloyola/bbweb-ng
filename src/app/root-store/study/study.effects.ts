@@ -9,115 +9,100 @@ import * as StudyActions from './study.actions';
 @Injectable()
 export class StudyStoreEffects {
 
-  constructor(private actions$: Actions<StudyActions.StudyActions>,
+  constructor(private actions$: Actions<StudyActions.StudyActionsUnion>,
               private studyService: StudyService) { }
 
   @Effect()
   getRequest$: Observable<Action> = this.actions$.pipe(
-    ofType(StudyActions.ActionTypes.GetStudyRequest),
-    map(action => action.payload),
+    ofType(StudyActions.getStudyRequest.type),
     switchMap(
-      payload =>
-        this.studyService.get(payload.slug)
-        .pipe(
-          map(study => new StudyActions.GetStudySuccess({ study })),
-          catchError(error => observableOf(new StudyActions.GetStudyFailure({ error }))))
+      action =>
+        this.studyService.get(action.slug).pipe(
+          map(study => StudyActions.getStudySuccess({ study })),
+          catchError(error => observableOf(StudyActions.getStudyFailure({ error }))))
     )
   );
 
   @Effect()
   searchRequest$: Observable<Action> = this.actions$.pipe(
-    ofType(StudyActions.ActionTypes.SearchStudiesRequest),
-    map(action => action.payload),
+    ofType(StudyActions.searchStudiesRequest.type),
     switchMap(
-      payload =>
-        this.studyService.search(payload.searchParams)
-        .pipe(
-          map(pagedReply => new StudyActions.SearchStudiesSuccess({ pagedReply })),
-          catchError(error => observableOf(new StudyActions.SearchStudiesFailure({ error }))))
+      action =>
+        this.studyService.search(action.searchParams).pipe(
+          map(pagedReply => StudyActions.searchStudiesSuccess({ pagedReply })),
+          catchError(error => observableOf(StudyActions.searchStudiesFailure({ error }))))
     )
   );
 
   @Effect()
   addRequest$: Observable<Action> = this.actions$.pipe(
-    ofType(StudyActions.ActionTypes.AddStudyRequest),
-    map(action => action.payload),
+    ofType(StudyActions.addStudyRequest.type),
     switchMap(
-      payload =>
-        this.studyService.add(payload.study)
+      action =>
+        this.studyService.add(action.study)
         .pipe(
-          map(study => new StudyActions.AddStudySuccess({ study })),
-          catchError(error => observableOf(new StudyActions.AddStudyFailure({ error }))))
+          map(study => StudyActions.addStudySuccess({ study })),
+          catchError(error => observableOf(StudyActions.addStudyFailure({ error }))))
     )
   );
 
   @Effect()
   updateRequest$: Observable<Action> = this.actions$.pipe(
-    ofType(StudyActions.ActionTypes.UpdateStudyRequest),
-    map(action => action.payload),
+    ofType(StudyActions.updateStudyRequest.type),
     switchMap(
-      payload =>
-        this.studyService.update(payload.study, payload.attributeName, payload.value)
+      action =>
+        this.studyService.update(action.study, action.attributeName, action.value)
         .pipe(
-          map(study => new StudyActions.UpdateStudySuccess({ study })),
-          catchError(error => observableOf(new StudyActions.UpdateStudyFailure({ error }))))
+          map(study => StudyActions.updateStudySuccess({ study })),
+          catchError(error => observableOf(StudyActions.updateStudyFailure({ error }))))
     )
   );
 
   @Effect()
   addOrUpdateAnnotationTypeRequest$: Observable<Action> =
     this.actions$.pipe(
-      ofType(StudyActions.ActionTypes.UpdateStudyAddOrUpdateAnnotationTypeRequest),
-      map(action => action.payload),
+      ofType(StudyActions.updateStudyAddOrUpdateAnnotationTypeRequest.type),
       switchMap(
-        payload =>
-          this.studyService.addOrUpdateAnnotationType(payload.study,
-                                                      payload.annotationType)
-          .pipe(
+        action =>
+          this.studyService.addOrUpdateAnnotationType(action.study, action.annotationType).pipe(
             // delay(2000),
-            map(study => new StudyActions.UpdateStudySuccess({ study })),
+            map(study => StudyActions.updateStudySuccess({ study })),
             catchError(error =>
-                       observableOf(new StudyActions.UpdateStudyFailure({ error }))))));
+                       observableOf(StudyActions.updateStudyFailure({ error }))))));
 
   @Effect()
   removeAnnotationTypeRequest$: Observable<Action> =
     this.actions$.pipe(
-      ofType(StudyActions.ActionTypes.UpdateStudyRemoveAnnotationTypeRequest),
-      map(action => action.payload),
+      ofType(StudyActions.updateStudyRemoveAnnotationTypeRequest.type),
       switchMap(
-        payload =>
-          this.studyService.removeAnnotationType(payload.study,
-                                                 payload.annotationTypeId)
-          .pipe(
+        action =>
+          this.studyService.removeAnnotationType(action.study, action.annotationTypeId).pipe(
             // delay(2000),
-            map(study => new StudyActions.UpdateStudySuccess({ study })),
+            map(study => StudyActions.updateStudySuccess({ study })),
             catchError(error =>
-                       observableOf(new StudyActions.UpdateStudyFailure({ error }))))));
+                       observableOf(StudyActions.updateStudyFailure({ error }))))));
 
   @Effect()
   countsRequest$: Observable<Action> = this.actions$.pipe(
-    ofType(StudyActions.ActionTypes.GetStudyCountsRequest),
+    ofType(StudyActions.getStudyCountsRequest.type),
     switchMap(
       () =>
-        this.studyService.counts()
-        .pipe(
+        this.studyService.counts().pipe(
           // delay(5000),
-          map(studyCounts => new StudyActions.GetStudyCountsSuccess({ studyCounts })),
-          catchError(error => observableOf(new StudyActions.GetStudyCountsFailure({ error }))))
+          map(studyCounts => StudyActions.getStudyCountsSuccess({ studyCounts })),
+          catchError(error => observableOf(StudyActions.getStudyCountsFailure({ error }))))
     )
   );
 
   @Effect()
   enableAllowedRequest$: Observable<Action> = this.actions$.pipe(
-    ofType(StudyActions.ActionTypes.GetEnableAllowedRequest),
-    map(action => action.payload),
+    ofType(StudyActions.getEnableAllowedRequest.type),
     switchMap(
-      payload =>
-        this.studyService.enableAllowed(payload.studyId)
-        .pipe(
+      action =>
+        this.studyService.enableAllowed(action.studyId).pipe(
           // delay(5000),
-          map(value => new StudyActions.GetEnableAllowedSuccess(value)),
-          catchError(error => observableOf(new StudyActions.GetEnableAllowedFailure({ error }))))
+          map(value => StudyActions.getEnableAllowedSuccess(value)),
+          catchError(error => observableOf(StudyActions.getEnableAllowedFailure({ error }))))
     )
   );
 

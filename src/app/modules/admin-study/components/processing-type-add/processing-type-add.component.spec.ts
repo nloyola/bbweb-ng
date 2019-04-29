@@ -284,7 +284,7 @@ describe('ProcessingTypeAddComponent', () => {
   function createEntityFixtures(): Study {
     const study = new Study().deserialize(factory.study());
     createMockActivatedRouteSpies(study);
-    store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
+    store.dispatch(StudyStoreActions.getStudySuccess({ study }));
     return study;
   }
 });

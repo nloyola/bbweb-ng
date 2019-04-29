@@ -60,7 +60,7 @@ describe('StudyViewComponent', () => {
     fixture = TestBed.createComponent(StudyViewComponent);
     component = fixture.componentInstance;
     createMockActivatedRouteSpies(study);
-    store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
+    store.dispatch(StudyStoreActions.getStudySuccess({ study }));
   });
 
   it('should create', () => {

@@ -223,7 +223,7 @@ describe('CollectionAnnotationTypeAddContainerComponent', () => {
   function initializeComponent(): CollectionEventType {
     const eventType = createEventType();
     mockActivatedRouteSnapshot('annotationAdd', eventType);
-    store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
+    store.dispatch(StudyStoreActions.getStudySuccess({ study }));
     store.dispatch(new EventTypeStoreActions.GetEventTypeSuccess({ eventType }));
     return eventType;
   }

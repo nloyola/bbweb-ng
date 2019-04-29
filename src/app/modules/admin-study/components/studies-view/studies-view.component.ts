@@ -69,7 +69,7 @@ export class StudiesViewComponent implements OnInit, OnDestroy {
 
     this.serverError$ = this.store$.pipe(
       select(StudyStoreSelectors.selectStudyError),
-      filter(e => (e !== null) && (e.type === StudyStoreActions.ActionTypes.SearchStudiesFailure)));
+      filter(e => (e !== null) && (e.actionType === StudyStoreActions.searchStudiesFailure.type)));
 
     this.studyCountData$ = this.store$.pipe(
       select(StudyStoreSelectors.selectStudyCounts),
@@ -81,7 +81,7 @@ export class StudiesViewComponent implements OnInit, OnDestroy {
       takeUntil(this.unsubscribe$),
       map(reply => this.searchReplyToPageInfo(reply)));
 
-    this.store$.dispatch(new StudyStoreActions.GetStudyCountsRequest());
+    this.store$.dispatch(StudyStoreActions.getStudyCountsRequest());
     this.applySearchParams();
   }
 
@@ -123,7 +123,7 @@ export class StudiesViewComponent implements OnInit, OnDestroy {
   }
 
   private applySearchParams() {
-    this.store$.dispatch(new StudyStoreActions.SearchStudiesRequest({
+    this.store$.dispatch(StudyStoreActions.searchStudiesRequest({
       searchParams: new SearchParams(this.getFilters().join(';'),
                                      this.sortField,
                                      this.currentPage,

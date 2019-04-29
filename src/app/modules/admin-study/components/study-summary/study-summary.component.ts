@@ -92,7 +92,7 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
 
         if (this.studyId === undefined) {
           this.studyId = data.study.id;
-          this.store$.dispatch(new StudyStoreActions.GetEnableAllowedRequest({ studyId: data.study.id }));
+          this.store$.dispatch(StudyStoreActions.getEnableAllowedRequest({ studyId: data.study.id }));
         }
 
         this.study = data.study;
@@ -140,7 +140,7 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
   updateName() {
     this.modalService.open(this.updateNameModal).result
       .then(value => {
-        this.store$.dispatch(new StudyStoreActions.UpdateStudyRequest({
+        this.store$.dispatch(StudyStoreActions.updateStudyRequest({
           study: this.study.entity,
           attributeName: 'name',
           value
@@ -153,7 +153,7 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
   updateDescription() {
     this.modalService.open(this.updateDescriptionModal, { size: 'lg' }).result
       .then(value => {
-        this.store$.dispatch(new StudyStoreActions.UpdateStudyRequest({
+        this.store$.dispatch(StudyStoreActions.updateStudyRequest({
           study: this.study.entity,
           attributeName: 'description',
           value: value ? value : undefined
@@ -180,7 +180,7 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
   }
 
   private changeState(action: 'disable' | 'enable' | 'retire' | 'unretire') {
-    this.store$.dispatch(new StudyStoreActions.UpdateStudyRequest({
+    this.store$.dispatch(StudyStoreActions.updateStudyRequest({
       study: this.study.entity,
       attributeName: 'state',
       value: action

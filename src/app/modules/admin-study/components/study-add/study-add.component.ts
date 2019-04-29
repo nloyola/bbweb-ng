@@ -80,7 +80,7 @@ export class StudyAddComponent implements OnInit, OnDestroy {
 
   onSubmit() {
     const study = new Study().deserialize(this.form.value);
-    this.store$.dispatch(new StudyStoreActions.AddStudyRequest({ study }));
+    this.store$.dispatch(StudyStoreActions.addStudyRequest({ study }));
   }
 
   onCancel() {

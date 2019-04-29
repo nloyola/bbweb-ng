@@ -70,7 +70,7 @@ describe('ProcessingTypeViewContainerComponent', () => {
   it('study is retrieved from store', () => {
     const { study, processingType } = entityFixture.createEntities();
     createMockActivatedRouteSpies(study, processingType);
-    store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
+    store.dispatch(StudyStoreActions.getStudySuccess({ study }));
     fixture.detectChanges();
     expect(component.study).toBe(study);
   });
@@ -88,7 +88,7 @@ describe('ProcessingTypeViewContainerComponent', () => {
     const modalService = TestBed.get(NgbModal);
     const { study, processingType } = entityFixture.createEntities();
     createMockActivatedRouteSpies(study, processingType);
-    store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
+    store.dispatch(StudyStoreActions.getStudySuccess({ study }));
     store.dispatch(new ProcessingTypeStoreActions.GetProcessingTypeSuccess({ processingType }));
     flush();
     fixture.detectChanges();
@@ -129,7 +129,7 @@ describe('ProcessingTypeViewContainerComponent', () => {
       context.fixture = fixture;
       context.componentInitialize = () => {
         createMockActivatedRouteSpies(study, processingType);
-        store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
+        store.dispatch(StudyStoreActions.getStudySuccess({ study }));
         store.dispatch(new ProcessingTypeStoreActions.GetProcessingTypeSuccess({ processingType }));
       };
       context.componentValidateInitialization =
@@ -293,7 +293,7 @@ describe('ProcessingTypeViewContainerComponent', () => {
         ...entities.study as any,
         state: stateValue.state
       });
-      store.dispatch(new StudyStoreActions.UpdateStudySuccess({ study: updatedStudy }));
+      store.dispatch(StudyStoreActions.updateStudySuccess({ study: updatedStudy }));
 
       fixture.detectChanges();
       expect(component.allowChanges).toBe(stateValue.expectedAllowChanges);
@@ -340,7 +340,7 @@ describe('ProcessingTypeViewContainerComponent', () => {
         ...entities.study as any,
         state: StudyState.Enabled
       });
-      store.dispatch(new StudyStoreActions.UpdateStudySuccess({ study: updatedStudy }));
+      store.dispatch(StudyStoreActions.updateStudySuccess({ study: updatedStudy }));
       fixture.detectChanges();
 
       const throwErrFuncs = componentUpdateFuncs.concat([
@@ -633,7 +633,7 @@ describe('ProcessingTypeViewContainerComponent', () => {
     const { study, processingType } = entityFixture.createEntities();
 
     createMockActivatedRouteSpies(study, processingType);
-    store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
+    store.dispatch(StudyStoreActions.getStudySuccess({ study }));
     store.dispatch(new ProcessingTypeStoreActions.GetProcessingTypeSuccess({ processingType }));
 
     return {

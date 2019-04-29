@@ -2,15 +2,15 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { StudyService } from '@app/core/services';
 import { SearchParams } from '@app/domain';
+import { AnnotationType } from '@app/domain/annotations';
+import { Study } from '@app/domain/studies';
 import { StudyStoreActions } from '@app/root-store';
-import { Factory } from '@test/factory';
 import { provideMockActions } from '@ngrx/effects/testing';
+import { Action } from '@ngrx/store';
+import { Factory } from '@test/factory';
 import { cold, hot } from 'jasmine-marbles';
 import { Observable, of, throwError } from 'rxjs';
 import { StudyStoreEffects } from './study.effects';
-import { Study } from '@app/domain/studies';
-import { Action } from '@ngrx/store';
-import { AnnotationType } from '@app/domain/annotations';
 
 describe('study-store effects', () => {
 
@@ -39,8 +39,8 @@ describe('study-store effects', () => {
 
     it('should respond with success', () => {
       const studyCounts = factory.studyCounts();
-      const action = new StudyStoreActions.GetStudyCountsRequest();
-      const completion = new StudyStoreActions.GetStudyCountsSuccess({ studyCounts });
+      const action = StudyStoreActions.getStudyCountsRequest();
+      const completion = StudyStoreActions.getStudyCountsSuccess({ studyCounts });
       spyOn(studyService, 'counts').and.returnValue(of(studyCounts));
 
       actions = hot('--a-', { a: action });
@@ -56,8 +56,8 @@ describe('study-store effects', () => {
           message: 'simulated error'
         }
       };
-      const action = new StudyStoreActions.GetStudyCountsRequest();
-      const completion = new StudyStoreActions.GetStudyCountsFailure({ error });
+      const action = StudyStoreActions.getStudyCountsRequest();
+      const completion = StudyStoreActions.getStudyCountsFailure({ error });
       spyOn(studyService, 'counts').and.returnValue(throwError(error));
 
       actions = hot('--a-', { a: action });
@@ -73,8 +73,8 @@ describe('study-store effects', () => {
       const searchParams = new SearchParams();
       const study = factory.study();
       const pagedReply = factory.pagedReply([ study ]);
-      const action = new StudyStoreActions.SearchStudiesRequest({ searchParams });
-      const completion = new StudyStoreActions.SearchStudiesSuccess({ pagedReply });
+      const action = StudyStoreActions.searchStudiesRequest({ searchParams });
+      const completion = StudyStoreActions.searchStudiesSuccess({ pagedReply });
       spyOn(studyService, 'search').and.returnValue(of(pagedReply));
 
       actions = hot('--a-', { a: action });
@@ -91,8 +91,8 @@ describe('study-store effects', () => {
           message: 'simulated error'
         }
       };
-      const action = new StudyStoreActions.SearchStudiesRequest({ searchParams });
-      const completion = new StudyStoreActions.SearchStudiesFailure({ error });
+      const action = StudyStoreActions.searchStudiesRequest({ searchParams });
+      const completion = StudyStoreActions.searchStudiesFailure({ error });
       spyOn(studyService, 'search').and.returnValue(throwError(error));
 
       actions = hot('--a-', { a: action });
@@ -106,8 +106,8 @@ describe('study-store effects', () => {
 
     it('should respond with success', () => {
       const study = factory.study();
-      const action = new StudyStoreActions.AddStudyRequest({ study });
-      const completion = new StudyStoreActions.AddStudySuccess({ study });
+      const action = StudyStoreActions.addStudyRequest({ study });
+      const completion = StudyStoreActions.addStudySuccess({ study });
       spyOn(studyService, 'add').and.returnValue(of(study));
 
       actions = hot('--a-', { a: action });
@@ -124,8 +124,8 @@ describe('study-store effects', () => {
           message: 'simulated error'
         }
       };
-      const action = new StudyStoreActions.AddStudyRequest({ study });
-      const completion = new StudyStoreActions.AddStudyFailure({ error });
+      const action = StudyStoreActions.addStudyRequest({ study });
+      const completion = StudyStoreActions.addStudyFailure({ error });
       spyOn(studyService, 'add').and.returnValue(throwError(error));
 
       actions = hot('--a-', { a: action });
@@ -139,8 +139,8 @@ describe('study-store effects', () => {
 
     it('should respond with success', () => {
       const study = factory.study();
-      const action = new StudyStoreActions.GetStudyRequest({ slug: study.slug });
-      const completion = new StudyStoreActions.GetStudySuccess({ study });
+      const action = StudyStoreActions.getStudyRequest({ slug: study.slug });
+      const completion = StudyStoreActions.getStudySuccess({ study });
       spyOn(studyService, 'get').and.returnValue(of(study));
 
       actions = hot('--a-', { a: action });
@@ -157,8 +157,8 @@ describe('study-store effects', () => {
           message: 'simulated error'
         }
       };
-      const action = new StudyStoreActions.GetStudyRequest({ slug: study.slug });
-      const completion = new StudyStoreActions.GetStudyFailure({ error });
+      const action = StudyStoreActions.getStudyRequest({ slug: study.slug });
+      const completion = StudyStoreActions.getStudyFailure({ error });
       spyOn(studyService, 'get').and.returnValue(throwError(error));
 
       actions = hot('--a-', { a: action });
@@ -175,7 +175,7 @@ describe('study-store effects', () => {
 
     beforeEach(() => {
       study = factory.study();
-      action = new StudyStoreActions.UpdateStudyRequest({
+      action = StudyStoreActions.updateStudyRequest({
         study,
         attributeName: 'name',
         value: factory.stringNext()
@@ -184,7 +184,7 @@ describe('study-store effects', () => {
     });
 
     it('should respond with success', () => {
-      const completion = new StudyStoreActions.UpdateStudySuccess({ study });
+      const completion = StudyStoreActions.updateStudySuccess({ study });
 
       jest.spyOn(studyService, 'update').mockReturnValue(of(study));
       actions = hot('--a-', { a: action });
@@ -198,7 +198,7 @@ describe('study-store effects', () => {
           message: 'simulated error'
         }
       };
-      const completion = new StudyStoreActions.UpdateStudyFailure({ error });
+      const completion = StudyStoreActions.updateStudyFailure({ error });
 
       jest.spyOn(studyService, 'update').mockReturnValue(throwError(error));
       actions = hot('--a-', { a: action });
@@ -215,7 +215,7 @@ describe('study-store effects', () => {
     beforeEach(() => {
       annotationType = factory.annotationType();
       study = factory.study({ annotationTypes: [ annotationType ]});
-      action = new StudyStoreActions.UpdateStudyAddOrUpdateAnnotationTypeRequest({
+      action = StudyStoreActions.updateStudyAddOrUpdateAnnotationTypeRequest({
         study,
         annotationType
       });
@@ -223,7 +223,7 @@ describe('study-store effects', () => {
     });
 
     it('should respond with success', () => {
-      const completion = new StudyStoreActions.UpdateStudySuccess({ study });
+      const completion = StudyStoreActions.updateStudySuccess({ study });
 
       jest.spyOn(studyService, 'addOrUpdateAnnotationType').mockReturnValue(of(study));
       actions = hot('--a-', { a: action });
@@ -237,7 +237,7 @@ describe('study-store effects', () => {
           message: 'simulated error'
         }
       };
-      const completion = new StudyStoreActions.UpdateStudyFailure({ error });
+      const completion = StudyStoreActions.updateStudyFailure({ error });
 
       jest.spyOn(studyService, 'addOrUpdateAnnotationType').mockReturnValue(throwError(error));
       actions = hot('--a-', { a: action });
@@ -254,7 +254,7 @@ describe('study-store effects', () => {
     beforeEach(() => {
       annotationType = factory.annotationType();
       study = factory.study({ annotationTypes: [ annotationType ]});
-      action = new StudyStoreActions.UpdateStudyRemoveAnnotationTypeRequest({
+      action = StudyStoreActions.updateStudyRemoveAnnotationTypeRequest({
         study,
         annotationTypeId: annotationType.id
       });
@@ -262,7 +262,7 @@ describe('study-store effects', () => {
     });
 
     it('should respond with success', () => {
-      const completion = new StudyStoreActions.UpdateStudySuccess({ study });
+      const completion = StudyStoreActions.updateStudySuccess({ study });
 
       jest.spyOn(studyService, 'removeAnnotationType').mockReturnValue(of(study));
       actions = hot('--a-', { a: action });
@@ -276,7 +276,7 @@ describe('study-store effects', () => {
           message: 'simulated error'
         }
       };
-      const completion = new StudyStoreActions.UpdateStudyFailure({ error });
+      const completion = StudyStoreActions.updateStudyFailure({ error });
 
       jest.spyOn(studyService, 'removeAnnotationType').mockReturnValue(throwError(error));
       actions = hot('--a-', { a: action });
@@ -291,7 +291,7 @@ describe('study-store effects', () => {
 
     beforeEach(() => {
       study = factory.study();
-      action = new StudyStoreActions.GetEnableAllowedRequest({ studyId: study.id });
+      action = StudyStoreActions.getEnableAllowedRequest({ studyId: study.id });
       jest.spyOn(studyService, 'enableAllowed');
     });
 
@@ -300,7 +300,7 @@ describe('study-store effects', () => {
         studyId: study.id,
         allowed: true
       };
-      const completion = new StudyStoreActions.GetEnableAllowedSuccess(reply);
+      const completion = StudyStoreActions.getEnableAllowedSuccess(reply);
 
       jest.spyOn(studyService, 'enableAllowed').mockReturnValue(of(reply));
       actions = hot('--a-', { a: action });
@@ -314,7 +314,7 @@ describe('study-store effects', () => {
           message: 'simulated error'
         }
       };
-      const completion = new StudyStoreActions.GetEnableAllowedFailure({ error });
+      const completion = StudyStoreActions.getEnableAllowedFailure({ error });
 
       jest.spyOn(studyService, 'enableAllowed').mockReturnValue(throwError(error));
       actions = hot('--a-', { a: action });

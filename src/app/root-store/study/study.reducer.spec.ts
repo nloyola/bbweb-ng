@@ -1,4 +1,5 @@
-import { StudyStoreActions, StudyStoreReducer } from '@app/root-store';
+import { reducer, initialState } from './study.reducer';
+import * as StudyActions from './study.actions';
 import { Factory } from '@test/factory';
 import { SearchParams, PagedReplyEntityIds } from '@app/domain';
 import { Study } from '@app/domain/studies';
@@ -14,27 +15,27 @@ describe('Study Reducer', () => {
   describe('unknown action', () => {
     it('should return the initial state', () => {
       const action = {} as any;
-      const result = StudyStoreReducer.reducer(StudyStoreReducer.initialState, action);
-      expect(result).toBe(StudyStoreReducer.initialState);
+      const result = reducer(initialState, action);
+      expect(result).toBe(initialState);
     });
   });
 
   it('GetStudyCountsRequest', () => {
-    const action = new StudyStoreActions.GetStudyCountsRequest();
-    const state = StudyStoreReducer.reducer(undefined, action);
+    const action = StudyActions.getStudyCountsRequest();
+    const state = reducer(undefined, action);
 
     expect(state).toEqual({
-      ...StudyStoreReducer.initialState
+      ...initialState
     });
   });
 
   it('GetStudyCountsSuccess', () => {
     const studyCounts = factory.studyCounts();
-    const action = new StudyStoreActions.GetStudyCountsSuccess({ studyCounts });
-    const state = StudyStoreReducer.reducer(undefined, action);
+    const action = StudyActions.getStudyCountsSuccess({ studyCounts });
+    const state = reducer(undefined, action);
 
     expect(state).toEqual({
-      ...StudyStoreReducer.initialState,
+      ...initialState,
       studyCounts
     });
   });
@@ -48,14 +49,14 @@ describe('Study Reducer', () => {
         }
       }
     };
-    const action = new StudyStoreActions.GetStudyCountsFailure(payload);
-    const state = StudyStoreReducer.reducer(undefined, action);
+    const action = StudyActions.getStudyCountsFailure(payload);
+    const state = reducer(undefined, action);
 
     expect(state).toEqual({
-      ...StudyStoreReducer.initialState,
+      ...initialState,
       error: {
         actionType: action.type,
-        error: action.payload.error
+        error: action.error
       }
     });
   });
@@ -64,11 +65,11 @@ describe('Study Reducer', () => {
     const payload = {
       searchParams: new SearchParams()
     };
-    const action = new StudyStoreActions.SearchStudiesRequest(payload);
-    const state = StudyStoreReducer.reducer(undefined, action);
+    const action = StudyActions.searchStudiesRequest(payload);
+    const state = reducer(undefined, action);
 
     expect(state).toEqual({
-      ...StudyStoreReducer.initialState,
+      ...initialState,
       lastSearch: payload.searchParams,
       searchActive: true
     });
@@ -79,10 +80,10 @@ describe('Study Reducer', () => {
     const payload = {
       pagedReply: factory.pagedReply<Study>([ study ])
     };
-    const action = new StudyStoreActions.SearchStudiesSuccess(payload);
-    const state = StudyStoreReducer.reducer(
+    const action = StudyActions.searchStudiesSuccess(payload);
+    const state = reducer(
       {
-        ...StudyStoreReducer.initialState,
+        ...initialState,
         lastSearch: payload.pagedReply.searchParams
       },
       action);
@@ -111,15 +112,15 @@ describe('Study Reducer', () => {
         }
       }
     };
-    const action = new StudyStoreActions.SearchStudiesFailure(payload);
-    const state = StudyStoreReducer.reducer(undefined, action);
+    const action = StudyActions.searchStudiesFailure(payload);
+    const state = reducer(undefined, action);
 
     expect(state).toEqual({
-      ...StudyStoreReducer.initialState,
+      ...initialState,
       lastSearch: null,
       error: {
-        type: action.type,
-        error: action.payload.error
+        actionType: action.type,
+        error: action.error
       }
     });
   });
@@ -127,19 +128,19 @@ describe('Study Reducer', () => {
   it('AddStudyRequest', () => {
     const study = factory.study();
     const payload = { study };
-    const action = new StudyStoreActions.AddStudyRequest(payload);
-    const state = StudyStoreReducer.reducer(undefined, action);
+    const action = StudyActions.addStudyRequest(payload);
+    const state = reducer(undefined, action);
 
     expect(state).toEqual({
-      ...StudyStoreReducer.initialState,
+      ...initialState,
     });
   });
 
   it('AddStudySuccess', () => {
     const study = factory.study();
     const payload = { study };
-    const action = new StudyStoreActions.AddStudySuccess(payload);
-    const state = StudyStoreReducer.reducer(undefined, action);
+    const action = StudyActions.addStudySuccess(payload);
+    const state = reducer(undefined, action);
 
     expect(state.lastAddedId).toEqual(study.id);
     expect(state.ids).toContain(study.id);
@@ -155,15 +156,15 @@ describe('Study Reducer', () => {
         }
       }
     };
-    const action = new StudyStoreActions.AddStudyFailure(payload);
-    const state = StudyStoreReducer.reducer(undefined, action);
+    const action = StudyActions.addStudyFailure(payload);
+    const state = reducer(undefined, action);
 
     expect(state).toEqual({
-      ...StudyStoreReducer.initialState,
+      ...initialState,
       lastSearch: null,
       error: {
         actionType: action.type,
-        error: action.payload.error
+        error: action.error
       }
     });
   });
@@ -171,19 +172,19 @@ describe('Study Reducer', () => {
   it('GetStudyRequest', () => {
     const study = factory.study();
     const payload = { slug: study.slug };
-    const action = new StudyStoreActions.GetStudyRequest(payload);
-    const state = StudyStoreReducer.reducer(undefined, action);
+    const action = StudyActions.getStudyRequest(payload);
+    const state = reducer(undefined, action);
 
     expect(state).toEqual({
-      ...StudyStoreReducer.initialState,
+      ...initialState,
     });
   });
 
   it('GetStudySuccess', () => {
     const study = factory.study();
     const payload = { study };
-    const action = new StudyStoreActions.GetStudySuccess(payload);
-    const state = StudyStoreReducer.reducer(undefined, action);
+    const action = StudyActions.getStudySuccess(payload);
+    const state = reducer(undefined, action);
 
     expect(state.ids).toContain(study.id);
     expect(state.entities[study.id]).toEqual(study);
@@ -198,15 +199,15 @@ describe('Study Reducer', () => {
         }
       }
     };
-    const action = new StudyStoreActions.GetStudyFailure(payload);
-    const state = StudyStoreReducer.reducer(undefined, action);
+    const action = StudyActions.getStudyFailure(payload);
+    const state = reducer(undefined, action);
 
     expect(state).toEqual({
-      ...StudyStoreReducer.initialState,
+      ...initialState,
       lastSearch: null,
       error: {
-        type: action.type,
-        error: action.payload.error
+        actionType: action.type,
+        error: action.error
       }
     });
   });

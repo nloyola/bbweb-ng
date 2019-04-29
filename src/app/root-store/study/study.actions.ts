@@ -1,207 +1,140 @@
-import { HideSpinner, ShowSpinner } from '@app/core/decorators';
 import { PagedReply, SearchParams } from '@app/domain';
 import { AnnotationType } from '@app/domain/annotations';
 import { Study, StudyCounts } from '@app/domain/studies';
-import { Action } from '@ngrx/store';
+import { createAction, props, union } from '@ngrx/store';
 
-// TODO: Update to use createAction introduced in NGRX 7.4
+export const getStudyCountsRequest = createAction(
+  '[Study] Get Study Count Request'
+);
 
-interface StudyUpdateRequestPayload {
-  study: Study;
-  attributeName: string;
-  value: string;
-}
+export const getStudyCountsSuccess = createAction(
+  '[Study] Get Study Count Success',
+  props<{ studyCounts: StudyCounts }>()
+);
 
-interface StudyAddOrUpdateAnnotationTypeRequestPayload {
-  study: Study;
-  annotationType: AnnotationType;
-}
+export const getStudyCountsFailure = createAction(
+  '[Study] Get Study Count Failure',
+  props<{ error: any }>()
+);
 
-interface StudyRemoveAnnotationTypeRequestPayload {
-  study: Study;
-  annotationTypeId: string;
-}
+export const searchStudiesRequest = createAction(
+  '[Study] Search Studies Request',
+  props<{ searchParams: SearchParams }>()
+);
 
-export enum ActionTypes {
-  GetStudyCountsRequest = '[Study] Get Study Count Request',
-  GetStudyCountsSuccess = '[Study] Get Study Count Success',
-  GetStudyCountsFailure = '[Study] Get Study Count Failure',
+export const searchStudiesSuccess = createAction(
+  '[Study] Search Studies Success',
+  props<{ pagedReply: PagedReply<Study> }>()
+);
 
-  SearchStudiesRequest = '[Study] Search Studies Request',
-  SearchStudiesSuccess = '[Study] Search Studies Success',
-  SearchStudiesFailure = '[Studyts] Search Studies Failure',
+export const searchStudiesFailure = createAction(
+  '[Study] Search Studies Failure',
+  props<{ error: any }>()
+);
 
-  AddStudyRequest = '[Study] Add Study Request',
-  AddStudySuccess = '[Study] Add Study Success',
-  AddStudyFailure = '[Study] Add Study Failure',
+export const addStudyRequest = createAction(
+  '[Study] Add Study Request',
+  props<{ study: Study }>()
+);
 
-  GetStudyRequest = '[Study] Get Study Request',
-  GetStudySuccess = '[Study] Get Study Success',
-  GetStudyFailure = '[Study] Get Study Failure',
+export const addStudySuccess = createAction(
+  '[Study] Add Study Success',
+  props<{ study: Study }>()
+);
 
-  GetEnableAllowedRequest = '[Study] Get Enable Allowed Request',
-  GetEnableAllowedSuccess = '[Study] Get Enable Allowed Success',
-  GetEnableAllowedFailure = '[Study] Get Enable Allowed Failure',
+export const addStudyFailure = createAction(
+  '[Study] Add Study Failure',
+  props<{ error: any }>()
+);
 
-  UpdateStudyRequest = '[Study] Update Study Request',
-  UpdateStudyAddOrUpdateAnnotationTypeRequest = '[Study] Update Study Add or Update Annotation Type Request',
-  UpdateStudyRemoveAnnotationTypeRequest = '[Study] Update Study Remove Annotation Type Request',
-  UpdateStudySuccess = '[Study] Update Study Success',
-  UpdateStudyFailure = '[Study] Update Study Failure',
-}
+export const updateStudyRequest = createAction(
+  '[Study] Update Study Request',
+  props<{
+    study: Study,
+    attributeName: string,
+    value: string
+  }>()
+);
 
-@ShowSpinner()
-export class GetStudyCountsRequest implements Action {
-  readonly type = ActionTypes.GetStudyCountsRequest;
-}
+export const updateStudyAddOrUpdateAnnotationTypeRequest = createAction(
+  '[Study] Update Study Add or Update Annotation Type Request',
+  props<{
+    study: Study,
+    annotationType: AnnotationType
+  }>()
+);
 
-/* tslint:disable:max-classes-per-file */
-@HideSpinner(ActionTypes.GetStudyCountsRequest)
-export class GetStudyCountsSuccess implements Action {
-  readonly type = ActionTypes.GetStudyCountsSuccess;
+export const updateStudyRemoveAnnotationTypeRequest = createAction(
+  '[Study] Update Study Remove Annotation Type Request',
+  props<{
+    study: Study,
+    annotationTypeId: string
+  }>()
+);
 
-  constructor(public payload: { studyCounts: StudyCounts }) { }
-}
+export const updateStudySuccess = createAction(
+  '[Study] Update Study Success',
+  props<{ study: Study }>()
+);
 
-@HideSpinner(ActionTypes.GetStudyCountsRequest)
-export class GetStudyCountsFailure implements Action {
-  readonly type = ActionTypes.GetStudyCountsFailure;
+export const updateStudyFailure = createAction(
+  '[Study] Update Study Failure',
+  props<{ error: any }>()
+);
 
-  constructor(public payload: { error: any }) { }
-}
+export const getStudyRequest = createAction(
+  '[Study] Get Study Request',
+  props<{ slug: string }>()
+);
 
-export class SearchStudiesRequest implements Action {
-  readonly type = ActionTypes.SearchStudiesRequest;
+export const getStudySuccess = createAction(
+  '[Study] Get Study Success',
+  props<{ study: Study }>()
+);
 
-  constructor(public payload: { searchParams: SearchParams }) { }
-}
+export const getStudyFailure = createAction(
+  '[Study] Get Study Failure',
+  props<{ error: any }>()
+);
 
-export class SearchStudiesSuccess implements Action {
-  readonly type = ActionTypes.SearchStudiesSuccess;
+export const getEnableAllowedRequest = createAction(
+  '[Study] Get Enable Allowed Request',
+  props<{ studyId: string }>()
+);
 
-  constructor(public payload: { pagedReply: PagedReply<Study> }) { }
-}
+export const getEnableAllowedSuccess = createAction(
+  '[Study] Get Enable Allowed Success',
+  props<{
+    studyId: string,
+    allowed: boolean
+  }>()
+);
 
-export class SearchStudiesFailure implements Action {
-  readonly type = ActionTypes.SearchStudiesFailure;
+export const getEnableAllowedFailure = createAction(
+  '[Study] Get Enable Allowed Failure',
+  props<{ error: any }>()
+);
 
-  constructor(public payload: { error: any }) { }
-}
-
-@ShowSpinner()
-export class AddStudyRequest implements Action {
-  readonly type = ActionTypes.AddStudyRequest;
-
-  constructor(public payload: { study: Study }) { }
-}
-
-@HideSpinner(ActionTypes.AddStudyRequest)
-export class AddStudySuccess implements Action {
-  readonly type = ActionTypes.AddStudySuccess;
-
-  constructor(public payload: { study: Study }) { }
-}
-
-@HideSpinner(ActionTypes.AddStudyRequest)
-export class AddStudyFailure implements Action {
-  readonly type = ActionTypes.AddStudyFailure;
-
-  constructor(public payload: { error: any }) { }
-}
-
-@ShowSpinner()
-export class UpdateStudyRequest implements Action {
-  readonly type = ActionTypes.UpdateStudyRequest;
-
-  constructor(public payload: StudyUpdateRequestPayload) { }
-}
-
-export class UpdateStudyAddOrUpdateAnnotationTypeRequest implements Action {
-  readonly type = ActionTypes.UpdateStudyAddOrUpdateAnnotationTypeRequest;
-
-  constructor(public payload: StudyAddOrUpdateAnnotationTypeRequestPayload) { }
-}
-
-export class UpdateStudyRemoveAnnotationTypeRequest implements Action {
-  readonly type = ActionTypes.UpdateStudyRemoveAnnotationTypeRequest;
-
-  constructor(public payload: StudyRemoveAnnotationTypeRequestPayload) { }
-}
-
-@HideSpinner(ActionTypes.UpdateStudyRequest)
-export class UpdateStudySuccess implements Action {
-  readonly type = ActionTypes.UpdateStudySuccess;
-
-  constructor(public payload: { study: Study }) { }
-}
-
-@HideSpinner(ActionTypes.UpdateStudyRequest)
-export class UpdateStudyFailure implements Action {
-  readonly type = ActionTypes.UpdateStudyFailure;
-
-  constructor(public payload: { error: any }) { }
-}
-
-@ShowSpinner()
-export class GetStudyRequest implements Action {
-  readonly type = ActionTypes.GetStudyRequest;
-
-  constructor(public payload: { slug: string }) { }
-}
-
-@HideSpinner(ActionTypes.GetStudyRequest)
-export class GetStudySuccess implements Action {
-  readonly type = ActionTypes.GetStudySuccess;
-
-  constructor(public payload: { study: Study }) { }
-}
-
-@HideSpinner(ActionTypes.GetStudyRequest)
-export class GetStudyFailure implements Action {
-  readonly type = ActionTypes.GetStudyFailure;
-
-  constructor(public payload: { error: any }) { }
-}
-
-@ShowSpinner()
-export class GetEnableAllowedRequest implements Action {
-  readonly type = ActionTypes.GetEnableAllowedRequest;
-
-  constructor(public payload: { studyId: string }) { }
-}
-
-@HideSpinner(ActionTypes.GetEnableAllowedRequest)
-export class GetEnableAllowedSuccess implements Action {
-  readonly type = ActionTypes.GetEnableAllowedSuccess;
-
-  constructor(public payload: { studyId: string, allowed: boolean }) { }
-}
-
-@HideSpinner(ActionTypes.GetEnableAllowedRequest)
-export class GetEnableAllowedFailure implements Action {
-  readonly type = ActionTypes.GetEnableAllowedFailure;
-
-  constructor(public payload: { error: any }) { }
-}
-
-export type StudyActions =
-  GetStudyCountsRequest
-  | GetStudyCountsSuccess
-  | GetStudyCountsFailure
-  | SearchStudiesRequest
-  | SearchStudiesSuccess
-  | SearchStudiesFailure
-  | AddStudyRequest
-  | AddStudySuccess
-  | AddStudyFailure
-  | GetStudyRequest
-  | GetStudySuccess
-  | GetStudyFailure
-  | GetEnableAllowedRequest
-  | GetEnableAllowedSuccess
-  | GetEnableAllowedFailure
-  | UpdateStudyRequest
-  | UpdateStudyAddOrUpdateAnnotationTypeRequest
-  | UpdateStudyRemoveAnnotationTypeRequest
-  | UpdateStudySuccess
-  | UpdateStudyFailure;
+const all = union({
+  getStudyCountsRequest,
+  getStudyCountsSuccess,
+  getStudyCountsFailure,
+  searchStudiesRequest,
+  searchStudiesSuccess,
+  searchStudiesFailure,
+  addStudyRequest,
+  addStudySuccess,
+  addStudyFailure,
+  getStudyRequest,
+  getStudySuccess,
+  getStudyFailure,
+  getEnableAllowedRequest,
+  getEnableAllowedSuccess,
+  getEnableAllowedFailure,
+  updateStudyRequest,
+  updateStudyAddOrUpdateAnnotationTypeRequest,
+  updateStudyRemoveAnnotationTypeRequest,
+  updateStudySuccess,
+  updateStudyFailure
+});
+export type StudyActionsUnion = typeof all;

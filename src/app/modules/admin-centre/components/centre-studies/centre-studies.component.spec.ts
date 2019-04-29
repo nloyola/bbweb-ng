@@ -92,7 +92,7 @@ describe('CentreStudiesComponent', () => {
 
     expect(storeListener.mock.calls.length).toBe(1);
     expect(storeListener.mock.calls[0][0]).toEqual(
-      new StudyStoreActions.SearchStudiesRequest({
+      StudyStoreActions.searchStudiesRequest({
         searchParams: {} as SearchParams
       }));
   }));

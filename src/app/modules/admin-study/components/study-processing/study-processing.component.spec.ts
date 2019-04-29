@@ -50,7 +50,7 @@ describe('StudyProcessingComponent', () => {
     const study = new Study().deserialize(factory.study());
     expect(study.state).toBe(StudyState.Disabled);
     mockActivatedRouteSnapshot(study);
-    store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
+    store.dispatch(StudyStoreActions.getStudySuccess({ study }));
     fixture.detectChanges();
     expect(component).toBeTruthy();
   });
@@ -63,7 +63,7 @@ describe('StudyProcessingComponent', () => {
     const eventTypeNoSpecimens = new CollectionEventType().deserialize(factory.collectionEventType());
 
     mockActivatedRouteSnapshot(study);
-    store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
+    store.dispatch(StudyStoreActions.getStudySuccess({ study }));
     fixture.detectChanges();
 
     [ false, true  ].forEach((hasSpecimenDefinitions) => {
@@ -97,7 +97,7 @@ describe('StudyProcessingComponent', () => {
       expect(study.state).toBe(StudyState.Disabled);
       mockActivatedRouteSnapshot(study);
 
-      store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
+      store.dispatch(StudyStoreActions.getStudySuccess({ study }));
       fixture.detectChanges();
 
       fixture.whenStable().then(() => {
@@ -114,7 +114,7 @@ describe('StudyProcessingComponent', () => {
           state
         });
         mockActivatedRouteSnapshot(studyWrongState);
-        store.dispatch(new StudyStoreActions.GetStudySuccess({ study: studyWrongState }));
+        store.dispatch(StudyStoreActions.getStudySuccess({ study: studyWrongState }));
         fixture.detectChanges();
         expect(() => component.addProcessingTypeSelected()).toThrowError('modifications not allowed');
       });
@@ -134,7 +134,7 @@ describe('StudyProcessingComponent', () => {
     const processingType = new ProcessingType().deserialize(factory.processingType());
 
     mockActivatedRouteSnapshot(study);
-    store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
+    store.dispatch(StudyStoreActions.getStudySuccess({ study }));
     store.dispatch(new ProcessingTypeStoreActions.GetProcessingTypeSuccess({ processingType }));
     fixture.detectChanges();
 

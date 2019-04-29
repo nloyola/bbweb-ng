@@ -99,7 +99,7 @@ describe('EventTypeViewContainer', () => {
         ...study as any,
         state: stateValue.state
       });
-      store.dispatch(new StudyStoreActions.UpdateStudySuccess({ study: updatedStudy }));
+      store.dispatch(StudyStoreActions.updateStudySuccess({ study: updatedStudy }));
 
       fixture.detectChanges();
       expect(component.allowChanges).toBe(stateValue.expectedAllowChanges);
@@ -523,7 +523,7 @@ describe('EventTypeViewContainer', () => {
 
   /* tslint:disable:no-shadowed-variable */
   function componentSetup(study: Study, eventType: CollectionEventType): void {
-    store.dispatch(new StudyStoreActions.GetStudySuccess({ study }));
+    store.dispatch(StudyStoreActions.getStudySuccess({ study }));
     store.dispatch(new EventTypeStoreActions.GetEventTypeSuccess({ eventType }));
     fixture.detectChanges();
   }

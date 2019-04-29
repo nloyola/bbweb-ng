@@ -88,7 +88,7 @@ describe('StudyAddComponent', () => {
       component.description.setValue(study.description);
       component.onSubmit();
 
-      const expectedAction = new StudyStoreActions.AddStudyRequest({
+      const expectedAction = StudyStoreActions.addStudyRequest({
         study: new Study().deserialize({
           name: study.name,
           description: study.description
@@ -98,7 +98,7 @@ describe('StudyAddComponent', () => {
       expect(storeListener.mock.calls.length).toBe(1);
       expect(storeListener.mock.calls[0][0]).toEqual(expectedAction);
 
-      const action = new StudyStoreActions.AddStudySuccess({ study });
+      const action = StudyStoreActions.addStudySuccess({ study });
       store.dispatch(action);
       fixture.detectChanges();
       flush();
@@ -137,7 +137,7 @@ describe('StudyAddComponent', () => {
         component.description.setValue(study.description);
         component.onSubmit();
 
-        const action = new StudyStoreActions.AddStudyFailure({ error });
+        const action = StudyStoreActions.addStudyFailure({ error });
         store.dispatch(action);
         flush();
         fixture.detectChanges();
