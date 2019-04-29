@@ -1,12 +1,13 @@
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { PagedReply, SearchParams } from '@app/domain';
-import { Study, StudyCounts } from '@app/domain/studies';
+import { Study, StudyCounts, IStudyInfoAndState, IStudy, StudyState } from '@app/domain/studies';
 import { PagedQueryBehaviour } from '@test/behaviours/paged-query.behaviour';
 import { Factory } from '@test/factory';
 import * as faker from 'faker';
 import { StudyService } from './study.service';
 import { AnnotationType } from '@app/domain/annotations';
+import { SearchableApiBehaviour } from '@test/behaviours/searchable-api.behaviour';
 
 describe('StudyService', () => {
 
@@ -98,66 +99,41 @@ describe('StudyService', () => {
 
   });
 
-  describe('when searching studies', () => {
-    let rawStudy: any;
-    let reply: any;
+  describe('when searching for studies', () => {
+
+    const context: PagedQueryBehaviour.Context<Study> = {};
 
     beforeEach(() => {
-      rawStudy = factory.study();
-      reply = {
-        items: [ rawStudy ],
-        page: 1,
-        limit: 10,
-        offset: 0,
-        total: 1
-      };
-    });
-
-    it('can retrieve studies', () => {
-      const params = new SearchParams();
-      service.search(params).subscribe((pr: PagedReply<Study>) => {
+      context.replyItems = [ factory.study() ];
+      context.subscription = (pr: PagedReply<Study>) => {
         expect(pr.entities.length).toBe(1);
         expect(pr.entities[0]).toEqual(jasmine.any(Study));
-        expect(pr.offset).toBe(reply.offset);
-        expect(pr.total).toBe(reply.total);
-      });
-
-      const req = httpMock.expectOne(r => r.url === `${BASE_URL}/search`);
-      expect(req.request.method).toBe('GET');
-      expect(req.request.params.keys()).toEqual([]);
-      req.flush({
-        status: 'success',
-        data: reply
-      });
-      httpMock.verify();
+      };
+      context.search = (searchParams: SearchParams) => service.search(searchParams);
+      context.url = `${BASE_URL}/search`;
     });
 
-    describe('uses valid query parameters', function () {
+    PagedQueryBehaviour.sharedBehaviour(context);
 
-      const context: PagedQueryBehaviour.Context<Study> = {};
+  });
 
-      beforeEach(() => {
-        context.search = (searchParams: SearchParams) => service.search(searchParams);
-        context.url = `${BASE_URL}/search`;
-        context.reply = reply;
-      });
+  describe('when searching for collection studies', function () {
 
-      PagedQueryBehaviour.sharedBehaviour(context);
+    const context: SearchableApiBehaviour.Context<IStudy, StudyState, IStudyInfoAndState> = {};
 
+    beforeEach(() => {
+      const study = factory.study();
+      const dto = factory.entityNameAndStateDto(study);
+      context.search = (searchParams: SearchParams) => service.searchCollectionStudies(searchParams);
+      context.replyItems = [ dto ];
+      context.subscription = (entities: IStudyInfoAndState[]) => {
+        expect(entities.length).toBe(context.replyItems.length);
+        expect(entities[0]).toEqual(jasmine.objectContaining(dto));
+      };
+      context.url = `${BASE_URL}/collectionStudies`;
     });
 
-    it('handles an error reply correctly', () => {
-      const params = new SearchParams();
-      service.search(params).subscribe(
-        u => { fail('should have been an error response'); },
-        err => { expect(err.message).toContain('expected a paged reply'); }
-      );
-
-      const req = httpMock.expectOne(`${BASE_URL}/search`);
-      expect(req.request.method).toBe('GET');
-      req.flush({ status: 'error', data: undefined });
-      httpMock.verify();
-    });
+    SearchableApiBehaviour.sharedBehaviour(context);
 
   });
 

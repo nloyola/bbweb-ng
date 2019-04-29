@@ -4,7 +4,7 @@ import { JSONObject } from '@app/domain';
 import { ApiReply } from '@app/domain/api-reply.model';
 import { Participant } from '@app/domain/participants';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, delay } from 'rxjs/operators';
 
 export type ParticipantUpdateAttribute =
   'uniqueId'
@@ -24,8 +24,9 @@ export class ParticipantService {
    * Retrieves a Participant from the server.
    */
   get(slug: string): Observable<Participant> {
-    return this.http.get<ApiReply>(`${this.BASE_URL}/${slug}`)
-      .pipe(map(this.replyToParticipant));
+    return this.http.get<ApiReply>(`${this.BASE_URL}/${slug}`).pipe(
+      // delay(2000),
+      map(this.replyToParticipant));
   }
 
   add(participant: Participant): Observable<Participant> {
@@ -34,7 +35,7 @@ export class ParticipantService {
       uniqueId: participant.uniqueId,
       annotations
     };
-    return this.http.post<ApiReply>(`${this.BASE_URL}/`, json).pipe(
+    return this.http.post<ApiReply>(`${this.BASE_URL}/${participant.study.id}`, json).pipe(
       // delay(2000),
       map(this.replyToParticipant));
   }

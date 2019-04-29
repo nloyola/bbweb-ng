@@ -21,7 +21,6 @@ import { ToastrModule } from 'ngx-toastr';
     BrowserModule,
     HttpClientModule,
     SharedModule,
-    CollectionModule,
     HomeModule,
     ShippingModule,
     UsersModule,

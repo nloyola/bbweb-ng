@@ -1,22 +1,13 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EntityStateInfo, LabelledId, SearchFilterValues, SearchParams } from '@app/domain';
+import { EntityStateInfo, LabelledId, PagedReplyInfo, SearchFilterValues, SearchParams } from '@app/domain';
 import { Role } from '@app/domain/access';
 import { NameFilter, SearchFilter, StateFilter } from '@app/domain/search-filters';
 import { RootStoreState } from '@app/root-store';
+import { RoleStoreActions, RoleStoreSelectors } from '@app/root-store/role';
 import { select, Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
-import { filter, map, takeUntil, tap } from 'rxjs/operators';
-import { RoleStoreSelectors, RoleStoreActions } from '@app/root-store/role';
-import { SearchReply } from '@app/domain/search-reply.model';
-
-interface RolePageInfo {
-  hasNoEntitiesToDisplay?: boolean;
-  hasNoResultsToDisplay?: boolean;
-  hasResultsToDisplay?: boolean;
-  roles?: Role[];
-  total?: number;
-}
+import { filter, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-roles-view',
@@ -27,9 +18,8 @@ export class RolesViewComponent implements OnInit, OnDestroy {
 
   isCountsLoading$: Observable<boolean>;
   isLoading$: Observable<boolean>;
-  serverError$: Observable<boolean>;
   hasLoaded$: Observable<boolean>;
-  rolePageInfo$: Observable<RolePageInfo>;
+  rolePageInfo$: Observable<PagedReplyInfo<Role>>;
 
   rolesLimit = 5;
 
@@ -61,14 +51,9 @@ export class RolesViewComponent implements OnInit, OnDestroy {
     this.isLoading$ =
       this.store$.pipe(select(RoleStoreSelectors.selectRoleSearchActive));
 
-    this.serverError$ = this.store$.pipe(
-      select(RoleStoreSelectors.selectRoleError),
-      filter(e => (e !== null) && (e.type === RoleStoreActions.RoleActionTypes.SearchRolesFailure)));
-
     this.rolePageInfo$ = this.store$.pipe(
       select(RoleStoreSelectors.selectRoleSearchRepliesAndEntities),
-      takeUntil(this.unsubscribe$),
-      map(reply => this.searchReplyToPageInfo(reply)));
+      takeUntil(this.unsubscribe$));
 
     this.applySearchParams();
   }
@@ -114,20 +99,5 @@ export class RolesViewComponent implements OnInit, OnDestroy {
                                      this.currentPage,
                                      this.rolesLimit)
     }));
-  }
-
-  private searchReplyToPageInfo(searchReply: SearchReply<Role>): RolePageInfo {
-    if (searchReply === undefined) { return {}; }
-
-    return {
-      hasResultsToDisplay: searchReply.entities.length > 0,
-      hasNoEntitiesToDisplay: ((searchReply.entities.length <= 0)
-                               && (searchReply.reply.searchParams.filter === '')),
-
-      hasNoResultsToDisplay: ((searchReply.entities.length <= 0)
-                              && (searchReply.reply.searchParams.filter !== '')),
-      roles: searchReply.entities,
-      total: searchReply.reply.total
-    };
   }
 }

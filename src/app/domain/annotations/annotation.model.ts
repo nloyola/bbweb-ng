@@ -32,7 +32,12 @@ export abstract class Annotation extends DomainEntity implements IAnnotation {
   value: AnnotationValueType;
   _annotationType: AnnotationType;
 
+  get annotationType(): AnnotationType {
+    return this._annotationType;
+  }
+
   set annotationType(at: AnnotationType) {
+    this.valueType = at.valueType;
     this._annotationType = at;
   }
 

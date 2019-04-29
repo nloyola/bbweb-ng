@@ -1,8 +1,14 @@
-import { reducer, initialState } from './study.reducer';
-import * as StudyActions from './study.actions';
-import { Factory } from '@test/factory';
-import { SearchParams, PagedReplyEntityIds } from '@app/domain';
+import { PagedReply, PagedReplyEntityIds, SearchParams } from '@app/domain';
 import { Study } from '@app/domain/studies';
+import { Factory } from '@test/factory';
+import * as StudyActions from './study.actions';
+import { initialState, reducer } from './study.reducer';
+
+interface SearchSharedBehavourContext {
+  createSearchRequestAction?: (sp: SearchParams) => StudyActions.StudyActionsUnion;
+  createSearchFailureAction?: (e: any) => StudyActions.StudyActionsUnion;
+  stateKey?: string;
+}
 
 describe('Study Reducer', () => {
 
@@ -61,67 +67,94 @@ describe('Study Reducer', () => {
     });
   });
 
-  it('SearchStudiesRequest', () => {
-    const payload = {
-      searchParams: new SearchParams()
-    };
-    const action = StudyActions.searchStudiesRequest(payload);
-    const state = reducer(undefined, action);
+  describe('studies search', () => {
 
-    expect(state).toEqual({
-      ...initialState,
-      lastSearch: payload.searchParams,
-      searchActive: true
+    it('Search Success', () => {
+      const study = factory.study();
+      const pagedReply = factory.pagedReply<Study>([ study ]);
+      const action = StudyActions.searchStudiesSuccess({ pagedReply });
+      const state = reducer(
+        {
+          ...initialState,
+          searchState: {
+            ...initialState.searchState,
+            lastSearch: pagedReply.searchParams
+          }
+        },
+        action);
+
+      const searchReply: { [ key: string]: PagedReplyEntityIds } = {};
+      searchReply[pagedReply.searchParams.queryString()] = {
+        searchParams: pagedReply.searchParams,
+        offset: pagedReply.offset,
+        total: pagedReply.total,
+        entityIds: pagedReply.entities.map(e => e.id),
+        maxPages: pagedReply.maxPages
+      };
+
+      expect(state.searchState.searchReplies).toEqual(searchReply);
+      expect(state.searchState.searchActive).toBe(false);
+      expect(state.ids).toContain(study.id);
+      expect(state.entities[study.id]).toEqual(study);
     });
+
+    describe('common', () => {
+
+      const context: SearchSharedBehavourContext = {};
+
+      beforeEach(() => {
+        context.createSearchRequestAction =
+          (searchParams: SearchParams) => StudyActions.searchStudiesRequest({ searchParams });
+        context.createSearchFailureAction = (error: any) => StudyActions.searchStudiesFailure({ error });
+        context.stateKey = 'searchState';
+      });
+
+      searchSharedBehaviour(context);
+
+    });
+
   });
 
-  it('SearchStudiesSuccess', () => {
-    const study = factory.study();
-    const payload = {
-      pagedReply: factory.pagedReply<Study>([ study ])
-    };
-    const action = StudyActions.searchStudiesSuccess(payload);
-    const state = reducer(
-      {
-        ...initialState,
-        lastSearch: payload.pagedReply.searchParams
-      },
-      action);
+  describe('collection studies search', () => {
 
-    const searchReply: { [ key: string]: PagedReplyEntityIds } = {};
-    searchReply[payload.pagedReply.searchParams.queryString()] = {
-      searchParams: payload.pagedReply.searchParams,
-      offset: payload.pagedReply.offset,
-      total: payload.pagedReply.total,
-      entityIds: payload.pagedReply.entities.map(e => e.id),
-      maxPages: payload.pagedReply.maxPages
-    };
+    it('Search Success', () => {
+      const study = factory.study();
+      const studiesData = [ factory.entityNameAndStateDto(study) ];
+      const searchParams = new SearchParams();
+      const action = StudyActions.searchCollectionStudiesSuccess({ studiesData });
+      const state = reducer(
+        {
+          ...initialState,
+          searchCollectionStudiesState: {
+            ...initialState.searchCollectionStudiesState,
+            lastSearch: searchParams
+          }
+        },
+        action);
 
-    expect(state.searchReplies).toEqual(searchReply);
-    expect(state.searchActive).toBe(false);
-    expect(state.ids).toContain(study.id);
-    expect(state.entities[study.id]).toEqual(study);
-  });
+      const searchReply: { [ key: string]: string[] } = {};
+      searchReply[searchParams.queryString()] = [ study.id ];
 
-  it('SearchStudiesFailure', () => {
-    const payload = {
-      error: {
-        status: 404,
-        error: {
-          message: 'simulated error'
-        }
-      }
-    };
-    const action = StudyActions.searchStudiesFailure(payload);
-    const state = reducer(undefined, action);
+      expect(state.searchCollectionStudiesState.searchReplies).toEqual(searchReply);
+      expect(state.searchCollectionStudiesState.searchActive).toBe(false);
+      expect(state.ids).toContain(study.id);
+      expect(state.entities[study.id]).toBeTruthy();
+    });
 
-    expect(state).toEqual({
-      ...initialState,
-      lastSearch: null,
-      error: {
-        actionType: action.type,
-        error: action.error
-      }
+    describe('common', () => {
+
+      const context: SearchSharedBehavourContext = {};
+
+      beforeEach(() => {
+        context.createSearchRequestAction =
+          (searchParams: SearchParams) => StudyActions.searchCollectionStudiesRequest({ searchParams });
+        context.createSearchFailureAction =
+          (error: any) => StudyActions.searchCollectionStudiesFailure({ error });
+        context.stateKey = 'searchCollectionStudiesState';
+      });
+
+      searchSharedBehaviour(context);
+
     });
   });
 
@@ -161,7 +194,10 @@ describe('Study Reducer', () => {
 
     expect(state).toEqual({
       ...initialState,
-      lastSearch: null,
+      searchState: {
+        ...initialState.searchState,
+        lastSearch: null
+      },
       error: {
         actionType: action.type,
         error: action.error
@@ -204,12 +240,63 @@ describe('Study Reducer', () => {
 
     expect(state).toEqual({
       ...initialState,
-      lastSearch: null,
+      searchState: {
+        ...initialState.searchState,
+        lastSearch: null
+      },
       error: {
         actionType: action.type,
         error: action.error
       }
     });
   });
+
+  function searchSharedBehaviour(context: SearchSharedBehavourContext) {
+
+    describe('shared behaviour', () => {
+
+      it('Search Request', () => {
+        const searchParams = new SearchParams();
+        const action = context.createSearchRequestAction(searchParams);
+        const state = reducer(undefined, action);
+
+        const expectedState = { ...initialState };
+        expectedState[context.stateKey] = {
+          ...initialState[context.stateKey],
+          lastSearch: searchParams,
+          searchActive: true
+        };
+
+        expect(state).toEqual(expectedState);
+      });
+
+      it('Search Failure', () => {
+        const error = {
+          status: 404,
+          error: {
+            message: 'simulated error'
+          }
+        };
+        const action = context.createSearchFailureAction({ ...error });
+        const state = reducer(undefined, action);
+        const searchState = {};
+
+        searchState[context.stateKey] = {
+          ...initialState[context.stateKey],
+          lastSearch: null
+        };
+
+        expect(state).toEqual({
+          ...initialState,
+          ...searchState,
+          error: {
+            actionType: action.type,
+            error
+          }
+        });
+      });
+
+    });
+  }
 
 });

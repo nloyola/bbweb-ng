@@ -72,61 +72,21 @@ describe('shipment-specimens.Service', () => {
   });
 
   describe('when searching shipment specimens', () => {
-    let rawShipment: any;
-    let reply: any;
+
+    const context: PagedQueryBehaviour.Context<ShipmentSpecimen> = {};
 
     beforeEach(() => {
-      rawShipment = factory.shipment();
-      reply = {
-        items: [ rawShipment ],
-        page: 1,
-        limit: 10,
-        offset: 0,
-        total: 1
+      const { shipment } = createEntities();
+      context.search = (searchParams: SearchParams) => service.search(shipment, searchParams);
+      context.url = `${BASE_URL}/${shipment.id}`;
+      context.replyItems = [ factory.shipment() ];
+      context.subscription = (pr: PagedReply<ShipmentSpecimen>) => {
+        expect(pr.entities.length).toBe(1);
+        expect(pr.entities[0]).toEqual(jasmine.any(ShipmentSpecimen));
       };
     });
 
-    it('can retrieve shipments', () => {
-      const { shipment } = createEntities();
-      const params = new SearchParams();
-      service.search(shipment, params).subscribe((pr: PagedReply<ShipmentSpecimen>) => {
-        expect(pr.entities.length).toBe(1);
-        expect(pr.entities[0]).toEqual(jasmine.any(Shipment));
-        expect(pr.offset).toBe(reply.offset);
-        expect(pr.total).toBe(reply.total);
-      });
-
-      const req = httpMock.expectOne(r => r.url === `${BASE_URL}/${shipment.id}`);
-      expect(req.request.method).toBe('GET');
-      expect(req.request.params.keys()).toEqual([]);
-      req.flush({ status: 'success', data: reply });
-      httpMock.verify();
-    });
-
-    describe('uses valid query parameters', function () {
-
-      const context: PagedQueryBehaviour.Context<ShipmentSpecimen> = {};
-
-      beforeEach(() => {
-        const { shipment } = createEntities();
-        context.search = (searchParams: SearchParams) => service.search(shipment, searchParams);
-        context.url = `${BASE_URL}/${shipment.id}`;
-        context.reply = reply;
-      });
-
-      PagedQueryBehaviour.sharedBehaviour(context);
-
-    });
-
-    it('handles an error reply correctly', () => {
-      const { shipment } = createEntities();
-      const params = new SearchParams();
-      const obs = service.search(shipment, params);
-      expect(obs).toBeHttpError(httpMock,
-                                'GET',
-                                `${BASE_URL}/${shipment.id}`,
-                                'expected a paged reply');
-    });
+    PagedQueryBehaviour.sharedBehaviour(context);
 
   });
 

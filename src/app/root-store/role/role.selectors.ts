@@ -1,6 +1,5 @@
-import { PagedReplyEntityIds, SearchParams } from '@app/domain';
+import { PagedReplyEntityIds, PagedReplyInfo, pagedReplyToInfo, SearchParams } from '@app/domain';
 import { Role } from '@app/domain/access';
-import { SearchReply } from '@app/domain/search-reply.model';
 import { createFeatureSelector, createSelector, MemoizedSelector } from '@ngrx/store';
 import * as fromRole from './role.reducer';
 
@@ -42,14 +41,14 @@ export const selectRoleSearchRepliesAndEntities =
     (searchActive: boolean,
      lastSearch: SearchParams,
      searchReplies: { [ url: string ]: PagedReplyEntityIds },
-     entities: any): SearchReply<Role> => {
+     entities: any): PagedReplyInfo<Role> => {
       if (searchActive || (lastSearch === null)) { return undefined; }
 
       const reply = searchReplies[lastSearch.queryString()];
       if (reply === undefined) { return undefined; }
 
       return {
-        reply,
+        ...pagedReplyToInfo(reply),
         entities: reply.entityIds.map(id => entities[id])
       };
     });

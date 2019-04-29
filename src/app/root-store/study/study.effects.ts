@@ -34,6 +34,20 @@ export class StudyStoreEffects {
     )
   );
 
+  /**
+   * Returns studies that allow specimen collection.
+   */
+  @Effect()
+  searchCollectionStudiesRequest$: Observable<Action> = this.actions$.pipe(
+    ofType(StudyActions.searchCollectionStudiesRequest.type),
+    switchMap(
+      action =>
+        this.studyService.searchCollectionStudies(action.searchParams).pipe(
+          map(studiesData => StudyActions.searchCollectionStudiesSuccess({ studiesData })),
+          catchError(error => observableOf(StudyActions.searchCollectionStudiesFailure({ error }))))
+    )
+  );
+
   @Effect()
   addRequest$: Observable<Action> = this.actions$.pipe(
     ofType(StudyActions.addStudyRequest.type),

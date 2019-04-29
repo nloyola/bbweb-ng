@@ -1,136 +1,124 @@
-<ng-container *ngIf="!(serverError$ | async); else serverError">
+<app-entity-filters class="mb-2"
+                    [useNameFilter]="true"
+                    [stateData]="stateData"
+                    (filters)="onFiltersUpdated($event)">
+</app-entity-filters>
 
-  <app-entity-filters class="mb-2"
-                      [useNameFilter]="true"
-                      [stateData]="stateData"
-                      (filters)="onFiltersUpdated($event)">
-  </app-entity-filters>
+<div class="row">
+  <div class="col-sm-12 mt-2">
+    <div class="card">
+      <div class="card-header bg-default">
+        <app-user-counts [countData]="userCountData$ | async">
+        </app-user-counts>
 
-  <div class="row">
-    <div class="col-sm-12 mt-2">
-      <div class="card">
-        <div class="card-header bg-default">
-          <app-user-counts [countData]="userCountData$ | async">
-          </app-user-counts>
+        <span class="float-right d-inline-block" ngbDropdown>
+          <button class="btn btn-sm btn-outline-primary"
+                  type="button"
+                  id="tableMenu"
+                  ngbDropdownToggle>
+            <mat-icon inline="true">more_vert</mat-icon>
+          </button>
 
-          <span class="float-right d-inline-block" ngbDropdown>
-            <button class="btn btn-sm btn-outline-primary"
-                    type="button"
-                    id="tableMenu"
-                    ngbDropdownToggle>
-              <mat-icon inline="true">more_vert</mat-icon>
-            </button>
+          <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="tableMenu">
+            <h5 class="dropdown-header" i18n>Sort by</h5>
+            <a class="dropdown-item"
+               *ngFor="let sortChoice of sortChoices"
+               (click)="sortFieldSelected(sortChoice.id)">
+              {{ sortChoice.label }}
+            </a>
+          </div>
+        </span>
+      </div>
 
-            <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="tableMenu">
-              <h5 class="dropdown-header" i18n>Sort by</h5>
-              <a class="dropdown-item"
-                 *ngFor="let sortChoice of sortChoices"
-                 (click)="sortFieldSelected(sortChoice.id)">
-                {{ sortChoice.label }}
-              </a>
-            </div>
-          </span>
+      <div class="card-body" *ngIf="isLoading$ | async">
+        <div class="card-text">
+          <div class="alert alert-warning" role="alert">
+            <app-spinner name="users" [show]="isLoading$ | async" i18n>
+              Loading...
+            </app-spinner>
+          </div>
         </div>
+      </div>
 
-        <div class="card-body" *ngIf="isLoading$ | async">
+      <ng-container *ngIf="(userPageInfo$ | async); let userPageInfo">
+
+        <div class="card-body" *ngIf="userPageInfo.hasNoEntitiesToDisplay">
           <div class="card-text">
             <div class="alert alert-warning" role="alert">
-              <app-spinner name="users" [show]="isLoading$ | async" i18n>
-                Loading...
-              </app-spinner>
+              <mat-icon>warning</mat-icon>
+              <ng-container i18n>
+                No users have been added yet.
+              </ng-container>
             </div>
           </div>
         </div>
 
-        <ng-container *ngIf="(userPageInfo$ | async); let userPageInfo">
-
-          <div class="card-body" *ngIf="userPageInfo.hasNoEntitiesToDisplay">
-            <div class="card-text">
-              <div class="alert alert-warning" role="alert">
-                <mat-icon>warning</mat-icon>
-                <ng-container i18n>
-                  No users have been added yet.
-                </ng-container>
-              </div>
+        <div class="card-body" *ngIf="userPageInfo.hasNoResultsToDisplay">
+          <div class="card-text">
+            <div class="alert alert-warning" role="alert">
+              <mat-icon>warning</mat-icon>
+              <ng-container i18n>
+                There are no users that match your criteria.
+              </ng-container>
             </div>
           </div>
+        </div>
 
-          <div class="card-body" *ngIf="userPageInfo.hasNoResultsToDisplay">
-            <div class="card-text">
-              <div class="alert alert-warning" role="alert">
-                <mat-icon>warning</mat-icon>
-                <ng-container i18n>
-                  There are no users that match your criteria.
-                </ng-container>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item" *ngFor="let user of users$ | async">
+            <div class="row">
+              <div class="col-md-12">
+                <mat-icon class="mr-1" [ngClass]="user.stateIconClass()">{{ user.stateIcon() }}</mat-icon>
+                <a [routerLink]="[ '/admin/access/users', user.slug ]">
+                  <strong>{{ user.name }}</strong>
+                </a>
               </div>
             </div>
-          </div>
-
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item" *ngFor="let user of userPageInfo.users">
-              <div class="row">
-                <div class="col-md-12">
-                  <mat-icon class="mr-1" [ngClass]="user.stateIconClass()">{{ user.stateIcon() }}</mat-icon>
-                  <a [routerLink]="[ '/admin/access/users', user.slug ]">
-                    <strong>{{ user.name }}</strong>
+            <div class="row">
+              <div class="col-md-6">
+                <small class="text-info">
+                  <span i18n>Email:</span>
+                  <a href="mailto:{{ user.email }}" target="_top">
+                    {{ user.email }}
                   </a>
-                </div>
+                </small>
               </div>
-              <div class="row">
-                <div class="col-md-6">
-                  <small class="text-info">
-                    <span i18n>Email:</span>
-                    <a href="mailto:{{ user.email }}" target="_top">
-                      {{ user.email }}
-                    </a>
-                  </small>
-                </div>
-                <div class="col-md-6" *ngIf="user.entity.avatarUrl">
-                  <small class="text-info">
-                    <span i18n>Avatar:</span>
-                    <a href="{{ user.entity.avatarUrl }}" target="_top">
-                      {{ user.entity.avatarUrl }}
-                    </a>
-                  </small>
-                </div>
+              <div class="col-md-6" *ngIf="user.entity.avatarUrl">
+                <small class="text-info">
+                  <span i18n>Avatar:</span>
+                  <a href="{{ user.entity.avatarUrl }}" target="_top">
+                    {{ user.entity.avatarUrl }}
+                  </a>
+                </small>
               </div>
-              <div class="row">
-                <div class="col-md-12">
-                  <app-entity-status [state]="user.stateLabel()"
-                                     [timeAdded]="user.entity.timeAdded"
-                                     [timeModified]="user.entity.timeModified"
-                                     [useBadges]="false">
-                  </app-entity-status>
-                </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <app-entity-status [state]="user.stateLabel()"
+                                   [timeAdded]="user.entity.timeAdded"
+                                   [timeModified]="user.entity.timeModified"
+                                   [useBadges]="false">
+                </app-entity-status>
               </div>
-            </li>
-          </ul>
+            </div>
+          </li>
+        </ul>
 
-          <div class="card-footer" *ngIf="userPageInfo.hasResultsToDisplay">
-            <ngb-pagination size="sm"
-                            [collectionSize]="userPageInfo.totalUsers"
-                            [(page)]="currentPage"
-                            [maxSize]="usersLimit"
-                            [pageSize]="usersLimit"
-                            [rotate]="false"
-                            [boundaryLinks]="true"
-                            aria-label="Default pagination"
-                            (pageChange)="paginationPageChanged($event)">
-            </ngb-pagination>
-          </div>
+        <div class="card-footer" *ngIf="userPageInfo.hasResultsToDisplay">
+          <ngb-pagination size="sm"
+                          [collectionSize]="userPageInfo.total"
+                          [(page)]="currentPage"
+                          [maxSize]="usersLimit"
+                          [pageSize]="usersLimit"
+                          [rotate]="false"
+                          [boundaryLinks]="true"
+                          aria-label="Default pagination"
+                          (pageChange)="paginationPageChanged($event)">
+          </ngb-pagination>
+        </div>
 
-        </ng-container>
+      </ng-container>
 
-      </div>
     </div>
   </div>
-</ng-container>
-
-<ng-template #serverError>
-  <div class="alert alert-danger mt-2" role="alert">
-    <mat-icon>warning</mat-icon>
-    <ng-container i18n>
-      Server error. Please contact your web site administrator.
-    </ng-container>
-  </div>
-</ng-template>
+</div>

@@ -115,14 +115,13 @@ describe('specimen-store selectors', () => {
       };
 
       expect(selectors.selectSpecimenSearchRepliesAndEntities(state)).toEqual({
-        reply: {
-          searchParams: pagedReply.searchParams,
-          offset: pagedReply.offset,
-          total: pagedReply.total,
-          maxPages: pagedReply.maxPages,
-          entityIds: pagedReply.entities.map(e => e.id)
-        },
-        entities: [ specimen ]
+        entities: [ specimen ],
+        hasNoEntitiesToDisplay: false,
+        hasNoResultsToDisplay: false,
+        hasResultsToDisplay: true,
+        total: pagedReply.total,
+        maxPages: pagedReply.maxPages,
+        showPagination: false
       });
     });
 

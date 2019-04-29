@@ -1,0 +1,108 @@
+<div [formGroup]="annotationsGroup">
+  <div formArrayName="annotations">
+    <ng-container *ngFor="let control of annotations.controls">
+
+      <div class="form-group row">
+        <label class="col-md-3 col-form-label" i18n>
+          {{ control.controls.text.value }}
+        </label>
+
+        <ng-container [ngSwitch]="control.controls.valueType.value">
+
+          <ng-container *ngSwitchCase="'text'">
+            <div class="col-md-9">
+              <input class="form-control"
+                     [formControl]="control.controls.field"
+                     type="text">
+            </div>
+            <div class="offset-3 col-md-9"
+                 *ngIf="control.controls.field.invalid && control.controls.field.touched">
+              <div class="text-danger small" *ngIf="control.controls.field.errors.required" i18n>
+                A value is required
+              </div>
+            </div>
+          </ng-container>
+
+          <ng-container *ngSwitchCase="'number'">
+            <div class="col-md-9">
+              <input class="form-control"
+                     [formControl]="control.controls.field"
+                     type="number">
+            </div>
+            <div class="offset-3 col-md-9"
+                 *ngIf="control.controls.field.invalid && control.controls.field.touched">
+              <div class="text-danger small" *ngIf="control.controls.field.errors.required" i18n>
+                A number is required
+              </div>
+            </div>
+          </ng-container>
+
+          <ng-container *ngSwitchCase="'datetime'">
+            <div class="input-group col-md-9">
+              <input class="form-control"
+                     type="datetime"
+                     [formControl]="control.controls.field"
+                     [owlDateTime]="dt"
+                     i18n-placeholder
+                     placeholder="Date Time">
+              <div class="input-group-append">
+                <span class="input-group-text" [owlDateTimeTrigger]="dt">
+                  <fa-icon [icon]="faCalendar"></fa-icon>
+                </span>
+                <owl-date-time #dt></owl-date-time>
+              </div>
+            </div>
+            <div class="offset-3 col-md-9"
+                 *ngIf="control.controls.field.invalid && control.controls.field.touched">
+              <div class="text-danger small" *ngIf="control.controls.field.errors.required" i18n>
+                Please enter a date and time
+              </div>
+              <div class="text-danger small" *ngIf="control.controls.field.errors.owlDateTimeParse" i18n>
+                Please enter a valid date and time
+              </div>
+            </div>
+          </ng-container>
+
+          <ng-container *ngSwitchCase="'select'">
+            <ng-container *ngIf="control.controls.maxValueCount.value === 1">
+              <div class="col-md-9">
+                <select class="form-control"
+                        [formControl]="control.controls.field">
+                  <option value="" i18n>-- make a selection --</option>
+                  <option *ngFor="let option of control.controls.options.value" [value]="option">
+                    {{ option }}
+                  </option>
+                </select>
+              </div>
+              <div class="offset-3 col-md-9"
+                   *ngIf="control.controls.field.invalid && control.controls.field.touched">
+                <div class="text-danger small" *ngIf="control.controls.field.errors.required" i18n>
+                  Please make a selection
+                </div>
+              </div>
+            </ng-container>
+
+            <ng-container *ngIf="control.controls.maxValueCount.value  > 1">
+              <div class="col-md-9">
+                <ng-container *ngFor="let control of control.controls.field.controls['options'].controls; let last = last">
+                  <input type="checkbox"
+                         [formControl]="control.controls.checkbox"
+                         [value]="control.controls.id">
+                  <span class="ml-1" i18n>{{ control.controls.id.value }}</span>
+                  <br *ngIf="!last">
+                </ng-container>
+              </div>
+              <div class="offset-3 col-md-9"
+                   *ngIf="control.controls.field.controls['selectedOptions'].invalid && control.controls.field.controls['selectedOptions'].touched">
+                <div class="text-danger small"
+                     *ngIf="control.controls.field.controls['selectedOptions'].errors.required" i18n>
+                  Please select at least one
+                </div>
+              </div>
+            </ng-container>
+          </ng-container>
+        </ng-container>
+      </div>
+    </ng-container>
+  </div>
+</div>

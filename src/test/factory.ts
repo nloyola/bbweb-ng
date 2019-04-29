@@ -1,4 +1,4 @@
-import { AnatomicalSource, ConcurrencySafeEntity, PagedReply, PreservationTemperature, PreservationType, SearchParams, SpecimenType } from '@app/domain';
+import { AnatomicalSource, ConcurrencySafeEntity, PagedReply, PreservationTemperature, PreservationType, SearchParams, SpecimenType, slugify } from '@app/domain';
 import { MaxValueCount, ValueTypes } from '@app/domain/annotations';
 import { CentreCounts, CentreState } from '@app/domain/centres';
 import { StudyCounts, StudyState } from '@app/domain/studies';
@@ -49,7 +49,7 @@ export class Factory {
       id: this.domainEntityIdNext(DomainEntities.USER),
       version: 0,
       name: name,
-      slug: this.slugify(name),
+      slug: slugify(name),
       email: faker.internet.email(),
       state: UserState.Registered,
       roles: []
@@ -438,7 +438,7 @@ export class Factory {
   nameAndSlug(): any {
     const name = this.stringNext();
     return {
-      slug: this.slugify(name),
+      slug: slugify(name),
       name: name
     };
   }
@@ -562,7 +562,7 @@ export class Factory {
         uniqueId,
         annotations: []
       },
-      slug: this.slugify(uniqueId),
+      slug: slugify(uniqueId),
       ...options
     };
     this.defaultEntities.set(DomainEntities.PARTICIPANT, p);
@@ -646,7 +646,7 @@ export class Factory {
       ...{
         id:                    this.domainEntityIdNext(DomainEntities.SPECIMEN),
         version:         0,
-        slug:                  this.slugify(inventoryId),
+        slug:                  slugify(inventoryId),
         inventoryId:           inventoryId,
         specimenDefinitionId:  null,
         originLocationInfo:    null,
@@ -690,7 +690,7 @@ export class Factory {
         eventTypeId:     collectionEventType.id,
         eventTypeSlug:   collectionEventType.slug,
         timeCompleted:   faker.date.recent(10),
-        slug:            this.slugify('visit-number-' + visitNumber),
+        slug:            slugify('visit-number-' + visitNumber),
         visitNumber:     visitNumber,
         annotations:     []
       },
@@ -780,7 +780,7 @@ export class Factory {
     return {
       id: this.domainEntityIdNext(DomainEntities.MEMBERSHIP_BASE),
       name: name,
-      slug: this.slugify(name),
+      slug: slugify(name),
       description: faker.lorem.sentences(4),
       studyData: this.entitySet(),
       centreData: this.entitySet()
@@ -792,7 +792,7 @@ export class Factory {
     return {
       id: this.domainEntityIdNext(DomainEntities.ACCESS_ITEM),
       name: name,
-      slug: this.slugify(name),
+      slug: slugify(name),
       description: faker.lorem.sentences(4),
       parentData: [this.entityInfo()],
       childData: [this.entityInfo()]

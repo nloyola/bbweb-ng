@@ -1,117 +1,103 @@
-<ng-container *ngIf="!(serverError$ | async); else serverError">
+<app-entity-filters class="mb-2"
+                    [useNameFilter]="true"
+                    [stateData]="stateData"
+                    (filters)="onFiltersUpdated($event)">
+</app-entity-filters>
 
-  <app-entity-filters class="mb-2"
-                      [useNameFilter]="true"
-                      [stateData]="stateData"
-                      (filters)="onFiltersUpdated($event)">
-  </app-entity-filters>
+<div class="row">
+  <div class="col-sm-12 mt-2">
+    <div class="card">
+      <div class="card-header bg-default">
+        <app-study-counts [countData]="studyCountData$ | async">
+        </app-study-counts>
 
-  <div class="row">
-    <div class="col-sm-12 mt-2">
-      <div class="card">
-        <div class="card-header bg-default">
-          <app-study-counts [countData]="studyCountData$ | async">
-          </app-study-counts>
+        <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
+          <button class="btn btn-sm btn-outline-primary"
+                  type="button"
+                  id="tableMenu"
+                  ngbDropdownToggle>
+            <mat-icon inline="true">more_vert</mat-icon>
+          </button>
 
-          <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
-            <button class="btn btn-sm btn-outline-primary"
-                    type="button"
-                    id="tableMenu"
-                    ngbDropdownToggle>
-              <mat-icon inline="true">more_vert</mat-icon>
-            </button>
+          <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="tableMenu">
 
-            <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="tableMenu">
+            <a routerLink="/admin/studies/add"
+               class="dropdown-item">
+              <mat-icon class="success-icon mr-1">add_circle</mat-icon>
+              <span i18n>Add Study</span>
+            </a>
 
-              <a routerLink="/admin/studies/add"
-                 class="dropdown-item">
-                <mat-icon class="success-icon mr-1">add_circle</mat-icon>
-                <span i18n>Add Study</span>
-              </a>
+            <div class="dropdown-divider"></div>
 
-              <div class="dropdown-divider"></div>
+            <h5 class="dropdown-header" i18n>Sort by</h5>
+            <a class="dropdown-item"
+               *ngFor="let sortChoice of sortChoices"
+               (click)="sortFieldSelected(sortChoice.id)">
+              {{ sortChoice.label }}
+            </a>
+          </div>
+        </span>
+      </div>
 
-              <h5 class="dropdown-header" i18n>Sort by</h5>
-              <a class="dropdown-item"
-                 *ngFor="let sortChoice of sortChoices"
-                 (click)="sortFieldSelected(sortChoice.id)">
-                {{ sortChoice.label }}
-              </a>
-            </div>
-          </span>
+      <div class="card-body" *ngIf="isLoading$ | async">
+        <div class="card-text">
+          <div class="alert alert-warning" role="alert">
+            <app-spinner name="studies" [show]="true" i18n>
+              Loading...
+            </app-spinner>
+          </div>
         </div>
+      </div>
 
-        <div class="card-body" *ngIf="isLoading$ | async">
+      <ng-container *ngIf="(studyPageInfo$ | async); let studyPageInfo">
+
+        <div class="card-body" *ngIf="studyPageInfo.hasNoEntitiesToDisplay">
           <div class="card-text">
             <div class="alert alert-warning" role="alert">
-              <app-spinner name="studies" [show]="true" i18n>
-                Loading...
-              </app-spinner>
+              <mat-icon>warning</mat-icon>
+              <ng-container i18n>
+                No studies have been added yet.
+              </ng-container>
             </div>
           </div>
         </div>
 
-        <ng-container *ngIf="(studyPageInfo$ | async); let studyPageInfo">
-
-          <div class="card-body" *ngIf="studyPageInfo.hasNoEntitiesToDisplay">
-            <div class="card-text">
-              <div class="alert alert-warning" role="alert">
-                <mat-icon>warning</mat-icon>
-                <ng-container i18n>
-                  No studies have been added yet.
-                </ng-container>
-              </div>
+        <div class="card-body" *ngIf="studyPageInfo.hasNoResultsToDisplay">
+          <div class="card-text">
+            <div class="alert alert-warning" role="alert">
+              <mat-icon>warning</mat-icon>
+              <ng-container i18n>
+                There are no studies that match your criteria.
+              </ng-container>
             </div>
           </div>
+        </div>
 
-          <div class="card-body" *ngIf="studyPageInfo.hasNoResultsToDisplay">
-            <div class="card-text">
-              <div class="alert alert-warning" role="alert">
-                <mat-icon>warning</mat-icon>
-                <ng-container i18n>
-                  There are no studies that match your criteria.
-                </ng-container>
-              </div>
-            </div>
-          </div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item" *ngFor="let study of (studies$ | async)">
+            <app-entity-summary [entity]="study"
+                                [icon]="study.stateIcon()"
+                                [iconClass]="study.stateIconClass()"
+                                (selected)="studySelected($event)">
+            </app-entity-summary>
+          </li>
+        </ul>
 
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item" *ngFor="let study of studyPageInfo.studies">
-              <app-entity-summary [entity]="study"
-                                  [icon]="study.stateIcon()"
-                                  [iconClass]="study.stateIconClass()"
-                                  (selected)="studySelected($event)">
-              </app-entity-summary>
-            </li>
-          </ul>
+        <div class="card-footer" *ngIf="studyPageInfo.hasResultsToDisplay">
+          <ngb-pagination size="sm"
+                          [collectionSize]="studyPageInfo.total"
+                          [(page)]="currentPage"
+                          [maxSize]="studiesLimit"
+                          [pageSize]="studiesLimit"
+                          [rotate]="false"
+                          [boundaryLinks]="true"
+                          aria-label="Default pagination"
+                          (pageChange)="paginationPageChanged($event)">
+          </ngb-pagination>
+        </div>
 
-          <div class="card-footer" *ngIf="studyPageInfo.hasResultsToDisplay">
-            <ngb-pagination size="sm"
-                            [collectionSize]="studyPageInfo.totalStudies"
-                            [(page)]="currentPage"
-                            [maxSize]="studiesLimit"
-                            [pageSize]="studiesLimit"
-                            [rotate]="false"
-                            [boundaryLinks]="true"
-                            aria-label="Default pagination"
-                            (pageChange)="paginationPageChanged($event)">
-            </ngb-pagination>
-          </div>
+      </ng-container>
 
-        </ng-container>
-
-      </div>
     </div>
   </div>
-
-</ng-container>
-
-
-<ng-template #serverError>
-  <div class="alert alert-danger mt-2" role="alert">
-    <mat-icon>warning</mat-icon>
-    <ng-container i18n>
-      Server error. Please contact your web site administrator.
-    </ng-container>
-  </div>
-</ng-template>
+</div>

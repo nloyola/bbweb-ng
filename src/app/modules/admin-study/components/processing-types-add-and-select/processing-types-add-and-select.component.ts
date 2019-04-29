@@ -6,7 +6,6 @@ import { ProcessingTypeStoreActions, ProcessingTypeStoreSelectors } from '@app/r
 import { select, Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
 import { filter, map, takeUntil, tap } from 'rxjs/operators';
-import { SearchReply } from '@app/domain/search-reply.model';
 
 export interface ProcessingTypePageInfo {
   hasNoEntitiesToDisplay: boolean;
@@ -32,7 +31,6 @@ export class ProcessingTypesAddAndSelectComponent implements OnInit, OnDestroy {
 
   isLoading$: Observable<boolean>;
   pageInfo$: Observable<PagedReplyInfo<ProcessingType>>;
-  serverError$: Observable<boolean>;
   isAddAllowed: boolean;
 
   currentPage = 1;
@@ -52,20 +50,7 @@ export class ProcessingTypesAddAndSelectComponent implements OnInit, OnDestroy {
 
     this.pageInfo$ = this.store$.pipe(
       select(ProcessingTypeStoreSelectors.selectSearchRepliesAndEntities),
-      takeUntil(this.unsubscribe$),
-      map(reply => this.searchReplyToPageInfo(reply)));
-
-    this.serverError$ = this.store$.pipe(
-      select(ProcessingTypeStoreSelectors.selectError),
-      filter(error => error !== null),
-      /* tslint:disable-next-line:max-line-length */
-      map(error => (error.actionType === ProcessingTypeStoreActions.ActionTypes.SearchProcessingTypesFailure)),
-      tap(error => {
-        if (error) {
-          this.currentPage = 1;
-          this.applySearchParams();
-        }
-      }));
+      takeUntil(this.unsubscribe$));
 
     this.store$.pipe(
       select(ProcessingTypeStoreSelectors.selectLastRemovedId),
@@ -109,24 +94,6 @@ export class ProcessingTypesAddAndSelectComponent implements OnInit, OnDestroy {
                                      this.currentPage,
                                      this.processingTypesLimit)
     }));
-  }
-
-  private searchReplyToPageInfo(searchReply: SearchReply<ProcessingType>): PagedReplyInfo<ProcessingType> {
-    if (searchReply === undefined) { return {} as any; }
-
-    return {
-      hasResultsToDisplay: searchReply.entities.length > 0,
-      hasNoEntitiesToDisplay: ((searchReply.entities.length <= 0)
-                               && (searchReply.reply.searchParams.filter === '')),
-
-      hasNoResultsToDisplay: ((searchReply.entities.length <= 0)
-                              && (searchReply.reply.searchParams.filter !== '')),
-
-      entities: searchReply.entities,
-      total: searchReply.reply.total,
-      maxPages: searchReply.reply.maxPages,
-      showPagination: searchReply.reply.maxPages > 1
-    };
   }
 
 }

@@ -36,65 +36,20 @@ describe('EventTypeService', () => {
   });
 
   describe('when searching event types', () => {
-    let rawEventType: any;
-    let reply: any;
+
+    const context: PagedQueryBehaviour.Context<CollectionEventType> = {};
 
     beforeEach(() => {
-      rawEventType = factory.collectionEventType();
-      reply = {
-        items: [ rawEventType ],
-        page: 1,
-        limit: 10,
-        offset: 0,
-        total: 1
+      context.search = (searchParams: SearchParams) => service.search(study.slug, searchParams);
+      context.url = `${BASE_URL}/${study.slug}`;
+      context.replyItems = [ factory.collectionEventType() ];
+      context.subscription = (pr: PagedReply<CollectionEventType>) => {
+        expect(pr.entities.length).toBe(1);
+        expect(pr.entities[0]).toEqual(jasmine.any(CollectionEventType));
       };
     });
 
-    it('can retrieve studies', () => {
-      const params = new SearchParams();
-      service.search(study.slug, params).subscribe((pr: PagedReply<CollectionEventType>) => {
-        expect(pr.entities.length).toBe(1);
-        expect(pr.entities[0]).toEqual(jasmine.any(CollectionEventType));
-        expect(pr.offset).toBe(reply.offset);
-        expect(pr.total).toBe(reply.total);
-      });
-
-      const req = httpMock.expectOne(r => r.url === `${BASE_URL}/${study.slug}`);
-      expect(req.request.method).toBe('GET');
-      expect(req.request.params.keys()).toEqual([]);
-      req.flush({
-        status: 'success',
-        data: reply
-      });
-      httpMock.verify();
-    });
-
-    describe('uses valid query parameters', function () {
-
-      const context: PagedQueryBehaviour.Context<CollectionEventType> = {};
-
-      beforeEach(() => {
-        context.search = (searchParams: SearchParams) => service.search(study.slug, searchParams);
-        context.url = `${BASE_URL}/${study.slug}`;
-        context.reply = reply;
-      });
-
-      PagedQueryBehaviour.sharedBehaviour(context);
-
-    });
-
-    it('handles an error reply correctly', () => {
-      const params = new SearchParams();
-      service.search(study.slug, params).subscribe(
-        () => { fail('should have been an error response'); },
-        err => { expect(err.message).toContain('expected a paged reply'); }
-      );
-
-      const req = httpMock.expectOne(`${BASE_URL}/${study.slug}`);
-      expect(req.request.method).toBe('GET');
-      req.flush({ status: 'error', data: undefined });
-      httpMock.verify();
-    });
+    PagedQueryBehaviour.sharedBehaviour(context);
 
   });
 

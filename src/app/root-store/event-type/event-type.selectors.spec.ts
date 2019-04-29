@@ -41,8 +41,13 @@ describe('EventTypeStore selectors', () => {
       });
 
       expect(EventTypeStoreSelectors.selectSearchRepliesAndEntities(state)).toEqual({
-        reply: searchReplies[factory.defaultStudy().id][pagedReply.searchParams.queryString()],
-        entities: [ eventType ]
+        entities: [ eventType ],
+        hasNoEntitiesToDisplay: false,
+        hasNoResultsToDisplay: false,
+        hasResultsToDisplay: true,
+        total: pagedReply.total,
+        maxPages: pagedReply.maxPages,
+        showPagination: false
       });
     });
 

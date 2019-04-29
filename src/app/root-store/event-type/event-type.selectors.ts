@@ -1,4 +1,4 @@
-import { SearchReply } from '@app/domain/search-reply.model';
+import { PagedReplyInfo, pagedReplyToInfo } from '@app/domain';
 import { CollectionEventType } from '@app/domain/studies';
 import { createFeatureSelector, createSelector, MemoizedSelector } from '@ngrx/store';
 import * as fromEventType from './event-type.reducer';
@@ -60,14 +60,14 @@ export const selectSearchRepliesAndEntities =
     (searchActive: boolean,
      lastSearch: fromEventType.LastSearch,
      searchReplies: fromEventType.PagedReplyHash,
-     entities: any): SearchReply<CollectionEventType> => {
+     entities: any): PagedReplyInfo<CollectionEventType> => {
       if (searchActive || (lastSearch === null)) { return undefined; }
 
       const reply = searchReplies[lastSearch.studyId][lastSearch.params.queryString()];
       if (reply === undefined) { return undefined; }
 
       return {
-        reply,
+        ...pagedReplyToInfo(reply),
         entities: reply.entityIds.map(id => entities[id])
       };
     });

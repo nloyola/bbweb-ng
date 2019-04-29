@@ -4,11 +4,12 @@ import { JSONArray } from '../json-object.model';
 
 export class SelectAnnotation extends Annotation {
 
-  value: string[];
+  value: string[] = [];
 
   serverAnnotation() {
     return {
       annotationTypeId: this.annotationTypeId,
+      valueType:        this.valueType,
       selectedValues:   this.value
     };
   }

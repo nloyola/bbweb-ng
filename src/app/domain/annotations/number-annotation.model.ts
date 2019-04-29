@@ -8,7 +8,8 @@ export class NumberAnnotation extends Annotation {
   serverAnnotation(): any {
     return {
       annotationTypeId: this.annotationTypeId,
-      numberValue:      this.value,
+      valueType:        this.valueType,
+      numberValue:      this.value.toString(10),
       selectedValues:   []
     };
   }

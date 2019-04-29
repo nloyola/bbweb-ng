@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, SimpleChange } from '@angular/core';
 import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
@@ -29,18 +29,11 @@ describe('EntitySelectorComponent', () => {
     fixture = TestBed.createComponent<EntitySelectorComponent<TestEntity>>(EntitySelectorComponent);
     component = fixture.componentInstance;
 
-    component.pageInfo = {
-      hasNoEntitiesToDisplay: false,
-      hasNoResultsToDisplay: false,
-      hasResultsToDisplay: false,
-      entities: [],
-      total: 0,
-      maxPages: 0,
-      showPagination: true
-    };
+    component.entities = [ new TestEntity() ];
     component.isLoading = false;
     component.entitiesLimit = 5;
     component.page = 1;
+    component.hasNoMatches = false;
   });
 
   it('should create', () => {
@@ -75,4 +68,14 @@ describe('EntitySelectorComponent', () => {
       expect(eventProduced).toBe(true);
     });
   }));
+
+  it('when there are no matches', () => {
+    fixture.detectChanges();
+    component.ngOnChanges({
+      hasNoMatches: new SimpleChange(null, true, false)
+    });
+    fixture.detectChanges();
+    expect(component.hasNoMatches).toBe(true);
+    expect(component.hasNoResultsToDisplay).toBe(false);
+  });
 });

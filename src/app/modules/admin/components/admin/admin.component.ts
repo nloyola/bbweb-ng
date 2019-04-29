@@ -25,28 +25,27 @@ export class AdminComponent implements OnInit {
   constructor(private store$: Store<RootStoreState.State>) { }
 
   public ngOnInit() {
-    this.permissions$ = this.store$
-      .pipe(
-        select(AuthStoreSelectors.selectAuthUser),
-        map((user: User) => {
-          if (user === null) {
-            return {
-              user,
-              hasStudyAdminRole: false,
-              hasCentreAdminRole: false,
-              hasUserAdminRole: false,
-              hasAdminRole: false
-            };
-          }
-
+    this.permissions$ = this.store$.pipe(
+      select(AuthStoreSelectors.selectAuthUser),
+      map((user: User) => {
+        if (user === null) {
           return {
-              user,
-              hasStudyAdminRole: user.hasStudyAdminRole(),
-              hasCentreAdminRole: user.hasCentreAdminRole(),
-              hasUserAdminRole: user.hasUserAdminRole(),
-              hasAdminRole: user.hasAdminRole()
+            user,
+            hasStudyAdminRole: false,
+            hasCentreAdminRole: false,
+            hasUserAdminRole: false,
+            hasAdminRole: false
           };
-        }));
+        }
+
+        return {
+          user,
+          hasStudyAdminRole: user.hasStudyAdminRole(),
+          hasCentreAdminRole: user.hasCentreAdminRole(),
+          hasUserAdminRole: user.hasUserAdminRole(),
+          hasAdminRole: user.hasAdminRole()
+        };
+      }));
   }
 
 }

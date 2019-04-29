@@ -37,7 +37,7 @@ export const addParticipantFailure = createAction(
 
 export const getParticipantRequest = createAction(
   '[Participant] Get Participant Request',
-  props<{ id: string }>()
+  props<{ slug: string }>()
 );
 
 export const getParticipantSuccess = createAction(

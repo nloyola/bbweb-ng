@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --proxy-config proxy.conf.json",
+    "start": "ng --progress=false serve --proxy-config proxy.conf.json",
     "build": "ng build",
     "test": "jest",
     "test:ci": "jest --runInBand",
@@ -44,6 +44,7 @@
     "jquery": "^3.4.1",
     "lodash.template": "^4.4.0",
     "lodash.templatesettings": "^4.1.0",
+    "ng-pick-datetime": "^7.0.0",
     "ngx-toastr": "^10.0.4",
     "rxjs": "^6.5.2",
     "tslib": "^1.9.3",

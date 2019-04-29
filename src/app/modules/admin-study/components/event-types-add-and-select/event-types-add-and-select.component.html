@@ -1,13 +1,13 @@
-<app-entity-selector [pageInfo]="(pageInfo$ | async)"
-                     [isLoading]="(isLoading$ | async)"
-                     [entitiesLimit]="eventTypesLimit"
-                     [(page)]="currentPage"
-                     [heading]="heading"
-                     [noEntitiesToDisplay]="noEntitiesToDisplay"
-                     [noResultsToDisplay]="noResultsToDisplay"
-                     [loadingContent]="showLoading"
-                     (nameFilterUpdated)="onFiltersUpdated($event)"
-                     (pageChange)="paginationPageChange($event)">
+<app-paged-entity-selector [pageInfo]="(pageInfo$ | async)"
+                           [isLoading]="(isLoading$ | async)"
+                           [entitiesLimit]="eventTypesLimit"
+                           [(page)]="currentPage"
+                           [heading]="heading"
+                           [noEntitiesToDisplay]="noEntitiesToDisplay"
+                           [noResultsToDisplay]="noResultsToDisplay"
+                           [loadingContent]="showLoading"
+                           (nameFilterUpdated)="onFiltersUpdated($event)"
+                           (pageChange)="paginationPageChange($event)">
   <ng-template let-entity>
     <li class="list-group-item" *ngIf="entity">
       <a href="#" (click)="!!eventTypeSelected(entity)">
@@ -16,7 +16,7 @@
       <span class="float-right badge badge-secondary">{{ getRecurringLabel(entity) }}</span>
     </li>
   </ng-template>
-</app-entity-selector>
+</app-paged-entity-selector>
 
 <ng-template #heading>
   <small i18n>Events</small>
@@ -60,6 +60,6 @@
 
 <ng-template #showLoading>
   <app-spinner name="loading" [show]="true" i18n>
-    <small>Loading</small>
+    <small>Loading...</small>
   </app-spinner>
 </ng-template>

@@ -1,6 +1,5 @@
-import { PagedReplyEntityIds, SearchParams } from '@app/domain';
+import { PagedReplyEntityIds, SearchParams, PagedReplyInfo, pagedReplyToInfo } from '@app/domain';
 import { Centre, CentreCounts } from '@app/domain/centres';
-import { SearchReply } from '@app/domain/search-reply.model';
 import { createFeatureSelector, createSelector, MemoizedSelector } from '@ngrx/store';
 import * as fromCentre from './centre.reducer';
 
@@ -52,14 +51,14 @@ export const selectCentreSearchRepliesAndEntities =
     (searchActive: boolean,
      lastSearch: SearchParams,
      searchReplies: { [ url: string ]: PagedReplyEntityIds },
-     entities: any): SearchReply<Centre> => {
+     entities: any): PagedReplyInfo<Centre> => {
       if (searchActive || (lastSearch === null)) { return undefined; }
 
       const reply = searchReplies[lastSearch.queryString()];
       if (reply === undefined) { return undefined; }
 
       return {
-        reply,
+        ...pagedReplyToInfo(reply),
         entities: reply.entityIds.map(id => entities[id])
       };
     });

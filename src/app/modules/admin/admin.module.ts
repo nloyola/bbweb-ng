@@ -21,8 +21,8 @@ import { AdminAccessModule } from '../admin-access/admin-access.module';
     FontAwesomeModule,
     SharedModule,
     AdminRoutingModule,
-    AdminCentreModule,
     AdminStudyModule,
+    AdminCentreModule,
     AdminAccessModule
   ],
   declarations: [

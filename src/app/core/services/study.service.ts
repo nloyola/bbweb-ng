@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { PagedReply, SearchParams, JSONObject, JSONArray, JSONValue } from '@app/domain';
 import { AnnotationType } from '@app/domain/annotations';
 import { ApiReply } from '@app/domain/api-reply.model';
-import { Study, StudyCounts } from '@app/domain/studies';
+import { Study, StudyCounts, IStudyInfoAndState, StudyState } from '@app/domain/studies';
 import { Observable } from 'rxjs';
 import { map, delay } from 'rxjs/operators';
 
@@ -25,6 +25,7 @@ export class StudyService {
   counts(): Observable<StudyCounts> {
     return this.http.get<ApiReply>(`${this.BASE_URL}/counts`)
       .pipe(
+        // delay(100000),
         map((reply: ApiReply) => {
           if (reply && reply.data) {
             const jObj = reply.data as JSONObject;
@@ -50,13 +51,7 @@ export class StudyService {
   }
 
   /**
-   * Used to search studies.
-   *
-   * <p>A paged API is used to list studies. See below for more details.</p>
-   *
-   * @param searchParams - The options to use to search for studies.
-   *
-   * @returns The studies within a PagedReply.
+   * Used to search all studies.
    */
   search(searchParams: SearchParams): Observable<PagedReply<Study>> {
     return this.http.get<ApiReply>(`${this.BASE_URL}/search`,
@@ -75,6 +70,28 @@ export class StudyService {
               total: jObj.total as number,
               maxPages: jObj.maxPages as number
             };
+          }
+          throw new Error('expected a paged reply');
+        }));
+  }
+
+  /**
+   * Used to search for studies that can collect specimens.
+   */
+  searchCollectionStudies(searchParams: SearchParams): Observable<IStudyInfoAndState[]> {
+    return this.http.get<ApiReply>(`${this.BASE_URL}/collectionStudies`,
+                                   { params: searchParams.httpParams() })
+      .pipe(
+        // delay(10000),
+        map((reply: ApiReply) => {
+          if (reply && reply.data) {
+            return (reply.data as JSONArray).map((obj: JSONObject) => ({
+              id:              obj.id as string,
+              slug:            obj.slug as string,
+              name:            obj.name as string,
+              state:           obj.state as StudyState,
+              annotationTypes: []
+            }));
           }
           throw new Error('expected a paged reply');
         }));

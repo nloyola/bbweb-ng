@@ -5,25 +5,47 @@ import { NumberAnnotation } from './number-annotation.model';
 import { SelectAnnotation } from './select-annotation.model';
 import { TextAnnotation } from './text-annotation.model';
 import { ValueTypes } from './value-type.enum';
+import { AnnotationType } from './annotation-type.model';
 
-export function annotationFactory(obj: JSONObject): Annotation {
-  switch (obj.valueType) {
+
+
+export function annotationFromValueType(valueType: ValueTypes): Annotation {
+  let annotation: Annotation;
+
+  switch (valueType) {
     case ValueTypes.Text:
-      return new TextAnnotation().deserialize(obj);
+      annotation = new TextAnnotation();
+      break;
 
     case ValueTypes.Number:
-      return new NumberAnnotation().deserialize(obj);
+      annotation = new NumberAnnotation();
+      break;
 
     case ValueTypes.DateTime:
-      return new DateTimeAnnotation().deserialize(obj);
+      annotation = new DateTimeAnnotation();
+      break;
 
     case ValueTypes.Select:
-      return new SelectAnnotation().deserialize(obj);
+      annotation = new SelectAnnotation();
+      break;
 
     default:
-      // do nothing
+      // should never happen since this is checked for in the create method, but just in case
+      throw new Error('value type is invalid: ' + valueType);
   }
+  annotation.valueType = valueType;
+  return annotation;
+}
 
-  // should never happen since this is checked for in the create method, but just in case
-  throw new Error('value type is invalid: ' + obj.valueType);
+export function annotationFromType(annotationType: AnnotationType): Annotation {
+  const annotation = annotationFromValueType(annotationType.valueType);
+  annotation.annotationTypeId = annotationType.id;
+  annotation.annotationType = annotationType;
+  annotation.valueType = annotationType.valueType;
+  return annotation;
+}
+
+export function annotationFactory(obj: JSONObject): Annotation {
+  const annotation = annotationFromValueType(obj.valueType as ValueTypes);
+  return annotation.deserialize(obj);
 }

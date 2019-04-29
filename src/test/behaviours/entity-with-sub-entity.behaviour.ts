@@ -1,5 +1,4 @@
 import { fakeAsync, flush, TestBed } from '@angular/core/testing';
-import { ConcurrencySafeEntity } from '@app/domain';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
@@ -23,7 +22,7 @@ export namespace EntityWithSubEntityBehaviour {
     checkRemoveUpdateRequest: (mockListener: any) => void;
   }
 
-  export function addSharedBehaviour<T extends ConcurrencySafeEntity>(context: AddContext) {
+  export function addSharedBehaviour(context: AddContext) {
 
     describe('(shared behaviour)', () => {
 
@@ -92,7 +91,7 @@ export namespace EntityWithSubEntityBehaviour {
 
   }
 
-  export function removeSharedBehaviour<T extends ConcurrencySafeEntity>(context: RemoveContext) {
+  export function removeSharedBehaviour(context: RemoveContext) {
 
     describe('(shared behaviour)', () => {
 

@@ -1,6 +1,5 @@
-import { PagedReplyEntityIds, SearchParams } from '@app/domain';
+import { PagedReplyEntityIds, PagedReplyInfo, pagedReplyToInfo, SearchParams } from '@app/domain';
 import { Membership } from '@app/domain/access';
-import { SearchReply } from '@app/domain/search-reply.model';
 import { createFeatureSelector, createSelector, MemoizedSelector } from '@ngrx/store';
 import * as fromMembership from './membership.reducer';
 
@@ -48,14 +47,14 @@ export const selectMembershipSearchRepliesAndEntities =
     (searchActive: boolean,
      lastSearch: SearchParams,
      searchReplies: { [ url: string ]: PagedReplyEntityIds },
-     entities: any): SearchReply<Membership> => {
+     entities: any): PagedReplyInfo<Membership> => {
       if (searchActive || (lastSearch === null)) { return undefined; }
 
       const reply = searchReplies[lastSearch.queryString()];
       if (reply === undefined) { return undefined; }
 
       return {
-        reply,
+        ...pagedReplyToInfo(reply),
         entities: reply.entityIds.map(id => entities[id])
       };
     });

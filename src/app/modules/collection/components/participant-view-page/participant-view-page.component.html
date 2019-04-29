@@ -1,0 +1,5 @@
+<div class="pb-2 mt-4 mb-2 border-bottom">
+  <h1 *ngIf="participant$ | async as participant" >
+    {{participant.study.name}} <small><span i18>Participant</span> {{participant.uniqueId}}</small>
+  </h1>
+</div>

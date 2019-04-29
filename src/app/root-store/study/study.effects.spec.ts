@@ -102,6 +102,42 @@ describe('study-store effects', () => {
     });
   });
 
+  describe('searchCollectionStudiesRequestEffect', () => {
+
+    it('should respond with success', () => {
+      const searchParams = new SearchParams();
+      const study = factory.study();
+      const dto = factory.entityNameAndStateDto(study);
+      const studiesData = [ dto ];
+      const action = StudyStoreActions.searchCollectionStudiesRequest({ searchParams });
+      const completion = StudyStoreActions.searchCollectionStudiesSuccess({ studiesData });
+      spyOn(studyService, 'searchCollectionStudies').and.returnValue(of(studiesData));
+
+      actions = hot('--a-', { a: action });
+      const expected = cold('--b', { b: completion });
+
+      expect(effects.searchCollectionStudiesRequest$).toBeObservable(expected);
+    });
+
+    it('should respond with failure', () => {
+      const searchParams = new SearchParams();
+      const error = {
+        status: 404,
+        error: {
+          message: 'simulated error'
+        }
+      };
+      const action = StudyStoreActions.searchCollectionStudiesRequest({ searchParams });
+      const completion = StudyStoreActions.searchCollectionStudiesFailure({ error });
+      spyOn(studyService, 'searchCollectionStudies').and.returnValue(throwError(error));
+
+      actions = hot('--a-', { a: action });
+      const expected = cold('--b', { b: completion });
+
+      expect(effects.searchCollectionStudiesRequest$).toBeObservable(expected);
+    });
+  });
+
   describe('addStudyRequestEffect', () => {
 
     it('should respond with success', () => {

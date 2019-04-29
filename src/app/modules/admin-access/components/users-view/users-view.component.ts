@@ -1,22 +1,13 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EntityStateInfo, LabelledId, SearchFilterValues, SearchParams } from '@app/domain';
+import { EntityStateInfo, LabelledId, SearchFilterValues, SearchParams, PagedReplyInfo } from '@app/domain';
 import { NameFilter, SearchFilter, StateFilter } from '@app/domain/search-filters';
 import { userCountsToUIMap, UserCountsUIMap, UserState, UserStateUIMap, User } from '@app/domain/users';
 import { UserUI } from '@app/domain/users/user-ui.model';
 import { RootStoreState, UserStoreActions, UserStoreSelectors } from '@app/root-store';
 import { select, Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
-import { filter, map, takeUntil } from 'rxjs/operators';
-import { SearchReply } from '@app/domain/search-reply.model';
-
-interface UserPageInfo {
-  hasNoEntitiesToDisplay?: boolean;
-  hasNoResultsToDisplay?: boolean;
-  hasResultsToDisplay?: boolean;
-  users?: UserUI[];
-  totalUsers?: number;
-}
+import { filter, map, takeUntil, shareReplay } from 'rxjs/operators';
 
 @Component({
   selector: 'app-users-view',
@@ -27,10 +18,10 @@ export class UsersViewComponent implements OnInit, OnDestroy {
 
   isCountsLoading$: Observable<boolean>;
   isLoading$: Observable<boolean>;
-  serverError$: Observable<boolean>;
   hasLoaded$: Observable<boolean>;
   userCountData$: Observable<UserCountsUIMap>;
-  userPageInfo$: Observable<UserPageInfo>;
+  userPageInfo$: Observable<PagedReplyInfo<User>>;
+  users$: Observable<UserUI[]>;
 
   usersLimit = 5;
 
@@ -67,10 +58,6 @@ export class UsersViewComponent implements OnInit, OnDestroy {
     this.isLoading$ =
       this.store$.pipe(select(UserStoreSelectors.selectUserSearchActive));
 
-    this.serverError$ = this.store$.pipe(
-      select(UserStoreSelectors.selectUserError),
-      filter(e => (e !== null) && (e.type === UserStoreActions.UserActionTypes.SearchUsersFailure)));
-
     this.userCountData$ = this.store$.pipe(
       select(UserStoreSelectors.selectUserCounts),
       takeUntil(this.unsubscribe$),
@@ -79,7 +66,11 @@ export class UsersViewComponent implements OnInit, OnDestroy {
     this.userPageInfo$ = this.store$.pipe(
       select(UserStoreSelectors.selectUserSearchRepliesAndEntities),
       takeUntil(this.unsubscribe$),
-      map(reply => this.searchReplyToPageInfo(reply)));
+      shareReplay());
+
+    this.users$ = this.userPageInfo$.pipe(
+      filter(page => page !== undefined),
+      map(page => page.entities.map(e => new UserUI(e))));
 
     this.store$.dispatch(new UserStoreActions.GetUserCountsRequest());
     this.applySearchParams();
@@ -134,21 +125,5 @@ export class UsersViewComponent implements OnInit, OnDestroy {
                                      this.currentPage,
                                      this.usersLimit)
     }));
-  }
-
-  private searchReplyToPageInfo(searchReply: SearchReply<User>): UserPageInfo {
-    if (searchReply === undefined) { return {}; }
-
-    return {
-      hasResultsToDisplay: searchReply.entities.length > 0,
-      hasNoEntitiesToDisplay: ((searchReply.entities.length <= 0)
-                               && (searchReply.reply.searchParams.filter === '')),
-
-      hasNoResultsToDisplay: ((searchReply.entities.length <= 0)
-                              && (searchReply.reply.searchParams.filter !== '')),
-
-      users: searchReply.entities.map(s => new UserUI(s)),
-      totalUsers: searchReply.reply.total
-    };
   }
 }

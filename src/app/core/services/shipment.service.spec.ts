@@ -59,55 +59,20 @@ describe('ShipmentService', () => {
   });
 
   describe('when searching shipments', () => {
-    let rawShipment: any;
-    let reply: any;
+
+    const context: PagedQueryBehaviour.Context<Shipment> = {};
 
     beforeEach(() => {
-      rawShipment = factory.shipment();
-      reply = {
-        items: [ rawShipment ],
-        page: 1,
-        limit: 10,
-        offset: 0,
-        total: 1
+      context.search = (searchParams: SearchParams) => service.search(searchParams);
+      context.url = `${BASE_URL}/list`;
+      context.replyItems = [ factory.shipment() ];
+      context.subscription = (pr: PagedReply<Shipment>) => {
+        expect(pr.entities.length).toBe(1);
+        expect(pr.entities[0]).toEqual(jasmine.any(Shipment));
       };
     });
 
-    it('can retrieve shipments', () => {
-      const params = new SearchParams();
-      service.search(params).subscribe((pr: PagedReply<Shipment>) => {
-        expect(pr.entities.length).toBe(1);
-        expect(pr.entities[0]).toEqual(jasmine.any(Shipment));
-        expect(pr.offset).toBe(reply.offset);
-        expect(pr.total).toBe(reply.total);
-      });
-
-      const req = httpMock.expectOne(r => r.url === `${BASE_URL}/list`);
-      expect(req.request.method).toBe('GET');
-      expect(req.request.params.keys()).toEqual([]);
-      req.flush({ status: 'success', data: reply });
-      httpMock.verify();
-    });
-
-    describe('uses valid query parameters', function () {
-
-      const context: PagedQueryBehaviour.Context<Shipment> = {};
-
-      beforeEach(() => {
-        context.search = (searchParams: SearchParams) => service.search(searchParams);
-        context.url = `${BASE_URL}/list`;
-        context.reply = reply;
-      });
-
-      PagedQueryBehaviour.sharedBehaviour(context);
-
-    });
-
-    it('handles an error reply correctly', () => {
-      const params = new SearchParams();
-      const obs = service.search(params);
-      expect(obs).toBeHttpError(httpMock, 'GET', `${BASE_URL}/list`, 'expected a paged reply');
-    });
+    PagedQueryBehaviour.sharedBehaviour(context);
 
   });
 

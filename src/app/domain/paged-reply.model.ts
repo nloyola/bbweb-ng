@@ -1,4 +1,4 @@
-import { SearchParams, DomainEntity, ConcurrencySafeEntity } from '@app/domain';
+import { SearchParams, IDomainEntity } from '@app/domain';
 
 export interface PagedReplyBase {
 
@@ -22,19 +22,37 @@ export interface PagedReplyEntityIds extends PagedReplyBase {
 /**
  * Object returned by server for a paged API call.
  */
-export interface PagedReply<T extends ConcurrencySafeEntity> extends PagedReplyBase {
+export interface PagedReply<T extends IDomainEntity> extends PagedReplyBase {
 
   /** The items in the page. */
   entities: T[];
 
 }
 
-export interface PagedReplyInfo<T extends DomainEntity> {
+export interface PagedReplyInfoBase {
   hasNoEntitiesToDisplay: boolean;
   hasNoResultsToDisplay: boolean;
   hasResultsToDisplay: boolean;
-  entities: T[];
   total: number;
   maxPages: number;
   showPagination: boolean;
+}
+
+export interface PagedReplyInfo<T extends IDomainEntity> extends PagedReplyInfoBase {
+  entities: T[];
+}
+
+export function pagedReplyToInfo(reply: PagedReplyEntityIds): PagedReplyInfoBase {
+  return {
+    hasNoEntitiesToDisplay: ((reply.entityIds.length <= 0)
+                             && (reply.searchParams.filter === '')),
+
+    hasNoResultsToDisplay: ((reply.entityIds.length <= 0)
+                            && (reply.searchParams.filter !== '')),
+
+    hasResultsToDisplay: reply.entityIds.length > 0,
+    total: reply.total,
+    maxPages: reply.maxPages,
+    showPagination: reply.maxPages > 1,
+  };
 }

@@ -1,22 +1,13 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EntityStateInfo, LabelledId, SearchFilterValues, SearchParams } from '@app/domain';
+import { EntityStateInfo, LabelledId, PagedReplyInfo, SearchFilterValues, SearchParams } from '@app/domain';
 import { NameFilter, SearchFilter, StateFilter } from '@app/domain/search-filters';
-import { studyCountsToUIMap, StudyCountsUIMap, StudyState, StudyStateUIMap, Study } from '@app/domain/studies';
+import { Study, studyCountsToUIMap, StudyCountsUIMap, StudyState, StudyStateUIMap } from '@app/domain/studies';
 import { StudyUI } from '@app/domain/studies/study-ui.model';
 import { RootStoreState, StudyStoreActions, StudyStoreSelectors } from '@app/root-store';
 import { select, Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
-import { filter, map, takeUntil } from 'rxjs/operators';
-import { SearchReply } from '@app/domain/search-reply.model';
-
-interface StudyPageInfo {
-  hasNoEntitiesToDisplay?: boolean;
-  hasNoResultsToDisplay?: boolean;
-  hasResultsToDisplay?: boolean;
-  studies?: StudyUI[];
-  totalStudies?: number;
-}
+import { filter, map, shareReplay, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-studies-view',
@@ -27,10 +18,10 @@ export class StudiesViewComponent implements OnInit, OnDestroy {
 
   isCountsLoading$: Observable<boolean>;
   isLoading$: Observable<boolean>;
-  serverError$: Observable<boolean>;
   hasLoaded$: Observable<boolean>;
   studyCountData$: Observable<StudyCountsUIMap>;
-  studyPageInfo$: Observable<StudyPageInfo>;
+  studyPageInfo$: Observable<PagedReplyInfo<Study>>;
+  studies$: Observable<StudyUI[]>;
 
   studiesLimit = 5;
 
@@ -38,11 +29,11 @@ export class StudiesViewComponent implements OnInit, OnDestroy {
   stateData: EntityStateInfo[];
   sortChoices: LabelledId[];
 
-  private filters: { [ name: string ]: SearchFilter };
-  private unsubscribe$: Subject<void> = new Subject<void>();
-
   currentPage = 1;
   studyToAdd: any;
+
+  private filters: { [ name: string ]: SearchFilter };
+  private unsubscribe$: Subject<void> = new Subject<void>();
 
   constructor(private store$: Store<RootStoreState.State>,
               private router: Router,
@@ -64,22 +55,22 @@ export class StudiesViewComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.isLoading$ =
-      this.store$.pipe(select(StudyStoreSelectors.selectStudySearchActive));
-
-    this.serverError$ = this.store$.pipe(
-      select(StudyStoreSelectors.selectStudyError),
-      filter(e => (e !== null) && (e.actionType === StudyStoreActions.searchStudiesFailure.type)));
+    this.isLoading$ = this.store$.pipe(
+      select(StudyStoreSelectors.selectStudiesSearchActive));
 
     this.studyCountData$ = this.store$.pipe(
       select(StudyStoreSelectors.selectStudyCounts),
-      takeUntil(this.unsubscribe$),
-      map(studyCountsToUIMap));
+      map(studyCountsToUIMap),
+      takeUntil(this.unsubscribe$));
 
     this.studyPageInfo$ = this.store$.pipe(
       select(StudyStoreSelectors.selectStudySearchRepliesAndEntities),
       takeUntil(this.unsubscribe$),
-      map(reply => this.searchReplyToPageInfo(reply)));
+      shareReplay());
+
+    this.studies$ = this.studyPageInfo$.pipe(
+      filter(page => page !== undefined),
+      map(page => page.entities.map(e => new StudyUI(e))));
 
     this.store$.dispatch(StudyStoreActions.getStudyCountsRequest());
     this.applySearchParams();
@@ -129,21 +120,5 @@ export class StudiesViewComponent implements OnInit, OnDestroy {
                                      this.currentPage,
                                      this.studiesLimit)
     }));
-  }
-
-  private searchReplyToPageInfo(searchReply: SearchReply<Study>): StudyPageInfo {
-    if (searchReply === undefined) { return {}; }
-
-    return {
-      hasResultsToDisplay: searchReply.entities.length > 0,
-      hasNoEntitiesToDisplay: ((searchReply.entities.length <= 0)
-                               && (searchReply.reply.searchParams.filter === '')),
-
-      hasNoResultsToDisplay: ((searchReply.entities.length <= 0)
-                              && (searchReply.reply.searchParams.filter !== '')),
-
-      studies: searchReply.entities.map(s => new StudyUI(s)),
-      totalStudies: searchReply.reply.total
-    };
   }
 }

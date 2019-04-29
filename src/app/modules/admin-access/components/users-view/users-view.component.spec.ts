@@ -1,17 +1,19 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, fakeAsync, flush, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { SearchFilterValues, SearchParams } from '@app/domain';
-import { User, UserUI, UserCountsUIMap, UserState } from '@app/domain/users';
+import { SearchParams } from '@app/domain';
+import { User, UserState, UserUI } from '@app/domain/users';
 import { UserStoreActions, UserStoreReducer } from '@app/root-store';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { EntityFiltersComponent } from '@app/shared/components/entity-filters/entity-filters.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
+import { UserCountsComponent } from '../user-counts/user-counts.component';
 import { UsersViewComponent } from './users-view.component';
+import { By } from '@angular/platform-browser';
 
 describe('UsersViewComponent', () => {
   let component: UsersViewComponent;
@@ -34,7 +36,8 @@ describe('UsersViewComponent', () => {
       ],
       declarations: [
         EntityFiltersComponent,
-        UsersViewComponent
+        UsersViewComponent,
+        UserCountsComponent
       ],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     })
@@ -58,24 +61,27 @@ describe('UsersViewComponent', () => {
 
     it('user count initialized', () => {
       const users = [];
-      const pagedReply = factory.pagedReply(users);
-      store.dispatch(new UserStoreActions.SearchUsersSuccess({ pagedReply }));
+      const userCounts = factory.userCounts();
+      const action = new UserStoreActions.GetUserCountsSuccess({ userCounts });
+      store.dispatch(action);
+      fixture.detectChanges();
 
-      component.userPageInfo$.subscribe((pageInfo: any) => {
-        expect(pageInfo.totalUsers).toBe(users.length);
+      component.userCountData$.subscribe(countData => {
+        expect(countData).toBeTruthy();
       });
     });
 
     it('total is displayed', fakeAsync(() => {
-      const de = fixture.debugElement;
-      expect(de.nativeElement.querySelector('.row .card-body').textContent).toContain('Loading');
+      const comp = fixture.debugElement.queryAll(By.css('app-user-counts'));
+      expect(comp.length).toBe(1);
+      expect(comp[0].nativeElement.textContent).toContain('Retrieving counts');
 
-      const pagedReply = factory.pagedReply([]);
-      store.dispatch(new UserStoreActions.SearchUsersSuccess({ pagedReply }));
-
+      const userCounts = factory.userCounts();
+      const action = new UserStoreActions.GetUserCountsSuccess({ userCounts });
+      store.dispatch(action);
       flush();
       fixture.detectChanges();
-      expect(de.nativeElement.querySelector('.row .card-body').textContent).not.toContain('Loading');
+      expect(comp[0].nativeElement.textContent).not.toContain('Retrieving counts');
     }));
 
   });
@@ -176,22 +182,5 @@ describe('UsersViewComponent', () => {
     const de = fixture.debugElement;
     expect(de.nativeElement.querySelectorAll('.list-group-item').length).toBe(1);
     expect(de.nativeElement.querySelectorAll('.card-footer').length).toBe(1);
-  });
-
-  it('displays an error if the server replies with an error', () => {
-    const error = {
-      status: 404,
-      error: {
-        message: 'simulated error'
-      }
-    };
-    store.dispatch(new UserStoreActions.SearchUsersFailure({ error }));
-    component.sortFieldSelected('name');
-    fixture.detectChanges();
-
-    const de = fixture.debugElement;
-    expect(de.nativeElement.querySelectorAll('.list-group-item').length).toBe(0);
-    expect(de.nativeElement.querySelector('.alert').textContent)
-      .toContain('Server error. Please contact your web site administrator.');
   });
 });

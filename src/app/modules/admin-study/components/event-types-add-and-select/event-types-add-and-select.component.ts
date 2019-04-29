@@ -7,7 +7,6 @@ import { EventTypeStoreActions, EventTypeStoreSelectors } from '@app/root-store/
 import { select, Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
 import { filter, map, takeUntil, tap } from 'rxjs/operators';
-import { SearchReply } from '@app/domain/search-reply.model';
 
 @Component({
   selector: 'app-event-types-add-and-select',
@@ -23,7 +22,6 @@ export class EventTypesAddAndSelectComponent implements OnInit, OnDestroy {
 
   isLoading$: Observable<boolean>;
   pageInfo$: Observable<PagedReplyInfo<CollectionEventType>>;
-  serverError$: Observable<boolean>;
   filterForm: FormGroup;
   isAddAllowed: boolean;
 
@@ -43,19 +41,7 @@ export class EventTypesAddAndSelectComponent implements OnInit, OnDestroy {
 
     this.pageInfo$ = this.store$.pipe(
       select(EventTypeStoreSelectors.selectSearchRepliesAndEntities),
-      takeUntil(this.unsubscribe$),
-      map(reply => this.searchReplyToPageInfo(reply)));
-
-    this.serverError$ = this.store$.pipe(
-      select(EventTypeStoreSelectors.selectError),
-      filter(error => error !== null),
-      map(error => (error.actionType === EventTypeStoreActions.ActionTypes.SearchEventTypesFailure)),
-      tap(error => {
-        if (error) {
-          this.currentPage = 1;
-          this.applySearchParams();
-        }
-      }));
+      takeUntil(this.unsubscribe$));
 
     this.store$.pipe(
       select(EventTypeStoreSelectors.selectLastRemovedId),
@@ -103,27 +89,6 @@ export class EventTypesAddAndSelectComponent implements OnInit, OnDestroy {
                                      this.currentPage,
                                      this.eventTypesLimit)
     }));
-  }
-
-  private searchReplyToPageInfo(
-    searchReply: SearchReply<CollectionEventType>
-  ): PagedReplyInfo<CollectionEventType> {
-    if (searchReply === undefined) { return {} as any; }
-
-    const result = {
-      hasResultsToDisplay: searchReply.entities.length > 0,
-      hasNoEntitiesToDisplay: ((searchReply.entities.length <= 0)
-                               && (searchReply.reply.searchParams.filter === '')),
-
-      hasNoResultsToDisplay: ((searchReply.entities.length <= 0)
-                              && (searchReply.reply.searchParams.filter !== '')),
-
-      entities: searchReply.entities,
-      total: searchReply.reply.total,
-      maxPages: searchReply.reply.maxPages,
-      showPagination: searchReply.reply.maxPages > 1
-    };
-    return result;
   }
 
 }

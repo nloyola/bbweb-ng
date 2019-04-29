@@ -1,5 +1,4 @@
-import { PagedReplyEntityIds, SearchParams } from '@app/domain';
-import { SearchReply } from '@app/domain/search-reply.model';
+import { PagedReplyEntityIds, SearchParams, pagedReplyToInfo, PagedReplyInfo } from '@app/domain';
 import { ShipmentSpecimen } from '@app/domain/shipments';
 import { createFeatureSelector, createSelector, MemoizedSelector } from '@ngrx/store';
 import * as fromShipmentSpecimen from './shipment-specimen.reducer';
@@ -49,14 +48,14 @@ export const selectShipmentSpecimenSearchRepliesAndEntities =
     (searchActive: boolean,
      lastSearch: SearchParams,
      searchReplies: { [ url: string ]: PagedReplyEntityIds },
-     entities: any): SearchReply<ShipmentSpecimen> => {
+     entities: any): PagedReplyInfo<ShipmentSpecimen> => {
       if (searchActive || (lastSearch === null)) { return undefined; }
 
       const reply = searchReplies[lastSearch.queryString()];
       if (reply === undefined) { return undefined; }
 
       return {
-        reply,
+        ...pagedReplyToInfo(reply),
         entities: reply.entityIds.map(id => entities[id])
       };
     });

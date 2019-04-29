@@ -51,18 +51,17 @@ export class StudyAddComponent implements OnInit, OnDestroy {
       this.router.navigate([ '../', s.slug ], { relativeTo: this.route });
     });
 
-    this.store$
-      .pipe(
-        select(StudyStoreSelectors.selectStudyError),
-        filter(s => !!s),
-        takeUntil(this.unsubscribe$))
-      .subscribe((error: any) => {
-        let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
-        if (errMessage.match(/EntityCriteriaError: name already used/)) {
-          errMessage = `A study with the name ${this.name.value} already exits. Please use a different one.`;
-        }
-        this.toastr.error(errMessage, 'Add Error', { disableTimeOut: true });
-      });
+    this.store$.pipe(
+      select(StudyStoreSelectors.selectStudyError),
+      filter(s => !!s),
+      takeUntil(this.unsubscribe$)
+    ).subscribe((error: any) => {
+      let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
+      if (errMessage.match(/EntityCriteriaError: name already used/)) {
+        errMessage = `A study with the name ${this.name.value} already exits. Please use a different one.`;
+      }
+      this.toastr.error(errMessage, 'Add Error', { disableTimeOut: true });
+    });
   }
 
   public ngOnDestroy() {

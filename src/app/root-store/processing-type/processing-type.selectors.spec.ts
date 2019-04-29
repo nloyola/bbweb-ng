@@ -41,8 +41,13 @@ describe('ProcessingTypeStore selectors', () => {
       });
 
       expect(ProcessingTypeStoreSelectors.selectSearchRepliesAndEntities(state)).toEqual({
-        reply: searchReplies[processingType.studyId][pagedReply.searchParams.queryString()],
-        entities: [ processingType ]
+        entities: [ processingType ],
+        hasNoEntitiesToDisplay: false,
+        hasNoResultsToDisplay: false,
+        hasResultsToDisplay: true,
+        total: pagedReply.total,
+        maxPages: pagedReply.maxPages,
+        showPagination: false
       });
     });
 

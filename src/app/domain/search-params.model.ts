@@ -23,7 +23,8 @@ export class SearchParams {
     public page?: number,
 
     /** The number of entities to return per page. */
-    public limit?: number) {
+    public limit?: number
+  ) {
 
     this.params = new HttpParams();
 

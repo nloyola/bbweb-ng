@@ -1,4 +1,4 @@
-import { ConcurrencySafeEntity, HasSlug, IConcurrencySafeEntity, JSONArray, JSONObject, applyMixins } from '@app/domain';
+import { ConcurrencySafeEntity, HasSlug, IConcurrencySafeEntity, JSONArray, JSONObject, applyMixins, IEntityInfo, EntityInfo } from '@app/domain';
 import { Annotation, annotationFactory, IAnnotation, HasAnnotations, AnnotationType } from '@app/domain/annotations';
 import { Study } from '@app/domain/studies';
 
@@ -15,9 +15,9 @@ export interface IParticipant extends IConcurrencySafeEntity, HasSlug {
   uniqueId: string;
 
   /**
-   * The ID of the {@link app.domain.studies.Study|Study} this Participant belongs to.
+   * Information for the {@link app.domain.studies.Study|Study} this Participant belongs to.
    */
-  studyId: string;
+  study: IEntityInfo<Study>;
 
   /**
    * The values of the {@link app.domain.annotations.Annotation|Annotations} collected for this participant.
@@ -29,20 +29,26 @@ export class Participant extends ConcurrencySafeEntity implements IParticipant, 
 
   slug: string;
   uniqueId: string;
-  studyId: string;
+  study: EntityInfo<Study>;
+  studyEntity: Study;
 
   annotations: Annotation[];
   setAnnotationTypes: (at: AnnotationType[]) => void;
 
   private _study: Study;
 
-  set study(s: Study) {
-    this._study = s;
+  setStudy(s: Study) {
+    this.study.id = s.id;
+    this.study.slug = s.slug;
+    this.study.name = s.name;
+    this.studyEntity = s;
     this.setAnnotationTypes(s.annotationTypes);
   }
 
   deserialize(input: JSONObject) {
     super.deserialize(input);
+
+    this.study = new EntityInfo().deserialize(input.study as JSONObject);
 
     if (input.annotations) {
       this.annotations = (input.annotations as JSONArray)

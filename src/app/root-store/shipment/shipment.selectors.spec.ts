@@ -114,14 +114,13 @@ describe('shipment-store selectors', () => {
       };
 
       expect(ShipmentStoreSelectors.selectShipmentSearchRepliesAndEntities(state)).toEqual({
-        reply: {
-          searchParams: pagedReply.searchParams,
-          offset: pagedReply.offset,
-          total: pagedReply.total,
-          maxPages: pagedReply.maxPages,
-          entityIds: pagedReply.entities.map(e => e.id)
-        },
-        entities: [ shipment ]
+        entities: [ shipment ],
+        hasNoEntitiesToDisplay: false,
+        hasNoResultsToDisplay: false,
+        hasResultsToDisplay: true,
+        total: pagedReply.total,
+        maxPages: pagedReply.maxPages,
+        showPagination: false
       });
     });
 

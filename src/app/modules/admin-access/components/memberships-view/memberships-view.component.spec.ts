@@ -54,30 +54,14 @@ describe('MembershipsViewComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  describe('for total count', () => {
+  it('membership count initialized', () => {
+    const memberships = [];
+    const pagedReply = factory.pagedReply(memberships);
+    store.dispatch(new MembershipStoreActions.SearchMembershipsSuccess({ pagedReply }));
 
-    it('membership count initialized', () => {
-      const memberships = [];
-      const pagedReply = factory.pagedReply(memberships);
-      store.dispatch(new MembershipStoreActions.SearchMembershipsSuccess({ pagedReply }));
-
-      component.membershipPageInfo$.subscribe((pageInfo: any) => {
-        expect(pageInfo.total).toBe(memberships.length);
-      });
+    component.membershipPageInfo$.subscribe((pageInfo: any) => {
+      expect(pageInfo.total).toBe(memberships.length);
     });
-
-    it('total is displayed', fakeAsync(() => {
-      const de = fixture.debugElement;
-      expect(de.nativeElement.querySelector('.card-body').textContent).toContain('Loading');
-
-      const pagedReply = factory.pagedReply([]);
-      store.dispatch(new MembershipStoreActions.SearchMembershipsSuccess({ pagedReply }));
-
-      flush();
-      fixture.detectChanges();
-      expect(de.nativeElement.querySelector('.card-body').textContent).not.toContain('Loading');
-    }));
-
   });
 
   describe('for name filter', () => {
@@ -169,20 +153,4 @@ describe('MembershipsViewComponent', () => {
     expect(de.nativeElement.querySelectorAll('.card-footer').length).toBe(1);
   });
 
-  it('displays an error if the server replies with an error', () => {
-    const error = {
-      status: 404,
-      error: {
-        message: 'simulated error'
-      }
-    };
-    store.dispatch(new MembershipStoreActions.SearchMembershipsFailure({ error }));
-    component.sortFieldSelected('name');
-    fixture.detectChanges();
-
-    const de = fixture.debugElement;
-    expect(de.nativeElement.querySelectorAll('.list-group-item').length).toBe(0);
-    expect(de.nativeElement.querySelector('.alert').textContent)
-      .toContain('Server error. Please contact your web site administrator.');
-  });
 });

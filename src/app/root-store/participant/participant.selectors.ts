@@ -1,6 +1,4 @@
-import { PagedReplyEntityIds, SearchParams } from '@app/domain';
 import { Participant } from '@app/domain/participants';
-import { SearchReply } from '@app/domain/search-reply.model';
 import { createFeatureSelector, createSelector, MemoizedSelector } from '@ngrx/store';
 import * as fromParticipant from './participant.reducer';
 

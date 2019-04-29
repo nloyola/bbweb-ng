@@ -115,14 +115,13 @@ describe('collectionEvent-store selectors', () => {
       };
 
       expect(selectors.selectCollectionEventSearchRepliesAndEntities(state)).toEqual({
-        reply: {
-          searchParams: pagedReply.searchParams,
-          offset: pagedReply.offset,
-          total: pagedReply.total,
-          maxPages: pagedReply.maxPages,
-          entityIds: pagedReply.entities.map(e => e.id)
-        },
-        entities: [ collectionEvent ]
+        entities: [ collectionEvent ],
+        hasNoEntitiesToDisplay: false,
+        hasNoResultsToDisplay: false,
+        hasResultsToDisplay: true,
+        total: pagedReply.total,
+        maxPages: pagedReply.maxPages,
+        showPagination: false
       });
     });
 

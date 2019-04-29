@@ -56,18 +56,17 @@ export class EventTypeAddComponent implements OnInit, OnDestroy {
         this.router.navigate([ '../view', eventType.slug ], { relativeTo: this.route });
       });
 
-    this.store$
-      .pipe(
-        select(EventTypeStoreSelectors.selectError),
-        filter(et => !!et),
-        takeUntil(this.unsubscribe$))
-      .subscribe((error: any) => {
-        let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
-        if (errMessage && errMessage.match(/EntityCriteriaError.*name already exists/)) {
-          errMessage = `The name is already in use: ${this.eventTypeToSave.name}`;
-        }
-        this.toastr.error(errMessage, 'Add Error', { disableTimeOut: true });
-      });
+    this.store$.pipe(
+      select(EventTypeStoreSelectors.selectError),
+      filter(et => !!et),
+      takeUntil(this.unsubscribe$)
+    ).subscribe((error: any) => {
+      let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
+      if (errMessage && errMessage.match(/EntityCriteriaError.*name already exists/)) {
+        errMessage = `The name is already in use: ${this.eventTypeToSave.name}`;
+      }
+      this.toastr.error(errMessage, 'Add Error', { disableTimeOut: true });
+    });
   }
 
   ngOnDestroy() {

@@ -49,7 +49,7 @@ describe('CollectionEventService', () => {
     });
 
     it('handles an error reply correctly', () => {
-      const { rawEvent, event } = createEntities();
+      const { event } = createEntities();
       const obs = service.get(event.id);
       expect(obs).toBeHttpError(httpMock,
                                 'GET',
@@ -61,50 +61,20 @@ describe('CollectionEventService', () => {
 
   describe('when searching collection events', () => {
 
-    it('can retrieve collectionEvents', () => {
+    const context: PagedQueryBehaviour.Context<CollectionEvent> = {};
+
+    beforeEach(() => {
       const { participant, rawEvent } = createEntities();
-      const params = new SearchParams();
-      const reply = createPagedReply([ rawEvent ]);
-      service.search(participant, params).subscribe((pr: PagedReply<CollectionEvent>) => {
-        expect(pr.entities.length).toBe(reply.total);
+      context.search = (searchParams: SearchParams) => service.search(participant, searchParams);
+      context.url = `${BASE_URL}/list/${participant.id}`;
+      context.replyItems = [ rawEvent  ];
+      context.subscription = (pr: PagedReply<CollectionEvent>) => {
+        expect(pr.entities.length).toBe(context.replyItems.length);
         expect(pr.entities[0]).toEqual(jasmine.any(CollectionEvent));
-        expect(pr.offset).toBe(reply.offset);
-        expect(pr.total).toBe(reply.total);
-      });
-
-      const req = httpMock.expectOne(r => r.url === `${BASE_URL}/list/${participant.id}`);
-      expect(req.request.method).toBe('GET');
-      expect(req.request.params.keys()).toEqual([]);
-      req.flush({ status: 'success', data: reply });
-      httpMock.verify();
+      };
     });
 
-    describe('uses valid query parameters', function () {
-
-      const context: PagedQueryBehaviour.Context<CollectionEvent> = {};
-
-      beforeEach(() => {
-        const { participant, rawEvent } = createEntities();
-        const reply = createPagedReply([ rawEvent ]);
-        context.search = (searchParams: SearchParams) => service.search(participant, searchParams);
-        context.url = `${BASE_URL}/list/${participant.id}`;
-        context.reply = reply;
-      });
-
-      PagedQueryBehaviour.sharedBehaviour(context);
-
-    });
-
-    it('handles an error reply correctly', () => {
-      const { participant, rawEvent } = createEntities();
-      const params = new SearchParams();
-      const reply = createPagedReply([ rawEvent ]);
-      const obs = service.search(participant, params);
-      expect(obs).toBeHttpError(httpMock,
-                                'GET',
-                                `${BASE_URL}/list/${participant.id}`,
-                                'expected a paged reply');
-    });
+    PagedQueryBehaviour.sharedBehaviour(context);
 
   });
 
@@ -219,7 +189,7 @@ describe('CollectionEventService', () => {
     });
 
     it('throws an exception for invalid input', () => {
-      const { rawEvent, event } = createEntities();
+      const { event } = createEntities();
       testData = [
         {
           event: undefined,
@@ -268,7 +238,7 @@ describe('CollectionEventService', () => {
 
   });
 
-  function createEntities() {
+  function createEntities(): TestEntities {
     const participant = new Participant().deserialize(factory.participant());
     const rawEvent = factory.collectionEvent();
     const event = new CollectionEvent().deserialize(rawEvent);

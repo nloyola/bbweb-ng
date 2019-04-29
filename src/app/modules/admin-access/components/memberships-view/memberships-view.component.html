@@ -1,124 +1,111 @@
-<ng-container *ngIf="!(serverError$ | async); else serverError">
+<app-entity-filters class="mb-2"
+                    [useNameFilter]="true"
+                    (filters)="onFiltersUpdated($event)">
+</app-entity-filters>
 
-  <app-entity-filters class="mb-2"
-                      [useNameFilter]="true"
-                      (filters)="onFiltersUpdated($event)">
-  </app-entity-filters>
+<ng-container *ngIf="(membershipPageInfo$ | async); let membershipPageInfo">
 
-  <ng-container *ngIf="(membershipPageInfo$ | async); let membershipPageInfo">
-
-    <div class="row">
-      <div class="col-sm-12 mt-2">
-        <div class="card">
-          <div class="card-header bg-default">
-            <mat-icon class="warning-icon">settings</mat-icon>
-            {{ membershipPageInfo.total }} <span i18n>Memberships</span>
+  <div class="row">
+    <div class="col-sm-12 mt-2">
+      <div class="card">
+        <div class="card-header bg-default">
+          <mat-icon class="warning-icon">settings</mat-icon>
+          {{ membershipPageInfo.total }} <span i18n>Memberships</span>
 
 
-            <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
-              <button class="btn btn-sm btn-outline-primary"
-                      type="button"
-                      id="tableMenu"
-                      ngbDropdownToggle>
-                <mat-icon inline="true">more_vert</mat-icon>
-              </button>
+          <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
+            <button class="btn btn-sm btn-outline-primary"
+                    type="button"
+                    id="tableMenu"
+                    ngbDropdownToggle>
+              <mat-icon inline="true">more_vert</mat-icon>
+            </button>
 
-              <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="tableMenu">
+            <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="tableMenu">
 
-                <a routerLink="/admin/access/memberships/add"
-                   class="dropdown-item">
-                  <mat-icon class="success-icon mr-1">add_circle</mat-icon>
-                  <span i18n>Add Membership</span>
+              <a routerLink="/admin/access/memberships/add"
+                 class="dropdown-item">
+                <mat-icon class="success-icon mr-1">add_circle</mat-icon>
+                <span i18n>Add Membership</span>
+              </a>
+            </div>
+          </span>
+        </div>
+
+        <div class="card-body" *ngIf="isLoading$ | async">
+          <div class="card-text">
+            <div class="alert alert-warning" role="alert">
+              <app-spinner name="studies" [show]="isLoading$ | async" i18n>
+                Loading...
+              </app-spinner>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-body" *ngIf="membershipPageInfo.hasNoEntitiesToDisplay">
+          <div class="card-text">
+            <div class="alert alert-warning" membership="alert">
+              <mat-icon>warning</mat-icon>
+              <ng-container i18n>
+                No memberships have been added yet.
+              </ng-container>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-body" *ngIf="membershipPageInfo.hasNoResultsToDisplay">
+          <div class="card-text">
+            <div class="alert alert-warning" membership="alert">
+              <mat-icon>warning</mat-icon>
+              <ng-container i18n>
+                There are no memberships that match your criteria.
+              </ng-container>
+            </div>
+          </div>
+        </div>
+
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item" *ngFor="let membership of membershipPageInfo.entities">
+            <div class="row">
+              <div class="col-md-12">
+                <a [routerLink]="[ '/admin/access/memberships', membership.slug ]">
+                  <mat-icon class="warning-icon">settings</mat-icon>
+                  <strong>{{ membership.name }}</strong>
                 </a>
               </div>
-            </span>
-          </div>
-
-          <div class="card-body" *ngIf="isLoading$ | async">
-            <div class="card-text">
-              <div class="alert alert-warning" role="alert">
-                <app-spinner name="studies" [show]="isLoading$ | async" i18n>
-                  Loading...
-                </app-spinner>
+            </div>
+            <div class="row" *ngIf="membership.description">
+              <div class="col-md-12">
+                <small class="text-info">
+                  {{ membership.description | truncate:100 }}
+                </small>
               </div>
             </div>
-          </div>
-
-          <div class="card-body" *ngIf="membershipPageInfo.hasNoEntitiesToDisplay">
-            <div class="card-text">
-              <div class="alert alert-warning" membership="alert">
-                <mat-icon>warning</mat-icon>
-                <ng-container i18n>
-                  No memberships have been added yet.
-                </ng-container>
+            <div class="row">
+              <div class="col-md-12">
+                <app-entity-status [timeAdded]="membership.timeAdded"
+                                   [timeModified]="membership.timeModified"
+                                   [useBadges]="false">
+                </app-entity-status>
               </div>
             </div>
-          </div>
+          </li>
+        </ul>
 
-          <div class="card-body" *ngIf="membershipPageInfo.hasNoResultsToDisplay">
-            <div class="card-text">
-              <div class="alert alert-warning" membership="alert">
-                <mat-icon>warning</mat-icon>
-                <ng-container i18n>
-                  There are no memberships that match your criteria.
-                </ng-container>
-              </div>
-            </div>
-          </div>
-
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item" *ngFor="let membership of membershipPageInfo.memberships">
-              <div class="row">
-                <div class="col-md-12">
-                  <a [routerLink]="[ '/admin/access/memberships', membership.slug ]">
-                    <mat-icon class="warning-icon">settings</mat-icon>
-                    <strong>{{ membership.name }}</strong>
-                  </a>
-                </div>
-              </div>
-              <div class="row" *ngIf="membership.description">
-                <div class="col-md-12">
-                  <small class="text-info">
-                    {{ membership.description | truncate:100 }}
-                  </small>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-12">
-                  <app-entity-status [timeAdded]="membership.timeAdded"
-                                     [timeModified]="membership.timeModified"
-                                     [useBadges]="false">
-                  </app-entity-status>
-                </div>
-              </div>
-            </li>
-          </ul>
-
-          <div class="card-footer" *ngIf="membershipPageInfo.hasResultsToDisplay">
-            <ngb-pagination size="sm"
-                            [collectionSize]="membershipPageInfo.total"
-                            [(page)]="currentPage"
-                            [maxSize]="membershipsLimit"
-                            [pageSize]="membershipsLimit"
-                            [rotate]="false"
-                            [boundaryLinks]="true"
-                            aria-label="Default pagination"
-                            (pageChange)="paginationPageChanged($event)">
-            </ngb-pagination>
-          </div>
+        <div class="card-footer" *ngIf="membershipPageInfo.hasResultsToDisplay">
+          <ngb-pagination size="sm"
+                          [collectionSize]="membershipPageInfo.total"
+                          [(page)]="currentPage"
+                          [maxSize]="membershipsLimit"
+                          [pageSize]="membershipsLimit"
+                          [rotate]="false"
+                          [boundaryLinks]="true"
+                          aria-label="Default pagination"
+                          (pageChange)="paginationPageChanged($event)">
+          </ngb-pagination>
         </div>
       </div>
     </div>
-
-  </ng-container>
+  </div>
 
 </ng-container>
-
-<ng-template #serverError>
-  <div class="alert alert-danger mt-2" membership="alert">
-    <mat-icon>warning</mat-icon>
-    <ng-container i18n>
-      Server error. Please contact your web site administrator.
-    </ng-container>
-  </div>
-</ng-template>

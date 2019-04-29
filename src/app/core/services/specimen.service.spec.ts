@@ -54,60 +54,21 @@ describe('SpecimenService', () => {
   });
 
   describe('when searching specimens', () => {
-    let reply: any;
+
+    const context: PagedQueryBehaviour.Context<Specimen> = {};
 
     beforeEach(() => {
       const { rawSpecimen, specimen, event } = createEntities();
-      reply = {
-        items: [ rawSpecimen ],
-        page: 1,
-        limit: 10,
-        offset: 0,
-        total: 1
+      context.search = (searchParams: SearchParams) => service.search(event, searchParams);
+      context.url = `${BASE_URL}/list/${event.slug}`;
+      context.replyItems = [ rawSpecimen ];
+      context.subscription = (pr: PagedReply<Specimen>) => {
+        expect(pr.entities.length).toBe(1);
+        expect(pr.entities[0]).toEqual(jasmine.any(Specimen));
       };
     });
 
-    it('can retrieve specimens', () => {
-      const event = new CollectionEvent().deserialize(factory.collectionEvent());
-      const params = new SearchParams();
-      service.search(event, params).subscribe((pr: PagedReply<Specimen>) => {
-        expect(pr.entities.length).toBe(1);
-        expect(pr.entities[0]).toEqual(jasmine.any(Specimen));
-        expect(pr.offset).toBe(reply.offset);
-        expect(pr.total).toBe(reply.total);
-      });
-
-      const req = httpMock.expectOne(r => r.url === `${BASE_URL}/list/${event.slug}`);
-      expect(req.request.method).toBe('GET');
-      expect(req.request.params.keys()).toEqual([]);
-      req.flush({ status: 'success', data: reply });
-      httpMock.verify();
-    });
-
-    describe('uses valid query parameters', function () {
-
-      const context: PagedQueryBehaviour.Context<Specimen> = {};
-
-      beforeEach(() => {
-        const event = new CollectionEvent().deserialize(factory.collectionEvent());
-        context.search = (searchParams: SearchParams) => service.search(event, searchParams);
-        context.url = `${BASE_URL}/list/${event.slug}`;
-        context.reply = reply;
-      });
-
-      PagedQueryBehaviour.sharedBehaviour(context);
-
-    });
-
-    it('handles an error reply correctly', () => {
-      const event = new CollectionEvent().deserialize(factory.collectionEvent());
-      const params = new SearchParams();
-      const obs = service.search(event, params);
-      expect(obs).toBeHttpError(httpMock,
-                                'GET',
-                                `${BASE_URL}/list/${event.slug}`,
-                                'expected a paged reply');
-    });
+    PagedQueryBehaviour.sharedBehaviour(context);
 
   });
 

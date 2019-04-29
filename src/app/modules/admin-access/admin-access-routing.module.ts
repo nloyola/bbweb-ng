@@ -18,7 +18,7 @@ export const routes: Routes = [
     path: 'access',
     canActivate: [ AuthGuard ],
     data: {
-      breadcrumbs: 'User'
+      breadcrumbs: 'Users'
     },
     children: [
       {

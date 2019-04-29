@@ -1,16 +1,17 @@
-import { CUSTOM_ELEMENTS_SCHEMA, NgZone, Component } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { Router, Routes } from '@angular/router';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { async, ComponentFixture, fakeAsync, flush, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { SearchFilterValues, SearchParams } from '@app/domain';
-import { Study, StudyState, StudyCountsUIMap } from '@app/domain/studies';
-import { SpinnerStoreReducer } from '@app/root-store/spinner';
-import { StudyStoreActions, StudyStoreReducer } from '@app/root-store/study';
-import { Factory } from '@test/factory';
-import { Store, StoreModule } from '@ngrx/store';
-import { StudiesViewComponent } from './studies-view.component';
+import { Study, StudyCountsUIMap, StudyState } from '@app/domain/studies';
 import { StudyUI } from '@app/domain/studies/study-ui.model';
+import { StudyStoreActions, StudyStoreReducer } from '@app/root-store/study';
+import { Store, StoreModule } from '@ngrx/store';
+import { Factory } from '@test/factory';
 import { ToastrModule } from 'ngx-toastr';
+import { StudyCountsComponent } from '../study-counts/study-counts.component';
+import { StudiesViewComponent } from './studies-view.component';
 
 describe('StudiesViewComponent', () => {
 
@@ -20,29 +21,18 @@ describe('StudiesViewComponent', () => {
   let router: Router;
   const factory = new Factory();
 
-  @Component({ template: 'Test component' })
-  class TestComponent { }
-
-  const routes: Routes = [
-    {
-      path: ':slug/summary',
-      component: TestComponent
-    },
-  ];
-
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
-        RouterTestingModule.withRoutes(routes),
+        RouterTestingModule,
         StoreModule.forRoot({
-          'study': StudyStoreReducer.reducer,
-          'spinner': SpinnerStoreReducer.reducer
+          'study': StudyStoreReducer.reducer
         }),
         ToastrModule.forRoot()
       ],
       declarations: [
-        TestComponent,
-        StudiesViewComponent
+        StudiesViewComponent,
+        StudyCountsComponent
       ],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     })
@@ -74,17 +64,17 @@ describe('StudiesViewComponent', () => {
     });
   });
 
-  it('counts are displayed', async(() => {
-    const de = fixture.debugElement;
-    expect(de.nativeElement.querySelector('.card-body').textContent).toContain('Loading');
+  it('counts are displayed', fakeAsync(() => {
+    const comp = fixture.debugElement.queryAll(By.css('app-study-counts'));
+    expect(comp.length).toBe(1);
+    expect(comp[0].nativeElement.textContent).toContain('Retrieving counts');
 
-    const action = StudyStoreActions.searchStudiesSuccess({
-      pagedReply: factory.pagedReply([])
-    });
+    const studyCounts = factory.studyCounts();
+    const action = StudyStoreActions.getStudyCountsSuccess({ studyCounts });
     store.dispatch(action);
-
+    flush();
     fixture.detectChanges();
-    expect(de.nativeElement.querySelector('.card-body').textContent).not.toContain('Loading');
+    expect(comp[0].nativeElement.textContent).not.toContain('Retrieving counts');
   }));
 
   it('reloads page when a filter is modified', () => {

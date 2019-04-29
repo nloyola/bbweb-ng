@@ -1,6 +1,5 @@
-import { PagedReplyEntityIds, SearchParams } from '@app/domain';
+import { PagedReplyEntityIds, PagedReplyInfo, SearchParams, pagedReplyToInfo } from '@app/domain';
 import { CollectionEvent } from '@app/domain/participants';
-import { SearchReply } from '@app/domain/search-reply.model';
 import { createFeatureSelector, createSelector, MemoizedSelector } from '@ngrx/store';
 import * as fromCollectionEvent from './event.reducer';
 
@@ -53,14 +52,14 @@ export const selectCollectionEventSearchRepliesAndEntities =
     (searchActive: boolean,
      lastSearch: SearchParams,
      searchReplies: { [ url: string ]: PagedReplyEntityIds },
-     entities: any): SearchReply<CollectionEvent> => {
+     entities: any): PagedReplyInfo<CollectionEvent> => {
       if (searchActive || (lastSearch === null)) { return undefined; }
 
       const reply = searchReplies[lastSearch.queryString()];
       if (reply === undefined) { return undefined; }
 
       return {
-        reply,
+        ...pagedReplyToInfo(reply),
         entities: reply.entityIds.map(id => entities[id])
       };
     });

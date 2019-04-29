@@ -25,6 +25,9 @@ import { SpinnerComponent } from './components/spinner/spinner.component';
 import { TruncateToggleComponent } from './components/truncate-toggle/truncate-toggle.component';
 import { YesNoPipe } from './pipes/yes-no-pipe';
 import { EntitySelectorComponent } from './components/entity-selector/entity-selector.component';
+import { UnauthorizedPageComponent } from './components/unauthorized-page/unauthorized-page.component';
+import { ServerErrorPageComponent } from './components/server-error-page/server-error-page.component';
+import { PagedEntitySelectorComponent } from './components/paged-entity-selector/paged-entity-selector.component';
 
 @NgModule({
   imports: [
@@ -56,7 +59,10 @@ import { EntitySelectorComponent } from './components/entity-selector/entity-sel
     AnnotationTypeRemoveComponent,
     LocationAddComponent,
     LocationRemoveComponent,
-    EntitySelectorComponent
+    EntitySelectorComponent,
+    UnauthorizedPageComponent,
+    ServerErrorPageComponent,
+    PagedEntitySelectorComponent
   ],
   exports: [
     BreadcrumbsComponent,
@@ -77,6 +83,7 @@ import { EntitySelectorComponent } from './components/entity-selector/entity-sel
     AnnotationTypeViewComponent,
     AnnotationTypeRemoveComponent,
     EntitySelectorComponent,
+    PagedEntitySelectorComponent,
     LocationAddComponent
   ]
 })

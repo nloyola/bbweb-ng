@@ -8,6 +8,7 @@ export class DateTimeAnnotation extends Annotation {
   serverAnnotation(): any {
     return {
       annotationTypeId: this.annotationTypeId,
+      valueType:        this.valueType,
       stringValue:      this.value.toUTCString(),
       selectedValues:   []
     };

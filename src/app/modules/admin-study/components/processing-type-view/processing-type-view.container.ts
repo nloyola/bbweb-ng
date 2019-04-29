@@ -63,7 +63,7 @@ export class ProcessingTypeViewContainerComponent implements OnInit, OnDestroy {
 
   private data$: Observable<StoreData>;
   private updatedMessage$ = new Subject<string>();
-  private unsubscribe$: Subject<void> = new Subject<void>();
+  private unsubscribe$ = new Subject<void>();
 
   constructor(private store$: Store<RootStoreState.State>,
               private router: Router,

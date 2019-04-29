@@ -1,22 +1,13 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EntityStateInfo, LabelledId, SearchFilterValues, SearchParams } from '@app/domain';
-import { centreCountsToUIMap, CentreCountsUIMap, CentreState, CentreStateUIMap, Centre } from '@app/domain/centres';
+import { EntityStateInfo, LabelledId, PagedReplyInfo, SearchFilterValues, SearchParams } from '@app/domain';
+import { Centre, centreCountsToUIMap, CentreCountsUIMap, CentreState, CentreStateUIMap } from '@app/domain/centres';
 import { CentreUI } from '@app/domain/centres/centre-ui.model';
 import { NameFilter, SearchFilter, StateFilter } from '@app/domain/search-filters';
 import { CentreStoreActions, CentreStoreSelectors, RootStoreState } from '@app/root-store';
 import { select, Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
-import { filter, map, takeUntil } from 'rxjs/operators';
-import { SearchReply } from '@app/domain/search-reply.model';
-
-interface CentrePageInfo {
-  hasNoEntitiesToDisplay?: boolean;
-  hasNoResultsToDisplay?: boolean;
-  hasResultsToDisplay?: boolean;
-  centres?: CentreUI[];
-  totalCentres?: number;
-}
+import { filter, map, shareReplay, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-centres-view',
@@ -27,16 +18,16 @@ export class CentresViewComponent implements OnInit, OnDestroy {
 
   isCountsLoading$: Observable<boolean>;
   isLoading$: Observable<boolean>;
-  serverError$: Observable<boolean>;
   hasLoaded$: Observable<boolean>;
   centreCountData$: Observable<CentreCountsUIMap>;
-  centrePageInfo$: Observable<CentrePageInfo>;
+  centrePageInfo$: Observable<PagedReplyInfo<Centre>>;
 
   centresLimit = 5;
 
   sortField: string;
   stateData: EntityStateInfo[];
   sortChoices: LabelledId[];
+  centres$: Observable<CentreUI[]>;
 
   private filters: { [ name: string ]: SearchFilter };
   private unsubscribe$: Subject<void> = new Subject<void>();
@@ -67,10 +58,6 @@ export class CentresViewComponent implements OnInit, OnDestroy {
     this.isLoading$ =
       this.store$.pipe(select(CentreStoreSelectors.selectCentreSearchActive));
 
-    this.serverError$ = this.store$.pipe(
-      select(CentreStoreSelectors.selectCentreError),
-      filter(e => (e !== null) && (e.type === CentreStoreActions.ActionTypes.SearchCentresFailure)));
-
     this.centreCountData$ = this.store$.pipe(
       select(CentreStoreSelectors.selectCentreCounts),
       takeUntil(this.unsubscribe$),
@@ -79,7 +66,11 @@ export class CentresViewComponent implements OnInit, OnDestroy {
     this.centrePageInfo$ = this.store$.pipe(
       select(CentreStoreSelectors.selectCentreSearchRepliesAndEntities),
       takeUntil(this.unsubscribe$),
-      map(reply => this.searchReplyToPageInfo(reply)));
+      shareReplay());
+
+    this.centres$ = this.centrePageInfo$.pipe(
+      filter(page => page !== undefined),
+      map(page => page.entities.map(e => new CentreUI(e))));
 
     this.store$.dispatch(new CentreStoreActions.GetCentreCountsRequest());
     this.applySearchParams();
@@ -129,21 +120,5 @@ export class CentresViewComponent implements OnInit, OnDestroy {
                                      this.currentPage,
                                      this.centresLimit)
     }));
-  }
-
-  private searchReplyToPageInfo(searchReply: SearchReply<Centre>): CentrePageInfo {
-    if (searchReply === undefined) { return {}; }
-
-    return {
-      hasResultsToDisplay: searchReply.entities.length > 0,
-      hasNoEntitiesToDisplay: ((searchReply.entities.length <= 0)
-                               && (searchReply.reply.searchParams.filter === '')),
-
-      hasNoResultsToDisplay: ((searchReply.entities.length <= 0)
-                              && (searchReply.reply.searchParams.filter !== '')),
-
-      centres: searchReply.entities.map(s => new CentreUI(s)),
-      totalCentres: searchReply.reply.total
-    };
   }
 }

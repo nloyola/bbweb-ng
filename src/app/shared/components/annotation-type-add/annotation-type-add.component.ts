@@ -11,7 +11,6 @@ export class AnnotationTypeAddComponent implements OnInit, OnChanges {
 
   /* tslint:disable-next-line:no-input-rename */
   @Input('isSaving') isSaving$: Observable<boolean>;
-  /* tslint:enable-next-line:no-input-rename */
 
   @Input() entityName: string;
   @Input() annotationType: AnnotationType;

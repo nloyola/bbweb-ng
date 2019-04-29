@@ -66,65 +66,20 @@ describe('MembershipService', () => {
   });
 
   describe('when searching memberships', () => {
-    let rawMembership: any;
-    let reply: any;
+
+    const context: PagedQueryBehaviour.Context<Membership> = {};
 
     beforeEach(() => {
-      rawMembership = factory.membership();
-      reply = {
-        items: [ rawMembership ],
-        page: 1,
-        limit: 10,
-        offset: 0,
-        total: 1
+      context.search = (searchParams: SearchParams) => service.search(searchParams);
+      context.url = BASE_URL;
+      context.replyItems = [ factory.membership() ];
+      context.subscription = (pr: PagedReply<Membership>) => {
+        expect(pr.entities.length).toBe(1);
+        expect(pr.entities[0]).toEqual(jasmine.any(Membership));
       };
     });
 
-    it('can retrieve memberships', () => {
-      const params = new SearchParams();
-      service.search(params).subscribe((pr: PagedReply<Membership>) => {
-        expect(pr.entities.length).toBe(1);
-        expect(pr.entities[0]).toEqual(jasmine.any(Membership));
-        expect(pr.offset).toBe(reply.offset);
-        expect(pr.total).toBe(reply.total);
-      });
-
-      const req = httpMock.expectOne(r => r.url === BASE_URL);
-      expect(req.request.method).toBe('GET');
-      expect(req.request.params.keys()).toEqual([]);
-      req.flush({
-        status: 'success',
-        data: reply
-      });
-      httpMock.verify();
-    });
-
-    describe('uses valid query parameters', function () {
-
-      const context: PagedQueryBehaviour.Context<Membership> = {};
-
-      beforeEach(() => {
-        context.search = (searchParams: SearchParams) => service.search(searchParams);
-        context.url = BASE_URL;
-        context.reply = reply;
-      });
-
-      PagedQueryBehaviour.sharedBehaviour(context);
-
-    });
-
-    it('handles an error reply correctly', () => {
-      const params = new SearchParams();
-      service.search(params).subscribe(
-        u => { fail('should have been an error response'); },
-        err => { expect(err.message).toContain('expected a paged reply'); }
-      );
-
-      const req = httpMock.expectOne(BASE_URL);
-      expect(req.request.method).toBe('GET');
-      req.flush({ status: 'error', data: undefined });
-      httpMock.verify();
-    });
+    PagedQueryBehaviour.sharedBehaviour(context);
 
   });
 

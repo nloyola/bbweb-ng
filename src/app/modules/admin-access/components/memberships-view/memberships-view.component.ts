@@ -1,22 +1,13 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EntityStateInfo, LabelledId, SearchFilterValues, SearchParams } from '@app/domain';
+import { EntityStateInfo, LabelledId, SearchFilterValues, SearchParams, PagedReplyInfo } from '@app/domain';
 import { Membership } from '@app/domain/access';
 import { NameFilter, SearchFilter, StateFilter } from '@app/domain/search-filters';
-import { SearchReply } from '@app/domain/search-reply.model';
 import { RootStoreState } from '@app/root-store';
 import { MembershipStoreActions, MembershipStoreSelectors } from '@app/root-store/membership';
 import { select, Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
-
-interface MembershipPageInfo {
-  hasNoEntitiesToDisplay?: boolean;
-  hasNoResultsToDisplay?: boolean;
-  hasResultsToDisplay?: boolean;
-  memberships?: Membership[];
-  total?: number;
-}
 
 @Component({
   selector: 'app-memberships-view',
@@ -27,9 +18,8 @@ export class MembershipsViewComponent implements OnInit, OnDestroy {
 
   isCountsLoading$: Observable<boolean>;
   isLoading$: Observable<boolean>;
-  serverError$: Observable<boolean>;
   hasLoaded$: Observable<boolean>;
-  membershipPageInfo$: Observable<MembershipPageInfo>;
+  membershipPageInfo$: Observable<PagedReplyInfo<Membership>>;
 
   membershipsLimit = 5;
 
@@ -61,15 +51,9 @@ export class MembershipsViewComponent implements OnInit, OnDestroy {
     this.isLoading$ =
       this.store$.pipe(select(MembershipStoreSelectors.selectMembershipSearchActive));
 
-    this.serverError$ = this.store$.pipe(
-      select(MembershipStoreSelectors.selectMembershipError),
-      filter(e => (e !== null)
-             && (e.type === MembershipStoreActions.MembershipActionTypes.SearchMembershipsFailure)));
-
     this.membershipPageInfo$ = this.store$.pipe(
       select(MembershipStoreSelectors.selectMembershipSearchRepliesAndEntities),
-      takeUntil(this.unsubscribe$),
-      map(reply => this.searchReplyToPageInfo(reply)));
+      takeUntil(this.unsubscribe$));
 
     this.applySearchParams();
   }
@@ -115,20 +99,5 @@ export class MembershipsViewComponent implements OnInit, OnDestroy {
                                      this.currentPage,
                                      this.membershipsLimit)
     }));
-  }
-
-  private searchReplyToPageInfo(searchReply: SearchReply<Membership>): MembershipPageInfo {
-    if (searchReply === undefined) { return {}; }
-
-    return {
-      hasResultsToDisplay: searchReply.entities.length > 0,
-      hasNoEntitiesToDisplay: ((searchReply.entities.length <= 0)
-                               && (searchReply.reply.searchParams.filter === '')),
-
-      hasNoResultsToDisplay: ((searchReply.entities.length <= 0)
-                              && (searchReply.reply.searchParams.filter !== '')),
-      memberships: searchReply.entities,
-      total: searchReply.reply.total
-    };
   }
 }
