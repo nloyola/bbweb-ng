@@ -1,16 +1,16 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { ConcurrencySafeEntity } from '@app/domain';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { AddAndSelectComponent } from './add-and-select.component';
+import { EntitySelectorComponent } from './entity-selector.component';
 
 class TestEntity extends ConcurrencySafeEntity {}
 
-describe('AddAndSelectComponent', () => {
-  let component: AddAndSelectComponent<TestEntity>;
-  let fixture: ComponentFixture<AddAndSelectComponent<TestEntity>>;
+describe('EntitySelectorComponent', () => {
+  let component: EntitySelectorComponent<TestEntity>;
+  let fixture: ComponentFixture<EntitySelectorComponent<TestEntity>>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -19,19 +19,16 @@ describe('AddAndSelectComponent', () => {
         ReactiveFormsModule,
         NgbModule
       ],
-      declarations: [
-        AddAndSelectComponent
-      ],
+      declarations: [ EntitySelectorComponent ],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     })
-      .compileComponents();
+    .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent<AddAndSelectComponent<TestEntity>>(AddAndSelectComponent);
+    fixture = TestBed.createComponent<EntitySelectorComponent<TestEntity>>(EntitySelectorComponent);
     component = fixture.componentInstance;
 
-    component.isAddAllowed = true;
     component.pageInfo = {
       hasNoEntitiesToDisplay: false,
       hasNoResultsToDisplay: false,
@@ -54,16 +51,16 @@ describe('AddAndSelectComponent', () => {
   it('updates to name should emit an event', fakeAsync(() => {
     fixture.detectChanges();
     let eventProduced = false;
-    component.nameFilterUpdated.subscribe(() => { eventProduced = true; });
+    component.nameFilterUpdated.subscribe(() => {
+      eventProduced = true;
+    });
 
     const inputElem = fixture.debugElement.query(By.css('input'));
     inputElem.nativeElement.value = 'test';
     inputElem.nativeElement.dispatchEvent(new Event('input'));
-    fixture.detectChanges();
-
     tick(500);
-
     fixture.detectChanges();
+
     expect(eventProduced).toBe(true);
   }));
 

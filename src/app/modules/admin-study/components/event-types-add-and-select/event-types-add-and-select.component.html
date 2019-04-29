@@ -1,14 +1,13 @@
-<app-add-and-select [isAddAllowed]="isAddallowed"
-                    [pageInfo]="(pageInfo$ | async)"
-                    [isLoading]="(isLoading$ | async)"
-                    [entitiesLimit]="eventTypesLimit"
-                    [(page)]="currentPage"
-                    [heading]="heading"
-                    [noEntitiesToDisplay]="noEntitiesToDisplay"
-                    [noResultsToDisplay]="noResultsToDisplay"
-                    [loadingContent]="showLoading"
-                    (nameFilterUpdated)="onFiltersUpdated($event)"
-                    (pageChange)="paginationPageChange($event)">
+<app-entity-selector [pageInfo]="(pageInfo$ | async)"
+                     [isLoading]="(isLoading$ | async)"
+                     [entitiesLimit]="eventTypesLimit"
+                     [(page)]="currentPage"
+                     [heading]="heading"
+                     [noEntitiesToDisplay]="noEntitiesToDisplay"
+                     [noResultsToDisplay]="noResultsToDisplay"
+                     [loadingContent]="showLoading"
+                     (nameFilterUpdated)="onFiltersUpdated($event)"
+                     (pageChange)="paginationPageChange($event)">
   <ng-template let-entity>
     <li class="list-group-item" *ngIf="entity">
       <a href="#" (click)="!!eventTypeSelected(entity)">
@@ -17,7 +16,7 @@
       <span class="float-right badge badge-secondary">{{ getRecurringLabel(entity) }}</span>
     </li>
   </ng-template>
-</app-add-and-select>
+</app-entity-selector>
 
 <ng-template #heading>
   <small i18n>Events</small>

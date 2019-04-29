@@ -7,13 +7,12 @@ import { Subject, timer } from 'rxjs';
 import { debounce, distinct, takeUntil } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-add-and-select',
-  templateUrl: './add-and-select.component.html',
-  styleUrls: ['./add-and-select.component.scss']
+  selector: 'app-entity-selector',
+  templateUrl: './entity-selector.component.html',
+  styleUrls: ['./entity-selector.component.scss']
 })
-export class AddAndSelectComponent<T extends DomainEntity> implements OnInit, OnDestroy {
+export class EntitySelectorComponent<T extends DomainEntity> implements OnInit, OnDestroy {
 
-  @Input() isAddAllowed: boolean;
   @Input() pageInfo: PagedReplyInfo<T>;
   @Input() isLoading: boolean;
   @Input() entitiesLimit: number;

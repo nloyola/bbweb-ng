@@ -8,7 +8,6 @@ import { TimeagoPipe } from '@app/shared/pipes/timeago.pipe';
 import { TruncatePipe } from '@app/shared/pipes/truncate.pipe';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { AddAndSelectComponent } from './components/add-and-select/add-and-select.component';
 import { AnnotationTypeActionsComponent } from './components/annotation-type-actions/annotation-type-actions.component';
 import { AnnotationTypeAddComponent } from './components/annotation-type-add/annotation-type-add.component';
 import { AnnotationTypeRemoveComponent } from './components/annotation-type-remove/annotation-type-remove.component';
@@ -25,6 +24,7 @@ import { PageNotFoundComponent } from './components/page-not-found/page-not-foun
 import { SpinnerComponent } from './components/spinner/spinner.component';
 import { TruncateToggleComponent } from './components/truncate-toggle/truncate-toggle.component';
 import { YesNoPipe } from './pipes/yes-no-pipe';
+import { EntitySelectorComponent } from './components/entity-selector/entity-selector.component';
 
 @NgModule({
   imports: [
@@ -54,9 +54,9 @@ import { YesNoPipe } from './pipes/yes-no-pipe';
     AnnotationTypeAddComponent,
     AnnotationTypeViewComponent,
     AnnotationTypeRemoveComponent,
-    AddAndSelectComponent,
     LocationAddComponent,
-    LocationRemoveComponent
+    LocationRemoveComponent,
+    EntitySelectorComponent
   ],
   exports: [
     BreadcrumbsComponent,
@@ -76,7 +76,7 @@ import { YesNoPipe } from './pipes/yes-no-pipe';
     AnnotationTypeAddComponent,
     AnnotationTypeViewComponent,
     AnnotationTypeRemoveComponent,
-    AddAndSelectComponent,
+    EntitySelectorComponent,
     LocationAddComponent
   ]
 })
