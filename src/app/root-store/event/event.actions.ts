@@ -42,7 +42,11 @@ export const addEventFailure = createAction(
 
 export const getEventRequest = createAction(
   '[Event] Get Event Request',
-  props<{ id: string }>()
+  props<{
+    id?: string
+    participant?: Participant,
+    visitNumber?: number
+  }>()
 );
 
 export const getEventSuccess = createAction(

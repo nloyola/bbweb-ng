@@ -47,7 +47,7 @@ export class AnnotationsAddSubformComponent {
 
         control = optionsGroup;
       } else {
-        control = new FormControl('', validators);
+        control = new FormControl(annotation.value, validators);
       }
 
       formArray.push(new FormGroup({

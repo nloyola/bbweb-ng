@@ -86,11 +86,10 @@ export class StudyService {
         map((reply: ApiReply) => {
           if (reply && reply.data) {
             return (reply.data as JSONArray).map((obj: JSONObject) => ({
-              id:              obj.id as string,
-              slug:            obj.slug as string,
-              name:            obj.name as string,
-              state:           obj.state as StudyState,
-              annotationTypes: []
+              id:    obj.id as string,
+              slug:  obj.slug as string,
+              name:  obj.name as string,
+              state: obj.state as StudyState
             }));
           }
           throw new Error('expected a paged reply');

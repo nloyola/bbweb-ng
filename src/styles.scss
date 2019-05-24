@@ -54,3 +54,8 @@ span.deletable-item { cursor: pointer; }
 #toast-container > div {
   opacity: 1;
 }
+
+/* so that ng-pick-datetime displays properly in bootstrap modals */
+.cdk-overlay-container {
+  z-index: 2000;
+}

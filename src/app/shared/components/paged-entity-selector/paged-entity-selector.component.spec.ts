@@ -46,23 +46,7 @@ describe('PagedEntitySelectorComponent', () => {
   it('should create', () => {
     fixture.detectChanges();
     expect(component).toBeTruthy();
-  });
-
-  it('updates to name should emit an event', fakeAsync(() => {
-    fixture.detectChanges();
-    let eventProduced = false;
-    component.nameFilterUpdated.subscribe(() => {
-      eventProduced = true;
-    });
-
-    const inputElem = fixture.debugElement.query(By.css('input'));
-    inputElem.nativeElement.value = 'test';
-    inputElem.nativeElement.dispatchEvent(new Event('input'));
-    tick(500);
-    fixture.detectChanges();
-
-    expect(eventProduced).toBe(true);
-  }));
+  });;
 
   it('changes to page should emit an event', async(() => {
     fixture.detectChanges();

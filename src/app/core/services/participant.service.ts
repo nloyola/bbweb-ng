@@ -29,6 +29,12 @@ export class ParticipantService {
       map(this.replyToParticipant));
   }
 
+  getByUniqueId(uniqueId: string): Observable<Participant> {
+    return this.http.get<ApiReply>(`${this.BASE_URL}/uniqueId/${uniqueId}`).pipe(
+      // delay(2000),
+      map(this.replyToParticipant));
+  }
+
   add(participant: Participant): Observable<Participant> {
     const annotations = participant.annotations.map(a => a.serverAnnotation());
     const json = {

@@ -6,6 +6,7 @@ import { ProcessingTypeStoreActions, ProcessingTypeStoreSelectors } from '@app/r
 import { select, Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
 import { filter, map, takeUntil, tap } from 'rxjs/operators';
+import { NameFilter } from '@app/domain/search-filters';
 
 export interface ProcessingTypePageInfo {
   hasNoEntitiesToDisplay: boolean;
@@ -68,8 +69,10 @@ export class ProcessingTypesAddAndSelectComponent implements OnInit, OnDestroy {
     this.unsubscribe$.complete();
   }
 
-  public onFiltersUpdated(filterValues: string) {
-    this.filterValues = filterValues;
+  public onFiltersUpdated(filterValue: string) {
+    const filter = new NameFilter();
+    filter.setValue(filterValue)
+    this.filterValues = filter.getValue();
     this.applySearchParams();
   }
 

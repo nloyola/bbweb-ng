@@ -6,7 +6,7 @@
                            [noEntitiesToDisplay]="noEntitiesToDisplay"
                            [noResultsToDisplay]="noResultsToDisplay"
                            [loadingContent]="showLoading"
-                           (nameFilterUpdated)="onFiltersUpdated($event)"
+                           (filterUpdated)="onFiltersUpdated($event)"
                            (pageChange)="paginationPageChange($event)">
   <ng-template let-entity>
     <li class="list-group-item" *ngIf="entity">

@@ -15,13 +15,20 @@ export class EventStoreEffects {
   @Effect()
   getRequest$ = this.actions$.pipe(
     ofType(EventActions.getEventRequest.type),
-    map(action => action.id),
-    switchMap(
-      id => this.collectionEventService.get(id).pipe(
-        map(event => EventActions.getEventSuccess({ event })),
-        catchError(error => observableOf(EventActions.getEventFailure({ error }))))
-    )
-  );
+    switchMap(action => {
+      if (action.id) {
+        return this.collectionEventService.get(action.id).pipe(
+          map(event => EventActions.getEventSuccess({ event })),
+          catchError(error => observableOf(EventActions.getEventFailure({ error }))));
+      } else if (action.participant && action.visitNumber) {
+        return this.collectionEventService.getByVisitNumber(action.participant, action.visitNumber).pipe(
+          map(event => EventActions.getEventSuccess({ event })),
+          catchError(error => observableOf(EventActions.getEventFailure({ error }))));
+      } else {
+        const error = { message: 'invalid action parameters' };
+        return observableOf(EventActions.getEventFailure({ error }));
+      }
+    }));
 
   @Effect()
   searchRequest$ = this.actions$.pipe(

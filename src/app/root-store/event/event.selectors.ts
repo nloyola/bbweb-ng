@@ -16,7 +16,7 @@ export const getError = (state: fromCollectionEvent.State): any => state.error;
 export const getSearchReplies =
   (state: fromCollectionEvent.State): { [ url: string ]: PagedReplyEntityIds } => state.searchReplies;
 
-export const selectCollectionEventState = createFeatureSelector<fromCollectionEvent.State>('collectionEvent');
+export const selectCollectionEventState = createFeatureSelector<fromCollectionEvent.State>('event');
 
 export const selectCollectionEventLastAddedId: MemoizedSelector<object, string> =
   createSelector(selectCollectionEventState, getLastAddedId);

@@ -25,7 +25,7 @@ export class PagedEntitySelectorComponent<T extends DomainEntity> implements OnI
 
   @ContentChild(TemplateRef) entityTemplate: TemplateRef<NgForOfContext<T>>;
 
-  @Output() nameFilterUpdated = new EventEmitter<string>();
+  @Output() filterUpdated = new EventEmitter<string>();
   @Output() pageChange = new EventEmitter<number>();
 
   filterForm: FormGroup;
@@ -34,9 +34,6 @@ export class PagedEntitySelectorComponent<T extends DomainEntity> implements OnI
   private unsubscribe$: Subject<void> = new Subject<void>();
 
   constructor(private formBuilder: FormBuilder) {
-    this.filters = {
-      nameFilter: new NameFilter()
-    };
   }
 
   ngOnInit() {
@@ -47,9 +44,8 @@ export class PagedEntitySelectorComponent<T extends DomainEntity> implements OnI
         debounce(() => timer(500)),
         distinct(() => this.filterForm.value),
         takeUntil(this.unsubscribe$))
-      .subscribe(() => {
-        this.filters.nameFilter.setValue(this.filterForm.value.name);
-        this.nameFilterUpdated.emit(this.getFilters().join(';'));
+      .subscribe(value => {
+        this.filterUpdated.emit(value);
       });
   }
 
@@ -65,12 +61,6 @@ export class PagedEntitySelectorComponent<T extends DomainEntity> implements OnI
   public paginationPageChange(newPage: number) {
     if (isNaN(newPage)) { return; }
     this.pageChange.emit(newPage);
-  }
-
-  private getFilters() {
-    return Object.values(this.filters)
-      .map(f => f.getValue())
-      .filter(value => value !== '');
   }
 
 }

@@ -1,0 +1,15 @@
+<div class="card mt-2">
+  <div class="card-header bg-primary text-light">
+    <mat-icon inline="false">event</mat-icon>
+    <span class="ml-1" i18n>Add Event</span>
+  </div>
+  <div class="card-body">
+    <form class="form-horizontal"
+          [formGroup]="form"
+          autocomplete="on"
+          (ngSubmit)="onSubmit()"
+          novalidate>
+
+    </form>
+  </div>
+</div>

@@ -16,7 +16,7 @@ export class NumberAnnotation extends Annotation {
 
   deserialize(input: JSONObject) {
     super.deserialize(input);
-    this.value = +input.value;
+    this.value = +input.numberValue;
     return this;
   }
 }

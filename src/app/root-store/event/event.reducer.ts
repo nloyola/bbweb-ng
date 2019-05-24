@@ -61,6 +61,7 @@ export function reducer(
     case CollectionEventActions.searchEventsFailure.type: {
       return {
         ...state,
+        searchActive: false,
         error: {
           error: action.error,
           actionType: action.type

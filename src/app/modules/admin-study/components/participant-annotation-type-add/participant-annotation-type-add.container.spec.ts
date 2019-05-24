@@ -13,6 +13,7 @@ import { Store, StoreModule } from '@ngrx/store';
 import { cold } from 'jasmine-marbles';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { ParticipantAnnotationTypeAddContainerComponent } from './participant-annotation-type-add.container';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('ParticipantAnnotationTypeAddContainer', () => {
 
@@ -29,6 +30,7 @@ describe('ParticipantAnnotationTypeAddContainer', () => {
 
     TestBed.configureTestingModule({
       imports: [
+        BrowserAnimationsModule,
         FormsModule,
         ReactiveFormsModule,
         RouterTestingModule,
@@ -163,9 +165,10 @@ describe('ParticipantAnnotationTypeAddContainer', () => {
       jest.spyOn(toastr, 'error').mockReturnValue(null);
       jest.spyOn(router, 'navigate');
 
+      store.dispatch(StudyStoreActions.getStudySuccess({ study }));
+
       testData.forEach(testInfo => {
         mockActivatedRouteSnapshot(testInfo.path, study);
-        store.dispatch(StudyStoreActions.getStudySuccess({ study }));
         component.ngOnInit();
         fixture.detectChanges();
 

@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { Tab } from '@app/domain';
+import { Tab, IdToTab } from '@app/domain';
 import { Study } from '@app/domain/studies';
 import { RootStoreState, StudyStoreSelectors } from '@app/root-store';
 import { NgbTabChangeEvent } from '@ng-bootstrap/ng-bootstrap';
@@ -19,7 +19,7 @@ export class StudyViewComponent implements OnInit, OnDestroy {
   tabIds: string[];
   activeTabId: string;
 
-  private tabData: { [id: string]: Tab };
+  private tabData: IdToTab;
   private unsubscribe$: Subject<void> = new Subject<void>();
 
   constructor(private store$: Store<RootStoreState.State>,
@@ -52,13 +52,12 @@ export class StudyViewComponent implements OnInit, OnDestroy {
 
     this.activeTabId = this.getActiveTabId(this.router.url);
 
-    this.router.events
-      .pipe(
-        filter(x => x instanceof NavigationEnd),
-        takeUntil(this.unsubscribe$))
-      .subscribe((event: NavigationEnd) => {
-        this.activeTabId = this.getActiveTabId(event.urlAfterRedirects);
-      });
+    this.router.events.pipe(
+      filter(x => x instanceof NavigationEnd),
+      takeUntil(this.unsubscribe$)
+    ).subscribe((event: NavigationEnd) => {
+      this.activeTabId = this.getActiveTabId(event.urlAfterRedirects);
+    });
   }
 
   ngOnDestroy() {

@@ -1,12 +1,12 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { FormGroup } from '@angular/forms';
 import { PagedReplyInfo, SearchParams } from '@app/domain';
 import { CollectionEventType, Study } from '@app/domain/studies';
 import { RootStoreState } from '@app/root-store';
 import { EventTypeStoreActions, EventTypeStoreSelectors } from '@app/root-store/event-type';
 import { select, Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
-import { filter, map, takeUntil, tap } from 'rxjs/operators';
+import { filter, takeUntil } from 'rxjs/operators';
+import { NameFilter } from '@app/domain/search-filters';
 
 @Component({
   selector: 'app-event-types-add-and-select',
@@ -16,13 +16,11 @@ import { filter, map, takeUntil, tap } from 'rxjs/operators';
 export class EventTypesAddAndSelectComponent implements OnInit, OnDestroy {
 
   @Input() study: Study;
-
   @Output() addSelected = new EventEmitter<any>();
   @Output() selected = new EventEmitter<CollectionEventType>();
 
   isLoading$: Observable<boolean>;
   pageInfo$: Observable<PagedReplyInfo<CollectionEventType>>;
-  filterForm: FormGroup;
   isAddAllowed: boolean;
 
   currentPage = 1;
@@ -59,8 +57,10 @@ export class EventTypesAddAndSelectComponent implements OnInit, OnDestroy {
     this.unsubscribe$.complete();
   }
 
-  public onFiltersUpdated(filterValues: string) {
-    this.filterValues = filterValues;
+  public onFiltersUpdated(filterValue: string) {
+    const filter = new NameFilter();
+    filter.setValue(filterValue)
+    this.filterValues = filter.getValue();
     this.applySearchParams();
   }
 

@@ -14,7 +14,6 @@ import { filter, map } from 'rxjs/operators';
 export class StudyCollectionComponent implements OnInit {
 
   study$: Observable<Study>;
-  eventType: CollectionEventType;
   private modificationsAllowed = false;
 
   constructor(private store$: Store<RootStoreState.State>,
@@ -22,19 +21,18 @@ export class StudyCollectionComponent implements OnInit {
               private route: ActivatedRoute) {}
 
   ngOnInit() {
-    this.study$ = this.store$
-      .pipe(
-        select(StudyStoreSelectors.selectAllStudies),
-        filter(s => s.length > 0),
-        map((entities: Study[]) => {
-          const entity = entities.find(s => s.slug === this.route.parent.parent.snapshot.params.slug);
-          if (entity) {
-            const study = (entity instanceof Study) ? entity :  new Study().deserialize(entity);
-            this.modificationsAllowed = study.isDisabled();
-            return study;
-          }
-          return undefined;
-        }));
+    this.study$ = this.store$.pipe(
+      select(StudyStoreSelectors.selectAllStudies),
+      filter(s => s.length > 0),
+      map((entities: Study[]) => {
+        const entity = entities.find(s => s.slug === this.route.parent.parent.snapshot.params.slug);
+        if (entity) {
+          const study = (entity instanceof Study) ? entity :  new Study().deserialize(entity);
+          this.modificationsAllowed = study.isDisabled();
+          return study;
+        }
+        return undefined;
+      }));
   }
 
   addEventTypeSelected() {
@@ -43,7 +41,6 @@ export class StudyCollectionComponent implements OnInit {
     }
 
     this.router.navigate([ '../add' ], { relativeTo: this.route });
-    this.eventType = undefined;
   }
 
   eventTypeSelected(eventType: CollectionEventType) {

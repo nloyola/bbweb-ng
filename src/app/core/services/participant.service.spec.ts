@@ -76,7 +76,7 @@ describe('ParticipantService', () => {
         expect(s).toEqual(participant);
       });
 
-      const req = httpMock.expectOne(`${BASE_URL}/`);
+      const req = httpMock.expectOne(`${BASE_URL}/${participant.study.id}`);
 
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual({
@@ -96,7 +96,7 @@ describe('ParticipantService', () => {
         err => { expect(err.message).toContain('expected a participant object'); }
       );
 
-      const req = httpMock.expectOne(`${BASE_URL}/`);
+      const req = httpMock.expectOne(`${BASE_URL}/${participant.study.id}`);
       req.flush({ status: 'error', data: undefined });
       httpMock.verify();
     });

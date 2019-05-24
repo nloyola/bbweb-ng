@@ -29,6 +29,11 @@ export class CollectionEventService {
       .pipe(map(this.replyToCollectionEvent));
   }
 
+  getByVisitNumber(participant: Participant, visitNumber: number): Observable<CollectionEvent> {
+    return this.http.get<ApiReply>(`${this.BASE_URL}/visitNumber/${participant.id}/${visitNumber}`)
+      .pipe(map(this.replyToCollectionEvent));
+  }
+
   /**
    * Used to search for CollectionEvents.
    */

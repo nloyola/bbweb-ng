@@ -1,9 +1,7 @@
-import { reducer, initialState } from './participant.reducer';
-import { SearchParams, PagedReplyEntityIds } from '@app/domain';
+import { Participant } from '@app/domain/participants';
 import { Factory } from '@test/factory';
 import * as ParticipantActions from './participant.actions';
-import { Participant } from '@app/domain/participants';
-import { Specimen } from '@app/domain/participants';
+import { initialState, reducer } from './participant.reducer';
 
 describe('Participant Reducer', () => {
 
@@ -28,7 +26,7 @@ describe('Participant Reducer', () => {
     });
 
     it('GetParticipantRequest', () => {
-      const action = ParticipantActions.getParticipantRequest({ id: participant.id });
+      const action = ParticipantActions.getParticipantRequest({ slug: participant.slug });
       const state = reducer(undefined, action);
 
       expect(state).toEqual(initialState);

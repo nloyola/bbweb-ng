@@ -13,6 +13,6 @@ export function applyMixins(derivedCtor: any, baseCtors: any[]) {
 export function slugify(text: string): string {
   return text.toString().toLowerCase().trim()
     .replace(/[^\w\s-]/g, '')
-    .replace(/[\s_-]+/g, '_')
+    //.replace(/[\s_-]+/g, '_')
     .replace(/^-+|-+$/g, '');
 }

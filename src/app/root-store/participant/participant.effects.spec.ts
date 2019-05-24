@@ -69,29 +69,88 @@ describe('participant-store effects', () => {
 
   describe('getParticipantRequestEffect', () => {
 
-    it('should respond with success', () => {
-      const participant = factory.participant();
-      const action = ParticipantActions.getParticipantRequest({ id: participant.id });
-      const completion = ParticipantActions.getParticipantSuccess({ participant });
-      spyOn(participantService, 'get').and.returnValue(of(participant));
+    describe('when using participant slug', () => {
 
-      actions = hot('--a-', { a: action });
-      const expected = cold('--b', { b: completion });
+      it('should respond with success', () => {
+        const participant = factory.participant();
+        const action = ParticipantActions.getParticipantRequest({ slug: participant.slug });
+        const completion = ParticipantActions.getParticipantSuccess({ participant });
+        spyOn(participantService, 'get').and.returnValue(of(participant));
 
-      expect(effects.getRequest$).toBeObservable(expected);
+        actions = hot('--a-', { a: action });
+        const expected = cold('--b', { b: completion });
+
+        expect(effects.getRequest$).toBeObservable(expected);
+      });
+
+      it('should respond with failure', () => {
+        const participant = factory.participant();
+        const error = {
+          status: 404,
+          error: {
+            message: 'simulated error'
+          }
+        };
+        const action = ParticipantActions.getParticipantRequest({ slug: participant.slug });
+        const completion = ParticipantActions.getParticipantFailure({ error });
+        spyOn(participantService, 'get').and.returnValue(throwError(error));
+
+        actions = hot('--a-', { a: action });
+        const expected = cold('--b', { b: completion });
+
+        expect(effects.getRequest$).toBeObservable(expected);
+      });
+
     });
 
-    it('should respond with failure', () => {
+    describe('when using participant uniqueId', () => {
+
+      it('should respond with success', () => {
+        const study = factory.study();
+        const participant = factory.participant();
+        const action = ParticipantActions.getParticipantRequest({
+          uniqueId: participant.uniqueId,
+          studyId: study.id
+        });
+        const completion = ParticipantActions.getParticipantSuccess({ participant });
+        spyOn(participantService, 'getByUniqueId').and.returnValue(of(participant));
+
+        actions = hot('--a-', { a: action });
+        const expected = cold('--b', { b: completion });
+
+        expect(effects.getRequest$).toBeObservable(expected);
+      });
+
+      it('should respond with failure', () => {
+        const study = factory.study();
+        const participant = factory.participant();
+        const error = {
+          status: 404,
+          error: {
+            message: 'simulated error'
+          }
+        };
+        const action = ParticipantActions.getParticipantRequest({
+          uniqueId: participant.uniqueId,
+          studyId: study.id
+        });
+        const completion = ParticipantActions.getParticipantFailure({ error });
+        spyOn(participantService, 'getByUniqueId').and.returnValue(throwError(error));
+
+        actions = hot('--a-', { a: action });
+        const expected = cold('--b', { b: completion });
+
+        expect(effects.getRequest$).toBeObservable(expected);
+      });
+
+    });
+
+    it('throws error when invalid parameters are used', () => {
+      const study = factory.study();
       const participant = factory.participant();
-      const error = {
-        status: 404,
-        error: {
-          message: 'simulated error'
-        }
-      };
-      const action = ParticipantActions.getParticipantRequest({ id: participant.id });
+      const error = { message: 'invalid action parameters' };
+      const action = ParticipantActions.getParticipantRequest({});
       const completion = ParticipantActions.getParticipantFailure({ error });
-      spyOn(participantService, 'get').and.returnValue(throwError(error));
 
       actions = hot('--a-', { a: action });
       const expected = cold('--b', { b: completion });

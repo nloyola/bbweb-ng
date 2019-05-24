@@ -42,7 +42,8 @@ export class CollectionPageComponent implements OnInit, OnDestroy {
     this.haveCollectionStudies$ = this.store$.pipe(
       select(StudyStoreSelectors.selectCollectionStudiesSearchRepliesAndEntities),
       filter(studies => studies !== undefined),
-      map(studies => studies.length > 0));
+      map(studies => studies.length > 0),
+      takeUntil(this.unsubscribe$));
 
     this.validUser$ = this.store$.pipe(
       select(AuthStoreSelectors.selectAuthUser),
@@ -94,9 +95,7 @@ export class CollectionPageComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(): void {
-    this.store$.dispatch(ParticipantStoreActions.getParticipantRequest({
-      slug: slugify(this.form.value.uniqueId)
-    }));
+    this.store$.dispatch(ParticipantStoreActions.getParticipantRequest({ uniqueId: this.form.value.uniqueId }));
     this.participantLoading$.next(true);
   }
 

@@ -109,12 +109,12 @@ export function reducer(
     }
 
     case StudyActions.searchCollectionStudiesSuccess.type: {
-      const dtoData = action.studiesData.map(dto => new Study().deserialize({
-          id: dto.id,
-          slug: dto.slug,
-          name: dto.name,
-          state: dto.name
-        }));
+      const dtoData = action.studiesData.map(dto => ({
+        id: dto.id,
+        slug: dto.slug,
+        name: dto.name,
+        state: dto.state
+      } as Study));
       const queryString = state.searchCollectionStudiesState.lastSearch.queryString();
       const newIds = {};
       newIds[queryString] = action.studiesData.map(dto => dto.id);
