@@ -216,7 +216,7 @@ export class ProcessingTypeViewContainerComponent implements OnInit, OnDestroy {
         }));
         this.updatedMessage$.next('Step name was updated');
       })
-      .catch(err => console.log('err', err));
+      .catch(() => undefined);
   }
 
   updateDescription() {
@@ -233,7 +233,7 @@ export class ProcessingTypeViewContainerComponent implements OnInit, OnDestroy {
         }));
         this.updatedMessage$.next('Step description was updated');
       })
-      .catch(err => console.log('err', err));
+      .catch(() => undefined);
   }
 
   updateEnabled() {
@@ -250,7 +250,7 @@ export class ProcessingTypeViewContainerComponent implements OnInit, OnDestroy {
         }));
         this.updatedMessage$.next('Enabled was updated');
       })
-      .catch(err => console.log('err', err));
+      .catch(() => undefined);
   }
 
   addAnnotationType() {

@@ -122,7 +122,7 @@ export class CentreSummaryComponent implements OnInit, OnDestroy {
         }));
         this.updatedMessage$.next('Centre name was updated');
       })
-      .catch(err => console.log('err', err));
+      .catch(() => undefined);
   }
 
   updateDescription() {
@@ -139,7 +139,7 @@ export class CentreSummaryComponent implements OnInit, OnDestroy {
         }));
         this.updatedMessage$.next('Centre description was updated');
       })
-      .catch(err => console.log('err', err));
+      .catch(() => undefined);
   }
 
   disable() {

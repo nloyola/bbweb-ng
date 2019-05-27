@@ -124,7 +124,7 @@ export class CentreStudiesComponent implements OnInit, OnDestroy {
 
         this.updatedMessage$.next('Study removed');
       })
-      .catch(err => console.log('err', err));
+      .catch(() => undefined);
   }
 
   private sortStudyNames(studyNames: IStudyInfoAndState[]): IStudyInfoAndState[] {

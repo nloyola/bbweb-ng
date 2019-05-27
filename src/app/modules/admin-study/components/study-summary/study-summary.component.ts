@@ -147,7 +147,7 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
         }));
         this.updatedMessage$.next('Study name was updated');
       })
-      .catch(err => console.log('err', err));
+      .catch(() => undefined);
   }
 
   updateDescription() {
@@ -160,7 +160,7 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
         }));
         this.updatedMessage$.next('Study description was updated');
       })
-      .catch(err => console.log('err', err));
+      .catch(() => undefined);
   }
 
   disable() {
