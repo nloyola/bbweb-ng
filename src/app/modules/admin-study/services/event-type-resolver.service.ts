@@ -18,7 +18,7 @@ export class EventTypeResolver implements Resolve<CollectionEventType> {
     const studySlug = route.parent.parent.parent.paramMap.get('slug');
     const eventTypeSlug = route.paramMap.get('eventTypeSlug');
 
-    this.store$.dispatch(new EventTypeStoreActions.GetEventTypeRequest({ studySlug, eventTypeSlug }));
+    this.store$.dispatch(EventTypeStoreActions.getEventTypeRequest({ studySlug, eventTypeSlug }));
 
     return race<any>(
       this.store$.pipe(

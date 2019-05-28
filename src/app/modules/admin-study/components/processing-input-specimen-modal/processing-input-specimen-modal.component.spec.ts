@@ -74,7 +74,7 @@ describe('ProcessingInputSpecimenModalComponent', () => {
       .toEqual(new ProcessingTypeStoreActions.GetSpecimenDefinitionNamesRequest({ studyId: study.id }));
 
     expect(storeListener.mock.calls[1][0])
-      .toEqual(new EventTypeStoreActions.GetSpecimenDefinitionNamesRequest({ studySlug: study.slug }));
+      .toEqual(EventTypeStoreActions.getSpecimenDefinitionNamesRequest({ studySlug: study.slug }));
   });
 
   it('selects the processed and collected specimen definitions', () => {
@@ -191,11 +191,10 @@ describe('ProcessingInputSpecimenModalComponent', () => {
       new ProcessingTypeStoreActions.GetSpecimenDefinitionNamesSuccess({
         specimenDefinitionNames: processedDefinitionNames
       }));
-    store.dispatch(
-      new EventTypeStoreActions.GetSpecimenDefinitionNamesSuccess({
-        studySlug: study.slug,
-        specimenDefinitionNames: collectedDefinitionNames
-      }));
+    store.dispatch(EventTypeStoreActions.getSpecimenDefinitionNamesSuccess({
+      studySlug: study.slug,
+      specimenDefinitionNames: collectedDefinitionNames
+    }));
     return { study, eventType, input, processingType, processedDefinitionNames, collectedDefinitionNames };
   }
 });

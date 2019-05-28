@@ -8,6 +8,9 @@ import { provideMockActions } from '@ngrx/effects/testing';
 import { cold, hot } from 'jasmine-marbles';
 import { Observable, of, throwError } from 'rxjs';
 import { EventTypeStoreEffects } from './event-type.effects';
+import { CollectionEventType, CollectedSpecimenDefinition } from '@app/domain/studies';
+import { AnnotationType } from '@app/domain/annotations';
+import { EventTypeActionsUnion } from './event-type.actions';
 
 describe('eventType-store effects', () => {
 
@@ -39,12 +42,12 @@ describe('eventType-store effects', () => {
       const study = factory.study();
       const eventType = factory.collectionEventType();
       const pagedReply = factory.pagedReply([ eventType ]);
-      const action = new EventTypeStoreActions.SearchEventTypesRequest({
+      const action = EventTypeStoreActions.searchEventTypesRequest({
         studyId: study.id,
         studySlug: study.slug,
         searchParams
       });
-      const completion = new EventTypeStoreActions.SearchEventTypesSuccess({ pagedReply });
+      const completion = EventTypeStoreActions.searchEventTypesSuccess({ pagedReply });
       spyOn(eventTypeService, 'search').and.returnValue(of(pagedReply));
 
       actions = hot('--a-', { a: action });
@@ -62,12 +65,12 @@ describe('eventType-store effects', () => {
           message: 'simulated error'
         }
       };
-      const action = new EventTypeStoreActions.SearchEventTypesRequest({
+      const action = EventTypeStoreActions.searchEventTypesRequest({
         studyId: study.id,
         studySlug: study.slug,
         searchParams
       });
-      const completion = new EventTypeStoreActions.SearchEventTypesFailure({ error });
+      const completion = EventTypeStoreActions.searchEventTypesFailure({ error });
       spyOn(eventTypeService, 'search').and.returnValue(throwError(error));
 
       actions = hot('--a-', { a: action });
@@ -82,11 +85,11 @@ describe('eventType-store effects', () => {
     it('should respond with success', () => {
       const study = factory.study();
       const eventType = factory.collectionEventType();
-      const action = new EventTypeStoreActions.GetEventTypeRequest({
+      const action = EventTypeStoreActions.getEventTypeRequest({
         studySlug: study.slug,
         eventTypeSlug: eventType.slug
       });
-      const completion = new EventTypeStoreActions.GetEventTypeSuccess({ eventType });
+      const completion = EventTypeStoreActions.getEventTypeSuccess({ eventType });
       spyOn(eventTypeService, 'get').and.returnValue(of(eventType));
 
       actions = hot('--a-', { a: action });
@@ -104,11 +107,11 @@ describe('eventType-store effects', () => {
           message: 'simulated error'
         }
       };
-      const action = new EventTypeStoreActions.GetEventTypeRequest({
+      const action = EventTypeStoreActions.getEventTypeRequest({
         studySlug: study.slug,
         eventTypeSlug: eventType.slug
       });
-      const completion = new EventTypeStoreActions.GetEventTypeFailure({ error });
+      const completion = EventTypeStoreActions.getEventTypeFailure({ error });
       spyOn(eventTypeService, 'get').and.returnValue(throwError(error));
 
       actions = hot('--a-', { a: action });
@@ -122,8 +125,8 @@ describe('eventType-store effects', () => {
 
     it('should respond with success', () => {
       const eventType = factory.collectionEventType();
-      const action = new EventTypeStoreActions.AddEventTypeRequest({ eventType });
-      const completion = new EventTypeStoreActions.AddEventTypeSuccess({ eventType });
+      const action = EventTypeStoreActions.addEventTypeRequest({ eventType });
+      const completion = EventTypeStoreActions.addEventTypeSuccess({ eventType });
       spyOn(eventTypeService, 'add').and.returnValue(of(eventType));
 
       actions = hot('--a-', { a: action });
@@ -140,8 +143,8 @@ describe('eventType-store effects', () => {
           message: 'simulated error'
         }
       };
-      const action = new EventTypeStoreActions.AddEventTypeRequest({ eventType });
-      const completion = new EventTypeStoreActions.AddEventTypeFailure({ error });
+      const action = EventTypeStoreActions.addEventTypeRequest({ eventType });
+      const completion = EventTypeStoreActions.addEventTypeFailure({ error });
       spyOn(eventTypeService, 'add').and.returnValue(throwError(error));
 
       actions = hot('--a-', { a: action });
@@ -153,21 +156,20 @@ describe('eventType-store effects', () => {
 
   describe('updateRequestEffect', () => {
 
-    let eventType;
-    let action;
+    let eventType: CollectionEventType;
+    let action: EventTypeActionsUnion;
 
     beforeEach(() => {
       eventType = factory.collectionEventType();
-      action = new EventTypeStoreActions.UpdateEventTypeRequest({
+      action = EventTypeStoreActions.updateEventTypeRequest({
         eventType,
         attributeName: 'name',
         value: factory.stringNext()
       });
-      jest.spyOn(eventTypeService, 'update');
     });
 
     it('should respond with success', () => {
-      const completion = new EventTypeStoreActions.UpdateEventTypeSuccess({ eventType });
+      const completion = EventTypeStoreActions.updateEventTypeSuccess({ eventType });
 
       jest.spyOn(eventTypeService, 'update').mockReturnValue(of(eventType));
       actions = hot('--a-', { a: action });
@@ -181,167 +183,160 @@ describe('eventType-store effects', () => {
           message: 'simulated error'
         }
       };
-      const completion = new EventTypeStoreActions.UpdateEventTypeFailure({ error });
+      const completion = EventTypeStoreActions.updateEventTypeFailure({ error });
 
       jest.spyOn(eventTypeService, 'update').mockReturnValue(throwError(error));
       actions = hot('--a-', { a: action });
       expect(effects.updateRequest$).toBeObservable(cold('--b', { b: completion }));
     });
-  });
 
-  describe('addOrUpdateAnnotationTypeRequestEffect', () => {
+    describe('when adding annotation types', () => {
 
-    let annotationType;
-    let eventType;
-    let action;
+      let annotationType: AnnotationType;
 
-    beforeEach(() => {
-      annotationType = factory.annotationType();
-      eventType = factory.collectionEventType({ annotationTypes: [ annotationType ]});
-      action = new EventTypeStoreActions.UpdateEventTypeAddOrUpdateAnnotationTypeRequest({
-        eventType,
-        annotationType
+      beforeEach(() => {
+        annotationType = factory.annotationType();
+        eventType = factory.collectionEventType({ annotationTypes: [ annotationType ]});
+        action = EventTypeStoreActions.updateEventTypeRequest({
+          eventType,
+          attributeName: 'addOrUpdateAnnotationType',
+          value: annotationType
+        });
+        jest.spyOn(eventTypeService, 'update');
       });
-      jest.spyOn(eventTypeService, 'addOrUpdateAnnotationType');
-    });
 
-    it('should respond with success', () => {
-      const completion = new EventTypeStoreActions.UpdateEventTypeSuccess({ eventType });
+      it('should respond with success', () => {
+        const completion = EventTypeStoreActions.updateEventTypeSuccess({ eventType });
 
-      jest.spyOn(eventTypeService, 'addOrUpdateAnnotationType').mockReturnValue(of(eventType));
-      actions = hot('--a-', { a: action });
-      expect(effects.addOrUpdateAnnotationTypeRequest$).toBeObservable(cold('--b', { b: completion }));
-    });
-
-    it('should respond with failure', () => {
-      const error = {
-        status: 404,
-        error: {
-          message: 'simulated error'
-        }
-      };
-      const completion = new EventTypeStoreActions.UpdateEventTypeFailure({ error });
-
-      jest.spyOn(eventTypeService, 'addOrUpdateAnnotationType').mockReturnValue(throwError(error));
-      actions = hot('--a-', { a: action });
-      expect(effects.addOrUpdateAnnotationTypeRequest$).toBeObservable(cold('--b', { b: completion }));
-    });
-  });
-
-  describe('removeAnnotationTypeRequestEffect', () => {
-
-    let annotationType;
-    let eventType;
-    let action;
-
-    beforeEach(() => {
-      annotationType = factory.annotationType();
-      eventType = factory.collectionEventType({ annotationTypes: [ annotationType ]});
-      action = new EventTypeStoreActions.UpdateEventTypeRemoveAnnotationTypeRequest({
-        eventType,
-        annotationTypeId: annotationType.id
+        jest.spyOn(eventTypeService, 'update').mockReturnValue(of(eventType));
+        actions = hot('--a-', { a: action });
+        expect(effects.updateRequest$).toBeObservable(cold('--b', { b: completion }));
       });
-      jest.spyOn(eventTypeService, 'removeAnnotationType');
-    });
 
-    it('should respond with success', () => {
-      const completion = new EventTypeStoreActions.UpdateEventTypeSuccess({ eventType });
+      it('should respond with failure', () => {
+        const error = {
+          status: 404,
+          error: {
+            message: 'simulated error'
+          }
+        };
+        const completion = EventTypeStoreActions.updateEventTypeFailure({ error });
 
-      jest.spyOn(eventTypeService, 'removeAnnotationType').mockReturnValue(of(eventType));
-      actions = hot('--a-', { a: action });
-      expect(effects.removeAnnotationTypeRequest$).toBeObservable(cold('--b', { b: completion }));
-    });
-
-    it('should respond with failure', () => {
-      const error = {
-        status: 404,
-        error: {
-          message: 'simulated error'
-        }
-      };
-      const completion = new EventTypeStoreActions.UpdateEventTypeFailure({ error });
-
-      jest.spyOn(eventTypeService, 'removeAnnotationType').mockReturnValue(throwError(error));
-      actions = hot('--a-', { a: action });
-      expect(effects.removeAnnotationTypeRequest$).toBeObservable(cold('--b', { b: completion }));
-    });
-  });
-
-  describe('addOrUpdateSpecimenDefinitionRequestEffect', () => {
-
-    let specimenDefinition;
-    let eventType;
-    let action;
-
-    beforeEach(() => {
-      specimenDefinition = factory.collectedSpecimenDefinition();
-      eventType = factory.collectionEventType({ specimenDefinitions: [ specimenDefinition ]});
-      action = new EventTypeStoreActions.UpdateEventTypeAddOrUpdateSpecimenDefinitionRequest({
-        eventType,
-        specimenDefinition
+        jest.spyOn(eventTypeService, 'update').mockReturnValue(throwError(error));
+        actions = hot('--a-', { a: action });
+        expect(effects.updateRequest$).toBeObservable(cold('--b', { b: completion }));
       });
-      jest.spyOn(eventTypeService, 'addOrUpdateSpecimenDefinition');
     });
 
-    it('should respond with success', () => {
-      const completion = new EventTypeStoreActions.UpdateEventTypeSuccess({ eventType });
+    describe('when removing an Annotation Type', () => {
 
-      jest.spyOn(eventTypeService, 'addOrUpdateSpecimenDefinition').mockReturnValue(of(eventType));
-      actions = hot('--a-', { a: action });
-      expect(effects.addOrUpdateSpecimenDefinitionRequest$).toBeObservable(cold('--b', { b: completion }));
-    });
+      let annotationType: AnnotationType;
 
-    it('should respond with failure', () => {
-      const error = {
-        status: 404,
-        error: {
-          message: 'simulated error'
-        }
-      };
-      const completion = new EventTypeStoreActions.UpdateEventTypeFailure({ error });
-
-      jest.spyOn(eventTypeService, 'addOrUpdateSpecimenDefinition').mockReturnValue(throwError(error));
-      actions = hot('--a-', { a: action });
-      expect(effects.addOrUpdateSpecimenDefinitionRequest$).toBeObservable(cold('--b', { b: completion }));
-    });
-  });
-
-  describe('removeSpecimenDefinitionRequestEffect', () => {
-
-    let specimenDefinition;
-    let eventType;
-    let action;
-
-    beforeEach(() => {
-      specimenDefinition = factory.collectedSpecimenDefinition();
-      eventType = factory.collectionEventType({ specimenDefinitions: [ specimenDefinition ]});
-      action = new EventTypeStoreActions.UpdateEventTypeRemoveSpecimenDefinitionRequest({
-        eventType,
-        specimenDefinitionId: specimenDefinition.id
+      beforeEach(() => {
+        annotationType = factory.annotationType();
+        eventType = factory.collectionEventType({ annotationTypes: [ annotationType ]});
+        action = EventTypeStoreActions.updateEventTypeRequest({
+          eventType,
+          attributeName: 'removeAnnotationType',
+          value: annotationType.id
+        });
       });
-      jest.spyOn(eventTypeService, 'removeSpecimenDefinition');
+
+      it('should respond with success', () => {
+        const completion = EventTypeStoreActions.updateEventTypeSuccess({ eventType });
+
+        jest.spyOn(eventTypeService, 'update').mockReturnValue(of(eventType));
+        actions = hot('--a-', { a: action });
+        expect(effects.updateRequest$).toBeObservable(cold('--b', { b: completion }));
+      });
+
+      it('should respond with failure', () => {
+        const error = {
+          status: 404,
+          error: {
+            message: 'simulated error'
+          }
+        };
+        const completion = EventTypeStoreActions.updateEventTypeFailure({ error });
+
+        jest.spyOn(eventTypeService, 'update').mockReturnValue(throwError(error));
+        actions = hot('--a-', { a: action });
+        expect(effects.updateRequest$).toBeObservable(cold('--b', { b: completion }));
+      });
     });
 
-    it('should respond with success', () => {
-      const completion = new EventTypeStoreActions.UpdateEventTypeSuccess({ eventType });
+    describe('when adding or updating a Specimen Definition', () => {
 
-      jest.spyOn(eventTypeService, 'removeSpecimenDefinition').mockReturnValue(of(eventType));
-      actions = hot('--a-', { a: action });
-      expect(effects.removeSpecimenDefinitionRequest$).toBeObservable(cold('--b', { b: completion }));
+      let specimenDefinition: CollectedSpecimenDefinition;
+
+      beforeEach(() => {
+        specimenDefinition = factory.collectedSpecimenDefinition();
+        eventType = factory.collectionEventType({ specimenDefinitions: [ specimenDefinition ]});
+        action = EventTypeStoreActions.updateEventTypeRequest({
+          eventType,
+          attributeName: 'addOrUpdateSpecimenDefinition',
+          value: specimenDefinition
+        });
+      });
+
+      it('should respond with success', () => {
+        const completion = EventTypeStoreActions.updateEventTypeSuccess({ eventType });
+
+        jest.spyOn(eventTypeService, 'update').mockReturnValue(of(eventType));
+        actions = hot('--a-', { a: action });
+        expect(effects.updateRequest$).toBeObservable(cold('--b', { b: completion }));
+      });
+
+      it('should respond with failure', () => {
+        const error = {
+          status: 404,
+          error: {
+            message: 'simulated error'
+          }
+        };
+        const completion = EventTypeStoreActions.updateEventTypeFailure({ error });
+
+        jest.spyOn(eventTypeService, 'update').mockReturnValue(throwError(error));
+        actions = hot('--a-', { a: action });
+        expect(effects.updateRequest$).toBeObservable(cold('--b', { b: completion }));
+      });
     });
 
-    it('should respond with failure', () => {
-      const error = {
-        status: 404,
-        error: {
-          message: 'simulated error'
-        }
-      };
-      const completion = new EventTypeStoreActions.UpdateEventTypeFailure({ error });
+    describe('when removing a SpecimenDefinition', () => {
 
-      jest.spyOn(eventTypeService, 'removeSpecimenDefinition').mockReturnValue(throwError(error));
-      actions = hot('--a-', { a: action });
-      expect(effects.removeSpecimenDefinitionRequest$).toBeObservable(cold('--b', { b: completion }));
+      let specimenDefinition: CollectedSpecimenDefinition;
+
+      beforeEach(() => {
+        specimenDefinition = factory.collectedSpecimenDefinition();
+        eventType = factory.collectionEventType({ specimenDefinitions: [ specimenDefinition ]});
+        action = EventTypeStoreActions.updateEventTypeRequest({
+          eventType,
+          attributeName: 'removeSpecimenDefinition',
+          value: specimenDefinition.id
+        });
+      });
+
+      it('should respond with success', () => {
+        const completion = EventTypeStoreActions.updateEventTypeSuccess({ eventType });
+
+        jest.spyOn(eventTypeService, 'update').mockReturnValue(of(eventType));
+        actions = hot('--a-', { a: action });
+        expect(effects.updateRequest$).toBeObservable(cold('--b', { b: completion }));
+      });
+
+      it('should respond with failure', () => {
+        const error = {
+          status: 404,
+          error: {
+            message: 'simulated error'
+          }
+        };
+        const completion = EventTypeStoreActions.updateEventTypeFailure({ error });
+
+        jest.spyOn(eventTypeService, 'update').mockReturnValue(throwError(error));
+        actions = hot('--a-', { a: action });
+        expect(effects.updateRequest$).toBeObservable(cold('--b', { b: completion }));
+      });
     });
   });
 
@@ -352,12 +347,12 @@ describe('eventType-store effects', () => {
 
     beforeEach(() => {
       eventType = factory.collectionEventType();
-      action = new EventTypeStoreActions.RemoveEventTypeRequest({ eventType });
+      action = EventTypeStoreActions.removeEventTypeRequest({ eventType });
       jest.spyOn(eventTypeService, 'removeEventType');
     });
 
     it('should respond with success', () => {
-      const completion = new EventTypeStoreActions.RemoveEventTypeSuccess({ eventTypeId: eventType.id });
+      const completion = EventTypeStoreActions.removeEventTypeSuccess({ eventTypeId: eventType.id });
 
       jest.spyOn(eventTypeService, 'removeEventType').mockReturnValue(of(eventType.id));
       actions = hot('--a-', { a: action });
@@ -371,7 +366,7 @@ describe('eventType-store effects', () => {
           message: 'simulated error'
         }
       };
-      const completion = new EventTypeStoreActions.RemoveEventTypeFailure({ error });
+      const completion = EventTypeStoreActions.removeEventTypeFailure({ error });
 
       jest.spyOn(eventTypeService, 'removeEventType').mockReturnValue(throwError(error));
       actions = hot('--a-', { a: action });

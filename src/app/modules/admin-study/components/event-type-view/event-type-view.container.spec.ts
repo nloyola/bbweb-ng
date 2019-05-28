@@ -118,7 +118,7 @@ describe('EventTypeViewContainer', () => {
         recurring: recurringValue
       });
 
-      store.dispatch(new EventTypeStoreActions.UpdateEventTypeSuccess({ eventType: updatedEventType }));
+      store.dispatch(EventTypeStoreActions.updateEventTypeSuccess({ eventType: updatedEventType }));
 
       fixture.detectChanges();
       expect(component.eventType).toEqual(updatedEventType);
@@ -143,7 +143,7 @@ describe('EventTypeViewContainer', () => {
     flush();
     fixture.detectChanges();
 
-    store.dispatch(new EventTypeStoreActions.UpdateEventTypeSuccess({
+    store.dispatch(EventTypeStoreActions.updateEventTypeSuccess({
       eventType: etWithNewName
     }));
     flush();
@@ -165,13 +165,13 @@ describe('EventTypeViewContainer', () => {
       context.componentInitialize = () => {
         createMockActivatedRouteSpies(study, eventType);
         componentSetup(study, eventType);
-        store.dispatch(new EventTypeStoreActions.GetEventTypeSuccess({ eventType }));
+        store.dispatch(EventTypeStoreActions.getEventTypeSuccess({ eventType }));
       };
       context.componentValidateInitialization = () => { expect(component.eventType).toEqual(eventType); };
       context.dispatchSuccessAction =
-        () => { store.dispatch(new EventTypeStoreActions.UpdateEventTypeSuccess({ eventType })); };
+        () => { store.dispatch(EventTypeStoreActions.updateEventTypeSuccess({ eventType })); };
       context.createExpectedFailureAction =
-        (error) => new EventTypeStoreActions.UpdateEventTypeFailure({ error });
+        (error) => EventTypeStoreActions.updateEventTypeFailure({ error });
       context.duplicateNameError = 'already exists';
     });
 
@@ -188,13 +188,13 @@ describe('EventTypeViewContainer', () => {
           name: newName
         });
 
-        context.expectedSuccessAction = new EventTypeStoreActions.UpdateEventTypeRequest({
+        context.expectedSuccessAction = EventTypeStoreActions.updateEventTypeRequest({
           eventType,
           attributeName: 'name',
           value: newName
         });
         context.dispatchSuccessAction = () => {
-          store.dispatch(new EventTypeStoreActions.UpdateEventTypeSuccess({
+          store.dispatch(EventTypeStoreActions.updateEventTypeSuccess({
             eventType: eventTypeWithUpdatedSlug
           }));
         };
@@ -211,7 +211,7 @@ describe('EventTypeViewContainer', () => {
         context.modalReturnValue = { result: Promise.resolve(newValue) };
         context.updateEntity = () => { component.updateDescription(); };
 
-        context.expectedSuccessAction = new EventTypeStoreActions.UpdateEventTypeRequest({
+        context.expectedSuccessAction = EventTypeStoreActions.updateEventTypeRequest({
           eventType,
           attributeName: 'description',
           value: newValue
@@ -229,7 +229,7 @@ describe('EventTypeViewContainer', () => {
         context.modalReturnValue = { result: Promise.resolve(newValue) };
         context.updateEntity = () => { component.updateRecurring(); };
 
-        context.expectedSuccessAction = new EventTypeStoreActions.UpdateEventTypeRequest({
+        context.expectedSuccessAction = EventTypeStoreActions.updateEventTypeRequest({
           eventType,
           attributeName: 'recurring',
           value: newValue
@@ -314,7 +314,7 @@ describe('EventTypeViewContainer', () => {
         updateFunc(component, eventType);
         flush();
         fixture.detectChanges();
-        store.dispatch(new EventTypeStoreActions.UpdateEventTypeSuccess({ eventType }));
+        store.dispatch(EventTypeStoreActions.updateEventTypeSuccess({ eventType }));
       });
 
       flush();
@@ -377,9 +377,10 @@ describe('EventTypeViewContainer', () => {
 
         component.removeAnnotationType(eventType.annotationTypes[0]);
         fixture.whenStable().then(() => {
-          const action = new EventTypeStoreActions.UpdateEventTypeRemoveAnnotationTypeRequest({
+          const action = EventTypeStoreActions.updateEventTypeRequest({
             eventType,
-            annotationTypeId: eventType.annotationTypes[0].id
+            attributeName: 'removeAnnotationType',
+            value: eventType.annotationTypes[0].id
           });
 
           expect(store.dispatch).toHaveBeenCalledWith(action);
@@ -445,9 +446,10 @@ describe('EventTypeViewContainer', () => {
 
         component.removeSpecimenDefinition(eventType.specimenDefinitions[0]);
         fixture.whenStable().then(() => {
-          const action = new EventTypeStoreActions.UpdateEventTypeRemoveSpecimenDefinitionRequest({
+          const action = EventTypeStoreActions.updateEventTypeRequest({
             eventType,
-            specimenDefinitionId: eventType.specimenDefinitions[0].id
+            attributeName: 'removeSpecimenDefinition',
+            value: eventType.specimenDefinitions[0].id
           });
 
           expect(store.dispatch).toHaveBeenCalledWith(action);
@@ -475,7 +477,7 @@ describe('EventTypeViewContainer', () => {
 
       component.removeEventType();
       fixture.whenStable().then(() => {
-        const action = new EventTypeStoreActions.RemoveEventTypeRequest({
+        const action = EventTypeStoreActions.removeEventTypeRequest({
           eventType
         });
 
@@ -499,7 +501,7 @@ describe('EventTypeViewContainer', () => {
       flush();
       fixture.detectChanges();
 
-      const action = new EventTypeStoreActions.RemoveEventTypeSuccess({ eventTypeId: eventType.id });
+      const action = EventTypeStoreActions.removeEventTypeSuccess({ eventTypeId: eventType.id });
       store.dispatch(action);
       flush();
       fixture.detectChanges();
@@ -524,7 +526,7 @@ describe('EventTypeViewContainer', () => {
   /* tslint:disable:no-shadowed-variable */
   function componentSetup(study: Study, eventType: CollectionEventType): void {
     store.dispatch(StudyStoreActions.getStudySuccess({ study }));
-    store.dispatch(new EventTypeStoreActions.GetEventTypeSuccess({ eventType }));
+    store.dispatch(EventTypeStoreActions.getEventTypeSuccess({ eventType }));
     fixture.detectChanges();
   }
 

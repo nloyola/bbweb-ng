@@ -219,7 +219,7 @@ describe('ProcessingTypeViewContainerComponent', () => {
         const study = new Study().deserialize(factory.defaultStudy());
         createMockActivatedRouteSpies(study, processingType);
         store.dispatch(new ProcessingTypeStoreActions.GetProcessingTypeSuccess({ processingType }));
-        store.dispatch(new EventTypeStoreActions.GetEventTypeSuccess({ eventType }));
+        store.dispatch(EventTypeStoreActions.getEventTypeSuccess({ eventType }));
 
         fixture.detectChanges();
         expect(component.inputEntity).toBe(eventType);
@@ -252,7 +252,7 @@ describe('ProcessingTypeViewContainerComponent', () => {
         fixture.detectChanges();
         expect(storeListener.mock.calls.length).toBe(1);
         expect(storeListener.mock.calls[0][0]).toEqual(
-          new EventTypeStoreActions.GetEventTypeByIdRequest({
+          EventTypeStoreActions.getEventTypeByIdRequest({
             studyId: processingType.studyId,
             eventTypeId: processingType.input.entityId
           }));

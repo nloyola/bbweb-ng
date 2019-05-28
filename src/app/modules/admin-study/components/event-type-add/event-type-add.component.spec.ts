@@ -99,9 +99,9 @@ describe('EventTypeAddComponent', () => {
       fixture.detectChanges();
 
       expect(storeListener.mock.calls[0][0]).toEqual(
-        new EventTypeStoreActions.AddEventTypeRequest({ eventType: eventTypeToAdd }));
+        EventTypeStoreActions.addEventTypeRequest({ eventType: eventTypeToAdd }));
 
-      ngZone.run(() => store.dispatch(new EventTypeStoreActions.AddEventTypeSuccess({ eventType })));
+      ngZone.run(() => store.dispatch(EventTypeStoreActions.addEventTypeSuccess({ eventType })));
       fixture.whenStable().then(() => {
         fixture.detectChanges();
         expect(storeListener.mock.calls.length).toBe(3);
@@ -142,7 +142,7 @@ describe('EventTypeAddComponent', () => {
         component.description.setValue(eventType.description);
         component.recurring.setValue(eventType.recurring);
         component.onSubmit();
-        store.dispatch(new EventTypeStoreActions.AddEventTypeFailure({ error }));
+        store.dispatch(EventTypeStoreActions.addEventTypeFailure({ error }));
         flush();
         fixture.detectChanges();
         expect(toastr.error).toHaveBeenCalled();

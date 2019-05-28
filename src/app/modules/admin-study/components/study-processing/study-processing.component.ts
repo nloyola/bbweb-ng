@@ -60,7 +60,7 @@ export class StudyProcessingComponent implements OnInit {
         return undefined;
       }));
 
-    this.store$.dispatch(new EventTypeStoreActions.GetSpecimenDefinitionNamesRequest({
+    this.store$.dispatch(EventTypeStoreActions.getSpecimenDefinitionNamesRequest({
       studySlug: this.route.parent.parent.snapshot.params.slug
     }));
   }

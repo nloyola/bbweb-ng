@@ -95,7 +95,7 @@ describe('CollectedSpecimenDefinitionAddContainer', () => {
 
     expect(storeListener.mock.calls.length).toBe(1);
     expect(storeListener.mock.calls[0][0]).toEqual(
-      new EventTypeStoreActions.GetEventTypeRequest({
+      EventTypeStoreActions.getEventTypeRequest({
       studySlug: study.slug,
       eventTypeSlug: eventType.slug
     }));
@@ -118,7 +118,7 @@ describe('CollectedSpecimenDefinitionAddContainer', () => {
 
     testData.forEach((testInfo, index) => {
       mockActivatedRouteSnapshot(testInfo.path, eventType);
-      store.dispatch(new EventTypeStoreActions.GetEventTypeSuccess({ eventType }));
+      store.dispatch(EventTypeStoreActions.getEventTypeSuccess({ eventType }));
       component.ngOnInit();
       fixture.detectChanges();
 
@@ -132,9 +132,10 @@ describe('CollectedSpecimenDefinitionAddContainer', () => {
 
     it('on valid submission', async(() => {
       const eventType = initializeComponent();
-      const expectedAction = new EventTypeStoreActions.UpdateEventTypeAddOrUpdateSpecimenDefinitionRequest({
+      const expectedAction = EventTypeStoreActions.updateEventTypeRequest({
         eventType,
-        specimenDefinition: eventType.specimenDefinitions[0]
+        attributeName: 'addOrUpdateSpecimenDefinition',
+        value: eventType.specimenDefinitions[0]
       });
 
       jest.spyOn(store, 'dispatch');
@@ -142,7 +143,7 @@ describe('CollectedSpecimenDefinitionAddContainer', () => {
       const spy = jest.spyOn(router, 'navigate');
 
       mockActivatedRouteSnapshot('spcDefAdd', eventType);
-      store.dispatch(new EventTypeStoreActions.GetEventTypeSuccess({ eventType }));
+      store.dispatch(EventTypeStoreActions.getEventTypeSuccess({ eventType }));
       fixture.detectChanges();
 
       component.onSubmit(eventType.specimenDefinitions[0]);
@@ -150,7 +151,7 @@ describe('CollectedSpecimenDefinitionAddContainer', () => {
 
       expect(component.isSaving$).toBeObservable(cold('b', { b: true }));
 
-      ngZone.run(() => store.dispatch(new EventTypeStoreActions.UpdateEventTypeSuccess({ eventType })));
+      ngZone.run(() => store.dispatch(EventTypeStoreActions.updateEventTypeSuccess({ eventType })));
 
       fixture.whenStable().then(() => {
         expect(component.isSaving$).toBeObservable(cold('b', { b: false }));
@@ -189,7 +190,7 @@ describe('CollectedSpecimenDefinitionAddContainer', () => {
 
       const eventType = initializeComponent();
       store.dispatch(StudyStoreActions.getStudySuccess({ study }));
-      store.dispatch(new EventTypeStoreActions.GetEventTypeSuccess({ eventType }));
+      store.dispatch(EventTypeStoreActions.getEventTypeSuccess({ eventType }));
       fixture.detectChanges();
 
       testData.forEach(testInfo => {
@@ -198,7 +199,7 @@ describe('CollectedSpecimenDefinitionAddContainer', () => {
         errors.forEach(error => {
           component.onSubmit(eventType.specimenDefinitions[0]);
           expect(component.isSaving$).toBeObservable(cold('b', { b: true }));
-          store.dispatch(new EventTypeStoreActions.GetEventTypeFailure({ error }));
+          store.dispatch(EventTypeStoreActions.getEventTypeFailure({ error }));
           flush();
           fixture.detectChanges();
 
@@ -248,7 +249,7 @@ describe('CollectedSpecimenDefinitionAddContainer', () => {
     const eventType = createEventType();
     mockActivatedRouteSnapshot('spcDefAdd', eventType);
     store.dispatch(StudyStoreActions.getStudySuccess({ study }));
-    store.dispatch(new EventTypeStoreActions.GetEventTypeSuccess({ eventType }));
+    store.dispatch(EventTypeStoreActions.getEventTypeSuccess({ eventType }));
     return eventType;
   }
 

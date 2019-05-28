@@ -6,6 +6,15 @@ import { CollectedSpecimenDefinition, CollectedSpecimenDefinitionName, Collectio
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+export type EventTypeUpdateAttribute =
+  'name'
+  | 'description'
+  | 'recurring'
+  | 'addOrUpdateAnnotationType'
+  | 'removeAnnotationType'
+  | 'addOrUpdateSpecimenDefinition'
+  | 'removeSpecimenDefinition';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -97,8 +106,8 @@ export class EventTypeService {
 
   update(
     eventType: CollectionEventType,
-    attributeName: string,
-    value: string | boolean
+    attributeName: EventTypeUpdateAttribute,
+    value: string | boolean | AnnotationType | CollectedSpecimenDefinition
   ): Observable<CollectionEventType> {
     let url: string;
     let json = {
@@ -119,65 +128,20 @@ export class EventTypeService {
         json = { ...json, recurring: value } as  any;
         url = `${this.BASE_URL}/recurring/${eventType.id}`;
         break;
+      case 'addOrUpdateAnnotationType':
+        return this.addOrUpdateAnnotationType(eventType, value as AnnotationType);
+      case 'removeAnnotationType':
+        return this.removeAnnotationType(eventType, value as string);
+      case 'addOrUpdateSpecimenDefinition':
+        return this.addOrUpdateSpecimenDefinition(eventType, value as CollectedSpecimenDefinition);
+      case 'removeSpecimenDefinition':
+        return this.removeSpecimenDefinition(eventType, value as string);
 
       default:
         throw new Error('invalid attribute name for update: ' + attributeName);
     }
 
     return this.http.post<ApiReply>(url, json).pipe(map(this.replyToEventType));
-  }
-
-  addOrUpdateAnnotationType(eventType: CollectionEventType,
-                            annotationType: AnnotationType): Observable<CollectionEventType> {
-    const json = {
-      ...annotationType,
-      studyId: eventType.studyId,
-      expectedVersion: eventType.version
-    };
-    let url = `${this.BASE_URL}/annottype/${eventType.id}`;
-    if (!annotationType.isNew()) {
-      url += '/' + annotationType.id;
-    }
-    return this.http.post<ApiReply>(url, json).pipe(
-      // delay(2000),
-      map(this.replyToEventType));
-  }
-
-  removeAnnotationType(eventType: CollectionEventType,
-                       annotationTypeId: string): Observable<CollectionEventType> {
-    /* tslint:disable:max-line-length */
-    const url = `${this.BASE_URL}/annottype/${eventType.studyId}/${eventType.id}/${eventType.version}/${annotationTypeId}`;
-    /* tslint:enable:max-line-length */
-
-    return this.http.delete<ApiReply>(url)
-      .pipe(map(this.replyToEventType));
-  }
-
-  addOrUpdateSpecimenDefinition(eventType: CollectionEventType,
-                                specimenDefinition: CollectedSpecimenDefinition)
-  : Observable<CollectionEventType> {
-    const json = {
-      ...specimenDefinition,
-      studyId: eventType.studyId,
-      expectedVersion: eventType.version
-    };
-    let url = `${this.BASE_URL}/spcdef/${eventType.id}`;
-    if (!specimenDefinition.isNew()) {
-      url += '/' + specimenDefinition.id;
-    }
-    return this.http.post<ApiReply>(url, json).pipe(
-      // delay(2000),
-      map(this.replyToEventType));
-  }
-
-  removeSpecimenDefinition(eventType: CollectionEventType,
-                           specimenDefinitionId: string): Observable<CollectionEventType> {
-      /* tslint:disable:max-line-length */
-    const url = `${this.BASE_URL}/spcdef/${eventType.studyId}/${eventType.id}/${eventType.version}/${specimenDefinitionId}`;
-      /* tslint:enable:max-line-length */
-
-    return this.http.delete<ApiReply>(url)
-      .pipe(map(this.replyToEventType));
   }
 
   removeEventType(eventType: CollectionEventType): Observable<string> {
@@ -196,6 +160,66 @@ export class EventTypeService {
       return new CollectionEventType().deserialize(reply.data as JSONObject);
     }
     throw new Error('expected a collection event type object');
+  }
+
+  private addOrUpdateAnnotationType(
+    eventType: CollectionEventType,
+    annotationType: AnnotationType
+  ): Observable<CollectionEventType> {
+    const json = {
+      ...annotationType,
+      studyId: eventType.studyId,
+      expectedVersion: eventType.version
+    };
+    let url = `${this.BASE_URL}/annottype/${eventType.id}`;
+    if (!annotationType.isNew()) {
+      url += '/' + annotationType.id;
+    }
+    return this.http.post<ApiReply>(url, json).pipe(
+      // delay(2000),
+      map(this.replyToEventType));
+  }
+
+  private removeAnnotationType(
+    eventType: CollectionEventType,
+    annotationTypeId: string
+  ): Observable<CollectionEventType> {
+    /* tslint:disable:max-line-length */
+    const url = `${this.BASE_URL}/annottype/${eventType.studyId}/${eventType.id}/${eventType.version}/${annotationTypeId}`;
+    /* tslint:enable:max-line-length */
+
+    return this.http.delete<ApiReply>(url)
+      .pipe(map(this.replyToEventType));
+  }
+
+  private addOrUpdateSpecimenDefinition(
+    eventType: CollectionEventType,
+    specimenDefinition: CollectedSpecimenDefinition
+  ): Observable<CollectionEventType> {
+    const json = {
+      ...specimenDefinition,
+      studyId: eventType.studyId,
+      expectedVersion: eventType.version
+    };
+    let url = `${this.BASE_URL}/spcdef/${eventType.id}`;
+    if (!specimenDefinition.isNew()) {
+      url += '/' + specimenDefinition.id;
+    }
+    return this.http.post<ApiReply>(url, json).pipe(
+      // delay(2000),
+      map(this.replyToEventType));
+  }
+
+  private removeSpecimenDefinition(
+    eventType: CollectionEventType,
+    specimenDefinitionId: string
+  ): Observable<CollectionEventType> {
+      /* tslint:disable:max-line-length */
+    const url = `${this.BASE_URL}/spcdef/${eventType.studyId}/${eventType.id}/${eventType.version}/${specimenDefinitionId}`;
+      /* tslint:enable:max-line-length */
+
+    return this.http.delete<ApiReply>(url)
+      .pipe(map(this.replyToEventType));
   }
 
 }

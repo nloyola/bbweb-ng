@@ -45,7 +45,7 @@ describe('EventTypeResolver', () => {
     const eventType = new CollectionEventType().deserialize(factory.collectionEventType());
     const route = createRoute(study, eventType);
 
-    const action = new EventTypeStoreActions.GetEventTypeSuccess({ eventType });
+    const action = EventTypeStoreActions.getEventTypeSuccess({ eventType });
     store.dispatch(action);
 
     const expected = cold('(b|)', { b: eventType });
@@ -63,11 +63,11 @@ describe('EventTypeResolver', () => {
       status: 404
     };
 
-    const action = new EventTypeStoreActions.GetEventTypeFailure({ error });
+    const action = EventTypeStoreActions.getEventTypeFailure({ error });
     store.dispatch(action);
     const expected = cold('(b|)', {
       b: {
-        actionType: EventTypeStoreActions.ActionTypes.GetEventTypeFailure,
+        actionType: EventTypeStoreActions.getEventTypeFailure.type,
         error
       }
     });

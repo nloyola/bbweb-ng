@@ -1,16 +1,12 @@
 import { reducer, initialState } from './event-type.reducer';
 import { SearchParams, PagedReplyEntityIds } from '@app/domain';
-import { EventTypeStoreActions, EventTypeStoreReducer } from '@app/root-store';
 import { Factory } from '@test/factory';
 import { CollectionEventType } from '@app/domain/studies';
+import * as EventTypeStoreActions from './event-type.actions';
 
 describe('EventType Reducer', () => {
 
-  let factory: Factory;
-
-  beforeEach(() => {
-    factory = new Factory();
-  });
+  let factory = new Factory();
 
   describe('unknown action', () => {
     it('should return the initial state', () => {
@@ -27,11 +23,11 @@ describe('EventType Reducer', () => {
       studySlug: factory.stringNext(),
       searchParams: new SearchParams()
     };
-    const action = new EventTypeStoreActions.SearchEventTypesRequest(payload);
-    const state = EventTypeStoreReducer.reducer(undefined, action);
+    const action = EventTypeStoreActions.searchEventTypesRequest(payload);
+    const state = reducer(undefined, action);
 
     expect(state).toEqual({
-      ...EventTypeStoreReducer.initialState,
+      ...initialState,
       lastSearch: {
         studyId,
         params: payload.searchParams
@@ -46,10 +42,10 @@ describe('EventType Reducer', () => {
       studySlug: factory.stringNext(),
       pagedReply: factory.pagedReply<CollectionEventType>([ eventType ])
     };
-    const action = new EventTypeStoreActions.SearchEventTypesSuccess(payload);
-    const state = EventTypeStoreReducer.reducer(
+    const action = EventTypeStoreActions.searchEventTypesSuccess(payload);
+    const state = reducer(
       {
-        ...EventTypeStoreReducer.initialState,
+        ...initialState,
         lastSearch: {
           studyId: eventType.studyId,
           params: payload.pagedReply.searchParams
@@ -82,11 +78,11 @@ describe('EventType Reducer', () => {
         }
       }
     };
-    const action = new EventTypeStoreActions.SearchEventTypesFailure(payload);
-    const state = EventTypeStoreReducer.reducer(undefined, action);
+    const action = EventTypeStoreActions.searchEventTypesFailure(payload);
+    const state = reducer(undefined, action);
 
     expect(state).toEqual({
-      ...EventTypeStoreReducer.initialState,
+      ...initialState,
       lastSearch: null,
       error: {
         actionType: action.type,
@@ -98,8 +94,8 @@ describe('EventType Reducer', () => {
   it('GetEventTypeSuccess', () => {
     const eventType = factory.collectionEventType();
     const payload = { eventType };
-    const action = new EventTypeStoreActions.GetEventTypeSuccess(payload);
-    const state = EventTypeStoreReducer.reducer(undefined, action);
+    const action = EventTypeStoreActions.getEventTypeSuccess(payload);
+    const state = reducer(undefined, action);
 
     expect(state.ids).toContain(eventType.id);
     expect(state.entities[eventType.id]).toEqual(eventType);
@@ -114,11 +110,11 @@ describe('EventType Reducer', () => {
         }
       }
     };
-    const action = new EventTypeStoreActions.GetEventTypeFailure(payload);
-    const state = EventTypeStoreReducer.reducer(undefined, action);
+    const action = EventTypeStoreActions.getEventTypeFailure(payload);
+    const state = reducer(undefined, action);
 
     expect(state).toEqual({
-      ...EventTypeStoreReducer.initialState,
+      ...initialState,
       lastSearch: null,
       error: {
         actionType: action.type,
@@ -130,8 +126,8 @@ describe('EventType Reducer', () => {
   it('AddEventTypeSuccess', () => {
     const eventType = factory.collectionEventType();
     const payload = { eventType };
-    const action = new EventTypeStoreActions.AddEventTypeSuccess(payload);
-    const state = EventTypeStoreReducer.reducer(undefined, action);
+    const action = EventTypeStoreActions.addEventTypeSuccess(payload);
+    const state = reducer(undefined, action);
 
     expect(state.ids).toContain(eventType.id);
     expect(state.entities[eventType.id]).toEqual(eventType);
@@ -146,11 +142,11 @@ describe('EventType Reducer', () => {
         }
       }
     };
-    const action = new EventTypeStoreActions.AddEventTypeFailure(payload);
-    const state = EventTypeStoreReducer.reducer(undefined, action);
+    const action = EventTypeStoreActions.addEventTypeFailure(payload);
+    const state = reducer(undefined, action);
 
     expect(state).toEqual({
-      ...EventTypeStoreReducer.initialState,
+      ...initialState,
       lastSearch: null,
       error: {
         actionType: action.type,
@@ -167,7 +163,7 @@ describe('EventType Reducer', () => {
     beforeEach(() => {
       eventType = factory.collectionEventType();
       testInitialState = {
-        ...EventTypeStoreReducer.initialState,
+        ...initialState,
         ids: [ eventType.id ],
         entities: {}
       };
@@ -176,8 +172,8 @@ describe('EventType Reducer', () => {
 
     it('UpdateEventTypeSuccess', () => {
       const payload = { eventType };
-      const action = new EventTypeStoreActions.UpdateEventTypeSuccess(payload);
-      const state = EventTypeStoreReducer.reducer(testInitialState, action);
+      const action = EventTypeStoreActions.updateEventTypeSuccess(payload);
+      const state = reducer(testInitialState, action);
 
       expect(state.ids).toContain(eventType.id);
       expect(state.entities[eventType.id]).toEqual(eventType);
@@ -192,8 +188,8 @@ describe('EventType Reducer', () => {
           }
         }
       };
-      const action = new EventTypeStoreActions.UpdateEventTypeFailure(payload);
-      const state = EventTypeStoreReducer.reducer(testInitialState, action);
+      const action = EventTypeStoreActions.updateEventTypeFailure(payload);
+      const state = reducer(testInitialState, action);
       expect(state.error).toEqual({
         actionType: action.type,
         error: payload.error
@@ -210,7 +206,7 @@ describe('EventType Reducer', () => {
     beforeEach(() => {
       eventType = factory.collectionEventType();
       testInitialState = {
-        ...EventTypeStoreReducer.initialState,
+        ...initialState,
         ids: [ eventType.id ],
         entities: {}
       };
@@ -219,8 +215,8 @@ describe('EventType Reducer', () => {
 
     it('RemoveEventTypeSuccess', () => {
       const payload = { eventTypeId: eventType.id };
-      const action = new EventTypeStoreActions.RemoveEventTypeSuccess(payload);
-      const state = EventTypeStoreReducer.reducer(testInitialState, action);
+      const action = EventTypeStoreActions.removeEventTypeSuccess(payload);
+      const state = reducer(testInitialState, action);
 
       expect(state.ids).not.toContain(eventType.id);
       expect(state.entities[eventType.id]).toBeUndefined();
@@ -235,8 +231,8 @@ describe('EventType Reducer', () => {
           }
         }
       };
-      const action = new EventTypeStoreActions.RemoveEventTypeFailure(payload);
-      const state = EventTypeStoreReducer.reducer(testInitialState, action);
+      const action = EventTypeStoreActions.removeEventTypeFailure(payload);
+      const state = reducer(testInitialState, action);
       expect(state.error).toEqual({
         actionType: action.type,
         error: payload.error

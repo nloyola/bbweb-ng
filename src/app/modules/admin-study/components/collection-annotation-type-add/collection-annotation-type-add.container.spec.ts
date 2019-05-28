@@ -94,7 +94,7 @@ describe('CollectionAnnotationTypeAddContainerComponent', () => {
 
     jest.spyOn(store, 'dispatch');
     fixture.detectChanges();
-    expect(store.dispatch).toHaveBeenCalledWith(new EventTypeStoreActions.GetEventTypeRequest({
+    expect(store.dispatch).toHaveBeenCalledWith(EventTypeStoreActions.getEventTypeRequest({
       studySlug: study.slug,
       eventTypeSlug: eventType.slug
     }));
@@ -118,7 +118,7 @@ describe('CollectionAnnotationTypeAddContainerComponent', () => {
     testData.forEach((testInfo, index) => {
       routerListener.mockReset();
       mockActivatedRouteSnapshot(testInfo.path, eventType);
-      store.dispatch(new EventTypeStoreActions.GetEventTypeSuccess({ eventType }));
+      store.dispatch(EventTypeStoreActions.getEventTypeSuccess({ eventType }));
       component.ngOnInit();
       fixture.detectChanges();
 
@@ -132,9 +132,10 @@ describe('CollectionAnnotationTypeAddContainerComponent', () => {
 
     it('on valid submission', async(() => {
       const eventType = initializeComponent();
-      const expectedAction = new EventTypeStoreActions.UpdateEventTypeAddOrUpdateAnnotationTypeRequest({
+      const expectedAction = EventTypeStoreActions.updateEventTypeRequest({
         eventType,
-        annotationType: eventType.annotationTypes[0]
+        attributeName: 'addOrUpdateAnnotationType',
+        value: eventType.annotationTypes[0]
       });
 
       jest.spyOn(store, 'dispatch');
@@ -142,7 +143,7 @@ describe('CollectionAnnotationTypeAddContainerComponent', () => {
       const spy = jest.spyOn(router, 'navigate');
 
       mockActivatedRouteSnapshot('annotationAdd', eventType);
-      store.dispatch(new EventTypeStoreActions.GetEventTypeSuccess({ eventType }));
+      store.dispatch(EventTypeStoreActions.getEventTypeSuccess({ eventType }));
       fixture.detectChanges();
 
       component.onSubmit(eventType.annotationTypes[0]);
@@ -150,7 +151,7 @@ describe('CollectionAnnotationTypeAddContainerComponent', () => {
 
       expect(component.isSaving$).toBeObservable(cold('b', { b: true }));
 
-      ngZone.run(() => store.dispatch(new EventTypeStoreActions.UpdateEventTypeSuccess({ eventType })));
+      ngZone.run(() => store.dispatch(EventTypeStoreActions.updateEventTypeSuccess({ eventType })));
 
       fixture.whenStable().then(() => {
         expect(component.isSaving$).toBeObservable(cold('b', { b: false }));
@@ -192,7 +193,7 @@ describe('CollectionAnnotationTypeAddContainerComponent', () => {
         mockActivatedRouteSnapshot(testInfo.path, eventType);
         component.ngOnInit();
 
-        store.dispatch(new EventTypeStoreActions.GetEventTypeSuccess({ eventType }));
+        store.dispatch(EventTypeStoreActions.getEventTypeSuccess({ eventType }));
         fixture.detectChanges();
 
         errors.forEach(error => {
@@ -200,7 +201,7 @@ describe('CollectionAnnotationTypeAddContainerComponent', () => {
           fixture.detectChanges();
 
           expect(component.isSaving$).toBeObservable(cold('b', { b: true }));
-          store.dispatch(new EventTypeStoreActions.GetEventTypeFailure({ error }));
+          store.dispatch(EventTypeStoreActions.getEventTypeFailure({ error }));
 
           fixture.whenStable().then(() => {
             fixture.detectChanges();
@@ -224,7 +225,7 @@ describe('CollectionAnnotationTypeAddContainerComponent', () => {
     const eventType = createEventType();
     mockActivatedRouteSnapshot('annotationAdd', eventType);
     store.dispatch(StudyStoreActions.getStudySuccess({ study }));
-    store.dispatch(new EventTypeStoreActions.GetEventTypeSuccess({ eventType }));
+    store.dispatch(EventTypeStoreActions.getEventTypeSuccess({ eventType }));
     return eventType;
   }
 

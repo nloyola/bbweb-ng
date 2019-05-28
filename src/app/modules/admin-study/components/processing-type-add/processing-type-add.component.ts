@@ -96,7 +96,7 @@ export class ProcessingTypeAddComponent implements OnInit, OnDestroy {
         studyId: study.id
       }));
 
-      this.store$.dispatch(new EventTypeStoreActions.GetSpecimenDefinitionNamesRequest({
+      this.store$.dispatch(EventTypeStoreActions.getSpecimenDefinitionNamesRequest({
         studySlug: study.slug
       }));
     });

@@ -1,10 +1,9 @@
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { AnnotationType } from '@app/domain/annotations';
 import { Participant } from '@app/domain/participants';
 import { Factory } from '@test/factory';
-import * as faker from 'faker';
 import { ParticipantService } from './participant.service';
-import { AnnotationType } from '@app/domain/annotations';
 
 describe('ParticipantService', () => {
 

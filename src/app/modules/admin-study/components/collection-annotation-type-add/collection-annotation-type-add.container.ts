@@ -106,7 +106,7 @@ export class CollectionAnnotationTypeAddContainerComponent implements OnInit, On
         this.toastr.error(errMessage, 'Add Error', { disableTimeOut: true });
       });
 
-    this.store$.dispatch(new EventTypeStoreActions.GetEventTypeRequest({
+    this.store$.dispatch(EventTypeStoreActions.getEventTypeRequest({
       studySlug: this.route.parent.parent.parent.parent.snapshot.params.slug,
       eventTypeSlug: this.route.snapshot.params.eventTypeSlug
     }));
@@ -120,9 +120,10 @@ export class CollectionAnnotationTypeAddContainerComponent implements OnInit, On
   onSubmit(annotationType: AnnotationType): void {
     this.isSaving$.next(true);
     this.annotationTypeToSave = annotationType;
-    this.store$.dispatch(new EventTypeStoreActions.UpdateEventTypeAddOrUpdateAnnotationTypeRequest({
+    this.store$.dispatch(EventTypeStoreActions.updateEventTypeRequest({
       eventType: this.eventType,
-      annotationType: this.annotationTypeToSave
+      attributeName: 'addOrUpdateAnnotationType',
+      value: this.annotationTypeToSave
     }));
 
     this.updatedMessage$.next(this.annotationType.isNew() ? 'Annotation Added' : 'Annotation Updated');

@@ -5,14 +5,14 @@ import { EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 import { reducer, initialState } from './event.reducer';
 import * as selectors from './event.selectors';
 
-describe('collectionEvent-store selectors', () => {
+describe('collection event store selectors', () => {
 
   const factory = new Factory();
 
   it('selectCollectionEventLastAdded', () => {
     const collectionEvent = factory.collectionEvent();
     const state = {
-      collectionEvent: {
+      event: {
         ...initialState,
         lastAddedId: collectionEvent.id
       }
@@ -24,7 +24,7 @@ describe('collectionEvent-store selectors', () => {
   it('selectCollectionEventLastRemoved', () => {
     const collectionEvent = factory.collectionEvent();
     const state = {
-      collectionEvent: {
+      event: {
         ...initialState,
         lastRemovedId: collectionEvent.id
       }
@@ -35,7 +35,7 @@ describe('collectionEvent-store selectors', () => {
 
   it('selectCollectionEventSearchActive', () => {
     const state = {
-      collectionEvent: {
+      event: {
         ...initialState,
         searchActive: true
       }
@@ -47,7 +47,7 @@ describe('collectionEvent-store selectors', () => {
   it('selectCollectionEventLastSearch', () => {
     const searchParams = new SearchParams();
     const state = {
-      collectionEvent: {
+      event: {
         ...initialState,
         lastSearch: searchParams
       }
@@ -68,7 +68,7 @@ describe('collectionEvent-store selectors', () => {
       maxPages: pagedReply.maxPages,
     };
     const state = {
-      collectionEvent: {
+      event: {
         ...initialState,
         searchReplies
       }
@@ -83,7 +83,7 @@ describe('collectionEvent-store selectors', () => {
       selectId: (s: CollectionEvent) => s.id
     });
     const state = {
-      collectionEvent: adapter.addAll([ collectionEvent ], initialState)
+      event: adapter.addAll([ collectionEvent ], initialState)
     };
 
     expect(selectors.selectAllCollectionEvents(state)).toEqual([ collectionEvent ]);
@@ -106,7 +106,7 @@ describe('collectionEvent-store selectors', () => {
         maxPages: pagedReply.maxPages
       };
       const state = {
-        collectionEvent: adapter.addAll([ collectionEvent ], {
+        event: adapter.addAll([ collectionEvent ], {
           ...initialState,
           searchActive: false,
           lastSearch: pagedReply.searchParams,
@@ -127,7 +127,7 @@ describe('collectionEvent-store selectors', () => {
 
     it('when there is no last search', () => {
       const state = {
-        collectionEvent: {
+        event: {
           ...initialState,
           searchActive: false,
           lastSearch: null
@@ -144,7 +144,7 @@ describe('collectionEvent-store selectors', () => {
       });
       const pagedReply = factory.pagedReply<CollectionEvent>([ collectionEvent ]);
       const state = {
-        collectionEvent: adapter.addAll([ collectionEvent ], {
+        event: adapter.addAll([ collectionEvent ], {
           ...initialState,
           searchActive: false,
           lastSearch: pagedReply.searchParams,
@@ -163,7 +163,7 @@ describe('collectionEvent-store selectors', () => {
       selectId: (s: CollectionEvent) => s.id
     });
     const state = {
-      collectionEvent: adapter.addAll([ collectionEvent ], {
+      event: adapter.addAll([ collectionEvent ], {
         ...initialState,
         lastRemovedId: collectionEvent.id
       })

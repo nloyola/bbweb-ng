@@ -175,7 +175,7 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
     };
     this.modalService.open(this.updateNameModal, { size: 'lg' }).result
       .then((value) => {
-        this.store$.dispatch(new EventTypeStoreActions.UpdateEventTypeRequest({
+        this.store$.dispatch(EventTypeStoreActions.updateEventTypeRequest({
           eventType: this.eventType,
           attributeName: 'name',
           value
@@ -196,7 +196,7 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
     };
     this.modalService.open(this.updateDescriptionModal, { size: 'lg' }).result
       .then((value: string) => {
-        this.store$.dispatch(new EventTypeStoreActions.UpdateEventTypeRequest({
+        this.store$.dispatch(EventTypeStoreActions.updateEventTypeRequest({
           eventType: this.eventType,
           attributeName: 'description',
           value
@@ -213,7 +213,7 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
 
     this.modalService.open(this.updateRecurringModal, { size: 'lg' }).result
       .then(value => {
-        this.store$.dispatch(new EventTypeStoreActions.UpdateEventTypeRequest({
+        this.store$.dispatch(EventTypeStoreActions.updateEventTypeRequest({
           eventType: this.eventType,
           attributeName: 'recurring',
           value
@@ -256,9 +256,10 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.annotationType = annotationType;
     modalRef.result
       .then(() => {
-        this.store$.dispatch(new EventTypeStoreActions.UpdateEventTypeRemoveAnnotationTypeRequest({
+        this.store$.dispatch(EventTypeStoreActions.updateEventTypeRequest({
           eventType: this.eventType,
-          annotationTypeId: annotationType.id
+          attributeName: 'removeAnnotationType',
+          value: annotationType.id
         }));
 
         this.updatedMessage$.next('Annotation removed');
@@ -299,9 +300,10 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.specimenDefinition = specimenDefinition;
     modalRef.result
       .then(() => {
-        this.store$.dispatch(new EventTypeStoreActions.UpdateEventTypeRemoveSpecimenDefinitionRequest({
+        this.store$.dispatch(EventTypeStoreActions.updateEventTypeRequest({
           eventType: this.eventType,
-          specimenDefinitionId: specimenDefinition.id
+          attributeName: 'removeSpecimenDefinition',
+          value: specimenDefinition.id
         }));
 
         this.updatedMessage$.next('Specimen removed');
@@ -318,7 +320,7 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.eventType = this.eventType;
     modalRef.result
       .then(() => {
-        this.store$.dispatch(new EventTypeStoreActions.RemoveEventTypeRequest({
+        this.store$.dispatch(EventTypeStoreActions.removeEventTypeRequest({
           eventType: this.eventType
         }));
 

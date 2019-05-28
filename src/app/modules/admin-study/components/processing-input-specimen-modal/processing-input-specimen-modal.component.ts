@@ -54,7 +54,7 @@ export class ProcessingInputSpecimenModalComponent implements OnInit {
       studyId: this.study.id
     }));
 
-    this.store$.dispatch(new EventTypeStoreActions.GetSpecimenDefinitionNamesRequest({
+    this.store$.dispatch(EventTypeStoreActions.getSpecimenDefinitionNamesRequest({
       studySlug: this.study.slug
     }));
   }

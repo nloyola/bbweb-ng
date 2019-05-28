@@ -9,163 +9,97 @@ import * as EventTypeStoreActions from './event-type.actions';
 @Injectable()
 export class EventTypeStoreEffects {
 
-  constructor(private actions$: Actions<EventTypeStoreActions.EventTypeActions>,
+  constructor(private actions$: Actions<EventTypeStoreActions.EventTypeActionsUnion>,
               private eventTypeService: EventTypeService) { }
 
   @Effect()
   searchRequest$: Observable<Action> = this.actions$.pipe(
-    ofType(EventTypeStoreActions.ActionTypes.SearchEventTypesRequest),
-    map(action => action.payload),
+    ofType(EventTypeStoreActions.searchEventTypesRequest.type),
     // delay(2000),
     switchMap(
-      payload =>
-        this.eventTypeService.search(payload.studySlug, payload.searchParams)
+      action =>
+        this.eventTypeService.search(action.studySlug, action.searchParams)
         .pipe(
-          map(pagedReply => new EventTypeStoreActions.SearchEventTypesSuccess({ pagedReply })),
-          catchError(error => observableOf(new EventTypeStoreActions.SearchEventTypesFailure({ error }))))
+          map(pagedReply => EventTypeStoreActions.searchEventTypesSuccess({ pagedReply })),
+          catchError(error => observableOf(EventTypeStoreActions.searchEventTypesFailure({ error }))))
     )
   );
 
   @Effect()
   getRequest$: Observable<Action> = this.actions$.pipe(
-    ofType(EventTypeStoreActions.ActionTypes.GetEventTypeRequest),
-    map(action => action.payload),
+    ofType(EventTypeStoreActions.getEventTypeRequest.type),
     switchMap(
-      payload =>
-        this.eventTypeService.get(payload.studySlug, payload.eventTypeSlug)
+      action =>
+        this.eventTypeService.get(action.studySlug, action.eventTypeSlug)
         .pipe(
-          map(eventType => new EventTypeStoreActions.GetEventTypeSuccess({ eventType })),
-          catchError(error => observableOf(new EventTypeStoreActions.GetEventTypeFailure({ error }))))
+          map(eventType => EventTypeStoreActions.getEventTypeSuccess({ eventType })),
+          catchError(error => observableOf(EventTypeStoreActions.getEventTypeFailure({ error }))))
     )
   );
 
   @Effect()
   getByIdRequest$: Observable<Action> = this.actions$.pipe(
-    ofType(EventTypeStoreActions.ActionTypes.GetEventTypeByIdRequest),
-    map(action => action.payload),
+    ofType(EventTypeStoreActions.getEventTypeByIdRequest.type),
     switchMap(
-      payload =>
-        this.eventTypeService.getById(payload.studyId, payload.eventTypeId)
+      action =>
+        this.eventTypeService.getById(action.studyId, action.eventTypeId)
         .pipe(
-          map(eventType => new EventTypeStoreActions.GetEventTypeSuccess({ eventType })),
-          catchError(error => observableOf(new EventTypeStoreActions.GetEventTypeFailure({ error }))))
+          map(eventType => EventTypeStoreActions.getEventTypeSuccess({ eventType })),
+          catchError(error => observableOf(EventTypeStoreActions.getEventTypeFailure({ error }))))
     )
   );
 
   @Effect()
   addRequest$: Observable<Action> = this.actions$.pipe(
-    ofType(EventTypeStoreActions.ActionTypes.AddEventTypeRequest),
-    map(action => action.payload),
+    ofType(EventTypeStoreActions.addEventTypeRequest.type),
     switchMap(
-      payload =>
-        this.eventTypeService.add(payload.eventType)
+      action =>
+        this.eventTypeService.add(action.eventType)
         .pipe(
-          map(eventType => new EventTypeStoreActions.AddEventTypeSuccess({ eventType })),
-          catchError(error => observableOf(new EventTypeStoreActions.AddEventTypeFailure({ error }))))
+          map(eventType => EventTypeStoreActions.addEventTypeSuccess({ eventType })),
+          catchError(error => observableOf(EventTypeStoreActions.addEventTypeFailure({ error }))))
     )
   );
 
   @Effect()
   updateRequest$: Observable<Action> = this.actions$.pipe(
-    ofType(EventTypeStoreActions.ActionTypes.UpdateEventTypeRequest),
-    map(action => action.payload),
+    ofType(EventTypeStoreActions.updateEventTypeRequest.type),
     switchMap(
-      payload =>
-        this.eventTypeService.update(payload.eventType, payload.attributeName, payload.value)
+      action =>
+        this.eventTypeService.update(action.eventType, action.attributeName, action.value)
         .pipe(
-          map(eventType => new EventTypeStoreActions.UpdateEventTypeSuccess({ eventType })),
-          catchError(error => observableOf(new EventTypeStoreActions.UpdateEventTypeFailure({ error }))))
+          map(eventType => EventTypeStoreActions.updateEventTypeSuccess({ eventType })),
+          catchError(error => observableOf(EventTypeStoreActions.updateEventTypeFailure({ error }))))
     )
   );
 
   @Effect()
-  addOrUpdateAnnotationTypeRequest$: Observable<Action> =
-    this.actions$.pipe(
-      ofType(EventTypeStoreActions.ActionTypes.UpdateEventTypeAddOrUpdateAnnotationTypeRequest),
-      map(action => action.payload),
-      switchMap(
-        payload =>
-          this.eventTypeService.addOrUpdateAnnotationType(payload.eventType,
-                                                      payload.annotationType)
-          .pipe(
-            // delay(2000),
-            map(eventType => new EventTypeStoreActions.UpdateEventTypeSuccess({ eventType })),
-            catchError(error =>
-                       observableOf(new EventTypeStoreActions.UpdateEventTypeFailure({ error }))))));
-
-  @Effect()
-  removeAnnotationTypeRequest$: Observable<Action> =
-    this.actions$.pipe(
-      ofType(EventTypeStoreActions.ActionTypes.UpdateEventTypeRemoveAnnotationTypeRequest),
-      map(action => action.payload),
-      switchMap(
-        payload =>
-          this.eventTypeService.removeAnnotationType(payload.eventType,
-                                                 payload.annotationTypeId)
-          .pipe(
-            // delay(2000),
-            map(eventType => new EventTypeStoreActions.UpdateEventTypeSuccess({ eventType })),
-            catchError(error =>
-                       observableOf(new EventTypeStoreActions.UpdateEventTypeFailure({ error }))))));
-
-  @Effect()
-  addOrUpdateSpecimenDefinitionRequest$: Observable<Action> =
-    this.actions$.pipe(
-      ofType(EventTypeStoreActions.ActionTypes.UpdateEventTypeAddOrUpdateSpecimenDefinitionRequest),
-      map(action => action.payload),
-      switchMap(
-        payload =>
-          this.eventTypeService.addOrUpdateSpecimenDefinition(payload.eventType, payload.specimenDefinition)
-          .pipe(
-            // delay(2000),
-            map(eventType => new EventTypeStoreActions.UpdateEventTypeSuccess({ eventType })),
-            catchError(error =>
-                       observableOf(new EventTypeStoreActions.UpdateEventTypeFailure({ error }))))));
-
-  @Effect()
-  removeSpecimenDefinitionRequest$: Observable<Action> =
-    this.actions$.pipe(
-      ofType(EventTypeStoreActions.ActionTypes.UpdateEventTypeRemoveSpecimenDefinitionRequest),
-      map(action => action.payload),
-      switchMap(
-        payload =>
-          this.eventTypeService.removeSpecimenDefinition(payload.eventType,
-                                                 payload.specimenDefinitionId)
-          .pipe(
-            // delay(2000),
-            map(eventType => new EventTypeStoreActions.UpdateEventTypeSuccess({ eventType })),
-            catchError(error =>
-                       observableOf(new EventTypeStoreActions.UpdateEventTypeFailure({ error }))))));
-
-  @Effect()
   removeEventTypeRequest$: Observable<Action> =
     this.actions$.pipe(
-      ofType(EventTypeStoreActions.ActionTypes.RemoveEventTypeRequest),
-      map(action => action.payload),
+      ofType(EventTypeStoreActions.removeEventTypeRequest.type),
       switchMap(
-        payload =>
-          this.eventTypeService.removeEventType(payload.eventType)
+        action =>
+          this.eventTypeService.removeEventType(action.eventType)
           .pipe(
             // delay(2000),
-            map(eventTypeId => new EventTypeStoreActions.RemoveEventTypeSuccess({ eventTypeId })),
-            catchError(error => observableOf(new EventTypeStoreActions.RemoveEventTypeFailure({ error }))))));
+            map(eventTypeId => EventTypeStoreActions.removeEventTypeSuccess({ eventTypeId })),
+            catchError(error => observableOf(EventTypeStoreActions.removeEventTypeFailure({ error }))))));
 
 
   @Effect()
   specimenDefinitionNamesRequest$: Observable<Action> = this.actions$.pipe(
-    ofType(EventTypeStoreActions.ActionTypes.GetSpecimenDefinitionNamesRequest),
-    map(action => action.payload),
+    ofType(EventTypeStoreActions.getSpecimenDefinitionNamesRequest.type),
     // delay(2000),
     switchMap(
-      payload =>
-        this.eventTypeService.getSpecimenDefinitionNames(payload.studySlug)
+      action =>
+        this.eventTypeService.getSpecimenDefinitionNames(action.studySlug)
         .pipe(
-          map(reply => new EventTypeStoreActions.GetSpecimenDefinitionNamesSuccess({
-            studySlug: payload.studySlug,
+          map(reply => EventTypeStoreActions.getSpecimenDefinitionNamesSuccess({
+            studySlug: action.studySlug,
             specimenDefinitionNames: reply
           })),
           catchError(error => observableOf(
-            new EventTypeStoreActions.GetSpecimenDefinitionNamesFailure({ error }))))
+            EventTypeStoreActions.getSpecimenDefinitionNamesFailure({ error }))))
     )
   );
 

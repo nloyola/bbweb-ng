@@ -398,7 +398,7 @@ export class ProcessingTypeViewContainerComponent implements OnInit, OnDestroy {
     let action: Action;
     // then entity has not been retrieved from the server yet
     if (processingType.input.definitionType === 'collected') {
-      action = new EventTypeStoreActions.GetEventTypeByIdRequest({
+      action = EventTypeStoreActions.getEventTypeByIdRequest({
         studyId: processingType.studyId,
         eventTypeId: processingType.input.entityId
       });

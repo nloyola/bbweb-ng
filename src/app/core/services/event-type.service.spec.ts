@@ -277,7 +277,7 @@ describe('EventTypeService', () => {
         const rawEventType = factory.collectionEventType({ annotationTypes: [ rawAnnotationType ]});
         const eventType = new CollectionEventType().deserialize(rawEventType);
 
-        service.addOrUpdateAnnotationType(eventType, eventType.annotationTypes[0]).subscribe(s => {
+        service.update(eventType, 'addOrUpdateAnnotationType', eventType.annotationTypes[0]).subscribe(s => {
           expect(s).toEqual(jasmine.any(CollectionEventType));
           expect(s).toEqual(eventType);
         });
@@ -309,7 +309,7 @@ describe('EventTypeService', () => {
         const rawEventType = factory.collectionEventType({ annotationTypes: [ rawAnnotationType ]});
         const eventType = new CollectionEventType().deserialize(rawEventType);
 
-        service.addOrUpdateAnnotationType(eventType, eventType.annotationTypes[0]).subscribe(
+        service.update(eventType, 'addOrUpdateAnnotationType', eventType.annotationTypes[0]).subscribe(
           () => { fail('should have been an error response'); },
           err => { expect(err.message).toContain('expected a study object'); }
         );
@@ -333,7 +333,7 @@ describe('EventTypeService', () => {
       const rawEventType = factory.collectionEventType({ annotationTypes: [ rawAnnotationType ]});
       const eventType = new CollectionEventType().deserialize(rawEventType);
 
-      service.removeAnnotationType(eventType, eventType.annotationTypes[0].id).subscribe(s => {
+      service.update(eventType, 'removeAnnotationType', eventType.annotationTypes[0].id).subscribe(s => {
         expect(s).toEqual(jasmine.any(Study));
         expect(s).toEqual(study);
       });
@@ -354,7 +354,7 @@ describe('EventTypeService', () => {
       const rawEventType = factory.collectionEventType({ annotationTypes: [ rawAnnotationType ]});
       const eventType = new CollectionEventType().deserialize(rawEventType);
 
-      service.removeAnnotationType(eventType, eventType.annotationTypes[0].id).subscribe(
+      service.update(eventType, 'removeAnnotationType', eventType.annotationTypes[0].id).subscribe(
         () => { fail('should have been an error response'); },
         err => { expect(err.message).toContain('expected a study object'); }
       );
@@ -382,10 +382,11 @@ describe('EventTypeService', () => {
         const rawEventType = factory.collectionEventType({ specimenDefinitions: [ rawSpecimenDefinition ]});
         const eventType = new CollectionEventType().deserialize(rawEventType);
 
-        service.addOrUpdateSpecimenDefinition(eventType, eventType.specimenDefinitions[0]).subscribe(s => {
-          expect(s).toEqual(jasmine.any(CollectionEventType));
-          expect(s).toEqual(eventType);
-        });
+        service.update(eventType, 'addOrUpdateSpecimenDefinition', eventType.specimenDefinitions[0])
+          .subscribe(s => {
+            expect(s).toEqual(jasmine.any(CollectionEventType));
+            expect(s).toEqual(eventType);
+          });
 
         let url = `${BASE_URL}/spcdef/${eventType.id}`;
         if (specimenDefinitionId !== null) {
@@ -414,7 +415,7 @@ describe('EventTypeService', () => {
         const rawEventType = factory.collectionEventType({ specimenDefinitions: [ rawAnnotationType ]});
         const eventType = new CollectionEventType().deserialize(rawEventType);
 
-        service.addOrUpdateSpecimenDefinition(eventType, eventType.specimenDefinitions[0]).subscribe(
+        service.update(eventType, 'addOrUpdateSpecimenDefinition', eventType.specimenDefinitions[0]).subscribe(
           () => { fail('should have been an error response'); },
           err => { expect(err.message).toContain('expected a study object'); }
         );
@@ -438,7 +439,7 @@ describe('EventTypeService', () => {
       const rawEventType = factory.collectionEventType({ specimenDefinitions: [ rawSpecimenDefinition ]});
       const eventType = new CollectionEventType().deserialize(rawEventType);
 
-      service.removeSpecimenDefinition(eventType, eventType.specimenDefinitions[0].id).subscribe(s => {
+      service.update(eventType, 'removeSpecimenDefinition', eventType.specimenDefinitions[0].id).subscribe(s => {
         expect(s).toEqual(jasmine.any(CollectionEventType));
         expect(s).toEqual(eventType);
       });
@@ -459,7 +460,7 @@ describe('EventTypeService', () => {
       const rawEventType = factory.collectionEventType({ specimenDefinitions: [ rawSpecimenDefinition ]});
       const eventType = new CollectionEventType().deserialize(rawEventType);
 
-      service.removeSpecimenDefinition(eventType, eventType.specimenDefinitions[0].id).subscribe(
+      service.update(eventType, 'removeSpecimenDefinition', eventType.specimenDefinitions[0].id).subscribe(
         () => { fail('should have been an error response'); },
         err => { expect(err.message).toContain('expected a study object'); }
       );

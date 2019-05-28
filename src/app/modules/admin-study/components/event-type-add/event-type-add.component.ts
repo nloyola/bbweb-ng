@@ -52,7 +52,7 @@ export class EventTypeAddComponent implements OnInit, OnDestroy {
         this.toastr.success(
           `EventType was added successfully: ${eventType.name}`,
           'Add Successfull');
-        this.store$.dispatch(new EventTypeStoreActions.ClearLastAdded());
+        this.store$.dispatch(EventTypeStoreActions.clearLastAdded());
         this.router.navigate([ '../view', eventType.slug ], { relativeTo: this.route });
       });
 
@@ -90,7 +90,7 @@ export class EventTypeAddComponent implements OnInit, OnDestroy {
     this.eventTypeToSave = new CollectionEventType().deserialize(this.form.value);
     this.eventTypeToSave.studyId = this.study.id;
     this.eventTypeToSave.recurring = !!this.eventTypeToSave.recurring;
-    this.store$.dispatch(new EventTypeStoreActions.AddEventTypeRequest({
+    this.store$.dispatch(EventTypeStoreActions.addEventTypeRequest({
       eventType: this.eventTypeToSave
     }));
   }

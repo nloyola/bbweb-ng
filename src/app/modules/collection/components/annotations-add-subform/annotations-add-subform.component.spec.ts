@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AnnotationsAddSubformComponent } from './annotations-add-subform.component';
 
-describe('AnnotationsAddSubformComponent', () => {
+xdescribe('AnnotationsAddSubformComponent', () => {
   let component: AnnotationsAddSubformComponent;
   let fixture: ComponentFixture<AnnotationsAddSubformComponent>;
 

@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { EventAddSelectComponent } from './event-add-select.component';
 
-describe('EventAddSelectComponent', () => {
+xdescribe('EventAddSelectComponent', () => {
   let component: EventAddSelectComponent;
   let fixture: ComponentFixture<EventAddSelectComponent>;
 

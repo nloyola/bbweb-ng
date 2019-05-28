@@ -107,7 +107,7 @@ export class CollectedSpecimenDefinitionAddContainerComponent implements OnInit,
         this.toastr.error(errMessage, 'Add Error', { disableTimeOut: true });
       });
 
-    this.store$.dispatch(new EventTypeStoreActions.GetEventTypeRequest({
+    this.store$.dispatch(EventTypeStoreActions.getEventTypeRequest({
       studySlug: this.route.parent.parent.parent.parent.snapshot.params.slug,
       eventTypeSlug: this.route.snapshot.params.eventTypeSlug
     }));
@@ -122,9 +122,10 @@ export class CollectedSpecimenDefinitionAddContainerComponent implements OnInit,
     this.isSaving$.next(true);
     this.specimenDefinitionToSave = specimenDefinition;
 
-    this.store$.dispatch(new EventTypeStoreActions.UpdateEventTypeAddOrUpdateSpecimenDefinitionRequest({
+    this.store$.dispatch(EventTypeStoreActions.updateEventTypeRequest({
       eventType: this.eventType,
-      specimenDefinition: this.specimenDefinitionToSave
+      attributeName: 'addOrUpdateSpecimenDefinition',
+      value: this.specimenDefinitionToSave
     }));
 
     this.updatedMessage$.next(this.specimenDefinition.isNew() ? 'Specimen Added' : 'Specimen Updated');

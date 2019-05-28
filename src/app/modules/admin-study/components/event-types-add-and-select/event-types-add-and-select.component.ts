@@ -81,7 +81,7 @@ export class EventTypesAddAndSelectComponent implements OnInit, OnDestroy {
   }
 
   private applySearchParams() {
-    this.store$.dispatch(new EventTypeStoreActions.SearchEventTypesRequest({
+    this.store$.dispatch(EventTypeStoreActions.searchEventTypesRequest({
       studySlug: this.study.slug,
       studyId: this.study.id,
       searchParams: new SearchParams(this.filterValues,

@@ -81,7 +81,7 @@ describe('ProcessingTypeAddComponent', () => {
 
       expect(storeListener.mock.calls.length).toBeGreaterThan(1);
       expect(storeListener.mock.calls[1][0]).toEqual(
-        new EventTypeStoreActions.GetSpecimenDefinitionNamesRequest({ studySlug: study.slug }));
+        EventTypeStoreActions.getSpecimenDefinitionNamesRequest({ studySlug: study.slug }));
     });
 
   });
@@ -174,7 +174,7 @@ describe('ProcessingTypeAddComponent', () => {
       const study = createEntityFixtures();
       component.processingType = processingType;
       const specimenDefinitionNames = entityFixture.collectedDefinitionNames([ eventType ]);
-      store.dispatch(new EventTypeStoreActions.GetSpecimenDefinitionNamesSuccess({
+      store.dispatch(EventTypeStoreActions.getSpecimenDefinitionNamesSuccess({
         studySlug: study.slug,
         specimenDefinitionNames
       }));
@@ -225,11 +225,10 @@ describe('ProcessingTypeAddComponent', () => {
         const study = createEntityFixtures();
         component.processingType = processingType;
         const specimenDefinitionNames = entityFixture.collectedDefinitionNames([ eventType ]);
-        store.dispatch(
-          new EventTypeStoreActions.GetSpecimenDefinitionNamesSuccess({
-            studySlug: study.slug,
-            specimenDefinitionNames
-          }));
+        store.dispatch(EventTypeStoreActions.getSpecimenDefinitionNamesSuccess({
+          studySlug: study.slug,
+          specimenDefinitionNames
+        }));
         fixture.detectChanges();
 
         const event: StepperSelectionEvent = {

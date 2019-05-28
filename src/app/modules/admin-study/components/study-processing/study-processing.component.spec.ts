@@ -68,7 +68,7 @@ describe('StudyProcessingComponent', () => {
 
     [ false, true  ].forEach((hasSpecimenDefinitions) => {
       if (hasSpecimenDefinitions) {
-        store.dispatch(new EventTypeStoreActions.GetSpecimenDefinitionNamesSuccess({
+        store.dispatch(EventTypeStoreActions.getSpecimenDefinitionNamesSuccess({
           studySlug: study.slug,
           specimenDefinitionNames: factory.collectedSpecimenDefinitionNames([ eventType ])
         }));
