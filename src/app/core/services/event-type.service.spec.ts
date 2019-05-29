@@ -1,7 +1,7 @@
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { PagedReply, SearchParams } from '@app/domain';
-import { CollectionEventType, Study } from '@app/domain/studies';
+import { CollectionEventType, Study, EventTypeInfo } from '@app/domain/studies';
 import { PagedQueryBehaviour } from '@test/behaviours/paged-query.behaviour';
 import { Factory } from '@test/factory';
 import * as faker from 'faker';
@@ -14,7 +14,7 @@ describe('EventTypeService', () => {
 
   let httpMock: HttpTestingController;
   let service: EventTypeService;
-  let factory: Factory;
+  let factory = new Factory();
   let study: Study;
 
   beforeEach(() => {
@@ -27,7 +27,6 @@ describe('EventTypeService', () => {
 
     httpMock = TestBed.get(HttpTestingController);
     service = TestBed.get(EventTypeService);
-    factory = new Factory();
     study = new Study().deserialize(factory.study());
   });
 
@@ -107,10 +106,37 @@ describe('EventTypeService', () => {
 
   });
 
+  describe('when searching the event type names', () => {
+
+    it('reply is handled correctly', done => {
+      const { rawEventType, ...rest } = createEntities();
+      const params = new SearchParams();
+      const obs = service.searchNames(study.id, params);
+      const reply = [ factory.entityToInfo(rawEventType) ];
+      obs.subscribe(et => {
+        expect(et.length).toBe(1);
+        expect(et[0]).toEqual(jasmine.any(EventTypeInfo));
+        done();
+      });
+      expect(obs).toBeHttpSuccess(httpMock, 'GET', `${BASE_URL}/names/${study.id}`, reply);
+    });
+
+    it('handles an error reply correctly', () => {
+      const { rawAnnotationType, rawEventType, eventType } = createEntities();
+      const params = new SearchParams();
+      const obs = service.searchNames(study.id, params);
+      expect(obs).toBeHttpError(httpMock,
+                                'GET',
+                                `${BASE_URL}/names/${study.id}`,
+                                'expected a collection type names array');
+    });
+
+  });
+
   describe('when querying for the collected specimen definition names', () => {
 
     it('reply is handled correctly', () => {
-      const { rawAnnotationType, rawEventType, eventType } = createEntities();
+      const { rawEventType, ...rest } = createEntities();
       const specimenDefinitionNames = factory.collectedSpecimenDefinitionNames([ rawEventType ]);
       const obs = service.getSpecimenDefinitionNames(study.id);
       obs.subscribe(et => {

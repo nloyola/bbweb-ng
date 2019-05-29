@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { IStudyInfoAndState } from '@app/domain/studies';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { StudyStateInfo } from '@app/domain/studies';
 
 @Component({
   selector: 'app-study-remove-modal',
@@ -9,7 +9,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 })
 export class StudyRemoveModalComponent {
 
-  @Input() study: IStudyInfoAndState;
+  @Input() study: StudyStateInfo;
 
   constructor(private activeModal: NgbActiveModal) { }
 

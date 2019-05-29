@@ -1,8 +1,9 @@
-import { JSONArray, HasDescription, HasName, HasSlug, JSONObject } from '@app/domain';
+import { JSONArray, HasDescription, HasName, HasSlug, JSONObject, IEntityInfo } from '@app/domain';
 import { ConcurrencySafeEntity, IConcurrencySafeEntity } from '@app/domain/concurrency-safe-entity.model';
 import { AnnotationType, IAnnotationType } from '@app/domain/annotations';
 import { ProcessingTypeInputEntity } from './processing-type-input-entity.model';
 import { CollectedSpecimenDefinition } from './collected-specimen-definition.model';
+import { EntityInfo } from '../entity-info.model';
 
 export interface ICollectionEventType
 extends IConcurrencySafeEntity, ProcessingTypeInputEntity, HasSlug, HasName, HasDescription {
@@ -60,3 +61,7 @@ export class CollectionEventType extends ConcurrencySafeEntity implements IColle
   }
 
 }
+
+export type IEventTypeInfo = IEntityInfo<ICollectionEventType>;
+
+export class EventTypeInfo extends EntityInfo<CollectionEventType> { }

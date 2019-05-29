@@ -1,5 +1,5 @@
 import { reducer, initialState } from './event-type.reducer';
-import { SearchParams, PagedReplyEntityIds } from '@app/domain';
+import { SearchParams, PagedReplyEntityIds, EntityIds } from '@app/domain';
 import { Factory } from '@test/factory';
 import { CollectionEventType } from '@app/domain/studies';
 import * as EventTypeStoreActions from './event-type.actions';
@@ -16,79 +16,153 @@ describe('EventType Reducer', () => {
     });
   });
 
-  it('SearchEventTypesRequest', () => {
-    const studyId = factory.stringNext();
-    const payload = {
-      studyId,
-      studySlug: factory.stringNext(),
-      searchParams: new SearchParams()
-    };
-    const action = EventTypeStoreActions.searchEventTypesRequest(payload);
-    const state = reducer(undefined, action);
+  describe('searching for collection events', () => {
 
-    expect(state).toEqual({
-      ...initialState,
-      lastSearch: {
+    it('SearchEventTypesRequest', () => {
+      const studyId = factory.stringNext();
+      const payload = {
         studyId,
-        params: payload.searchParams
-      },
-      searchActive: true
-    });
-  });
+        studySlug: factory.stringNext(),
+        searchParams: new SearchParams()
+      };
+      const action = EventTypeStoreActions.searchEventTypesRequest(payload);
+      const state = reducer(undefined, action);
 
-  it('SearchEventTypesSuccess', () => {
-    const eventType = factory.collectionEventType();
-    const payload = {
-      studySlug: factory.stringNext(),
-      pagedReply: factory.pagedReply<CollectionEventType>([ eventType ])
-    };
-    const action = EventTypeStoreActions.searchEventTypesSuccess(payload);
-    const state = reducer(
-      {
+      expect(state).toEqual({
         ...initialState,
-        lastSearch: {
-          studyId: eventType.studyId,
-          params: payload.pagedReply.searchParams
+        searchState: {
+          ...state.searchState,
+          lastSearch: {
+            studyId,
+            params: payload.searchParams
+          },
+          searchActive: true
         }
-      },
-      action);
+      });
+    });
 
-    const searchReply: { [ key: string]: PagedReplyEntityIds } = {};
-    searchReply[eventType.studyId] = {} as  any;
-    searchReply[eventType.studyId][payload.pagedReply.searchParams.queryString()] = {
-      searchParams: payload.pagedReply.searchParams,
-      offset: payload.pagedReply.offset,
-      total: payload.pagedReply.total,
-      entityIds: payload.pagedReply.entities.map(e => e.id),
-      maxPages: payload.pagedReply.maxPages
-    };
+    it('SearchEventTypesSuccess', () => {
+      const eventType = factory.collectionEventType();
+      const payload = {
+        studySlug: factory.stringNext(),
+        pagedReply: factory.pagedReply<CollectionEventType>([ eventType ])
+      };
+      const action = EventTypeStoreActions.searchEventTypesSuccess(payload);
+      const state = reducer(
+        {
+          ...initialState,
+          searchState: {
+            ...initialState.searchState,
+            lastSearch: {
+              studyId: eventType.studyId,
+              params: payload.pagedReply.searchParams
+            }
+          }
+        },
+        action);
 
-    expect(state.searchReplies).toEqual(searchReply);
-    expect(state.searchActive).toBe(false);
-    expect(state.ids).toContain(eventType.id);
-    expect(state.entities[eventType.id]).toEqual(eventType);
-  });
+      const searchReply: { [ key: string]: PagedReplyEntityIds } = {};
+      searchReply[eventType.studyId] = {} as  any;
+      searchReply[eventType.studyId][payload.pagedReply.searchParams.queryString()] = {
+        searchParams: payload.pagedReply.searchParams,
+        offset: payload.pagedReply.offset,
+        total: payload.pagedReply.total,
+        entityIds: payload.pagedReply.entities.map(e => e.id),
+        maxPages: payload.pagedReply.maxPages
+      };
 
-  it('SearchEventTypesFailure', () => {
-    const payload = {
-      error: {
+      expect(state.searchState.searchReplies).toEqual(searchReply);
+      expect(state.searchState.searchActive).toBe(false);
+      expect(state.ids).toContain(eventType.id);
+      expect(state.entities[eventType.id]).toEqual(eventType);
+    });
+
+    it('SearchEventTypesFailure', () => {
+      const error = {
         status: 404,
         error: {
           message: 'simulated error'
         }
-      }
-    };
-    const action = EventTypeStoreActions.searchEventTypesFailure(payload);
-    const state = reducer(undefined, action);
+      };
+      const action = EventTypeStoreActions.searchEventTypesFailure({ error: error });
+      const state = reducer(initialState, action);
 
-    expect(state).toEqual({
-      ...initialState,
-      lastSearch: null,
-      error: {
-        actionType: action.type,
-        error: payload.error
-      }
+      expect(state.searchState.lastSearch).toBeNull();
+      expect(state.error.actionType).toEqual(action.type);
+      expect(state.error.error).toEqual(error);
     });
+
+  });
+
+  describe('searching for collection event names', () => {
+
+    it('SearchEventTypeNamesRequest', () => {
+      const studyId = factory.stringNext();
+      const searchParams = new SearchParams();
+      const action = EventTypeStoreActions.searchEventTypeNamesRequest({
+        studyId,
+        searchParams
+      });
+      const state = reducer(undefined, action);
+
+      expect(state).toEqual({
+        ...initialState,
+        namesSearchState: {
+          lastSearch: {
+            studyId,
+            params: searchParams
+          },
+          searchActive: true
+        }
+      });
+    });
+
+    it('SearchEventTypeNamesSuccess', () => {
+      const eventType = factory.collectionEventType();
+      const searchParams = new SearchParams();
+      const action = EventTypeStoreActions.searchEventTypeNamesSuccess({
+        eventTypeInfo: [ factory.entityToInfo(eventType) ]
+      });
+      const state = reducer(
+        {
+          ...initialState,
+          namesSearchState: {
+            ...initialState.namesSearchState,
+            lastSearch: {
+              studyId: eventType.studyId,
+              params: searchParams
+            }
+          }
+        },
+        action);
+
+      const searchReply: { [ key: string]: EntityIds } = {};
+      searchReply[eventType.studyId] = {} as any;
+      searchReply[eventType.studyId][searchParams.queryString()] = {
+        entityIds: action.eventTypeInfo.map(e => e.id),
+      };
+
+      expect(state.namesSearchState.searchReplies).toEqual(searchReply);
+      expect(state.namesSearchState.searchActive).toBe(false);
+      expect(state.ids).toContain(eventType.id);
+      expect(state.entities[eventType.id]).toEqual(factory.entityToInfo(eventType));
+    });
+
+    it('SearchEventTypeNamesFailure', () => {
+      const error = {
+        status: 404,
+        error: {
+          message: 'simulated error'
+        }
+      };
+      const action = EventTypeStoreActions.searchEventTypeNamesFailure({ error: error });
+      const state = reducer(initialState, action);
+
+      expect(state.namesSearchState.lastSearch).toBeNull();
+      expect(state.error.actionType).toEqual(action.type);
+      expect(state.error.error).toEqual(error);
+    });
+
   });
 
   it('GetEventTypeSuccess', () => {

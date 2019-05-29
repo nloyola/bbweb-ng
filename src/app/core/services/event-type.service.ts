@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ApiReply, PagedReply, SearchParams, JSONArray, JSONValue, JSONObject } from '@app/domain';
 import { AnnotationType } from '@app/domain/annotations';
-import { CollectedSpecimenDefinition, CollectedSpecimenDefinitionName, CollectionEventType } from '@app/domain/studies';
+import { CollectedSpecimenDefinition, CollectedSpecimenDefinitionName, CollectionEventType, EventTypeInfo } from '@app/domain/studies';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -67,13 +67,25 @@ export class EventTypeService {
 
   /**
    * Retrieves a CollectionEventType from the server.
-   *
-   * @param studyId the ID of the {@link Study}.
-   * @param eventTypeId the ID of the {@link CollectionEventType} to retrieve.
    */
   getById(studyId: string, eventTypeId: string): Observable<CollectionEventType> {
     return this.http.get<ApiReply>(`${this.BASE_URL}/id/${studyId}/${eventTypeId}`)
       .pipe(map(this.replyToEventType));
+  }
+
+  /**
+   * Retrieves event type names for a {@link domain.studies.Study Study} from the server.
+   */
+  searchNames(studyId: string, searchParams: SearchParams): Observable<EventTypeInfo[]> {
+    return this.http.get<ApiReply>(`${this.BASE_URL}/names/${studyId}`,
+                                   { params: searchParams.httpParams() })
+      .pipe(map((reply: ApiReply) => {
+        if (reply && reply.data) {
+          return (reply.data as JSONArray)
+            .map((obj: JSONObject) => new EventTypeInfo().deserialize(obj));
+        }
+        throw new Error('expected a collection event type names array');
+      }));
   }
 
   /**

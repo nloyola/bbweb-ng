@@ -1,5 +1,5 @@
-import { PagedReply, PagedReplyEntityIds, SearchParams } from '@app/domain';
-import { CollectionEventType } from '@app/domain/studies';
+import { PagedReply, PagedReplyEntityIds, SearchParams, EntityIds } from '@app/domain';
+import { CollectionEventType, EventTypeInfo, IStudy, ICollectionEventType } from '@app/domain/studies';
 import { EventTypeStoreReducer, EventTypeStoreSelectors } from '@app/root-store';
 import { Factory } from '@test/factory';
 
@@ -33,11 +33,13 @@ describe('EventTypeStore selectors', () => {
 
     it('returns entities', () => {
       const state = initialStateWithEntity(eventType, {
-        lastSearch: {
-          studyId: factory.defaultStudy().id,
-          params: pagedReply.searchParams
-        },
-        searchReplies
+        searchState: {
+          lastSearch: {
+            studyId: factory.defaultStudy().id,
+            params: pagedReply.searchParams
+          },
+          searchReplies
+        }
       });
 
       expect(EventTypeStoreSelectors.selectSearchRepliesAndEntities(state)).toEqual({
@@ -53,9 +55,11 @@ describe('EventTypeStore selectors', () => {
 
     it('when search is active returns undefined', () => {
       const state = initialStateWithEntity(eventType, {
-        searchActive: true,
-        lastSearch: pagedReply.searchParams,
-        searchReplies
+        searchState: {
+          searchActive: true,
+          lastSearch: pagedReply.searchParams,
+          searchReplies
+        }
       });
 
       expect(EventTypeStoreSelectors.selectSearchRepliesAndEntities(state)).toBeUndefined();
@@ -63,8 +67,10 @@ describe('EventTypeStore selectors', () => {
 
     it('when there have been no previous searches returns undefined', () => {
       const state = initialStateWithEntity(eventType, {
-        lastSearch: null,
-        searchReplies
+        searchState: {
+          lastSearch: null,
+          searchReplies
+        }
       });
 
       expect(EventTypeStoreSelectors.selectSearchRepliesAndEntities(state)).toBeUndefined();
@@ -72,11 +78,81 @@ describe('EventTypeStore selectors', () => {
 
     it('when the search was never completed returns undefined', () => {
       const state = initialStateWithEntity(eventType, {
-        lastSearch: {
-          studyId: factory.defaultStudy().id,
-          params: new SearchParams(undefined, 'name')
-        },
-        searchReplies
+        searchState: {
+          lastSearch: {
+            studyId: factory.defaultStudy().id,
+            params: new SearchParams(undefined, 'name')
+          },
+          searchReplies
+        }
+      });
+
+      expect(EventTypeStoreSelectors.selectSearchRepliesAndEntities(state)).toBeUndefined();
+    });
+
+  });
+
+  describe('selectNamesSearchRepliesAndEntities', () => {
+
+    let study: IStudy;
+    let eventType: CollectionEventType;
+    const searchParams = new SearchParams();
+    let searchReplies: { [ key: string]: EntityIds };
+
+    beforeEach(() => {
+      eventType = factory.collectionEventType();
+      study = factory.defaultStudy().id;
+      searchReplies = {};
+      searchReplies[study.id] = {} as any;
+      searchReplies[study.id][searchParams.queryString()] = [ eventType.id ];
+    });
+
+    it('returns entities', () => {
+      const state = initialStateWithEntity(eventType, {
+        namesSearchState: {
+          lastSearch: {
+            studyId: study.id,
+            params: searchParams
+          },
+          searchReplies
+        }
+      });
+
+      expect(EventTypeStoreSelectors.selectLastNamesSearchEntities(state)).toEqual([ eventType ]);
+    });
+
+    it('when search is active returns undefined', () => {
+      const state = initialStateWithEntity(eventType, {
+        namesSearchState: {
+          searchActive: true,
+          lastSearch: searchParams,
+          searchReplies
+        }
+      });
+
+      expect(EventTypeStoreSelectors.selectSearchRepliesAndEntities(state)).toBeUndefined();
+    });
+
+    it('when there have been no previous searches returns undefined', () => {
+      const state = initialStateWithEntity(eventType, {
+        namesSearchState: {
+          lastSearch: null,
+          searchReplies
+        }
+      });
+
+      expect(EventTypeStoreSelectors.selectSearchRepliesAndEntities(state)).toBeUndefined();
+    });
+
+    it('when the search was never completed returns undefined', () => {
+      const state = initialStateWithEntity(eventType, {
+        namesSearchState: {
+          lastSearch: {
+            studyId: factory.defaultStudy().id,
+            params: new SearchParams(undefined, 'name')
+          },
+          searchReplies
+        }
       });
 
       expect(EventTypeStoreSelectors.selectSearchRepliesAndEntities(state)).toBeUndefined();

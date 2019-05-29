@@ -1,4 +1,4 @@
-import { PagedReplyEntityIds, SearchParams } from '@app/domain';
+import { PagedReplyEntityIds, SearchParams, EntityIds } from '@app/domain';
 import { CollectedSpecimenDefinitionName, CollectionEventType } from '@app/domain/studies';
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity';
 import * as EventTypeActions from './event-type.actions';
@@ -12,14 +12,23 @@ export interface PagedReplyHash {
   [ id: string ]: { [ url: string ]: PagedReplyEntityIds };
 }
 
+export interface EntityIdsHash {
+  [ id: string ]: { [ url: string ]: EntityIds };
+}
+
 export interface SpecimenDefinitionNamesByStudy {
   [ slug: string ]: CollectedSpecimenDefinitionName[];
 }
 
-export interface State extends EntityState<CollectionEventType> {
+export interface SearchState<T> {
   lastSearch?: LastSearch;
+  searchReplies?: T;
   searchActive?: boolean;
-  searchReplies?: PagedReplyHash;
+}
+
+export interface State extends EntityState<CollectionEventType> {
+  searchState: SearchState<PagedReplyHash>;
+  namesSearchState: SearchState<EntityIdsHash>;
   specimenDefinitionNames: SpecimenDefinitionNamesByStudy;
   lastAddedId: string;
   lastRemovedId: string;
@@ -31,8 +40,16 @@ export const adapter: EntityAdapter<CollectionEventType> =
 
 export const initialState: State = adapter.getInitialState({
   lastSearch: null,
-  searchActive: false,
-  searchReplies: {},
+  searchState: {
+    lastSearch: null,
+    searchReplies: {},
+    searchActive: false,
+  },
+  namesSearchState: {
+    lastSearch: null,
+    searchReplies: {},
+    searchActive: false,
+  },
   specimenDefinitionNames: {},
   lastAddedId: null,
   lastRemovedId: null,
@@ -45,11 +62,13 @@ export function reducer(state = initialState, action: EventTypeActions.EventType
     case EventTypeActions.searchEventTypesRequest.type: {
       return {
         ...state,
-        lastSearch: {
-          studyId: action.studyId,
-          params: action.searchParams
+        searchState: {
+          lastSearch: {
+            studyId: action.studyId,
+            params: action.searchParams
+          },
+          searchActive: true
         },
-        searchActive: true,
         error: null
       };
     }
@@ -57,19 +76,22 @@ export function reducer(state = initialState, action: EventTypeActions.EventType
     case EventTypeActions.searchEventTypesFailure.type: {
       return {
         ...state,
+        searchState: {
+          ...state.searchState,
+          lastSearch: null,
+          searchActive: false
+        },
         error: {
           error: action.error,
           actionType: action.type
         },
-        lastSearch: null,
-        searchActive: false
       };
     }
 
     case EventTypeActions.searchEventTypesSuccess.type: {
       const pagedReply = action.pagedReply;
-      const studyId = state.lastSearch.studyId;
-      const queryString = state.lastSearch.params.queryString();
+      const studyId = state.searchState.lastSearch.studyId;
+      const queryString = state.searchState.lastSearch.params.queryString();
       const newReply = {};
       newReply[queryString] = {
         entityIds: pagedReply.entities.map(et => et.id),
@@ -81,22 +103,80 @@ export function reducer(state = initialState, action: EventTypeActions.EventType
 
       const studyReplies = {};
       studyReplies[studyId] = {
-        ...state.searchReplies[studyId],
+        ...state.searchState.searchReplies[studyId],
         ...newReply
       };
 
       return adapter.upsertMany(pagedReply.entities, {
         ...state,
-        searchReplies: {
-          ...state.searchReplies,
-          ...studyReplies
+        searchState: {
+          ...state.searchState,
+          searchReplies: {
+            ...state.searchState.searchReplies,
+            ...studyReplies
+          }
         },
         searchActive: false
       });
     }
 
+    case EventTypeActions.searchEventTypeNamesRequest.type: {
+      return {
+        ...state,
+        namesSearchState: {
+          ...state.namesSearchState,
+          lastSearch: {
+            studyId: action.studyId,
+            params: action.searchParams
+          },
+          searchActive: true
+        },
+        error: null
+      };
+    }
+
+    case EventTypeActions.searchEventTypeNamesFailure.type: {
+      return {
+        ...state,
+        namesSearchState: {
+          ...state.namesSearchState,
+          lastSearch: null,
+          searchActive: false
+        },
+        error: {
+          error: action.error,
+          actionType: action.type
+        },
+      };
+    }
+
+    case EventTypeActions.searchEventTypeNamesSuccess.type: {
+      const studyId = state.namesSearchState.lastSearch.studyId;
+      const queryString = state.namesSearchState.lastSearch.params.queryString();
+      const newReply = {};
+      newReply[queryString] = action.eventTypeInfo.map(et => et.id);
+
+      const studyReplies = {};
+      studyReplies[studyId] = {
+        ...state.namesSearchState.searchReplies[studyId],
+        ...newReply
+      };
+
+      return adapter.upsertMany(action.eventTypeInfo as CollectionEventType[], {
+        ...state,
+        namesSearchState: {
+          ...state.namesSearchState,
+          searchReplies: {
+            ...state.namesSearchState.searchReplies,
+            ...studyReplies
+          },
+          searchActive: false
+        }
+      });
+    }
+
     case EventTypeActions.getEventTypeSuccess.type: {
-      return adapter.addOne(action.eventType, state);
+      return adapter.upsertOne(action.eventType, state);
     }
 
     case EventTypeActions.addEventTypeRequest.type: {

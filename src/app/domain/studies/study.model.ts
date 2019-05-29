@@ -1,7 +1,7 @@
-import { ConcurrencySafeEntity, IConcurrencySafeEntity, HasDescription, HasName, HasSlug, IEntityInfo, IEntitySet, JSONArray, JSONObject } from '@app/domain';
+import { ConcurrencySafeEntity, HasDescription, HasName, HasSlug, IConcurrencySafeEntity, IEntityInfo, IEntityInfoAndState, IEntitySet, JSONArray, JSONObject } from '@app/domain';
 import { AnnotationType } from '@app/domain/annotations/annotation-type.model';
-import { IEntityInfoAndState } from '../entity-info-and-state.model';
 import { StudyState } from './study-state.enum';
+import { EntityInfoAndState } from '../entity-info-and-state.model';
 
 /**
  * A Study represents a collection of participants and specimens collected for a particular research study.
@@ -18,12 +18,6 @@ export interface IStudy extends IConcurrencySafeEntity, HasSlug, HasName, HasDes
    */
   state: StudyState;
 }
-
-export type IStudyInfo = IEntityInfo<IStudy>;
-
-export type IStudyInfoAndState = IEntityInfoAndState<IStudy, StudyState>;
-
-export type IStudyInfoSet = IEntitySet<IStudy>;
 
 export class Study extends ConcurrencySafeEntity implements IStudy {
 
@@ -74,5 +68,12 @@ export class Study extends ConcurrencySafeEntity implements IStudy {
     return (this.state === StudyState.Retired);
   }
 
-
 }
+
+export type IStudyInfo = IEntityInfo<IStudy>;
+
+export type IStudyInfoSet = IEntitySet<IStudy>;
+
+export type IStudyStateInfo = IEntityInfoAndState<IStudy, StudyState>;
+
+export class StudyStateInfo extends EntityInfoAndState<Study, StudyState> {}

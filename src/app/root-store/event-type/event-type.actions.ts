@@ -1,6 +1,6 @@
 import { EventTypeUpdateAttribute } from '@app/core/services';
 import { PagedReply, SearchParams } from '@app/domain';
-import { CollectedSpecimenDefinitionName, CollectionEventType, CollectedSpecimenDefinition } from '@app/domain/studies';
+import { CollectedSpecimenDefinitionName, CollectionEventType, CollectedSpecimenDefinition, EventTypeInfo } from '@app/domain/studies';
 import { createAction, props, union } from '@ngrx/store';
 import { AnnotationType } from '@app/domain/annotations';
 
@@ -8,12 +8,11 @@ export const searchEventTypesRequest = createAction(
   '[EventType] Search Event Types Request',
   props<{
     studySlug: string,
-    studyId: string,
+    studyId: string;
     searchParams: SearchParams
   }>()
 );
 
-/* tslint:disable:max-classes-per-file */
 export const searchEventTypesSuccess = createAction(
   '[EventType] Search Event Types Success',
   props<{ pagedReply: PagedReply<CollectionEventType> }>()
@@ -21,6 +20,24 @@ export const searchEventTypesSuccess = createAction(
 
 export const searchEventTypesFailure = createAction(
   '[EventType] Search Event Types Failure',
+  props<{ error: any }>()
+);
+
+export const searchEventTypeNamesRequest = createAction(
+  '[EventType] Search Event Type Names Request',
+  props<{
+    studyId: string,
+    searchParams: SearchParams
+  }>()
+);
+
+export const searchEventTypeNamesSuccess = createAction(
+  '[EventType] Search Event Type Names Success',
+  props<{ eventTypeInfo: EventTypeInfo[] }>()
+);
+
+export const searchEventTypeNamesFailure = createAction(
+  '[EventType] Search Event Type Names Failure',
   props<{ error: any }>()
 );
 
@@ -119,6 +136,9 @@ const all = union({
   searchEventTypesRequest,
   searchEventTypesSuccess,
   searchEventTypesFailure,
+  searchEventTypeNamesRequest,
+  searchEventTypeNamesSuccess,
+  searchEventTypeNamesFailure,
   getEventTypeRequest,
   getEventTypeByIdRequest,
   getEventTypeSuccess,

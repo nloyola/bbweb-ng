@@ -1,15 +1,46 @@
-<div class="card mt-2">
-  <div class="card-header bg-primary text-light">
-    <mat-icon inline="false">event</mat-icon>
-    <span class="ml-1" i18n>Add Event</span>
-  </div>
-  <div class="card-body">
-    <form class="form-horizontal"
-          [formGroup]="form"
-          autocomplete="on"
-          (ngSubmit)="onSubmit()"
-          novalidate>
+<ng-container *ngIf="eventTypes$ | async; let eventTypes">
 
-    </form>
+  <div class="card mt-2">
+    <div class="card-header bg-primary text-light">
+      <mat-icon inline="false">event</mat-icon>
+      <span class="ml-1" i18n>Add Event</span>
+    </div>
+    <div class="card-body">
+      <form class="form-horizontal"
+            [formGroup]="form"
+            autocomplete="on"
+            (ngSubmit)="onSubmit()"
+            novalidate>
+
+        <!-- EVENT TYPES  -->
+        <div class="form-group row">
+          <label for="study" class="col-md-3 col-form-label" i18n>Event Type</label>
+          <div class="col-md-9">
+            <select #eventTypeSelect
+                    class="form-control"
+                    id="study"
+                    formControlName="eventType"
+                    (change)="onEventTypeSelected()">
+              <option value="" i18n>-- make a selection --</option>
+              <option *ngFor="let eventType of eventTypes;trackBy: eventTypeTrackBy" [value]="eventType.id">
+                {{ eventType.name }}
+              </option>
+            </select>
+          </div>
+
+          <div class="offset-3 col-md-9" *ngIf="eventType.invalid && eventType.touched">
+            <div class="text-danger small" *ngIf="eventType.errors.required" i18n>
+              Please make a selection
+            </div>
+          </div>
+        </div>
+
+        <!-- ANNOTATIONS  -->
+        <app-annotations-add-subform [annotationsGroup]="annotationsGroup">
+        </app-annotations-add-subform>
+
+      </form>
+    </div>
   </div>
-</div>
+
+</ng-container>

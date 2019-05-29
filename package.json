@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng --progress=false serve --proxy-config proxy.conf.json",
-    "build": "ng build",
+    "build": "ng --progress=false build",
     "test": "jest",
     "test:ci": "jest --runInBand",
     "test:clearcache": "jest --clearCache",

@@ -17,7 +17,7 @@ describe('eventType-store effects', () => {
   let effects: EventTypeStoreEffects;
   let actions: Observable<any>;
   let eventTypeService: EventTypeService;
-  let factory: Factory;
+  const factory = new Factory();
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -32,7 +32,6 @@ describe('eventType-store effects', () => {
 
     effects = TestBed.get(EventTypeStoreEffects);
     eventTypeService = TestBed.get(EventTypeService);
-    factory = new Factory();
   });
 
   describe('searchRequestEffect', () => {
@@ -43,7 +42,6 @@ describe('eventType-store effects', () => {
       const eventType = factory.collectionEventType();
       const pagedReply = factory.pagedReply([ eventType ]);
       const action = EventTypeStoreActions.searchEventTypesRequest({
-        studyId: study.id,
         studySlug: study.slug,
         searchParams
       });
@@ -66,7 +64,6 @@ describe('eventType-store effects', () => {
         }
       };
       const action = EventTypeStoreActions.searchEventTypesRequest({
-        studyId: study.id,
         studySlug: study.slug,
         searchParams
       });
@@ -77,6 +74,47 @@ describe('eventType-store effects', () => {
       const expected = cold('--b', { b: completion });
 
       expect(effects.searchRequest$).toBeObservable(expected);
+    });
+  });
+
+  describe('searchNamesRequestEffect', () => {
+
+    it('should respond with success', () => {
+      const eventType = factory.collectionEventType();
+      const reply = [ factory.entityToInfo(eventType) ];
+      const action = EventTypeStoreActions.searchEventTypeNamesRequest({
+        studyId: eventType.studyId,
+        searchParams: new SearchParams()
+      });
+      const completion = EventTypeStoreActions.searchEventTypeNamesSuccess({ eventTypeInfo: reply });
+      spyOn(eventTypeService, 'searchNames').and.returnValue(of(reply));
+
+      actions = hot('--a-', { a: action });
+      const expected = cold('--b', { b: completion });
+
+      expect(effects.searchNamesRequest$).toBeObservable(expected);
+    });
+
+    it('should respond with failure', () => {
+      const searchParams = new SearchParams();
+      const study = factory.study();
+      const error = {
+        status: 404,
+        error: {
+          message: 'simulated error'
+        }
+      };
+      const action = EventTypeStoreActions.searchEventTypeNamesRequest({
+        studyId: study.id,
+        searchParams
+      });
+      const completion = EventTypeStoreActions.searchEventTypeNamesFailure({ error });
+      spyOn(eventTypeService, 'searchNames').and.returnValue(throwError(error));
+
+      actions = hot('--a-', { a: action });
+      const expected = cold('--b', { b: completion });
+
+      expect(effects.searchNamesRequest$).toBeObservable(expected);
     });
   });
 

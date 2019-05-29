@@ -29,7 +29,7 @@ export class ModalInputAnnotationComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.form = this.formBuilder.group({
       annotationsGroup: this.formBuilder.group({
-        annotations: AnnotationsAddSubformComponent.buildSubForm([ this.annotation ])
+        annotations: AnnotationsAddSubformComponent.buildSubForm([ this.annotation ], this.unsubscribe$)
       })
     });
 

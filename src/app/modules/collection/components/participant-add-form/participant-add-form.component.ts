@@ -1,9 +1,9 @@
-import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild, OnDestroy } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Annotation, annotationFromType } from '@app/domain/annotations';
 import { Participant } from '@app/domain/participants';
 import { Study } from '@app/domain/studies';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { AnnotationsAddSubformComponent } from '../annotations-add-subform/annotations-add-subform.component';
 
 @Component({
@@ -11,7 +11,7 @@ import { AnnotationsAddSubformComponent } from '../annotations-add-subform/annot
   templateUrl: './participant-add-form.component.html',
   styleUrls: ['./participant-add-form.component.scss']
 })
-export class ParticipantAddFormComponent implements OnInit, OnChanges {
+export class ParticipantAddFormComponent implements OnInit, OnDestroy, OnChanges {
 
   /* tslint:disable-next-line:no-input-rename */
   @Input('isSaving') isSaving$: Observable<boolean>;
@@ -29,6 +29,8 @@ export class ParticipantAddFormComponent implements OnInit, OnChanges {
   selectedStudy: Study;
   annotations: Annotation[];
 
+  private unsubscribe$ = new Subject<void>();
+
   constructor(private formBuilder: FormBuilder) { }
 
   ngOnInit() {
@@ -41,6 +43,11 @@ export class ParticipantAddFormComponent implements OnInit, OnChanges {
     });
   }
 
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.studies && !changes.studies.firstChange) {
       this.studies = changes.studies.currentValue;
@@ -50,7 +57,7 @@ export class ParticipantAddFormComponent implements OnInit, OnChanges {
         this.annotations = study.annotationTypes.map(at => annotationFromType(at));
         this.annotationsGroup.setControl(
           'annotations',
-          AnnotationsAddSubformComponent.buildSubForm(this.annotations));
+          AnnotationsAddSubformComponent.buildSubForm(this.annotations, this.unsubscribe$));
       }
     }
   }

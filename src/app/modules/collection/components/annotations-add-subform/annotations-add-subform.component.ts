@@ -2,6 +2,8 @@ import { Component, Input } from '@angular/core';
 import { AbstractControl, FormArray, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { Annotation, annotationFromValueType, ValueTypes } from '@app/domain/annotations';
 import { faCalendar } from '@fortawesome/free-solid-svg-icons';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-annotations-add-subform',
@@ -15,7 +17,7 @@ export class AnnotationsAddSubformComponent {
   @Input() annotationsGroup: FormGroup;
   faCalendar = faCalendar;
 
-  static buildSubForm(annotations: Annotation[]): FormArray {
+  static buildSubForm(annotations: Annotation[], unsubscribe$: Subject<void>): FormArray {
     const formArray = new FormArray([]);
     annotations.forEach(annotation => {
       let control: AbstractControl;
@@ -40,7 +42,9 @@ export class AnnotationsAddSubformComponent {
           selectedOptions: hiddenControl
         })
 
-        checkboxArray.valueChanges.subscribe(v => {
+        checkboxArray.valueChanges.pipe(
+          takeUntil(unsubscribe$)
+        ).subscribe(v => {
           hiddenControl.setValue(this.mapSelectedOptions(v));
           hiddenControl.markAsTouched();
         });

@@ -236,6 +236,14 @@ export class Factory {
     };
   }
 
+  entityToInfo(entity: any): any {
+    return {
+      id: entity.id,
+      name: entity.name,
+      slug: entity.slug
+    };
+  }
+
   entitySet(): any {
     return { allEntities: false, entityData: [this.entityInfo()] };
   }

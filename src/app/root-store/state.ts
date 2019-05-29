@@ -4,14 +4,18 @@ import { EventTypeStoreReducer } from './event-type';
 import { ProcessingTypeStoreReducer } from './processing-type';
 import { SpinnerStoreReducer } from './spinner';
 import { CentreStoreReducer } from './centre';
+import { EventStoreReducer } from './event';
+import { ParticipantStoreReducer } from './participant';
 
 export interface State {
 
   'auth': AuthStoreReducer.State;
   'centre': CentreStoreReducer.State;
-  'study': StudyStoreReducer.State;
   'event-type': EventTypeStoreReducer.State;
+  'event': EventStoreReducer.State;
+  'participant': ParticipantStoreReducer.State;
   'processing-type': ProcessingTypeStoreReducer.State;
   'spinner': SpinnerStoreReducer.State;
+  'study': StudyStoreReducer.State;
 
 }

@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { PagedReply, SearchParams, JSONObject, JSONArray, JSONValue } from '@app/domain';
 import { AnnotationType } from '@app/domain/annotations';
 import { ApiReply } from '@app/domain/api-reply.model';
-import { Study, StudyCounts, IStudyInfoAndState, StudyState } from '@app/domain/studies';
+import { Study, StudyCounts, StudyStateInfo } from '@app/domain/studies';
 import { Observable } from 'rxjs';
 import { map, delay } from 'rxjs/operators';
 
@@ -78,19 +78,15 @@ export class StudyService {
   /**
    * Used to search for studies that can collect specimens.
    */
-  searchCollectionStudies(searchParams: SearchParams): Observable<IStudyInfoAndState[]> {
+  searchCollectionStudies(searchParams: SearchParams): Observable<StudyStateInfo[]> {
     return this.http.get<ApiReply>(`${this.BASE_URL}/collectionStudies`,
                                    { params: searchParams.httpParams() })
       .pipe(
         // delay(10000),
         map((reply: ApiReply) => {
           if (reply && reply.data) {
-            return (reply.data as JSONArray).map((obj: JSONObject) => ({
-              id:    obj.id as string,
-              slug:  obj.slug as string,
-              name:  obj.name as string,
-              state: obj.state as StudyState
-            }));
+            return (reply.data as JSONArray)
+              .map((obj: JSONObject) => new StudyStateInfo().deserialize(obj));
           }
           throw new Error('expected a paged reply');
         }));

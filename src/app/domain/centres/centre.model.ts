@@ -1,5 +1,5 @@
 import { ConcurrencySafeEntity, EntityInfoAndState, HasDescription, HasName, HasSlug, IConcurrencySafeEntity, IEntityInfo, IEntityInfoAndState, IEntitySet, JSONArray, JSONObject, Location } from '@app/domain';
-import { IStudyInfoAndState, Study, StudyState } from '@app/domain/studies';
+import { Study, StudyState, StudyStateInfo } from '@app/domain/studies';
 import { CentreState } from './centre-state.enum';
 
 export interface ICentre extends IConcurrencySafeEntity, HasSlug, HasName, HasDescription {
@@ -9,7 +9,7 @@ export interface ICentre extends IConcurrencySafeEntity, HasSlug, HasName, HasDe
    */
   state: CentreState;
 
-  studyNames: IStudyInfoAndState[];
+  studyNames: StudyStateInfo[];
 
   locations: Location[];
 }
@@ -29,7 +29,7 @@ export class Centre extends ConcurrencySafeEntity implements ICentre {
   name: string;
   description: string | null;
   state: CentreState;
-  studyNames: IStudyInfoAndState[];
+  studyNames: StudyStateInfo[];
   locations: Location[];
 
   deserialize(input: JSONObject) {

@@ -45,7 +45,7 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
   isRemoving = false;
 
   private updatedMessage$ = new Subject<string>();
-  private unsubscribe$: Subject<void> = new Subject<void>();
+  private unsubscribe$ = new Subject<void>();
 
   constructor(private store$: Store<RootStoreState.State>,
               private router: Router,

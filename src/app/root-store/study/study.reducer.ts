@@ -1,6 +1,6 @@
 import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 import { Study } from '@app/domain/studies';
-import { SearchParams, PagedReplyEntityIds, PagedReply } from '@app/domain';
+import { SearchParams, PagedReplyEntityIds, PagedReply, EntityIds } from '@app/domain';
 import { StudyCounts } from '@app/domain/studies/study-counts.model';
 import * as StudyActions from './study.actions';
 
@@ -17,7 +17,7 @@ export interface SearchState<T> {
 export interface State extends EntityState<Study> {
   lastAddedId: string;
   searchState: SearchState<PagedReplyEntityIds>;
-  searchCollectionStudiesState: SearchState<string[]>;
+  searchCollectionStudiesState: SearchState<EntityIds>;
   studyCounts?: StudyCounts;
   enableAllowedIds?: EnableAllowdIds;
   error?: any;

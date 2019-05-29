@@ -14,9 +14,11 @@ export interface PagedReplyBase {
   maxPages: number;
 }
 
+export type EntityIds = string[];
+
 export interface PagedReplyEntityIds extends PagedReplyBase {
 
-  entityIds: string[];
+  entityIds: EntityIds;
 }
 
 /**

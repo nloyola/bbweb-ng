@@ -1,6 +1,6 @@
 import { PagedReply, SearchParams } from '@app/domain';
 import { AnnotationType } from '@app/domain/annotations';
-import { Study, StudyCounts, IStudyInfoAndState } from '@app/domain/studies';
+import { Study, StudyCounts, StudyStateInfo } from '@app/domain/studies';
 import { createAction, props, union } from '@ngrx/store';
 
 export const getStudyCountsRequest = createAction(
@@ -39,7 +39,7 @@ export const searchCollectionStudiesRequest = createAction(
 
 export const searchCollectionStudiesSuccess = createAction(
   '[Study] Search Collection Studies Success',
-  props<{ studiesData: IStudyInfoAndState[] }>()
+  props<{ studiesData: StudyStateInfo[] }>()
 );
 
 export const searchCollectionStudiesFailure = createAction(

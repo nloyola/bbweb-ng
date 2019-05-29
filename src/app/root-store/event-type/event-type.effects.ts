@@ -15,15 +15,22 @@ export class EventTypeStoreEffects {
   @Effect()
   searchRequest$: Observable<Action> = this.actions$.pipe(
     ofType(EventTypeStoreActions.searchEventTypesRequest.type),
-    // delay(2000),
     switchMap(
       action =>
-        this.eventTypeService.search(action.studySlug, action.searchParams)
-        .pipe(
+        this.eventTypeService.search(action.studySlug, action.searchParams).pipe(
           map(pagedReply => EventTypeStoreActions.searchEventTypesSuccess({ pagedReply })),
-          catchError(error => observableOf(EventTypeStoreActions.searchEventTypesFailure({ error }))))
-    )
-  );
+          catchError(error => observableOf(EventTypeStoreActions.searchEventTypesFailure({ error })))
+        )));
+
+  @Effect()
+  searchNamesRequest$: Observable<Action> = this.actions$.pipe(
+    ofType(EventTypeStoreActions.searchEventTypeNamesRequest.type),
+    switchMap(
+      action =>
+        this.eventTypeService.searchNames(action.studyId, action.searchParams).pipe(
+          map(eventTypeInfo => EventTypeStoreActions.searchEventTypeNamesSuccess({ eventTypeInfo })),
+          catchError(error => observableOf(EventTypeStoreActions.searchEventTypeNamesFailure({ error })))
+        )));
 
   @Effect()
   getRequest$: Observable<Action> = this.actions$.pipe(
