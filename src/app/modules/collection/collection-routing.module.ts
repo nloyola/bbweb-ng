@@ -50,9 +50,6 @@ const routes: Routes = [
           },
           {
             path: 'collection',
-            data: {
-              breadcrumbs: 'Events'
-            },
             children: [
               { path: '', redirectTo: 'view', pathMatch: 'full' },
               {
@@ -69,10 +66,10 @@ const routes: Routes = [
                   {
                     path: ':visitNumber',
                     resolve: {
-                      eventType: CollectionEventResolver
+                      event: CollectionEventResolver
                     },
                     data: {
-                      breadcrumbs: '{{eventType.visitNumber}}'
+                      breadcrumbs: 'Visit {{event.visitNumber}}'
                     },
                     children: [
                       {

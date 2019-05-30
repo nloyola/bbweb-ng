@@ -35,9 +35,73 @@
           </div>
         </div>
 
+        <!-- VISIT NUMBER -->
+        <div class="form-group row">
+          <label for="visitNumber" class="col-md-3 col-form-label" i18n>Visit Number</label>
+          <div class="col-md-9">
+            <input class="form-control"
+                   [formControl]="visitNumber"
+                   type="number">
+          </div>
+          <div class="offset-3 col-md-9"
+               *ngIf="visitNumber.invalid && visitNumber.touched">
+            <div class="text-danger small" *ngIf="visitNumber.errors.required" i18n>
+              A number is required
+            </div>
+          </div>
+        </div>
+
+        <!-- TIME COMPLETED -->
+        <div class="form-group row">
+          <label for="timeCompleted" class="col-md-3 col-form-label" i18n>Time Completed</label>
+          <div class="input-group col-md-9">
+            <input class="form-control"
+                   type="datetime"
+                   [formControl]="timeCompleted"
+                   [owlDateTime]="dt"
+                   i18n-placeholder
+                   placeholder="Date Time">
+            <div class="input-group-append">
+              <span class="input-group-text" [owlDateTimeTrigger]="dt">
+                <fa-icon [icon]="faCalendar"></fa-icon>
+              </span>
+              <owl-date-time #dt></owl-date-time>
+            </div>
+          </div>
+          <div class="offset-3 col-md-9"
+               *ngIf="timeCompleted.invalid && timeCompleted.touched">
+            <div class="text-danger small" *ngIf="timeCompleted.errors.required" i18n>
+              Please enter a date and time
+            </div>
+            <div class="text-danger small" *ngIf="timeCompleted.errors.owlDateTimeParse" i18n>
+              Please enter a valid date and time
+            </div>
+          </div>
+        </div>
+
         <!-- ANNOTATIONS  -->
         <app-annotations-add-subform [annotationsGroup]="annotationsGroup">
         </app-annotations-add-subform>
+
+        <!-- BUTTONS  -->
+        <div class="form-group row">
+          <div class="col-md-9 offset-3">
+            <button class="btn btn-primary mr-2"
+                    type="submit"
+                    [disabled]="form.invalid || !!(isSaving$ | async)"
+                    i18n>
+              <ng-container *ngIf="!(isSaving$ | async)">
+                Submit
+              </ng-container>
+              <app-spinner name="annotationTypeSaving" [show]="(isSaving$ | async)">
+                Saving
+              </app-spinner>
+            </button>
+            <button class="btn btn-secondary" type="button" (click)="onCancel()" i18n>
+              Cancel
+            </button>
+          </div>
+        </div>
 
       </form>
     </div>

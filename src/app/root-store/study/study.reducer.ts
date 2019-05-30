@@ -48,6 +48,7 @@ export function reducer(
 ): State {
   switch (action.type) {
     case StudyActions.getStudyCountsRequest.type:
+    case StudyActions.getStudyRequest.type:
     case StudyActions.addStudyRequest.type:
     case StudyActions.getEnableAllowedRequest.type: {
       return {

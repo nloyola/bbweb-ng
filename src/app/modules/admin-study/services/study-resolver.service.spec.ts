@@ -60,13 +60,18 @@ describe('StudyResolver', () => {
     const route = new ActivatedRouteSnapshot();
     route.params = { slug: 'test' };
     const action = StudyStoreActions.getStudyFailure({ error });
-    store.dispatch(action);
     const expected = cold('(b|)', {
       b: {
         error,
         actionType: StudyStoreActions.getStudyFailure.type
       }
     });
+    store.dispatch(action);
+
+    // the resolver will dispatch the getStudyRequest request action which clears an error,
+    // to avoid the error getting cleared, we mock dispatch to do nothing
+    jest.spyOn(store, 'dispatch').mockImplementationOnce(() => {});
+
     ngZone.run(() => {
       expect(resolver.resolve(route, null)).toBeObservable(expected);
     });

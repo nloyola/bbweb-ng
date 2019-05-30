@@ -61,23 +61,13 @@
     </div>
 
     <ng-template #updateUniqueIdModal let-modal>
-      <app-modal-input-text [title]="'Update Name'"
+      <app-modal-input-text [title]="'Update Unique ID'"
                             [label]="'New participant Unique ID'"
                             [value]="participant.uniqueId"
                             [options]="uniqueIdModalOptions"
                             (onConfirm)="confirm($event)"
                             [modal]="modal">
       </app-modal-input-text>
-    </ng-template>
-
-    <ng-template #updateDescriptionModal let-modal>
-      <app-modal-input-textarea [title]="'Update Description'"
-                                [label]="'New participant description'"
-                                [value]="participant.description"
-                                [options]="updateDescriptionModalOptions"
-                                (onConfirm)="confirm($event)"
-                                [modal]="modal">
-      </app-modal-input-textarea>
     </ng-template>
 
     <ng-template #updateAnnotationModal let-modal>

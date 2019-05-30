@@ -29,7 +29,11 @@ export class CollectionEventResolver implements Resolve<CollectionEvent> {
         filter(s => s.length > 0),
         map((collectionEvents: CollectionEvent[]) => {
           const collectionEvent = collectionEvents.find(e => e.visitNumber === visitNumber);
-          return collectionEvent ? collectionEvent : throwError('collection event not found');
+          if (collectionEvent === undefined) {
+            return throwError('collection event not found');
+          }
+          return (collectionEvent instanceof CollectionEvent)
+            ? collectionEvent : new CollectionEvent().deserialize(collectionEvent);
         })))
       .pipe(take(1));
   }

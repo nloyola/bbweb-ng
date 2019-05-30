@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { SearchParams } from '@app/domain';
 import { Participant } from '@app/domain/participants';
 import { CollectionEventType } from '@app/domain/studies';
@@ -10,6 +10,7 @@ import { Observable, Subject } from 'rxjs';
 import { takeUntil, tap } from 'rxjs/operators';
 import { AnnotationsAddSubformComponent } from '../annotations-add-subform/annotations-add-subform.component';
 import { annotationFromType, Annotation } from '@app/domain/annotations';
+import { faCalendar } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-event-add-form',
@@ -22,17 +23,21 @@ export class EventAddFormComponent implements OnInit, OnDestroy {
   eventTypes$: Observable<CollectionEventType[]>;
   annotations: Annotation[];
   form: FormGroup;
+  faCalendar = faCalendar;
 
   private unsubscribe$ = new Subject<void>();
 
   constructor(private store$: Store<RootStoreState.State>,
               private formBuilder: FormBuilder,
+              private router: Router,
               private route: ActivatedRoute) { }
 
   ngOnInit() {
     this.participant = this.route.parent.parent.snapshot.data.participant;
     this.form = this.formBuilder.group({
       eventType: [ '', [ Validators.required ]],
+      visitNumber: [ '', [ Validators.required ]],
+      timeCompleted: [ '', [ Validators.required ]],
       annotationsGroup: this.formBuilder.group({ annotations: new FormArray([]) })
     });
 
@@ -67,6 +72,14 @@ export class EventAddFormComponent implements OnInit, OnDestroy {
     return this.form.get('eventType');
   }
 
+  get visitNumber() {
+    return this.form.get('visitNumber');
+  }
+
+  get timeCompleted() {
+    return this.form.get('timeCompleted');
+  }
+
   get annotationsGroup(): FormGroup {
     return this.form.get('annotationsGroup') as FormGroup;
   }
@@ -83,9 +96,11 @@ export class EventAddFormComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(): void {
+    // this.router.navigate([ '../view', ], { relativeTo: this.route });
   }
 
   onCancel(): void {
+    this.router.navigate([ '..' ], { relativeTo: this.route });
   }
 
 }

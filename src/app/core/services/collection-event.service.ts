@@ -9,7 +9,7 @@ import { map } from 'rxjs/operators';
 export type CollectionEventUpdateAttribute =
   'visitNumber'
   | 'timeCompleted'
-  | 'addAnnotation'
+  | 'addOrUpdateAnnotation'
   | 'removeAnnotation';
 
 @Injectable({
@@ -97,7 +97,7 @@ export class CollectionEventService {
         url = `${this.BASE_URL}/timeCompleted/${collectionEvent.id}`;
         break;
 
-      case 'addAnnotation':
+      case 'addOrUpdateAnnotation':
         json = { ...json, ...value } as any;
         url = `${this.BASE_URL}/annot/${collectionEvent.id}`;
         break;

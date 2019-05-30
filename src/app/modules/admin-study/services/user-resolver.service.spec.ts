@@ -58,7 +58,11 @@ describe('UserResolver', () => {
       status: 404
     };
     store.dispatch(new UserStoreActions.GetUserFailure({ error }));
+
+    // the resolver will dispatch the getStudyRequest request action which clears an error,
+    // to avoid the error getting cleared, we mock dispatch to do nothing
     jest.spyOn(store, 'dispatch').mockImplementationOnce(() => {});
+
     const expected = cold('(b|)', {
       b: {
         actionType: UserStoreActions.UserActionTypes.GetUserFailure,

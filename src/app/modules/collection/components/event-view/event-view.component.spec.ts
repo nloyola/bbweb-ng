@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { EventViewComponent } from './event-view.component';
 
-describe('EventViewComponent', () => {
+xdescribe('EventViewComponent', () => {
   let component: EventViewComponent;
   let fixture: ComponentFixture<EventViewComponent>;
 

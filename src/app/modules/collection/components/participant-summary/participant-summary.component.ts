@@ -154,7 +154,6 @@ export class ParticipantSummaryComponent implements OnInit, OnDestroy {
   }
 
   updateAnnotation(annotation: Annotation) {
-    console.log(annotation);
     this.annotationToEdit = annotation;
 
     this.modalService.open(this.updateAnnotationModal, { size: 'lg' }).result

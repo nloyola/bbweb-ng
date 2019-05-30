@@ -1,6 +1,6 @@
-import { ConcurrencySafeEntity, HasSlug, IConcurrencySafeEntity, JSONArray, JSONObject, applyMixins, IEntityInfo, EntityInfo } from '@app/domain';
-import { Annotation, annotationFactory, IAnnotation, HasAnnotations, AnnotationType } from '@app/domain/annotations';
-import { Study } from '@app/domain/studies';
+import { applyMixins, ConcurrencySafeEntity, EntityInfo, HasSlug, IConcurrencySafeEntity } from '@app/domain';
+import { Annotation, annotationFactory, AnnotationType, HasAnnotations, IAnnotation } from '@app/domain/annotations';
+import { IStudyInfo, Study } from '@app/domain/studies';
 
 /**
  * The subject for which a set of Specimens were collected from. The subject can be human or
@@ -17,7 +17,7 @@ export interface IParticipant extends IConcurrencySafeEntity, HasSlug {
   /**
    * Information for the {@link app.domain.studies.Study|Study} this Participant belongs to.
    */
-  study: IEntityInfo<Study>;
+  study: IStudyInfo;
 
   /**
    * The values of the {@link app.domain.annotations.Annotation|Annotations} collected for this participant.

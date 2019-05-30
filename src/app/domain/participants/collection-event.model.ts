@@ -60,25 +60,27 @@ export class CollectionEvent extends ConcurrencySafeEntity implements ICollectio
   annotations: Annotation[];
   setAnnotationTypes: (at: AnnotationType[]) => void;
 
-  private _eventType: CollectionEventType;
-
   set eventType(eventType: CollectionEventType) {
     if (this.eventTypeId && (this.eventTypeId !== eventType.id)) {
       throw new Error('collection event types do not match');
     }
     this.eventTypeId = eventType.id;
-    this._eventType = eventType;
     this.setAnnotationTypes(eventType.annotationTypes);
   }
 
   deserialize(input: ICollectionEvent): this {
-    const { slug, participantId, participantSlug, visitNumber } = input;
-    Object.assign(this, { slug, participantId, participantSlug, visitNumber });
-
-    this.eventTypeId = (input as any).collectionEventTypeId;
-    this.eventTypeSlug = (input as any).collectionEventTypeSlug;
-
+    const { slug, participantId, participantSlug, eventTypeId, eventTypeSlug, visitNumber } = input;
+    Object.assign(this, { slug, participantId, participantSlug, eventTypeId, eventTypeSlug, visitNumber });
     super.deserialize(input);
+
+    const { collectionEventTypeId, collectionEventTypeSlug } = input as any;
+    if (collectionEventTypeId !== undefined) {
+      this.eventTypeId = collectionEventTypeId;
+    }
+
+    if (collectionEventTypeSlug !== undefined) {
+      this.eventTypeSlug = collectionEventTypeSlug;
+    }
 
     if (input.timeCompleted) {
       this.timeCompleted = new Date(input.timeCompleted);
@@ -87,6 +89,7 @@ export class CollectionEvent extends ConcurrencySafeEntity implements ICollectio
     if (input.annotations) {
       this.annotations = input.annotations.map(a => annotationFactory(a));
     }
+
     return this;
   }
 

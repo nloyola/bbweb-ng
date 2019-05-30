@@ -53,7 +53,7 @@
           </a>
         </div>
       </li>
-      <li class="nav-item" routerLinkActive="active" *ngIf="(user$ | async) !== false">
+      <li class="nav-item" routerLinkActive="active" *ngIf="(user$ | async) === null">
         <a class="nav-link" routerLink="login">
           <mat-icon inline="true">exit_to_app</mat-icon>
           <ng-container i18n>Login</ng-container>

@@ -1,3 +1,115 @@
-<p>
-  event-view works!
-</p>
+<ng-container *ngIf="event$ | async as event">
+  <ng-container *ngIf="eventType$ | async as eventType">
+    <ng-container *ngIf="annotations$ | async as annotations">
+
+      <div class="card mt-2">
+        <div class="card-header bg-primary text-light"
+             *ngIf="(isLoading$ | async) !== false; else showLoading">
+          <mat-icon inline="false">event</mat-icon>
+          {{ event.uniqueId }}
+          <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
+
+            <button class="btn btn-sm btn-light"
+                    type="button"
+                    id="eventSummaryMenu"
+                    ngbDropdownToggle>
+              <mat-icon inline="true">more_vert</mat-icon>
+            </button>
+
+            <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="eventSummaryMenu">
+              <a class="dropdown-item" (click)="updateVisitNumber()">
+                <mat-icon class="success-icon mr-1">edit</mat-icon>
+                <ng-container i18n>Update Visit Number</ng-container>
+              </a>
+              <a class="dropdown-item" (click)="updateTimeCompleted()">
+                <mat-icon class="success-icon mr-1">edit</mat-icon>
+                <ng-container i18n>Update Time Completed</ng-container>
+              </a>
+              <a class="dropdown-item"
+                 *ngFor="let annotation of annotations"
+                 (click)="updateAnnotation(annotation)">
+                <mat-icon class="success-icon mr-1">edit</mat-icon>
+                <ng-container i18n>Update {{ annotation.label }}</ng-container>
+              </a>
+            </div>
+          </span>
+        </div>
+
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">
+            <div class="row">
+              <div class="col-md-3">
+                <strong i18n>Type</strong>
+              </div>
+              <div class="col-md-9">
+                {{ eventType.name }}
+              </div>
+            </div>
+          </li>
+          <li class="list-group-item">
+            <div class="row">
+              <div class="col-md-3">
+                <strong i18n>Visit Number</strong>
+              </div>
+              <div class="col-md-9">
+                {{ event.visitNumber }}
+              </div>
+            </div>
+          </li>
+          <li class="list-group-item">
+            <div class="row">
+              <div class="col-md-3">
+                <strong i18n>Time Completed</strong>
+              </div>
+              <div class="col-md-9">
+                {{ event.timeCompleted }}
+              </div>
+            </div>
+          </li>
+          <li class="list-group-item" *ngFor="let annotation of annotations">
+            <div class="row">
+              <div class="col-md-3">
+                <strong i18n>{{ annotation.label }}</strong>
+              </div>
+              <div class="col-md-9">
+                {{ annotation.value }}
+              </div>
+            </div>
+          </li>
+          <li class="list-group-item m-0 p-0">
+            <app-entity-status [timeAdded]="event.timeAdded"
+                               [timeModified]="event.timeModified"
+                               [useBadges]="false">
+            </app-entity-status>
+          </li>
+        </ul>
+      </div>
+
+      <ng-template #updateVisitNumberModal let-modal>
+        <app-modal-input-text [title]="'Update Name'"
+                              [label]="'New event Unique ID'"
+                              [value]="event.uniqueId"
+                              [options]="uniqueIdModalOptions"
+                              (onConfirm)="confirm($event)"
+                              [modal]="modal">
+        </app-modal-input-text>
+      </ng-template>
+
+      <ng-template #updateAnnotationModal let-modal>
+        <app-modal-input-annotation [annotation]="annotationToEdit"
+                                    [options]="annotationModalOptions"
+                                    (onConfirm)="confirm($event)"
+                                    [modal]="modal">
+        </app-modal-input-annotation>
+      </ng-template>
+    </ng-container>
+  </ng-container>
+</ng-container>
+
+<ng-template #showLoading>
+  <div class="card-header">
+    <app-spinner name="login" [show]="true" i18n>
+      Loading
+    </app-spinner>
+  </div>
+</ng-template>
