@@ -45,14 +45,14 @@ export class Participant extends ConcurrencySafeEntity implements IParticipant, 
     this.setAnnotationTypes(s.annotationTypes);
   }
 
-  deserialize(input: JSONObject) {
+  deserialize(input: IParticipant): this {
+    const { slug,  uniqueId } = input;
+    Object.assign(this, { slug,  uniqueId });
     super.deserialize(input);
-
-    this.study = new EntityInfo().deserialize(input.study as JSONObject);
+    this.study = new EntityInfo().deserialize(input.study);
 
     if (input.annotations) {
-      this.annotations = (input.annotations as JSONArray)
-        .map((a: JSONObject) => annotationFactory(a));
+      this.annotations = input.annotations.map(a => annotationFactory(a));
     }
     return this;
   }

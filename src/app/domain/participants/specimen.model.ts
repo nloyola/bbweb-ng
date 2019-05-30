@@ -121,19 +121,39 @@ export class Specimen extends ConcurrencySafeEntity implements ISpecimen {
     this._specimenDefinition = specimenDefinition;
   }
 
-  deserialize(input: JSONObject) {
+  deserialize(input: ISpecimen): this {
+    const {
+      slug,
+      inventoryId,
+      specimenDefinitionId,
+      timeCreated,
+      amount,
+      state,
+      eventTypeName,
+    } = input;
+    Object.assign(
+      this,
+      {
+        slug,
+        inventoryId,
+        specimenDefinitionId,
+        timeCreated,
+        amount,
+        state,
+        eventTypeName,
+      });
     super.deserialize(input);
 
     if (input.timeCreated) {
-      this.timeCreated = new Date(input.timeCreated as string);
+      this.timeCreated = new Date(input.timeCreated);
     }
 
     if (input.originLocationInfo) {
-      this.originLocationInfo = new CentreLocationInfo().deserialize(input.originLocationInfo as JSONObject);
+      this.originLocationInfo = new CentreLocationInfo().deserialize(input.originLocationInfo);
     }
 
     if (input.locationInfo) {
-      this.locationInfo = new CentreLocationInfo().deserialize(input.locationInfo as JSONObject);
+      this.locationInfo = new CentreLocationInfo().deserialize(input.locationInfo);
     }
 
     return this;

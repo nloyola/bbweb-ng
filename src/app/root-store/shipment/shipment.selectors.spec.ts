@@ -56,7 +56,7 @@ describe('shipment-store selectors', () => {
   });
 
   it('selectShipmentSearchReplies', () => {
-    const shipment = factory.shipment();
+    const shipment = new Shipment().deserialize(factory.shipment());
     const pagedReply = factory.pagedReply<Shipment>([ shipment ]);
     const searchReplies: { [ key: string]: PagedReplyEntityIds } = {};
     searchReplies[pagedReply.searchParams.queryString()] = {
@@ -77,7 +77,7 @@ describe('shipment-store selectors', () => {
   });
 
   it('selectAllShipments', () => {
-    const shipment = factory.shipment();
+    const shipment = new Shipment().deserialize(factory.shipment());
     const adapter: EntityAdapter<Shipment> = createEntityAdapter<Shipment>({
       selectId: (s: Shipment) => s.id
     });
@@ -91,7 +91,7 @@ describe('shipment-store selectors', () => {
   describe('selectShipmentSearchRepliesAndEntities', () => {
 
     it('when search has completed', () => {
-      const shipment = factory.shipment();
+      const shipment = new Shipment().deserialize(factory.shipment());
       const adapter: EntityAdapter<Shipment> = createEntityAdapter<Shipment>({
         selectId: (s: Shipment) => s.id
       });
@@ -137,7 +137,7 @@ describe('shipment-store selectors', () => {
     });
 
     it('when reply is missing', () => {
-      const shipment = factory.shipment();
+      const shipment = new Shipment().deserialize(factory.shipment());
       const adapter: EntityAdapter<Shipment> = createEntityAdapter<Shipment>({
         selectId: (s: Shipment) => s.id
       });
@@ -157,7 +157,7 @@ describe('shipment-store selectors', () => {
   });
 
   it('selectShipmentLastRemoved', () => {
-    const shipment = factory.shipment();
+    const shipment = new Shipment().deserialize(factory.shipment());
     const adapter: EntityAdapter<Shipment> = createEntityAdapter<Shipment>({
       selectId: (s: Shipment) => s.id
     });

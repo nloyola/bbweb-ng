@@ -35,7 +35,7 @@ describe('ParticipantService', () => {
     let participant: Participant;
 
     beforeEach(() => {
-      annotationType = factory.annotationType();
+      annotationType = new AnnotationType().deserialize(factory.annotationType());
       rawParticipant = factory.participant({ annotationTypes: [annotationType] });
       participant = new Participant().deserialize(rawParticipant);
     });

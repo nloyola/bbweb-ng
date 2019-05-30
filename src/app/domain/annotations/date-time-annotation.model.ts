@@ -1,5 +1,4 @@
-import { JSONObject } from '@app/domain';
-import { Annotation } from './annotation.model';
+import { Annotation, IAnnotation } from './annotation.model';
 
 export class DateTimeAnnotation extends Annotation {
 
@@ -14,11 +13,11 @@ export class DateTimeAnnotation extends Annotation {
     };
   }
 
-  deserialize(input: JSONObject) {
+  deserialize(input: IAnnotation): this {
     super.deserialize(input);
-
-    if (input.stringValue) {
-      this.value = new Date(input.stringValue as string);
+    const stringValue = (input as any).stringValue;
+    if (stringValue) {
+      this.value = new Date(stringValue);
     }
     return this;
   }

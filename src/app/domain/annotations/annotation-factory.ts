@@ -1,13 +1,10 @@
-import { JSONObject } from '@app/domain';
-import { Annotation } from './annotation.model';
+import { AnnotationType } from './annotation-type.model';
+import { Annotation, IAnnotation } from './annotation.model';
 import { DateTimeAnnotation } from './date-time-annotation.model';
 import { NumberAnnotation } from './number-annotation.model';
 import { SelectAnnotation } from './select-annotation.model';
 import { TextAnnotation } from './text-annotation.model';
 import { ValueTypes } from './value-type.enum';
-import { AnnotationType } from './annotation-type.model';
-
-
 
 export function annotationFromValueType(valueType: ValueTypes): Annotation {
   let annotation: Annotation;
@@ -45,7 +42,7 @@ export function annotationFromType(annotationType: AnnotationType): Annotation {
   return annotation;
 }
 
-export function annotationFactory(obj: JSONObject): Annotation {
+export function annotationFactory(obj: IAnnotation): Annotation {
   const annotation = annotationFromValueType(obj.valueType as ValueTypes);
   return annotation.deserialize(obj);
 }

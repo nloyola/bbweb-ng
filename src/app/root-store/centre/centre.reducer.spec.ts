@@ -78,7 +78,7 @@ describe('Centre Reducer', () => {
     });
 
     it('SearchCentresSuccess', () => {
-      const centre = factory.centre();
+      const centre = new Centre().deserialize(factory.centre());
       const payload = {
         pagedReply: factory.pagedReply<Centre>([ centre ])
       };
@@ -132,7 +132,7 @@ describe('Centre Reducer', () => {
   describe('adding a centre', () => {
 
     it('AddCentreRequest', () => {
-      const centre = factory.centre();
+      const centre = new Centre().deserialize(factory.centre());
       const payload = { centre };
       const action = new CentreStoreActions.AddCentreRequest(payload);
       const state = CentreStoreReducer.reducer(undefined, action);
@@ -143,7 +143,7 @@ describe('Centre Reducer', () => {
     });
 
     it('AddCentreSuccess', () => {
-      const centre = factory.centre();
+      const centre = new Centre().deserialize(factory.centre());
       const payload = { centre };
       const action = new CentreStoreActions.AddCentreSuccess(payload);
       const state = CentreStoreReducer.reducer(undefined, action);
@@ -191,7 +191,7 @@ describe('Centre Reducer', () => {
     });
 
     it('GetCentreSuccess', () => {
-      const centre = factory.centre();
+      const centre = new Centre().deserialize(factory.centre());
       const payload = { centre };
       const action = new CentreStoreActions.GetCentreSuccess(payload);
       const state = CentreStoreReducer.reducer(undefined, action);
@@ -230,7 +230,7 @@ describe('Centre Reducer', () => {
     let testInitialState: any;
 
     beforeEach(() => {
-      centre = factory.centre();
+      centre = new Centre().deserialize(factory.centre());
       testInitialState = {
         ...CentreStoreReducer.initialState,
         ids: [ centre.id ],

@@ -36,9 +36,9 @@ describe('AdminComponent', () => {
 
   it('should display cards when user has the correct permissions', function() {
     const roles = [
-      new UserRole().deserialize({ id: RoleIds.StudyAdministrator }),
-      new UserRole().deserialize({ id: RoleIds.CentreAdministrator }),
-      new UserRole().deserialize({ id: RoleIds.UserAdministrator })
+      new UserRole().deserialize({ id: RoleIds.StudyAdministrator } as any),
+      new UserRole().deserialize({ id: RoleIds.CentreAdministrator } as any),
+      new UserRole().deserialize({ id: RoleIds.UserAdministrator } as any)
     ];
 
     roles.forEach(role => {

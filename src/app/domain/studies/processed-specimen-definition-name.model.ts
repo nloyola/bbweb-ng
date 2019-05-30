@@ -12,12 +12,12 @@ export class ProcessedSpecimenDefinitionName extends EntityInfo<ProcessingType> 
 
   specimenDefinitionName: SpecimenDefinitionName;
 
-  deserialize(obj: JSONObject) {
+  deserialize(obj: IProcessedSpecimenDefinitionName): this {
     super.deserialize(obj);
 
     if (obj.specimenDefinitionName !== undefined) {
       this.specimenDefinitionName =
-        new SpecimenDefinitionName().deserialize(obj.specimenDefinitionName as JSONObject);
+        new SpecimenDefinitionName().deserialize(obj.specimenDefinitionName);
     }
 
     return this;

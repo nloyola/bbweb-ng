@@ -79,22 +79,39 @@ export class Shipment extends ConcurrencySafeEntity {
 
   /**
    * A predicate to test if the shipment's state is NOT CREATED or UNPACKED.
-   *
-   * @returns {boolean} TRUE if the state is NOT CREATED or UNPACKED.
    */
   isNotCreatedNorUnpacked() {
     return (this.state !== ShipmentState.Created) && (this.state !== ShipmentState.Unpacked);
   }
 
-  deserialize(input: JSONObject) {
+  deserialize(input: IShipment): this {
+    const { state, courierName, trackingNumber } = input;
+    Object.assign(this, { state, courierName, trackingNumber });
     super.deserialize(input);
+
+    if (input.timePacked) {
+      this.timePacked = new Date(input.timePacked);
+    }
+    if (input.timeSent) {
+      this.timeSent = new Date(input.timeSent);
+    }
+    if (input.timeReceived) {
+      this.timeReceived = new Date(input.timeReceived);
+    }
+    if (input.timeUpacked) {
+      this.timeUpacked = new Date(input.timeUpacked);
+    }
+    if (input.timeCompleted) {
+      this.timeCompleted = new Date(input.timeCompleted);
+    }
+
     if (input.fromLocationInfo) {
       this.fromLocationInfo =
-        new CentreLocationInfo().deserialize(input.fromLocationInfo as JSONObject);
+        new CentreLocationInfo().deserialize(input.fromLocationInfo);
     }
     if (input.toLocationInfo) {
       this.toLocationInfo =
-        new CentreLocationInfo().deserialize(input.toLocationInfo as JSONObject);
+        new CentreLocationInfo().deserialize(input.toLocationInfo);
     }
 
     [ 'timePacked', 'timeSent', 'timeReceived', 'timeUpacked', 'timeCompleted' ]

@@ -182,7 +182,7 @@ describe('CollectionEvent Reducer', () => {
     let testInitialState: any;
 
     beforeEach(() => {
-      collectionEvent = factory.collectionEvent();
+      collectionEvent = new CollectionEvent().deserialize(factory.collectionEvent());
       testInitialState = {
         ...initialState,
         ids: [ collectionEvent.id ],

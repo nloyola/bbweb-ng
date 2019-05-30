@@ -39,7 +39,7 @@ describe('specimen-store effects', () => {
     it('should respond with success', () => {
       const event = new CollectionEvent().deserialize(factory.collectionEvent());
       const searchParams = new SearchParams();
-      const specimen = factory.specimen();
+      const specimen = new Specimen().deserialize(factory.specimen());
       const pagedReply = factory.pagedReply([ specimen ]);
       const action = SpecimenActions.searchSpecimensRequest({ event, searchParams });
       const completion = SpecimenActions.searchSpecimensSuccess({ pagedReply });
@@ -109,7 +109,7 @@ describe('specimen-store effects', () => {
   describe('getSpecimenRequestEffect', () => {
 
     it('should respond with success', () => {
-      const specimen = factory.specimen();
+      const specimen = new Specimen().deserialize(factory.specimen());
       const action = SpecimenActions.getSpecimenRequest({ id: specimen.id });
       const completion = SpecimenActions.getSpecimenSuccess({ specimen });
       spyOn(specimenService, 'get').and.returnValue(of(specimen));
@@ -145,7 +145,7 @@ describe('specimen-store effects', () => {
     let action: Action;
 
     beforeEach(() => {
-      specimen = factory.specimen();
+      specimen = new Specimen().deserialize(factory.specimen());
       action = SpecimenActions.removeSpecimenRequest({ specimen });
     });
 

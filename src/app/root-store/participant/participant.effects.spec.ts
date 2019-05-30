@@ -1,7 +1,6 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { ParticipantService } from '@app/core/services';
-import { SearchParams } from '@app/domain';
 import { Participant } from '@app/domain/participants';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
@@ -16,7 +15,7 @@ describe('participant-store effects', () => {
   let effects: ParticipantStoreEffects;
   let actions: Observable<any>;
   let participantService: ParticipantService;
-  let factory: Factory;
+  const factory = new Factory();
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -31,13 +30,12 @@ describe('participant-store effects', () => {
 
     effects = TestBed.get(ParticipantStoreEffects);
     participantService = TestBed.get(ParticipantService);
-    factory = new Factory();
   });
 
   describe('addParticipantRequestEffect', () => {
 
     it('should respond with success', () => {
-      const participant = factory.participant();
+      const participant = new Participant().deserialize(factory.participant());
       const action = ParticipantActions.addParticipantRequest({ participant });
       const completion = ParticipantActions.addParticipantSuccess({ participant });
       spyOn(participantService, 'add').and.returnValue(of(participant));
@@ -49,7 +47,7 @@ describe('participant-store effects', () => {
     });
 
     it('should respond with failure', () => {
-      const participant = factory.participant();
+      const participant = new Participant().deserialize(factory.participant());
       const error = {
         status: 404,
         error: {
@@ -72,7 +70,7 @@ describe('participant-store effects', () => {
     describe('when using participant slug', () => {
 
       it('should respond with success', () => {
-        const participant = factory.participant();
+        const participant = new Participant().deserialize(factory.participant());
         const action = ParticipantActions.getParticipantRequest({ slug: participant.slug });
         const completion = ParticipantActions.getParticipantSuccess({ participant });
         spyOn(participantService, 'get').and.returnValue(of(participant));
@@ -84,7 +82,7 @@ describe('participant-store effects', () => {
       });
 
       it('should respond with failure', () => {
-        const participant = factory.participant();
+        const participant = new Participant().deserialize(factory.participant());
         const error = {
           status: 404,
           error: {
@@ -107,11 +105,8 @@ describe('participant-store effects', () => {
 
       it('should respond with success', () => {
         const study = factory.study();
-        const participant = factory.participant();
-        const action = ParticipantActions.getParticipantRequest({
-          uniqueId: participant.uniqueId,
-          studyId: study.id
-        });
+        const participant = new Participant().deserialize(factory.participant());
+        const action = ParticipantActions.getParticipantRequest({ uniqueId: participant.uniqueId });
         const completion = ParticipantActions.getParticipantSuccess({ participant });
         spyOn(participantService, 'getByUniqueId').and.returnValue(of(participant));
 
@@ -130,10 +125,7 @@ describe('participant-store effects', () => {
             message: 'simulated error'
           }
         };
-        const action = ParticipantActions.getParticipantRequest({
-          uniqueId: participant.uniqueId,
-          studyId: study.id
-        });
+        const action = ParticipantActions.getParticipantRequest({ uniqueId: participant.uniqueId });
         const completion = ParticipantActions.getParticipantFailure({ error });
         spyOn(participantService, 'getByUniqueId').and.returnValue(throwError(error));
 
@@ -146,8 +138,6 @@ describe('participant-store effects', () => {
     });
 
     it('throws error when invalid parameters are used', () => {
-      const study = factory.study();
-      const participant = factory.participant();
       const error = { message: 'invalid action parameters' };
       const action = ParticipantActions.getParticipantRequest({});
       const completion = ParticipantActions.getParticipantFailure({ error });
@@ -166,7 +156,7 @@ describe('participant-store effects', () => {
     let participantListener: any;
 
     beforeEach(() => {
-      participant = factory.participant();
+      participant = new Participant().deserialize(factory.participant());
       action = ParticipantActions.updateParticipantRequest({
         participant,
         attributeName: 'uniqueId',

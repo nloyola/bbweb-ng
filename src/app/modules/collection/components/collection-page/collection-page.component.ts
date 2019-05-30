@@ -95,7 +95,8 @@ export class CollectionPageComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(): void {
-    this.store$.dispatch(ParticipantStoreActions.getParticipantRequest({ uniqueId: this.form.value.uniqueId }));
+    this.store$.dispatch(
+      ParticipantStoreActions.getParticipantRequest({ uniqueId: this.form.value.uniqueId }));
     this.participantLoading$.next(true);
   }
 

@@ -92,7 +92,7 @@ describe('CentreAddComponent', () => {
         centre: new Centre().deserialize({
           name: centre.name,
           description: centre.description
-        })
+        } as any)
       });
 
       expect(storeListener.mock.calls.length).toBe(1);

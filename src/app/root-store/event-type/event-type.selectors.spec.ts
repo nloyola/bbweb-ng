@@ -5,11 +5,7 @@ import { Factory } from '@test/factory';
 
 describe('EventTypeStore selectors', () => {
 
-  let factory: Factory;
-
-  beforeEach(() => {
-    factory = new Factory();
-  });
+  const factory = new Factory();
 
   describe('selectSearchRepliesAndEntities', () => {
 
@@ -18,7 +14,7 @@ describe('EventTypeStore selectors', () => {
     let searchReplies: { [ key: string]: PagedReplyEntityIds };
 
     beforeEach(() => {
-      eventType = factory.collectionEventType();
+      eventType = new CollectionEventType().deserialize(factory.collectionEventType());
       pagedReply = factory.pagedReply<CollectionEventType>([ eventType ]);
       searchReplies = {};
       searchReplies[factory.defaultStudy().id] = {} as any;
@@ -100,8 +96,8 @@ describe('EventTypeStore selectors', () => {
     let searchReplies: { [ key: string]: EntityIds };
 
     beforeEach(() => {
-      eventType = factory.collectionEventType();
-      study = factory.defaultStudy().id;
+      eventType = new CollectionEventType().deserialize(factory.collectionEventType());
+      study = factory.defaultStudy();
       searchReplies = {};
       searchReplies[study.id] = {} as any;
       searchReplies[study.id][searchParams.queryString()] = [ eventType.id ];
@@ -161,7 +157,7 @@ describe('EventTypeStore selectors', () => {
   });
 
   it('selectLastAdded', () => {
-    const eventType = factory.collectionEventType();
+    const eventType = new CollectionEventType().deserialize(factory.collectionEventType());
     const state = initialStateWithEntity(eventType, { lastAddedId: eventType.id });
 
     expect(EventTypeStoreSelectors.selectLastAdded(state)).toEqual(eventType);

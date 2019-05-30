@@ -21,7 +21,7 @@ export class ParticipantStoreEffects {
       let result: Observable<Participant>;
       if (action.slug) {
         result = this.participantService.get(action.slug);
-      } else if (action.uniqueId){
+      } else if (action.uniqueId) {
         result = this.participantService.getByUniqueId(action.uniqueId);
       } else {
         const error = { message: 'invalid action parameters' };
@@ -30,7 +30,7 @@ export class ParticipantStoreEffects {
 
       return result.pipe(
         map(participant => ParticipantActions.getParticipantSuccess({ participant })),
-        catchError(error => observableOf(ParticipantActions.getParticipantFailure({ error }))))
+        catchError(error => observableOf(ParticipantActions.getParticipantFailure({ error }))));
     }));
 
   @Effect()

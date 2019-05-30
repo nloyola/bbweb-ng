@@ -26,7 +26,8 @@ export class ParticipantEventsComponent implements OnInit {
       map((entities: Participant[]) => {
         const entity = entities.find(s => s.slug === this.route.parent.parent.snapshot.params.slug);
         if (entity) {
-          const participant = (entity instanceof Participant) ? entity :  new Participant().deserialize(entity);
+          const participant = (entity instanceof Participant)
+            ? entity :  new Participant().deserialize(entity);
           return participant;
         }
         return undefined;

@@ -35,7 +35,7 @@ describe('Membership Reducer', () => {
     });
 
     it('SearchMembershipsSuccess', () => {
-      const membership = factory.membership();
+      const membership = new Membership().deserialize(factory.membership());
       const payload = {
         pagedReply: factory.pagedReply<Membership>([ membership ])
       };
@@ -89,7 +89,7 @@ describe('Membership Reducer', () => {
   describe('for adding a membership', () => {
 
     it('AddMembershipRequest', () => {
-      const membership = factory.membership();
+      const membership = new Membership().deserialize(factory.membership());
       const action = new MembershipStoreActions.AddMembershipRequest({ membership });
       const state = MembershipStoreReducer.reducer(undefined, action);
 
@@ -98,7 +98,7 @@ describe('Membership Reducer', () => {
     });
 
     it('AddMembershipSuccess', () => {
-      const membership = factory.membership();
+      const membership = new Membership().deserialize(factory.membership());
       const payload = { membership };
       const action = new MembershipStoreActions.AddMembershipSuccess(payload);
       const state = MembershipStoreReducer.reducer(undefined, action);
@@ -133,7 +133,7 @@ describe('Membership Reducer', () => {
   describe('when updating memberships', () => {
 
     it('UpdateMembershipRequest', () => {
-      const membership = factory.membership();
+      const membership = new Membership().deserialize(factory.membership());
       const action = new MembershipStoreActions.UpdateMembershipRequest({
         membership,
         attributeName: 'name',
@@ -183,7 +183,7 @@ describe('Membership Reducer', () => {
   describe('when getting a single membership', () => {
 
     it('GetMembershipRequest', () => {
-      const membership = factory.membership();
+      const membership = new Membership().deserialize(factory.membership());
       const payload = { slug: membership.slug };
       const action = new MembershipStoreActions.GetMembershipRequest(payload);
       const state = MembershipStoreReducer.reducer(undefined, action);
@@ -194,7 +194,7 @@ describe('Membership Reducer', () => {
     });
 
     it('GetMembershipSuccess', () => {
-      const membership = factory.membership();
+      const membership = new Membership().deserialize(factory.membership());
       const payload = { membership };
       const action = new MembershipStoreActions.GetMembershipSuccess(payload);
       const state = MembershipStoreReducer.reducer(undefined, action);
@@ -233,7 +233,7 @@ describe('Membership Reducer', () => {
     let testInitialState: any;
 
     beforeEach(() => {
-      membership = factory.membership();
+      membership = new Membership().deserialize(factory.membership());
       testInitialState = {
         ...MembershipStoreReducer.initialState,
         ids: [ membership.id ],

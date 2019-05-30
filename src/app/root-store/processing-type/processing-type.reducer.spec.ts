@@ -2,7 +2,7 @@ import { reducer, initialState } from './processing-type.reducer';
 import { SearchParams, PagedReplyEntityIds } from '@app/domain';
 import { ProcessingTypeStoreActions, ProcessingTypeStoreReducer } from '@app/root-store';
 import { Factory } from '@test/factory';
-import { ProcessingType } from '@app/domain/studies';
+import { ProcessingType, IProcessingType } from '@app/domain/studies';
 
 describe('ProcessingType Reducer', () => {
 
@@ -182,10 +182,8 @@ describe('ProcessingType Reducer', () => {
       const initialAction = new ProcessingTypeStoreActions.GetProcessingTypeSuccess(payload);
       let state = ProcessingTypeStoreReducer.reducer(initialState, initialAction);
 
-      const  updatedPt = new ProcessingType().deserialize({
-        ...processingType as any,
-        enabled: !processingType.enabled
-      });
+      const  updatedPt = new ProcessingType().deserialize(processingType);
+      updatedPt.enabled = !processingType.enabled;
       state = ProcessingTypeStoreReducer.reducer(
         state,
         new ProcessingTypeStoreActions.UpdateProcessingTypeSuccess({

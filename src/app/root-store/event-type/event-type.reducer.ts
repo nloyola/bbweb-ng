@@ -63,6 +63,7 @@ export function reducer(state = initialState, action: EventTypeActions.EventType
       return {
         ...state,
         searchState: {
+          ...state.searchState,
           lastSearch: {
             studyId: action.studyId,
             params: action.searchParams
@@ -111,12 +112,12 @@ export function reducer(state = initialState, action: EventTypeActions.EventType
         ...state,
         searchState: {
           ...state.searchState,
+          searchActive: false,
           searchReplies: {
             ...state.searchState.searchReplies,
             ...studyReplies
           }
-        },
-        searchActive: false
+        }
       });
     }
 

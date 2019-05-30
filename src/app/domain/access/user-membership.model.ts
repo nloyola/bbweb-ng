@@ -1,11 +1,5 @@
-import { MembershipBase, IMembershipBase } from './membership-base.model';
-import { JSONObject } from '@app/domain';
+import { IMembershipBase, MembershipBase } from './membership-base.model';
 
-export class UserMembership extends MembershipBase implements IMembershipBase {
+export type IUserMembership = IMembershipBase;
 
-  deserialize(input: JSONObject) {
-    super.deserialize(input);
-    return this;
-  }
-
-}
+export class UserMembership extends MembershipBase implements IUserMembership { }

@@ -39,7 +39,7 @@ describe('shipmentSpecimen-store effects', () => {
     it('should respond with success', () => {
       const searchParams = new SearchParams();
       const shipment = new Shipment().deserialize(factory.shipment());
-      const shipmentSpecimen = factory.shipmentSpecimen();
+      const shipmentSpecimen = new ShipmentSpecimen().deserialize(factory.shipmentSpecimen());
       const pagedReply = factory.pagedReply([ shipmentSpecimen ]);
       const action = ShipmentSpecimenActions.searchShipmentSpecimensRequest({
         shipment,
@@ -80,7 +80,7 @@ describe('shipmentSpecimen-store effects', () => {
   describe('getShipmentSpecimenRequestEffect', () => {
 
     it('should respond with success', () => {
-      const shipmentSpecimen = factory.shipmentSpecimen();
+      const shipmentSpecimen = new ShipmentSpecimen().deserialize(factory.shipmentSpecimen());
       const action = ShipmentSpecimenActions.getShipmentSpecimenRequest({ id: shipmentSpecimen.id });
       const completion = ShipmentSpecimenActions.getShipmentSpecimenSuccess({ shipmentSpecimen });
       spyOn(shipmentSpecimenService, 'get').and.returnValue(of(shipmentSpecimen));
@@ -116,7 +116,7 @@ describe('shipmentSpecimen-store effects', () => {
     let action: Action;
 
     beforeEach(() => {
-      shipmentSpecimen = factory.shipmentSpecimen();
+      shipmentSpecimen = new ShipmentSpecimen().deserialize(factory.shipmentSpecimen());
       action = ShipmentSpecimenActions.removeShipmentSpecimenRequest({ shipmentSpecimen });
     });
 

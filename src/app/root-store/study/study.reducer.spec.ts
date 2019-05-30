@@ -1,5 +1,5 @@
 import { PagedReply, PagedReplyEntityIds, SearchParams } from '@app/domain';
-import { Study } from '@app/domain/studies';
+import { Study, StudyStateInfo } from '@app/domain/studies';
 import { Factory } from '@test/factory';
 import * as StudyActions from './study.actions';
 import { initialState, reducer } from './study.reducer';
@@ -70,7 +70,7 @@ describe('Study Reducer', () => {
   describe('studies search', () => {
 
     it('Search Success', () => {
-      const study = factory.study();
+      const study = new Study().deserialize(factory.study());
       const pagedReply = factory.pagedReply<Study>([ study ]);
       const action = StudyActions.searchStudiesSuccess({ pagedReply });
       const state = reducer(
@@ -118,8 +118,8 @@ describe('Study Reducer', () => {
   describe('collection studies search', () => {
 
     it('Search Success', () => {
-      const study = factory.study();
-      const studiesData = [ factory.entityNameAndStateDto(study) ];
+      const study = new Study().deserialize(factory.study());
+      const studiesData = [ new StudyStateInfo().deserialize(factory.entityNameAndStateDto(study)) ];
       const searchParams = new SearchParams();
       const action = StudyActions.searchCollectionStudiesSuccess({ studiesData });
       const state = reducer(
@@ -159,7 +159,7 @@ describe('Study Reducer', () => {
   });
 
   it('AddStudyRequest', () => {
-    const study = factory.study();
+    const study = new Study().deserialize(factory.study());
     const payload = { study };
     const action = StudyActions.addStudyRequest(payload);
     const state = reducer(undefined, action);
@@ -170,7 +170,7 @@ describe('Study Reducer', () => {
   });
 
   it('AddStudySuccess', () => {
-    const study = factory.study();
+    const study = new Study().deserialize(factory.study());
     const payload = { study };
     const action = StudyActions.addStudySuccess(payload);
     const state = reducer(undefined, action);
@@ -206,7 +206,7 @@ describe('Study Reducer', () => {
   });
 
   it('GetStudyRequest', () => {
-    const study = factory.study();
+    const study = new Study().deserialize(factory.study());
     const payload = { slug: study.slug };
     const action = StudyActions.getStudyRequest(payload);
     const state = reducer(undefined, action);
@@ -217,7 +217,7 @@ describe('Study Reducer', () => {
   });
 
   it('GetStudySuccess', () => {
-    const study = factory.study();
+    const study = new Study().deserialize(factory.study());
     const payload = { study };
     const action = StudyActions.getStudySuccess(payload);
     const state = reducer(undefined, action);

@@ -8,7 +8,7 @@ import { ActivatedRoute } from '@angular/router';
 import { SearchParams } from '@app/domain';
 import { Centre } from '@app/domain/centres';
 import { CentreUI } from '@app/domain/centres/centre-ui.model';
-import { Study, StudyState, StudyStateUIMap } from '@app/domain/studies';
+import { Study, StudyState, StudyStateUIMap, StudyStateInfo } from '@app/domain/studies';
 import { CentreStoreActions, CentreStoreReducer, StudyStoreActions, StudyStoreReducer } from '@app/root-store';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { NgbModal, NgbModule, NgbTypeaheadModule, NgbTypeaheadSelectItemEvent } from '@ng-bootstrap/ng-bootstrap';
@@ -107,7 +107,8 @@ describe('CentreStudiesComponent', () => {
         ...factory.study(),
         state
       });
-      const studyName = factory.entityNameAndStateDto(study);
+
+      const studyName = new StudyStateInfo().deserialize(factory.entityNameAndStateDto(study));
       expect(component.studyStateLabel(studyName)).toBe(StudyStateUIMap.get(study.state).stateLabel);
     });
   });

@@ -49,7 +49,7 @@ export class EventAddFormComponent implements OnInit, OnDestroy {
             AnnotationsAddSubformComponent.buildSubForm(this.annotations, this.unsubscribe$));
         }
       }),
-      //tap(x => console.log('eventTypes$', x)),
+      // tap(x => console.log('eventTypes$', x)),
       takeUntil(this.unsubscribe$));
 
     this.store$.dispatch(EventTypeStoreActions.searchEventTypeNamesRequest({

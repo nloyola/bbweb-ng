@@ -70,9 +70,9 @@ export class ProcessingTypesAddAndSelectComponent implements OnInit, OnDestroy {
   }
 
   public onFiltersUpdated(filterValue: string) {
-    const filter = new NameFilter();
-    filter.setValue(filterValue)
-    this.filterValues = filter.getValue();
+    const f = new NameFilter();
+    f.setValue(filterValue);
+    this.filterValues = f.getValue();
     this.applySearchParams();
   }
 

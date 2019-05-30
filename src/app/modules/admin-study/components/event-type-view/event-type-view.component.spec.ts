@@ -147,15 +147,16 @@ describe('EventTypeViewComponent', () => {
 
   function createTestEventType(): CollectionEventType {
     return new CollectionEventType().deserialize({
-      ...factory.collectionEventType(),
-      annotationTypes: [
-        factory.annotationType(),
-        factory.annotationType()
-      ],
-      specimenDefinitions: [
-        factory.collectedSpecimenDefinition(),
-        factory.collectedSpecimenDefinition()
-      ]
+      ...factory.collectionEventType({
+        annotationTypes: [
+          factory.annotationType(),
+          factory.annotationType()
+        ],
+        specimenDefinitions: [
+          factory.collectedSpecimenDefinition(),
+          factory.collectedSpecimenDefinition()
+        ]
+      })
     });
   }
 });

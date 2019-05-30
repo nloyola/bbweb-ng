@@ -26,7 +26,7 @@ export class AuthService {
           const jObj = reply.data as JSONObject;
           if (jObj.user && jObj.token) {
             this.authToken = {
-              user: new User().deserialize(jObj.user as JSONObject),
+              user: new User().deserialize(jObj.user as any),
               token: jObj.token as string,
               expiresOn: new Date(jObj.expiresOn as string)
             };
@@ -47,8 +47,7 @@ export class AuthService {
 
   register(name: string, email: string, password: string) {
     return this.http.post<any>(this.BASE_URL + '/', { name, email, password })
-      .pipe(
-        map((res: JSONObject) => new User().deserialize(res.data as JSONObject)));
+      .pipe(map((res: JSONObject) => new User().deserialize(res.data as any)));
   }
 
   isLoggedIn() {
@@ -59,7 +58,7 @@ export class AuthService {
     const jObj = JSON.parse(localStorage.getItem(AUTH_TOKEN_LOCAL_STORAGE_KEY)) as JSONObject;
     if (jObj) {
       this.authToken = {
-        user: new User().deserialize(jObj.user as JSONObject),
+        user: new User().deserialize(jObj.user as any),
         token: jObj.token as string,
         expiresOn: new Date(jObj.expiresOn as string)
       };

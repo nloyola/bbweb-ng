@@ -47,4 +47,11 @@ export abstract class Annotation extends DomainEntity implements IAnnotation {
 
   abstract serverAnnotation(): any;
 
+  deserialize(input: IAnnotation): this {
+    const { annotationTypeId, valueType } = input;
+    Object.assign(this, { annotationTypeId, valueType });
+    super.deserialize(input);
+    return this;
+  }
+
 }

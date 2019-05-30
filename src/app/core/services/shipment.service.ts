@@ -44,7 +44,7 @@ export class ShipmentService {
           const jObj = reply.data as JSONObject;
           if (reply && reply.data && jObj.items) {
             const entities: Shipment[] = (jObj.items as JSONArray)
-              .map((obj: JSONObject) => new Shipment().deserialize(obj));
+              .map(obj => new Shipment().deserialize(obj as any));
 
             return {
               searchParams,
@@ -143,7 +143,7 @@ export class ShipmentService {
       // delay(2000),
       map(reply => {
         if (reply && reply.data) {
-          return new Specimen().deserialize(reply.data as JSONObject);
+          return new Specimen().deserialize(reply.data as any);
         }
         throw new Error('expected a specimen object');
       }));
@@ -217,7 +217,7 @@ export class ShipmentService {
 
   private replyToShipment(reply: ApiReply): Shipment {
     if (reply && reply.data) {
-      return new Shipment().deserialize(reply.data as JSONObject);
+      return new Shipment().deserialize(reply.data as any);
     }
     throw new Error('expected a shipment object');
   }

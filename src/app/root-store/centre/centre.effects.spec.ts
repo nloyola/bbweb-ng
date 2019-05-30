@@ -70,7 +70,7 @@ describe('centre-store effects', () => {
 
     it('should respond with success', () => {
       const searchParams = new SearchParams();
-      const centre = factory.centre();
+      const centre = new Centre().deserialize(factory.centre());
       const pagedReply = factory.pagedReply([ centre ]);
       const action = new CentreStoreActions.SearchCentresRequest({ searchParams });
       const completion = new CentreStoreActions.SearchCentresSuccess({ pagedReply });
@@ -104,7 +104,7 @@ describe('centre-store effects', () => {
   describe('addCentreRequestEffect', () => {
 
     it('should respond with success', () => {
-      const centre = factory.centre();
+      const centre = new Centre().deserialize(factory.centre());
       const action = new CentreStoreActions.AddCentreRequest({ centre });
       const completion = new CentreStoreActions.AddCentreSuccess({ centre });
       spyOn(centreService, 'add').and.returnValue(of(centre));
@@ -116,7 +116,7 @@ describe('centre-store effects', () => {
     });
 
     it('should respond with failure', () => {
-      const centre = factory.centre();
+      const centre = new Centre().deserialize(factory.centre());
       const error = {
         status: 404,
         error: {
@@ -137,7 +137,7 @@ describe('centre-store effects', () => {
   describe('getCentreRequestEffect', () => {
 
     it('should respond with success', () => {
-      const centre = factory.centre();
+      const centre = new Centre().deserialize(factory.centre());
       const action = new CentreStoreActions.GetCentreRequest({ slug: centre.slug });
       const completion = new CentreStoreActions.GetCentreSuccess({ centre });
       spyOn(centreService, 'get').and.returnValue(of(centre));
@@ -174,7 +174,7 @@ describe('centre-store effects', () => {
     let centreListener: any;
 
     beforeEach(() => {
-      centre = factory.centre();
+      centre = new Centre().deserialize(factory.centre());
       action = new CentreStoreActions.UpdateCentreRequest({
         centre,
         attributeName: 'name',

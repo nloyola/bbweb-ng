@@ -92,19 +92,18 @@ export class CollectionAnnotationTypeAddContainerComponent implements OnInit, On
       this.router.navigate([ this.parentStateRelativePath ], { relativeTo: this.route });
     });
 
-    this.store$
-      .pipe(
-        select(EventTypeStoreSelectors.selectError),
-        filter(s => !!s),
-        takeUntil(this.unsubscribe$))
-      .subscribe((error: any) => {
-        this.isSaving$.next(false);
-        let errMessage = error.error ? error.error.message : error.statusText;
-        if (errMessage && errMessage.match(/EntityCriteriaError.*name already used/)) {
-          errMessage = `The name is already in use: ${this.annotationTypeToSave.name}`;
-        }
-        this.toastr.error(errMessage, 'Add Error', { disableTimeOut: true });
-      });
+    this.store$.pipe(
+      select(EventTypeStoreSelectors.selectError),
+      filter(s => !!s),
+      takeUntil(this.unsubscribe$)
+    ).subscribe((error: any) => {
+      this.isSaving$.next(false);
+      let errMessage = error.error ? error.error.message : error.statusText;
+      if (errMessage && errMessage.match(/EntityCriteriaError.*name already used/)) {
+        errMessage = `The name is already in use: ${this.annotationTypeToSave.name}`;
+      }
+      this.toastr.error(errMessage, 'Add Error', { disableTimeOut: true });
+    });
 
     this.store$.dispatch(EventTypeStoreActions.getEventTypeRequest({
       studySlug: this.route.parent.parent.parent.parent.snapshot.params.slug,

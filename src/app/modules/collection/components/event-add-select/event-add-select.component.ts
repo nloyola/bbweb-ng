@@ -57,9 +57,9 @@ export class EventAddSelectComponent implements OnInit, OnDestroy {
   }
 
   onFiltersUpdated(filterValue: string) {
-    const filter = new VisitNumberFilter();
-    filter.setValue(filterValue)
-    this.filterValues = filter.getValue();
+    const f = new VisitNumberFilter();
+    f.setValue(filterValue);
+    this.filterValues = f.getValue();
     this.applySearchParams();
   }
 

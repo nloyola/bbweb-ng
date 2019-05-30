@@ -47,7 +47,7 @@ export class RoleService {
           const jObj = reply.data as JSONObject;
           if (reply && reply.data && jObj.items) {
             const entities: Role[] = (jObj.items as JSONArray)
-              .map((obj: JSONObject) => new Role().deserialize(obj));
+              .map((obj: JSONObject) => new Role().deserialize(obj as any));
             return {
               searchParams,
               entities,
@@ -83,7 +83,7 @@ export class RoleService {
 
   private replyToRole(reply: ApiReply): Role {
     if (reply && reply.data) {
-      return new Role().deserialize(reply.data as JSONObject);
+      return new Role().deserialize(reply.data as any);
     }
     throw new Error('expected a role object');
   }

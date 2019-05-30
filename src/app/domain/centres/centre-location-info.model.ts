@@ -1,6 +1,6 @@
 import { IDomainEntity, DomainEntity, JSONObject } from '@app/domain';
 
-export interface ICentreLocationInfo extends IDomainEntity {
+export interface ICentreLocationInfo {
 
   /** the ID that identifies the centre. */
   centreId: string;
@@ -13,14 +13,15 @@ export interface ICentreLocationInfo extends IDomainEntity {
 
 }
 
-export class CentreLocationInfo extends DomainEntity {
+export class CentreLocationInfo {
 
   centreId: string;
   locationId: string;
   name: string;
 
-  deserialize(input: JSONObject) {
-    super.deserialize(input);
+  deserialize(input: ICentreLocationInfo): this {
+    const { centreId, locationId, name } = input;
+    Object.assign(this, { centreId, locationId, name });
     return this;
   }
 

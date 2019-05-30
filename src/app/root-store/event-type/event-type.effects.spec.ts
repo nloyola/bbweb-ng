@@ -8,7 +8,7 @@ import { provideMockActions } from '@ngrx/effects/testing';
 import { cold, hot } from 'jasmine-marbles';
 import { Observable, of, throwError } from 'rxjs';
 import { EventTypeStoreEffects } from './event-type.effects';
-import { CollectionEventType, CollectedSpecimenDefinition } from '@app/domain/studies';
+import { CollectionEventType, CollectedSpecimenDefinition, EventTypeInfo } from '@app/domain/studies';
 import { AnnotationType } from '@app/domain/annotations';
 import { EventTypeActionsUnion } from './event-type.actions';
 
@@ -39,9 +39,10 @@ describe('eventType-store effects', () => {
     it('should respond with success', () => {
       const searchParams = new SearchParams();
       const study = factory.study();
-      const eventType = factory.collectionEventType();
+      const eventType = new CollectionEventType().deserialize(factory.collectionEventType());
       const pagedReply = factory.pagedReply([ eventType ]);
       const action = EventTypeStoreActions.searchEventTypesRequest({
+        studyId: study.id,
         studySlug: study.slug,
         searchParams
       });
@@ -64,6 +65,7 @@ describe('eventType-store effects', () => {
         }
       };
       const action = EventTypeStoreActions.searchEventTypesRequest({
+        studyId: study.id,
         studySlug: study.slug,
         searchParams
       });
@@ -80,8 +82,8 @@ describe('eventType-store effects', () => {
   describe('searchNamesRequestEffect', () => {
 
     it('should respond with success', () => {
-      const eventType = factory.collectionEventType();
-      const reply = [ factory.entityToInfo(eventType) ];
+      const eventType = new CollectionEventType().deserialize(factory.collectionEventType());
+      const reply = [ new EventTypeInfo().deserialize(factory.entityToInfo(eventType)) ];
       const action = EventTypeStoreActions.searchEventTypeNamesRequest({
         studyId: eventType.studyId,
         searchParams: new SearchParams()
@@ -122,7 +124,7 @@ describe('eventType-store effects', () => {
 
     it('should respond with success', () => {
       const study = factory.study();
-      const eventType = factory.collectionEventType();
+      const eventType = new CollectionEventType().deserialize(factory.collectionEventType());
       const action = EventTypeStoreActions.getEventTypeRequest({
         studySlug: study.slug,
         eventTypeSlug: eventType.slug
@@ -162,7 +164,7 @@ describe('eventType-store effects', () => {
   describe('addRequestEffect', () => {
 
     it('should respond with success', () => {
-      const eventType = factory.collectionEventType();
+      const eventType = new CollectionEventType().deserialize(factory.collectionEventType());
       const action = EventTypeStoreActions.addEventTypeRequest({ eventType });
       const completion = EventTypeStoreActions.addEventTypeSuccess({ eventType });
       spyOn(eventTypeService, 'add').and.returnValue(of(eventType));
@@ -174,7 +176,7 @@ describe('eventType-store effects', () => {
     });
 
     it('should respond with failure', () => {
-      const eventType = factory.collectionEventType();
+      const eventType = new CollectionEventType().deserialize(factory.collectionEventType());
       const error = {
         status: 404,
         error: {
@@ -198,7 +200,7 @@ describe('eventType-store effects', () => {
     let action: EventTypeActionsUnion;
 
     beforeEach(() => {
-      eventType = factory.collectionEventType();
+      eventType = new CollectionEventType().deserialize(factory.collectionEventType());
       action = EventTypeStoreActions.updateEventTypeRequest({
         eventType,
         attributeName: 'name',
@@ -233,8 +235,10 @@ describe('eventType-store effects', () => {
       let annotationType: AnnotationType;
 
       beforeEach(() => {
-        annotationType = factory.annotationType();
-        eventType = factory.collectionEventType({ annotationTypes: [ annotationType ]});
+        const rawAnnotationType = factory.annotationType();
+        annotationType = new AnnotationType().deserialize(rawAnnotationType);
+        eventType = new CollectionEventType().deserialize(
+          factory.collectionEventType({ annotationTypes: [ rawAnnotationType ]}));
         action = EventTypeStoreActions.updateEventTypeRequest({
           eventType,
           attributeName: 'addOrUpdateAnnotationType',
@@ -271,8 +275,10 @@ describe('eventType-store effects', () => {
       let annotationType: AnnotationType;
 
       beforeEach(() => {
-        annotationType = factory.annotationType();
-        eventType = factory.collectionEventType({ annotationTypes: [ annotationType ]});
+        const rawAnnotationType = factory.annotationType();
+        annotationType = new AnnotationType().deserialize(rawAnnotationType);
+        eventType = new CollectionEventType().deserialize(
+          factory.collectionEventType({ annotationTypes: [ rawAnnotationType ]}));
         action = EventTypeStoreActions.updateEventTypeRequest({
           eventType,
           attributeName: 'removeAnnotationType',
@@ -308,8 +314,10 @@ describe('eventType-store effects', () => {
       let specimenDefinition: CollectedSpecimenDefinition;
 
       beforeEach(() => {
-        specimenDefinition = factory.collectedSpecimenDefinition();
-        eventType = factory.collectionEventType({ specimenDefinitions: [ specimenDefinition ]});
+        const rawSpecimenDefinition = factory.collectedSpecimenDefinition();
+        specimenDefinition = new CollectedSpecimenDefinition().deserialize(rawSpecimenDefinition);
+        eventType = new CollectionEventType().deserialize(
+          factory.collectionEventType({ specimenDefinitions: [ rawSpecimenDefinition ]}));
         action = EventTypeStoreActions.updateEventTypeRequest({
           eventType,
           attributeName: 'addOrUpdateSpecimenDefinition',
@@ -345,8 +353,10 @@ describe('eventType-store effects', () => {
       let specimenDefinition: CollectedSpecimenDefinition;
 
       beforeEach(() => {
-        specimenDefinition = factory.collectedSpecimenDefinition();
-        eventType = factory.collectionEventType({ specimenDefinitions: [ specimenDefinition ]});
+        const rawSpecimenDefinition = factory.collectedSpecimenDefinition();
+        specimenDefinition = new CollectedSpecimenDefinition().deserialize(rawSpecimenDefinition);
+        eventType = new CollectionEventType().deserialize(
+          factory.collectionEventType({ specimenDefinitions: [ rawSpecimenDefinition ]}));
         action = EventTypeStoreActions.updateEventTypeRequest({
           eventType,
           attributeName: 'removeSpecimenDefinition',

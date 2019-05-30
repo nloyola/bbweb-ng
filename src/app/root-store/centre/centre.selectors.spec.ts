@@ -76,7 +76,7 @@ describe('centre-store selectors', () => {
   });
 
   it('selectCentreSearchReplies', () => {
-    const centre = factory.centre();
+    const centre = new Centre().deserialize(factory.centre());
     const pagedReply = factory.pagedReply<Centre>([ centre ]);
     const searchReplies: { [ key: string]: PagedReplyEntityIds } = {};
     searchReplies[pagedReply.searchParams.queryString()] = {
@@ -97,7 +97,7 @@ describe('centre-store selectors', () => {
   });
 
   it('selectAllCentres', () => {
-    const centre = factory.centre();
+    const centre = new Centre().deserialize(factory.centre());
     const adapter: EntityAdapter<Centre> = createEntityAdapter<Centre>({
       selectId: (s: Centre) => s.id
     });
@@ -111,7 +111,7 @@ describe('centre-store selectors', () => {
   describe('selectCentreSearchRepliesAndEntities', () => {
 
     it('when search has completed', () => {
-      const centre = factory.centre();
+      const centre = new Centre().deserialize(factory.centre());
       const adapter: EntityAdapter<Centre> = createEntityAdapter<Centre>({
         selectId: (s: Centre) => s.id
       });
@@ -157,7 +157,7 @@ describe('centre-store selectors', () => {
     });
 
     it('when reply is missing', () => {
-      const centre = factory.centre();
+      const centre = new Centre().deserialize(factory.centre());
       const adapter: EntityAdapter<Centre> = createEntityAdapter<Centre>({
         selectId: (s: Centre) => s.id
       });
@@ -177,7 +177,7 @@ describe('centre-store selectors', () => {
   });
 
   it('selectCentreLastAdded', () => {
-    const centre = factory.centre();
+    const centre = new Centre().deserialize(factory.centre());
     const adapter: EntityAdapter<Centre> = createEntityAdapter<Centre>({
       selectId: (s: Centre) => s.id
     });

@@ -38,7 +38,7 @@ describe('membership-store effects', () => {
 
     it('should respond with success', () => {
       const searchParams = new SearchParams();
-      const membership = factory.membership();
+      const membership = new Membership().deserialize(factory.membership());
       const pagedReply = factory.pagedReply([ membership ]);
       const action = new MembershipStoreActions.SearchMembershipsRequest({ searchParams });
       const completion = new MembershipStoreActions.SearchMembershipsSuccess({ pagedReply });
@@ -72,7 +72,7 @@ describe('membership-store effects', () => {
   describe('addMembershipRequestEffect', () => {
 
     it('should respond with success', () => {
-      const membership = factory.membership();
+      const membership = new Membership().deserialize(factory.membership());
       const action = new MembershipStoreActions.AddMembershipRequest({ membership });
       const completion = new MembershipStoreActions.AddMembershipSuccess({ membership });
       spyOn(membershipService, 'add').and.returnValue(of(membership));
@@ -84,7 +84,7 @@ describe('membership-store effects', () => {
     });
 
     it('should respond with failure', () => {
-      const membership = factory.membership();
+      const membership = new Membership().deserialize(factory.membership());
       const error = {
         status: 404,
         error: {
@@ -105,7 +105,7 @@ describe('membership-store effects', () => {
   describe('getMembershipRequestEffect', () => {
 
     it('should respond with success', () => {
-      const membership = factory.membership();
+      const membership = new Membership().deserialize(factory.membership());
       const action = new MembershipStoreActions.GetMembershipRequest({ slug: membership.slug });
       const completion = new MembershipStoreActions.GetMembershipSuccess({ membership });
       spyOn(membershipService, 'get').and.returnValue(of(membership));
@@ -117,7 +117,7 @@ describe('membership-store effects', () => {
     });
 
     it('should respond with failure', () => {
-      const membership = factory.membership();
+      const membership = new Membership().deserialize(factory.membership());
       const error = {
         status: 404,
         error: {
@@ -142,7 +142,7 @@ describe('membership-store effects', () => {
     let membershipListener: any;
 
     beforeEach(() => {
-      membership = factory.membership();
+      membership = new Membership().deserialize(factory.membership());
       action = new MembershipStoreActions.UpdateMembershipRequest({
         membership,
         attributeName: 'name',
@@ -180,7 +180,7 @@ describe('membership-store effects', () => {
     let action: Action;
 
     beforeEach(() => {
-      membership = factory.membership();
+      membership = new Membership().deserialize(factory.membership());
       action = new MembershipStoreActions.RemoveMembershipRequest({ membership });
       jest.spyOn(membershipService, 'removeMembership');
     });

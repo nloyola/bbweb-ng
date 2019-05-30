@@ -116,7 +116,7 @@ describe('Participant Reducer', () => {
     let testInitialState: any;
 
     beforeEach(() => {
-      participant = factory.participant();
+      participant = new Participant().deserialize(factory.participant());
       testInitialState = {
         ...initialState,
         ids: [ participant.id ],

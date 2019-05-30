@@ -23,15 +23,13 @@ export abstract class AccessItem extends ConcurrencySafeEntity implements IAcces
   parentData: IAccessItemInfo[];
   childData: IAccessItemInfo[];
 
-  deserialize(input: JSONObject) {
+  deserialize(input: IAccessItem): this {
     super.deserialize(input);
     if (input.parentData) {
-      this.parentData = (input.parentData as JSONArray)
-        .map((p: JSONObject) => new EntityInfo().deserialize(p));
+      this.parentData = input.parentData.map(pd => new EntityInfo().deserialize(pd));
     }
     if (input.childData) {
-      this.childData = (input.childData as JSONArray)
-        .map((c: JSONObject) => new EntityInfo().deserialize(c));
+      this.childData = input.childData.map(cd => new EntityInfo().deserialize(cd));
     }
     return this;
   }

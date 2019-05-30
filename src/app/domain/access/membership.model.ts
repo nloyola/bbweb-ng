@@ -1,19 +1,24 @@
 import { EntityInfo, JSONObject, JSONArray } from '@app/domain';
-import { IUserInfo } from '@app/domain/users';
-import { MembershipBase } from './membership-base.model';
+import { IUserInfo, UserInfo } from '@app/domain/users';
+import { MembershipBase, IMembershipBase } from './membership-base.model';
 
-export class Membership extends MembershipBase {
+export interface IMembership extends IMembershipBase {
 
   /**
    * This users associated with this membership.
    */
   userData: IUserInfo[];
 
-  deserialize(input: JSONObject) {
+}
+
+export class Membership extends MembershipBase {
+
+  userData: UserInfo[];
+
+  deserialize(input: IMembership): this {
     super.deserialize(input);
     if (input.userData) {
-      this.userData = (input.userData as JSONArray)
-        .map((ui: JSONObject) => new EntityInfo().deserialize(ui));
+      this.userData = input.userData.map(ui => new EntityInfo().deserialize(ui));
     }
     return this;
   }

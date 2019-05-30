@@ -2,7 +2,7 @@
   <h1 i18n>Collection</h1>
 </div>
 
-<ng-container *ngIf="!(isLoading$ | async); else showLoading">
+<ng-container *ngIf="(isLoading$ | async) === false; else showLoading">
   <ng-container *ngIf="haveCollectionStudies$ | async; else noCollectionStudies">
     <div class="row" *ngIf="validUser$ | async as validUser; else invalidUser">
       <div class="col-md-12">
@@ -29,9 +29,9 @@
                 <div class="col-md-3">
                   <button class="btn btn-primary mr-2"
                           type="submit"
-                          [disabled]="form.invalid || !!(participantLoading$ | async)"
+                          [disabled]="form.invalid || ((participantLoading$ | async) === true)"
                           i18n>
-                    <ng-container *ngIf="!(participantLoading$ | async)">
+                    <ng-container *ngIf="(participantLoading$ | async) !== true">
                       Submit
                     </ng-container>
                     <app-spinner name="uniqueIdGet" [show]="(participantLoading$ | async)">

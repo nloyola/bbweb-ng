@@ -71,26 +71,21 @@ export class CollectionEvent extends ConcurrencySafeEntity implements ICollectio
     this.setAnnotationTypes(eventType.annotationTypes);
   }
 
-  deserialize(input: JSONObject) {
-    if (input.collectionEventTypeId) {
-      this.eventTypeId = input.collectionEventTypeId as string;
-    }
+  deserialize(input: ICollectionEvent): this {
+    const { slug, participantId, participantSlug, visitNumber } = input;
+    Object.assign(this, { slug, participantId, participantSlug, visitNumber });
 
-    if (input.collectionEventTypeSlug) {
-      this.eventTypeSlug = input.collectionEventTypeSlug as string;
-    }
+    this.eventTypeId = (input as any).collectionEventTypeId;
+    this.eventTypeSlug = (input as any).collectionEventTypeSlug;
 
-    delete input['collectionEventTypeId'];
-    delete input['collectionEventTypeSlug'];
     super.deserialize(input);
 
     if (input.timeCompleted) {
-      this.timeCompleted = new Date(input.timeCompleted as string);
+      this.timeCompleted = new Date(input.timeCompleted);
     }
 
     if (input.annotations) {
-      this.annotations = (input.annotations as JSONArray)
-        .map((a: JSONObject) => annotationFactory(a));
+      this.annotations = input.annotations.map(a => annotationFactory(a));
     }
     return this;
   }

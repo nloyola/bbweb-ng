@@ -86,7 +86,7 @@
                       type="submit"
                       [disabled]="registerForm.invalid"
                       i18n>
-                <ng-container *ngIf="!(isRegistering$ | async)" i18n>
+                <ng-container *ngIf="(isRegistering$ | async) === false" i18n>
                   Submit
                 </ng-container>
                 <app-spinner name="login" [show]="(isRegistering$ | async)" i18n>

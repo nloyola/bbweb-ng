@@ -3,7 +3,7 @@
 
     <div class="card mt-2">
       <div class="card-header bg-primary text-light"
-           *ngIf="!(isLoading$ | async); else showLoading">
+           *ngIf="(isLoading$ | async) !== false; else showLoading">
         <mat-icon inline="false">account_box</mat-icon>
         {{ participant.uniqueId }}
         <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">

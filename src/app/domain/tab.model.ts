@@ -8,4 +8,4 @@ export interface Tab {
 
 }
 
-export type IdToTab = Record<string, Tab>
+export type IdToTab = Record<string, Tab>;

@@ -46,8 +46,13 @@ export class AnnotationType extends DomainEntity implements IAnnotationType {
     return sortedAnnotationTypes;
   }
 
-  deserialize(input: JSONObject) {
-    Object.assign(this, input);
+  deserialize(input: IAnnotationType): this {
+    const { name, valueType, maxValueCount, required, options } = input;
+    Object.assign(this, { name, valueType, maxValueCount, required, options });
+    if (input.description !== undefined) {
+      this.description = input.description;
+    }
+    super.deserialize(input);
     return this;
   }
 

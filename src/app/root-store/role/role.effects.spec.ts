@@ -38,7 +38,7 @@ describe('role-store effects', () => {
 
     it('should respond with success', () => {
       const searchParams = new SearchParams();
-      const role = factory.role();
+      const role = new Role().deserialize(factory.role());
       const pagedReply = factory.pagedReply([ role ]);
       const action = new RoleStoreActions.SearchRolesRequest({ searchParams });
       const completion = new RoleStoreActions.SearchRolesSuccess({ pagedReply });
@@ -72,7 +72,7 @@ describe('role-store effects', () => {
   describe('getRoleRequestEffect', () => {
 
     it('should respond with success', () => {
-      const role = factory.role();
+      const role = new Role().deserialize(factory.role());
       const action = new RoleStoreActions.GetRoleRequest({ slug: role.slug });
       const completion = new RoleStoreActions.GetRoleSuccess({ role });
       spyOn(roleService, 'get').and.returnValue(of(role));
@@ -109,7 +109,7 @@ describe('role-store effects', () => {
     let roleListener: any;
 
     beforeEach(() => {
-      role = factory.role();
+      role = new Role().deserialize(factory.role());
       action = new RoleStoreActions.UpdateRoleRequest({
         role,
         attributeName: 'userAdd',

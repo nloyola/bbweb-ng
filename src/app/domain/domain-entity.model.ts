@@ -1,5 +1,4 @@
 import { Deserializable } from './deserializable.model';
-import { JSONObject } from './json-object.model';
 
 export interface IDomainEntity {
 
@@ -24,8 +23,9 @@ export abstract class DomainEntity implements IDomainEntity, Deserializable {
     return (this.id === undefined) || (this.id === null);
   }
 
-  deserialize(input: JSONObject) {
-    Object.assign(this, input);
+  deserialize(input: IDomainEntity): this {
+    const { id } = input;
+    Object.assign(this, { id });
     return this;
   }
 

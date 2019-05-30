@@ -68,7 +68,7 @@ describe('CentreService', () => {
     let centre: Centre;
 
     beforeEach(() => {
-      location = factory.location();
+      location = new Location().deserialize(factory.location());
       rawCentre = factory.centre({ locations: [location] });
       centre = new Centre().deserialize(rawCentre);
     });
@@ -221,7 +221,7 @@ describe('CentreService', () => {
           expect(s).toEqual(centre);
         });
 
-        const expectedJson = { expectedVersion: centre.version };
+        let expectedJson = { expectedVersion: centre.version };
 
         switch (testInfo.attribute) {
           case 'studyAdd':
@@ -229,7 +229,7 @@ describe('CentreService', () => {
             break;
 
           case 'locationAdd':
-            expectedJson['location'] = location;
+            expectedJson = { ...expectedJson, ...location };
             break;
 
           case 'state':

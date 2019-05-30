@@ -41,7 +41,7 @@ export class EventTypeService {
           const jObj = reply.data as JSONObject;
           if (reply && reply.data && jObj.items) {
             const entities: CollectionEventType[] = (jObj.items as JSONArray)
-              .map((obj: JSONObject) => new CollectionEventType().deserialize(obj));
+              .map(obj => new CollectionEventType().deserialize(obj as any));
             return {
               searchParams,
               entities,
@@ -82,7 +82,7 @@ export class EventTypeService {
       .pipe(map((reply: ApiReply) => {
         if (reply && reply.data) {
           return (reply.data as JSONArray)
-            .map((obj: JSONObject) => new EventTypeInfo().deserialize(obj));
+            .map(obj => new EventTypeInfo().deserialize(obj as any));
         }
         throw new Error('expected a collection event type names array');
       }));
@@ -99,7 +99,7 @@ export class EventTypeService {
       .pipe(map((reply: ApiReply) => {
         if (reply && reply.data) {
           return (reply.data as JSONArray)
-            .map((info: JSONObject) => new CollectedSpecimenDefinitionName().deserialize(info));
+            .map(info => new CollectedSpecimenDefinitionName().deserialize(info as any));
         }
         throw new Error('expected a collected specimen definition names array');
       }));
@@ -169,7 +169,7 @@ export class EventTypeService {
 
   private replyToEventType(reply: ApiReply): CollectionEventType {
     if (reply && reply.data) {
-      return new CollectionEventType().deserialize(reply.data as JSONObject);
+      return new CollectionEventType().deserialize(reply.data as any);
     }
     throw new Error('expected a collection event type object');
   }

@@ -52,9 +52,9 @@
         <div class="col-md-9 offset-3">
           <button class="btn btn-primary mr-2"
                   type="submit"
-                  [disabled]="form.invalid || !!(isSaving$ | async)"
+                  [disabled]="form.invalid || (isSaving$ | async) !== false"
                   i18n>
-            <ng-container *ngIf="!(isSaving$ | async)">
+            <ng-container *ngIf="(isSaving$ | async) === false">
               Submit
             </ng-container>
             <app-spinner name="annotationTypeSaving" [show]="isSaving$ | async">

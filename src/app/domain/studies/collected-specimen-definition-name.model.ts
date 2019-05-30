@@ -13,12 +13,12 @@ export class CollectedSpecimenDefinitionName extends EntityInfo<CollectionEventT
 
   specimenDefinitionNames: SpecimenDefinitionName[];
 
-  deserialize(obj: JSONObject) {
+  deserialize(obj: ICollectedSpecimenDefinitionName): this {
     super.deserialize(obj);
 
     if (obj.specimenDefinitionNames !== undefined) {
-      this.specimenDefinitionNames = (obj.specimenDefinitionNames as JSONArray)
-        .map((sdn: JSONObject) => new SpecimenDefinitionName().deserialize(sdn));
+      this.specimenDefinitionNames = obj.specimenDefinitionNames
+        .map(sdn => new SpecimenDefinitionName().deserialize(sdn));
     }
 
     return this;

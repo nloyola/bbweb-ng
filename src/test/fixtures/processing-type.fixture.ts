@@ -20,10 +20,8 @@ export class ProcessingTypeFixture {
 
   createProcessingTypeWithAnnotations(): ProcessingType {
     const annotationType = this.factory.annotationType();
-    const processingType = new ProcessingType().deserialize({
-      ...this.factory.processingType(),
-      annotationTypes: [ annotationType ]
-    });
+    const processingType = new ProcessingType().deserialize(
+      this.factory.processingType({ annotationTypes: [ annotationType ] }));
 
     return processingType;
   }
@@ -60,7 +58,7 @@ export class ProcessingTypeFixture {
         id: sd.id,
         slug: sd.slug,
         name: sd.name,
-      })) as any
+      } as any))
     }));
   }
 

@@ -74,7 +74,7 @@ export class CentreService {
           const jObj = reply.data as JSONObject;
           if (reply && reply.data && jObj.items) {
             const entities: Centre[] = (jObj.items as JSONArray)
-              .map((obj: JSONObject) => new Centre().deserialize(obj));
+              .map(obj => new Centre().deserialize(obj as any));
 
             return {
               searchParams,
@@ -129,7 +129,7 @@ export class CentreService {
 
       case 'locationAdd': {
         const location = value as Location;
-        json['location'] = location;
+        json = { ...json, ...location };
         url = `${this.BASE_URL}/locations/${centre.id}`;
         if (!location.isNew()) {
           url += '/' + location.id;
@@ -163,7 +163,7 @@ export class CentreService {
 
   private replyToCentre(reply: ApiReply): Centre {
     if (reply && reply.data) {
-      return new Centre().deserialize(reply.data as JSONObject);
+      return new Centre().deserialize(reply.data as any);
     }
     throw new Error('expected a centre object');
   }

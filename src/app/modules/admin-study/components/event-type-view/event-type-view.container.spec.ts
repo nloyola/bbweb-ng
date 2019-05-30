@@ -10,13 +10,13 @@ import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { YesNoPipe } from '@app/shared/pipes/yes-no-pipe';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
+import { EntityUpdateComponentBehaviour } from '@test/behaviours/entity-update-component.behaviour';
 import { Factory } from '@test/factory';
 import { MockActivatedRoute } from '@test/mocks';
 import * as faker from 'faker';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { EventTypeRemoveComponent } from '../event-type-remove/event-type-remove.component';
 import { EventTypeViewContainerComponent } from './event-type-view.container';
-import { EntityUpdateComponentBehaviour } from '@test/behaviours/entity-update-component.behaviour';
 
 describe('EventTypeViewContainer', () => {
   let component: EventTypeViewContainerComponent;
@@ -516,9 +516,10 @@ describe('EventTypeViewContainer', () => {
     const annotationType = factory.annotationType();
     const specimenDefinition = factory.collectedSpecimenDefinition();
     const eventType = new CollectionEventType().deserialize({
-      ...factory.collectionEventType(),
-      annotationTypes: [ annotationType ],
-      specimenDefinitions: [ specimenDefinition ]
+      ...factory.collectionEventType({
+        annotationTypes: [ annotationType ],
+        specimenDefinitions: [ specimenDefinition ]
+      })
     });
     return eventType;
   }

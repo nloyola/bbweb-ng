@@ -1,4 +1,4 @@
-<app-processing-type-view-ui *ngIf="!(isLoading$ | async); else showLoading"
+<app-processing-type-view-ui *ngIf="(isLoading$ | async) === false; else showLoading"
                              [processingType]="processingType"
                              [allowChanges]="(allowChanges$ | async)"
                              [inputEntity]="inputEntity"

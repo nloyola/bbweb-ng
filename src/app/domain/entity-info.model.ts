@@ -7,8 +7,15 @@ export type IEntityInfo<T extends IDomainEntity & HasSlug & HasName> = Pick<T, '
 export class EntityInfo<T extends IDomainEntity & HasSlug & HasName>
   extends DomainEntity implements IEntityInfo<T> {
 
-  id: string;
-  slug: string;
-  name: string;
+    id: string;
+    slug: string;
+    name: string;
+
+    deserialize(input: IEntityInfo<T>): this {
+      const { slug, name } = input;
+      Object.assign(this, { slug, name });
+      super.deserialize(input);
+      return this;
+    }
 
 }

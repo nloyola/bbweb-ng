@@ -1,5 +1,4 @@
-import { JSONObject } from '@app/domain';
-import { Annotation } from './annotation.model';
+import { Annotation, IAnnotation } from './annotation.model';
 
 export class TextAnnotation extends Annotation {
 
@@ -14,9 +13,9 @@ export class TextAnnotation extends Annotation {
     };
   }
 
-  deserialize(input: JSONObject) {
+  deserialize(input: IAnnotation): this {
     super.deserialize(input);
-    this.value = input.stringValue as string;
+    this.value = (input as any).stringValue;
     return this;
   }
 }

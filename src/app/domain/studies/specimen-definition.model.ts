@@ -1,6 +1,6 @@
-import { AnatomicalSource, DomainEntity, HasDescription, HasName, HasSlug, PreservationTemperature, PreservationType, SpecimenType } from '@app/domain';
+import { AnatomicalSource, DomainEntity, HasDescription, HasName, HasSlug, IDomainEntity, PreservationTemperature, PreservationType, SpecimenType } from '@app/domain';
 
-export interface ISpecimenDefinition extends DomainEntity, HasSlug, HasName, HasDescription {
+export interface ISpecimenDefinition extends IDomainEntity, HasSlug, HasName, HasDescription {
 
   anatomicalSourceType: AnatomicalSource;
 
@@ -41,6 +41,31 @@ export abstract class SpecimenDefinition extends DomainEntity implements ISpecim
       return 0;
     });
     return sortedSpecimenDefinitions;
+  }
+
+  deserialize(input: ISpecimenDefinition): this {
+    const {
+      slug,
+      name,
+      description,
+      anatomicalSourceType,
+      preservationType,
+      preservationTemperature,
+      specimenType,
+      units,
+    } = input;
+    Object.assign(this, {
+      slug,
+      name,
+      description,
+      anatomicalSourceType,
+      preservationType,
+      preservationTemperature,
+      specimenType,
+      units,
+    });
+    super.deserialize(input);
+    return this;
   }
 
 }

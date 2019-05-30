@@ -1,5 +1,4 @@
-import { SpecimenDefinition, ISpecimenDefinition } from './specimen-definition.model';
-import { JSONObject } from '@app/domain';
+import { ISpecimenDefinition, SpecimenDefinition } from './specimen-definition.model';
 
 export interface ICollectedSpecimenDefinition extends ISpecimenDefinition {
 
@@ -29,8 +28,10 @@ export class CollectedSpecimenDefinition extends SpecimenDefinition implements I
   amount: number;
   maxCount: number;
 
-  deserialize(input: JSONObject) {
-    Object.assign(this, input);
+  deserialize(input: ICollectedSpecimenDefinition): this {
+    const { amount, maxCount } = input;
+    Object.assign(this, { amount, maxCount });
+    super.deserialize(input);
     return this;
   }
 }

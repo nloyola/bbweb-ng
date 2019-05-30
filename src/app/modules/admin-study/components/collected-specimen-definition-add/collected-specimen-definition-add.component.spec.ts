@@ -95,10 +95,9 @@ describe('CollectedSpecimenDefinitionAddComponent', () => {
 
   function eventTypeForTest(): CollectionEventType {
     return new CollectionEventType().deserialize({
-      ...factory.collectionEventType(),
-      specimenDefinitions: [
-        factory.collectedSpecimenDefinition()
-      ]
+      ...factory.collectionEventType({
+        specimenDefinitions: [ factory.collectedSpecimenDefinition() ]
+      })
     });
   }
 

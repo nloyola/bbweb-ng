@@ -1,10 +1,16 @@
-import { ProcessedSpecimenDefinition } from './processed-specimen-definition.model';
-import { ISpecimenProcessing } from './specimen-processing.model';
 import { JSONObject } from '@app/domain';
+import { IProcessedSpecimenDefinition, ProcessedSpecimenDefinition } from './processed-specimen-definition.model';
+import { ISpecimenProcessing } from './specimen-processing.model';
 
 export interface IOutputSpecimenProcessing extends ISpecimenProcessing {
 
-  specimenDefinition: ProcessedSpecimenDefinition;
+  specimenDefinition: IProcessedSpecimenDefinition;
+
+  expectedChange: number;
+
+  count: number;
+
+  containerTypeId: string | null;
 
 }
 
@@ -19,8 +25,9 @@ export class OutputSpecimenProcessing implements IOutputSpecimenProcessing {
     this.specimenDefinition = new ProcessedSpecimenDefinition();
   }
 
-  deserialize(input: JSONObject) {
-    Object.assign(this, input);
+  deserialize(input: JSONObject): this {
+    const { specimenDefinition, expectedChange, count, containerTypeId } = input;
+    Object.assign(this, { specimenDefinition, expectedChange, count, containerTypeId });
     return this;
   }
 

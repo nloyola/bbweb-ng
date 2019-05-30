@@ -83,7 +83,7 @@ export class UserService {
           const jObj = reply.data as JSONObject;
           if (reply && reply.data && jObj.items) {
             const entities: User[] = (jObj.items as JSONArray)
-              .map((obj: JSONObject) => new User().deserialize(obj));
+              .map((obj: JSONObject) => new User().deserialize(obj as any));
             return {
               searchParams,
               entities,
@@ -129,7 +129,7 @@ export class UserService {
 
   private replyToUser(reply: ApiReply): User {
     if (reply && reply.data) {
-      return new User().deserialize(reply.data as JSONObject);
+      return new User().deserialize(reply.data as any);
     }
     throw new Error('expected a user object');
   }

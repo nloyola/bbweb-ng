@@ -26,13 +26,15 @@ export abstract class ConcurrencySafeEntity extends DomainEntity implements ICon
   timeAdded: Date;
   timeModified: Date | null;
 
-  deserialize(input: JSONObject) {
+  deserialize(input: IConcurrencySafeEntity): this {
+    const { version, timeAdded, timeModified } = input;
+    Object.assign(this, { version });
     super.deserialize(input);
     if (input.timeAdded) {
-      this.timeAdded = new Date(input.timeAdded as string);
+      this.timeAdded = new Date(timeAdded);
     }
     if (input.timeModified) {
-      this.timeModified = new Date(input.timeModified as string);
+      this.timeModified = new Date(timeModified);
     }
     return this;
   }

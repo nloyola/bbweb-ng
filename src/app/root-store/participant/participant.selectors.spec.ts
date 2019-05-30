@@ -21,7 +21,7 @@ describe('participant-store selectors', () => {
   });
 
   it('selectAllParticipants', () => {
-    const participant = factory.participant();
+    const participant = new Participant().deserialize(factory.participant());
     const adapter: EntityAdapter<Participant> = createEntityAdapter<Participant>({
       selectId: (s: Participant) => s.id
     });

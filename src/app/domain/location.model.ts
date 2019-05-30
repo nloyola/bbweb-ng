@@ -34,8 +34,10 @@ export class Location extends DomainEntity implements ILocation {
   poBoxNumber: string;
   countryIsoCode: string;
 
-  deserialize(input: JSONObject) {
-    Object.assign(this, input);
+  deserialize(input: ILocation): this {
+    const { name, street, city, province, postalCode, poBoxNumber, countryIsoCode } = input;
+    Object.assign(this, { name, street, city, province, postalCode, poBoxNumber, countryIsoCode });
+    super.deserialize(input);
     return this;
   }
 }

@@ -2,12 +2,11 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { CollectionEventService } from '@app/core/services';
 import { SearchParams } from '@app/domain';
-import { Specimen, Participant } from '@app/domain/participants';
-import { CollectionEvent } from '@app/domain/participants';
+import { CollectionEvent, Participant } from '@app/domain/participants';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
 import { Factory } from '@test/factory';
-import { cold, getTestScheduler, hot, initTestScheduler } from 'jasmine-marbles';
+import { cold, hot } from 'jasmine-marbles';
 import { Observable, of, throwError } from 'rxjs';
 import * as EventActions from './event.actions';
 import { EventStoreEffects } from './event.effects';
@@ -40,7 +39,7 @@ describe('collectionEvent-store effects', () => {
     it('should respond with success', () => {
       const participant = new Participant().deserialize(factory.participant());
       const searchParams = new SearchParams();
-      const collectionEvent = factory.collectionEvent();
+      const collectionEvent = new CollectionEvent().deserialize(factory.collectionEvent());
       const pagedReply = factory.pagedReply([ collectionEvent ]);
       const action = EventActions.searchEventsRequest({ participant, searchParams });
       const completion = EventActions.searchEventsSuccess({ pagedReply });
@@ -75,7 +74,7 @@ describe('collectionEvent-store effects', () => {
   describe('addEventRequestEffect', () => {
 
     it('should respond with success', () => {
-      const event = factory.collectionEvent();
+      const event = new CollectionEvent().deserialize(factory.collectionEvent());
       const action = EventActions.addEventRequest({ event });
       const completion = EventActions.addEventSuccess({ event });
       spyOn(collectionEventService, 'add').and.returnValue(of(event));
@@ -87,7 +86,7 @@ describe('collectionEvent-store effects', () => {
     });
 
     it('should respond with failure', () => {
-      const event = factory.collectionEvent();
+      const event = new CollectionEvent().deserialize(factory.collectionEvent());
       const error = {
         status: 404,
         error: {
@@ -108,7 +107,7 @@ describe('collectionEvent-store effects', () => {
   describe('getEventRequestEffect', () => {
 
     it('should respond with success', () => {
-      const event = factory.collectionEvent();
+      const event = new CollectionEvent().deserialize(factory.collectionEvent());
       const action = EventActions.getEventRequest({ id: event.id });
       const completion = EventActions.getEventSuccess({ event });
       spyOn(collectionEventService, 'get').and.returnValue(of(event));
@@ -145,7 +144,7 @@ describe('collectionEvent-store effects', () => {
     let collectionEventListener: any;
 
     beforeEach(() => {
-      event = factory.collectionEvent();
+      event = new CollectionEvent().deserialize(factory.collectionEvent());
       action = EventActions.updateEventRequest({
         event,
         attributeName: 'timeCompleted',
@@ -183,7 +182,7 @@ describe('collectionEvent-store effects', () => {
     let action: Action;
 
     beforeEach(() => {
-      event = factory.collectionEvent();
+      event = new CollectionEvent().deserialize(factory.collectionEvent());
       action = EventActions.removeEventRequest({ event });
     });
 

@@ -182,7 +182,7 @@ describe('Shipment Reducer', () => {
     let testInitialState: any;
 
     beforeEach(() => {
-      shipment = factory.shipment();
+      shipment = new Shipment().deserialize(factory.shipment());
       testInitialState = {
         ...initialState,
         ids: [ shipment.id ],

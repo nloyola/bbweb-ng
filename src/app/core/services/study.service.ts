@@ -62,7 +62,7 @@ export class StudyService {
           const jObj = reply.data as JSONObject;
           if (reply && reply.data && jObj.items) {
             const entities: Study[] = (jObj.items as JSONArray)
-              .map((obj: JSONObject) => new Study().deserialize(obj));
+              .map((obj: JSONObject) => new Study().deserialize(obj as any));
             return {
               searchParams,
               entities,
@@ -86,7 +86,7 @@ export class StudyService {
         map((reply: ApiReply) => {
           if (reply && reply.data) {
             return (reply.data as JSONArray)
-              .map((obj: JSONObject) => new StudyStateInfo().deserialize(obj));
+              .map((obj: JSONObject) => new StudyStateInfo().deserialize(obj as any));
           }
           throw new Error('expected a paged reply');
         }));
@@ -167,7 +167,7 @@ export class StudyService {
 
   private replyToStudy(reply: ApiReply): Study {
     if (reply && reply.data) {
-      return new Study().deserialize(reply.data as JSONObject);
+      return new Study().deserialize(reply.data as any);
     }
     throw new Error('expected a study object');
   }

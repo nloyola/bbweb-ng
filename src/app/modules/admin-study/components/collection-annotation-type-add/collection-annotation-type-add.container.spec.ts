@@ -189,12 +189,12 @@ describe('CollectionAnnotationTypeAddContainerComponent', () => {
       jest.spyOn(toastr, 'error').mockReturnValue(null);
       jest.spyOn(router, 'navigate');
 
+      store.dispatch(EventTypeStoreActions.getEventTypeSuccess({ eventType }));
+      fixture.detectChanges();
+
       testData.forEach(testInfo => {
         mockActivatedRouteSnapshot(testInfo.path, eventType);
         component.ngOnInit();
-
-        store.dispatch(EventTypeStoreActions.getEventTypeSuccess({ eventType }));
-        fixture.detectChanges();
 
         errors.forEach(error => {
           component.onSubmit(eventType.annotationTypes[0]);

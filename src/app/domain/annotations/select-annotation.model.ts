@@ -1,6 +1,4 @@
-import { JSONObject } from '@app/domain';
-import { Annotation } from './annotation.model';
-import { JSONArray } from '../json-object.model';
+import { Annotation, IAnnotation } from './annotation.model';
 
 export class SelectAnnotation extends Annotation {
 
@@ -14,9 +12,9 @@ export class SelectAnnotation extends Annotation {
     };
   }
 
-  deserialize(input: JSONObject) {
+  deserialize(input: IAnnotation): this {
     super.deserialize(input);
-    this.value = (input.selectedValues as JSONArray).map(v => v as string);
+    this.value = (input as any).selectedValues;
     return this;
   }
 }

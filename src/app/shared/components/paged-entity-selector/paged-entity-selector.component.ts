@@ -30,7 +30,6 @@ export class PagedEntitySelectorComponent<T extends DomainEntity> implements OnI
 
   filterForm: FormGroup;
 
-  private filters: { [ name: string]: SearchFilter };
   private unsubscribe$: Subject<void> = new Subject<void>();
 
   constructor(private formBuilder: FormBuilder) {

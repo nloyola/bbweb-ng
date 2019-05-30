@@ -35,7 +35,7 @@ export class SpecimenService {
           const jObj = reply.data as JSONObject;
           if (reply && reply.data && jObj.items) {
             const entities: Specimen[] = (jObj.items as JSONArray)
-              .map((obj: JSONObject) => new Specimen().deserialize(obj));
+              .map((obj: JSONObject) => new Specimen().deserialize(obj as any));
 
             return {
               searchParams,
@@ -77,14 +77,14 @@ export class SpecimenService {
 
   private replyToSpecimen(reply: ApiReply): Specimen {
     if (reply && reply.data) {
-      return new Specimen().deserialize(reply.data as JSONObject);
+      return new Specimen().deserialize(reply.data as any);
     }
     throw new Error('expected a specimen object');
   }
 
   private replyToCollectionEvent(reply: ApiReply): CollectionEvent {
     if (reply && reply.data) {
-      return new CollectionEvent().deserialize(reply.data as JSONObject);
+      return new CollectionEvent().deserialize(reply.data as any);
     }
     throw new Error('expected a collectionEvent object');
   }

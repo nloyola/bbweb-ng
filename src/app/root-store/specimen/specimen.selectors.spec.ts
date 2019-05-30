@@ -57,7 +57,7 @@ describe('specimen-store selectors', () => {
   });
 
   it('selectSpecimenSearchReplies', () => {
-    const specimen = factory.specimen();
+    const specimen = new Specimen().deserialize(factory.specimen());
     const pagedReply = factory.pagedReply<Specimen>([ specimen ]);
     const searchReplies: { [ key: string]: PagedReplyEntityIds } = {};
     searchReplies[pagedReply.searchParams.queryString()] = {
@@ -78,7 +78,7 @@ describe('specimen-store selectors', () => {
   });
 
   it('selectAllSpecimens', () => {
-    const specimen = factory.specimen();
+    const specimen = new Specimen().deserialize(factory.specimen());
     const adapter: EntityAdapter<Specimen> = createEntityAdapter<Specimen>({
       selectId: (s: Specimen) => s.id
     });
@@ -92,7 +92,7 @@ describe('specimen-store selectors', () => {
   describe('selectSpecimenSearchRepliesAndEntities', () => {
 
     it('when search has completed', () => {
-      const specimen = factory.specimen();
+      const specimen = new Specimen().deserialize(factory.specimen());
       const adapter: EntityAdapter<Specimen> = createEntityAdapter<Specimen>({
         selectId: (s: Specimen) => s.id
       });
@@ -138,7 +138,7 @@ describe('specimen-store selectors', () => {
     });
 
     it('when reply is missing', () => {
-      const specimen = factory.specimen();
+      const specimen = new Specimen().deserialize(factory.specimen());
       const adapter: EntityAdapter<Specimen> = createEntityAdapter<Specimen>({
         selectId: (s: Specimen) => s.id
       });
@@ -158,7 +158,7 @@ describe('specimen-store selectors', () => {
   });
 
   it('selectSpecimenLastRemoved', () => {
-    const specimen = factory.specimen();
+    const specimen = new Specimen().deserialize(factory.specimen());
     const adapter: EntityAdapter<Specimen> = createEntityAdapter<Specimen>({
       selectId: (s: Specimen) => s.id
     });

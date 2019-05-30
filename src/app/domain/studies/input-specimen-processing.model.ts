@@ -12,6 +12,8 @@ export interface IInputSpecimenProcessing extends ISpecimenProcessing {
   expectedChange: number;
 
   count: number;
+
+  containerTypeId: string | null;
 }
 
 export class InputSpecimenProcessing implements IInputSpecimenProcessing {
@@ -27,8 +29,16 @@ export class InputSpecimenProcessing implements IInputSpecimenProcessing {
     this.definitionType = 'collected';
   }
 
-  deserialize(input: JSONObject) {
-    Object.assign(this, input);
+  deserialize(input: JSONObject): this {
+    const { definitionType, entityId, specimenDefinitionId, expectedChange, count, containerTypeId } = input;
+    Object.assign(this, {
+      definitionType,
+      entityId,
+      specimenDefinitionId,
+      expectedChange,
+      count,
+      containerTypeId
+    });
     return this;
   }
 

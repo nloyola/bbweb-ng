@@ -32,21 +32,22 @@ export class Centre extends ConcurrencySafeEntity implements ICentre {
   studyNames: StudyStateInfo[];
   locations: Location[];
 
-  deserialize(input: JSONObject) {
+  deserialize(input: ICentre): this {
+    const { slug, name, state } = input;
+    Object.assign(this, { slug, name, state });
     super.deserialize(input);
 
-    if (input.description === undefined) {
-      this.description = undefined;
+    if (input.description !== undefined) {
+      this.description = input.description;
     }
 
     if (input.studyNames) {
-      this.studyNames = (input.studyNames as JSONArray)
-        .map((sn: JSONObject) => new EntityInfoAndState<Study, StudyState>().deserialize(sn));
+      this.studyNames = input.studyNames
+        .map(sn => new EntityInfoAndState<Study, StudyState>().deserialize(sn));
     }
 
     if (input.locations) {
-      this.locations = (input.locations as JSONArray)
-        .map((loc: JSONObject) => new Location().deserialize(loc));
+      this.locations = input.locations.map(loc => new Location().deserialize(loc));
     }
     return this;
   }

@@ -57,7 +57,7 @@ describe('collection event store selectors', () => {
   });
 
   it('selectCollectionEventSearchReplies', () => {
-    const collectionEvent = factory.collectionEvent();
+    const collectionEvent = new CollectionEvent().deserialize(factory.collectionEvent());
     const pagedReply = factory.pagedReply<CollectionEvent>([ collectionEvent ]);
     const searchReplies: { [ key: string]: PagedReplyEntityIds } = {};
     searchReplies[pagedReply.searchParams.queryString()] = {
@@ -78,7 +78,7 @@ describe('collection event store selectors', () => {
   });
 
   it('selectAllCollectionEvents', () => {
-    const collectionEvent = factory.collectionEvent();
+    const collectionEvent = new CollectionEvent().deserialize(factory.collectionEvent());
     const adapter: EntityAdapter<CollectionEvent> = createEntityAdapter<CollectionEvent>({
       selectId: (s: CollectionEvent) => s.id
     });
@@ -92,7 +92,7 @@ describe('collection event store selectors', () => {
   describe('selectCollectionEventSearchRepliesAndEntities', () => {
 
     it('when search has completed', () => {
-      const collectionEvent = factory.collectionEvent();
+      const collectionEvent = new CollectionEvent().deserialize(factory.collectionEvent());
       const adapter: EntityAdapter<CollectionEvent> = createEntityAdapter<CollectionEvent>({
         selectId: (s: CollectionEvent) => s.id
       });
@@ -138,7 +138,7 @@ describe('collection event store selectors', () => {
     });
 
     it('when reply is missing', () => {
-      const collectionEvent = factory.collectionEvent();
+      const collectionEvent = new CollectionEvent().deserialize(factory.collectionEvent());
       const adapter: EntityAdapter<CollectionEvent> = createEntityAdapter<CollectionEvent>({
         selectId: (s: CollectionEvent) => s.id
       });
@@ -158,7 +158,7 @@ describe('collection event store selectors', () => {
   });
 
   it('selectCollectionEventLastRemoved', () => {
-    const collectionEvent = factory.collectionEvent();
+    const collectionEvent = new CollectionEvent().deserialize(factory.collectionEvent());
     const adapter: EntityAdapter<CollectionEvent> = createEntityAdapter<CollectionEvent>({
       selectId: (s: CollectionEvent) => s.id
     });

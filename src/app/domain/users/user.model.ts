@@ -1,4 +1,4 @@
-import { ConcurrencySafeEntity, HasName, HasSlug, IConcurrencySafeEntity, IEntityInfo, JSONArray, JSONObject } from '@app/domain';
+import { ConcurrencySafeEntity, HasName, HasSlug, IConcurrencySafeEntity, IEntityInfo, JSONArray, JSONObject, EntityInfo } from '@app/domain';
 import { RoleIds, UserMembership, UserRole } from '@app/domain/access';
 import { UserState } from '@app/domain/users/user-state.enum';
 
@@ -27,8 +27,6 @@ export interface IUser extends IConcurrencySafeEntity, HasSlug, HasName {
   membership: UserMembership | null;
 
 }
-
-export type IUserInfo = IEntityInfo<IUser>;
 
 /**
  * Information for a user of the system.
@@ -107,18 +105,23 @@ export class User extends ConcurrencySafeEntity implements IUser {
     return this.membership !== undefined;
   }
 
-  deserialize(input: JSONObject) {
+  deserialize(input: IUser): this {
+    const { slug, name, email, avatarUrl, state } = input;
+    Object.assign(this, { slug, name, email, avatarUrl, state });
     super.deserialize(input);
     if (input.roles) {
-      this.roles = (input.roles as JSONArray)
-        .map((role: JSONObject) => new UserRole().deserialize(role));
+      this.roles = input.roles.map(role => new UserRole().deserialize(role));
     }
 
     if (input.membership) {
-      this.membership = new UserMembership().deserialize(input.membership as JSONObject);
+      this.membership = new UserMembership().deserialize(input.membership);
     }
     return this;
   }
 
-
 }
+
+export type IUserInfo = IEntityInfo<IUser>;
+
+/* tslint:disable-next-line:max-classes-per-file */
+export class UserInfo extends EntityInfo<User> { }

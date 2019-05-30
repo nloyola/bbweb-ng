@@ -35,7 +35,7 @@ describe('Role Reducer', () => {
     });
 
     it('SearchRolesSuccess', () => {
-      const role = factory.role();
+      const role = new Role().deserialize(factory.role());
       const payload = {
         pagedReply: factory.pagedReply<Role>([ role ])
       };
@@ -89,7 +89,7 @@ describe('Role Reducer', () => {
   describe('when updating roles', () => {
 
     it('UpdateRoleRequest', () => {
-      const role = factory.role();
+      const role = new Role().deserialize(factory.role());
       const action = new RoleStoreActions.UpdateRoleRequest({
         role,
         attributeName: 'userAdd',
@@ -150,7 +150,7 @@ describe('Role Reducer', () => {
     });
 
     it('GetRoleSuccess', () => {
-      const role = factory.role();
+      const role = new Role().deserialize(factory.role());
       const payload = { role };
       const action = new RoleStoreActions.GetRoleSuccess(payload);
       const state = RoleStoreReducer.reducer(undefined, action);

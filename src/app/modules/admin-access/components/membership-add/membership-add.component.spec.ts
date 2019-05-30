@@ -90,7 +90,7 @@ describe('MembershipAddComponent', () => {
         membership: new Membership().deserialize({
           name: membership.name,
           description: membership.description
-        })
+        } as any)
       });
 
       expect(storeListener.mock.calls.length).toBe(1);

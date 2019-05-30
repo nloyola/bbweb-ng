@@ -43,7 +43,7 @@ export class ProcessingTypeService {
           const jObj = reply.data as JSONObject;
           if (reply && reply.data && jObj.items) {
             const entities: ProcessingType[] = (jObj.items as JSONArray)
-              .map((obj: JSONObject) => new ProcessingType().deserialize(obj));
+              .map((obj: JSONObject) => new ProcessingType().deserialize(obj as any));
             return {
               searchParams,
               entities,
@@ -107,7 +107,7 @@ export class ProcessingTypeService {
       .pipe(map((reply: ApiReply) => {
         if (reply && reply.data) {
           return (reply.data as JSONArray)
-            .map((info: JSONObject) => new ProcessedSpecimenDefinitionName().deserialize(info));
+            .map((info: JSONObject) => new ProcessedSpecimenDefinitionName().deserialize(info as any));
         }
         throw new Error('expected a processed specimen definition names array');
       }));
@@ -187,7 +187,7 @@ export class ProcessingTypeService {
 
   private replyToProcessingType(reply: ApiReply): ProcessingType {
     if (reply && reply.data) {
-      return new ProcessingType().deserialize(reply.data as JSONObject);
+      return new ProcessingType().deserialize(reply.data as any);
     }
     throw new Error('expected a processing type object');
   }

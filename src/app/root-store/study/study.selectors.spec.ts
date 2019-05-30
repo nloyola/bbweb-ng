@@ -22,7 +22,7 @@ describe('study-store selectors', () => {
   });
 
   it('selectStudyLastAdded', () => {
-    const study = factory.study();
+    const study = new Study().deserialize(factory.study());
     const state = {
       study: {
         ...initialState,
@@ -46,7 +46,7 @@ describe('study-store selectors', () => {
   });
 
   it('selectAllStudies', () => {
-    const study = factory.study();
+    const study = new Study().deserialize(factory.study());
     const adapter: EntityAdapter<Study> = createEntityAdapter<Study>({
       selectId: (s: Study) => s.id
     });
@@ -58,7 +58,7 @@ describe('study-store selectors', () => {
   });
 
   it('selectStudyLastAdded', () => {
-    const study = factory.study();
+    const study = new Study().deserialize(factory.study());
     const adapter: EntityAdapter<Study> = createEntityAdapter<Study>({
       selectId: (s: Study) => s.id
     });
@@ -93,7 +93,7 @@ describe('study-store selectors', () => {
     describe('for replies', () => {
 
       it('select search replies', () => {
-        const study = factory.study();
+        const study = new Study().deserialize(factory.study());
         const pagedReply = factory.pagedReply<Study>([ study ]);
         const searchReplies: { [ key: string]: PagedReplyEntityIds } = {};
         searchReplies[pagedReply.searchParams.queryString()] = {
@@ -119,7 +119,7 @@ describe('study-store selectors', () => {
       describe('select search replies and entities', () => {
 
         it('when search has completed', () => {
-          const study = factory.study();
+          const study = new Study().deserialize(factory.study());
           const adapter: EntityAdapter<Study> = createEntityAdapter<Study>({
             selectId: (s: Study) => s.id
           });
@@ -161,7 +161,7 @@ describe('study-store selectors', () => {
         });
 
         it('when reply is missing', () => {
-          const study = factory.study();
+          const study = new Study().deserialize(factory.study());
           const adapter: EntityAdapter<Study> = createEntityAdapter<Study>({
             selectId: (s: Study) => s.id
           });

@@ -215,7 +215,7 @@ export class ProcessingTypeAddComponent implements OnInit, OnDestroy {
         expectedChange: this.outputSubForm.value.expectedChange,
         count:          this.outputSubForm.value.count
       }
-    });
+    } as any);
   }
 
 }

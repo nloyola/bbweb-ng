@@ -145,13 +145,7 @@ describe('ProcessingInputSpecimenModalComponent', () => {
     });
 
     it('and a processed specimen is selected', () => {
-      const { study,
-              eventType,
-              input,
-              processingType,
-              processedDefinitionNames,
-              collectedDefinitionNames
-            } = createFixtureEntities();
+      const { input } = createFixtureEntities();
       fixture.detectChanges();
 
       const processedRadioElem = fixture.debugElement.query(By.css('input[value="processed"'));

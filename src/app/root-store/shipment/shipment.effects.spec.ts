@@ -39,7 +39,7 @@ describe('shipment-store effects', () => {
 
     it('should respond with success', () => {
       const searchParams = new SearchParams();
-      const shipment = factory.shipment();
+      const shipment = new Shipment().deserialize(factory.shipment());
       const pagedReply = factory.pagedReply([ shipment ]);
       const action = ShipmentActions.searchShipmentsRequest({ searchParams });
       const completion = ShipmentActions.searchShipmentsSuccess({ pagedReply });
@@ -73,7 +73,7 @@ describe('shipment-store effects', () => {
   describe('addShipmentRequestEffect', () => {
 
     it('should respond with success', () => {
-      const shipment = factory.shipment();
+      const shipment = new Shipment().deserialize(factory.shipment());
       const action = ShipmentActions.addShipmentRequest({ shipment });
       const completion = ShipmentActions.addShipmentSuccess({ shipment });
       spyOn(shipmentService, 'add').and.returnValue(of(shipment));
@@ -85,7 +85,7 @@ describe('shipment-store effects', () => {
     });
 
     it('should respond with failure', () => {
-      const shipment = factory.shipment();
+      const shipment = new Shipment().deserialize(factory.shipment());
       const error = {
         status: 404,
         error: {
@@ -106,7 +106,7 @@ describe('shipment-store effects', () => {
   describe('getShipmentRequestEffect', () => {
 
     it('should respond with success', () => {
-      const shipment = factory.shipment();
+      const shipment = new Shipment().deserialize(factory.shipment());
       const action = ShipmentActions.getShipmentRequest({ id: shipment.id });
       const completion = ShipmentActions.getShipmentSuccess({ shipment });
       spyOn(shipmentService, 'get').and.returnValue(of(shipment));
@@ -118,7 +118,7 @@ describe('shipment-store effects', () => {
     });
 
     it('should respond with failure', () => {
-      const shipment = factory.shipment();
+      const shipment = new Shipment().deserialize(factory.shipment());
       const error = {
         status: 404,
         error: {
@@ -143,7 +143,7 @@ describe('shipment-store effects', () => {
     let shipmentListener: any;
 
     beforeEach(() => {
-      shipment = factory.shipment();
+      shipment = new Shipment().deserialize(factory.shipment());
       action = ShipmentActions.updateShipmentRequest({
         shipment,
         attributeName: 'courierName',
@@ -183,8 +183,8 @@ describe('shipment-store effects', () => {
     let shipmentListener: any;
 
     beforeEach(() => {
-      specimens = [ factory.specimen() ];
-      shipment = factory.shipment();
+      specimens = [ new Specimen().deserialize(factory.specimen()) ];
+      shipment = new Shipment().deserialize(factory.shipment());
       action = ShipmentActions.addSpecimensRequest({
         shipment,
         specimenInventoryIds: specimens.map(s => s.inventoryId)
@@ -222,7 +222,7 @@ describe('shipment-store effects', () => {
     let shipmentListener: any;
 
     beforeEach(() => {
-      specimen = factory.specimen();
+      specimen = new Specimen().deserialize(factory.specimen());
       action = ShipmentActions.canAddSpecimenRequest({ inventoryId: specimen.inventoryId });
       shipmentListener = jest.spyOn(shipmentService, 'canAddSpecimen');
     });
@@ -258,8 +258,8 @@ describe('shipment-store effects', () => {
     const tagData = {};
 
     beforeEach(() => {
-      specimens = [ factory.specimen() ];
-      shipment = factory.shipment();
+      specimens = [ new Specimen().deserialize(factory.specimen()) ];
+      shipment = new Shipment().deserialize(factory.shipment());
 
       tagData[ShipmentItemState.Present]  = {
         methodName: 'tagSpecimensAsPresent',
@@ -327,7 +327,7 @@ describe('shipment-store effects', () => {
     let action: Action;
 
     beforeEach(() => {
-      shipment = factory.shipment();
+      shipment = new Shipment().deserialize(factory.shipment());
       action = ShipmentActions.removeShipmentRequest({ shipment });
     });
 

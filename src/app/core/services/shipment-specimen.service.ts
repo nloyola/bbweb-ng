@@ -36,7 +36,7 @@ export class ShipmentSpecimenService {
           const jObj = reply.data as JSONObject;
           if (reply && reply.data && jObj.items) {
             const entities: ShipmentSpecimen[] = (jObj.items as JSONArray)
-              .map((obj: JSONObject) => new ShipmentSpecimen().deserialize(obj));
+              .map((obj: any) => new ShipmentSpecimen().deserialize(obj));
 
             return {
               searchParams,
@@ -66,7 +66,7 @@ export class ShipmentSpecimenService {
 
   private replyToShipmentSpecimen(reply: ApiReply): ShipmentSpecimen {
     if (reply && reply.data) {
-      return new ShipmentSpecimen().deserialize(reply.data as JSONObject);
+      return new ShipmentSpecimen().deserialize(reply.data as any);
     }
     throw new Error('expected a shipment specimen object');
   }

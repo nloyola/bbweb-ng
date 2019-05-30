@@ -60,26 +60,29 @@ export class ProcessingType extends ConcurrencySafeEntity implements IProcessing
     this.output = new OutputSpecimenProcessing();
   }
 
-  deserialize(obj: JSONObject) {
+  deserialize(obj: IProcessingType): this {
+    const { slug, name, enabled, studyId, inUse } = obj;
+    Object.assign(this, { slug, name, enabled, studyId, inUse });
     super.deserialize(obj);
 
-    if (obj.description === undefined) {
-      this.description = undefined;
+    if (obj.description !== undefined) {
+      this.description = obj.description;
     }
 
     if (obj.annotationTypes) {
-      this.annotationTypes = (obj.annotationTypes as JSONArray)
-        .map((at: JSONObject) => new AnnotationType().deserialize(at));
+      this.annotationTypes = obj.annotationTypes.map(at => new AnnotationType().deserialize(at));
     }
 
-    if (obj.specimenProcessing) {
-      const jObj = obj.specimenProcessing as JSONObject;
-      if (jObj.input) {
-        this.input = new InputSpecimenProcessing().deserialize(jObj.input as JSONObject);
-      }
-      if (jObj.output) {
-        this.output = new OutputSpecimenProcessing().deserialize(jObj.output as JSONObject);
-      }
+    const specimenProcessing = (obj as any).specimenProcessing;
+    const input = (specimenProcessing && specimenProcessing.input) ? specimenProcessing.iput : obj.input;
+    const output = (specimenProcessing && specimenProcessing.output) ? specimenProcessing.iput : obj.output;
+
+    if (input) {
+      this.input = new InputSpecimenProcessing().deserialize(input);
+    }
+
+    if (output) {
+      this.output = new OutputSpecimenProcessing().deserialize(output);
     }
 
     return this;

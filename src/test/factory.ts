@@ -1,12 +1,13 @@
-import { AnatomicalSource, ConcurrencySafeEntity, PagedReply, PreservationTemperature, PreservationType, SearchParams, SpecimenType, slugify } from '@app/domain';
-import { MaxValueCount, ValueTypes } from '@app/domain/annotations';
-import { CentreCounts, CentreState } from '@app/domain/centres';
-import { StudyCounts, StudyState } from '@app/domain/studies';
-import { UserState, UserCounts } from '@app/domain/users';
+import { AnatomicalSource, ConcurrencySafeEntity, HasName, HasSlug, IConcurrencySafeEntity, IDomainEntity, IEntityInfo, IEntityInfoAndState, IEntitySet, PagedReply, PreservationTemperature, PreservationType, SearchParams, slugify, SpecimenType, ILocation } from '@app/domain';
+import { IAccessItem, IMembership, IMembershipBase, IRole, IUserMembership, IUserRole } from '@app/domain/access';
+import { IAnnotation, IAnnotationType, MaxValueCount, ValueTypes } from '@app/domain/annotations';
+import { CentreCounts, CentreState, ICentre, ICentreLocationInfo } from '@app/domain/centres';
+import { ICollectionEvent, IParticipant, ISpecimen, SpecimenState } from '@app/domain/participants';
+import { IShipment, IShipmentSpecimen, ShipmentItemState, ShipmentState } from '@app/domain/shipments';
+import { ICollectedSpecimenDefinition, ICollectedSpecimenDefinitionName, ICollectionEventType, IInputSpecimenProcessing, IOutputSpecimenProcessing, IProcessedSpecimenDefinition, IProcessedSpecimenDefinitionName, IProcessingType, IStudy, StudyCounts, StudyState } from '@app/domain/studies';
+import { IUser, UserCounts, UserState } from '@app/domain/users';
 import * as _ from 'lodash';
 import faker = require('faker');
-import { ShipmentState, ShipmentItemState } from '@app/domain/shipments';
-import { SpecimenState } from '@app/domain/participants';
 
 enum DomainEntities {
 
@@ -32,6 +33,8 @@ enum DomainEntities {
   PERMISSION = 'permission'
 }
 
+interface INameAndSlug extends HasName, HasSlug { }
+
 /**
  * Generates plain objects for {@link domain|Domain Entities} simulating what is returned by the server.
  */
@@ -43,113 +46,104 @@ export class Factory {
     return this.domainEntityNameNext();
   }
 
-  user(options: any = { membership: undefined }): any {
+  user(options: any = { membership: undefined }): IUser {
     const name = faker.name.findName();
-    const defaults = {
+    const membership = (options.membership) ? this.userMembership(options.membership) : {};
+
+    const u = {
+      ...this.commonFields(),
       id: this.domainEntityIdNext(DomainEntities.USER),
       version: 0,
       name: name,
       slug: slugify(name),
       email: faker.internet.email(),
       state: UserState.Registered,
-      roles: []
-    };
-
-    const membership = (options.membership) ? this.userMembership(options.membership) : {};
-
-    const u = {
-      ...defaults,
-      ...this.commonFields(),
+      roles: [],
       ...options,
-      ...{ membership }
+      membership: membership
     };
     this.defaultEntities.set(DomainEntities.USER, u);
     return u;
   }
 
-  defaultUser(): any {
+  defaultUser(): IUser {
     const dflt = this.defaultEntities.get(DomainEntities.USER);
     return dflt ? dflt : this.user();
   }
 
-  membershipBase(options: any = {}): any {
-    const defaults = this.membershipBaseDefaults();
+  membershipBase(options: any = {}): IMembershipBase {
     const m = {
-      ...defaults,
       ...this.commonFields(),
+      ...this.membershipBaseDefaults(),
       ...options
     };
     this.defaultEntities.set(DomainEntities.MEMBERSHIP_BASE, m);
     return m;
   }
 
-  defaultMembershipBase(): any {
+  defaultMembershipBase(): IMembershipBase {
     const dflt = this.defaultEntities.get(DomainEntities.MEMBERSHIP_BASE);
     return dflt ? dflt : this.membershipBase();
   }
 
-  userMembership(options: any = {}): any {
+  userMembership(options: any = {}): IUserMembership {
     return this.membershipBase(options);
   }
 
-  membership(options: any = {}): any {
-    return this.membershipBase({
-      ...options,
+  membership(options: any = {}): IMembership {
+    return {
+      ...this.membershipBase(options),
       userData: []
-    });
+    };
   }
 
-  defaultMembership(): any {
+  defaultMembership(): IMembership {
     const dflt = this.defaultEntities.get(DomainEntities.MEMBERSHIP);
     return dflt ? dflt : this.membership();
   }
 
-  accessItem(options: any = {}): any {
-    const defaults = this.accessItemDefaults();
+  accessItem(options: any = {}): IAccessItem {
     const item = {
-      ...defaults,
       ...this.commonFields(),
+      ...this.accessItemDefaults(),
       ...options
     };
     this.defaultEntities.set(DomainEntities.ACCESS_ITEM, item);
     return item;
   }
 
-  role(options: any = {}): any {
+  role(options: any = {}): IRole {
     const role = {
-      ...{ userData: [this.entityInfo()] },
       ...this.accessItem(options),
+      userData: [ this.entityInfo() ],
       ...options
     };
     this.defaultEntities.set(DomainEntities.ROLE, role);
     return role;
   }
 
-  defaultRole(): any {
+  defaultRole(): IRole {
     const dflt = this.defaultEntities.get(DomainEntities.ROLE);
     return dflt ? dflt : this.role();
   }
 
-  userRole(): any {
-    const role = this.defaultRole(),
-    userRole = _.omit(role, ['userData', 'parentData']);
-    return userRole;
+  userRole(): IUserRole {
+    const { userData, parentData, ...userRole} = this.defaultRole();
+    return {
+      ...userRole,
+      parentData: []
+    };
   }
 
-  study(options: any = {}): any {
-    const defaults = {
-      ...{
-        id:              this.domainEntityIdNext(DomainEntities.STUDY),
-        version:         0,
-        description:     faker.lorem.sentences(4),
-        annotationTypes: [],
-        state:           StudyState.Disabled
-      },
-      ...this.nameAndSlug()
-    };
-
+  study(options: any = {}): IStudy {
     const s = {
-      ...defaults,
+      ...this.commonFields(),
+      id:              this.domainEntityIdNext(DomainEntities.STUDY),
+      version:         0,
+      description:     faker.lorem.sentences(4),
+      annotationTypes: [],
+      state:           StudyState.Disabled,
+      ...this.nameAndSlug(),
       ...options
     };
     this.defaultEntities.set(DomainEntities.STUDY, s);
@@ -159,28 +153,23 @@ export class Factory {
   /**
    * Returns the last {@link domain.studies.Study Study} plain object created by this factory.
    */
-  defaultStudy(): any {
+  defaultStudy(): IStudy {
     const dflt = this.defaultEntities.get(DomainEntities.STUDY);
     return dflt ? dflt : this.study();
   }
 
-  collectionEventType(options: any = {}): any {
+  collectionEventType(options: any = {}): ICollectionEventType {
     const study = this.defaultStudy();
-    const defaults = {
-      ...{
-        id:                  this.domainEntityIdNext(DomainEntities.COLLECTION_EVENT_TYPE),
-        version:             0,
-        studyId:             study.id,
-        description:         faker.lorem.sentences(4),
-        specimenDefinitions: [],
-        annotationTypes:     [],
-        recurring:           false
-      },
-      ...this.nameAndSlug()
-    };
-
     const eventType = {
-      ...defaults,
+      ...this.commonFields(),
+      id:                  this.domainEntityIdNext(DomainEntities.COLLECTION_EVENT_TYPE),
+      version:             0,
+      studyId:             study.id,
+      description:         faker.lorem.sentences(4),
+      specimenDefinitions: [],
+      annotationTypes:     [],
+      recurring:           false,
+      ...this.nameAndSlug(),
       ...options
     };
     this.defaultEntities.set(DomainEntities.COLLECTION_EVENT_TYPE, eventType);
@@ -191,29 +180,24 @@ export class Factory {
    * Returns the last {@link domain.studies.CollectionEventType CollectionEventType} plain
    * object created by this factory.
    */
-  defaultCollectionEventType(): any {
+  defaultCollectionEventType(): ICollectionEventType {
     const dflt = this.defaultEntities.get(DomainEntities.COLLECTION_EVENT_TYPE);
     return dflt ? dflt : this.collectionEventType();
   }
 
-  processingType(options: any = {}): any {
+  processingType(options: any = {}): IProcessingType {
     const study = this.defaultStudy();
-    const defaults = {
-      ...{
-        id:                 this.domainEntityIdNext(DomainEntities.PROCESSING_TYPE),
-        version:            0,
-        studyId:            study.id,
-        description:        faker.lorem.sentences(4),
-        enabled:            false,
-        input:              this.inputSpecimenProcessing(),
-        output:             this.outputSpecimenProcessing(),
-        annotationTypes:    []
-      },
-      ...this.nameAndSlug()
-    };
-
     const processingType = {
-      ...defaults,
+      ...this.commonFields(),
+      id:                 this.domainEntityIdNext(DomainEntities.PROCESSING_TYPE),
+      version:            0,
+      studyId:            study.id,
+      description:        faker.lorem.sentences(4),
+      enabled:            false,
+      annotationTypes:    [],
+      input:             this.inputSpecimenProcessing(options.input),
+      output:            this.outputSpecimenProcessing(options.output),
+      ...this.nameAndSlug(),
       ...options
     };
     this.defaultEntities.set(DomainEntities.PROCESSING_TYPE, processingType);
@@ -224,19 +208,19 @@ export class Factory {
    * Returns the last {@link domain.studies.ProcessingType ProcessingType} plain
    * object created by this factory.
    */
-  defaultProcessingType(): any {
+  defaultProcessingType(): IProcessingType {
     const dflt = this.defaultEntities.get(DomainEntities.PROCESSING_TYPE);
     return dflt ? dflt : this.processingType();
   }
 
-  entityInfo(): any {
+  entityInfo<T extends IDomainEntity & HasSlug & HasName>(): IEntityInfo<T> {
     return {
-      ...{ id: this.stringNext() },
+      id: this.stringNext(),
       ...this.nameAndSlug()
     };
   }
 
-  entityToInfo(entity: any): any {
+  entityToInfo<T extends IDomainEntity & HasSlug & HasName>(entity: any): IEntityInfo<T> {
     return {
       id: entity.id,
       name: entity.name,
@@ -244,8 +228,8 @@ export class Factory {
     };
   }
 
-  entitySet(): any {
-    return { allEntities: false, entityData: [this.entityInfo()] };
+  entitySet<T extends IDomainEntity & HasSlug & HasName>(): IEntitySet<T> {
+    return { allEntities: false, entityData: [ this.entityInfo() ] };
   }
 
   /**
@@ -258,17 +242,14 @@ export class Factory {
   annotationType(options: any = {
     valueType: ValueTypes.Text,
     maxValueCount: MaxValueCount.None
-  }): any {
+  }): IAnnotationType {
     const defaults = {
-      ...{
-        id: this.domainEntityIdNext(DomainEntities.ANNOTATION_TYPE),
-        description: null,
-        valueType: ValueTypes.Text,
-        options: [],
-        maxValueCount: MaxValueCount.None,
-        required: false
-      },
-      ...this.nameAndSlug()
+      id: this.domainEntityIdNext(DomainEntities.ANNOTATION_TYPE),
+      description: null,
+      valueType: ValueTypes.Text,
+      options: [],
+      maxValueCount: MaxValueCount.None,
+      required: false
     };
 
     if (!options.valueType) {
@@ -288,57 +269,47 @@ export class Factory {
 
     return {
       ...defaults,
+      ...this.nameAndSlug(),
       ...options
     };
   }
 
-  processedSpecimenDefinition(options = {}) {
-    const defaults = {
-      ...{
-        id:                      this.domainEntityIdNext(DomainEntities.PROCESSED_SPECIMEN_DEFINITION),
-        description:             faker.lorem.sentences(4),
-        units:                   'mL',
-        anatomicalSourceType:    this.randomAnatomicalSourceType(),
-        preservationType:        this.randomPreservationType(),
-        preservationTemperature: this.randomPreservationTemperature(),
-        specimenType:            this.randomSpecimenType()
-      },
-      ...this.nameAndSlug()
-    };
+  processedSpecimenDefinition(options = {}): IProcessedSpecimenDefinition {
     return {
-      ...defaults,
+      id:                      this.domainEntityIdNext(DomainEntities.PROCESSED_SPECIMEN_DEFINITION),
+      description:             faker.lorem.sentences(4),
+      units:                   'mL',
+      anatomicalSourceType:    this.randomAnatomicalSourceType(),
+      preservationType:        this.randomPreservationType(),
+      preservationTemperature: this.randomPreservationTemperature(),
+      specimenType:            this.randomSpecimenType(),
+      ...this.nameAndSlug(),
       ...options
     };
   }
 
-  inputSpecimenProcessing(options = {}) {
+  inputSpecimenProcessing(options = {}): IInputSpecimenProcessing {
     const specimenDefinition =  this.processedSpecimenDefinition();
     const collectionEventType = this.collectionEventType({
       specimenDefinitions: [ specimenDefinition ]
     });
-    const defaults = {
+    return {
+      definitionType: 'collected',
+      entityId:             collectionEventType.id,
+      specimenDefinitionId: specimenDefinition.id,
       expectedChange:       1.0,
       count:                1,
       containerTypeId:      null,
-      definitionType:       'collected',
-      entityId:             collectionEventType.id,
-      specimenDefinitionId: specimenDefinition.id
-    };
-    return {
-      ...defaults,
       ...options
     };
   }
 
-  outputSpecimenProcessing(options = {}) {
-    const defaults = {
+  outputSpecimenProcessing(options = {}): IOutputSpecimenProcessing {
+    return {
+      specimenDefinition: this.processedSpecimenDefinition(),
       expectedChange:     1.0,
       count:              1,
       containerTypeId:    null,
-      specimenDefinition: this.processedSpecimenDefinition()
-    };
-    return {
-      ...defaults,
       ...options
     };
   }
@@ -359,24 +330,22 @@ export class Factory {
     return faker.random.arrayElement(Object.values(SpecimenType));
   }
 
-  collectedSpecimenDefinition(options: any = {}): any {
+  collectedSpecimenDefinition(options: any = {}): ICollectedSpecimenDefinition {
     const defaults = {
-      ...{
-        id:                      this.domainEntityIdNext(DomainEntities.COLLECTED_SPECIMEN_DEFINITION),
-        description:             faker.lorem.sentences(4),
-        units:                   'mL',
-        anatomicalSourceType:    this.randomAnatomicalSourceType(),
-        preservationType:        this.randomPreservationType(),
-        preservationTemperature: this.randomPreservationTemperature(),
-        specimenType:            this.randomSpecimenType(),
-        maxCount:                1,
-        amount:                  0.5
-      },
-      ...this.nameAndSlug()
+      id:                      this.domainEntityIdNext(DomainEntities.COLLECTED_SPECIMEN_DEFINITION),
+      description:             faker.lorem.sentences(4),
+      units:                   'mL',
+      anatomicalSourceType:    this.randomAnatomicalSourceType(),
+      preservationType:        this.randomPreservationType(),
+      preservationTemperature: this.randomPreservationTemperature(),
+      specimenType:            this.randomSpecimenType(),
+      maxCount:                1,
+      amount:                  0.5
     };
 
     return {
       ...defaults,
+      ...this.nameAndSlug(),
       ...options
     };
   }
@@ -407,16 +376,14 @@ export class Factory {
     };
   }
 
-  centre(options: any = {}): any {
+  centre(options: any = {}): ICentre {
     const s = {
-      ...{
-        id:              this.domainEntityIdNext(DomainEntities.CENTRE),
-        version:         0,
-        description:     faker.lorem.sentences(4),
-        studyNames:      [],
-        locations:       [],
-        state:           CentreState.Disabled
-      },
+      id:              this.domainEntityIdNext(DomainEntities.CENTRE),
+      version:         0,
+      description:     faker.lorem.sentences(4),
+      studyNames:      [],
+      locations:       [],
+      state:           CentreState.Disabled,
       ...options,
       ...this.nameAndSlug()
     };
@@ -427,7 +394,7 @@ export class Factory {
   /**
    * Returns the last {@link domain.centres.Centre Centre} plain object created by this factory.
    */
-  defaultCentre(): any {
+  defaultCentre(): ICentre {
     const dflt = this.defaultEntities.get(DomainEntities.CENTRE);
     return dflt ? dflt : this.centre();
   }
@@ -443,7 +410,7 @@ export class Factory {
     };
   }
 
-  nameAndSlug(): any {
+  nameAndSlug(): INameAndSlug {
     const name = this.stringNext();
     return {
       slug: slugify(name),
@@ -451,7 +418,7 @@ export class Factory {
     };
   }
 
-  entityNameDto(entity: any, options: any = {}): any {
+  entityNameDto<T extends IDomainEntity & HasSlug & HasName>(entity: any, options: any = {}): IEntityInfo<T> {
     const combined = { ...entity, ...options };
     return {
       id: combined.id,
@@ -460,7 +427,10 @@ export class Factory {
     };
   }
 
-  entityNameAndStateDto(entity: any, options: any = {}): any {
+  entityNameAndStateDto<T extends IDomainEntity & HasSlug & HasName, S>(
+    entity: T,
+    options: any = {}
+  ): IEntityInfoAndState<T, S> {
     const combined = { ...entity, ...options };
     return {
       ...this.entityNameDto(entity, options),
@@ -468,46 +438,36 @@ export class Factory {
     };
   }
 
-  location(options: any = {}) {
+  location(options: any = {}): ILocation {
     const location = {
-      ...{
-        id: this.domainEntityIdNext(DomainEntities.LOCATION),
-        street:         faker.address.streetAddress(),
-        city:           faker.address.city(),
-        province:       faker.address.state(),
-        postalCode:     faker.address.zipCode(),
-        poBoxNumber:    faker.address.zipCode(),
-        countryIsoCode: faker.address.country()
-      },
+      id:             this.domainEntityIdNext(DomainEntities.LOCATION),
+      street:         faker.address.streetAddress(),
+      city:           faker.address.city(),
+      province:       faker.address.state(),
+      postalCode:     faker.address.zipCode(),
+      poBoxNumber:    faker.address.zipCode(),
+      countryIsoCode: faker.address.country(),
       ...options,
       ...this.nameAndSlug()
     };
     return location;
   }
 
-  domainEntityName(entity: any): any {
-    return {
-      id: entity.id,
-      slug: entity.slug,
-      name: entity.name
-    };
-  }
-
-  collectedSpecimenDefinitionNames(eventTypes: any[]): any {
+  collectedSpecimenDefinitionNames(eventTypes: any[]): ICollectedSpecimenDefinitionName[] {
     return eventTypes.map(et => ({
-      ...this.domainEntityName(et),
-      specimenDefinitionNames: et.specimenDefinitions.map(sd => this.domainEntityName(sd))
+      ...this.entityToInfo(et),
+      specimenDefinitionNames: et.specimenDefinitions.map(sd => this.entityToInfo(sd))
     }));
   }
 
-  processedSpecimenDefinitionNames(processingTypes: any[]): any {
+  processedSpecimenDefinitionNames(processingTypes: any[]): IProcessedSpecimenDefinitionName[] {
     return processingTypes.map(pt => ({
-      ...this.domainEntityName(pt),
-      specimenDefinitionName: this.domainEntityName(pt.output.specimenDefinition)
+      ...this.entityToInfo(pt),
+      specimenDefinitionName: this.entityToInfo(pt.output.specimenDefinition)
     }));
   }
 
-  shipment(options: any = {}): any {
+  shipment(options: any = {}): IShipment {
     const loc = this.location();
     const ctr = this.centre({ locations: [ loc ]});
     const locationInfo = {
@@ -516,41 +476,39 @@ export class Factory {
       name: ctr.name + ': ' + loc.name
     };
     const s = {
-      ...{
-        id:               this.domainEntityIdNext(DomainEntities.SHIPMENT),
-        state:            ShipmentState.Created,
-        courierName:      this.stringNext(),
-        trackingNumber:   this.stringNext(),
-        fromLocationInfo: locationInfo,
-        toLocationInfo:   locationInfo,
-        specimenCount:    0
-      },
+      ...this.commonFields(),
+      id:               this.domainEntityIdNext(DomainEntities.SHIPMENT),
+      state:            ShipmentState.Created,
+      courierName:      this.stringNext(),
+      trackingNumber:   this.stringNext(),
+      fromLocationInfo: locationInfo,
+      toLocationInfo:   locationInfo,
+      specimenCount:    0,
       ...options,
     };
     this.defaultEntities.set(DomainEntities.SHIPMENT, s);
     return s;
   }
 
-  defaultShipment(): any {
+  defaultShipment(): IShipment {
     const dflt = this.defaultEntities.get(DomainEntities.SHIPMENT);
     return dflt ? dflt : this.shipment();
   }
 
-  shipmentSpecimen(options: any = {}): any {
+  shipmentSpecimen(options: any = {}): IShipmentSpecimen {
     const ss = {
-      ...{
-        id:         this.domainEntityIdNext(DomainEntities.SHIPMENT_SPECIMEN),
-        state:      ShipmentItemState.Present,
-        shipmentId: this.defaultShipment().id,
-        specimenId: this.defaultSpecimen().id
-      },
+      ...this.commonFields(),
+      id:         this.domainEntityIdNext(DomainEntities.SHIPMENT_SPECIMEN),
+      state:      ShipmentItemState.Present,
+      shipmentId: this.defaultShipment().id,
+      specimenId: this.defaultSpecimen().id,
       ...options,
     };
     this.defaultEntities.set(DomainEntities.SHIPMENT_SPECIMEN, ss);
     return ss;
   }
 
-  defaultShipmentSpecimen(): any {
+  defaultShipmentSpecimen(): IShipmentSpecimen {
     const dflt = this.defaultEntities.get(DomainEntities.SHIPMENT_SPECIMEN);
     return dflt ? dflt : this.shipment();
   }
@@ -559,17 +517,16 @@ export class Factory {
    * If {@link test.services.Factory#defaultStudy defaultStudy} has annotation types, then participant will
    * have annotations based on the study's, unless options.annotationTypes is defined.
    */
-  participant(options: any = {}) {
+  participant(options: any = {}): IParticipant {
     const study = this.defaultStudy();
     const uniqueId = this.domainEntityIdNext(DomainEntities.PARTICIPANT);
     const p = {
-      ...{
-        id:          this.domainEntityIdNext(DomainEntities.PARTICIPANT),
-        version:     0,
-        studyId:     study.id,
-        uniqueId,
-        annotations: []
-      },
+      ...this.commonFields(),
+      id:          this.domainEntityIdNext(DomainEntities.PARTICIPANT),
+      version:     0,
+      study:       this.entityToInfo(study),
+      uniqueId,
+      annotations: [],
       slug: slugify(uniqueId),
       ...options
     };
@@ -577,7 +534,7 @@ export class Factory {
     return p;
   }
 
-  defaultParticipant(): any {
+  defaultParticipant(): IParticipant {
     const dflt = this.defaultEntities.get(DomainEntities.PARTICIPANT);
     return dflt ? dflt : this.participant();
   }
@@ -585,17 +542,14 @@ export class Factory {
   /**
    * @param options.value The value for the annotation.
    */
-  annotation(options: any = {}, annotationType?: any) {
+  annotation(options: any = {}, annotationType?: any): IAnnotation {
     const annotationTypeId = annotationType ? annotationType.id : undefined;
     const valueType = annotationType ? annotationType.valueType : undefined;
     const annotation = {
-      ...{
-        annotationTypeId: null,
-        stringValue:      null,
-        numberValue:      null,
-        selectedValues:   []
-      },
-      annotationTypeId,
+      annotationTypeId: null,
+      stringValue:      null,
+      numberValue:      null,
+      selectedValues:   [],
       valueType,
       ...options
     };
@@ -603,14 +557,14 @@ export class Factory {
     const value = options ? options.value : undefined;
     if ((value !== undefined) && (valueType !== undefined)) {
       switch (valueType) {
-      case ValueTypes.Text:
-      case ValueTypes.DateTime:
-        annotation.stringValue = options.value;
-        break;
+        case ValueTypes.Text:
+        case ValueTypes.DateTime:
+          annotation.stringValue = options.value;
+          break;
 
-      case ValueTypes.Number:
-        annotation.numberValue = options.value;
-        break;
+        case ValueTypes.Number:
+          annotation.numberValue = options.value;
+          break;
 
         case ValueTypes.Select:
           if ((value !== undefined) && (value !== '')) {
@@ -633,7 +587,7 @@ export class Factory {
     return annotation;
   }
 
-  centreLocationInfo(centre: any) {
+  centreLocationInfo(centre: ICentre): ICentreLocationInfo {
     if (!centre.locations || (centre.locations.length < 1)) {
       throw new Error('centre does not have any locations');
     }
@@ -644,26 +598,25 @@ export class Factory {
     };
   }
 
-  specimen(options: any = {}) {
+  specimen(options: any = {}): ISpecimen {
     const eventType = this.collectionEventType({
       specimenDefinitions: [ this.collectedSpecimenDefinition() ]
     });
     const ctr = this.centre({ locations: [ this.location() ]});
     const inventoryId = this.domainEntityNameNext(DomainEntities.SPECIMEN);
     const specimen = {
-      ...{
-        id:                    this.domainEntityIdNext(DomainEntities.SPECIMEN),
-        version:         0,
-        slug:                  slugify(inventoryId),
-        inventoryId:           inventoryId,
-        specimenDefinitionId:  null,
-        originLocationInfo:    null,
-        locationInfo:          null,
-        timeCreated:           faker.date.recent(10),
-        amount:                1,
-        state:                 SpecimenState.USABLE,
-        eventTypeName:         eventType.name
-      },
+      ...this.commonFields(),
+      id:                    this.domainEntityIdNext(DomainEntities.SPECIMEN),
+      version:               0,
+      slug:                  slugify(inventoryId),
+      inventoryId:           inventoryId,
+      specimenDefinitionId:  null,
+      originLocationInfo:    null,
+      locationInfo:          null,
+      timeCreated:           faker.date.recent(10),
+      amount:                1,
+      state:                 SpecimenState.USABLE,
+      eventTypeName:         eventType.name,
       ...options
     };
 
@@ -680,28 +633,26 @@ export class Factory {
     return specimen;
   }
 
-  defaultSpecimen() {
+  defaultSpecimen(): ISpecimen {
     const dflt = this.defaultEntities.get(DomainEntities.SPECIMEN);
     return dflt ? dflt : this.specimen();
   }
 
-  collectionEvent(options: any = {}) {
+  collectionEvent(options: any = {}): ICollectionEvent {
     const participant = this.defaultParticipant();
     const collectionEventType = this.defaultCollectionEventType();
     const visitNumber = 1;
     const ce = {
-      ...{
-        id:              this.domainEntityIdNext(DomainEntities.COLLECTION_EVENT),
-        version:         0,
-        participantId:   participant.id,
-        participantSlug: participant.slug,
-        eventTypeId:     collectionEventType.id,
-        eventTypeSlug:   collectionEventType.slug,
-        timeCompleted:   faker.date.recent(10),
-        slug:            slugify('visit-number-' + visitNumber),
-        visitNumber:     visitNumber,
-        annotations:     []
-      },
+      id:              this.domainEntityIdNext(DomainEntities.COLLECTION_EVENT),
+      version:         0,
+      participantId:   participant.id,
+      participantSlug: participant.slug,
+      eventTypeId:     collectionEventType.id,
+      eventTypeSlug:   collectionEventType.slug,
+      timeCompleted:   faker.date.recent(10),
+      slug:            slugify('visit-number-' + visitNumber),
+      visitNumber:     visitNumber,
+      annotations:     [],
       ...options
     };
 
@@ -718,19 +669,19 @@ export class Factory {
     return ce;
   }
 
-  defaultCollectionEvent() {
+  defaultCollectionEvent(): ICollectionEvent {
     const dflt = this.defaultEntities.get(DomainEntities.COLLECTION_EVENT);
     return dflt ? dflt : this.collectionEvent();
   }
 
-  annotations(annotationTypes: any[]) {
+  annotations(annotationTypes: any[]): IAnnotation[] {
     return annotationTypes.map(annotationType => {
       const value = this.valueForAnnotation(annotationType);
       return this.annotation({ value: value }, annotationType);
     });
   }
 
-  valueForAnnotation(annotationType: any) {
+  valueForAnnotation(annotationType: any): string | number | Date | string[] {
     switch (annotationType.valueType) {
 
       case ValueTypes.Text:
@@ -766,24 +717,26 @@ export class Factory {
       .replace(/^-+|-+$/g, '');
   }
 
-  private domainEntityNameNext(domainEntityType?: string) {
+  private domainEntityNameNext(domainEntityType?: string): string {
     const id = domainEntityType ? domainEntityType : 'string';
     return _.uniqueId(id + '_');
   }
 
-  private domainEntityIdNext(domainEntityType?: string) {
+  private domainEntityIdNext(domainEntityType?: string): string {
     return this.domainEntityNameNext(domainEntityType);
   }
 
-  private commonFields(): any {
+  private commonFields(): IConcurrencySafeEntity {
     return {
+      id: undefined,
       version: 0,
       timeAdded: faker.date.recent(10),
       timeModified: faker.date.recent(5)
     };
   }
 
-  private membershipBaseDefaults() {
+  private membershipBaseDefaults():
+  Pick<IMembershipBase, 'id' | 'name' | 'slug' | 'description' | 'studyData' | 'centreData'> {
     const name = this.domainEntityNameNext(DomainEntities.MEMBERSHIP_BASE);
     return {
       id: this.domainEntityIdNext(DomainEntities.MEMBERSHIP_BASE),
@@ -795,7 +748,8 @@ export class Factory {
     };
   }
 
-  private accessItemDefaults() {
+  private accessItemDefaults():
+  Pick<IAccessItem, 'id' | 'name' | 'slug' | 'description' | 'parentData' | 'childData'> {
     const name = this.domainEntityNameNext(DomainEntities.ACCESS_ITEM);
     return {
       id: this.domainEntityIdNext(DomainEntities.ACCESS_ITEM),

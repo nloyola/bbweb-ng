@@ -15,11 +15,10 @@ export class Role extends AccessItem implements IRole {
 
   userData: IUserInfo[];
 
-  deserialize(input: JSONObject) {
+  deserialize(input: IRole): this {
     super.deserialize(input);
     if (input.userData) {
-      this.userData = (input.userData as JSONArray)
-        .map((u: JSONObject) => new EntityInfo().deserialize(u));
+      this.userData = input.userData.map(ui => new EntityInfo().deserialize(ui));
     }
     return this;
   }

@@ -14,7 +14,7 @@ describe('EventTypeService', () => {
 
   let httpMock: HttpTestingController;
   let service: EventTypeService;
-  let factory = new Factory();
+  const factory = new Factory();
   let study: Study;
 
   beforeEach(() => {
@@ -441,10 +441,12 @@ describe('EventTypeService', () => {
         const rawEventType = factory.collectionEventType({ specimenDefinitions: [ rawAnnotationType ]});
         const eventType = new CollectionEventType().deserialize(rawEventType);
 
-        service.update(eventType, 'addOrUpdateSpecimenDefinition', eventType.specimenDefinitions[0]).subscribe(
-          () => { fail('should have been an error response'); },
-          err => { expect(err.message).toContain('expected a study object'); }
-        );
+        service
+          .update(eventType, 'addOrUpdateSpecimenDefinition', eventType.specimenDefinitions[0])
+          .subscribe(
+            () => { fail('should have been an error response'); },
+            err => { expect(err.message).toContain('expected a study object'); }
+          );
 
         let url = `${BASE_URL}/spcdef/${eventType.id}`;
         if (specimenDefinitionId !== null) {
@@ -465,10 +467,12 @@ describe('EventTypeService', () => {
       const rawEventType = factory.collectionEventType({ specimenDefinitions: [ rawSpecimenDefinition ]});
       const eventType = new CollectionEventType().deserialize(rawEventType);
 
-      service.update(eventType, 'removeSpecimenDefinition', eventType.specimenDefinitions[0].id).subscribe(s => {
-        expect(s).toEqual(jasmine.any(CollectionEventType));
-        expect(s).toEqual(eventType);
-      });
+      service
+        .update(eventType, 'removeSpecimenDefinition', eventType.specimenDefinitions[0].id)
+        .subscribe(s => {
+          expect(s).toEqual(jasmine.any(CollectionEventType));
+          expect(s).toEqual(eventType);
+        });
 
       /* tslint:disable:max-line-length */
       const url = `${BASE_URL}/spcdef/${eventType.studyId}/${eventType.id}/${eventType.version}/${rawSpecimenDefinition.id}`;

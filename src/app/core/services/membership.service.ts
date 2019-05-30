@@ -57,7 +57,7 @@ export class MembershipService {
           const jObj = reply.data as JSONObject;
           if (reply && reply.data && jObj.items) {
             const entities: Membership[] = (jObj.items as JSONArray)
-              .map((obj: JSONObject) => new Membership().deserialize(obj));
+              .map((obj: JSONObject) => new Membership().deserialize(obj as any));
             return {
               searchParams,
               entities,
@@ -175,7 +175,7 @@ export class MembershipService {
 
   private replyToMembership(reply: ApiReply): Membership {
     if (reply && reply.data) {
-      return new Membership().deserialize(reply.data as JSONObject);
+      return new Membership().deserialize(reply.data as any);
     }
     throw new Error('expected a membership object');
   }

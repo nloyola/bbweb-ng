@@ -17,7 +17,7 @@ describe('processingType-store effects', () => {
   let effects: ProcessingTypeStoreEffects;
   let actions: Observable<any>;
   let processingTypeService: ProcessingTypeService;
-  let factory: Factory;
+  const factory = new Factory();
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -32,7 +32,6 @@ describe('processingType-store effects', () => {
 
     effects = TestBed.get(ProcessingTypeStoreEffects);
     processingTypeService = TestBed.get(ProcessingTypeService);
-    factory = new Factory();
   });
 
   describe('searchRequestEffect', () => {
@@ -199,7 +198,7 @@ describe('processingType-store effects', () => {
     let action: Action;
 
     beforeEach(() => {
-      annotationType = factory.annotationType();
+      annotationType = new AnnotationType().deserialize(factory.annotationType());
       processingType = factory.processingType({ annotationTypes: [ annotationType ]});
       action = new ProcessingTypeStoreActions.UpdateProcessingTypeAddOrUpdateAnnotationTypeRequest({
         processingType,
@@ -238,7 +237,7 @@ describe('processingType-store effects', () => {
     let action: Action;
 
     beforeEach(() => {
-      annotationType = factory.annotationType();
+      annotationType = new AnnotationType().deserialize(factory.annotationType());
       processingType = factory.processingType({ annotationTypes: [ annotationType ]});
       action = new ProcessingTypeStoreActions.UpdateProcessingTypeRemoveAnnotationTypeRequest({
         processingType,

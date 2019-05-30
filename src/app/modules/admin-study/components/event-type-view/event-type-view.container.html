@@ -1,4 +1,4 @@
-<app-event-type-view-ui *ngIf="!(isLoading$ | async); else showLoading"
+<app-event-type-view-ui *ngIf="(isLoading$ | async) !== false; else showLoading"
                         [eventType]="eventType"
                         [allowChanges]="(allowChanges$ | async)"
                         (updateNameSelected)="updateName($event)"

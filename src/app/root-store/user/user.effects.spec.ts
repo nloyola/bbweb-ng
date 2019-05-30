@@ -70,7 +70,7 @@ describe('user-store effects', () => {
 
     it('should respond with success', () => {
       const searchParams = new SearchParams();
-      const user = factory.user();
+      const user = new User().deserialize(factory.user());
       const pagedReply = factory.pagedReply([ user ]);
       const action = new UserStoreActions.SearchUsersRequest({ searchParams });
       const completion = new UserStoreActions.SearchUsersSuccess({ pagedReply });
@@ -104,7 +104,7 @@ describe('user-store effects', () => {
   describe('getUserRequestEffect', () => {
 
     it('should respond with success', () => {
-      const user = factory.user();
+      const user = new User().deserialize(factory.user());
       const action = new UserStoreActions.GetUserRequest({ slug: user.slug });
       const completion = new UserStoreActions.GetUserSuccess({ user });
       spyOn(userService, 'get').and.returnValue(of(user));
@@ -141,7 +141,7 @@ describe('user-store effects', () => {
     let userListener: any;
 
     beforeEach(() => {
-      user = factory.user();
+      user = new User().deserialize(factory.user());
       action = new UserStoreActions.UpdateUserRequest({
         user,
         attributeName: 'name',

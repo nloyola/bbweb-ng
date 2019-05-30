@@ -12,6 +12,7 @@ import { takeUntil } from 'rxjs/operators';
 })
 export class AnnotationsAddSubformComponent {
 
+  /* tslint:disable-next-line:max-line-length */
   // see: https://stackoverflow.com/questions/43384804/how-to-validate-that-at-least-one-checkbox-should-be-selected/43386577
 
   @Input() annotationsGroup: FormGroup;
@@ -40,7 +41,7 @@ export class AnnotationsAddSubformComponent {
         const optionsGroup = new FormGroup({
           options: checkboxArray,
           selectedOptions: hiddenControl
-        })
+        });
 
         checkboxArray.valueChanges.pipe(
           takeUntil(unsubscribe$)
@@ -71,7 +72,7 @@ export class AnnotationsAddSubformComponent {
   }
 
   static mapSelectedOptions(options: any[]) {
-    let selectedOptions = options.filter(option => option.checkbox).map(option => option.id);
+    const selectedOptions = options.filter(option => option.checkbox).map(option => option.id);
     return selectedOptions.length ? selectedOptions : null;
   }
 

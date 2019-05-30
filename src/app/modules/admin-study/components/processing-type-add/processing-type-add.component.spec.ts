@@ -219,8 +219,7 @@ describe('ProcessingTypeAddComponent', () => {
 
     describe('input entity name and specimen definition name are correct', () => {
 
-      it('when adding a processing type with a collected specimen as input', () => {
-
+      fit('when adding a processing type with a collected specimen as input', () => {
         const { eventType, processingType } = entityFixture.createProcessingTypeFromCollected();
         const study = createEntityFixtures();
         component.processingType = processingType;

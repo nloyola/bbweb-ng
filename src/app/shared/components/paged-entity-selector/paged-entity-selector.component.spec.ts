@@ -46,7 +46,7 @@ describe('PagedEntitySelectorComponent', () => {
   it('should create', () => {
     fixture.detectChanges();
     expect(component).toBeTruthy();
-  });;
+  });
 
   it('changes to page should emit an event', async(() => {
     fixture.detectChanges();

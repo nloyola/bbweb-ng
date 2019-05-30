@@ -56,8 +56,6 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
               private toastr: ToastrService) {}
 
   ngOnInit() {
-    this.isLoading$ = this.store$.pipe(select(SpinnerStoreSelectors.selectSpinnerIsActive));
-
     this.route.params.pipe(
       map(params => params.eventTypeSlug),
       takeUntil(this.unsubscribe$)
@@ -115,6 +113,7 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
       shareReplay());
 
     this.allowChanges$ = this.data$.pipe(map(data => data.allowChanges));
+    this.isLoading$ = this.data$.pipe(map(data => data !== undefined));
 
     this.data$.pipe(
       withLatestFrom(this.updatedMessage$),

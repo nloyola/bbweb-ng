@@ -81,7 +81,7 @@ export class ParticipantService {
 
   private replyToParticipant(reply: ApiReply): Participant {
     if (reply && reply.data) {
-      return new Participant().deserialize(reply.data as JSONObject);
+      return new Participant().deserialize(reply.data as any);
     }
     throw new Error('expected a participant object');
   }

@@ -84,7 +84,7 @@ describe('EventTypeAddComponent', () => {
         description: eventType.description,
         recurring: eventType.recurring,
         studyId: study.id
-      });
+      } as any);
 
       const storeListener = jest.spyOn(store, 'dispatch');
       const toastrListener = jest.spyOn(toastr, 'success').mockReturnValue(null);

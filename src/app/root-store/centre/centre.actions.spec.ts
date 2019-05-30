@@ -1,6 +1,7 @@
 import { Factory } from '@test/factory';
 import { CentreStoreActions } from '@app/root-store/centre';
 import { SearchParams } from '@app/domain';
+import { Centre } from '@app/domain/centres';
 
 describe('centre-store actions', () => {
 
@@ -84,7 +85,7 @@ describe('centre-store actions', () => {
 
   it('AddCentreRequest', () => {
     const payload = {
-      centre: factory.centre()
+      centre: new Centre().deserialize(factory.centre())
     };
     const action = new CentreStoreActions.AddCentreRequest(payload);
     expect({ ...action }).toEqual({
@@ -95,7 +96,7 @@ describe('centre-store actions', () => {
 
   it('AddCentreSuccess', () => {
     const payload = {
-      centre: factory.centre()
+      centre: new Centre().deserialize(factory.centre())
     };
     const action = new CentreStoreActions.AddCentreSuccess(payload);
     expect({ ...action }).toEqual({
@@ -133,7 +134,7 @@ describe('centre-store actions', () => {
 
   it('GetCentreSuccess', () => {
     const payload = {
-      centre: factory.centre()
+      centre: new Centre().deserialize(factory.centre())
     };
     const action = new CentreStoreActions.GetCentreSuccess(payload);
     expect({ ...action }).toEqual({

@@ -27,16 +27,17 @@ export class Study extends ConcurrencySafeEntity implements IStudy {
   annotationTypes: AnnotationType[] = [];
   state: StudyState;
 
-  deserialize(input: JSONObject) {
+  deserialize(input: IStudy): this {
+    const { slug, name, state } = input;
+    Object.assign(this, { slug, name, state });
     super.deserialize(input);
 
-    if (((input.description === undefined))) {
-      this.description = undefined;
+    if (input.description !== undefined) {
+      this.description = input.description;
     }
 
     if (input.annotationTypes) {
-      this.annotationTypes = (input.annotationTypes as JSONArray)
-        .map((at: JSONObject) => new AnnotationType().deserialize(at));
+      this.annotationTypes = input.annotationTypes.map(at => new AnnotationType().deserialize(at));
     }
     return this;
   }
@@ -76,4 +77,5 @@ export type IStudyInfoSet = IEntitySet<IStudy>;
 
 export type IStudyStateInfo = IEntityInfoAndState<IStudy, StudyState>;
 
-export class StudyStateInfo extends EntityInfoAndState<Study, StudyState> {}
+/* tslint:disable-next-line:max-classes-per-file */
+export class StudyStateInfo extends EntityInfoAndState<Study, StudyState> { }

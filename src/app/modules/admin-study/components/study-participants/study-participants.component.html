@@ -1,6 +1,6 @@
 <div class="card mt-2" *ngIf="study">
   <div class="card-header bg-primary text-light"
-       *ngIf="!(isLoading$ | async); else showLoading">
+       *ngIf="(isLoading$ | async) === false; else showLoading">
     <mat-icon [ngClass]="study.stateIconClass()">{{ study.stateIcon() }}</mat-icon>
     {{ study.name }} <small i18n>Participant Annotations</small>
     <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">

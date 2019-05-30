@@ -222,7 +222,7 @@ describe('ProcessingTypeViewContainerComponent', () => {
         store.dispatch(EventTypeStoreActions.getEventTypeSuccess({ eventType }));
 
         fixture.detectChanges();
-        expect(component.inputEntity).toBe(eventType);
+        expect(component.inputEntity).toEqual(eventType);
       });
 
       it('when input is from processed, processing type is retrieved from store', () => {

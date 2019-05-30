@@ -80,7 +80,7 @@ describe('User Reducer', () => {
     });
 
     it('SearchUsersSuccess', () => {
-      const user = factory.user();
+      const user = new User().deserialize(factory.user());
       const payload = {
         pagedReply: factory.pagedReply<User>([ user ])
       };
@@ -134,7 +134,7 @@ describe('User Reducer', () => {
   describe('when updating users', () => {
 
     it('UpdateUserRequest', () => {
-      const user = factory.user();
+      const user = new User().deserialize(factory.user());
       const action = new UserStoreActions.UpdateUserRequest({
         user,
         attributeName: 'name',
@@ -195,7 +195,7 @@ describe('User Reducer', () => {
     });
 
     it('GetUserSuccess', () => {
-      const user = factory.user();
+      const user = new User().deserialize(factory.user());
       const payload = { user };
       const action = new UserStoreActions.GetUserSuccess(payload);
       const state = UserStoreReducer.reducer(undefined, action);

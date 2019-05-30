@@ -1,8 +1,10 @@
 import { ConcurrencySafeEntity, EntitySet, HasName, HasSlug, IConcurrencySafeEntity, IEntityInfo, JSONObject } from '@app/domain';
 import { ICentreInfoSet } from '@app/domain/centres';
 import { IStudyInfoSet } from '@app/domain/studies';
+import { HasDescription } from '../has-description.model';
 
-export interface IMembershipBase extends IConcurrencySafeEntity, HasSlug, HasName {
+export interface IMembershipBase extends IConcurrencySafeEntity, HasSlug, HasName, HasDescription {
+
   /**
    * This studies this membership is for.
    */
@@ -24,13 +26,20 @@ export abstract class MembershipBase extends ConcurrencySafeEntity implements Ha
   studyData: IStudyInfoSet;
   centreData: ICentreInfoSet;
 
-  deserialize(input: JSONObject) {
+  deserialize(input: IMembershipBase): this {
+    const { slug, name } = input;
+    Object.assign(this, { slug, name });
     super.deserialize(input);
+
+    if (input.description) {
+      this.description = input.description;
+    }
+
     if (input.studyData) {
-      this.studyData = new EntitySet().deserialize(input.studyData as JSONObject);
+      this.studyData = new EntitySet().deserialize(input.studyData);
     }
     if (input.centreData) {
-      this.centreData = new EntitySet().deserialize(input.centreData as JSONObject);
+      this.centreData = new EntitySet().deserialize(input.centreData);
     }
     return this;
   }

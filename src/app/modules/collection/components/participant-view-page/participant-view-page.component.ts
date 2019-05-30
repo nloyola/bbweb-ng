@@ -1,13 +1,12 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ParticipantStoreSelectors, StudyStoreSelectors, RootStoreState, StudyStoreActions } from '@app/root-store';
-import { createSelector, Store, select } from '@ngrx/store';
-import { Study } from '@app/domain/studies';
-import { Participant } from '@app/domain/participants';
-import { Observable, Subject, throwError } from 'rxjs';
-import { map, takeUntil, shareReplay, tap, filter } from 'rxjs/operators';
-import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { IdToTab } from '@app/domain';
+import { Participant } from '@app/domain/participants';
+import { ParticipantStoreSelectors, RootStoreState } from '@app/root-store';
 import { NgbTabChangeEvent } from '@ng-bootstrap/ng-bootstrap';
+import { select, Store } from '@ngrx/store';
+import { Observable, Subject } from 'rxjs';
+import { filter, map, shareReplay, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-participant-view-page',

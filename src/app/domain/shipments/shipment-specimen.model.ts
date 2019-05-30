@@ -21,14 +21,16 @@ export interface IShipmentSpecimen extends IConcurrencySafeEntity {
 
 }
 
-export class ShipmentSpecimen extends ConcurrencySafeEntity {
+export class ShipmentSpecimen extends ConcurrencySafeEntity implements IShipmentSpecimen {
 
   state: ShipmentItemState;
   shipmentId: string;
   specimenId: string;
   shipmentContainerId: string;
 
-  deserialize(input: JSONObject) {
+  deserialize(input: IShipmentSpecimen): this {
+    const { state, shipmentId, specimenId, shipmentContainerId } = input;
+    Object.assign(this, { state, shipmentId, specimenId, shipmentContainerId });
     super.deserialize(input);
     return this;
   }

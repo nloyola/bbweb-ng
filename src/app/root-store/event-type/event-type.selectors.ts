@@ -12,7 +12,8 @@ export const getLastSearch =
 export const getSearchReplies =
   (state: fromEventType.State): fromEventType.PagedReplyHash => state.searchState.searchReplies;
 
-export const getNamesSearchActive = (state: fromEventType.State): boolean => state.namesSearchState.searchActive;
+export const getNamesSearchActive =
+  (state: fromEventType.State): boolean => state.namesSearchState.searchActive;
 
 export const getLastNamesSearch =
   (state: fromEventType.State): fromEventType.LastSearch => state.namesSearchState.lastSearch;
@@ -88,7 +89,8 @@ export const selectSearchRepliesAndEntities =
         ...pagedReplyToInfo(reply),
         entities: reply.entityIds.map(id => {
           const entity = entities[id];
-          return (entity instanceof CollectionEventType) ? entity : new CollectionEventType().deserialize(entity);
+          return (entity instanceof CollectionEventType)
+            ? entity : new CollectionEventType().deserialize(entity);
         })
       };
     });
@@ -110,7 +112,8 @@ export const selectLastNamesSearchEntities =
 
       return entityIds.map(id => {
         const entity = entities[id];
-        return (entity instanceof CollectionEventType) ? entity : new CollectionEventType().deserialize(entity);
+        return (entity instanceof CollectionEventType)
+          ? entity : new CollectionEventType().deserialize(entity);
       });
     });
 

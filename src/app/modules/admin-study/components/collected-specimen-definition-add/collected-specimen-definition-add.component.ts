@@ -113,7 +113,7 @@ export class CollectedSpecimenDefinitionAddComponent implements OnInit, OnChange
       specimenType:            this.subform.value.specimenType,
       amount:                  this.form.value.amount,
       maxCount:                this.form.value.maxCount
-    });
+    } as any);
     return specimenDefinition;
   }
 

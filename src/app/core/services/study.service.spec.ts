@@ -1,7 +1,7 @@
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { PagedReply, SearchParams } from '@app/domain';
-import { Study, StudyCounts, IStudyInfoAndState, IStudy, StudyState } from '@app/domain/studies';
+import { Study, StudyCounts, IStudy, StudyState, IStudyStateInfo } from '@app/domain/studies';
 import { PagedQueryBehaviour } from '@test/behaviours/paged-query.behaviour';
 import { Factory } from '@test/factory';
 import * as faker from 'faker';
@@ -70,7 +70,7 @@ describe('StudyService', () => {
     let study: Study;
 
     beforeEach(() => {
-      annotationType = factory.annotationType();
+      annotationType = new AnnotationType().deserialize(factory.annotationType());
       rawStudy = factory.study({ annotationTypes: [annotationType] });
       study = new Study().deserialize(rawStudy);
     });
@@ -119,14 +119,14 @@ describe('StudyService', () => {
 
   describe('when searching for collection studies', function () {
 
-    const context: SearchableApiBehaviour.Context<IStudy, StudyState, IStudyInfoAndState> = {};
+    const context: SearchableApiBehaviour.Context<IStudy, StudyState, IStudyStateInfo> = {};
 
     beforeEach(() => {
       const study = factory.study();
       const dto = factory.entityNameAndStateDto(study);
       context.search = (searchParams: SearchParams) => service.searchCollectionStudies(searchParams);
       context.replyItems = [ dto ];
-      context.subscription = (entities: IStudyInfoAndState[]) => {
+      context.subscription = (entities: IStudyStateInfo[]) => {
         expect(entities.length).toBe(context.replyItems.length);
         expect(entities[0]).toEqual(jasmine.objectContaining(dto));
       };

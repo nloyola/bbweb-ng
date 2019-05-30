@@ -46,7 +46,7 @@ export class CollectionEventService {
           const jObj = reply.data as JSONObject;
           if (reply && reply.data && jObj.items) {
             const entities: CollectionEvent[] = (jObj.items as JSONArray)
-              .map((obj: JSONObject) => new CollectionEvent().deserialize(obj));
+              .map((obj: any) => new CollectionEvent().deserialize(obj));
 
             return {
               searchParams,
@@ -129,7 +129,7 @@ export class CollectionEventService {
 
   private replyToCollectionEvent(reply: ApiReply): CollectionEvent {
     if (reply && reply.data) {
-      return new CollectionEvent().deserialize(reply.data as JSONObject);
+      return new CollectionEvent().deserialize(reply.data as any);
     }
     throw new Error('expected a collectionEvent object');
   }

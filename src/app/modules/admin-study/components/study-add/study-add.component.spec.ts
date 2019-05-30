@@ -92,7 +92,7 @@ describe('StudyAddComponent', () => {
         study: new Study().deserialize({
           name: study.name,
           description: study.description
-        })
+        } as any)
       });
 
       expect(storeListener.mock.calls.length).toBe(1);

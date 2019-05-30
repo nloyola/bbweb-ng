@@ -1,5 +1,4 @@
-import { JSONObject } from '@app/domain';
-import { Annotation } from './annotation.model';
+import { Annotation, IAnnotation } from './annotation.model';
 
 export class NumberAnnotation extends Annotation {
 
@@ -14,9 +13,12 @@ export class NumberAnnotation extends Annotation {
     };
   }
 
-  deserialize(input: JSONObject) {
+  deserialize(input: IAnnotation): this {
     super.deserialize(input);
-    this.value = +input.numberValue;
+    const numberValue = (input as any).numberValue;
+    if (numberValue) {
+      this.value = +numberValue;
+    }
     return this;
   }
 }

@@ -5,7 +5,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { ProcessingTypeStoreReducer, StudyStoreReducer, StudyStoreActions, EventTypeStoreReducer, ProcessingTypeStoreActions, EventTypeStoreActions } from '@app/root-store';
 import { Store, StoreModule } from '@ngrx/store';
 import { StudyProcessingComponent } from './study-processing.component';
-import { Study, StudyState, ProcessingType, CollectionEventType } from '@app/domain/studies';
+import { Study, StudyState, ProcessingType, CollectionEventType, CollectedSpecimenDefinitionName } from '@app/domain/studies';
 import { Factory } from '@test/factory';
 import { MockActivatedRoute } from '@test/mocks';
 import { cold } from 'jasmine-marbles';
@@ -60,7 +60,8 @@ describe('StudyProcessingComponent', () => {
 
     const eventType = new CollectionEventType().deserialize(
       factory.collectionEventType({ specimenDefinitions: [ factory.collectedSpecimenDefinition() ]}));
-    const eventTypeNoSpecimens = new CollectionEventType().deserialize(factory.collectionEventType());
+    const specimenDefinitionNames = factory.collectedSpecimenDefinitionNames([ eventType ])
+      .map(sdn => new CollectedSpecimenDefinitionName().deserialize(sdn));
 
     mockActivatedRouteSnapshot(study);
     store.dispatch(StudyStoreActions.getStudySuccess({ study }));
@@ -70,7 +71,7 @@ describe('StudyProcessingComponent', () => {
       if (hasSpecimenDefinitions) {
         store.dispatch(EventTypeStoreActions.getSpecimenDefinitionNamesSuccess({
           studySlug: study.slug,
-          specimenDefinitionNames: factory.collectedSpecimenDefinitionNames([ eventType ])
+          specimenDefinitionNames
         }));
       }
       flush();

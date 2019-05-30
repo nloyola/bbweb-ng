@@ -40,21 +40,22 @@ export class CollectionEventType extends ConcurrencySafeEntity implements IColle
   annotationTypes: AnnotationType[] = [];
   specimenDefinitions: CollectedSpecimenDefinition[];
 
-  deserialize(input: JSONObject) {
+  deserialize(input: ICollectionEventType): this {
+    const { slug, name, recurring, studyId } = input;
+    Object.assign(this, { slug, name, recurring, studyId });
     super.deserialize(input);
 
-    if (input.description === undefined) {
-      this.description = undefined;
+    if (input.description !== undefined) {
+      this.description = input.description;
     }
 
     if (input.annotationTypes) {
-      this.annotationTypes = (input.annotationTypes as JSONArray)
-        .map((at: JSONObject) => new AnnotationType().deserialize(at));
+      this.annotationTypes = input.annotationTypes.map(at => new AnnotationType().deserialize(at));
     }
 
     if (input.specimenDefinitions) {
-      this.specimenDefinitions = (input.specimenDefinitions as JSONArray)
-        .map((sd: JSONObject) => new CollectedSpecimenDefinition().deserialize(sd));
+      this.specimenDefinitions =
+        input.specimenDefinitions.map(sd => new CollectedSpecimenDefinition().deserialize(sd));
     }
 
     return this;
@@ -64,4 +65,5 @@ export class CollectionEventType extends ConcurrencySafeEntity implements IColle
 
 export type IEventTypeInfo = IEntityInfo<ICollectionEventType>;
 
+/* tslint:disable-next-line:max-classes-per-file */
 export class EventTypeInfo extends EntityInfo<CollectionEventType> { }
