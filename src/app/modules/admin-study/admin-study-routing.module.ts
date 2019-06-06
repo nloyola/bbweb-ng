@@ -107,7 +107,7 @@ export const routes: Routes = [
                       eventType: EventTypeResolver
                     },
                     data: {
-                      breadcrumbs: '{{eventType.name}}'
+                      breadcrumbs: '{{ eventType.name }}'
                     },
                     children: [
                       {

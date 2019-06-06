@@ -134,7 +134,7 @@ describe('CollectionEventService', () => {
         {
           rawEvent,
           event,
-          attribute: 'addAnnotation',
+          attribute: 'addOrUpdateAnnotation',
           value: event.annotations[0],
           url: `${BASE_URL}/annot/${event.id}`
         },

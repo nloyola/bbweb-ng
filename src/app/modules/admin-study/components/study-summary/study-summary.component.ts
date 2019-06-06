@@ -4,13 +4,13 @@ import { Study, StudyStateUIMap } from '@app/domain/studies';
 import { StudyUI } from '@app/domain/studies/study-ui.model';
 import { ModalInputTextareaOptions, ModalInputTextOptions } from '@app/modules/modals/models';
 import { RootStoreState, StudyStoreActions, StudyStoreSelectors } from '@app/root-store';
-import { SpinnerStoreSelectors } from '@app/root-store/spinner';
 import { EnableAllowdIds } from '@app/root-store/study/study.reducer';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Dictionary } from '@ngrx/entity';
 import { createSelector, select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subject } from 'rxjs';
-import { filter, map, share, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { filter, map, shareReplay, takeUntil, withLatestFrom } from 'rxjs/operators';
 
 interface StoreData {
   study: StudyUI;
@@ -29,8 +29,6 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
 
   isLoading$: Observable<boolean>;
   study$: Observable<StudyUI>;
-  study: StudyUI;
-  isEnableAllowed: boolean;
   studyStateUIMap = StudyStateUIMap;
   descriptionToggleLength = 80;
   getStateIcon = StudyUI.getStateIcon;
@@ -46,6 +44,7 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
 
   private data$: Observable<StoreData>;
   private studyId: string;
+  private studySubject = new BehaviorSubject(null);
   private updatedMessage$ = new Subject<string>();
   private unsubscribe$ = new Subject<void>();
 
@@ -57,58 +56,38 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.isLoading$ = this.store$.pipe(select(SpinnerStoreSelectors.selectSpinnerIsActive));
+    this.studyId = this.route.parent.snapshot.data.study.id;
+    this.store$.dispatch(StudyStoreActions.getEnableAllowedRequest({ studyId: this.studyId }));
 
     const selector = createSelector(
-      StudyStoreSelectors.selectAllStudies,
+      StudyStoreSelectors.selectAllStudyEntities,
       StudyStoreSelectors.selectStudyEnableAllowedIds,
-      (studies: Study[], enableAllowedIds: EnableAllowdIds) =>
-        ({ studies, enableAllowedIds }));
+      (studies: Dictionary<Study>, enableAllowedIds: EnableAllowdIds) => {
+        const study = studies[this.studyId];
+        const isEnableAllowed = enableAllowedIds[this.studyId];
+        return {
+          study : study ? this.studyEntityToUI(study) : undefined,
+          isEnableAllowed
+        };
+      });
 
     this.data$ = this.store$.pipe(
       select(selector),
-      map(data => {
-        const studyEntity = data.studies.find(s => s.slug === this.route.parent.snapshot.params.slug);
-        if (studyEntity) {
-          const study = this.studyEntityToUI(studyEntity);
-          const isEnableAllowed = data.enableAllowedIds[this.studyId];
-          return { study, isEnableAllowed };
-        }
+      shareReplay());
 
-        if (this.studyId) {
-          const studyById = data.studies.find(s => s.id === this.studyId);
-          if (!studyById) {
-            throw new Error('could not find study by ID');
-          }
-          const study = this.studyEntityToUI(studyById);
-          const isEnableAllowed = data.enableAllowedIds[this.studyId];
-          return { study, isEnableAllowed };
-        }
-
-        return undefined;
-      }),
-      tap(data => {
-        if (data === undefined) { return; }
-
-        if (this.studyId === undefined) {
-          this.studyId = data.study.id;
-          this.store$.dispatch(StudyStoreActions.getEnableAllowedRequest({ studyId: data.study.id }));
-        }
-
-        this.study = data.study;
-        this.isEnableAllowed = data.isEnableAllowed;
-      }),
-      share());
+    this.data$.pipe(takeUntil(this.unsubscribe$)).subscribe(this.studySubject);
 
     this.study$ = this.data$.pipe(map(data => data ? data.study : undefined));
+    this.isLoading$ = this.data$.pipe(map(data => (data === undefined) || (data.study === undefined)));
 
     this.data$.pipe(
       withLatestFrom(this.updatedMessage$),
       takeUntil(this.unsubscribe$)
     ).subscribe(([ data, msg ]) => {
-      if (data === undefined) { return; }
+      if ((data === undefined) || (msg === null)) { return; }
 
       this.toastr.success(msg, 'Update Successfull');
+      this.updatedMessage$.next(null);
 
       if (data.study.slug !== this.route.parent.snapshot.params.slug) {
         // name was changed and new slug was assigned
@@ -138,10 +117,14 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
   }
 
   updateName() {
-    this.modalService.open(this.updateNameModal).result
+    const study = this.studySubject.value.study.entity;
+    if (!study.isDisabled()) {
+      throw new Error('modifications not allowed');
+    }
+    this.modalService.open(this.updateNameModal, { size: 'lg' }).result
       .then(value => {
         this.store$.dispatch(StudyStoreActions.updateStudyRequest({
-          study: this.study.entity,
+          study,
           attributeName: 'name',
           value
         }));
@@ -151,10 +134,14 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
   }
 
   updateDescription() {
+    const study = this.studySubject.value.study.entity;
+    if (!study.isDisabled()) {
+      throw new Error('modifications not allowed');
+    }
     this.modalService.open(this.updateDescriptionModal, { size: 'lg' }).result
       .then(value => {
         this.store$.dispatch(StudyStoreActions.updateStudyRequest({
-          study: this.study.entity,
+          study,
           attributeName: 'description',
           value: value ? value : undefined
         }));
@@ -180,8 +167,9 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
   }
 
   private changeState(action: 'disable' | 'enable' | 'retire' | 'unretire') {
+    const study = this.studySubject.value.study.entity;
     this.store$.dispatch(StudyStoreActions.updateStudyRequest({
-      study: this.study.entity,
+      study,
       attributeName: 'state',
       value: action
     }));

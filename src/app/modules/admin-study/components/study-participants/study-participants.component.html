@@ -1,4 +1,4 @@
-<div class="card mt-2" *ngIf="study">
+<div class="card mt-2" *ngIf="study$ | async as study">
   <div class="card-header bg-primary text-light"
        *ngIf="(isLoading$ | async) === false; else showLoading">
     <mat-icon [ngClass]="study.stateIconClass()">{{ study.stateIcon() }}</mat-icon>

@@ -49,6 +49,9 @@ describe('StudySummaryComponent', () => {
           useValue: {
             parent: {
               snapshot: {
+                data: {
+                  study: study
+                },
                 params: {
                   slug: study.slug
                 }
@@ -79,18 +82,6 @@ describe('StudySummaryComponent', () => {
     fixture.detectChanges();
     expect(component).toBeTruthy();
   });
-
-  it('isEnableAllowed resolved correctly', fakeAsync(() => {
-    store.dispatch(StudyStoreActions.getStudySuccess({ study }));
-    fixture.detectChanges();
-
-    [ false, true ].forEach(allowed => {
-      store.dispatch(StudyStoreActions.getEnableAllowedSuccess({ studyId: study.id, allowed }));
-      flush();
-      fixture.detectChanges();
-      expect(component.isEnableAllowed).toBe(allowed);
-    });
-  }));
 
   it('navigates to new path when study name is changed', fakeAsync(() => {
     store.dispatch(StudyStoreActions.getStudySuccess({ study }));
@@ -124,8 +115,14 @@ describe('StudySummaryComponent', () => {
     beforeEach(() => {
       context.fixture = fixture;
       context.componentInitialize =
-        () => { store.dispatch(StudyStoreActions.getStudySuccess({ study })); };
-      context.componentValidateInitialization = () => { expect(component.study.entity).toEqual(study); };
+        () => {
+          store.dispatch(StudyStoreActions.getStudySuccess({ study }));
+          store.dispatch(StudyStoreActions.getEnableAllowedSuccess({
+            studyId: study.id,
+            allowed: true
+          }));
+        };
+      context.componentValidateInitialization = () => undefined;
       context.dispatchSuccessAction =
         () => { store.dispatch(StudyStoreActions.updateStudySuccess({ study })); };
       context.createExpectedFailureAction =
@@ -301,16 +298,23 @@ describe('StudySummaryComponent', () => {
       fixture.detectChanges();
 
       const componentUpdateFuncs = [
-        (c) => c.updateName(),
-        (c) => c.updateDescription(),
-        (c) => c.disable(),
-        (c) => c.enable(),
-        (c) => c.retire(),
-        (c) => c.unretire()
+        () => component.updateName(),
+        () => component.updateDescription(),
+        () => component.disable(),
+        () => {
+          store.dispatch(StudyStoreActions.getEnableAllowedSuccess({
+            studyId: study.id,
+            allowed: true
+          }));
+          fixture.detectChanges();
+          component.enable();
+        },
+        () => component.retire(),
+        () => component.unretire()
       ];
 
       componentUpdateFuncs.forEach(updateFunc => {
-        updateFunc(component);
+        updateFunc();
         fixture.detectChanges();
         flush();
         expect(store.dispatch).toHaveBeenCalled();
@@ -323,23 +327,29 @@ describe('StudySummaryComponent', () => {
     }));
 
     it('functions that change the study state', fakeAsync(() => {
-      ngZone.run(() => store.dispatch(StudyStoreActions.getStudySuccess({ study })));
+      ngZone.run(() => {
+        store.dispatch(StudyStoreActions.getStudySuccess({ study }));
+        store.dispatch(StudyStoreActions.getEnableAllowedSuccess({
+          studyId: study.id,
+          allowed: true
+        }));
+      });
       fixture.detectChanges();
 
       const testData = [
-        { componentFunc: (c) => c.disable(),  value: 'disable' },
-        { componentFunc: (c) => c.enable(),   value: 'enable' },
-        { componentFunc: (c) => c.retire(),   value: 'retire' },
-        { componentFunc: (c) => c.unretire(), value: 'unretire' }
+        { componentFunc: () => component.disable(),  value: 'disable' },
+        { componentFunc: () => component.enable(),   value: 'enable' },
+        { componentFunc: () => component.retire(),   value: 'retire' },
+        { componentFunc: () => component.unretire(), value: 'unretire' }
       ];
 
       const storeListener = jest.spyOn(store, 'dispatch');
       testData.forEach((testInfo, index) => {
-        testInfo.componentFunc(component);
+        testInfo.componentFunc();
         fixture.detectChanges();
-        tick(1000);
+        flush();
 
-        expect(storeListener.mock.calls.length).toBe(index + 1);
+        expect(storeListener.mock.calls.length).toBe(1 + index);
         expect(storeListener.mock.calls[index][0]).toEqual(StudyStoreActions.updateStudyRequest({
           study,
           attributeName: 'state',

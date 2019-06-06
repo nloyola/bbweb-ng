@@ -62,26 +62,10 @@ describe('ProcessingTypeViewContainerComponent', () => {
   });
 
   it('should create', () => {
-    createEntities();
+    const { study, processingType } = entityFixture.createEntities();
+    createMockActivatedRouteSpies(study, processingType);
     fixture.detectChanges();
     expect(component).toBeTruthy();
-  });
-
-  it('study is retrieved from store', () => {
-    const { study, processingType } = entityFixture.createEntities();
-    createMockActivatedRouteSpies(study, processingType);
-    store.dispatch(StudyStoreActions.getStudySuccess({ study }));
-    fixture.detectChanges();
-    expect(component.study).toBe(study);
-  });
-
-  it('processing type is retrieved from store', () => {
-    const { study, processingType } = entityFixture.createEntities();
-    createMockActivatedRouteSpies(study, processingType);
-    store.dispatch(new ProcessingTypeStoreActions.GetProcessingTypeSuccess({ processingType }));
-
-    fixture.detectChanges();
-    expect(component.processingType).toBe(processingType);
   });
 
   it('navigates to new path when name is changed', fakeAsync(() => {
@@ -132,8 +116,7 @@ describe('ProcessingTypeViewContainerComponent', () => {
         store.dispatch(StudyStoreActions.getStudySuccess({ study }));
         store.dispatch(new ProcessingTypeStoreActions.GetProcessingTypeSuccess({ processingType }));
       };
-      context.componentValidateInitialization =
-        () => { expect(component.processingType).toEqual(processingType); };
+      context.componentValidateInitialization = () => undefined;
       context.dispatchSuccessAction =
         () => { store.dispatch(new ProcessingTypeStoreActions.UpdateProcessingTypeSuccess({
           processingType
@@ -277,27 +260,6 @@ describe('ProcessingTypeViewContainerComponent', () => {
 
     });
 
-  });
-
-  it('allow changes is updated', () => {
-    const stateValues = [
-      { state: StudyState.Enabled, expectedAllowChanges: false },
-      { state: StudyState.Disabled, expectedAllowChanges: true },
-    ];
-
-    const entities = createEntities();
-    fixture.detectChanges();
-
-    stateValues.forEach(stateValue => {
-      const updatedStudy = new Study().deserialize({
-        ...entities.study as any,
-        state: stateValue.state
-      });
-      store.dispatch(StudyStoreActions.updateStudySuccess({ study: updatedStudy }));
-
-      fixture.detectChanges();
-      expect(component.allowChanges).toBe(stateValue.expectedAllowChanges);
-    });
   });
 
   describe('common behaviour', () => {
@@ -542,7 +504,7 @@ describe('ProcessingTypeViewContainerComponent', () => {
       });
     }));
 
-    it('processing type becomes undefined when removed', fakeAsync(() => {
+    it('navigates to new route when removed', fakeAsync(() => {
       const entities = createEntities();
       fixture.detectChanges();
 
@@ -564,7 +526,6 @@ describe('ProcessingTypeViewContainerComponent', () => {
       flush();
       fixture.detectChanges();
 
-      expect(component.processingType).toBeUndefined();
       expect(routerListener).toHaveBeenCalled();
       expect(routerListener.mock.calls[0][0])
         .toEqual([ '/admin/studies', entities.study.slug, 'processing' ]);
@@ -592,7 +553,6 @@ describe('ProcessingTypeViewContainerComponent', () => {
       fixture.detectChanges();
 
       expect(modalListener).toHaveBeenCalled();
-      expect(component.processingType).not.toBeUndefined();
     });
   });
 
@@ -643,6 +603,7 @@ describe('ProcessingTypeViewContainerComponent', () => {
   }
 
   function createMockActivatedRouteSpies(study: Study, processingType: ProcessingType): void {
+    mockActivatedRoute.spyOnData(() => ({ processingType }));
     mockActivatedRoute.spyOnParams(() => processingType);
 
     mockActivatedRoute.spyOnParent(() => ({
@@ -650,6 +611,9 @@ describe('ProcessingTypeViewContainerComponent', () => {
         parent: {
           parent: {
             snapshot: {
+              data: {
+                study
+              },
               params: {
                 slug: study.slug
               }
@@ -658,6 +622,9 @@ describe('ProcessingTypeViewContainerComponent', () => {
         }
       },
       snapshot: {
+        data: {
+          processingType
+        },
         params: {
           processingTypeSlug: processingType.slug
         }
@@ -665,7 +632,9 @@ describe('ProcessingTypeViewContainerComponent', () => {
     }));
 
     mockActivatedRoute.spyOnSnapshot(() => ({
-      params: {}
+      data: {
+        processingType
+      }
     }));
   }
 });

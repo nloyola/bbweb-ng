@@ -1,17 +1,17 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AnnotationType } from '@app/domain/annotations';
 import { Study } from '@app/domain/studies';
 import { StudyUI } from '@app/domain/studies/study-ui.model';
 import { RootStoreState, StudyStoreActions, StudyStoreSelectors } from '@app/root-store';
-import { SpinnerStoreSelectors } from '@app/root-store/spinner';
 import { AnnotationTypeRemoveComponent } from '@app/shared/components/annotation-type-remove/annotation-type-remove.component';
 import { AnnotationTypeViewComponent } from '@app/shared/components/annotation-type-view/annotation-type-view.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Dictionary } from '@ngrx/entity';
 import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subject } from 'rxjs';
-import { filter, map, takeUntil, withLatestFrom, shareReplay, tap } from 'rxjs/operators';
+import { Observable, Subject, BehaviorSubject } from 'rxjs';
+import { filter, map, shareReplay, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
 
 @Component({
   selector: 'app-study-participants',
@@ -21,12 +21,11 @@ import { filter, map, takeUntil, withLatestFrom, shareReplay, tap } from 'rxjs/o
 export class StudyParticipantsComponent implements OnInit, OnDestroy {
 
   isLoading$: Observable<boolean>;
-  study$: Observable<Study>;
-  study: StudyUI;
-  isAddingAnnotation = false;
+  study$: Observable<StudyUI>;
   sortedAnnotationTypes: AnnotationType[];
-  updatedMessage$ = new Subject<string>();
 
+  private studySubject = new BehaviorSubject(null);
+  private updatedMessage$ = new Subject<string>();
   private unsubscribe$ = new Subject<void>();
 
   constructor(private store$: Store<RootStoreState.State>,
@@ -36,23 +35,25 @@ export class StudyParticipantsComponent implements OnInit, OnDestroy {
               private toastr: ToastrService) { }
 
   ngOnInit() {
-    this.isLoading$ = this.store$.pipe(select(SpinnerStoreSelectors.selectSpinnerIsActive));
-
     this.study$ = this.store$.pipe(
-      select(StudyStoreSelectors.selectAllStudies),
-      filter(s => s.length > 0),
-      map((studies: Study[]) => {
-        const studyEntity = studies.find(s => s.slug === this.route.parent.parent.snapshot.params.slug);
+      select(StudyStoreSelectors.selectAllStudyEntities),
+      map((studies: Dictionary<Study>) => {
+        const studyEntity = studies[this.route.parent.parent.snapshot.data.study.id];
         if (studyEntity) {
-          return (studyEntity instanceof Study) ? studyEntity :  new Study().deserialize(studyEntity);
+          const study = (studyEntity instanceof Study) ? studyEntity :  new Study().deserialize(studyEntity);
+          return new StudyUI(study);
         }
         return undefined;
       }),
       tap(study => {
-        this.study = new StudyUI(study);
-        this.setAnnotations();
+        if (study) {
+          this.setAnnotations(study.entity);
+        }
       }),
       shareReplay());
+
+    this.study$.pipe(takeUntil(this.unsubscribe$)).subscribe(this.studySubject);
+    this.isLoading$ = this.study$.pipe(map(study => study === undefined));
 
     this.store$.pipe(
       select(StudyStoreSelectors.selectStudyError),
@@ -78,7 +79,8 @@ export class StudyParticipantsComponent implements OnInit, OnDestroy {
   }
 
   add() {
-    if (!this.study.isDisabled()) {
+    const study = this.studySubject.value.entity;
+    if (!study.isDisabled()) {
       throw new Error('modifications not allowed');
     }
     this.router.navigate([ 'add' ], { relativeTo: this.route });
@@ -91,14 +93,16 @@ export class StudyParticipantsComponent implements OnInit, OnDestroy {
   }
 
   edit(annotationType: AnnotationType) {
-    if (!this.study.isDisabled()) {
+    const study = this.studySubject.value.entity;
+    if (!study.isDisabled()) {
       throw new Error('modifications not allowed');
     }
     this.router.navigate([ `../${annotationType.id}` ], { relativeTo: this.route });
   }
 
   remove(annotationType: AnnotationType) {
-    if (!this.study.isDisabled()) {
+    const study = this.studySubject.value.entity;
+    if (!study.isDisabled()) {
       throw new Error('modifications not allowed');
     }
 
@@ -107,7 +111,7 @@ export class StudyParticipantsComponent implements OnInit, OnDestroy {
     modalRef.result
       .then(() => {
         this.store$.dispatch(StudyStoreActions.updateStudyRemoveAnnotationTypeRequest({
-          study: this.study.entity,
+          study,
           annotationTypeId: annotationType.id
         }));
         this.updatedMessage$.next('Annotation removed');
@@ -115,8 +119,8 @@ export class StudyParticipantsComponent implements OnInit, OnDestroy {
       .catch(() => undefined);
   }
 
-  private setAnnotations() {
-    this.sortedAnnotationTypes = AnnotationType.sortAnnotationTypes(this.study.annotationTypes);
+  private setAnnotations(study: Study) {
+    this.sortedAnnotationTypes = AnnotationType.sortAnnotationTypes(study.annotationTypes);
   }
 
 }

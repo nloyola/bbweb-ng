@@ -1,73 +1,77 @@
-<app-processing-type-view-ui *ngIf="(isLoading$ | async) === false; else showLoading"
-                             [processingType]="processingType"
-                             [allowChanges]="(allowChanges$ | async)"
-                             [inputEntity]="inputEntity"
-                             (updateNameSelected)="updateName($event)"
-                             (updateDescriptionSelected)="updateDescription($event)"
-                             (updateEnabledSelected)="updateEnabled($event)"
-                             (addAnnotationTypeSelected)="addAnnotationType($event)"
-                             (viewAnnotationTypeSelected)="viewAnnotationType($event)"
-                             (editAnnotationTypeSelected)="editAnnotationType($event)"
-                             (removeAnnotationTypeSelected)="removeAnnotationType($event)"
-                             (inputSpecimenUpdateSelected)="updateInputSpecimen($event)"
-                             (outputSpecimenUpdateSelected)="updateOutputSpecimen($event)"
-                             (removeProcessingTypeSelected)="removeProcessingType($event)">
-</app-processing-type-view-ui>
+<ng-container *ngIf="processingType$ | async as processingType">
 
-<ng-template #showLoading>
-  <div class="card-header">
-    <app-spinner name="login" [show]="true" i18n>
-      Loading
-    </app-spinner>
-  </div>
-</ng-template>
+  <app-processing-type-view-ui *ngIf="(isLoading$ | async) === false; else showLoading"
+                               [processingType]="processingType"
+                               [allowChanges]="(allowChanges$ | async)"
+                               [inputEntity]="inputEntity"
+                               (updateNameSelected)="updateName($event)"
+                               (updateDescriptionSelected)="updateDescription($event)"
+                               (updateEnabledSelected)="updateEnabled($event)"
+                               (addAnnotationTypeSelected)="addAnnotationType($event)"
+                               (viewAnnotationTypeSelected)="viewAnnotationType($event)"
+                               (editAnnotationTypeSelected)="editAnnotationType($event)"
+                               (removeAnnotationTypeSelected)="removeAnnotationType($event)"
+                               (inputSpecimenUpdateSelected)="updateInputSpecimen($event)"
+                               (outputSpecimenUpdateSelected)="updateOutputSpecimen($event)"
+                               (removeProcessingTypeSelected)="removeProcessingType($event)">
+  </app-processing-type-view-ui>
 
-<ng-template #updateNameModal let-modal>
-  <app-modal-input-text [title]="'Update Name'"
-                        [label]="'New event name'"
-                        [value]="processingType?.name"
-                        [options]="updateNameModalOptions"
-                        (onConfirm)="confirm($event)"
-                        [modal]="modal">
-  </app-modal-input-text>
-</ng-template>
+  <ng-template #showLoading>
+    <div class="card-header">
+      <app-spinner name="login" [show]="true" i18n>
+        Loading
+      </app-spinner>
+    </div>
+  </ng-template>
 
-<ng-template #updateDescriptionModal let-modal>
-  <app-modal-input-textarea [title]="'Update Description'"
-                            [label]="'New event description'"
-                            [value]="processingType?.description"
-                            [options]="updateDescriptionModalOptions"
-                            (onConfirm)="confirm($event)"
-                            [modal]="modal">
-  </app-modal-input-textarea>
-</ng-template>
+  <ng-template #updateNameModal let-modal>
+    <app-modal-input-text [title]="'Update Name'"
+                          [label]="'New event name'"
+                          [value]="processingType?.name"
+                          [options]="updateNameModalOptions"
+                          (onConfirm)="confirm($event)"
+                          [modal]="modal">
+    </app-modal-input-text>
+  </ng-template>
 
-<ng-template #updateEnabledModal let-modal>
-  <app-modal-input-boolean [title]="'Update Enabled'"
-                           [label]="'New value'"
-                           [value]="processingType?.enabled"
-                           [options]="{ required: true }"
-                           (onConfirm)="confirm($event)"
-                           [modal]="modal">
-  </app-modal-input-boolean>
-</ng-template>
+  <ng-template #updateDescriptionModal let-modal>
+    <app-modal-input-textarea [title]="'Update Description'"
+                              [label]="'New event description'"
+                              [value]="processingType?.description"
+                              [options]="updateDescriptionModalOptions"
+                              (onConfirm)="confirm($event)"
+                              [modal]="modal">
+    </app-modal-input-textarea>
+  </ng-template>
+
+  <ng-template #updateEnabledModal let-modal>
+    <app-modal-input-boolean [title]="'Update Enabled'"
+                             [label]="'New value'"
+                             [value]="processingType?.enabled"
+                             [options]="{ required: true }"
+                             (onConfirm)="confirm($event)"
+                             [modal]="modal">
+    </app-modal-input-boolean>
+  </ng-template>
 
 
-<ng-template #processingTypeInUseModal let-modal>
-  <div class="modal-header">
-    <h4 class="modal-title" id="modal-basic-title" i18n>Processing Step In Use</h4>
-    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <div class="modal-body" i18n>
-    This processing stpe cannot be removed since it is an input for another processing step.
-    <p>
-      If you still want to remove it, remove this specimen as the input from the other
-      processing step.
-    </p>
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-primary" (click)="modal.close()" i18n>OK</button>
-  </div>
-</ng-template>
+  <ng-template #processingTypeInUseModal let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title" i18n>Processing Step In Use</h4>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body" i18n>
+      This processing stpe cannot be removed since it is an input for another processing step.
+      <p>
+        If you still want to remove it, remove this specimen as the input from the other
+        processing step.
+      </p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-primary" (click)="modal.close()" i18n>OK</button>
+    </div>
+  </ng-template>
+
+</ng-container>

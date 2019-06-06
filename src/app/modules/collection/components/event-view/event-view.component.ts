@@ -33,7 +33,6 @@ export class EventViewComponent implements OnInit, OnDestroy {
   annotations$: Observable<Annotation[]>;
 
   private visitNumber: number;
-  private annotationToEdit: Annotation;
   private updatedMessage$ = new Subject<string>();
   private unsubscribe$ = new Subject<void>();
 
@@ -47,7 +46,7 @@ export class EventViewComponent implements OnInit, OnDestroy {
     this.visitNumber = this.route.parent.snapshot.params.visitNumber;
     this.eventTypes$ = this.store$.pipe(select(EventTypeStoreSelectors.selectAllEventTypeEntities));
 
-    this.data$ = combineLatest(this.route.parent.data, this.eventTypes$).pipe(
+    this.data$ = combineLatest([ this.route.parent.data, this.eventTypes$ ]).pipe(
       map(([routeData, eventTypes]) => {
         const event = routeData.event;
         const eventType = eventTypes[event.eventTypeId];
@@ -113,7 +112,6 @@ export class EventViewComponent implements OnInit, OnDestroy {
   updateAnnotation(annotation: Annotation) {
     let entities: EntityData;
     this.data$.pipe(take(1)).subscribe(e => entities = e);
-    this.annotationToEdit = annotation;
 
     this.modalService.open(this.updateAnnotationModal, { size: 'lg' }).result
       .then(value => {

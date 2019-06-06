@@ -11,6 +11,10 @@ export class MockActivatedRoute extends ActivatedRoute {
   get parent(): ActivatedRoute { return null; }
   get snapshot(): ActivatedRouteSnapshot { return null; }
 
+  spyOnData(func: () => void): void {
+    Object.defineProperty(this, 'data', { get: () => observableOf(func()) });
+  }
+
   spyOnParams(func: () => void): void {
     Object.defineProperty(this, 'params', { get: () => observableOf(func()) });
   }

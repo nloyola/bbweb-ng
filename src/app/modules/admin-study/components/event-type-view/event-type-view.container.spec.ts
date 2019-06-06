@@ -83,48 +83,6 @@ describe('EventTypeViewContainer', () => {
     expect(component).toBeTruthy();
   });
 
-  it('allow changes is resolved', () => {
-    const eventType = createEventType();
-    createMockActivatedRouteSpies(study, eventType);
-    componentSetup(study, eventType);
-    fixture.detectChanges();
-
-    const stateValues = [
-      { state: StudyState.Enabled, expectedAllowChanges: false },
-      { state: StudyState.Disabled, expectedAllowChanges: true },
-    ];
-
-    stateValues.forEach(stateValue => {
-      const updatedStudy = new Study().deserialize({
-        ...study as any,
-        state: stateValue.state
-      });
-      store.dispatch(StudyStoreActions.updateStudySuccess({ study: updatedStudy }));
-
-      fixture.detectChanges();
-      expect(component.allowChanges).toBe(stateValue.expectedAllowChanges);
-    });
-  });
-
-  it('updates to event types are received', () => {
-    const eventType = createEventType();
-    createMockActivatedRouteSpies(study, eventType);
-    componentSetup(study, eventType);
-    const recurringValues = [ !eventType.recurring, eventType.recurring ];
-
-    recurringValues.forEach(recurringValue => {
-      const updatedEventType = new CollectionEventType().deserialize({
-        ...eventType as any,
-        recurring: recurringValue
-      });
-
-      store.dispatch(EventTypeStoreActions.updateEventTypeSuccess({ eventType: updatedEventType }));
-
-      fixture.detectChanges();
-      expect(component.eventType).toEqual(updatedEventType);
-    });
-  });
-
   it('navigates to new path when name is changed', fakeAsync(() => {
     const eventType = createEventType();
     createMockActivatedRouteSpies(study, eventType);
@@ -167,7 +125,7 @@ describe('EventTypeViewContainer', () => {
         componentSetup(study, eventType);
         store.dispatch(EventTypeStoreActions.getEventTypeSuccess({ eventType }));
       };
-      context.componentValidateInitialization = () => { expect(component.eventType).toEqual(eventType); };
+      context.componentValidateInitialization = () => undefined;
       context.dispatchSuccessAction =
         () => { store.dispatch(EventTypeStoreActions.updateEventTypeSuccess({ eventType })); };
       context.createExpectedFailureAction =
@@ -532,6 +490,7 @@ describe('EventTypeViewContainer', () => {
   }
 
   function createMockActivatedRouteSpies(study: Study, eventType: CollectionEventType): void {
+    mockActivatedRoute.spyOnData(() => ({ eventType }));
     mockActivatedRoute.spyOnParams(() => eventType);
 
     mockActivatedRoute.spyOnParent(() => ({
@@ -539,6 +498,9 @@ describe('EventTypeViewContainer', () => {
         parent: {
           parent: {
             snapshot: {
+              data: {
+                study
+              },
               params: {
                 slug: study.slug
               }
@@ -549,6 +511,9 @@ describe('EventTypeViewContainer', () => {
     }));
 
     mockActivatedRoute.spyOnSnapshot(() => ({
+      data: {
+        eventType
+      },
       params: {
         eventTypeSlug: eventType.slug
       }

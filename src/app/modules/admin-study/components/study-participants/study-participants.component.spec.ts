@@ -50,6 +50,9 @@ describe('StudyParticipantsComponent', () => {
             parent: {
               parent: {
                 snapshot: {
+                  data: {
+                    study: study
+                  },
                   params: {
                     slug: study.slug
                   }
@@ -95,13 +98,6 @@ describe('StudyParticipantsComponent', () => {
   it('should create', () => {
     fixture.detectChanges();
     expect(component).toBeTruthy();
-  });
-
-  it('assigns the study when updated', () => {
-    fixture.detectChanges();
-    store.dispatch(StudyStoreActions.getStudySuccess({ study }));
-    fixture.detectChanges();
-    expect(component.study).toEqual(new StudyUI(study));
   });
 
   it('should change state', () => {

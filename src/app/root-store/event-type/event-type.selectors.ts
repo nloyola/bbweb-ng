@@ -89,8 +89,11 @@ export const selectSearchRepliesAndEntities =
         ...pagedReplyToInfo(reply),
         entities: reply.entityIds.map(id => {
           const entity = entities[id];
-          return (entity instanceof CollectionEventType)
-            ? entity : new CollectionEventType().deserialize(entity);
+          if (entity) {
+            return (entity instanceof CollectionEventType)
+              ? entity : new CollectionEventType().deserialize(entity);
+          }
+          return undefined;
         })
       };
     });
@@ -112,8 +115,11 @@ export const selectLastNamesSearchEntities =
 
       return entityIds.map(id => {
         const entity = entities[id];
-        return (entity instanceof CollectionEventType)
-          ? entity : new CollectionEventType().deserialize(entity);
+        if (entity) {
+          return (entity instanceof CollectionEventType)
+            ? entity : new CollectionEventType().deserialize(entity);
+        }
+        return undefined;
       });
     });
 

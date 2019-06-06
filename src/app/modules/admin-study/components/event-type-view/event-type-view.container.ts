@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router, NavigationEnd, Params } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AnnotationType } from '@app/domain/annotations';
 import { CollectionEventType, Study } from '@app/domain/studies';
 import { CollectedSpecimenDefinition } from '@app/domain/studies/collected-specimen-definition.model';
@@ -8,21 +8,19 @@ import { EventTypeStoreActions, EventTypeStoreSelectors, RootStoreState, StudySt
 import { AnnotationTypeRemoveComponent } from '@app/shared/components/annotation-type-remove/annotation-type-remove.component';
 import { AnnotationTypeViewComponent } from '@app/shared/components/annotation-type-view/annotation-type-view.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Dictionary } from '@ngrx/entity';
 import { createSelector, select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
-import { Subject, Observable, of } from 'rxjs';
-import { takeUntil, map, withLatestFrom, tap, share, filter, shareReplay } from 'rxjs/operators';
+import { Observable, Subject, combineLatest, BehaviorSubject } from 'rxjs';
+import { filter, map, shareReplay, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
 import { EventTypeRemoveComponent } from '../event-type-remove/event-type-remove.component';
 import { SpecimenDefinitionRemoveComponent } from '../specimen-definition-remove/specimen-definition-remove.component';
 import { SpecimenDefinitionViewComponent } from '../specimen-definition-view/specimen-definition-view.component';
-import { SpinnerStoreSelectors } from '@app/root-store/spinner';
-import { Dictionary } from '@ngrx/entity';
 
 interface StoreData {
   study: Study;
   eventType: CollectionEventType;
-  eventTypes: CollectionEventType[];
-  allowChanges: boolean;
+  eventTypes: Dictionary<CollectionEventType>;
 }
 
 @Component({
@@ -36,16 +34,14 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
   @ViewChild('updateRecurringModal') updateRecurringModal: TemplateRef<any>;
 
   isLoading$: Observable<boolean>;
+  eventType$: Observable<CollectionEventType>;
   allowChanges$: Observable<boolean>;
   updateNameModalOptions: ModalInputTextOptions;
   updateDescriptionModalOptions: ModalInputTextareaOptions;
-  allowChanges: boolean;
-  eventType: CollectionEventType;
 
-  private data$: Observable<StoreData>;
-  private study: Study;
-  private eventTypes: CollectionEventType[];
   private eventTypeId: string;
+  private data$: Observable<StoreData>;
+  private dataSubject = new BehaviorSubject(null);
   private updatedMessage$ = new Subject<string>();
   private unsubscribe$: Subject<void> = new Subject<void>();
 
@@ -56,64 +52,49 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
               private toastr: ToastrService) {}
 
   ngOnInit() {
-    this.route.params.pipe(
-      map(params => params.eventTypeSlug),
+    this.eventTypeId = this.route.snapshot.data.eventType.id;
+    this.route.data.pipe(
       takeUntil(this.unsubscribe$)
-    ).subscribe((slug) => {
-      if (this.eventTypes) {
-        this.eventType = Object.values(this.eventTypes).find(et => et.slug === slug);
+    ).subscribe(data => {
+      if (this.eventTypeId !== data.eventType.id) {
+        // user selected a different event type
+        this.eventTypeId = data.eventType.id;
+        this.updatedMessage$.next(null);
       }
-
-      this.updatedMessage$.next(null);
     });
 
     const entitiesSelector = createSelector(
-      StudyStoreSelectors.selectAllStudies,
-      EventTypeStoreSelectors.selectAllEventTypes,
-      (studies: Study[], eventTypes: CollectionEventType[]) => ({ studies, eventTypes }));
-
-    this.data$ = this.store$.pipe(
-      select(entitiesSelector),
-      map(entities => {
+      StudyStoreSelectors.selectAllStudyEntities,
+      EventTypeStoreSelectors.selectAllEventTypeEntities,
+      (studies: Dictionary<Study>, eventTypes: Dictionary<CollectionEventType>) => {
         let study: Study;
-
-        const studyEntity = entities.studies
-          .find((s: Study) => s.slug === this.route.parent.parent.parent.parent.snapshot.params.slug);
+        const studyEntity = studies[this.route.snapshot.data.eventType.studyId];
         if (studyEntity) {
           study = (studyEntity instanceof Study) ? studyEntity :  new Study().deserialize(studyEntity);
         }
-
-        let eventType = this.getEventType(this.route.snapshot.params.eventTypeSlug, entities.eventTypes);
-        if (eventType) {
-          this.eventTypeId = eventType.id;
-        } else if (this.eventTypeId) {
-          // this only runs if the slug was changed or the was deleted
-          const eventTypeEntityById = entities.eventTypes.find(et => et.id === this.eventTypeId);
-
-          if (eventTypeEntityById) {
-            eventType = (eventTypeEntityById instanceof CollectionEventType)
-              ? eventTypeEntityById : new CollectionEventType().deserialize(eventTypeEntityById);
-          }
-        }
-
         return {
           study,
-          eventType,
-          eventTypes : entities.eventTypes,
-          allowChanges: study ? study.isDisabled() : undefined
+          eventTypes,
+          eventType: undefined
         };
-      }),
-      tap(data => {
-        this.study = data.study;
-        this.eventType = data.eventType;
-        this.eventTypes = data.eventTypes;
-        this.allowChanges = data.allowChanges;
+      });
+
+    this.data$ = combineLatest([ this.route.data, this.store$.pipe(select(entitiesSelector)) ]).pipe(
+      map(([routeData, entities]) => {
+        const eventType = entities.eventTypes[routeData.eventType.id];
+
+        return {
+          ...entities,
+          eventType,
+        };
       }),
       takeUntil(this.unsubscribe$),
       shareReplay());
 
-    this.allowChanges$ = this.data$.pipe(map(data => data.allowChanges));
-    this.isLoading$ = this.data$.pipe(map(data => data !== undefined));
+    this.data$.pipe(takeUntil(this.unsubscribe$)).subscribe(this.dataSubject);
+    this.eventType$ = this.data$.pipe(map(entities => entities.eventType));
+    this.allowChanges$ = this.data$.pipe(map(entities => entities.study.isDisabled()));
+    this.isLoading$ = this.data$.pipe(map(data => (data === undefined) || (data.eventType === undefined)));
 
     this.data$.pipe(
       withLatestFrom(this.updatedMessage$),
@@ -139,9 +120,9 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
       } else {
         this.toastr.success(msg, 'Remove Successfull');
         this.router.navigate([ '/admin/studies', data.study.slug, 'collection', 'view' ]);
-        this.eventType = undefined;
-        this.eventTypeId = undefined;
       }
+
+      this.updatedMessage$.next(null);
     });
 
     this.store$.pipe(
@@ -164,69 +145,62 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
   }
 
   updateName() {
-    if (!this.allowChanges) {
-      throw new Error('modifications not allowed');
-    }
-
-    this.updateNameModalOptions = {
-      required: true,
-      minLength: 2
-    };
-    this.modalService.open(this.updateNameModal, { size: 'lg' }).result
-      .then((value) => {
-        this.store$.dispatch(EventTypeStoreActions.updateEventTypeRequest({
-          eventType: this.eventType,
-          attributeName: 'name',
-          value
-        }));
-        this.updatedMessage$.next('Event name was updated');
-      })
-      .catch(() => undefined);
+    this.whenStudyDisabled((study, eventType) => {
+      this.updateNameModalOptions = {
+        required: true,
+        minLength: 2
+      };
+      this.modalService.open(this.updateNameModal, { size: 'lg' }).result
+        .then((value) => {
+          this.store$.dispatch(EventTypeStoreActions.updateEventTypeRequest({
+            eventType,
+            attributeName: 'name',
+            value
+          }));
+          this.updatedMessage$.next('Event name was updated');
+        })
+        .catch(() => undefined);
+    });
   }
 
   updateDescription() {
-    if (!this.allowChanges) {
-      throw new Error('modifications not allowed');
-    }
-
-    this.updateDescriptionModalOptions = {
-      rows: 20,
-      cols: 10
-    };
-    this.modalService.open(this.updateDescriptionModal, { size: 'lg' }).result
-      .then((value: string) => {
-        this.store$.dispatch(EventTypeStoreActions.updateEventTypeRequest({
-          eventType: this.eventType,
-          attributeName: 'description',
-          value
-        }));
-        this.updatedMessage$.next('Event description was updated');
-      })
-      .catch(() => undefined);
+    this.whenStudyDisabled((study, eventType) => {
+      this.updateDescriptionModalOptions = {
+        rows: 20,
+        cols: 10
+      };
+      this.modalService.open(this.updateDescriptionModal, { size: 'lg' }).result
+        .then((value: string) => {
+          this.store$.dispatch(EventTypeStoreActions.updateEventTypeRequest({
+            eventType,
+            attributeName: 'description',
+            value
+          }));
+          this.updatedMessage$.next('Event description was updated');
+        })
+        .catch(() => undefined);
+    });
   }
 
   updateRecurring() {
-    if (!this.allowChanges) {
-      throw new Error('modifications not allowed');
-    }
-
-    this.modalService.open(this.updateRecurringModal, { size: 'lg' }).result
-      .then(value => {
-        this.store$.dispatch(EventTypeStoreActions.updateEventTypeRequest({
-          eventType: this.eventType,
-          attributeName: 'recurring',
-          value
-        }));
-        this.updatedMessage$.next('Recurring was updated');
-      })
-      .catch(() => undefined);
+    this.whenStudyDisabled((study, eventType) => {
+      this.modalService.open(this.updateRecurringModal, { size: 'lg' }).result
+        .then(value => {
+          this.store$.dispatch(EventTypeStoreActions.updateEventTypeRequest({
+            eventType,
+            attributeName: 'recurring',
+            value
+          }));
+          this.updatedMessage$.next('Recurring was updated');
+        })
+        .catch(() => undefined);
+    });
   }
 
   addAnnotationType() {
-    if (!this.allowChanges) {
-      throw new Error('modifications not allowed');
-    }
-    this.router.navigate([ 'annotationAdd' ], { relativeTo: this.route });
+    this.whenStudyDisabled(() => {
+      this.router.navigate([ 'annotationAdd' ], { relativeTo: this.route });
+    });
   }
 
   viewAnnotationType(annotationType: AnnotationType): void {
@@ -240,37 +214,33 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
   }
 
   editAnnotationType(annotationType: AnnotationType): void {
-    if (!this.allowChanges) {
-      throw new Error('modifications not allowed');
-    }
-    this.router.navigate([ 'annotation', annotationType.id ], { relativeTo: this.route });
+    this.whenStudyDisabled(() => {
+      this.router.navigate([ 'annotation', annotationType.id ], { relativeTo: this.route });
+    });
   }
 
   removeAnnotationType(annotationType: AnnotationType): void {
-    if (!this.allowChanges) {
-      throw new Error('modifications not allowed');
-    }
+    this.whenStudyDisabled((study, eventType) => {
+      const modalRef = this.modalService.open(AnnotationTypeRemoveComponent);
+      modalRef.componentInstance.annotationType = annotationType;
+      modalRef.result
+        .then(() => {
+          this.store$.dispatch(EventTypeStoreActions.updateEventTypeRequest({
+            eventType,
+            attributeName: 'removeAnnotationType',
+            value: annotationType.id
+          }));
 
-    const modalRef = this.modalService.open(AnnotationTypeRemoveComponent);
-    modalRef.componentInstance.annotationType = annotationType;
-    modalRef.result
-      .then(() => {
-        this.store$.dispatch(EventTypeStoreActions.updateEventTypeRequest({
-          eventType: this.eventType,
-          attributeName: 'removeAnnotationType',
-          value: annotationType.id
-        }));
-
-        this.updatedMessage$.next('Annotation removed');
-      })
-      .catch(() => undefined);
+          this.updatedMessage$.next('Annotation removed');
+        })
+        .catch(() => undefined);
+    });
   }
 
   addSpecimenDefinition() {
-    if (!this.allowChanges) {
-      throw new Error('modifications not allowed');
-    }
-    this.router.navigate([ 'spcDefAdd' ], { relativeTo: this.route });
+    this.whenStudyDisabled(() => {
+      this.router.navigate([ 'spcDefAdd' ], { relativeTo: this.route });
+    });
   }
 
   viewSpecimenDefinition(specimenDefinition: CollectedSpecimenDefinition): void {
@@ -284,73 +254,64 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
   }
 
   editSpecimenDefinition(specimenDefinition: CollectedSpecimenDefinition): void {
-    if (!this.allowChanges) {
-      throw new Error('modifications not allowed');
-    }
-    this.router.navigate([ 'spcDef', specimenDefinition.id ], { relativeTo: this.route });
+    this.whenStudyDisabled(() => {
+      this.router.navigate([ 'spcDef', specimenDefinition.id ], { relativeTo: this.route });
+    });
   }
 
   removeSpecimenDefinition(specimenDefinition: CollectedSpecimenDefinition): void {
-    if (!this.allowChanges) {
-      throw new Error('modifications not allowed');
-    }
+    this.whenStudyDisabled((study, eventType) => {
+      const modalRef = this.modalService.open(SpecimenDefinitionRemoveComponent);
+      modalRef.componentInstance.specimenDefinition = specimenDefinition;
+      modalRef.result
+        .then(() => {
+          this.store$.dispatch(EventTypeStoreActions.updateEventTypeRequest({
+            eventType,
+            attributeName: 'removeSpecimenDefinition',
+            value: specimenDefinition.id
+          }));
 
-    const modalRef = this.modalService.open(SpecimenDefinitionRemoveComponent);
-    modalRef.componentInstance.specimenDefinition = specimenDefinition;
-    modalRef.result
-      .then(() => {
-        this.store$.dispatch(EventTypeStoreActions.updateEventTypeRequest({
-          eventType: this.eventType,
-          attributeName: 'removeSpecimenDefinition',
-          value: specimenDefinition.id
-        }));
-
-        this.updatedMessage$.next('Specimen removed');
-      })
-      .catch(() => undefined);
+          this.updatedMessage$.next('Specimen removed');
+        })
+        .catch(() => undefined);
+    });
   }
 
   removeEventType() {
-    if (!this.allowChanges) {
-      throw new Error('modifications not allowed');
-    }
+    this.whenStudyDisabled((study, eventType) => {
+      const modalRef = this.modalService.open(EventTypeRemoveComponent);
+      modalRef.componentInstance.eventType = eventType;
+      modalRef.result
+        .then(() => {
+          this.store$.dispatch(EventTypeStoreActions.removeEventTypeRequest({ eventType }));
 
-    const modalRef = this.modalService.open(EventTypeRemoveComponent);
-    modalRef.componentInstance.eventType = this.eventType;
-    modalRef.result
-      .then(() => {
-        this.store$.dispatch(EventTypeStoreActions.removeEventTypeRequest({
-          eventType: this.eventType
-        }));
-
-        this.updatedMessage$.next('Event removed');
-      })
-      .catch(() => undefined);
+          this.updatedMessage$.next('Event removed');
+        })
+        .catch(() => undefined);
+    });
   }
 
   addEventTypeSelected() {
-    if (!this.allowChanges) {
-      throw new Error('modifications not allowed');
-    }
-
-    // relative route does not work here, why?
-    this.router.navigate([ `/admin/studies/${this.study.slug}/collection/add` ]);
+    this.whenStudyDisabled((study, _eventType) => {
+      // relative route does not work here, why?
+      this.router.navigate([ `/admin/studies/${study.slug}/collection/add` ]);
+    });
   }
 
   eventTypeSelected(eventType: CollectionEventType) {
-    this.eventType = eventType;
-    // relative route does not work here, why?
-    this.router.navigate([ `/admin/studies/${this.study.slug}/collection/${eventType.slug}` ]);
+    this.whenStudyDisabled((study, _eventType) => {
+      // relative route does not work here, why?
+      this.router.navigate([ `/admin/studies/${study.slug}/collection/${eventType.slug}` ]);
+    });
   }
 
-  private getEventType(slug: string, eventTypes: CollectionEventType[]): CollectionEventType {
-    const eventTypeEntity = eventTypes.find((et: CollectionEventType) => et.slug === slug);
-
-    if (eventTypeEntity) {
-      return (eventTypeEntity instanceof CollectionEventType)
-        ? eventTypeEntity : new CollectionEventType().deserialize(eventTypeEntity as any);
+  private whenStudyDisabled(fn: (study: Study, eventType: CollectionEventType) => void) {
+    const study = this.dataSubject.value.study;
+    if (!study.isDisabled()) {
+      throw new Error('modifications not allowed');
     }
-    return undefined;
+
+    fn(study, this.dataSubject.value.eventType);
   }
 
 }
