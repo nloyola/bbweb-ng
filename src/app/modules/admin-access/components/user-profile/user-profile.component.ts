@@ -7,8 +7,9 @@ import { SpinnerStoreSelectors } from '@app/root-store/spinner';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, BehaviorSubject } from 'rxjs';
 import { filter, map, shareReplay, takeUntil, withLatestFrom, tap } from 'rxjs/operators';
+import { Dictionary } from '@ngrx/entity';
 
 @Component({
   selector: 'app-user-profile',
@@ -24,7 +25,6 @@ export class UserProfileComponent implements OnInit, OnDestroy {
 
   isLoading$: Observable<boolean>;
   user$: Observable<UserUI>;
-  userEntity: User;
   getStateIcon = UserUI.getStateIcon;
   getStateIconClass = UserUI.getStateIconClass;
   updateNameModalOptions: ModalInputTextOptions = {
@@ -35,7 +35,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     required: true
   };
 
-  private userId: string;
+  private userSubject = new BehaviorSubject(null);
   private updatedMessage$ = new Subject<string>();
   private unsubscribe$ = new Subject<void>();
 
@@ -44,48 +44,36 @@ export class UserProfileComponent implements OnInit, OnDestroy {
               private route: ActivatedRoute,
               private modalService: NgbModal,
               private toastr: ToastrService) {
-    this.isLoading$ = this.store$.pipe(select(SpinnerStoreSelectors.selectSpinnerIsActive));
 
     this.user$ = this.store$.pipe(
-      select(UserStoreSelectors.selectAllUsers),
-      filter(s => s.length > 0),
-      map((users: User[]) => {
-        const userEntity = users.find(u => u.slug === this.route.snapshot.params.slug);
+      select(UserStoreSelectors.selectAllUserEntities),
+      map((users: Dictionary<User>) => {
+        const userEntity = users[this.route.snapshot.data.user.id];
         if (userEntity) {
           return (userEntity instanceof User) ? userEntity : new User().deserialize(userEntity);
         }
-
-        if (this.userId) {
-          const userById = users.find(u => u.id === this.userId);
-          if (userById) {
-            return (userById instanceof User) ? userById : new User().deserialize(userById);
-          }
-        }
-
         return undefined;
-      }),
-      tap(user => {
-        if (user) {
-          this.userEntity = user;
-          this.userId = user.id;
-        }
       }),
       map(user => user ? new UserUI(user) : undefined),
       shareReplay());
+
+    this.user$.pipe(takeUntil(this.unsubscribe$)).subscribe(this.userSubject);
+    this.isLoading$ = this.user$.pipe(map(user => user === undefined));
 
     this.user$.pipe(
       withLatestFrom(this.updatedMessage$),
       takeUntil(this.unsubscribe$)
     ).subscribe(([ user, msg ]) => {
-      if (user !== undefined) {
-        this.toastr.success(msg, 'Update Successfull');
+      if ((msg === null) || (user === undefined)) { return; }
 
-        if (user.slug !== this.route.snapshot.params.slug) {
-          // name was changed and new slug was assigned
-          //
-          // need to change state since slug is used in URL and by breadcrumbs
-          this.router.navigate([ '..', user.slug ], { relativeTo: this.route });
-        }
+      this.toastr.success(msg, 'Update Successfull');
+      this.updatedMessage$.next(null);
+
+      if (user.slug !== this.route.snapshot.params.slug) {
+        // name was changed and new slug was assigned
+        //
+        // need to change state since slug is used in URL and by breadcrumbs
+        this.router.navigate([ '..', user.slug ], { relativeTo: this.route });
       }
     });
 
@@ -115,10 +103,11 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   }
 
   updateName(): void {
+    const user = this.userSubject.value.entity;
     this.modalService.open(this.updateNameModal, { size: 'lg' }).result
       .then(value => {
         this.store$.dispatch(new UserStoreActions.UpdateUserRequest({
-          user: this.userEntity,
+          user,
           attributeName: 'name',
           value
         }));
@@ -128,10 +117,11 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   }
 
   updateEmail(): void {
+    const user = this.userSubject.value.entity;
     this.modalService.open(this.updateEmailModal, { size: 'lg' }).result
       .then(value => {
         this.store$.dispatch(new UserStoreActions.UpdateUserRequest({
-          user: this.userEntity,
+          user,
           attributeName: 'email',
           value
         }));
@@ -141,10 +131,11 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   }
 
   updatePassword(): void {
+    const user = this.userSubject.value.entity;
     this.modalService.open(this.updatePasswordModal, { size: 'lg' }).result
       .then(value => {
         this.store$.dispatch(new UserStoreActions.UpdateUserRequest({
-          user: this.userEntity,
+          user,
           attributeName: 'password',
           value
         }));
@@ -154,10 +145,11 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   }
 
   updateAvatarUrl(): void {
+    const user = this.userSubject.value.entity;
     this.modalService.open(this.updateAvatarUrlModal, { size: 'lg' }).result
       .then(value => {
         this.store$.dispatch(new UserStoreActions.UpdateUserRequest({
-          user: this.userEntity,
+          user,
           attributeName: 'avatarUrl',
           value
         }));
@@ -179,8 +171,9 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   }
 
   private changeState(action: 'activate' | 'lock' | 'unlock') {
+    const user = this.userSubject.value.entity;
     this.store$.dispatch(new UserStoreActions.UpdateUserRequest({
-      user: this.userEntity,
+      user,
       attributeName: 'state',
       value: action
     }));

@@ -1,16 +1,15 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Role } from '@app/domain/access';
 import { IUserInfo, User } from '@app/domain/users';
 import { UserRemoveModalComponent } from '@app/modules/modals/components/user-remove-modal/user-remove-modal.component';
 import { RoleStoreActions, RoleStoreSelectors, RootStoreState } from '@app/root-store';
-import { SpinnerStoreSelectors } from '@app/root-store/spinner';
 import { UserAddTypeahead } from '@app/shared/typeaheads/user-add-typeahead';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subject } from 'rxjs';
-import { filter, map, shareReplay, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { filter, map, shareReplay, takeUntil, withLatestFrom } from 'rxjs/operators';
 
 @Component({
   selector: 'app-role-view',
@@ -22,14 +21,12 @@ export class RoleViewComponent implements OnInit, OnDestroy {
   isLoading$: Observable<boolean>;
   role$: Observable<Role>;
   userAddTypeahead: UserAddTypeahead;
-  roleEntity: Role;
-  roleId: string;
 
+  private roleSubject = new BehaviorSubject(null);
   private updatedMessage$ = new Subject<string>();
   private unsubscribe$: Subject<void> = new Subject<void>();
 
   constructor(private store$: Store<RootStoreState.State>,
-              private router: Router,
               private route: ActivatedRoute,
               private modalService: NgbModal,
               private toastr: ToastrService) {
@@ -37,23 +34,23 @@ export class RoleViewComponent implements OnInit, OnDestroy {
       this.store$,
       (users: User[]) => {
         // filter out users already linked to this membership
-        const existingUserIds = this.roleEntity.userData.map(ud => ud.id);
+        const role = this.roleSubject.value;
+        const existingUserIds = role.userData.map(ud => ud.id);
         return users.filter(entity => existingUserIds.indexOf(entity.id) < 0);
       });
 
     this.userAddTypeahead.selected$
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((user: User) => {
+        const role = this.roleSubject.value;
         this.store$.dispatch(new RoleStoreActions.UpdateRoleRequest({
-          role: this.roleEntity,
+          role,
           attributeName: 'userAdd',
           value: user.id
         }));
 
         this.updatedMessage$.next('User added');
       });
-
-    this.isLoading$ = this.store$.pipe(select(SpinnerStoreSelectors.selectSpinnerIsActive));
 
     this.role$ = this.store$.pipe(
       select(RoleStoreSelectors.selectAllRoles),
@@ -65,11 +62,10 @@ export class RoleViewComponent implements OnInit, OnDestroy {
         }
         throw new Error('role not found');
       }),
-      tap(role => {
-        this.roleEntity = role;
-        this.roleId = role.id;
-      }),
       shareReplay());
+
+    this.role$.pipe(takeUntil(this.unsubscribe$)).subscribe(this.roleSubject);
+    this.isLoading$ = this.role$.pipe(map(role => role === undefined));
 
     this.role$.pipe(
       withLatestFrom(this.updatedMessage$),
@@ -106,12 +102,13 @@ export class RoleViewComponent implements OnInit, OnDestroy {
   }
 
   userSelected(userInfo: IUserInfo): void {
+    const role = this.roleSubject.value;
     const modalRef = this.modalService.open(UserRemoveModalComponent);
     modalRef.componentInstance.user = userInfo;
     modalRef.result
       .then(() => {
         this.store$.dispatch(new RoleStoreActions.UpdateRoleRequest({
-          role: this.roleEntity,
+          role,
           attributeName: 'userRemove',
           value: userInfo.id
         }));

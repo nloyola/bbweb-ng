@@ -16,8 +16,9 @@ import { UserAddTypeahead } from '@app/shared/typeaheads/user-add-typeahead';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, BehaviorSubject } from 'rxjs';
 import { map, shareReplay, takeUntil, tap, withLatestFrom, filter } from 'rxjs/operators';
+import { Dictionary } from '@ngrx/entity';
 
 @Component({
   selector: 'app-membership-view',
@@ -35,8 +36,6 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
   changesAllowed = true;
   isLoading$: Observable<boolean>;
   membership$: Observable<Membership>;
-  membershipEntity: Membership;
-  membershipId: string;
   updateNameModalOptions: ModalInputTextOptions;
   updateDescriptionModalOptions: ModalInputTextareaOptions;
   userAddTypeahead: UserAddTypeahead;
@@ -44,6 +43,7 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
   centreAddTypeahead: CentreAddTypeahead;
   isRemoving = false;
 
+  private membershipSubject = new BehaviorSubject(null);
   private updatedMessage$ = new Subject<string>();
   private unsubscribe$ = new Subject<void>();
 
@@ -56,42 +56,32 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
     this.createStudyTypeahead();
     this.createCentreTypeahead();
 
-    this.isLoading$ = this.store$.pipe(select(SpinnerStoreSelectors.selectSpinnerIsActive));
-
     this.membership$ = this.store$.pipe(
-      select(MembershipStoreSelectors.selectAllMemberships),
-      map((memberships: Membership[]) => {
-        const membershipEntity = memberships.find(u => u.slug === this.route.snapshot.params.slug);
+      select(MembershipStoreSelectors.selectAllMembershipEntities),
+      map((memberships: Dictionary<Membership>) => {
+        const membershipEntity = memberships[this.route.snapshot.data.membership.id];
 
         if (membershipEntity) {
           return (membershipEntity instanceof Membership)
             ? membershipEntity : new Membership().deserialize(membershipEntity);
         }
 
-        if (this.membershipId) {
-          const membershipById = memberships.find(u => u.id === this.membershipId);
-          if (membershipById) {
-            return (membershipById instanceof Membership)
-              ? membershipById : new Membership().deserialize(membershipById);
-          }
-        }
-
         return undefined;
       }),
-      tap((membership) => {
-        if (membership) {
-          this.membershipId = membership.id;
-          this.membershipEntity = membership;
-        }
-      }),
       shareReplay());
+
+    this.membership$.pipe(takeUntil(this.unsubscribe$)).subscribe(this.membershipSubject);
+    this.isLoading$ = this.membership$.pipe(map(membership => membership === undefined));
 
     this.membership$.pipe(
       withLatestFrom(this.updatedMessage$),
       takeUntil(this.unsubscribe$)
     ).subscribe(([ membership, msg ]) => {
+      if (msg === null) { return; }
+
       if (membership !== undefined) {
         this.toastr.success(msg, 'Update Successfull');
+
         this.userAddTypeahead.clearSelected();
         this.studyAddTypeahead.clearSelected();
         this.centreAddTypeahead.clearSelected();
@@ -104,8 +94,9 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
         }
       } else {
         this.router.navigate([ '..' ], { relativeTo: this.route });
-        this.toastr.success('Membership removed', 'Remove Successfull');
+        this.toastr.success(msg, 'Remove Successfull');
       }
+      this.updatedMessage$.next(null);
     });
 
     this.store$.pipe(
@@ -122,11 +113,7 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnInit() {
-    this.store$.dispatch(new MembershipStoreActions.GetMembershipRequest({
-      slug: this.route.snapshot.params.slug
-    }));
-  }
+  ngOnInit() {}
 
   ngOnDestroy() {
     this.unsubscribe$.next();
@@ -134,6 +121,7 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
   }
 
   updateName(): void {
+    const membership = this.membershipSubject.value;
     this.updateNameModalOptions = {
       required: true,
       minLength: 2
@@ -141,7 +129,7 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
     this.modalService.open(this.updateNameModal, { size: 'lg' }).result
       .then(value => {
         this.store$.dispatch(new MembershipStoreActions.UpdateMembershipRequest({
-          membership: this.membershipEntity,
+          membership,
           attributeName: 'name',
           value
         }));
@@ -151,6 +139,7 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
   }
 
   updateDescription() {
+    const membership = this.membershipSubject.value;
     this.updateDescriptionModalOptions = {
       rows: 3,
       cols: 10
@@ -158,7 +147,7 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
     this.modalService.open(this.updateDescriptionModal, { size: 'lg' }).result
       .then(value => {
         this.store$.dispatch(new MembershipStoreActions.UpdateMembershipRequest({
-          membership: this.membershipEntity,
+          membership,
           attributeName: 'description',
           value: value ? value : undefined
         }));
@@ -168,12 +157,13 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
   }
 
   userSelected(userInfo: IUserInfo): void {
+    const membership = this.membershipSubject.value;
     const modalRef = this.modalService.open(UserRemoveModalComponent);
     modalRef.componentInstance.user = userInfo;
     modalRef.result
       .then(() => {
         this.store$.dispatch(new MembershipStoreActions.UpdateMembershipRequest({
-          membership: this.membershipEntity,
+          membership,
           attributeName: 'userRemove',
           value: userInfo.id
         }));
@@ -184,9 +174,10 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
   }
 
   studySelected(studyInfo: IUserInfo): void {
+    const membership = this.membershipSubject.value;
     const removeStudy = () => {
       this.store$.dispatch(new MembershipStoreActions.UpdateMembershipRequest({
-        membership: this.membershipEntity,
+        membership,
         attributeName: 'studyRemove',
         value: studyInfo.id
       }));
@@ -198,7 +189,7 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.study = studyInfo;
     modalRef.result
       .then(() => {
-        if (this.membershipEntity.studyData.entityData.length > 1) {
+        if (membership.studyData.entityData.length > 1) {
           removeStudy();
           return;
         }
@@ -207,7 +198,7 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
         this.modalService.open(this.allStudiesModal).result
           .then(() => {
             this.store$.dispatch(new MembershipStoreActions.UpdateMembershipRequest({
-              membership: this.membershipEntity,
+              membership,
               attributeName: 'allStudies'
             }));
 
@@ -221,9 +212,10 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
   }
 
   centreSelected(centreInfo: IUserInfo): void {
+    const membership = this.membershipSubject.value;
     const removeCentre = () => {
       this.store$.dispatch(new MembershipStoreActions.UpdateMembershipRequest({
-        membership: this.membershipEntity,
+        membership,
         attributeName: 'centreRemove',
         value: centreInfo.id
       }));
@@ -235,7 +227,7 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.centre = centreInfo;
     modalRef.result
       .then(() => {
-        if (this.membershipEntity.centreData.entityData.length > 1) {
+        if (membership.centreData.entityData.length > 1) {
           removeCentre();
           return;
         }
@@ -244,7 +236,7 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
         this.modalService.open(this.allCentresModal).result
           .then(() => {
             this.store$.dispatch(new MembershipStoreActions.UpdateMembershipRequest({
-              membership: this.membershipEntity,
+              membership,
               attributeName: 'allCentres'
             }));
 
@@ -258,11 +250,12 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
   }
 
   removeMembership() {
+    const membership = this.membershipSubject.value;
     const modalRef = this.modalService.open(this.removeMembershipModal);
     modalRef.result
       .then(() => {
         this.store$.dispatch(new MembershipStoreActions.RemoveMembershipRequest({
-          membership: this.membershipEntity
+          membership
         }));
         this.updatedMessage$.next('Memberhsip Removed');
       })
@@ -274,18 +267,20 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
       this.store$,
       (users: User[]) => {
         // filter out users already linked to this membership
-        const existingUserIds = this.membershipEntity.userData.map(ud => ud.id);
+        const membership = this.membershipSubject.value;
+        const existingUserIds = membership.userData.map(ud => ud.id);
         return users.filter(entity => existingUserIds.indexOf(entity.id) < 0);
       });
 
     this.userAddTypeahead.selected$
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((user: User) => {
-      this.store$.dispatch(new MembershipStoreActions.UpdateMembershipRequest({
-        membership: this.membershipEntity,
-        attributeName: 'userAdd',
-        value: user.id
-      }));
+        const membership = this.membershipSubject.value;
+        this.store$.dispatch(new MembershipStoreActions.UpdateMembershipRequest({
+          membership,
+          attributeName: 'userAdd',
+          value: user.id
+        }));
 
         this.updatedMessage$.next('User added');
     });
@@ -295,19 +290,21 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
     this.studyAddTypeahead = new StudyAddTypeahead(
       this.store$,
       (studys: Study[]) => {
+        const membership = this.membershipSubject.value;
         // filter out studys already linked to this membership
-        const existingStudyIds = this.membershipEntity.studyData.entityData.map(sd => sd.id);
+        const existingStudyIds = membership.studyData.entityData.map(sd => sd.id);
         return studys.filter(entity => existingStudyIds.indexOf(entity.id) < 0);
       });
 
     this.studyAddTypeahead.selected$
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((study: Study) => {
-      this.store$.dispatch(new MembershipStoreActions.UpdateMembershipRequest({
-        membership: this.membershipEntity,
-        attributeName: 'studyAdd',
-        value: study.id
-      }));
+        const membership = this.membershipSubject.value;
+        this.store$.dispatch(new MembershipStoreActions.UpdateMembershipRequest({
+          membership,
+          attributeName: 'studyAdd',
+          value: study.id
+        }));
 
         this.updatedMessage$.next('Study added');
     });
@@ -317,19 +314,21 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
     this.centreAddTypeahead = new CentreAddTypeahead(
       this.store$,
       (centres: Centre[]) => {
+        const membership = this.membershipSubject.value;
         // filter out centres already linked to this membership
-        const existingCentreIds = this.membershipEntity.centreData.entityData.map(sd => sd.id);
+        const existingCentreIds = membership.centreData.entityData.map(sd => sd.id);
         return centres.filter(entity => existingCentreIds.indexOf(entity.id) < 0);
       });
 
     this.centreAddTypeahead.selected$
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((centre: Centre) => {
-      this.store$.dispatch(new MembershipStoreActions.UpdateMembershipRequest({
-        membership: this.membershipEntity,
-        attributeName: 'centreAdd',
-        value: centre.id
-      }));
+        const membership = this.membershipSubject.value;
+        this.store$.dispatch(new MembershipStoreActions.UpdateMembershipRequest({
+          membership,
+          attributeName: 'centreAdd',
+          value: centre.id
+        }));
 
         this.updatedMessage$.next('Centre added');
     });

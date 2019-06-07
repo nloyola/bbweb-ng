@@ -65,13 +65,6 @@ describe('RoleViewComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('roleEntity and roleId are resolved correctly', () => {
-    store.dispatch(new RoleStoreActions.GetRoleSuccess({ role }));
-    fixture.detectChanges();
-    expect(component.roleEntity).toBe(role);
-    expect(component.roleId).toBe(role.id);
-  });
-
   describe('when adding and removing a user', () => {
 
     let baseContext: EntityWithSubEntityBehaviour.BaseContext = {} as any;

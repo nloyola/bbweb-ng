@@ -97,6 +97,7 @@ export class CentreStudiesComponent implements OnInit, OnDestroy {
       takeUntil(this.unsubscribe$)
     ).subscribe(([ centre, msg ]) => {
       this.toastr.success(msg, 'Update Successfull');
+      this.studyAddTypeahead.clearSelected();
     });
   }
 

@@ -47,6 +47,9 @@ describe('MembershipViewComponent', () => {
           provide: ActivatedRoute,
           useValue: {
             snapshot: {
+              data: {
+                membership: membership
+              },
               params: {
                 slug: membership.slug
               }
@@ -69,13 +72,6 @@ describe('MembershipViewComponent', () => {
   it('should create', () => {
     fixture.detectChanges();
     expect(component).toBeTruthy();
-  });
-
-  it('membershipEntity and membershipId are resolved correctly', () => {
-    store.dispatch(new MembershipStoreActions.GetMembershipSuccess({ membership }));
-    fixture.detectChanges();
-    expect(component.membershipEntity).toBe(membership);
-    expect(component.membershipId).toBe(membership.id);
   });
 
   it('navigates to new path when membership name is changed', fakeAsync(() => {
@@ -113,8 +109,7 @@ describe('MembershipViewComponent', () => {
       context.componentInitialize = () => {
         store.dispatch(new MembershipStoreActions.GetMembershipSuccess({ membership }));
       };
-      context.componentValidateInitialization =
-        () => { expect(component.membershipEntity).toEqual(membership); };
+      context.componentValidateInitialization = () => undefined;
       context.dispatchSuccessAction = () => {
         store.dispatch(new MembershipStoreActions.UpdateMembershipSuccess({ membership }));
       };
@@ -484,7 +479,6 @@ describe('MembershipViewComponent', () => {
     beforeEach(() => {
       store.dispatch(new MembershipStoreActions.GetMembershipSuccess({ membership }));
       fixture.detectChanges();
-      expect(component.membershipEntity).toBe(membership);
 
       modalService = TestBed.get(NgbModal);
       spyOn(modalService, 'open').and.returnValue({ result: Promise.resolve('OK') });

@@ -43,6 +43,9 @@ describe('UserProfileComponent', () => {
           provide: ActivatedRoute,
           useValue: {
             snapshot: {
+              data: {
+                user: user
+              },
               params: {
                 slug: user.slug
               }
@@ -102,7 +105,7 @@ describe('UserProfileComponent', () => {
       context.componentInitialize = () => {
         store.dispatch(new UserStoreActions.GetUserSuccess({ user }));
       };
-      context.componentValidateInitialization = () => { expect(component.userEntity).toEqual(user); };
+      context.componentValidateInitialization = () => undefined;
       context.dispatchSuccessAction = () => {
         store.dispatch(new UserStoreActions.UpdateUserSuccess({ user }));
       };

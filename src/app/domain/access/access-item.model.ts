@@ -24,7 +24,14 @@ export abstract class AccessItem extends ConcurrencySafeEntity implements IAcces
   childData: IAccessItemInfo[];
 
   deserialize(input: IAccessItem): this {
+    const { slug, name } = input;
+    Object.assign(this, { slug, name });
     super.deserialize(input);
+
+    if (input.description !== undefined) {
+      this.description = input.description;
+    }
+
     if (input.parentData) {
       this.parentData = input.parentData.map(pd => new EntityInfo().deserialize(pd));
     }
