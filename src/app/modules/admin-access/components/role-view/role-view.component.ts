@@ -91,9 +91,6 @@ export class RoleViewComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.store$.dispatch(new RoleStoreActions.GetRoleRequest({
-      slug: this.route.snapshot.params.slug
-    }));
   }
 
   ngOnDestroy() {

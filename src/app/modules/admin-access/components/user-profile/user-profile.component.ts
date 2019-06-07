@@ -92,9 +92,6 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.store$.dispatch(new UserStoreActions.GetUserRequest({
-      slug: this.route.snapshot.params.slug
-    }));
   }
 
   ngOnDestroy() {
