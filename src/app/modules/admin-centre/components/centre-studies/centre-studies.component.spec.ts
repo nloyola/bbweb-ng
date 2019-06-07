@@ -70,13 +70,6 @@ describe('CentreStudiesComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('assigns the centre when it is added to the store', () => {
-    createMockActivatedRouteSpies(centre);
-    store.dispatch(new CentreStoreActions.GetCentreSuccess({ centre }));
-    fixture.detectChanges();
-    expect(component.centre).toEqual(new CentreUI(centre));
-  });
-
   xit('dispatches an event when user types a study name', fakeAsync(() => {
     // TODO: cannot get this test to work - 2019-02-22
     createMockActivatedRouteSpies(centre);
@@ -226,7 +219,7 @@ describe('CentreStudiesComponent', () => {
           centre: c
         },
         params: {
-          slug: centre.slug
+          slug: c.slug
         }
       }
     }));

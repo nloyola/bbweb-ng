@@ -47,6 +47,9 @@ describe('CentreLocationsComponent', () => {
             parent: {
               parent: {
                 snapshot: {
+                  data: {
+                    centre: centre
+                  },
                   params: {
                     slug: centre.slug
                   }
@@ -89,13 +92,6 @@ describe('CentreLocationsComponent', () => {
   it('should create', () => {
     fixture.detectChanges();
     expect(component).toBeTruthy();
-  });
-
-  it('assigns the centre when it is added to the store', () => {
-    fixture.detectChanges();
-    store.dispatch(new CentreStoreActions.GetCentreSuccess({ centre }));
-    fixture.detectChanges();
-    expect(component.centre).toEqual(new CentreUI(centre));
   });
 
   it('should change state', () => {

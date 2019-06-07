@@ -49,6 +49,9 @@ describe('CentreSummaryComponent', () => {
           useValue: {
             parent: {
               snapshot: {
+                data: {
+                  centre: centre
+                },
                 params: {
                   slug: centre.slug
                 }
@@ -113,7 +116,7 @@ describe('CentreSummaryComponent', () => {
       context.fixture = fixture;
       context.componentInitialize =
         () => { store.dispatch(new CentreStoreActions.GetCentreSuccess({ centre })); };
-      context.componentValidateInitialization = () => { expect(component.centreEntity).toEqual(centre); };
+      context.componentValidateInitialization = () => undefined;
       context.dispatchSuccessAction =
         () => { store.dispatch(new CentreStoreActions.UpdateCentreSuccess({ centre })); };
       context.createExpectedFailureAction =
@@ -203,8 +206,8 @@ describe('CentreSummaryComponent', () => {
   describe('common behaviour', () => {
 
     const componentModalFuncs = [
-      (c) => c.updateName(),
-      (c) => c.updateDescription()
+      (c: CentreSummaryComponent) => c.updateName(),
+      (c: CentreSummaryComponent) => c.updateDescription()
     ];
 
     it('functions should open a modal', fakeAsync(() => {
@@ -261,10 +264,8 @@ describe('CentreSummaryComponent', () => {
       fixture.detectChanges();
 
       const componentUpdateFuncs = [
-        (c) => c.disable(),
-        (c) => c.enable(),
-        (c) => c.retire(),
-        (c) => c.unretire()
+        (c: CentreSummaryComponent) => component.disable(),
+        (c: CentreSummaryComponent) => component.enable()
       ].concat(componentModalFuncs);
 
       componentUpdateFuncs.forEach(updateFunc => {

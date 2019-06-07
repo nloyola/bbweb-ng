@@ -29,7 +29,7 @@
           </mat-icon>
           <ng-container i18n>Disable this centre</ng-container>
         </a>
-        <a class="dropdown-item" *ngIf="centre.isDisabled() && isEnableAllowed" (click)="enable()">
+        <a class="dropdown-item" *ngIf="centre.isDisabled() && ((isEnableAllowed$ | async) === true)" (click)="enable()">
           <mat-icon class="mr-1" [ngClass]="getStateIconClass('enabled')">
             {{ getStateIcon('enabled') }}
           </mat-icon>
@@ -63,7 +63,7 @@
         </div>
       </div>
     </li>
-    <li class="list-group-item" *ngIf="!isEnableAllowed">
+    <li class="list-group-item" *ngIf="(isEnableAllowed$ | async) === false">
       <div class="alert alert-warning">
         <mat-icon color="warning-icon">warning</mat-icon>
         <span i18n>

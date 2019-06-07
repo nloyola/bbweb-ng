@@ -117,37 +117,33 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
   }
 
   updateName() {
-    const study = this.studySubject.value.study.entity;
-    if (!study.isDisabled()) {
-      throw new Error('modifications not allowed');
-    }
-    this.modalService.open(this.updateNameModal, { size: 'lg' }).result
-      .then(value => {
-        this.store$.dispatch(StudyStoreActions.updateStudyRequest({
-          study,
-          attributeName: 'name',
-          value
-        }));
-        this.updatedMessage$.next('Study name was updated');
-      })
-      .catch(() => undefined);
+    this.whenStudyDisabled((study) => {
+      this.modalService.open(this.updateNameModal, { size: 'lg' }).result
+        .then(value => {
+          this.store$.dispatch(StudyStoreActions.updateStudyRequest({
+            study,
+            attributeName: 'name',
+            value
+          }));
+          this.updatedMessage$.next('Study name was updated');
+        })
+        .catch(() => undefined);
+    });
   }
 
   updateDescription() {
-    const study = this.studySubject.value.study.entity;
-    if (!study.isDisabled()) {
-      throw new Error('modifications not allowed');
-    }
-    this.modalService.open(this.updateDescriptionModal, { size: 'lg' }).result
-      .then(value => {
-        this.store$.dispatch(StudyStoreActions.updateStudyRequest({
-          study,
-          attributeName: 'description',
-          value: value ? value : undefined
-        }));
-        this.updatedMessage$.next('Study description was updated');
-      })
-      .catch(() => undefined);
+    this.whenStudyDisabled((study) => {
+      this.modalService.open(this.updateDescriptionModal, { size: 'lg' }).result
+        .then(value => {
+          this.store$.dispatch(StudyStoreActions.updateStudyRequest({
+            study,
+            attributeName: 'description',
+            value: value ? value : undefined
+          }));
+          this.updatedMessage$.next('Study description was updated');
+        })
+        .catch(() => undefined);
+    });
   }
 
   disable() {
@@ -155,6 +151,10 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
   }
 
   enable() {
+    if (!this.studySubject.value.isEnableAllowed) {
+      throw new Error('not allowed to enable study');
+      return;
+    }
     this.changeState('enable');
   }
 
@@ -179,6 +179,15 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
   private studyEntityToUI(entity: any): StudyUI {
     const study = (entity instanceof Study) ? entity : new Study().deserialize(entity);
     return new StudyUI(study);
+  }
+
+  private whenStudyDisabled(fn: (study: Study) => void) {
+    const study = this.studySubject.value.study.entity;
+    if (!study.isDisabled()) {
+      throw new Error('modifications not allowed');
+    }
+
+    fn(study);
   }
 
 }

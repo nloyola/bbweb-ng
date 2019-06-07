@@ -9,7 +9,7 @@ import { LocationRemoveComponent } from '@app/shared/components/location-remove/
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, BehaviorSubject } from 'rxjs';
 import { filter, map, shareReplay, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
 
 @Component({
@@ -21,8 +21,8 @@ export class CentreLocationsComponent implements OnInit, OnDestroy {
 
   isLoading$: Observable<boolean>;
   centre$: Observable<CentreUI>;
-  centre: CentreUI;
 
+  private centreSubject = new BehaviorSubject(null);
   private updatedMessage$ = new Subject<string>();
   private unsubscribe$ = new Subject<void>();
 
@@ -33,8 +33,6 @@ export class CentreLocationsComponent implements OnInit, OnDestroy {
               private toastr: ToastrService) { }
 
   ngOnInit() {
-    this.isLoading$ = this.store$.pipe(select(SpinnerStoreSelectors.selectSpinnerIsActive));
-
     this.centre$ = this.store$.pipe(
       select(CentreStoreSelectors.selectAllCentres),
       filter(s => s.length > 0),
@@ -47,10 +45,17 @@ export class CentreLocationsComponent implements OnInit, OnDestroy {
         }
         return undefined;
       }),
-      tap(centre => {
-        this.centre = centre;
-      }),
       shareReplay());
+
+    this.centre$.pipe(takeUntil(this.unsubscribe$)).subscribe(this.centreSubject);
+    this.isLoading$ = this.centre$.pipe(map(centre => centre === undefined));
+
+    this.centre$.pipe(
+      withLatestFrom(this.updatedMessage$),
+      takeUntil(this.unsubscribe$)
+    ).subscribe(([ centre, msg ]) => {
+      this.toastr.success(msg, 'Update Successfull');
+    });
 
     this.store$.pipe(
       select(CentreStoreSelectors.selectCentreError),
@@ -61,13 +66,6 @@ export class CentreLocationsComponent implements OnInit, OnDestroy {
       const errMessage = error.error.error ? error.error.error.message : error.error.statusText;
       this.toastr.error(errMessage, 'Update Error', { disableTimeOut: true });
     });
-
-    this.centre$.pipe(
-      withLatestFrom(this.updatedMessage$),
-      takeUntil(this.unsubscribe$)
-    ).subscribe(([ centre, msg ]) => {
-      this.toastr.success(msg, 'Update Successfull');
-    });
   }
 
   ngOnDestroy() {
@@ -76,37 +74,42 @@ export class CentreLocationsComponent implements OnInit, OnDestroy {
   }
 
   addLocation(): void {
-    if (!this.centre.isDisabled()) {
-      throw new Error('modifications not allowed');
-    }
-    this.router.navigate([ 'add'  ], { relativeTo: this.route });
+    this.whenCentreDisabled(() => {
+      this.router.navigate([ 'add'  ], { relativeTo: this.route });
+    });
   }
 
   edit(location: Location): void {
-    if (!this.centre.isDisabled()) {
-      throw new Error('modifications not allowed');
-    }
-    this.router.navigate([ location.id  ], { relativeTo: this.route });
+    this.whenCentreDisabled(() => {
+      this.router.navigate([ location.id  ], { relativeTo: this.route });
+    });
   }
 
   remove(location: Location): void {
-    if (!this.centre.isDisabled()) {
+    this.whenCentreDisabled(centre => {
+      const modalRef = this.modalService.open(LocationRemoveComponent);
+      modalRef.componentInstance.location = location;
+      modalRef.result
+        .then(() => {
+          this.store$.dispatch(new CentreStoreActions.UpdateCentreRequest({
+            centre,
+            attributeName: 'locationRemove',
+            value: location
+          }));
+
+          this.updatedMessage$.next('Location removed');
+        })
+        .catch(() => undefined);
+    });
+  }
+
+  private whenCentreDisabled(fn: (centre: Centre) => void) {
+    const centre = this.centreSubject.value.entity;
+    if (!centre.isDisabled()) {
       throw new Error('modifications not allowed');
     }
 
-    const modalRef = this.modalService.open(LocationRemoveComponent);
-    modalRef.componentInstance.location = location;
-    modalRef.result
-      .then(() => {
-        this.store$.dispatch(new CentreStoreActions.UpdateCentreRequest({
-          centre: this.centre.entity,
-          attributeName: 'locationRemove',
-          value: location
-        }));
-
-        this.updatedMessage$.next('Location removed');
-      })
-      .catch(() => undefined);
+    fn(centre);
   }
 
 }

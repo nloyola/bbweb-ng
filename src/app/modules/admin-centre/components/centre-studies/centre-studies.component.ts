@@ -9,9 +9,10 @@ import { StudyAddTypeahead } from '@app/shared/typeaheads/study-add-typeahead';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, BehaviorSubject } from 'rxjs';
 import { filter, map, shareReplay, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
 import { SpinnerStoreSelectors } from '@app/root-store/spinner';
+import { Dictionary } from '@ngrx/entity';
 
 @Component({
   selector: 'app-centre-studies',
@@ -22,7 +23,6 @@ export class CentreStudiesComponent implements OnInit, OnDestroy {
 
   isLoading$: Observable<boolean>;
   centre$: Observable<CentreUI>;
-  centre: CentreUI;
   updatedMessage: string;
   selectedStudy: Study;
   getStudyNames: (text: Observable<string>) => Observable<any[]>;
@@ -30,6 +30,7 @@ export class CentreStudiesComponent implements OnInit, OnDestroy {
   sortedStudyNames: StudyStateInfo[];
   studyAddTypeahead: StudyAddTypeahead;
 
+  private centreSubject = new BehaviorSubject(null);
   private updatedMessage$ = new Subject<string>();
   private unsubscribe$ = new Subject<void>();
 
@@ -40,16 +41,17 @@ export class CentreStudiesComponent implements OnInit, OnDestroy {
     this.studyAddTypeahead = new StudyAddTypeahead(
       this.store$,
       (studies: Study[]) => {
-        // filter out studys already linked to this membership
-        const existingStudyIds = this.centre.entity.studyNames.map(sn => sn.id);
+        // filter out studies already linked to this centre
+        const existingStudyIds = this.sortedStudyNames.map(sn => sn.id);
         return studies.filter(entity => existingStudyIds.indexOf(entity.id) < 0);
       });
 
     this.studyAddTypeahead.selected$.pipe(
       takeUntil(this.unsubscribe$)
     ).subscribe((study: Study) => {
+      const centre = this.centreSubject.value.entity;
       this.store$.dispatch(new CentreStoreActions.UpdateCentreRequest({
-        centre: this.centre.entity,
+        centre,
         attributeName: 'studyAdd',
         value: study.id
       }));
@@ -59,16 +61,10 @@ export class CentreStudiesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.store$.dispatch(new CentreStoreActions.GetCentreRequest({
-      slug: this.route.parent.snapshot.params.slug
-    }));
-    this.isLoading$ = this.store$.pipe(select(SpinnerStoreSelectors.selectSpinnerIsActive));
-
     this.centre$ = this.store$.pipe(
-      select(CentreStoreSelectors.selectAllCentres),
-      filter(s => s.length > 0),
-      map((centres: Centre[]) => {
-        const centreEntity = centres.find(s => s.slug === this.route.parent.snapshot.params.slug);
+      select(CentreStoreSelectors.selectAllCentreEntities),
+      map((centres: Dictionary<Centre>) => {
+        const centreEntity = centres[this.route.parent.snapshot.data.centre.id];
         if (centreEntity) {
           const centre = (centreEntity instanceof Centre)
             ? centreEntity :  new Centre().deserialize(centreEntity);
@@ -77,12 +73,14 @@ export class CentreStudiesComponent implements OnInit, OnDestroy {
         return undefined;
       }),
       tap(centre => {
-        this.centre = centre;
         if (centre) {
           this.sortedStudyNames = this.sortStudyNames(centre.entity.studyNames);
         }
       }),
       shareReplay());
+
+    this.centre$.pipe(takeUntil(this.unsubscribe$)).subscribe(this.centreSubject);
+    this.isLoading$ = this.centre$.pipe(map(centre => centre === undefined));
 
     this.store$.pipe(
       select(CentreStoreSelectors.selectCentreError),
@@ -112,19 +110,21 @@ export class CentreStudiesComponent implements OnInit, OnDestroy {
   }
 
   remove(study: StudyStateInfo) {
-    const modalRef = this.modalService.open(StudyRemoveModalComponent);
-    modalRef.componentInstance.study = study;
-    modalRef.result
-      .then(() => {
-        this.store$.dispatch(new CentreStoreActions.UpdateCentreRequest({
-          centre: this.centre.entity,
-          attributeName: 'studyRemove',
-          value: study.id
-        }));
+    this.whenCentreDisabled(centre => {
+      const modalRef = this.modalService.open(StudyRemoveModalComponent);
+      modalRef.componentInstance.study = study;
+      modalRef.result
+        .then(() => {
+          this.store$.dispatch(new CentreStoreActions.UpdateCentreRequest({
+            centre,
+            attributeName: 'studyRemove',
+            value: study.id
+          }));
 
-        this.updatedMessage$.next('Study removed');
-      })
-      .catch(() => undefined);
+          this.updatedMessage$.next('Study removed');
+        })
+        .catch(() => undefined);
+    });
   }
 
   private sortStudyNames(studyNames: StudyStateInfo[]): StudyStateInfo[] {
@@ -136,6 +136,15 @@ export class CentreStudiesComponent implements OnInit, OnDestroy {
         return 0;
       });
     return sortedStudyNames;
+  }
+
+  private whenCentreDisabled(fn: (centre: Centre) => void) {
+    const centre = this.centreSubject.value.entity;
+    if (!centre.isDisabled()) {
+      throw new Error('modifications not allowed');
+    }
+
+    fn(centre);
   }
 
 }
