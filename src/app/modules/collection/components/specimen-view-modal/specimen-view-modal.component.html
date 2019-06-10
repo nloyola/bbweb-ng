@@ -1,0 +1,114 @@
+<app-modal-input [cancelButtonShow]="false" (confirm)="confirm($event)" (dismiss)="dismiss($event)">
+  <div class="title" i18n>
+    <span i18n>Specimen</span><span class="ml-1">{{ specimen.inventoryId }}</span>
+  </div>
+  <div class="body" i18n>
+    <ul class="list-group">
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-md-3">
+            <strong translate>Study</strong>
+          </div>
+          <div class="col-md-7">
+            {{participant.study.name}}
+          </div>
+        </div>
+      </li>
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-md-3">
+            <strong translate>Participant ID</strong>
+          </div>
+          <div class="col-md-9">
+            {{participant.uniqueId}}
+          </div>
+        </div>
+      </li>
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-md-3">
+            <strong translate>Visit #</strong>
+          </div>
+          <div class="col-md-7">
+            {{event.visitNumber}}
+          </div>
+        </div>
+      </li>
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-md-3">
+            <strong translate>Event type</strong>
+          </div>
+          <div class="col-md-7">
+            {{specimen.eventTypeName}}
+          </div>
+        </div>
+      </li>
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-md-3">
+            <strong translate>Specimen Type</strong>
+          </div>
+          <div class="col-md-7">
+            {{specimen.specimenDefinitionName}}
+          </div>
+        </div>
+      </li>
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-md-3">
+            <strong translate>Created</strong>
+          </div>
+          <div class="col-md-7">
+            {{ specimen.timeCreated.toLocaleDateString() }}
+            {{ specimen.timeCreated.toLocaleTimeString() }}
+          </div>
+        </div>
+      </li>
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-md-3">
+            <strong translate>Amount</strong>
+          </div>
+          <div class="col-md-7">
+            {{specimen.amount}} {{specimen.specimenDefinitionUnits}}
+            <small>(default amount: {{specimen.isDefaultAmount | yesNo}})</small>
+          </div>
+        </div>
+      </li>
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-md-3">
+            <strong translate>State</strong>
+          </div>
+          <div class="col-md-7">
+            {{specimen.state}}
+          </div>
+        </div>
+      </li>
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-md-3">
+            <strong translate>Origin location</strong>
+          </div>
+          <div class="col-md-7">
+            {{specimen.originLocationInfo.name}}
+          </div>
+        </div>
+      </li>
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-md-3">
+            <strong translate>Current location</strong>
+          </div>
+          <div class="col-md-7">
+            {{specimen.locationInfo.name}}
+          </div>
+        </div>
+      </li>
+    </ul>
+    <app-entity-status [timeAdded]="specimen.timeAdded"
+                       [timeModified]="specimen.timeModified">
+    </app-entity-status>
+  </div>
+</app-modal-input>

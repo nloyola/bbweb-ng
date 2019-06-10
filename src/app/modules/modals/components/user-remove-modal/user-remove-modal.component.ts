@@ -11,9 +11,13 @@ export class UserRemoveModalComponent {
 
   @Input() user: IUserInfo;
 
-  constructor(private activeModal: NgbActiveModal) { }
+  constructor(private modal: NgbActiveModal) {}
 
   confirm(): void {
-    this.activeModal.close(this.user);
+    this.modal.close(this.user);
+  }
+
+  dismiss(): void {
+    this.modal.dismiss();
   }
 }

@@ -16,27 +16,34 @@ export class ErrorInterceptor implements HttpInterceptor {
     return next.handle(request).pipe(catchError(error => {
       if (error instanceof HttpErrorResponse) {
 
-        switch (error.status) {
-          case 401:
-            if (isDevMode()) {
-              this.router.navigateByUrl('/401');
-            } else {
-              // auto logout if 401 response returned from api
-              this.authService.logout();
+        console.log('--> error', error);
+        if (error.error instanceof ErrorEvent) {
+          // client side error
+        } else {
+          // server side error
+          switch (error.status) {
+            case 401:
+              if (isDevMode()) {
+                this.router.navigateByUrl('/401');
+              } else {
+                // auto logout if 401 response returned from api
+                this.authService.logout();
 
-              // if not at the login or forgot password page then reload the page
-              if ((location.pathname !== '/login') && (location.pathname !== '/forgot')) {
-                location.reload();
+                // if not at the login or forgot password page then reload the page
+                if ((location.pathname !== '/login') && (location.pathname !== '/forgot')) {
+                  location.reload();
+                }
               }
-            }
-            break;
+              break;
 
-          default:
-            if (!request.url.includes('/api/participants/') || (request.method !== 'GET')) {
-              this.router.navigateByUrl('/server-error');
-            }
+            default:
+              // if (!request.url.includes('/api/participants/') || (request.method !== 'GET')) {
+              //   this.router.navigateByUrl('/server-error');
+              // }
+              //
+              // do nothing for now
+          }
         }
-
       }
 
       return throwError(error);

@@ -11,8 +11,8 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Dictionary } from '@ngrx/entity';
 import { createSelector, select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subject, combineLatest, BehaviorSubject } from 'rxjs';
-import { filter, map, shareReplay, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
+import { filter, map, shareReplay, takeUntil, withLatestFrom } from 'rxjs/operators';
 import { EventTypeRemoveComponent } from '../event-type-remove/event-type-remove.component';
 import { SpecimenDefinitionRemoveComponent } from '../specimen-definition-remove/specimen-definition-remove.component';
 import { SpecimenDefinitionViewComponent } from '../specimen-definition-view/specimen-definition-view.component';
@@ -133,7 +133,7 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
     ).subscribe(([error, _msg]) => {
       let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
       if (errMessage.indexOf('already exists') > -1) {
-        errMessage = 'An event with that name already exists. Please use another name.';
+        errMessage = 'A participant with that unique ID already exists. Please use a different one.';
       }
       this.toastr.error(errMessage, 'Update Error', { disableTimeOut: true });
     });

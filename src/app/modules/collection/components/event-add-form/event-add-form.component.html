@@ -56,16 +56,16 @@
           <label for="timeCompleted" class="col-md-3 col-form-label" i18n>Time Completed</label>
           <div class="input-group col-md-9">
             <input class="form-control"
-                   type="datetime"
+                   type="text"
                    [formControl]="timeCompleted"
                    [owlDateTime]="dt"
                    i18n-placeholder
                    placeholder="Date Time">
+            <owl-date-time #dt></owl-date-time>
             <div class="input-group-append">
-              <span class="input-group-text" [owlDateTimeTrigger]="dt">
+              <button class="btn btn-outline-secondary" type="button" [owlDateTimeTrigger]="dt">
                 <fa-icon [icon]="faCalendar"></fa-icon>
-              </span>
-              <owl-date-time #dt></owl-date-time>
+              </button>
             </div>
           </div>
           <div class="offset-3 col-md-9"

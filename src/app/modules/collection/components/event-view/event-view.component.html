@@ -6,14 +6,24 @@
         <div class="card-header bg-primary text-light"
              *ngIf="(isLoading$ | async) !== false; else showLoading">
           <mat-icon inline="false">event</mat-icon>
-          {{ event.uniqueId }}
+          <span class="ml-1" i18n>Visit Number</span>
+          {{ event.visitNumber }}
           <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
 
-            <button class="btn btn-sm btn-light"
+            <button class="btn btn-sm btn-light mr-1"
                     type="button"
                     id="eventSummaryMenu"
                     ngbDropdownToggle>
               <mat-icon inline="true">more_vert</mat-icon>
+            </button>
+
+            <button class="btn btn-sm btn-light"
+                    type="button"
+                    (click)="isCardCollapsed = !isCardCollapsed"
+                    [attr.aria-expanded]="!isCollapsed"
+                    aria-controls="eventCollapse">
+              <mat-icon *ngIf="!isCardCollapsed" inline="true">keyboard_arrow_down</mat-icon>
+              <mat-icon *ngIf="isCardCollapsed" inline="true">keyboard_arrow_right</mat-icon>
             </button>
 
             <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="eventSummaryMenu">
@@ -31,68 +41,88 @@
                 <mat-icon class="success-icon mr-1">edit</mat-icon>
                 <ng-container i18n>Update {{ annotation.label }}</ng-container>
               </a>
+              <a class="dropdown-item" (click)="remove()">
+                <mat-icon class="danger-icon mr-1">remove_circle</mat-icon>
+                <ng-container i18n>Remove this Event</ng-container>
+              </a>
             </div>
           </span>
         </div>
 
-        <ul class="list-group list-group-flush">
-          <li class="list-group-item">
-            <div class="row">
-              <div class="col-md-3">
-                <strong i18n>Type</strong>
+        <div [ngbCollapse]="isCardCollapsed" id="eventCollapse">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <div class="row">
+                <div class="col-md-3">
+                  <strong i18n>Visit Type</strong>
+                </div>
+                <div class="col-md-9">
+                  {{ eventType.name }}
+                </div>
               </div>
-              <div class="col-md-9">
-                {{ eventType.name }}
+            </li>
+            <li class="list-group-item">
+              <div class="row">
+                <div class="col-md-3">
+                  <strong i18n>Visit Number</strong>
+                </div>
+                <div class="col-md-9">
+                  {{ event.visitNumber }}
+                </div>
               </div>
-            </div>
-          </li>
-          <li class="list-group-item">
-            <div class="row">
-              <div class="col-md-3">
-                <strong i18n>Visit Number</strong>
+            </li>
+            <li class="list-group-item">
+              <div class="row">
+                <div class="col-md-3">
+                  <strong i18n>Time Completed</strong>
+                </div>
+                <div class="col-md-9">
+                  {{ event.timeCompleted.toLocaleDateString() }} {{ event.timeCompleted.toLocaleTimeString() }}
+                </div>
               </div>
-              <div class="col-md-9">
-                {{ event.visitNumber }}
+            </li>
+            <li class="list-group-item" *ngFor="let annotation of annotations">
+              <div class="row">
+                <div class="col-md-3">
+                  <strong i18n>{{ annotation.label }}</strong>
+                </div>
+                <div class="col-md-9">
+                  {{ annotation.value }}
+                </div>
               </div>
-            </div>
-          </li>
-          <li class="list-group-item">
-            <div class="row">
-              <div class="col-md-3">
-                <strong i18n>Time Completed</strong>
-              </div>
-              <div class="col-md-9">
-                {{ event.timeCompleted }}
-              </div>
-            </div>
-          </li>
-          <li class="list-group-item" *ngFor="let annotation of annotations">
-            <div class="row">
-              <div class="col-md-3">
-                <strong i18n>{{ annotation.label }}</strong>
-              </div>
-              <div class="col-md-9">
-                {{ annotation.value }}
-              </div>
-            </div>
-          </li>
-          <li class="list-group-item m-0 p-0">
-            <app-entity-status [timeAdded]="event.timeAdded"
-                               [timeModified]="event.timeModified"
-                               [useBadges]="false">
-            </app-entity-status>
-          </li>
-        </ul>
+            </li>
+            <li class="list-group-item m-0 p-0">
+              <app-entity-status [timeAdded]="event.timeAdded"
+                                 [timeModified]="event.timeModified"
+                                 [useBadges]="false">
+              </app-entity-status>
+            </li>
+          </ul>
+        </div>
       </div>
 
+      <app-event-specimens-view [event]="event"
+                                [participant]="participant">
+      </app-event-specimens-view>
+
       <ng-template #updateVisitNumberModal let-modal>
-        <app-modal-input-text [title]="'Update Name'"
-                              [label]="'New event Unique ID'"
-                              [value]="event.uniqueId"
-                              [options]="uniqueIdModalOptions"
-                              (onConfirm)="confirm($event)"
-                              [modal]="modal">
-        </app-modal-input-text>
+        <app-modal-input-number [title]="'Update Visit Number'"
+                                [label]="'New Visit Number'"
+                                [value]="event.visitNumber"
+                                [options]="visitNumberModalOptions"
+                                (onConfirm)="confirm($event)"
+                                [modal]="modal">
+        </app-modal-input-number>
+      </ng-template>
+
+      <ng-template #updateTimeCompletedModal let-modal>
+        <app-modal-input-date-time [title]="'Update Time Completed'"
+                                   [label]="'New Time Completed'"
+                                   [value]="event.timeCompleted"
+                                   [options]="timeCompletedModalOptions"
+                                   (onConfirm)="confirm($event)"
+                                   [modal]="modal">
+        </app-modal-input-date-time>
       </ng-template>
 
       <ng-template #updateAnnotationModal let-modal>
@@ -105,6 +135,42 @@
     </ng-container>
   </ng-container>
 </ng-container>
+
+<ng-template #hasSpecimensModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title" i18n>Cannot Remove Event</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body" i18n>
+    <div class="alert alert-warning" role="alert">
+      <div class="row vertical-align">
+        <div class="col-md-1 text-center">
+          <mat-icon>warning</mat-icon>
+        </div>
+        <div class="col-md-11">
+          This event cannot be removed since it has collected specimens.
+          <br>If you still want to remove it, remove the collected specimens first.
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="modal.close()" i18n>OK</button>
+  </div>
+</ng-template>
+
+<ng-template #removeEventModal let-modal>
+  <app-modal-input (confirm)="modal.close()"
+                   (dismiss)="modal.dismiss()">
+    <span class="title">Remove Event</span>
+    <div class="body">
+      Are you sure you want to remove this event?
+    </div>
+  </app-modal-input>
+</ng-template>
+
 
 <ng-template #showLoading>
   <div class="card-header">

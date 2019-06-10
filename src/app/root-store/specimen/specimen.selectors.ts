@@ -70,11 +70,3 @@ export const selectSpecimenLastAdded =
     (id: string, entities: { [id: string]: Specimen }): Specimen => {
       return entities[id];
     });
-
-export const selectSpecimenLastRemoved =
-  createSelector(
-    selectSpecimenLastRemovedId,
-    selectAllSpecimenEntities,
-    (id: string, entities: { [id: string]: Specimen }): Specimen => {
-      return entities[id];
-    });

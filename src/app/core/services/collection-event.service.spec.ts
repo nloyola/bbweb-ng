@@ -88,22 +88,29 @@ describe('CollectionEventService', () => {
         expect(s).toEqual(event);
       });
 
-      expect(obs).toBeHttpSuccess(httpMock, 'POST', `${BASE_URL}/`, rawEvent, (body: any) => {
-        expect(body).toEqual({
-          participantId:         event.participantId,
-          collectionEventTypeId: event.eventTypeId,
-          visitNumber:           event.visitNumber,
-          timeCompleted:         event.timeCompleted,
-          annotations:           event.annotations
+      expect(obs).toBeHttpSuccess(
+        httpMock,
+        'POST',
+        `${BASE_URL}/${event.participantId}`,
+        rawEvent,
+        (body: any) => {
+          expect(body).toEqual({
+            collectionEventTypeId: event.eventTypeId,
+            visitNumber:           event.visitNumber,
+            timeCompleted:         event.timeCompleted,
+            annotations:           event.annotations
+          });
         });
-      });
     });
 
     it('handles an error reply correctly', () => {
       const rawCollectionEvent = factory.collectionEvent();
       const collectionEvent = new CollectionEvent().deserialize(rawCollectionEvent);
       expect(service.add(collectionEvent))
-        .toBeHttpError(httpMock, 'POST', `${BASE_URL}/`, 'expected a collectionEvent object');
+        .toBeHttpError(httpMock,
+                       'POST',
+                       `${BASE_URL}/${collectionEvent.participantId}`,
+                       'expected a collectionEvent object');
     });
 
   });
@@ -224,14 +231,14 @@ describe('CollectionEventService', () => {
         expect(id).toEqual(collectionEvent.id);
       });
 
-      const url = `${BASE_URL}/${collectionEvent.id}/${collectionEvent.version}`;
+      const url = `${BASE_URL}/${collectionEvent.participantId}/${collectionEvent.id}/${collectionEvent.version}`;
       expect(obs).toBeHttpSuccess(httpMock, 'DELETE', url, true);
     });
 
     it('handles an error reply correctly', () => {
       const rawCollectionEvent = factory.collectionEvent();
       const collectionEvent = new CollectionEvent().deserialize(rawCollectionEvent);
-      const url = `${BASE_URL}/${collectionEvent.id}/${collectionEvent.version}`;
+      const url = `${BASE_URL}/${collectionEvent.participantId}/${collectionEvent.id}/${collectionEvent.version}`;
       expect(service.remove(collectionEvent))
         .toBeHttpError(httpMock, 'DELETE', url, 'expected a collectionEvent object');
     });

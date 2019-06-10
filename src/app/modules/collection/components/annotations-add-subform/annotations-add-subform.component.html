@@ -40,16 +40,16 @@
           <ng-container *ngSwitchCase="'datetime'">
             <div class="input-group col-md-9">
               <input class="form-control"
-                     type="datetime"
+                     type="text"
                      [formControl]="control.controls.field"
                      [owlDateTime]="dt"
                      i18n-placeholder
                      placeholder="Date Time">
+              <owl-date-time #dt></owl-date-time>
               <div class="input-group-append">
-                <span class="input-group-text" [owlDateTimeTrigger]="dt">
+                <button class="btn btn-outline-secondary" type="button" [owlDateTimeTrigger]="dt">
                   <fa-icon [icon]="faCalendar"></fa-icon>
-                </span>
-                <owl-date-time #dt></owl-date-time>
+                </button>
               </div>
             </div>
             <div class="offset-3 col-md-9"

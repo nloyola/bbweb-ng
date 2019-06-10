@@ -10,6 +10,12 @@ export interface ISpecimen extends IConcurrencySafeEntity, HasSlug {
   inventoryId: string;
 
   /**
+   * The ID corresponding to the the {@link domain.studies.CollectionEvent CollectionEvent} this specimen
+   * belongs to.
+   */
+  eventId: string;
+
+  /**
    * The ID corresponding to the the {@link domain.studies.CollectionSpecimenDefinition
    * SpecimenDefinition} for this specimen.
    */
@@ -81,6 +87,7 @@ export class Specimen extends ConcurrencySafeEntity implements ISpecimen {
 
   slug: string;
   inventoryId: string;
+  eventId: string;
   specimenDefinitionId: string;
   specimenDefinitionName?: string;
   specimenDefinitionUnits?: string;
@@ -125,8 +132,10 @@ export class Specimen extends ConcurrencySafeEntity implements ISpecimen {
     const {
       slug,
       inventoryId,
+      eventId,
       specimenDefinitionId,
-      timeCreated,
+      specimenDefinitionName,
+      specimenDefinitionUnits,
       amount,
       state,
       eventTypeName,
@@ -136,8 +145,10 @@ export class Specimen extends ConcurrencySafeEntity implements ISpecimen {
       {
         slug,
         inventoryId,
+        eventId,
         specimenDefinitionId,
-        timeCreated,
+        specimenDefinitionName,
+        specimenDefinitionUnits,
         amount,
         state,
         eventTypeName,
@@ -146,6 +157,11 @@ export class Specimen extends ConcurrencySafeEntity implements ISpecimen {
 
     if (input.timeCreated) {
       this.timeCreated = new Date(input.timeCreated);
+    }
+
+    const { collectionEventId } = input as any;
+    if (collectionEventId !== undefined) {
+      this.eventId = collectionEventId;
     }
 
     if (input.originLocationInfo) {

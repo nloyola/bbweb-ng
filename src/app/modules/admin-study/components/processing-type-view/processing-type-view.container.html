@@ -54,7 +54,6 @@
     </app-modal-input-boolean>
   </ng-template>
 
-
   <ng-template #processingTypeInUseModal let-modal>
     <div class="modal-header">
       <h4 class="modal-title" id="modal-basic-title" i18n>Processing Step In Use</h4>
@@ -63,11 +62,18 @@
       </button>
     </div>
     <div class="modal-body" i18n>
-      This processing stpe cannot be removed since it is an input for another processing step.
-      <p>
-        If you still want to remove it, remove this specimen as the input from the other
-        processing step.
-      </p>
+      <div class="alert alert-warning" role="alert">
+        <div class="row vertical-align">
+          <div class="col-md-1 text-center">
+            <mat-icon>warning</mat-icon>
+          </div>
+          <div class="col-md-11">
+            This processing step cannot be removed since it is an input for another processing step.
+            <br>If you still want to remove it, remove this specimen as the input from the other
+            processing step.
+          </div>
+        </div>
+      </div>
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-primary" (click)="modal.close()" i18n>OK</button>

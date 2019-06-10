@@ -39,8 +39,7 @@ export class ParticipantSummaryComponent implements OnInit, OnDestroy {
 
   annotationModalOptions: ModalInputTextOptions = {};
 
-  private participantId: string;
-  private participantSlug: string;
+  private newUniqueId: string;
   private entities: EntityData;
   private updatedMessage$ = new Subject<string>();
   private unsubscribe$ = new Subject<void>();
@@ -52,36 +51,18 @@ export class ParticipantSummaryComponent implements OnInit, OnDestroy {
               private toastr: ToastrService) { }
 
   ngOnInit() {
-    this.participantSlug = this.route.parent.snapshot.params.slug;
-
     const entitiesSelector = createSelector(
-      ParticipantStoreSelectors.selectAllParticipants,
+      ParticipantStoreSelectors.selectAllParticipantEntities,
       StudyStoreSelectors.selectAllStudyEntities,
-      (participants: Participant[], studies: Dictionary<Study>): EntityData => {
-        const participant = participants.find(p => p.slug === this.participantSlug);
-        if (participant) {
-          this.participantId = participant.id;
-          const participantEntity = (participant instanceof Participant)
-            ? participant : new Participant().deserialize(participant);
+      (participants: Dictionary<Participant>, studies: Dictionary<Study>): EntityData => {
+        const participantEntity = participants[this.route.parent.snapshot.data.participant.id];
+        if (participantEntity !== undefined) {
+          const participant = (participantEntity instanceof Participant)
+            ? participantEntity : new Participant().deserialize(participantEntity);
 
           return {
-            participant: participantEntity,
+            participant,
             study: this.studyFromId(participant.study.id, studies)
-          };
-        }
-
-        if (this.participantId) {
-          const participantById = participants.find(p => p.id === this.participantId);
-          if (!participantById) {
-            throw new Error('could not find participant by ID');
-          }
-
-          const participantEntity = (participantById instanceof Participant)
-            ? participant : new Participant().deserialize(participantById);
-
-          return {
-            participant: participantEntity,
-            study: this.studyFromId(participantById.study.id, studies)
           };
         }
 
@@ -105,17 +86,30 @@ export class ParticipantSummaryComponent implements OnInit, OnDestroy {
       withLatestFrom(this.updatedMessage$),
       takeUntil(this.unsubscribe$)
     ).subscribe(([ entities, message ]) => {
-      if (entities === undefined) { return; }
+      if ((entities === undefined) || (message == null)) { return; }
 
-      if (entities.participant.slug === this.participantSlug) {
-        this.toastr.success(message, 'Update Successfull');
-      } else {
+      this.toastr.success(message, 'Update Successfull');
+      this.updatedMessage$.next(null);
+      if (entities.participant.slug !== this.route.parent.snapshot.params.slug) {
         // uniqueId was changed and a new slug was assigned
         //
         // need to change state since slug is used in URL and by breadcrumbs
         this.router.navigate([ '../..', entities.participant.slug, 'summary' ], { relativeTo: this.route });
-        this.participantSlug = entities.participant.slug;
       }
+    });
+
+    this.store$.pipe(
+      select(ParticipantStoreSelectors.selectParticipantError),
+      withLatestFrom(this.updatedMessage$),
+      takeUntil(this.unsubscribe$)
+    ).subscribe(([ error, _msg ]) => {
+      if (error === null) { return; }
+
+      let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
+      if (errMessage.match(/participant with unique ID already exists/)) {
+        errMessage = `A participant with the ID ${this.newUniqueId} already exits.`;
+      }
+      this.toastr.error(errMessage, 'Update Error', { disableTimeOut: true });
     });
 
     this.annotations$ = this.entities$.pipe(map(entities => {
@@ -141,6 +135,7 @@ export class ParticipantSummaryComponent implements OnInit, OnDestroy {
   updateUniqueId() {
     this.modalService.open(this.updateUniqueIdModal, { size: 'lg' }).result
       .then(value => {
+        this.newUniqueId = value;
         this.store$.dispatch(ParticipantStoreActions.updateParticipantRequest({
           participant: this.entities.participant,
           attributeName: 'uniqueId',

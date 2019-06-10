@@ -16,6 +16,9 @@ import { StudyRemoveModalComponent } from './components/study-remove-modal/study
 import { UserRemoveModalComponent } from './components/user-remove-modal/user-remove-modal.component';
 import { CentreRemoveModalComponent } from './components/centre-remove-modal/centre-remove-modal.component';
 import { ModalYesNoComponent } from './components/modal-yes-no/modal-yes-no.component';
+import { ModalInputNumberComponent } from './components/modal-input-number/modal-input-number.component';
+import { ModalInputDateTimeComponent } from './components/modal-input-date/modal-input-date-time.component';
+import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
 
 @NgModule({
   imports: [
@@ -26,11 +29,15 @@ import { ModalYesNoComponent } from './components/modal-yes-no/modal-yes-no.comp
     NgbModule,
     FontAwesomeModule,
     SharedModule,
+    OwlDateTimeModule,
+    OwlNativeDateTimeModule
   ],
   declarations: [
     ModalInputComponent,
     ModalInputTextComponent,
     ModalInputTextareaComponent,
+    ModalInputNumberComponent,
+    ModalInputDateTimeComponent,
     ModalInputBooleanComponent,
     ModalInputEmailComponent,
     ModalInputUrlComponent,
@@ -45,6 +52,8 @@ import { ModalYesNoComponent } from './components/modal-yes-no/modal-yes-no.comp
     ModalInputBooleanComponent,
     ModalInputTextComponent,
     ModalInputTextareaComponent,
+    ModalInputNumberComponent,
+    ModalInputDateTimeComponent,
     ModalInputEmailComponent,
     ModalInputUrlComponent,
     ModalInputPasswordComponent,

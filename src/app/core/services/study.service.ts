@@ -20,8 +20,8 @@ export class StudyService {
   private stateActions = [ 'disable', 'enable', 'retire', 'unretire' ];
 
   /**
-  * Retrieves the counts of all Studies from the server indexed by state.
-  */
+   * Retrieves the counts of all Studies from the server indexed by state.
+   */
   counts(): Observable<StudyCounts> {
     return this.http.get<ApiReply>(`${this.BASE_URL}/counts`)
       .pipe(
@@ -36,7 +36,7 @@ export class StudyService {
               retiredCount: jObj.retiredCount as number
             };
           }
-          throw new Error('expected a study object');
+          throw new Error('expected a study counts object');
         }));
   }
 
@@ -99,7 +99,7 @@ export class StudyService {
     };
     return this.http.post<ApiReply>(`${this.BASE_URL}/`, json)
       .pipe(
-        delay(2000),
+        // delay(2000),
         map(this.replyToStudy));
   }
 

@@ -1,11 +1,10 @@
-import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild, OnDestroy } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Annotation, annotationFromType } from '@app/domain/annotations';
 import { Participant } from '@app/domain/participants';
 import { Study } from '@app/domain/studies';
 import { Observable, Subject } from 'rxjs';
 import { AnnotationsAddSubformComponent } from '../annotations-add-subform/annotations-add-subform.component';
-import { EntityInfo } from '@app/domain';
 
 @Component({
   selector: 'app-participant-add-form',

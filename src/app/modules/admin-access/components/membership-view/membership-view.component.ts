@@ -9,16 +9,15 @@ import { StudyRemoveModalComponent } from '@app/modules/modals/components/study-
 import { UserRemoveModalComponent } from '@app/modules/modals/components/user-remove-modal/user-remove-modal.component';
 import { ModalInputTextareaOptions, ModalInputTextOptions } from '@app/modules/modals/models';
 import { MembershipStoreActions, MembershipStoreSelectors, RootStoreState } from '@app/root-store';
-import { SpinnerStoreSelectors } from '@app/root-store/spinner';
 import { CentreAddTypeahead } from '@app/shared/typeaheads/centre-add-typeahead';
 import { StudyAddTypeahead } from '@app/shared/typeaheads/study-add-typeahead';
 import { UserAddTypeahead } from '@app/shared/typeaheads/user-add-typeahead';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Dictionary } from '@ngrx/entity';
 import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subject, BehaviorSubject } from 'rxjs';
-import { map, shareReplay, takeUntil, tap, withLatestFrom, filter } from 'rxjs/operators';
-import { Dictionary } from '@ngrx/entity';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { filter, map, shareReplay, takeUntil, withLatestFrom } from 'rxjs/operators';
 
 @Component({
   selector: 'app-membership-view',

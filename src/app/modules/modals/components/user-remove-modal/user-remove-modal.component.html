@@ -1,4 +1,4 @@
-<app-modal-input (confirm)="confirm($event)" (dismiss)="activeModal.dismiss()">
+<app-modal-input (confirm)="confirm($event)" (dismiss)="dismiss($event)">
   <span class="title" i18n>Remove User</span>
   <div class="body" i18n>
     Are you sure you want to remove the user named <b>{{ user.name }}</b>?

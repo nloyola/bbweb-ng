@@ -14,6 +14,8 @@ import { ToastrModule } from 'ngx-toastr';
 import { RoleViewComponent } from './role-view.component';
 import { EntityWithSubEntityBehaviour } from '@test/behaviours/entity-with-sub-entity.behaviour';
 
+// (nl-recompile-mode 1)
+
 describe('RoleViewComponent', () => {
   let component: RoleViewComponent;
   let fixture: ComponentFixture<RoleViewComponent>;

@@ -63,13 +63,12 @@ export class CollectionEventService {
   add(event: CollectionEvent): Observable<CollectionEvent> {
     const annotations = event.annotations.map(a => a.serverAnnotation());
     const json = {
-      participantId: event.participantId,
       collectionEventTypeId: event.eventTypeId,
       timeCompleted: event.timeCompleted,
       visitNumber: event.visitNumber,
       annotations
     };
-    return this.http.post<ApiReply>(`${this.BASE_URL}/`, json).pipe(
+    return this.http.post<ApiReply>(`${this.BASE_URL}/${event.participantId}`, json).pipe(
       // delay(2000),
       map(this.replyToCollectionEvent));
   }
@@ -117,7 +116,7 @@ export class CollectionEventService {
   }
 
   remove(event: CollectionEvent): Observable<string> {
-    const url = `${this.BASE_URL}/${event.id}/${event.version}`;
+    const url = `${this.BASE_URL}/${event.participantId}/${event.id}/${event.version}`;
     return this.http.delete<ApiReply>(url)
       .pipe(map((reply: ApiReply) => {
         if (reply && reply.data) {

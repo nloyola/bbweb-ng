@@ -157,19 +157,4 @@ describe('specimen-store selectors', () => {
 
   });
 
-  it('selectSpecimenLastRemoved', () => {
-    const specimen = new Specimen().deserialize(factory.specimen());
-    const adapter: EntityAdapter<Specimen> = createEntityAdapter<Specimen>({
-      selectId: (s: Specimen) => s.id
-    });
-    const state = {
-      specimen: adapter.addAll([ specimen ], {
-        ...initialState,
-        lastRemovedId: specimen.id
-      })
-    };
-
-    expect(selectors.selectSpecimenLastRemoved(state)).toEqual(specimen);
-  });
-
 });

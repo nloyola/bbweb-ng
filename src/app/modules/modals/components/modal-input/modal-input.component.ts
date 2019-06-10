@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-modal-input',
@@ -8,6 +8,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 export class ModalInputComponent {
 
   @Input() modalInputValid = true;
+  @Input() cancelButtonShow = true;
 
   @Output() confirm = new EventEmitter<any>();
   @Output() dismiss = new EventEmitter<any>();

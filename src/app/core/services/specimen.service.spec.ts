@@ -60,7 +60,7 @@ describe('SpecimenService', () => {
     beforeEach(() => {
       const { rawSpecimen, specimen, event } = createEntities();
       context.search = (searchParams: SearchParams) => service.search(event, searchParams);
-      context.url = `${BASE_URL}/list/${event.slug}`;
+      context.url = `${BASE_URL}/${event.slug}`;
       context.replyItems = [ rawSpecimen ];
       context.subscription = (pr: PagedReply<Specimen>) => {
         expect(pr.entities.length).toBe(1);
@@ -115,14 +115,14 @@ describe('SpecimenService', () => {
         expect(id).toEqual(specimen.id);
       });
 
-      const url = `${BASE_URL}/${specimen.id}/${specimen.version}`;
+      const url = `${BASE_URL}/${specimen.eventId}/${specimen.id}/${specimen.version}`;
       expect(obs).toBeHttpSuccess(httpMock, 'DELETE', url, true);
     });
 
     it('handles an error reply correctly', () => {
       const rawSpecimen = factory.specimen();
       const specimen = new Specimen().deserialize(rawSpecimen);
-      const url = `${BASE_URL}/${specimen.id}/${specimen.version}`;
+      const url = `${BASE_URL}/${specimen.eventId}/${specimen.id}/${specimen.version}`;
       expect(service.remove(specimen))
         .toBeHttpError(httpMock, 'DELETE', url, 'expected a specimen object');
     });

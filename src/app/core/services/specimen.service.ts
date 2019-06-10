@@ -27,7 +27,7 @@ export class SpecimenService {
    * Used to search for Specimens.
    */
   search(event: CollectionEvent, searchParams: SearchParams): Observable<PagedReply<Specimen>> {
-    return this.http.get<ApiReply>(`${this.BASE_URL}/list/${event.slug}`,
+    return this.http.get<ApiReply>(`${this.BASE_URL}/${event.slug}`,
                                    { params: searchParams.httpParams() })
       .pipe(
         // delay(1000),
@@ -65,7 +65,7 @@ export class SpecimenService {
   }
 
   remove(specimen: Specimen): Observable<string> {
-    const url = `${this.BASE_URL}/${specimen.id}/${specimen.version}`;
+    const url = `${this.BASE_URL}/${specimen.eventId}/${specimen.id}/${specimen.version}`;
     return this.http.delete<ApiReply>(url)
       .pipe(map((reply: ApiReply) => {
         if (reply && reply.data) {

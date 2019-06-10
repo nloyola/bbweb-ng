@@ -33,7 +33,7 @@ export class StudiesViewComponent implements OnInit, OnDestroy {
   studyToAdd: any;
 
   private filters: { [ name: string ]: SearchFilter };
-  private unsubscribe$: Subject<void> = new Subject<void>();
+  private unsubscribe$ = new Subject<void>();
 
   constructor(private store$: Store<RootStoreState.State>,
               private router: Router,
@@ -105,7 +105,7 @@ export class StudiesViewComponent implements OnInit, OnDestroy {
 
   public studySelected(study: StudyUI): void {
     this.router.navigate([ study.slug, 'summary' ], { relativeTo: this.route });
- }
+  }
 
   private getFilters() {
     return Object.values(this.filters)

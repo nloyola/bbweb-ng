@@ -49,6 +49,7 @@ describe('HeaderComponent', () => {
   });
 
   it('should create', () => {
+    debugger;
     expect(component).toBeTruthy();
   });
 
@@ -68,8 +69,8 @@ describe('HeaderComponent', () => {
   });
 
   it('calling logout dispatches an action and goes to home state', () => {
-    const action = new AuthStoreActions.LogoutRequestAction();
     ngZone.run(() => component.logout());
+    const action = new AuthStoreActions.LogoutRequestAction();
     expect(store.dispatch).toHaveBeenCalledWith(action);
     expect(router.navigate).toHaveBeenCalledWith(['/']);
   });

@@ -2,7 +2,7 @@
   <h4 class="modal-title" id="modal-basic-title">
     <ng-content select=".title"></ng-content>
   </h4>
-  <button type="button" class="close" aria-label="Close" (click)="close('Cancel')">
+  <button type="button" class="close" aria-label="Close" (click)="onDismiss()">
     <span aria-hidden="true">&times;</span>
   </button>
 </div>
@@ -10,11 +10,12 @@
   <ng-content select=".body"></ng-content>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-secondary" (click)="onDismiss()" i18n>Cancel</button>
+  <button type="button" class="btn btn-secondary" (click)="onDismiss()" *ngIf="cancelButtonShow" i18n>Cancel</button>
   <button type="button"
           class="btn btn-primary"
           [disabled]="!modalInputValid"
-          (click)="onConfirm()" i18n>
+          (click)="onConfirm()"
+          i18n>
     OK
   </button>
 </div>

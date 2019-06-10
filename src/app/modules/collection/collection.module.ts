@@ -19,6 +19,8 @@ import { ParticipantSummaryComponent } from './components/participant-summary/pa
 import { ParticipantViewPageComponent } from './components/participant-view-page/participant-view-page.component';
 import { EventAddSelectComponent } from './components/event-add-select/event-add-select.component';
 import { EventViewComponent } from './components/event-view/event-view.component';
+import { EventSpecimensViewComponent } from './components/event-specimens-view/event-specimens-view.component';
+import { SpecimenViewModalComponent } from './components/specimen-view-modal/specimen-view-modal.component';
 
 @NgModule({
   imports: [
@@ -45,7 +47,12 @@ import { EventViewComponent } from './components/event-view/event-view.component
     ParticipantEventsComponent,
     ModalInputAnnotationComponent,
     EventAddSelectComponent,
-    EventViewComponent
+    EventViewComponent,
+    EventSpecimensViewComponent,
+    SpecimenViewModalComponent
+  ],
+  entryComponents: [
+    SpecimenViewModalComponent
   ]
 })
 export class CollectionModule { }
