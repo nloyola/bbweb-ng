@@ -1,23 +1,20 @@
-import { ConcurrencySafeEntity } from '@app/domain/concurrency-safe-entity.model';
 import { AnnotationType } from './annotation-type.model';
 import { Annotation } from './annotation.model';
-import { annotationFactory } from './annotation-factory';
-import { JSONObject } from '../json-object.model';
 
 export class HasAnnotations {
 
   annotations: Annotation[] = [];
 
   /**
-   * Assigns the {@link app.domain.annotations.AnnotationType AnnotationType} to the parent
-   * entity and converts the annotations to the matching objects derived from {@link
-   * app.domain.annotations.Annotation Annotation}.
+   * Assigns the {@link domain.annotations.AnnotationType AnnotationType} to the parent entity and converts
+   * the annotations to the matching objects derived from {@link app.domain.annotations.Annotation
+   * Annotation}.
    *
-   * @see app.domain.annotations.DateTimeAnnotation
-   * @see app.domain.annotations.MultipleSelectAnnotation
-   * @see app.domain.annotations.NumberAnnotation
-   * @see app.domain.annotations.SingleSelectAnnotation
-   * @see app.domain.annotations.TextAnnotation
+   * @see domain.annotations.DateTimeAnnotation
+   * @see domain.annotations.MultipleSelectAnnotation
+   * @see domain.annotations.NumberAnnotation
+   * @see domain.annotations.SingleSelectAnnotation
+   * @see domain.annotations.TextAnnotation
    */
   setAnnotationTypes(annotationTypes: AnnotationType[]): void {
     const validIds = annotationTypes.map(at => at.id);
@@ -38,7 +35,7 @@ export class HasAnnotations {
       if (!annotation) {
         throw new Error('annotation not found for id: ' + annotationType.id);
       }
-      annotation.annotationType = annotationType;
+      annotation._annotationType = annotationType;
       return annotation;
     });
   }

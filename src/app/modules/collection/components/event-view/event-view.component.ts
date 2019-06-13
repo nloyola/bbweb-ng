@@ -38,7 +38,7 @@ export class EventViewComponent implements OnInit, OnDestroy {
   @ViewChild('removeEventModal') removeEventModal: TemplateRef<any>;
   @ViewChild('hasSpecimensModal') hasSpecimensModal: TemplateRef<any>;
 
-  data$: Observable<EntityData>;
+  entities$: Observable<EntityData>;
   event$: Observable<CollectionEvent>;
   eventTypes$: Observable<Dictionary<CollectionEventType>>;
   eventType$: Observable<CollectionEventType>;
@@ -77,30 +77,32 @@ export class EventViewComponent implements OnInit, OnDestroy {
          events, eventTypes, specimens
       }));
 
-    this.data$ = combineLatest([ this.route.parent.data, this.store$.pipe(select(entitiesSelector)) ]).pipe(
+    this.entities$ = combineLatest([ this.route.parent.data, this.store$.pipe(select(entitiesSelector)) ]).pipe(
       map(([ routeData, entities ]) => {
         const event = entities.events[routeData.event.id];
         const eventType = entities.eventTypes[routeData.event.eventTypeId];
-        const specimens = entities.specimens ? entities.specimens.filter(spc => spc.eventId === routeData.event.id) : [];
+        const specimens = entities.specimens
+          ? entities.specimens.filter(spc => spc.eventId === routeData.event.id) : [];
 
         if (eventType === undefined) {
           this.store$.dispatch(EventTypeStoreActions.getEventTypeByIdRequest({
             studyId: this.route.parent.parent.parent.parent.snapshot.data.participant.study.id,
-            eventTypeId: event.eventTypeId
+            eventTypeId: routeData.event.eventTypeId
           }));
         }
 
+        debugger;
         return { event, eventType, specimens };
       }),
       takeUntil(this.unsubscribe$),
       shareReplay());
 
-    this.data$.pipe(takeUntil(this.unsubscribe$)).subscribe(this.entitiesSubject);
-    this.event$ = this.data$.pipe(map(entities => entities.event));
-    this.eventType$ = this.data$.pipe(map(entities => entities.eventType));
-    this.specimens$ = this.data$.pipe(map(entities => entities.specimens));
+    this.entities$.pipe(takeUntil(this.unsubscribe$)).subscribe(this.entitiesSubject);
+    this.event$ = this.entities$.pipe(map(entities => entities.event));
+    this.eventType$ = this.entities$.pipe(map(entities => entities.eventType));
+    this.specimens$ = this.entities$.pipe(map(entities => entities.specimens));
 
-    this.annotations$ = this.data$.pipe(map(entities => {
+    this.annotations$ = this.entities$.pipe(map(entities => {
       if ((entities.event === undefined) || (entities.eventType === undefined)
           || (entities.eventType.annotationTypes === undefined)) {
         return [];
@@ -118,7 +120,7 @@ export class EventViewComponent implements OnInit, OnDestroy {
       });
     }));
 
-    this.data$.pipe(
+    this.entities$.pipe(
       withLatestFrom(this.updatedMessage$),
       takeUntil(this.unsubscribe$)
     ).subscribe(([ entities, message ]) => {

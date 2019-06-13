@@ -131,22 +131,16 @@ describe('StudyParticipantsComponent', () => {
     const spy = jest.spyOn(modalService, 'open');
     const annotationType = study.annotationTypes[0];
 
-    /* tslint:disable:no-shadowed-variable */
     const testData = [
-      {
-        componentFunc: (component) => component.view(annotationType),
-      },
-      {
-        componentFunc: (component) => component.remove(annotationType),
-      }
+      { componentFunc: () => component.view(annotationType) },
+      { componentFunc: () => component.remove(annotationType) }
     ];
-    /* tslint:enable:no-shadowed-variable */
 
     store.dispatch(StudyStoreActions.getStudySuccess({ study }));
     fixture.detectChanges();
 
-    testData.forEach((testInfo, index) => {
-      testInfo.componentFunc(component);
+    testData.forEach((testInfo) => {
+      testInfo.componentFunc();
       fixture.detectChanges();
       expect(spy).toHaveBeenCalled();
     });
@@ -161,20 +155,18 @@ describe('StudyParticipantsComponent', () => {
     jest.spyOn(modalService, 'open');
     const annotationType = study.annotationTypes[0];
 
-    /* tslint:disable:no-shadowed-variable */
     const testData = [
-      { componentFunc: (component) => component.add(annotationType) },
-      { componentFunc: (component) => component.edit(annotationType) },
-      { componentFunc: (component) => component.remove(annotationType) }
+      { componentFunc: () => component.add() },
+      { componentFunc: () => component.edit(annotationType) },
+      { componentFunc: () => component.remove(annotationType) }
     ];
-    /* tslint:enable:no-shadowed-variable */
 
     fixture.detectChanges();
     store.dispatch(StudyStoreActions.getStudySuccess({ study }));
     fixture.detectChanges();
 
     testData.forEach(testInfo => {
-      expect(() => testInfo.componentFunc(component)).toThrowError('modifications not allowed');
+      expect(() => testInfo.componentFunc()).toThrowError('modifications not allowed');
     });
   });
 

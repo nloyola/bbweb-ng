@@ -58,7 +58,7 @@ export class EventSpecimensViewComponent implements OnInit, OnChanges {
     this.store$.pipe(
       select(SpecimenStoreSelectors.selectSpecimenLastRemovedId),
       takeUntil(this.unsubscribe$)
-    ).subscribe(x => {
+    ).subscribe(() => {
       this.applySearchParams();
     });
 
@@ -74,6 +74,9 @@ export class EventSpecimensViewComponent implements OnInit, OnChanges {
   paginationPageChanged(page: number) {
     if (isNaN(page)) { return; }
     this.applySearchParams();
+
+    // FIXME: not working 100%
+    // scrolling works only in some cases
     this.specimensTable.nativeElement.scrollIntoView({behavior: "smooth", block: "end"});
   }
 

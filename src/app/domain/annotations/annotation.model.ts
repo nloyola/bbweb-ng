@@ -1,6 +1,6 @@
-import { DomainEntity, IDomainEntity, JSONArray, JSONObject } from '@app/domain';
-import { AnnotationType } from './annotation-type.model';
+import { DomainEntity, IDomainEntity } from '@app/domain';
 import { ValueTypes } from './value-type.enum';
+import { AnnotationType } from './annotation-type.model';
 
 type AnnotationValueType = string | Date | Number | string[];
 

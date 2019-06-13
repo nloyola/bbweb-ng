@@ -73,6 +73,7 @@ export class ParticipantSummaryComponent implements OnInit, OnDestroy {
       select(entitiesSelector),
       tap(entities => {
         if (entities === undefined) { return; }
+
         if ((entities.study === undefined) || (entities.study.timeAdded === undefined)) {
           this.store$.dispatch(StudyStoreActions.getStudyRequest({ slug: entities.participant.study.slug }));
         }
@@ -114,7 +115,7 @@ export class ParticipantSummaryComponent implements OnInit, OnDestroy {
     });
 
     this.annotations$ = this.entities$.pipe(map(entities => {
-      if (entities.study === undefined) { return []; }
+      if ((entities === undefined) || (entities.study === undefined)) { return []; }
 
       return entities.study.annotationTypes.map(at => {
         const annotation = annotationFromType(at);
