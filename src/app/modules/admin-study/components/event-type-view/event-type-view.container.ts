@@ -29,9 +29,9 @@ interface StoreData {
 })
 export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
 
-  @ViewChild('updateNameModal') updateNameModal: TemplateRef<any>;
-  @ViewChild('updateDescriptionModal') updateDescriptionModal: TemplateRef<any>;
-  @ViewChild('updateRecurringModal') updateRecurringModal: TemplateRef<any>;
+  @ViewChild('updateNameModal', { static: true }) updateNameModal: TemplateRef<any>;
+  @ViewChild('updateDescriptionModal', { static: true }) updateDescriptionModal: TemplateRef<any>;
+  @ViewChild('updateRecurringModal', { static: true }) updateRecurringModal: TemplateRef<any>;
 
   isLoading$: Observable<boolean>;
   eventType$: Observable<CollectionEventType>;

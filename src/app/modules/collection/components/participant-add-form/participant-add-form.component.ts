@@ -25,7 +25,7 @@ export class ParticipantAddFormComponent implements OnInit, OnDestroy, OnChanges
   @Output() submitted = new EventEmitter<Participant>();
   @Output() cancelled = new EventEmitter<any>();
 
-  @ViewChild('studySelect') studySelect: ElementRef;
+  @ViewChild('studySelect', { static: true }) studySelect: ElementRef;
 
   form: FormGroup;
   selectedStudy: Study;

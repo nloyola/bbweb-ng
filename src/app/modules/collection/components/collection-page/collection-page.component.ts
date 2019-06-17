@@ -16,7 +16,7 @@ import { filter, map, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
 })
 export class CollectionPageComponent implements OnInit, OnDestroy {
 
-  @ViewChild('participantCreateModal') participantCreateModal: TemplateRef<any>;
+  @ViewChild('participantCreateModal', { static: true }) participantCreateModal: TemplateRef<any>;
 
   isLoading$: Observable<boolean>;
   haveCollectionStudies$: Observable<boolean>;

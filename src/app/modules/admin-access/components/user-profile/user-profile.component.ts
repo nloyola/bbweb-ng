@@ -18,10 +18,10 @@ import { Dictionary } from '@ngrx/entity';
 })
 export class UserProfileComponent implements OnInit, OnDestroy {
 
-  @ViewChild('updateNameModal') updateNameModal: TemplateRef<any>;
-  @ViewChild('updateEmailModal') updateEmailModal: TemplateRef<any>;
-  @ViewChild('updateAvatarUrlModal') updateAvatarUrlModal: TemplateRef<any>;
-  @ViewChild('updatePasswordModal') updatePasswordModal: TemplateRef<any>;
+  @ViewChild('updateNameModal', { static: true }) updateNameModal: TemplateRef<any>;
+  @ViewChild('updateEmailModal', { static: true }) updateEmailModal: TemplateRef<any>;
+  @ViewChild('updateAvatarUrlModal', { static: true }) updateAvatarUrlModal: TemplateRef<any>;
+  @ViewChild('updatePasswordModal', { static: true }) updatePasswordModal: TemplateRef<any>;
 
   isLoading$: Observable<boolean>;
   user$: Observable<UserUI>;

@@ -26,11 +26,11 @@ import { filter, map, shareReplay, takeUntil, withLatestFrom } from 'rxjs/operat
 })
 export class MembershipViewComponent implements OnInit, OnDestroy {
 
-  @ViewChild('updateNameModal') updateNameModal: TemplateRef<any>;
-  @ViewChild('updateDescriptionModal') updateDescriptionModal: TemplateRef<any>;
-  @ViewChild('allStudiesModal') allStudiesModal: TemplateRef<any>;
-  @ViewChild('allCentresModal') allCentresModal: TemplateRef<any>;
-  @ViewChild('removeMembershipModal') removeMembershipModal: TemplateRef<any>;
+  @ViewChild('updateNameModal', { static: true }) updateNameModal: TemplateRef<any>;
+  @ViewChild('updateDescriptionModal', { static: true }) updateDescriptionModal: TemplateRef<any>;
+  @ViewChild('allStudiesModal', { static: true }) allStudiesModal: TemplateRef<any>;
+  @ViewChild('allCentresModal', { static: true }) allCentresModal: TemplateRef<any>;
+  @ViewChild('removeMembershipModal', { static: true }) removeMembershipModal: TemplateRef<any>;
 
   changesAllowed = true;
   isLoading$: Observable<boolean>;

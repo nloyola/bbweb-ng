@@ -7,14 +7,14 @@ import { ServerErrorPageComponent } from './shared/components/server-error-page/
 const routes: Routes = [
   {
     path: 'admin',
-    loadChildren: '@app/modules/admin/admin.module#AdminModule',
+    loadChildren: () => import('@app/modules/admin/admin.module').then(m => m.AdminModule),
     data: {
       breadcrumbs: 'Admin'
     }
   },
   {
     path: 'collection',
-    loadChildren: '@app/modules/collection/collection.module#CollectionModule',
+    loadChildren: () => import('@app/modules/collection/collection.module').then(m => m.CollectionModule),
     data: {
       breadcrumbs: 'Collection'
     }

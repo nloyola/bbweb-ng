@@ -17,7 +17,7 @@ export class SpecimenDefinitionAddComponent implements OnInit {
   @Input() specimenDefinition: CollectedSpecimenDefinition;
   @Input() subform: FormGroup;
 
-  @ViewChild('nameInput') nameInput: ElementRef;
+  @ViewChild('nameInput', { static: true }) nameInput: ElementRef;
 
   anatomicalSources: string[];
   anatomicalSourceLabels: { [ key: string]: string };

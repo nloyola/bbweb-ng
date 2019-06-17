@@ -16,7 +16,7 @@ import { filter, takeUntil } from 'rxjs/operators';
 })
 export class MembershipAddComponent implements OnInit, OnDestroy {
 
-  @ViewChild('nameInput') nameInput: ElementRef;
+  @ViewChild('nameInput', { static: true }) nameInput: ElementRef;
 
   form: FormGroup;
   isSaving$: Observable<boolean>;

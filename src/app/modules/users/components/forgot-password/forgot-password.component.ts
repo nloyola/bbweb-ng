@@ -13,8 +13,8 @@ import { catchError, map } from 'rxjs/operators';
 })
 export class ForgotPasswordComponent implements OnInit {
 
-  @ViewChild('successModal') successModal: ElementRef;
-  @ViewChild('failureModal') failureModal: ElementRef;
+  @ViewChild('successModal', { static: true }) successModal: ElementRef;
+  @ViewChild('failureModal', { static: true }) failureModal: ElementRef;
   forgotForm: FormGroup;
 
   constructor(

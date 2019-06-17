@@ -20,8 +20,8 @@ import { SpecimenViewModalComponent } from '../specimen-view-modal/specimen-view
 })
 export class EventSpecimensViewComponent implements OnInit, OnChanges {
 
-  @ViewChild('specimensTable') private specimensTable: ElementRef;
-  @ViewChild('removeSpecimenModal') private removeSpecimenModal: TemplateRef<any>;
+  @ViewChild('specimensTable', { static: true }) private specimensTable: ElementRef;
+  @ViewChild('removeSpecimenModal', { static: true }) private removeSpecimenModal: TemplateRef<any>;
 
   @Input() event: CollectionEvent;
   @Input() participant: Participant;

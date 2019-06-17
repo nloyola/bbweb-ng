@@ -24,7 +24,7 @@ export class EntitySelectorComponent<T extends DomainEntity> implements OnInit, 
   @Input() noResultsToDisplay: TemplateRef<any>;
   @Input() loadingContent: TemplateRef<any>;
 
-  @ContentChild(TemplateRef) entityTemplate: TemplateRef<NgForOfContext<T>>;
+  @ContentChild(TemplateRef, { static: true }) entityTemplate: TemplateRef<NgForOfContext<T>>;
 
   @Output() nameFilterUpdated = new EventEmitter<string>();
   @Output() pageChange = new EventEmitter<number>();

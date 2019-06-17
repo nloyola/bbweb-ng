@@ -18,7 +18,7 @@ export class AnnotationTypeAddComponent implements OnInit, OnChanges {
   @Output() submitted = new EventEmitter<AnnotationType>();
   @Output() cancelled = new EventEmitter<any>();
 
-  @ViewChild('nameInput') nameInput: ElementRef;
+  @ViewChild('nameInput', { static: true }) nameInput: ElementRef;
 
   form: FormGroup;
   valueTypes: string[];

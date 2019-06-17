@@ -24,8 +24,8 @@ interface EntityData {
 })
 export class ParticipantSummaryComponent implements OnInit, OnDestroy {
 
-  @ViewChild('updateUniqueIdModal') updateUniqueIdModal: TemplateRef<any>;
-  @ViewChild('updateAnnotationModal') updateAnnotationModal: TemplateRef<any>;
+  @ViewChild('updateUniqueIdModal', { static: true }) updateUniqueIdModal: TemplateRef<any>;
+  @ViewChild('updateAnnotationModal', { static: true }) updateAnnotationModal: TemplateRef<any>;
 
   entities$: Observable<EntityData>;
   participant$: Observable<Participant>;

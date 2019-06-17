@@ -23,7 +23,7 @@ export class PagedEntitySelectorComponent<T extends DomainEntity> implements OnI
   @Input() noResultsToDisplay: TemplateRef<any>;
   @Input() loadingContent: TemplateRef<any>;
 
-  @ContentChild(TemplateRef) entityTemplate: TemplateRef<NgForOfContext<T>>;
+  @ContentChild(TemplateRef, { static: true }) entityTemplate: TemplateRef<NgForOfContext<T>>;
 
   @Output() filterUpdated = new EventEmitter<string>();
   @Output() pageChange = new EventEmitter<number>();

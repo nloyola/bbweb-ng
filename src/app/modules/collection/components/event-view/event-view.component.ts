@@ -32,11 +32,11 @@ interface EntityData {
 })
 export class EventViewComponent implements OnInit, OnDestroy {
 
-  @ViewChild('updateVisitNumberModal') updateVisitNumberModal: TemplateRef<any>;
-  @ViewChild('updateTimeCompletedModal') updateTimeCompletedModal: TemplateRef<any>;
-  @ViewChild('updateAnnotationModal') updateAnnotationModal: TemplateRef<any>;
-  @ViewChild('removeEventModal') removeEventModal: TemplateRef<any>;
-  @ViewChild('hasSpecimensModal') hasSpecimensModal: TemplateRef<any>;
+  @ViewChild('updateVisitNumberModal', { static: true }) updateVisitNumberModal: TemplateRef<any>;
+  @ViewChild('updateTimeCompletedModal', { static: true }) updateTimeCompletedModal: TemplateRef<any>;
+  @ViewChild('updateAnnotationModal', { static: true }) updateAnnotationModal: TemplateRef<any>;
+  @ViewChild('removeEventModal', { static: true }) removeEventModal: TemplateRef<any>;
+  @ViewChild('hasSpecimensModal', { static: true }) hasSpecimensModal: TemplateRef<any>;
 
   entities$: Observable<EntityData>;
   event$: Observable<CollectionEvent>;
