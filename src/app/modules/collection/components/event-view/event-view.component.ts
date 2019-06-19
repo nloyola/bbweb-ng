@@ -91,7 +91,6 @@ export class EventViewComponent implements OnInit, OnDestroy {
           }));
         }
 
-        debugger;
         return { event, eventType, specimens };
       }),
       takeUntil(this.unsubscribe$),
