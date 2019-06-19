@@ -37,6 +37,8 @@ export class CollectionPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    const searchParams = new SearchParams(null, null,  1, 5);
+    this.store$.dispatch(StudyStoreActions.searchCollectionStudiesRequest({ searchParams }));
     this.isLoading$ = this.store$.pipe(select(StudyStoreSelectors.selectCollectionStudiesSearchActive));
 
     this.haveCollectionStudies$ = this.store$.pipe(
@@ -53,7 +55,10 @@ export class CollectionPageComponent implements OnInit, OnDestroy {
       select(ParticipantStoreSelectors.selectAllParticipants),
       withLatestFrom(this.participantLoading$),
       takeUntil(this.unsubscribe$)
-    ).subscribe(([ participants, _loading]) => {
+    ).subscribe(([ participants, loading]) => {
+      if (!loading) { return ; }
+
+      this.participantLoading$.next(false);
       const participant = participants.find(p => p.uniqueId === this.form.value.uniqueId);
       if (participant) {
         this.router.navigate([ participant.slug ], { relativeTo: this.route });
@@ -67,7 +72,9 @@ export class CollectionPageComponent implements OnInit, OnDestroy {
       filter(error => !!error),
       withLatestFrom(this.participantLoading$),
       takeUntil(this.unsubscribe$)
-    ).subscribe(([ _error, _loading]) => {
+    ).subscribe(([ _error, loading]) => {
+      if (!loading) { return ; }
+
       this.modalService.open(this.participantCreateModal).result
         .then(() => {
           this.router.navigate([ `participant-add/${this.form.value.uniqueId}` ],
@@ -80,9 +87,6 @@ export class CollectionPageComponent implements OnInit, OnDestroy {
     });
 
     this.form = this.formBuilder.group({ uniqueId: ['', Validators.required ] });
-
-    const searchParams = new SearchParams(null, null,  1, 5);
-    this.store$.dispatch(StudyStoreActions.searchCollectionStudiesRequest({ searchParams }));
   }
 
   ngOnDestroy() {
