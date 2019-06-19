@@ -1,13 +1,17 @@
-import { Component, Input, OnInit, OnChanges, SimpleChanges, ViewChild, ElementRef, TemplateRef } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
+import { MatSort, Sort } from '@angular/material';
 import { PagedReplyInfo, SearchParams } from '@app/domain';
-import { CollectionEvent, Specimen, Participant } from '@app/domain/participants';
-import { RootStoreState, SpecimenStoreSelectors, SpecimenStoreActions } from '@app/root-store';
+import { CollectionEvent, Participant, Specimen } from '@app/domain/participants';
+import { RootStoreState, SpecimenStoreActions, SpecimenStoreSelectors } from '@app/root-store';
 import { faVial } from '@fortawesome/free-solid-svg-icons';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { select, Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
-import { shareReplay, takeUntil, filter, map, tap } from 'rxjs/operators';
+import { filter, map, shareReplay, takeUntil, tap, startWith } from 'rxjs/operators';
 import { SpecimenViewModalComponent } from '../specimen-view-modal/specimen-view-modal.component';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+
+// For an example see:
+// https://stackoverflow.com/questions/47871840/angular-material-2-table-server-side-pagination
 
 @Component({
   selector: 'app-event-specimens-view',
@@ -29,7 +33,7 @@ export class EventSpecimensViewComponent implements OnInit, OnChanges {
   tableDataLoading = false;
   currentPage = 1;
   specimensLimit = 5;
-  sortField = 'inventoryId'
+  sortField: string;
 
   private updatedMessage$ = new Subject<string>();
   private unsubscribe$ = new Subject<void>();
@@ -38,6 +42,7 @@ export class EventSpecimensViewComponent implements OnInit, OnChanges {
               private modalService: NgbModal) { }
 
   ngOnInit() {
+    this.sortField = 'inventoryId';
     this.applySearchParams();
 
     this.specimensPageInfo$ = this.store$.pipe(
@@ -101,6 +106,25 @@ export class EventSpecimensViewComponent implements OnInit, OnChanges {
                                      this.currentPage,
                                      this.specimensLimit)
     }));
+  }
+
+  sortData(sort: Sort) {
+
+    switch (sort.direction) {
+      case 'asc':
+        this.sortField = sort.active;
+        break;
+
+      case 'desc':
+        this.sortField = '-' + sort.active;
+        break;
+
+      default:
+        this.sortField = '';
+    }
+
+    this.currentPage = 1;
+    this.applySearchParams();
   }
 
 }
