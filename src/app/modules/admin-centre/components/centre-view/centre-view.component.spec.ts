@@ -16,7 +16,7 @@ import { NgZone } from '@angular/core';
 describe('CentreViewComponent', () => {
   let component: CentreViewComponent;
   let fixture: ComponentFixture<CentreViewComponent>;
-  let store: Store<CentreStoreReducer.State>;
+  let store: Store<RootStoreState.State>;
   const mockActivatedRoute = new MockActivatedRoute();
   const factory = new Factory();
   let centre: Centre;

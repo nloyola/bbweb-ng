@@ -5,7 +5,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CollectionEventType, Study, StudyState } from '@app/domain/studies';
-import { EventTypeStoreActions, EventTypeStoreReducer, StudyStoreActions, StudyStoreReducer } from '@app/root-store';
+import { EventTypeStoreActions, EventTypeStoreReducer, StudyStoreActions, StudyStoreReducer, RootStoreState } from '@app/root-store';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { YesNoPipe } from '@app/shared/pipes/yes-no-pipe';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -24,7 +24,7 @@ describe('EventTypeViewContainer', () => {
   const mockActivatedRoute = new MockActivatedRoute();
   let factory: Factory;
   let study: Study;
-  let store: Store<StudyStoreReducer.State>;
+  let store: Store<RootStoreState.State>;
   let router: Router;
 
   beforeEach(async(() => {
@@ -130,7 +130,7 @@ describe('EventTypeViewContainer', () => {
         () => { store.dispatch(EventTypeStoreActions.updateEventTypeSuccess({ eventType })); };
       context.createExpectedFailureAction =
         (error) => EventTypeStoreActions.updateEventTypeFailure({ error });
-      context.duplicateNameError = 'already exists';
+      context.duplicateAttibuteValueError = 'already exists';
     });
 
     describe('when updating name', () => {

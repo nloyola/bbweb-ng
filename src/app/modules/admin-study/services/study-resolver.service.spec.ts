@@ -15,7 +15,7 @@ describe('StudyResolver', () => {
 
   let ngZone: NgZone;
   let resolver: StudyResolver;
-  let store: Store<StudyStoreReducer.State>;
+  let store: Store<RootStoreState.State>;
   let factory: Factory;
 
   beforeEach(() => {

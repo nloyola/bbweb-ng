@@ -5,7 +5,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Study } from '@app/domain/studies';
-import { StudyStoreActions, StudyStoreReducer } from '@app/root-store';
+import { StudyStoreActions, StudyStoreReducer, RootStoreState } from '@app/root-store';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
@@ -20,7 +20,7 @@ describe('StudySummaryComponent', () => {
   let component: StudySummaryComponent;
   let fixture: ComponentFixture<StudySummaryComponent>;
   let ngZone: NgZone;
-  let store: Store<StudyStoreReducer.State>;
+  let store: Store<RootStoreState.State>;
   let router: Router;
   let modalService: NgbModal;
   let factory: Factory;
@@ -127,7 +127,7 @@ describe('StudySummaryComponent', () => {
         () => { store.dispatch(StudyStoreActions.updateStudySuccess({ study })); };
       context.createExpectedFailureAction =
         (error) => StudyStoreActions.updateStudyFailure({ error });
-      context.duplicateNameError = 'name already used';
+      context.duplicateAttibuteValueError = 'name already used';
     });
 
     describe('when updating name', () => {

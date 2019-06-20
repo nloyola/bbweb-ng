@@ -14,7 +14,7 @@ import { UserResolver } from './user-resolver.service';
 describe('UserResolver', () => {
 
   let resolver: UserResolver;
-  let store: Store<UserStoreReducer.State>;
+  let store: Store<RootStoreState.State>;
   let factory: Factory;
 
   beforeEach(() => {

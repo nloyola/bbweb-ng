@@ -22,7 +22,7 @@ describe('StudyParticipantsComponent', () => {
   let fixture: ComponentFixture<StudyParticipantsComponent>;
   let ngZone: NgZone;
   let router: Router;
-  let store: Store<StudyStoreReducer.State>;
+  let store: Store<RootStoreState.State>;
   let modalService: NgbModal;
   let factory: Factory;
   let study: Study;

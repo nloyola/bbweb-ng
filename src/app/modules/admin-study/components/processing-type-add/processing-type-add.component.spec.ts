@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ProcessingType, Study } from '@app/domain/studies';
-import { EventTypeStoreActions, EventTypeStoreReducer, ProcessingTypeStoreActions, ProcessingTypeStoreReducer, StudyStoreActions, StudyStoreReducer } from '@app/root-store';
+import { EventTypeStoreActions, EventTypeStoreReducer, ProcessingTypeStoreActions, ProcessingTypeStoreReducer, StudyStoreActions, StudyStoreReducer, RootStoreState } from '@app/root-store';
 import { Factory } from '@test/factory';
 import { MockActivatedRoute } from '@test/mocks';
 import { Store, StoreModule } from '@ngrx/store';
@@ -18,7 +18,7 @@ describe('ProcessingTypeAddComponent', () => {
   let component: ProcessingTypeAddComponent;
   let fixture: ComponentFixture<ProcessingTypeAddComponent>;
   const factory = new Factory();
-  let store: Store<ProcessingTypeStoreReducer.State>;
+  let store: Store<RootStoreState.State>;
   const mockActivatedRoute = new MockActivatedRoute();
   const entityFixture = new ProcessingTypeFixture(factory);
 

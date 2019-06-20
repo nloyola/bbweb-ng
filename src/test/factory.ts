@@ -7,7 +7,7 @@ import { IShipment, IShipmentSpecimen, ShipmentItemState, ShipmentState } from '
 import { ICollectedSpecimenDefinition, ICollectedSpecimenDefinitionName, ICollectionEventType, IInputSpecimenProcessing, IOutputSpecimenProcessing, IProcessedSpecimenDefinition, IProcessedSpecimenDefinitionName, IProcessingType, IStudy, StudyCounts, StudyState } from '@app/domain/studies';
 import { IUser, UserCounts, UserState } from '@app/domain/users';
 import * as _ from 'lodash';
-import faker = require('faker');
+import * as faker from 'faker';
 
 enum DomainEntities {
 
@@ -602,6 +602,7 @@ export class Factory {
     const eventType = this.collectionEventType({
       specimenDefinitions: [ this.collectedSpecimenDefinition() ]
     });
+    const event = this.defaultCollectionEvent();
     const ctr = this.centre({ locations: [ this.location() ]});
     const inventoryId = this.domainEntityNameNext(DomainEntities.SPECIMEN);
     const specimen = {
@@ -610,6 +611,7 @@ export class Factory {
       version:               0,
       slug:                  slugify(inventoryId),
       inventoryId:           inventoryId,
+      eventId:               event.id,
       specimenDefinitionId:  null,
       originLocationInfo:    null,
       locationInfo:          null,

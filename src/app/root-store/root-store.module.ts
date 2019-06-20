@@ -33,7 +33,7 @@ import { StudyStoreEffects } from './study/study.effects';
 import { UserStoreReducer } from './user';
 import { UserStoreEffects } from './user/user.effects';
 
-const ngrxRuntimeChecks = {
+export const NgrxRuntimeChecks = {
   runtimeChecks: {
     strictStateImmutability: false,
     strictActionImmutability: false,
@@ -45,7 +45,7 @@ const ngrxRuntimeChecks = {
 @NgModule({
   imports: [
     CommonModule,
-    StoreModule.forRoot({}, ngrxRuntimeChecks),
+    StoreModule.forRoot({}, NgrxRuntimeChecks),
     StoreModule.forFeature('auth', AuthStoreReducer.reducer),
     StoreModule.forFeature('centre', CentreStoreReducer.reducer),
     StoreModule.forFeature('event', EventStoreReducer.reducer),

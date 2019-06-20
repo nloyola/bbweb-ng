@@ -112,7 +112,6 @@ export class EventSpecimensViewComponent implements OnInit, OnChanges {
   }
 
   sortData(sort: Sort) {
-
     switch (sort.direction) {
       case 'asc':
         this.sortField = sort.active;

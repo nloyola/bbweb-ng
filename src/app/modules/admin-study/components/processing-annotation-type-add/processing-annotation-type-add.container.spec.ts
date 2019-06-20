@@ -4,7 +4,7 @@ import { ProcessingAnnotationTypeAddContainerComponent } from './processing-anno
 import { CUSTOM_ELEMENTS_SCHEMA, NgZone } from '@angular/core';
 import { RouterTestingModule } from '@angular/router/testing';
 import { StoreModule, Store } from '@ngrx/store';
-import { ProcessingTypeStoreReducer, StudyStoreReducer, ProcessingTypeStoreActions } from '@app/root-store';
+import { ProcessingTypeStoreReducer, StudyStoreReducer, ProcessingTypeStoreActions, RootStoreState } from '@app/root-store';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { MockActivatedRoute } from '@test/mocks';
 import { Study, ProcessingType } from '@app/domain/studies';
@@ -20,7 +20,7 @@ describe('ProcessingAnnotationTypeAddContainerComponent', () => {
   const mockActivatedRoute = new MockActivatedRoute();
   let ngZone: NgZone;
   let router: Router;
-  let store: Store<StudyStoreReducer.State>;
+  let store: Store<RootStoreState.State>;
   let toastr: ToastrService;
 
   beforeEach(async(() => {

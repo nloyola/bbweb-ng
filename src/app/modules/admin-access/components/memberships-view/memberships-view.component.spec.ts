@@ -16,7 +16,7 @@ import { MembershipsViewComponent } from './memberships-view.component';
 describe('MembershipsViewComponent', () => {
   let component: MembershipsViewComponent;
   let fixture: ComponentFixture<MembershipsViewComponent>;
-  let store: Store<MembershipStoreReducer.State>;
+  let store: Store<RootStoreState.State>;
   let router: Router;
   const factory = new Factory();
 

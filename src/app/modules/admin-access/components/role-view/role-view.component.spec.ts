@@ -21,7 +21,7 @@ describe('RoleViewComponent', () => {
   let fixture: ComponentFixture<RoleViewComponent>;
   const factory = new Factory();
   let role: Role;
-  let store: Store<RoleStoreReducer.State>;
+  let store: Store<RootStoreState.State>;
 
   beforeEach(async(() => {
     role = new Role().deserialize(factory.role());

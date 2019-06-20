@@ -18,7 +18,7 @@ import { By } from '@angular/platform-browser';
 describe('UsersViewComponent', () => {
   let component: UsersViewComponent;
   let fixture: ComponentFixture<UsersViewComponent>;
-  let store: Store<UserStoreReducer.State>;
+  let store: Store<RootStoreState.State>;
   let router: Router;
   const factory = new Factory();
 

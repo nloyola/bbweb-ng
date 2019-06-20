@@ -17,7 +17,7 @@ import { By } from '@angular/platform-browser';
 describe('RolesViewComponent', () => {
   let component: RolesViewComponent;
   let fixture: ComponentFixture<RolesViewComponent>;
-  let store: Store<RoleStoreReducer.State>;
+  let store: Store<RootStoreState.State>;
   let router: Router;
   const factory = new Factory();
 

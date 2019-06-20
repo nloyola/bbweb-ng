@@ -22,7 +22,7 @@ describe('CentreStudiesComponent', () => {
   let component: CentreStudiesComponent;
   let fixture: ComponentFixture<CentreStudiesComponent>;
   const mockActivatedRoute = new MockActivatedRoute();
-  let store: Store<StudyStoreReducer.State>;
+  let store: Store<RootStoreState.State>;
   let toastr: ToastrService;
   const factory = new Factory();
   let centre: Centre;

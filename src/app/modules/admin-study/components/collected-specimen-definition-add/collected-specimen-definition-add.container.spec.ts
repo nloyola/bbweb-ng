@@ -21,7 +21,7 @@ describe('CollectedSpecimenDefinitionAddContainer', () => {
   let ngZone: NgZone;
   let router: Router;
   const mockActivatedRoute = new MockActivatedRoute();
-  let store: Store<StudyStoreReducer.State>;
+  let store: Store<RootStoreState.State>;
   let factory: Factory;
   let study: Study;
   let toastr: ToastrService;

@@ -8,7 +8,7 @@ import { Membership } from '@app/domain/access';
 import { Centre } from '@app/domain/centres';
 import { Study } from '@app/domain/studies';
 import { User } from '@app/domain/users';
-import { MembershipStoreActions, MembershipStoreReducer } from '@app/root-store';
+import { MembershipStoreActions, MembershipStoreReducer, RootStoreState } from '@app/root-store';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
@@ -24,7 +24,7 @@ describe('MembershipViewComponent', () => {
   let fixture: ComponentFixture<MembershipViewComponent>;
   const factory = new Factory();
   let membership: Membership;
-  let store: Store<MembershipStoreReducer.State>;
+  let store: Store<RootStoreState.State>;
 
   beforeEach(async(() => {
     membership = new Membership().deserialize(factory.membership());
@@ -115,7 +115,7 @@ describe('MembershipViewComponent', () => {
       };
       context.createExpectedFailureAction =
         (error) => new MembershipStoreActions.UpdateMembershipFailure({ error });
-      context.duplicateNameError = 'name already used';
+      context.duplicateAttibuteValueError = 'name already used';
     });
 
     describe('when updating name', () => {

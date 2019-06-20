@@ -23,7 +23,7 @@ describe('StudyCollectionComponent', () => {
   let fixture: ComponentFixture<StudyCollectionComponent>;
   let ngZone: NgZone;
   let router: Router;
-  let store: Store<StudyStoreReducer.State>;
+  let store: Store<RootStoreState.State>;
   const mockActivatedRoute = new MockActivatedRoute();
   let routerListener: any;
   const factory = new Factory();

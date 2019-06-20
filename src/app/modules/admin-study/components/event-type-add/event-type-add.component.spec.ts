@@ -13,7 +13,7 @@ import { EventTypeAddComponent } from './event-type-add.component';
 
 describe('EventTypeAddComponent', () => {
 
-  let store: Store<EventTypeStoreReducer.State>;
+  let store: Store<RootStoreState.State>;
   let component: EventTypeAddComponent;
   let fixture: ComponentFixture<EventTypeAddComponent>;
   let ngZone: NgZone;

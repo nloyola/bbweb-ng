@@ -15,7 +15,7 @@ describe('MembershipResolver', () => {
 
   let ngZone: NgZone;
   let resolver: MembershipResolver;
-  let store: Store<MembershipStoreReducer.State>;
+  let store: Store<RootStoreState.State>;
   let factory: Factory;
 
   beforeEach(() => {

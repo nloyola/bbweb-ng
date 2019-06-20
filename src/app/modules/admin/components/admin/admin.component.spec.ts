@@ -8,7 +8,7 @@ import { Store, StoreModule } from '@ngrx/store';
 import { AdminComponent } from './admin.component';
 
 describe('AdminComponent', () => {
-  let store: Store<AuthStoreReducer.State>;
+  let store: Store<RootStoreState.State>;
   let component: AdminComponent;
   let fixture: ComponentFixture<AdminComponent>;
 

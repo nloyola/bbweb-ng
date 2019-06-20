@@ -14,7 +14,7 @@ import { StudyAddComponent } from './study-add.component';
 
 describe('StudyAddComponent', () => {
 
-  let store: Store<StudyStoreReducer.State>;
+  let store: Store<RootStoreState.State>;
   let component: StudyAddComponent;
   let fixture: ComponentFixture<StudyAddComponent>;
   let ngZone: NgZone;

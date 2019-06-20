@@ -17,7 +17,7 @@ import { MembershipStoreActions, MembershipStoreReducer } from '@app/root-store'
 describe('MembershipAddComponent', () => {
   let component: MembershipAddComponent;
   let fixture: ComponentFixture<MembershipAddComponent>;
-  let store: Store<CentreStoreReducer.State>;
+  let store: Store<RootStoreState.State>;
   let router: Router;
   let toastr: ToastrService;
   const factory = new Factory();

@@ -16,7 +16,7 @@ describe('CentresViewComponent', () => {
   let component: CentresViewComponent;
   let fixture: ComponentFixture<CentresViewComponent>;
   let ngZone: NgZone;
-  let store: Store<CentreStoreReducer.State>;
+  let store: Store<RootStoreState.State>;
   let router: Router;
   const factory = new Factory();
 

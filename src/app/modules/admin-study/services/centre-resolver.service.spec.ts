@@ -15,7 +15,7 @@ describe('CentreResolver', () => {
 
   let ngZone: NgZone;
   let resolver: CentreResolver;
-  let store: Store<CentreStoreReducer.State>;
+  let store: Store<RootStoreState.State>;
   let factory: Factory;
 
   beforeEach(() => {

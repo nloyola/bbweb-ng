@@ -108,7 +108,7 @@ export class ParticipantSummaryComponent implements OnInit, OnDestroy {
       if (error === null) { return; }
 
       let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
-      if (errMessage.match(/participant with unique ID already exists/)) {
+      if ((errMessage !== undefined) && errMessage.match(/participant with unique ID already exists/)) {
         errMessage = `A participant with the ID ${this.newUniqueId} already exits.`;
       }
       this.toastr.error(errMessage, 'Update Error', { disableTimeOut: true });
@@ -158,6 +158,7 @@ export class ParticipantSummaryComponent implements OnInit, OnDestroy {
     this.modalService.open(this.updateAnnotationModal, { size: 'lg' }).result
       .then(value => {
         const updatedAnnotation = value;
+        debugger;
         this.store$.dispatch(ParticipantStoreActions.updateParticipantRequest({
           participant,
           attributeName: 'addAnnotation',

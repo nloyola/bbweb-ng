@@ -72,7 +72,6 @@ export const updateParticipantFailure = createAction(
   props<{ error: any }>()
 );
 
-
 const all = union({
   searchParticipantsRequest,
   searchParticipantsSuccess,

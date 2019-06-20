@@ -72,7 +72,7 @@ export class CentresViewComponent implements OnInit, OnDestroy {
       filter(page => page !== undefined),
       map(page => page.entities.map(e => new CentreUI(e))));
 
-    this.store$.dispatch(new CentreStoreActions.GetCentreCountsRequest());
+    this.store$.dispatch(CentreStoreActions.getCentreCountsRequest());
     this.applySearchParams();
   }
 

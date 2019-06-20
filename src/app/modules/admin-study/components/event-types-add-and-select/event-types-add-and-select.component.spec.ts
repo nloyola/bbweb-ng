@@ -16,7 +16,7 @@ describe('EventTypesAddAndSelectComponent', () => {
 
   let component: EventTypesAddAndSelectComponent;
   let fixture: ComponentFixture<EventTypesAddAndSelectComponent>;
-  let store: Store<StudyStoreReducer.State>;
+  let store: Store<RootStoreState.State>;
   const mockActivatedRoute = new MockActivatedRoute();
   let factory: Factory;
 

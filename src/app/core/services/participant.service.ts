@@ -8,7 +8,7 @@ import { map, delay } from 'rxjs/operators';
 
 export type ParticipantUpdateAttribute =
   'uniqueId'
-  | 'addAnnotation'
+  | 'addOrUpdateAnnotation'
   | 'removeAnnotation';
 
 @Injectable({
@@ -60,7 +60,7 @@ export class ParticipantService {
         url = `${this.BASE_URL}/uniqueId/${participant.id}`;
         break;
 
-      case 'addAnnotation':
+      case 'addOrUpdateAnnotation':
         json = { ...json, ...value } as any;
         url = `${this.BASE_URL}/annot/${participant.id}`;
         break;

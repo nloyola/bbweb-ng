@@ -19,7 +19,7 @@ describe('CentreLocationsComponent', () => {
   let fixture: ComponentFixture<CentreLocationsComponent>;
   let ngZone: NgZone;
   let router: Router;
-  let store: Store<StudyStoreReducer.State>;
+  let store: Store<RootStoreState.State>;
   let modalService: NgbModal;
   let toastr: ToastrService;
   const factory = new Factory();

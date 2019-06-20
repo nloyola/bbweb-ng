@@ -17,7 +17,7 @@ describe('StudiesViewComponent', () => {
 
   let component: StudiesViewComponent;
   let fixture: ComponentFixture<StudiesViewComponent>;
-  let store: Store<StudyStoreReducer.State>;
+  let store: Store<RootStoreState.State>;
   let router: Router;
   const factory = new Factory();
 

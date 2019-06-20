@@ -64,7 +64,7 @@ export const updateEventRequest = createAction(
   props<{
     event: CollectionEvent,
     attributeName: CollectionEventUpdateAttribute,
-    value: string | Date
+    value: string | number | Date
   }>()
 );
 

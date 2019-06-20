@@ -19,7 +19,7 @@ describe('UserProfileComponent', () => {
   let component: UserProfileComponent;
   let fixture: ComponentFixture<UserProfileComponent>;
   const factory = new Factory();
-  let store: Store<UserStoreReducer.State>;
+  let store: Store<RootStoreState.State>;
   let user: User;
 
   beforeEach(async(() => {
@@ -111,7 +111,7 @@ describe('UserProfileComponent', () => {
       };
       context.createExpectedFailureAction =
         (error) => new UserStoreActions.UpdateUserFailure({ error });
-      context.duplicateNameError = 'EmailNotAvailable: user with email already exists';
+      context.duplicateAttibuteValueError = 'EmailNotAvailable: user with email already exists';
     });
 
     describe('when updating name', () => {

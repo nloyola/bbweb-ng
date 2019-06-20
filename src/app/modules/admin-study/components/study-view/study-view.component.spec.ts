@@ -17,7 +17,7 @@ describe('StudyViewComponent', () => {
 
   let component: StudyViewComponent;
   let fixture: ComponentFixture<StudyViewComponent>;
-  let store: Store<StudyStoreReducer.State>;
+  let store: Store<RootStoreState.State>;
   const mockActivatedRoute = new MockActivatedRoute();
   const factory = new Factory();
   let study: Study;

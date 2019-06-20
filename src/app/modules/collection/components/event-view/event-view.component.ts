@@ -44,7 +44,6 @@ export class EventViewComponent implements OnInit, OnDestroy {
   eventType$: Observable<CollectionEventType>;
   specimens$: Observable<Specimen[]>;
   annotations$: Observable<Annotation[]>;
-  participant: Participant;
   annotationToEdit: Annotation;
   visitNumberModalOptions: ModalInputOptions;
   timeCompletedModalOptions: ModalInputOptions;
@@ -61,7 +60,6 @@ export class EventViewComponent implements OnInit, OnDestroy {
               private toastr: ToastrService) { }
 
   ngOnInit() {
-    this.participant = this.route.parent.parent.parent.parent.snapshot.data.participant;
     this.store$.dispatch(SpecimenStoreActions.searchSpecimensRequest({
       event: this.route.parent.snapshot.data.event,
       searchParams: new SearchParams()
@@ -157,7 +155,7 @@ export class EventViewComponent implements OnInit, OnDestroy {
       takeUntil(this.unsubscribe$)
     ).subscribe(([error, _msg]) => {
       let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
-      if (errMessage.indexOf('already exists') > -1) {
+      if (errMessage && errMessage.indexOf('already exists') > -1) {
         errMessage = 'An event with that visit number exists. Please use a different one.';
       }
       this.toastr.error(errMessage, 'Update Error', { disableTimeOut: true });

@@ -1,9 +1,9 @@
-import { fakeAsync, flush, TestBed, ComponentFixture } from '@angular/core/testing';
-import { ConcurrencySafeEntity } from '@app/domain';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Store, Action } from '@ngrx/store';
-import { ToastrService } from 'ngx-toastr';
+import { ComponentFixture, fakeAsync, flush, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
+import { RootStoreState } from '@app/root-store';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Action, Store } from '@ngrx/store';
+import { ToastrService } from 'ngx-toastr';
 
 export namespace EntityUpdateComponentBehaviour {
 
@@ -18,7 +18,7 @@ export namespace EntityUpdateComponentBehaviour {
     // this value would contain the value returned from the modal
     modalReturnValue: any;
 
-    duplicateNameError: string;
+    duplicateAttibuteValueError: string;
     dispatchSuccessAction: () => void;
     expectedSuccessAction: Action;
     createExpectedFailureAction: (error: any) => Action;
@@ -28,7 +28,7 @@ export namespace EntityUpdateComponentBehaviour {
 
     describe('(shared behaviour)', () => {
 
-      let store: Store<{}>;
+      let store: Store<RootStoreState.State>;
       let router: Router;
       let modalService: NgbModal;
       let toastr: ToastrService;
@@ -64,7 +64,7 @@ export namespace EntityUpdateComponentBehaviour {
           context.updateEntity();
           flush();
           context.fixture.detectChanges();
-       };
+        };
 
         it('dispatches an action to update the entity', fakeAsync(() => {
           testCommon();
@@ -97,7 +97,7 @@ export namespace EntityUpdateComponentBehaviour {
           {
             status: 404,
             error: {
-              message: context.duplicateNameError
+              message: context.duplicateAttibuteValueError
             }
           }
         ];

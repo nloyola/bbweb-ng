@@ -15,7 +15,7 @@ describe('RoleResolver', () => {
 
   let ngZone: NgZone;
   let resolver: RoleResolver;
-  let store: Store<RoleStoreReducer.State>;
+  let store: Store<RootStoreState.State>;
   let factory: Factory;
 
   beforeEach(() => {

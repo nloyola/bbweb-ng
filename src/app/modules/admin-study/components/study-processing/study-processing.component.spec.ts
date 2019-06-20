@@ -14,7 +14,7 @@ describe('StudyProcessingComponent', () => {
 
   let component: StudyProcessingComponent;
   let fixture: ComponentFixture<StudyProcessingComponent>;
-  let store: Store<StudyStoreReducer.State>;
+  let store: Store<RootStoreState.State>;
   const mockActivatedRoute = new MockActivatedRoute();
   const factory = new Factory();
 

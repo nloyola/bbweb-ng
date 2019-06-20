@@ -10,13 +10,14 @@ import { Factory } from '@test/factory';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
 import { HeaderComponent } from './header.component';
+import { RootStoreState } from '@app/root-store';
 
 describe('HeaderComponent', () => {
 
   let component: HeaderComponent;
   let fixture: ComponentFixture<HeaderComponent>;
   let ngZone: NgZone;
-  let store: Store<AuthStoreReducer.State>;
+  let store: Store<RootStoreState.State>;
   let router: Router;
   let factory: Factory;
 

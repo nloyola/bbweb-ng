@@ -22,7 +22,7 @@ describe('ParticipantAnnotationTypeAddContainer', () => {
   let ngZone: NgZone;
   let router: Router;
   const mockActivatedRoute = new MockActivatedRoute();
-  let store: Store<StudyStoreReducer.State>;
+  let store: Store<RootStoreState.State>;
   let toastr: ToastrService;
   const factory = new Factory();
 

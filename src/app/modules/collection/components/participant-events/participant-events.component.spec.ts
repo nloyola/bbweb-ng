@@ -18,7 +18,7 @@ describe('ParticipantEventsComponent', () => {
   const mockActivatedRoute = new MockActivatedRoute();
   const factory = new Factory();
   let participant: Participant;
-  let store: Store<ParticipantStoreReducer.State>;
+  let store: Store<RootStoreState.State>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({

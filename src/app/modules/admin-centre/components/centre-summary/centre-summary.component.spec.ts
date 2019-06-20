@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Centre } from '@app/domain/centres';
-import { CentreStoreActions, CentreStoreReducer } from '@app/root-store';
+import { CentreStoreActions, CentreStoreReducer, RootStoreState } from '@app/root-store';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
@@ -21,7 +21,7 @@ describe('CentreSummaryComponent', () => {
   let component: CentreSummaryComponent;
   let fixture: ComponentFixture<CentreSummaryComponent>;
   let ngZone: NgZone;
-  let store: Store<CentreStoreReducer.State>;
+  let store: Store<RootStoreState.State>;
   let router: Router;
   let modalService: NgbModal;
   const factory = new Factory();
@@ -121,7 +121,7 @@ describe('CentreSummaryComponent', () => {
         () => { store.dispatch(new CentreStoreActions.UpdateCentreSuccess({ centre })); };
       context.createExpectedFailureAction =
         (error) => new CentreStoreActions.UpdateCentreFailure({ error });
-      context.duplicateNameError = 'name already used';
+      context.duplicateAttibuteValueError = 'name already used';
     });
 
     describe('when updating name', () => {

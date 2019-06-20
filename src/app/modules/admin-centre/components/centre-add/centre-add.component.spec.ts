@@ -16,7 +16,7 @@ describe('CentreAddComponent', () => {
 
   let component: CentreAddComponent;
   let fixture: ComponentFixture<CentreAddComponent>;
-  let store: Store<CentreStoreReducer.State>;
+  let store: Store<RootStoreState.State>;
   let ngZone: NgZone;
   let router: Router;
   let toastr: ToastrService;

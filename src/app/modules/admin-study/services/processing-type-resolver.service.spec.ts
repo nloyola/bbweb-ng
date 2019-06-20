@@ -15,7 +15,7 @@ describe('ProcessingTypeResolver', () => {
 
   let ngZone: NgZone;
   let resolver: ProcessingTypeResolver;
-  let store: Store<ProcessingTypeStoreReducer.State>;
+  let store: Store<RootStoreState.State>;
   let factory: Factory;
 
   beforeEach(() => {

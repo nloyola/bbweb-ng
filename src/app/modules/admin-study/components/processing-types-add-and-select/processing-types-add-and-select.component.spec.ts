@@ -12,7 +12,7 @@ import { ActivatedRoute } from '@angular/router';
 describe('ProcessingTypesAddAndSelectComponent', () => {
   let component: ProcessingTypesAddAndSelectComponent;
   let fixture: ComponentFixture<ProcessingTypesAddAndSelectComponent>;
-  let store: Store<StudyStoreReducer.State>;
+  let store: Store<RootStoreState.State>;
   const mockActivatedRoute = new MockActivatedRoute();
   const factory = new Factory();
 

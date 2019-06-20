@@ -4,7 +4,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ProcessingType, Study, StudyState } from '@app/domain/studies';
-import { EventTypeStoreActions, EventTypeStoreReducer, ProcessingTypeStoreActions, ProcessingTypeStoreReducer, StudyStoreActions, StudyStoreReducer } from '@app/root-store';
+import { EventTypeStoreActions, EventTypeStoreReducer, ProcessingTypeStoreActions, ProcessingTypeStoreReducer, StudyStoreActions, StudyStoreReducer, RootStoreState } from '@app/root-store';
 import { YesNoPipe } from '@app/shared/pipes/yes-no-pipe';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
@@ -23,7 +23,7 @@ describe('ProcessingTypeViewContainerComponent', () => {
   const mockActivatedRoute = new MockActivatedRoute();
   const factory = new Factory();
   const entityFixture = new ProcessingTypeFixture(factory);
-  let store: Store<ProcessingTypeStoreReducer.State>;
+  let store: Store<RootStoreState.State>;
   let router: Router;
 
   beforeEach(async(() => {
@@ -123,7 +123,7 @@ describe('ProcessingTypeViewContainerComponent', () => {
         })); };
       context.createExpectedFailureAction =
         (error) => new ProcessingTypeStoreActions.UpdateProcessingTypeFailure({ error });
-      context.duplicateNameError = 'already exists';
+      context.duplicateAttibuteValueError = 'already exists';
     });
 
     describe('when updating name', () => {

@@ -15,7 +15,7 @@ describe('EventTypeResolver', () => {
 
   let ngZone: NgZone;
   let resolver: EventTypeResolver;
-  let store: Store<EventTypeStoreReducer.State>;
+  let store: Store<RootStoreState.State>;
   let factory: Factory;
 
   beforeEach(() => {

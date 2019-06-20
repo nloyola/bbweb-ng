@@ -9,7 +9,7 @@ import { AuthStoreActions, AuthStoreReducer } from '@app/root-store/auth-store';
 import { Factory } from '@test/factory';
 
 describe('HomeComponent', () => {
-  let store: Store<AuthStoreReducer.State>;
+  let store: Store<RootStoreState.State>;
   let component: HomeComponent;
   let fixture: ComponentFixture<HomeComponent>;
   const factory = new Factory();

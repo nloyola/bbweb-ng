@@ -14,7 +14,7 @@ import { LoginComponent } from './login.component';
 
 describe('LoginComponent', () => {
 
-  let store: Store<AuthStoreReducer.State>;
+  let store: Store<RootStoreState.State>;
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
   let ngZone: NgZone;

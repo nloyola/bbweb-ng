@@ -15,7 +15,7 @@ import { ProcessingInputSpecimenModalComponent } from './processing-input-specim
 describe('ProcessingInputSpecimenModalComponent', () => {
   let component: ProcessingInputSpecimenModalComponent;
   let fixture: ComponentFixture<ProcessingInputSpecimenModalComponent>;
-  let store: Store<StudyStoreReducer.State>;
+  let store: Store<RootStoreState.State>;
   const factory = new Factory();
   const entityFixture = new ProcessingTypeFixture(factory);
 

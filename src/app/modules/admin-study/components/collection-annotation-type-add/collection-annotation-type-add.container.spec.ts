@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AnnotationType } from '@app/domain/annotations';
 import { CollectionEventType, Study } from '@app/domain/studies';
-import { EventTypeStoreActions, EventTypeStoreReducer, StudyStoreReducer, StudyStoreActions } from '@app/root-store';
+import { EventTypeStoreActions, EventTypeStoreReducer, StudyStoreReducer, StudyStoreActions, RootStoreState } from '@app/root-store';
 import { AnnotationTypeAddComponent } from '@app/shared/components/annotation-type-add/annotation-type-add.component';
 import { Factory } from '@test/factory';
 import { Store, StoreModule } from '@ngrx/store';
@@ -22,7 +22,7 @@ describe('CollectionAnnotationTypeAddContainerComponent', () => {
   let ngZone: NgZone;
   const mockActivatedRoute = new MockActivatedRoute();
   let router: Router;
-  let store: Store<StudyStoreReducer.State>;
+  let store: Store<RootStoreState.State>;
   let factory: Factory;
   let study: Study;
   let toastr: ToastrService;

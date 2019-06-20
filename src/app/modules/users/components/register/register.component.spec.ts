@@ -15,7 +15,7 @@ import { StudyStoreReducer } from '@app/root-store';
 
 describe('RegisterComponent', () => {
 
-  let store: Store<AuthStoreReducer.State>;
+  let store: Store<RootStoreState.State>;
   let component: RegisterComponent;
   let fixture: ComponentFixture<RegisterComponent>;
   let ngZone: NgZone;

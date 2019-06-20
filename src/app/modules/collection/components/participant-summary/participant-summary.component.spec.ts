@@ -6,7 +6,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { annotationFromType } from '@app/domain/annotations';
 import { Participant } from '@app/domain/participants';
 import { Study } from '@app/domain/studies';
-import { EventStoreReducer, ParticipantStoreActions, ParticipantStoreReducer, StudyStoreActions, StudyStoreReducer } from '@app/root-store';
+import { EventStoreReducer, ParticipantStoreActions, ParticipantStoreReducer, StudyStoreActions, StudyStoreReducer, RootStoreState } from '@app/root-store';
 import { NgbActiveModal, NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
@@ -14,6 +14,8 @@ import { MockActivatedRoute } from '@test/mocks';
 import { cold } from 'jasmine-marbles';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { ParticipantSummaryComponent } from './participant-summary.component';
+import { NgrxRuntimeChecks } from '@app/root-store/root-store.module';
+import { EntityUpdateComponentBehaviour } from '@test/behaviours/entity-update-component.behaviour';
 
 interface EntitiesOptions {
   study?: Study;
@@ -26,7 +28,7 @@ describe('ParticipantSummaryComponent', () => {
   let fixture: ComponentFixture<ParticipantSummaryComponent>;
   const mockActivatedRoute = new MockActivatedRoute();
   const factory = new Factory();
-  let store: Store<ParticipantStoreReducer.State>;
+  let store: Store<RootStoreState.State>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -34,11 +36,13 @@ describe('ParticipantSummaryComponent', () => {
         BrowserAnimationsModule,
         NgbModule,
         RouterTestingModule,
-        StoreModule.forRoot({
-          'study': StudyStoreReducer.reducer,
-          'participant': ParticipantStoreReducer.reducer,
-          'event': EventStoreReducer.reducer
-        }),
+        StoreModule.forRoot(
+          {
+            'study': StudyStoreReducer.reducer,
+            'participant': ParticipantStoreReducer.reducer,
+            'event': EventStoreReducer.reducer
+          },
+          NgrxRuntimeChecks),
         ToastrModule.forRoot()
       ],
       providers: [
@@ -53,7 +57,7 @@ describe('ParticipantSummaryComponent', () => {
       ],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
@@ -70,13 +74,11 @@ describe('ParticipantSummaryComponent', () => {
   });
 
   it('entities are loaded from the store', () => {
-    const { study, participant } = createEntities();
+    const entities = createEntities();
+    const { study, participant } = entities;
+    dispatchEntities(entities);
     fixture.detectChanges();
-    expect(component.entities$).toBeObservable(cold('a', { a: undefined }));
-
-    dispatchEntities({ study, participant });
-    fixture.detectChanges();
-    expect(component.entities$).toBeObservable(cold('(ab)', { a: undefined, b: { participant, study } }));
+    expect(component.entities$).toBeObservable(cold('a', { a: { participant, study } }));
   });
 
   it('requests study if not in the store', () => {
@@ -175,85 +177,83 @@ describe('ParticipantSummaryComponent', () => {
       expect(toastrListener.mock.calls[0][0]).toMatch(/A participant with the ID.*already exits/);
     }));
 
+    describe('shared behaviour', () => {
+
+      const context: EntityUpdateComponentBehaviour.Context<ParticipantSummaryComponent> = {} as any;
+      let participant: Participant;
+
+      beforeEach(() => {
+        const entities = createEntities();
+        participant = entities.participant;
+        context.fixture = fixture;
+        context.componentInitialize = () => { dispatchEntities(entities); };
+        context.componentValidateInitialization = () => undefined;
+        context.dispatchSuccessAction =
+          () => { store.dispatch(ParticipantStoreActions.updateParticipantSuccess({ participant })); };
+        context.createExpectedFailureAction =
+          (error) => ParticipantStoreActions.updateParticipantFailure({ error });
+        context.duplicateAttibuteValueError = 'unique id already exists';
+
+        const newUniqueId = factory.stringNext();
+        context.modalReturnValue = { result: Promise.resolve(newUniqueId) };
+        context.updateEntity = () => { component.updateUniqueId(); };
+
+        const updatedParticipant = new Participant().deserialize({
+          ...participant,
+          uniqueId: newUniqueId
+        });
+
+        context.expectedSuccessAction = ParticipantStoreActions.updateParticipantRequest({
+          participant,
+          attributeName: 'uniqueId',
+          value: newUniqueId
+        });
+        context.dispatchSuccessAction = () => {
+          store.dispatch(ParticipantStoreActions.updateParticipantSuccess({ participant: updatedParticipant }));
+        };
+      });
+
+      EntityUpdateComponentBehaviour.sharedBehaviour(context);
+
+    });
+
   });
 
   describe('when updating an annotation', () => {
 
-    let modalService: NgbModal;
-    let toastr: ToastrService;
-    let dispatchListener: any;
+    const context: EntityUpdateComponentBehaviour.Context<ParticipantSummaryComponent> = {} as any;
 
     beforeEach(() => {
-      modalService = TestBed.get(NgbModal);
-      toastr = TestBed.get(ToastrService);
-      dispatchListener = jest.spyOn(store, 'dispatch');
+      const study = new Study().deserialize(factory.study({ annotationTypes: [ factory.annotationType() ] }));
+      const entities = createEntities({ study });
+      const { participant } = entities;
+      const annotation = annotationFromType(study.annotationTypes[0]);
+      context.fixture = fixture;
+      context.componentInitialize = () => { dispatchEntities(entities); };
+      context.componentValidateInitialization = () => undefined;
+      context.dispatchSuccessAction =
+        () => { store.dispatch(ParticipantStoreActions.updateParticipantSuccess({ participant })); };
+      context.createExpectedFailureAction =
+        (error) => ParticipantStoreActions.updateParticipantFailure({ error });
+      context.duplicateAttibuteValueError = undefined;
+
+      context.modalReturnValue = { result: Promise.resolve(annotation) };
+      context.updateEntity = () => { component.updateAnnotation(annotation); };
+
+      const updatedParticipant = new Participant().deserialize(participant);
+      updatedParticipant.annotations = [ annotation ];
+
+      context.expectedSuccessAction = ParticipantStoreActions.updateParticipantRequest({
+        participant,
+        attributeName: 'addOrUpdateAnnotation',
+        value: annotation.serverAnnotation()
+      });
+      context.dispatchSuccessAction = () => {
+        store.dispatch(ParticipantStoreActions.updateParticipantSuccess({ participant: updatedParticipant }));
+      };
     });
 
-    it('should open a modal, send the server an update request, and display a toastr message', fakeAsync(() => {
-      const study = new Study().deserialize(factory.study({ annotationTypes: [ factory.annotationType() ] }));
-      const annotation = annotationFromType(study.annotationTypes[0]);
-      const { participant } = createEntities({ study });
-      participant.annotations = [ annotation ];
-      dispatchEntities({ study, participant });
-      fixture.detectChanges();
-
-      dispatchListener.mockClear();
-      const modalListener = jest.spyOn(modalService, 'open')
-        .mockReturnValue({ result: Promise.resolve(annotation) } as any);
-      component.updateAnnotation(annotation);
-      flush();
-      fixture.detectChanges();
-      expect(modalListener.mock.calls.length).toBe(1);
-      expect(dispatchListener.mock.calls.length).toBe(1);
-      const action = ParticipantStoreActions.updateParticipantRequest({
-          participant,
-          attributeName: 'addAnnotation',
-          value: annotation.serverAnnotation()
-      });
-      expect(dispatchListener.mock.calls[0][0]).toEqual(action);
-
-      const toastrListener = jest.spyOn(toastr, 'success').mockReturnValue(null);
-      store.dispatch(ParticipantStoreActions.updateParticipantSuccess({ participant }));
-      flush();
-      fixture.detectChanges();
-      expect(toastrListener.mock.calls.length).toBe(1);
-      expect(toastrListener.mock.calls[0][0]).toMatch(/was updated/);
-    }));
-
-    it('when server responds with an error it displays it', fakeAsync(() => {
-      const toastrListener = jest.spyOn(toastr, 'error').mockReturnValue(null);
-      const errors = [
-        {
-          status: 401,
-          statusText: 'Unauthorized'
-        },
-        {
-          status: 404,
-          error: {
-            message: 'simulated error'
-          }
-        }
-      ];
-
-      const study = new Study().deserialize(factory.study({ annotationTypes: [ factory.annotationType() ] }));
-      const { participant } = createEntities({ study });
-      const annotation = annotationFromType(study.annotationTypes[0]);
-      dispatchEntities({ study, participant });
-      fixture.detectChanges();
-
-      jest.spyOn(modalService, 'open').mockReturnValue({ result: Promise.resolve(annotation) } as any);
-      errors.forEach(error => {
-        toastrListener.mockClear();
-        component.updateAnnotation(annotation)
-        flush();
-        fixture.detectChanges();
-
-        store.dispatch(ParticipantStoreActions.updateParticipantFailure({ error }));
-        flush();
-        fixture.detectChanges();
-        expect(toastrListener.mock.calls.length).toBe(1);
-      });
-    }));
+    EntityUpdateComponentBehaviour.sharedBehaviour(context);
 
   });
 
@@ -292,4 +292,5 @@ describe('ParticipantSummaryComponent', () => {
       store.dispatch(ParticipantStoreActions.getParticipantSuccess({ participant: participant }));
     }
   }
+
 });
