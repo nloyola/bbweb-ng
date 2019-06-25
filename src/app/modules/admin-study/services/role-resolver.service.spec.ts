@@ -4,7 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { ActivatedRouteSnapshot } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Role } from '@app/domain/access';
-import { RoleStoreActions, RoleStoreReducer } from '@app/root-store';
+import { RoleStoreActions, RoleStoreReducer, RootStoreState, NgrxRuntimeChecks } from '@app/root-store';
 import { Factory } from '@test/factory';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
@@ -24,9 +24,11 @@ describe('RoleResolver', () => {
         HttpClientTestingModule,
         NgbModule,
         RouterTestingModule,
-        StoreModule.forRoot({
-          'role': RoleStoreReducer.reducer
-        })
+        StoreModule.forRoot(
+          {
+            'role': RoleStoreReducer.reducer
+          },
+          NgrxRuntimeChecks)
       ]
     });
 

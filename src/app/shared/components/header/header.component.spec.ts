@@ -5,12 +5,13 @@ import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { RoleIds } from '@app/domain/access';
 import { User } from '@app/domain/users';
+import { RootStoreState } from '@app/root-store';
 import { AuthStoreActions, AuthStoreReducer } from '@app/root-store/auth-store';
-import { Factory } from '@test/factory';
+import { NgrxRuntimeChecks } from '@app/root-store/root-store.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
+import { Factory } from '@test/factory';
 import { HeaderComponent } from './header.component';
-import { RootStoreState } from '@app/root-store';
 
 describe('HeaderComponent', () => {
 
@@ -26,9 +27,10 @@ describe('HeaderComponent', () => {
       imports: [
         NgbModule,
         RouterTestingModule,
-        StoreModule.forRoot({
-          'auth': AuthStoreReducer.reducer
-        })
+        StoreModule.forRoot(
+          { 'auth': AuthStoreReducer.reducer },
+          NgrxRuntimeChecks
+        )
       ],
       declarations: [HeaderComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
@@ -75,8 +77,8 @@ describe('HeaderComponent', () => {
     expect(router.navigate).toHaveBeenCalledWith(['/']);
   });
 
-  it('clicking navbar collapse button shows the navbar when hidden',() => {
-    let buttons = fixture.debugElement.queryAll(By.css('.navbar-toggler-right'));
+  it('clicking navbar collapse button shows the navbar when hidden', () => {
+    const buttons = fixture.debugElement.queryAll(By.css('.navbar-toggler-right'));
     expect(buttons.length).toBeGreaterThan(0);
     component.isCollapsed = true;
     buttons[0].nativeElement.click();
@@ -85,8 +87,8 @@ describe('HeaderComponent', () => {
   });
 
 
-  it('clicking navbar collapse button hides the navbar when shown',() => {
-    let buttons = fixture.debugElement.queryAll(By.css('.navbar-toggler-right'));
+  it('clicking navbar collapse button hides the navbar when shown', () => {
+    const buttons = fixture.debugElement.queryAll(By.css('.navbar-toggler-right'));
     expect(buttons.length).toBeGreaterThan(0);
     component.isCollapsed = false;
     buttons[0].nativeElement.click();

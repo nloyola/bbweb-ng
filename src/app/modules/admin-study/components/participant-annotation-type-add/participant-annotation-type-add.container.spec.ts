@@ -1,19 +1,19 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgZone } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Study } from '@app/domain/studies';
-import { StudyStoreActions, StudyStoreReducer } from '@app/root-store';
+import { NgrxRuntimeChecks, RootStoreState, StudyStoreActions, StudyStoreReducer } from '@app/root-store';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { AnnotationTypeAddComponent } from '@app/shared/components/annotation-type-add/annotation-type-add.component';
+import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
 import { MockActivatedRoute } from '@test/mocks';
-import { Store, StoreModule } from '@ngrx/store';
 import { cold } from 'jasmine-marbles';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { ParticipantAnnotationTypeAddContainerComponent } from './participant-annotation-type-add.container';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('ParticipantAnnotationTypeAddContainer', () => {
 
@@ -34,10 +34,12 @@ describe('ParticipantAnnotationTypeAddContainer', () => {
         FormsModule,
         ReactiveFormsModule,
         RouterTestingModule,
-        StoreModule.forRoot({
-          'spinner': SpinnerStoreReducer.reducer,
-          'study': StudyStoreReducer.reducer
-        }),
+        StoreModule.forRoot(
+          {
+            'spinner': SpinnerStoreReducer.reducer,
+            'study': StudyStoreReducer.reducer
+          },
+          NgrxRuntimeChecks),
         ToastrModule.forRoot()
       ],
       providers: [

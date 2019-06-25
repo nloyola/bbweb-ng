@@ -1,14 +1,14 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgZone } from '@angular/core';
-import { async, ComponentFixture, TestBed, flush, fakeAsync } from '@angular/core/testing';
+import { async, ComponentFixture, fakeAsync, flush, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { ProcessingTypeStoreReducer, StudyStoreReducer, StudyStoreActions, EventTypeStoreReducer, ProcessingTypeStoreActions, EventTypeStoreActions } from '@app/root-store';
+import { CollectedSpecimenDefinitionName, CollectionEventType, ProcessingType, Study, StudyState } from '@app/domain/studies';
+import { EventTypeStoreActions, EventTypeStoreReducer, ProcessingTypeStoreActions, ProcessingTypeStoreReducer, RootStoreState, StudyStoreActions, StudyStoreReducer, NgrxRuntimeChecks } from '@app/root-store';
 import { Store, StoreModule } from '@ngrx/store';
-import { StudyProcessingComponent } from './study-processing.component';
-import { Study, StudyState, ProcessingType, CollectionEventType, CollectedSpecimenDefinitionName } from '@app/domain/studies';
 import { Factory } from '@test/factory';
 import { MockActivatedRoute } from '@test/mocks';
 import { cold } from 'jasmine-marbles';
+import { StudyProcessingComponent } from './study-processing.component';
 
 describe('StudyProcessingComponent', () => {
 
@@ -22,11 +22,13 @@ describe('StudyProcessingComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         RouterTestingModule,
-        StoreModule.forRoot({
-          'study': StudyStoreReducer.reducer,
-          'processing-type': ProcessingTypeStoreReducer.reducer,
-          'event-type': EventTypeStoreReducer.reducer
-        })
+        StoreModule.forRoot(
+          {
+            'study': StudyStoreReducer.reducer,
+            'processing-type': ProcessingTypeStoreReducer.reducer,
+            'event-type': EventTypeStoreReducer.reducer
+          },
+          NgrxRuntimeChecks)
       ],
       providers: [
         {

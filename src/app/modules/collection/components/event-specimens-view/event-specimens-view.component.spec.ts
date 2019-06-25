@@ -1,10 +1,11 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { NgbActiveModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { EventSpecimensViewComponent } from './event-specimens-view.component';
 import { ModalInputComponent } from '@app/modules/modals/components/modal-input/modal-input.component';
-import { StoreModule } from '@ngrx/store';
 import { SpecimenStoreReducer } from '@app/root-store';
+import { NgrxRuntimeChecks } from '@app/root-store/root-store.module';
+import { NgbActiveModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { StoreModule } from '@ngrx/store';
+import { EventSpecimensViewComponent } from './event-specimens-view.component';
 
 describe('EventSpecimensViewComponent', () => {
   let component: EventSpecimensViewComponent;
@@ -14,9 +15,10 @@ describe('EventSpecimensViewComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         NgbModule,
-        StoreModule.forRoot({
-          'specimen': SpecimenStoreReducer.reducer
-        })
+        StoreModule.forRoot(
+          { 'specimen': SpecimenStoreReducer.reducer },
+          NgrxRuntimeChecks
+        )
       ],
       providers: [
         NgbActiveModal

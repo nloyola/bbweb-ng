@@ -4,14 +4,13 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Study, StudyState } from '@app/domain/studies';
-import { EventTypeStoreReducer, StudyStoreActions, StudyStoreReducer } from '@app/root-store';
-import { SpinnerStoreReducer } from '@app/root-store/spinner';
+import { EventTypeStoreReducer, NgrxRuntimeChecks, RootStoreState, StudyStoreActions, StudyStoreReducer } from '@app/root-store';
 import { TruncatePipe } from '@app/shared/pipes';
 import { YesNoPipe } from '@app/shared/pipes/yes-no-pipe';
-import { Factory } from '@test/factory';
-import { MockActivatedRoute } from '@test/mocks';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
+import { Factory } from '@test/factory';
+import { MockActivatedRoute } from '@test/mocks';
 import { ToastrModule } from 'ngx-toastr';
 import { EventTypeViewComponent } from '../event-type-view/event-type-view.component';
 import { EventTypesAddAndSelectComponent } from '../event-types-add-and-select/event-types-add-and-select.component';
@@ -35,10 +34,12 @@ describe('StudyCollectionComponent', () => {
         ReactiveFormsModule,
         NgbModule,
         RouterTestingModule,
-        StoreModule.forRoot({
-          'study': StudyStoreReducer.reducer,
-          'event-type': EventTypeStoreReducer.reducer
-        }),
+        StoreModule.forRoot(
+          {
+            'study': StudyStoreReducer.reducer,
+            'event-type': EventTypeStoreReducer.reducer
+          },
+          NgrxRuntimeChecks),
         ToastrModule.forRoot()
       ],
       providers: [

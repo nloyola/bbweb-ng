@@ -1,13 +1,13 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgZone } from '@angular/core';
-import { async, ComponentFixture, TestBed, flush, fakeAsync } from '@angular/core/testing';
+import { async, ComponentFixture, fakeAsync, flush, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CollectionEventType, Study } from '@app/domain/studies';
-import { EventTypeStoreActions, EventTypeStoreReducer } from '@app/root-store';
+import { EventTypeStoreActions, EventTypeStoreReducer, RootStoreState, NgrxRuntimeChecks } from '@app/root-store';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
-import { Factory } from '@test/factory';
 import { Store, StoreModule } from '@ngrx/store';
+import { Factory } from '@test/factory';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { EventTypeAddComponent } from './event-type-add.component';
 
@@ -30,10 +30,12 @@ describe('EventTypeAddComponent', () => {
         FormsModule,
         ReactiveFormsModule,
         RouterTestingModule,
-        StoreModule.forRoot({
-          'event-type': EventTypeStoreReducer.reducer,
-          'spinner': SpinnerStoreReducer.reducer
-        }),
+        StoreModule.forRoot(
+          {
+            'event-type': EventTypeStoreReducer.reducer,
+            'spinner': SpinnerStoreReducer.reducer
+          },
+          NgrxRuntimeChecks),
         ToastrModule.forRoot()
       ],
       providers: [

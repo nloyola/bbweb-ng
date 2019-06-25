@@ -9,6 +9,7 @@ import { Centre } from '@app/domain/centres';
 import { Study } from '@app/domain/studies';
 import { User } from '@app/domain/users';
 import { MembershipStoreActions, MembershipStoreReducer, RootStoreState } from '@app/root-store';
+import { NgrxRuntimeChecks } from '@app/root-store/root-store.module';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
@@ -36,10 +37,12 @@ describe('MembershipViewComponent', () => {
         ReactiveFormsModule,
         NgbModule,
         RouterTestingModule,
-        StoreModule.forRoot({
-          'membership': MembershipStoreReducer.reducer,
-          'spinner': SpinnerStoreReducer.reducer
-        }),
+        StoreModule.forRoot(
+          {
+            'membership': MembershipStoreReducer.reducer,
+            'spinner': SpinnerStoreReducer.reducer
+          },
+          NgrxRuntimeChecks),
         ToastrModule.forRoot()
       ],
       providers: [

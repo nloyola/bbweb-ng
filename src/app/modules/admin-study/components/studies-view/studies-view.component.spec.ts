@@ -6,6 +6,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { SearchFilterValues, SearchParams } from '@app/domain';
 import { Study, StudyCountsUIMap, StudyState } from '@app/domain/studies';
 import { StudyUI } from '@app/domain/studies/study-ui.model';
+import { RootStoreState, NgrxRuntimeChecks } from '@app/root-store';
 import { StudyStoreActions, StudyStoreReducer } from '@app/root-store/study';
 import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
@@ -25,9 +26,11 @@ describe('StudiesViewComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         RouterTestingModule,
-        StoreModule.forRoot({
-          'study': StudyStoreReducer.reducer
-        }),
+        StoreModule.forRoot(
+          {
+            'study': StudyStoreReducer.reducer
+          },
+          NgrxRuntimeChecks),
         ToastrModule.forRoot()
       ],
       declarations: [

@@ -4,18 +4,19 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ProcessingType, Study, StudyState } from '@app/domain/studies';
-import { EventTypeStoreActions, EventTypeStoreReducer, ProcessingTypeStoreActions, ProcessingTypeStoreReducer, StudyStoreActions, StudyStoreReducer, RootStoreState } from '@app/root-store';
+import { EventTypeStoreActions, EventTypeStoreReducer, ProcessingTypeStoreActions, ProcessingTypeStoreReducer, RootStoreState, StudyStoreActions, StudyStoreReducer } from '@app/root-store';
+import { NgrxRuntimeChecks } from '@app/root-store/root-store.module';
+import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { YesNoPipe } from '@app/shared/pipes/yes-no-pipe';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
+import { EntityUpdateComponentBehaviour } from '@test/behaviours/entity-update-component.behaviour';
 import { Factory } from '@test/factory';
 import { ProcessingTypeFixture, ProcessingTypeFixtureEntities } from '@test/fixtures';
 import { MockActivatedRoute } from '@test/mocks';
 import * as faker from 'faker';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { ProcessingTypeViewContainerComponent } from './processing-type-view.container';
-import { SpinnerStoreReducer } from '@app/root-store/spinner';
-import { EntityUpdateComponentBehaviour } from '@test/behaviours/entity-update-component.behaviour';
 
 describe('ProcessingTypeViewContainerComponent', () => {
   let component: ProcessingTypeViewContainerComponent;
@@ -31,12 +32,14 @@ describe('ProcessingTypeViewContainerComponent', () => {
       imports: [
         BrowserAnimationsModule,
         RouterTestingModule,
-        StoreModule.forRoot({
-          'study': StudyStoreReducer.reducer,
-          'processing-type': ProcessingTypeStoreReducer.reducer,
-          'event-type': EventTypeStoreReducer.reducer,
-          'spinner': SpinnerStoreReducer.reducer
-        }),
+        StoreModule.forRoot(
+          {
+            'study': StudyStoreReducer.reducer,
+            'processing-type': ProcessingTypeStoreReducer.reducer,
+            'event-type': EventTypeStoreReducer.reducer,
+            'spinner': SpinnerStoreReducer.reducer
+          },
+          NgrxRuntimeChecks),
         ToastrModule.forRoot()
       ],
       providers: [

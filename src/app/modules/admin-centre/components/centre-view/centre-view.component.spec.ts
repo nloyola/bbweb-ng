@@ -6,7 +6,7 @@ import { Centre } from '@app/domain/centres';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { RouterTestingModule } from '@angular/router/testing';
 import { StoreModule, Store } from '@ngrx/store';
-import { CentreStoreReducer, CentreStoreActions } from '@app/root-store';
+import { CentreStoreReducer, CentreStoreActions, RootStoreState, NgrxRuntimeChecks } from '@app/root-store';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { MockActivatedRoute } from '@test/mocks';
@@ -28,10 +28,12 @@ describe('CentreViewComponent', () => {
       imports: [
         NgbModule,
         RouterTestingModule,
-        StoreModule.forRoot({
-          'centre': CentreStoreReducer.reducer,
-          'spinner': SpinnerStoreReducer.reducer
-        })
+        StoreModule.forRoot(
+          {
+            'centre': CentreStoreReducer.reducer,
+            'spinner': SpinnerStoreReducer.reducer
+          },
+          NgrxRuntimeChecks)
       ],
       providers: [
         {

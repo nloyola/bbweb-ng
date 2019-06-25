@@ -7,9 +7,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute } from '@angular/router';
 import { SearchParams } from '@app/domain';
 import { Centre } from '@app/domain/centres';
-import { CentreUI } from '@app/domain/centres/centre-ui.model';
-import { Study, StudyState, StudyStateUIMap, StudyStateInfo } from '@app/domain/studies';
-import { CentreStoreActions, CentreStoreReducer, StudyStoreActions, StudyStoreReducer } from '@app/root-store';
+import { Study, StudyState, StudyStateInfo, StudyStateUIMap } from '@app/domain/studies';
+import { CentreStoreActions, CentreStoreReducer, RootStoreState, StudyStoreActions, NgrxRuntimeChecks } from '@app/root-store';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { NgbModal, NgbModule, NgbTypeaheadModule, NgbTypeaheadSelectItemEvent } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
@@ -38,10 +37,12 @@ describe('CentreStudiesComponent', () => {
         ReactiveFormsModule,
         NgbModule,
         NgbTypeaheadModule,
-        StoreModule.forRoot({
-          'centre': CentreStoreReducer.reducer,
-          'spinner': SpinnerStoreReducer.reducer
-        }),
+        StoreModule.forRoot(
+          {
+            'centre': CentreStoreReducer.reducer,
+            'spinner': SpinnerStoreReducer.reducer
+          },
+          NgrxRuntimeChecks),
         ToastrModule.forRoot()
       ],
       providers: [

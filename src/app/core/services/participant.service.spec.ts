@@ -120,7 +120,7 @@ describe('ParticipantService', () => {
           url: `${BASE_URL}/uniqueId/${participant.id}`
         },
         {
-          attribute: 'addAnnotation',
+          attribute: 'addOrUpdateAnnotation',
           value: annotation,
           url: `${BASE_URL}/annot/${participant.id}`
         },
@@ -143,7 +143,7 @@ describe('ParticipantService', () => {
         let expectedJson = { expectedVersion: participant.version };
 
         switch (testInfo.attribute) {
-          case 'addAnnotation':
+          case 'addOrUpdateAnnotation':
             expectedJson = { ...expectedJson, ...testInfo.value };
             break;
 

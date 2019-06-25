@@ -1,20 +1,21 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgZone } from '@angular/core';
-import { async, ComponentFixture, TestBed, tick, fakeAsync, flush } from '@angular/core/testing';
+import { async, ComponentFixture, fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
+import { CentreUpdateAttribute } from '@app/core/services';
 import { Centre } from '@app/domain/centres';
 import { CentreStoreActions, CentreStoreReducer, RootStoreState } from '@app/root-store';
+import { NgrxRuntimeChecks } from '@app/root-store/root-store.module';
+import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
+import { EntityUpdateComponentBehaviour } from '@test/behaviours/entity-update-component.behaviour';
 import { Factory } from '@test/factory';
+import * as faker from 'faker';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { CentreSummaryComponent } from './centre-summary.component';
-import { SpinnerStoreReducer } from '@app/root-store/spinner';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { EntityUpdateComponentBehaviour } from '@test/behaviours/entity-update-component.behaviour';
-import * as faker from 'faker';
-import { CentreUpdateAttribute } from '@app/core/services';
 
 describe('CentreSummaryComponent', () => {
 
@@ -37,10 +38,13 @@ describe('CentreSummaryComponent', () => {
         ReactiveFormsModule,
         NgbModule,
         RouterTestingModule,
-        StoreModule.forRoot({
-          'centre': CentreStoreReducer.reducer,
-          'spinner': SpinnerStoreReducer.reducer
-        }),
+        StoreModule.forRoot(
+          {
+            'centre': CentreStoreReducer.reducer,
+            'spinner': SpinnerStoreReducer.reducer
+          },
+          NgrxRuntimeChecks
+        ),
         ToastrModule.forRoot()
       ],
       providers: [

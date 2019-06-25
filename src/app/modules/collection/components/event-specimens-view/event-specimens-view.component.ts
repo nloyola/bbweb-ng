@@ -77,7 +77,7 @@ export class EventSpecimensViewComponent implements OnInit, OnChanges {
 
     // FIXME: not working 100%
     // scrolling works only in some cases
-    this.specimensTable.nativeElement.scrollIntoView({behavior: "smooth", block: "end"});
+    this.specimensTable.nativeElement.scrollIntoView({behavior: 'smooth', block: 'end'});
   }
 
   viewSpecimen(specimen: Specimen) {
@@ -104,7 +104,7 @@ export class EventSpecimensViewComponent implements OnInit, OnChanges {
     this.tableDataLoading = true;
     this.store$.dispatch(SpecimenStoreActions.searchSpecimensRequest({
       event: this.event,
-      searchParams: new SearchParams('', //this.getFilters().join(';'),
+      searchParams: new SearchParams('', // this.getFilters().join(';'),
                                      this.sortField,
                                      this.currentPage,
                                      this.specimensLimit)

@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { SearchParams } from '@app/domain';
 import { User, UserState, UserUI } from '@app/domain/users';
-import { UserStoreActions, UserStoreReducer } from '@app/root-store';
+import { UserStoreActions, UserStoreReducer, RootStoreState, NgrxRuntimeChecks } from '@app/root-store';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { EntityFiltersComponent } from '@app/shared/components/entity-filters/entity-filters.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -29,10 +29,12 @@ describe('UsersViewComponent', () => {
         ReactiveFormsModule,
         NgbModule,
         RouterTestingModule,
-        StoreModule.forRoot({
-          'user': UserStoreReducer.reducer,
-          'spinner': SpinnerStoreReducer.reducer
-        })
+        StoreModule.forRoot(
+          {
+            'user': UserStoreReducer.reducer,
+            'spinner': SpinnerStoreReducer.reducer
+          },
+          NgrxRuntimeChecks)
       ],
       declarations: [
         EntityFiltersComponent,

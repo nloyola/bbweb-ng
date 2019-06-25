@@ -5,7 +5,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { User } from '@app/domain/users';
-import { UserStoreActions, UserStoreReducer } from '@app/root-store';
+import { UserStoreActions, UserStoreReducer, RootStoreState } from '@app/root-store';
+import { NgrxRuntimeChecks } from '@app/root-store/root-store.module';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
@@ -32,10 +33,12 @@ describe('UserProfileComponent', () => {
         ReactiveFormsModule,
         NgbModule,
         RouterTestingModule,
-        StoreModule.forRoot({
-          'user': UserStoreReducer.reducer,
-          'spinner': SpinnerStoreReducer.reducer
-        }),
+        StoreModule.forRoot(
+          {
+            'user': UserStoreReducer.reducer,
+            'spinner': SpinnerStoreReducer.reducer
+          },
+          NgrxRuntimeChecks),
         ToastrModule.forRoot()
       ],
       providers: [

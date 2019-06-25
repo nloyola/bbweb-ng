@@ -231,6 +231,7 @@ describe('CollectionEventService', () => {
         expect(id).toEqual(collectionEvent.id);
       });
 
+      /* tslint:disable-next-line:max-line-length */
       const url = `${BASE_URL}/${collectionEvent.participantId}/${collectionEvent.id}/${collectionEvent.version}`;
       expect(obs).toBeHttpSuccess(httpMock, 'DELETE', url, true);
     });
@@ -238,6 +239,8 @@ describe('CollectionEventService', () => {
     it('handles an error reply correctly', () => {
       const rawCollectionEvent = factory.collectionEvent();
       const collectionEvent = new CollectionEvent().deserialize(rawCollectionEvent);
+
+      /* tslint:disable-next-line:max-line-length */
       const url = `${BASE_URL}/${collectionEvent.participantId}/${collectionEvent.id}/${collectionEvent.version}`;
       expect(service.remove(collectionEvent))
         .toBeHttpError(httpMock, 'DELETE', url, 'expected a collectionEvent object');

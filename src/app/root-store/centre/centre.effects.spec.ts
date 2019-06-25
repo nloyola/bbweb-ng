@@ -38,7 +38,7 @@ describe('centre-store effects', () => {
 
     it('should respond with success', () => {
       const centreCounts = factory.centreCounts();
-      const action = CentreStoreActions.getCentreCountsRequest;
+      const action = new CentreStoreActions.GetCentreCountsRequest;
       const completion = new CentreStoreActions.GetCentreCountsSuccess({ centreCounts });
       spyOn(centreService, 'counts').and.returnValue(of(centreCounts));
 

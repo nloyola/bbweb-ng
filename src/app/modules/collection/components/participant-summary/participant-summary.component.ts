@@ -158,10 +158,9 @@ export class ParticipantSummaryComponent implements OnInit, OnDestroy {
     this.modalService.open(this.updateAnnotationModal, { size: 'lg' }).result
       .then(value => {
         const updatedAnnotation = value;
-        debugger;
         this.store$.dispatch(ParticipantStoreActions.updateParticipantRequest({
           participant,
-          attributeName: 'addAnnotation',
+          attributeName: 'addOrUpdateAnnotation',
           value: updatedAnnotation.serverAnnotation()
         }));
         this.updatedMessage$.next(`${annotation.label} was updated`);

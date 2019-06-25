@@ -5,7 +5,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CollectionEventType, Study, StudyState } from '@app/domain/studies';
-import { EventTypeStoreActions, EventTypeStoreReducer, StudyStoreActions, StudyStoreReducer, RootStoreState } from '@app/root-store';
+import { EventTypeStoreActions, EventTypeStoreReducer, RootStoreState, StudyStoreActions, StudyStoreReducer } from '@app/root-store';
+import { NgrxRuntimeChecks } from '@app/root-store/root-store.module';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { YesNoPipe } from '@app/shared/pipes/yes-no-pipe';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -39,11 +40,14 @@ describe('EventTypeViewContainer', () => {
         BrowserAnimationsModule,
         NgbModule,
         RouterTestingModule,
-        StoreModule.forRoot({
-          'spinner': SpinnerStoreReducer.reducer,
-          'study': StudyStoreReducer.reducer,
-          'event-type': EventTypeStoreReducer.reducer,
-        }),
+        StoreModule.forRoot(
+          {
+            'spinner': SpinnerStoreReducer.reducer,
+            'study': StudyStoreReducer.reducer,
+            'event-type': EventTypeStoreReducer.reducer,
+          },
+          NgrxRuntimeChecks
+        ),
         ToastrModule.forRoot()
       ],
       providers: [

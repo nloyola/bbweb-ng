@@ -1,7 +1,7 @@
 import { HideSpinner, ShowSpinner } from '@app/core/decorators';
 import { Location, PagedReply, SearchParams } from '@app/domain';
 import { Centre, CentreCounts } from '@app/domain/centres';
-import { Action, createAction, union } from '@ngrx/store';
+import { Action } from '@ngrx/store';
 import { HttpErrorResponse } from '@angular/common/http';
 import { CentreUpdateAttribute } from '@app/core/services';
 
@@ -14,6 +14,7 @@ interface CentreUpdateRequestPayload {
 // TODO: Update to use createAction introduced in NGRX 7.4
 
 export enum ActionTypes {
+  GetCentreCountsRequest = '[Centre] Get Centre Count Request',
   GetCentreCountsSuccess = '[Centre] Get Centre Count Success',
   GetCentreCountsFailure = '[Centre] Get Centre Count Failure',
 
@@ -34,15 +35,20 @@ export enum ActionTypes {
   UpdateCentreFailure = '[Centre] Update Centre Failure',
 }
 
-export const getCentreCountsRequest = createAction(
-  '[Centre] Get Centre Count Request');
+@ShowSpinner()
+export class GetCentreCountsRequest implements Action {
+  readonly type = ActionTypes.GetCentreCountsRequest;
+}
 
+/* tslint:disable:max-classes-per-file */
+@HideSpinner(ActionTypes.GetCentreCountsRequest)
 export class GetCentreCountsSuccess implements Action {
   readonly type = ActionTypes.GetCentreCountsSuccess;
 
   constructor(public payload: { centreCounts: CentreCounts }) { }
 }
 
+@HideSpinner(ActionTypes.GetCentreCountsRequest)
 export class GetCentreCountsFailure implements Action {
   readonly type = ActionTypes.GetCentreCountsFailure;
 
@@ -131,6 +137,7 @@ export class UpdateCentreFailure implements Action {
 }
 
 export type CentreActions =
+  GetCentreCountsRequest
   | GetCentreCountsSuccess
   | GetCentreCountsFailure
   | SearchCentresRequest
@@ -145,8 +152,3 @@ export type CentreActions =
   | UpdateCentreRequest
   | UpdateCentreSuccess
   | UpdateCentreFailure;
-
-const all = union({
-  getCentreCountsRequest,
-});
-export type CentreActionsUnion = typeof all;

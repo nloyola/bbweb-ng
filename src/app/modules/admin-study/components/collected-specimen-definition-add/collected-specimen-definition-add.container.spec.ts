@@ -1,18 +1,18 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgZone } from '@angular/core';
-import { async, ComponentFixture, TestBed, fakeAsync, flush } from '@angular/core/testing';
+import { async, ComponentFixture, fakeAsync, flush, TestBed } from '@angular/core/testing';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CollectionEventType, Study } from '@app/domain/studies';
-import { EventTypeStoreActions, EventTypeStoreReducer, StudyStoreReducer, StudyStoreActions } from '@app/root-store';
+import { EventTypeStoreActions, EventTypeStoreReducer, RootStoreState, StudyStoreActions, StudyStoreReducer, NgrxRuntimeChecks } from '@app/root-store';
 import { YesNoPipe } from '@app/shared/pipes/yes-no-pipe';
-import { Factory } from '@test/factory';
-import { MockActivatedRoute } from '@test/mocks';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
+import { Factory } from '@test/factory';
+import { MockActivatedRoute } from '@test/mocks';
 import { cold } from 'jasmine-marbles';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { CollectedSpecimenDefinitionAddContainerComponent } from './collected-specimen-definition-add.container';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('CollectedSpecimenDefinitionAddContainer', () => {
 
@@ -35,10 +35,12 @@ describe('CollectedSpecimenDefinitionAddContainer', () => {
         BrowserAnimationsModule,
         NgbModule,
         RouterTestingModule,
-        StoreModule.forRoot({
-          'study': StudyStoreReducer.reducer,
-          'event-type': EventTypeStoreReducer.reducer,
-        }),
+        StoreModule.forRoot(
+          {
+            'study': StudyStoreReducer.reducer,
+            'event-type': EventTypeStoreReducer.reducer,
+          },
+          NgrxRuntimeChecks),
         ToastrModule.forRoot()
       ],
       providers: [

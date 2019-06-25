@@ -1,18 +1,17 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgZone } from '@angular/core';
-import { async, ComponentFixture, fakeAsync, TestBed, tick, flush } from '@angular/core/testing';
+import { async, ComponentFixture, fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Study, StudyState } from '@app/domain/studies';
-import { StudyUI } from '@app/domain/studies/study-ui.model';
-import { StudyStoreActions, StudyStoreReducer } from '@app/root-store';
+import { RootStoreState, StudyStoreActions, StudyStoreReducer, NgrxRuntimeChecks } from '@app/root-store';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { AnnotationTypeRemoveComponent } from '@app/shared/components/annotation-type-remove/annotation-type-remove.component';
 import { AnnotationTypeViewComponent } from '@app/shared/components/annotation-type-view/annotation-type-view.component';
 import { YesNoPipe } from '@app/shared/pipes/yes-no-pipe';
-import { Factory } from '@test/factory';
 import { NgbActiveModal, NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
+import { Factory } from '@test/factory';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { StudyParticipantsComponent } from './study-participants.component';
 
@@ -36,10 +35,12 @@ describe('StudyParticipantsComponent', () => {
       imports: [
         NgbModule,
         RouterTestingModule,
-        StoreModule.forRoot({
-          'spinner': SpinnerStoreReducer.reducer,
-          'study': StudyStoreReducer.reducer
-        }),
+        StoreModule.forRoot(
+          {
+            'spinner': SpinnerStoreReducer.reducer,
+            'study': StudyStoreReducer.reducer
+          },
+          NgrxRuntimeChecks),
         ToastrModule.forRoot()
       ],
       providers: [

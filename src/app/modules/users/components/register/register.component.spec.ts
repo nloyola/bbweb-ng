@@ -5,19 +5,19 @@ import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { RoleIds } from '@app/domain/access';
 import { User } from '@app/domain/users';
+import { NgrxRuntimeChecks, RootStoreState, StudyStoreReducer } from '@app/root-store';
 import { AuthStoreActions, AuthStoreReducer } from '@app/root-store/auth-store';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
-import { Factory } from '@test/factory';
 import { Store, StoreModule } from '@ngrx/store';
+import { Factory } from '@test/factory';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { RegisterComponent } from './register.component';
-import { StudyStoreReducer } from '@app/root-store';
 
 describe('RegisterComponent', () => {
 
-  let store: Store<RootStoreState.State>;
   let component: RegisterComponent;
   let fixture: ComponentFixture<RegisterComponent>;
+  let store: Store<RootStoreState.State>;
   let ngZone: NgZone;
   let router: Router;
   let toastrService: ToastrService;
@@ -29,11 +29,13 @@ describe('RegisterComponent', () => {
         FormsModule,
         ReactiveFormsModule,
         RouterTestingModule,
-        StoreModule.forRoot({
-          'auth': AuthStoreReducer.reducer,
-          'spinner': SpinnerStoreReducer.reducer,
-          'study': StudyStoreReducer.reducer
-        }),
+        StoreModule.forRoot(
+          {
+            'auth': AuthStoreReducer.reducer,
+            'spinner': SpinnerStoreReducer.reducer,
+            'study': StudyStoreReducer.reducer
+          },
+          NgrxRuntimeChecks),
         ToastrModule.forRoot()
       ],
       declarations: [RegisterComponent],

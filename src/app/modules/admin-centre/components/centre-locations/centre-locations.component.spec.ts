@@ -1,10 +1,10 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgZone } from '@angular/core';
-import { async, ComponentFixture, TestBed, fakeAsync, tick, flush } from '@angular/core/testing';
+import { async, ComponentFixture, fakeAsync, flush, TestBed } from '@angular/core/testing';
+import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Centre, CentreState } from '@app/domain/centres';
-import { CentreUI } from '@app/domain/centres/centre-ui.model';
-import { CentreStoreActions, CentreStoreReducer, StudyStoreReducer } from '@app/root-store';
+import { CentreStoreActions, CentreStoreReducer, RootStoreState, NgrxRuntimeChecks } from '@app/root-store';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { LocationRemoveComponent } from '@app/shared/components/location-remove/location-remove.component';
 import { NgbActiveModal, NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -12,7 +12,6 @@ import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { CentreLocationsComponent } from './centre-locations.component';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 
 describe('CentreLocationsComponent', () => {
   let component: CentreLocationsComponent;
@@ -33,10 +32,12 @@ describe('CentreLocationsComponent', () => {
         BrowserDynamicTestingModule,
         NgbModule,
         RouterTestingModule,
-        StoreModule.forRoot({
-          'spinner': SpinnerStoreReducer.reducer,
-          'centre': CentreStoreReducer.reducer
-        }),
+        StoreModule.forRoot(
+          {
+            'spinner': SpinnerStoreReducer.reducer,
+            'centre': CentreStoreReducer.reducer
+          },
+          NgrxRuntimeChecks),
         ToastrModule.forRoot()
       ],
       providers: [

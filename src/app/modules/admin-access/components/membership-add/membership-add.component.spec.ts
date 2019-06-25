@@ -1,18 +1,16 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { CUSTOM_ELEMENTS_SCHEMA, NgZone } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, fakeAsync, flush, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { CentreStoreReducer } from '@app/root-store/centre';
+import { Membership } from '@app/domain/access';
+import { MembershipStoreActions, MembershipStoreReducer, NgrxRuntimeChecks, RootStoreState } from '@app/root-store';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
-import { StudyStoreReducer } from '@app/root-store/study';
 import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { MembershipAddComponent } from './membership-add.component';
-import { Membership } from '@app/domain/access';
-import { MembershipStoreActions, MembershipStoreReducer } from '@app/root-store';
 
 describe('MembershipAddComponent', () => {
   let component: MembershipAddComponent;
@@ -29,10 +27,12 @@ describe('MembershipAddComponent', () => {
         HttpClientTestingModule,
         ReactiveFormsModule,
         RouterTestingModule,
-        StoreModule.forRoot({
-          'membership': MembershipStoreReducer.reducer,
-          'spinner': SpinnerStoreReducer.reducer
-        }),
+        StoreModule.forRoot(
+          {
+            'membership': MembershipStoreReducer.reducer,
+            'spinner': SpinnerStoreReducer.reducer
+          },
+          NgrxRuntimeChecks),
         ToastrModule.forRoot()
       ],
       declarations: [ MembershipAddComponent ],

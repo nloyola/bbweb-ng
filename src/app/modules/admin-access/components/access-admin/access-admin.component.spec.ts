@@ -1,8 +1,9 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { AccessAdminComponent } from './access-admin.component';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { StoreModule } from '@ngrx/store';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { AuthStoreReducer } from '@app/root-store';
+import { NgrxRuntimeChecks } from '@app/root-store/root-store.module';
+import { StoreModule } from '@ngrx/store';
+import { AccessAdminComponent } from './access-admin.component';
 
 describe('AccessAdminComponent', () => {
   let component: AccessAdminComponent;
@@ -11,9 +12,11 @@ describe('AccessAdminComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
-        StoreModule.forRoot({
-          'auth': AuthStoreReducer.reducer
-        })
+        StoreModule.forRoot(
+          {
+            'auth': AuthStoreReducer.reducer
+          },
+          NgrxRuntimeChecks)
       ],
       declarations: [ AccessAdminComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]

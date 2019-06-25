@@ -14,6 +14,7 @@ import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { StudySummaryComponent } from './study-summary.component';
 import { EntityUpdateComponentBehaviour } from '@test/behaviours/entity-update-component.behaviour';
 import * as faker from 'faker';
+import { NgrxRuntimeChecks } from '@app/root-store/root-store.module';
 
 describe('StudySummaryComponent', () => {
 
@@ -37,10 +38,12 @@ describe('StudySummaryComponent', () => {
         ReactiveFormsModule,
         NgbModule,
         RouterTestingModule,
-        StoreModule.forRoot({
-          'study': StudyStoreReducer.reducer,
-          'spinner': SpinnerStoreReducer.reducer
-        }),
+        StoreModule.forRoot(
+          {
+            'study': StudyStoreReducer.reducer,
+            'spinner': SpinnerStoreReducer.reducer
+          },
+          NgrxRuntimeChecks),
         ToastrModule.forRoot()
       ],
       providers: [

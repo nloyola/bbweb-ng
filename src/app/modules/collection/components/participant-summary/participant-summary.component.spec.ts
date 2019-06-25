@@ -137,17 +137,20 @@ describe('ParticipantSummaryComponent', () => {
 
       jest.spyOn(modalService, 'open')
         .mockReturnValue({ result: Promise.resolve(newUniqueIdAndSlug.name) } as any);
-      component.updateUniqueId()
+      component.updateUniqueId();
       flush();
       fixture.detectChanges();
 
-      const action = ParticipantStoreActions.updateParticipantSuccess({ participant: participantWithNewUniqueId });
+      const action = ParticipantStoreActions.updateParticipantSuccess({
+        participant: participantWithNewUniqueId
+      });
       store.dispatch(action);
       flush();
       fixture.detectChanges();
 
       expect(routerListener.mock.calls.length).toBe(1);
-      expect(routerListener.mock.calls[0][0]).toEqual([ '../..', participantWithNewUniqueId.slug, 'summary' ]);
+      expect(routerListener.mock.calls[0][0])
+        .toEqual([ '../..', participantWithNewUniqueId.slug, 'summary' ]);
     }));
 
     it('displays an error if an existing unique ID is entered', fakeAsync(() => {
@@ -165,8 +168,8 @@ describe('ParticipantSummaryComponent', () => {
       dispatchEntities({ study, participant });
       fixture.detectChanges();
 
-      jest.spyOn(modalService, 'open').mockReturnValue({ result: Promise.resolve("") } as any);
-      component.updateUniqueId()
+      jest.spyOn(modalService, 'open').mockReturnValue({ result: Promise.resolve('') } as any);
+      component.updateUniqueId();
       flush();
       fixture.detectChanges();
 
@@ -209,7 +212,9 @@ describe('ParticipantSummaryComponent', () => {
           value: newUniqueId
         });
         context.dispatchSuccessAction = () => {
-          store.dispatch(ParticipantStoreActions.updateParticipantSuccess({ participant: updatedParticipant }));
+          store.dispatch(ParticipantStoreActions.updateParticipantSuccess({
+            participant: updatedParticipant
+          }));
         };
       });
 

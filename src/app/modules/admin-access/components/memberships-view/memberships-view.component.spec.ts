@@ -1,11 +1,11 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, fakeAsync, flush, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { SearchFilterValues, SearchParams } from '@app/domain';
 import { Membership } from '@app/domain/access';
-import { MembershipStoreActions, MembershipStoreReducer } from '@app/root-store';
+import { MembershipStoreActions, MembershipStoreReducer, NgrxRuntimeChecks, RootStoreState } from '@app/root-store';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { TruncatePipe } from '@app/shared/pipes';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -27,10 +27,13 @@ describe('MembershipsViewComponent', () => {
         ReactiveFormsModule,
         NgbModule,
         RouterTestingModule,
-        StoreModule.forRoot({
-          'membership': MembershipStoreReducer.reducer,
-          'spinner': SpinnerStoreReducer.reducer
-        })
+        StoreModule.forRoot(
+          {
+            'membership': MembershipStoreReducer.reducer,
+            'spinner': SpinnerStoreReducer.reducer
+          },
+          NgrxRuntimeChecks
+        )
       ],
       declarations: [
         MembershipsViewComponent,

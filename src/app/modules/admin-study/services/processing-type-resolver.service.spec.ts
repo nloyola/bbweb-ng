@@ -1,13 +1,13 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { NgZone } from '@angular/core';
-import { TestBed, flush, fakeAsync } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { ActivatedRouteSnapshot, convertToParamMap } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ProcessingType, Study } from '@app/domain/studies';
-import { ProcessingTypeStoreActions, ProcessingTypeStoreReducer } from '@app/root-store';
-import { Factory } from '@test/factory';
+import { NgrxRuntimeChecks, ProcessingTypeStoreActions, ProcessingTypeStoreReducer, RootStoreState } from '@app/root-store';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
+import { Factory } from '@test/factory';
 import { cold } from 'jasmine-marbles';
 import { ProcessingTypeResolver } from './processing-type-resolver.service';
 
@@ -24,9 +24,11 @@ describe('ProcessingTypeResolver', () => {
         HttpClientTestingModule,
         NgbModule,
         RouterTestingModule,
-        StoreModule.forRoot({
-          'processing-type': ProcessingTypeStoreReducer.reducer
-        })
+        StoreModule.forRoot(
+          {
+            'processing-type': ProcessingTypeStoreReducer.reducer
+          },
+          NgrxRuntimeChecks)
       ]
     });
 

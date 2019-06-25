@@ -1,6 +1,7 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { CentreStoreReducer } from '@app/root-store';
+import { NgrxRuntimeChecks } from '@app/root-store/root-store.module';
 import { StoreModule } from '@ngrx/store';
 import { CentresAdminComponent } from './centres-admin.component';
 
@@ -11,9 +12,11 @@ describe('CentresAdminComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
-        StoreModule.forRoot({
-          'centre': CentreStoreReducer.reducer
-        })
+        StoreModule.forRoot(
+          {
+            'centre': CentreStoreReducer.reducer
+          },
+          NgrxRuntimeChecks)
       ],
       declarations: [ CentresAdminComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]

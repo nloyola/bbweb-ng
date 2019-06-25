@@ -9,6 +9,7 @@ import { Factory } from '@test/factory';
 import { StoreModule } from '@ngrx/store';
 import { ToastrModule } from 'ngx-toastr';
 import { CollectedSpecimenDefinitionAddComponent } from './collected-specimen-definition-add.component';
+import { NgrxRuntimeChecks } from '@app/root-store/root-store.module';
 
 describe('CollectedSpecimenDefinitionAddComponent', () => {
 
@@ -22,10 +23,13 @@ describe('CollectedSpecimenDefinitionAddComponent', () => {
         FormsModule,
         ReactiveFormsModule,
         RouterTestingModule,
-        StoreModule.forRoot({
-          'auth': AuthStoreReducer.reducer,
-          'spinner': SpinnerStoreReducer.reducer
-        }),
+        StoreModule.forRoot(
+          {
+            'auth': AuthStoreReducer.reducer,
+            'spinner': SpinnerStoreReducer.reducer
+          },
+          NgrxRuntimeChecks
+        ),
         ToastrModule.forRoot()
       ],
       declarations: [ CollectedSpecimenDefinitionAddComponent ],

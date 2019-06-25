@@ -1,18 +1,19 @@
+import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ProcessingType, Study } from '@app/domain/studies';
-import { EventTypeStoreActions, EventTypeStoreReducer, ProcessingTypeStoreActions, ProcessingTypeStoreReducer, StudyStoreActions, StudyStoreReducer, RootStoreState } from '@app/root-store';
-import { Factory } from '@test/factory';
-import { MockActivatedRoute } from '@test/mocks';
+import { EventTypeStoreActions, EventTypeStoreReducer, ProcessingTypeStoreActions, ProcessingTypeStoreReducer, RootStoreState, StudyStoreActions, StudyStoreReducer } from '@app/root-store';
+import { NgrxRuntimeChecks } from '@app/root-store/root-store.module';
 import { Store, StoreModule } from '@ngrx/store';
+import { Factory } from '@test/factory';
+import { ProcessingTypeFixture } from '@test/fixtures';
+import { MockActivatedRoute } from '@test/mocks';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { ProcessingTypeAddComponent } from './processing-type-add.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { ProcessingTypeFixture } from '@test/fixtures';
-import { StepperSelectionEvent } from '@angular/cdk/stepper';
 
 describe('ProcessingTypeAddComponent', () => {
   let component: ProcessingTypeAddComponent;
@@ -29,11 +30,13 @@ describe('ProcessingTypeAddComponent', () => {
         FormsModule,
         ReactiveFormsModule,
         RouterTestingModule,
-        StoreModule.forRoot({
-          'study': StudyStoreReducer.reducer,
-          'processing-type': ProcessingTypeStoreReducer.reducer,
-          'event-type': EventTypeStoreReducer.reducer
-        }),
+        StoreModule.forRoot(
+          {
+            'study': StudyStoreReducer.reducer,
+            'processing-type': ProcessingTypeStoreReducer.reducer,
+            'event-type': EventTypeStoreReducer.reducer
+          },
+          NgrxRuntimeChecks),
         ToastrModule.forRoot()
       ],
       declarations: [

@@ -11,7 +11,6 @@ describe('SpecimenViewModalComponent', () => {
   let component: SpecimenViewModalComponent;
   let fixture: ComponentFixture<SpecimenViewModalComponent>;
   const factory = new Factory();
-  let specimen: Specimen;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({

@@ -1,14 +1,11 @@
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { NgZone } from '@angular/core';
-import { TestBed, flush, fakeAsync } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { User } from '@app/domain/users';
-import { UserStoreActions, UserStoreReducer } from '@app/root-store';
-import { Factory } from '@test/factory';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { RootStoreState, UserStoreActions, UserStoreReducer, NgrxRuntimeChecks } from '@app/root-store';
 import { Store, StoreModule } from '@ngrx/store';
-import { cold, getTestScheduler } from 'jasmine-marbles';
+import { Factory } from '@test/factory';
+import { cold } from 'jasmine-marbles';
 import { UserResolver } from './user-resolver.service';
 
 describe('UserResolver', () => {
@@ -21,9 +18,11 @@ describe('UserResolver', () => {
     TestBed.configureTestingModule({
       imports: [
         RouterTestingModule,
-        StoreModule.forRoot({
-          'user': UserStoreReducer.reducer
-        })
+        StoreModule.forRoot(
+          {
+            'user': UserStoreReducer.reducer
+          },
+          NgrxRuntimeChecks)
       ]
     });
 

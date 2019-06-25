@@ -3,7 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { Study } from '@app/domain/studies';
-import { EventTypeStoreActions, EventTypeStoreReducer, ProcessingTypeStoreActions, ProcessingTypeStoreReducer, StudyStoreReducer } from '@app/root-store';
+import { EventTypeStoreActions, EventTypeStoreReducer, NgrxRuntimeChecks, ProcessingTypeStoreActions, ProcessingTypeStoreReducer, RootStoreState, StudyStoreReducer } from '@app/root-store';
 import { NgbActiveModal, NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
@@ -25,11 +25,13 @@ describe('ProcessingInputSpecimenModalComponent', () => {
         FormsModule,
         NgbModule,
         ReactiveFormsModule,
-        StoreModule.forRoot({
-          'study': StudyStoreReducer.reducer,
-          'processing-type': ProcessingTypeStoreReducer.reducer,
-          'event-type': EventTypeStoreReducer.reducer
-        })
+        StoreModule.forRoot(
+          {
+            'study': StudyStoreReducer.reducer,
+            'processing-type': ProcessingTypeStoreReducer.reducer,
+            'event-type': EventTypeStoreReducer.reducer
+          },
+          NgrxRuntimeChecks)
       ],
       providers: [
         NgbModal,

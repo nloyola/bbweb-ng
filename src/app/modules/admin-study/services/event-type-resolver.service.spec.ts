@@ -4,7 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { ActivatedRouteSnapshot, convertToParamMap } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CollectionEventType, Study } from '@app/domain/studies';
-import { EventTypeStoreActions, EventTypeStoreReducer } from '@app/root-store';
+import { EventTypeStoreActions, EventTypeStoreReducer, RootStoreState, NgrxRuntimeChecks } from '@app/root-store';
 import { Factory } from '@test/factory';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
@@ -24,9 +24,11 @@ describe('EventTypeResolver', () => {
         HttpClientTestingModule,
         NgbModule,
         RouterTestingModule,
-        StoreModule.forRoot({
-          'event-type': EventTypeStoreReducer.reducer
-        })
+        StoreModule.forRoot(
+          {
+            'event-type': EventTypeStoreReducer.reducer
+          },
+          NgrxRuntimeChecks)
       ]
     });
 

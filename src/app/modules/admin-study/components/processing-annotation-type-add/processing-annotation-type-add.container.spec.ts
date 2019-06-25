@@ -1,17 +1,18 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { ProcessingAnnotationTypeAddContainerComponent } from './processing-annotation-type-add.container';
 import { CUSTOM_ELEMENTS_SCHEMA, NgZone } from '@angular/core';
-import { RouterTestingModule } from '@angular/router/testing';
-import { StoreModule, Store } from '@ngrx/store';
-import { ProcessingTypeStoreReducer, StudyStoreReducer, ProcessingTypeStoreActions, RootStoreState } from '@app/root-store';
-import { ToastrModule, ToastrService } from 'ngx-toastr';
-import { MockActivatedRoute } from '@test/mocks';
-import { Study, ProcessingType } from '@app/domain/studies';
-import { Factory } from '@test/factory';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
 import { AnnotationType } from '@app/domain/annotations';
+import { ProcessingType, Study } from '@app/domain/studies';
+import { ProcessingTypeStoreActions, ProcessingTypeStoreReducer, RootStoreState, StudyStoreReducer } from '@app/root-store';
+import { NgrxRuntimeChecks } from '@app/root-store/root-store.module';
+import { Store, StoreModule } from '@ngrx/store';
+import { Factory } from '@test/factory';
+import { MockActivatedRoute } from '@test/mocks';
 import { cold } from 'jasmine-marbles';
+import { ToastrModule, ToastrService } from 'ngx-toastr';
+import { ProcessingAnnotationTypeAddContainerComponent } from './processing-annotation-type-add.container';
+
 
 describe('ProcessingAnnotationTypeAddContainerComponent', () => {
   let component: ProcessingAnnotationTypeAddContainerComponent;
@@ -27,10 +28,12 @@ describe('ProcessingAnnotationTypeAddContainerComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         RouterTestingModule,
-        StoreModule.forRoot({
-          'study': StudyStoreReducer.reducer,
-          'processing-type': ProcessingTypeStoreReducer.reducer
-        }),
+        StoreModule.forRoot(
+          {
+            'study': StudyStoreReducer.reducer,
+            'processing-type': ProcessingTypeStoreReducer.reducer
+          },
+          NgrxRuntimeChecks),
         ToastrModule.forRoot()
       ],
       providers: [

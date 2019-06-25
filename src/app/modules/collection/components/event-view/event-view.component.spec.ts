@@ -128,7 +128,8 @@ describe('EventViewComponent', () => {
       context.fixture = fixture;
       context.componentInitialize = () => { dispatchEntities(entities); };
       context.componentValidateInitialization = () => undefined;
-      context.dispatchSuccessAction = () => { store.dispatch(EventStoreActions.updateEventSuccess({ event })); };
+      context.dispatchSuccessAction =
+        () => { store.dispatch(EventStoreActions.updateEventSuccess({ event })); };
       context.createExpectedFailureAction =
         (error) => EventStoreActions.updateEventFailure({ error });
       context.duplicateAttibuteValueError = 'visit number already exists';
@@ -228,7 +229,7 @@ describe('EventViewComponent', () => {
 
   describe('when removing an event', () => {
 
-    let modalService : NgbModal;
+    let modalService: NgbModal;
 
     beforeEach(() => {
       modalService = TestBed.get(NgbModal);

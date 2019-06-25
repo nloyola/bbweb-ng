@@ -1,18 +1,17 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, fakeAsync, flush, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { RoleStoreActions, RoleStoreReducer } from '@app/root-store';
+import { SearchFilterValues, SearchParams } from '@app/domain';
+import { Role } from '@app/domain/access';
+import { NgrxRuntimeChecks, RoleStoreActions, RoleStoreReducer, RootStoreState } from '@app/root-store';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { TruncatePipe } from '@app/shared/pipes';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
 import { RolesViewComponent } from './roles-view.component';
-import { SearchFilterValues, SearchParams } from '@app/domain';
-import { Role } from '@app/domain/access';
-import { By } from '@angular/platform-browser';
 
 describe('RolesViewComponent', () => {
   let component: RolesViewComponent;
@@ -28,10 +27,12 @@ describe('RolesViewComponent', () => {
         ReactiveFormsModule,
         NgbModule,
         RouterTestingModule,
-        StoreModule.forRoot({
-          'role': RoleStoreReducer.reducer,
-          'spinner': SpinnerStoreReducer.reducer
-        })
+        StoreModule.forRoot(
+          {
+            'role': RoleStoreReducer.reducer,
+            'spinner': SpinnerStoreReducer.reducer
+          },
+          NgrxRuntimeChecks)
       ],
       declarations: [
         RolesViewComponent,

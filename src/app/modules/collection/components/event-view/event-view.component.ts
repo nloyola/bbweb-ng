@@ -75,7 +75,10 @@ export class EventViewComponent implements OnInit, OnDestroy {
          events, eventTypes, specimens
       }));
 
-    this.entities$ = combineLatest([ this.route.parent.data, this.store$.pipe(select(entitiesSelector)) ]).pipe(
+    this.entities$ = combineLatest([
+      this.route.parent.data,
+      this.store$.pipe(select(entitiesSelector))
+    ]).pipe(
       map(([ routeData, entities ]) => {
         const event = entities.events[routeData.event.id];
         const eventType = entities.eventTypes[routeData.event.eventTypeId];

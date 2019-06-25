@@ -1,12 +1,12 @@
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { ProcessingTypeInformationSubformComponent } from './processing-type-information-subform.component';
-import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core';
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
-import { StoreModule } from '@ngrx/store';
-import { ProcessingTypeStoreReducer } from '@app/root-store';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ProcessingType } from '@app/domain/studies';
+import { ProcessingTypeStoreReducer } from '@app/root-store';
+import { NgrxRuntimeChecks } from '@app/root-store/root-store.module';
+import { StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
+import { ProcessingTypeInformationSubformComponent } from './processing-type-information-subform.component';
 
 describe('ProcessingTypeInformationSubformComponent', () => {
 
@@ -45,9 +45,10 @@ describe('ProcessingTypeInformationSubformComponent', () => {
       imports: [
         FormsModule,
         ReactiveFormsModule,
-        StoreModule.forRoot({
-          'processing-type': ProcessingTypeStoreReducer.reducer
-        })
+        StoreModule.forRoot(
+          { 'processing-type': ProcessingTypeStoreReducer.reducer },
+          NgrxRuntimeChecks
+        )
       ],
       declarations: [
         TestComponent,

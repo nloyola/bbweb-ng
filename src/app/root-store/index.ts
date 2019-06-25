@@ -17,3 +17,4 @@ export * from './specimen';
 export * from './spinner';
 export * from './study';
 export * from './user';
+export * from './root-store.module';

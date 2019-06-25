@@ -5,11 +5,13 @@ import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { RoleIds } from '@app/domain/access';
 import { User } from '@app/domain/users';
+import { RootStoreState } from '@app/root-store';
 import { AuthStoreActions, AuthStoreReducer } from '@app/root-store/auth-store';
+import { NgrxRuntimeChecks } from '@app/root-store/root-store.module';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
-import { Factory } from '@test/factory';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
+import { Factory } from '@test/factory';
 import { LoginComponent } from './login.component';
 
 describe('LoginComponent', () => {
@@ -29,10 +31,13 @@ describe('LoginComponent', () => {
         ReactiveFormsModule,
         NgbModule,
         RouterTestingModule,
-        StoreModule.forRoot({
-          'auth': AuthStoreReducer.reducer,
-          'spinner': SpinnerStoreReducer.reducer
-        })
+        StoreModule.forRoot(
+          {
+            'auth': AuthStoreReducer.reducer,
+            'spinner': SpinnerStoreReducer.reducer
+          },
+          NgrxRuntimeChecks
+        )
       ],
       declarations: [LoginComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]

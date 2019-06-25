@@ -66,7 +66,7 @@ export class CentreStoreEffects {
 
   @Effect()
   countsRequest$: Observable<Action> = this.actions$.pipe(
-    ofType(CentreActions.getCentreCountsRequest.type),
+    ofType(CentreActions.ActionTypes.GetCentreCountsRequest),
     switchMap(
       () =>
         this.centreService.counts()

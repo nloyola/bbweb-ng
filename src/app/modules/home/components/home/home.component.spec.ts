@@ -1,12 +1,13 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { Store, StoreModule } from '@ngrx/store';
-import { HomeComponent } from './home.component';
-import { User } from '@app/domain/users';
 import { RoleIds, UserRole } from '@app/domain/access';
+import { User } from '@app/domain/users';
+import { RootStoreState, NgrxRuntimeChecks } from '@app/root-store';
 import { AuthStoreActions, AuthStoreReducer } from '@app/root-store/auth-store';
+import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
+import { HomeComponent } from './home.component';
 
 describe('HomeComponent', () => {
   let store: Store<RootStoreState.State>;
@@ -17,9 +18,11 @@ describe('HomeComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [
-        StoreModule.forRoot({
-          'auth': AuthStoreReducer.reducer
-        })
+        StoreModule.forRoot(
+          {
+            'auth': AuthStoreReducer.reducer
+          },
+          NgrxRuntimeChecks)
       ],
       declarations: [HomeComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]

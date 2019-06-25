@@ -1,19 +1,19 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgZone } from '@angular/core';
-import { async, ComponentFixture, TestBed, fakeAsync, flush } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { AnnotationType } from '@app/domain/annotations';
 import { CollectionEventType, Study } from '@app/domain/studies';
-import { EventTypeStoreActions, EventTypeStoreReducer, StudyStoreReducer, StudyStoreActions, RootStoreState } from '@app/root-store';
+import { EventTypeStoreActions, EventTypeStoreReducer, RootStoreState, StudyStoreActions, StudyStoreReducer } from '@app/root-store';
+import { NgrxRuntimeChecks } from '@app/root-store/root-store.module';
 import { AnnotationTypeAddComponent } from '@app/shared/components/annotation-type-add/annotation-type-add.component';
-import { Factory } from '@test/factory';
 import { Store, StoreModule } from '@ngrx/store';
+import { Factory } from '@test/factory';
+import { MockActivatedRoute } from '@test/mocks';
 import { cold } from 'jasmine-marbles';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { CollectionAnnotationTypeAddContainerComponent } from './collection-annotation-type-add.container';
-import { MockActivatedRoute } from '@test/mocks';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('CollectionAnnotationTypeAddContainerComponent', () => {
 
@@ -37,10 +37,12 @@ describe('CollectionAnnotationTypeAddContainerComponent', () => {
         FormsModule,
         ReactiveFormsModule,
         RouterTestingModule,
-        StoreModule.forRoot({
-          'study': StudyStoreReducer.reducer,
-          'event-type': EventTypeStoreReducer.reducer
-        }),
+        StoreModule.forRoot(
+          {
+            'study': StudyStoreReducer.reducer,
+            'event-type': EventTypeStoreReducer.reducer
+          },
+          NgrxRuntimeChecks),
         ToastrModule.forRoot()
       ],
       providers: [

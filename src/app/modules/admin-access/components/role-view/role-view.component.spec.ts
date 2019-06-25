@@ -5,16 +5,14 @@ import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Role } from '@app/domain/access';
 import { User } from '@app/domain/users';
-import { RoleStoreActions, RoleStoreReducer } from '@app/root-store';
+import { RoleStoreActions, RoleStoreReducer, RootStoreState, NgrxRuntimeChecks } from '@app/root-store';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
+import { EntityWithSubEntityBehaviour } from '@test/behaviours/entity-with-sub-entity.behaviour';
 import { Factory } from '@test/factory';
 import { ToastrModule } from 'ngx-toastr';
 import { RoleViewComponent } from './role-view.component';
-import { EntityWithSubEntityBehaviour } from '@test/behaviours/entity-with-sub-entity.behaviour';
-
-// (nl-recompile-mode 1)
 
 describe('RoleViewComponent', () => {
   let component: RoleViewComponent;
@@ -32,10 +30,12 @@ describe('RoleViewComponent', () => {
         ReactiveFormsModule,
         NgbModule,
         RouterTestingModule,
-        StoreModule.forRoot({
-          'role': RoleStoreReducer.reducer,
-          'spinner': SpinnerStoreReducer.reducer
-        }),
+        StoreModule.forRoot(
+          {
+            'role': RoleStoreReducer.reducer,
+            'spinner': SpinnerStoreReducer.reducer
+          },
+          NgrxRuntimeChecks),
         ToastrModule.forRoot()
       ],
       providers: [

@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Study, StudyState, StudyStateInfo } from '@app/domain/studies';
 import { User } from '@app/domain/users';
-import { ParticipantStoreReducer, RootStoreState, StudyStoreActions, StudyStoreReducer } from '@app/root-store';
+import { ParticipantStoreReducer, RootStoreState, StudyStoreActions, StudyStoreReducer, NgrxRuntimeChecks } from '@app/root-store';
 import { AuthStoreActions, AuthStoreReducer } from '@app/root-store/auth-store';
 import { TruncatePipe } from '@app/shared/pipes';
 import { Store, StoreModule } from '@ngrx/store';
@@ -23,18 +23,20 @@ describe('CollectionPageComponent', () => {
   let router: Router;
   const factory = new Factory();
 
-
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
         FormsModule,
         ReactiveFormsModule,
         RouterTestingModule,
-        StoreModule.forRoot({
-          'study': StudyStoreReducer.reducer,
-          'participant': ParticipantStoreReducer.reducer,
-          'auth': AuthStoreReducer.reducer
-        })
+        StoreModule.forRoot(
+          {
+            'study': StudyStoreReducer.reducer,
+            'participant': ParticipantStoreReducer.reducer,
+            'auth': AuthStoreReducer.reducer
+          },
+          NgrxRuntimeChecks
+        )
       ],
       declarations: [
         CollectionPageComponent,

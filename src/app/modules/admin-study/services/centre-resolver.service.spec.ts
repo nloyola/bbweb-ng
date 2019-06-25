@@ -4,10 +4,10 @@ import { TestBed } from '@angular/core/testing';
 import { ActivatedRouteSnapshot } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Centre } from '@app/domain/centres';
-import { CentreStoreActions, CentreStoreReducer } from '@app/root-store';
-import { Factory } from '@test/factory';
+import { CentreStoreActions, CentreStoreReducer, NgrxRuntimeChecks, RootStoreState } from '@app/root-store';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
+import { Factory } from '@test/factory';
 import { cold } from 'jasmine-marbles';
 import { CentreResolver } from './centre-resolver.service';
 
@@ -24,9 +24,11 @@ describe('CentreResolver', () => {
         HttpClientTestingModule,
         NgbModule,
         RouterTestingModule,
-        StoreModule.forRoot({
-          'centre': CentreStoreReducer.reducer
-        })
+        StoreModule.forRoot(
+          {
+            'centre': CentreStoreReducer.reducer
+          },
+          NgrxRuntimeChecks)
       ]
     });
 

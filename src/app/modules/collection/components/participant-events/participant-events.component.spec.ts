@@ -2,15 +2,15 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { Participant, CollectionEvent } from '@app/domain/participants';
-import { EventStoreReducer, ParticipantStoreActions, ParticipantStoreReducer } from '@app/root-store';
+import { CollectionEvent, Participant } from '@app/domain/participants';
+import { EventStoreReducer, ParticipantStoreActions, ParticipantStoreReducer, RootStoreState, NgrxRuntimeChecks } from '@app/root-store';
 import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
 import { MockActivatedRoute } from '@test/mocks';
+import { cold } from 'jasmine-marbles';
 import { ToastrModule } from 'ngx-toastr';
 import { EventAddSelectComponent } from '../event-add-select/event-add-select.component';
 import { ParticipantEventsComponent } from './participant-events.component';
-import { cold } from 'jasmine-marbles';
 
 describe('ParticipantEventsComponent', () => {
   let component: ParticipantEventsComponent;
@@ -24,10 +24,12 @@ describe('ParticipantEventsComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         RouterTestingModule,
-        StoreModule.forRoot({
-          'participant': ParticipantStoreReducer.reducer,
-          'event': EventStoreReducer.reducer
-        }),
+        StoreModule.forRoot(
+          {
+            'participant': ParticipantStoreReducer.reducer,
+            'event': EventStoreReducer.reducer
+          },
+          NgrxRuntimeChecks),
         ToastrModule.forRoot()
       ],
       providers: [
@@ -90,15 +92,15 @@ describe('ParticipantEventsComponent', () => {
     expect(routerListener.mock.calls[0][0]).toEqual([ event.visitNumber ]);
   });
 
-  function mockActivatedRouteSnapshot(participant: Participant): void {
+  function mockActivatedRouteSnapshot(p: Participant): void {
     mockActivatedRoute.spyOnParent(() => ({
       parent: {
         snapshot: {
           data: {
-            participant
+            participant: p
           },
           params: {
-            slug: participant.slug
+            slug: p.slug
           }
         }
       }

@@ -3,6 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { UserStoreReducer } from '@app/root-store';
 import { StoreModule } from '@ngrx/store';
 import { UsersAdminComponent } from './users-admin.component';
+import { NgrxRuntimeChecks } from '@app/root-store/root-store.module';
 
 describe('UsersAdminComponent', () => {
   let component: UsersAdminComponent;
@@ -11,9 +12,11 @@ describe('UsersAdminComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
-        StoreModule.forRoot({
-          'user': UserStoreReducer.reducer
-        })
+        StoreModule.forRoot(
+          {
+            'user': UserStoreReducer.reducer
+          },
+          NgrxRuntimeChecks)
       ],
       declarations: [ UsersAdminComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]

@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { RoleIds, UserRole } from '@app/domain/access';
 import { User } from '@app/domain/users';
+import { RootStoreState, NgrxRuntimeChecks } from '@app/root-store';
 import { AuthStoreActions, AuthStoreReducer } from '@app/root-store/auth-store';
 import { Store, StoreModule } from '@ngrx/store';
 import { AdminComponent } from './admin.component';
@@ -15,9 +16,11 @@ describe('AdminComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [
-        StoreModule.forRoot({
-          'auth': AuthStoreReducer.reducer
-        })
+        StoreModule.forRoot(
+          {
+            'auth': AuthStoreReducer.reducer
+          },
+          NgrxRuntimeChecks)
       ],
       declarations: [AdminComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
