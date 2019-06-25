@@ -70,7 +70,7 @@ describe('CentreLocationAddComponent', () => {
     const centre = createCentre();
     mockActivatedRouteSnapshot('add', centre);
 
-    store.dispatch(new CentreStoreActions.GetCentreSuccess({ centre }));
+    store.dispatch(CentreStoreActions.getCentreSuccess({ centre }));
 
     fixture.detectChanges();
     expect(component.centre).toEqual(centre);
@@ -80,7 +80,7 @@ describe('CentreLocationAddComponent', () => {
 
     it('on valid submission', async(() => {
       const centre = createCentre();
-      const expectedAction = new CentreStoreActions.UpdateCentreRequest({
+      const expectedAction = CentreStoreActions.updateCentreRequest({
         centre,
         attributeName: 'locationAdd',
         value: centre.locations[0]
@@ -91,13 +91,13 @@ describe('CentreLocationAddComponent', () => {
       const spy = jest.spyOn(router, 'navigate');
 
       mockActivatedRouteSnapshot('add', centre);
-      store.dispatch(new CentreStoreActions.GetCentreSuccess({ centre }));
+      store.dispatch(CentreStoreActions.getCentreSuccess({ centre }));
       fixture.detectChanges();
 
       component.onSubmit(centre.locations[0]);
       expect(store.dispatch).toHaveBeenCalledWith(expectedAction);
 
-      ngZone.run(() => store.dispatch(new CentreStoreActions.UpdateCentreSuccess({ centre })));
+      ngZone.run(() => store.dispatch(CentreStoreActions.updateCentreSuccess({ centre })));
 
       fixture.whenStable().then(() => {
         expect(store.dispatch).toHaveBeenCalled();
@@ -139,13 +139,13 @@ describe('CentreLocationAddComponent', () => {
         component.ngOnInit();
         routerListener.mockClear();
 
-        store.dispatch(new CentreStoreActions.GetCentreSuccess({ centre }));
+        store.dispatch(CentreStoreActions.getCentreSuccess({ centre }));
         fixture.detectChanges();
 
         errors.forEach(error => {
           component.onSubmit(centre.locations[0]);
 
-          store.dispatch(new CentreStoreActions.GetCentreFailure({ error }));
+          store.dispatch(CentreStoreActions.getCentreFailure({ error }));
           flush();
           fixture.detectChanges();
 

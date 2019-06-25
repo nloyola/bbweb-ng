@@ -15,7 +15,7 @@ export class CentreResolver implements Resolve<Centre> {
 
   resolve(route: ActivatedRouteSnapshot, _state: RouterStateSnapshot): Observable<Centre> {
     const slug = route.paramMap.get('slug');
-    this.store$.dispatch(new CentreStoreActions.GetCentreRequest({ slug }));
+    this.store$.dispatch(CentreStoreActions.getCentreRequest({ slug }));
 
     return race<any>(
       this.store$.pipe(

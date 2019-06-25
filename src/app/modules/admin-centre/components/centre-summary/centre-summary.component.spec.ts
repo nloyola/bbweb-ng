@@ -88,7 +88,7 @@ describe('CentreSummaryComponent', () => {
   });
 
   it('navigates to new path when centre name is changed', fakeAsync(() => {
-    store.dispatch(new CentreStoreActions.GetCentreSuccess({ centre }));
+    store.dispatch(CentreStoreActions.getCentreSuccess({ centre }));
     flush();
     fixture.detectChanges();
 
@@ -104,7 +104,7 @@ describe('CentreSummaryComponent', () => {
     flush();
     fixture.detectChanges();
 
-    store.dispatch(new CentreStoreActions.UpdateCentreSuccess({ centre: centreWithNewName }));
+    store.dispatch(CentreStoreActions.updateCentreSuccess({ centre: centreWithNewName }));
     flush();
     fixture.detectChanges();
 
@@ -119,12 +119,12 @@ describe('CentreSummaryComponent', () => {
     beforeEach(() => {
       context.fixture = fixture;
       context.componentInitialize =
-        () => { store.dispatch(new CentreStoreActions.GetCentreSuccess({ centre })); };
+        () => { store.dispatch(CentreStoreActions.getCentreSuccess({ centre })); };
       context.componentValidateInitialization = () => undefined;
       context.dispatchSuccessAction =
-        () => { store.dispatch(new CentreStoreActions.UpdateCentreSuccess({ centre })); };
+        () => { store.dispatch(CentreStoreActions.updateCentreSuccess({ centre })); };
       context.createExpectedFailureAction =
-        (error) => new CentreStoreActions.UpdateCentreFailure({ error });
+        (error) => CentreStoreActions.updateCentreFailure({ error });
       context.duplicateAttibuteValueError = 'name already used';
     });
 
@@ -141,13 +141,13 @@ describe('CentreSummaryComponent', () => {
           name: newName
         });
 
-        context.expectedSuccessAction = new CentreStoreActions.UpdateCentreRequest({
+        context.expectedSuccessAction = CentreStoreActions.updateCentreRequest({
           centre,
           attributeName: 'name',
           value: newName
         });
         context.dispatchSuccessAction = () => {
-          store.dispatch(new CentreStoreActions.UpdateCentreSuccess({ centre: centreWithUpdatedSlug }));
+          store.dispatch(CentreStoreActions.updateCentreSuccess({ centre: centreWithUpdatedSlug }));
         };
       });
 
@@ -162,7 +162,7 @@ describe('CentreSummaryComponent', () => {
         context.modalReturnValue = { result: Promise.resolve(newValue) };
         context.updateEntity = () => { component.updateDescription(); };
 
-        context.expectedSuccessAction = new CentreStoreActions.UpdateCentreRequest({
+        context.expectedSuccessAction = CentreStoreActions.updateCentreRequest({
           centre,
           attributeName: 'description',
           value: newValue
@@ -178,7 +178,7 @@ describe('CentreSummaryComponent', () => {
       beforeEach(() => {
         const newValue = 'disable';
         context.updateEntity = () => { component.disable(); };
-        context.expectedSuccessAction = new CentreStoreActions.UpdateCentreRequest({
+        context.expectedSuccessAction = CentreStoreActions.updateCentreRequest({
           centre,
           attributeName: 'state',
           value: newValue
@@ -194,7 +194,7 @@ describe('CentreSummaryComponent', () => {
       beforeEach(() => {
         const newValue = 'enable';
         context.updateEntity = () => { component.enable(); };
-        context.expectedSuccessAction = new CentreStoreActions.UpdateCentreRequest({
+        context.expectedSuccessAction = CentreStoreActions.updateCentreRequest({
           centre,
           attributeName: 'state',
           value: newValue
@@ -230,7 +230,7 @@ describe('CentreSummaryComponent', () => {
 
       const modalListener = jest.spyOn(modalService, 'open');
 
-      ngZone.run(() => store.dispatch(new CentreStoreActions.GetCentreSuccess({ centre })));
+      ngZone.run(() => store.dispatch(CentreStoreActions.getCentreSuccess({ centre })));
       fixture.detectChanges();
 
       const storeListener = jest.spyOn(store, 'dispatch');
@@ -245,7 +245,7 @@ describe('CentreSummaryComponent', () => {
         tick(1000);
 
         expect(storeListener.mock.calls.length).toBe(index + 1);
-        expect(storeListener.mock.calls[index][0]).toEqual(new CentreStoreActions.UpdateCentreRequest({
+        expect(storeListener.mock.calls[index][0]).toEqual(CentreStoreActions.updateCentreRequest({
           centre,
           attributeName: testInfo.attribute as CentreUpdateAttribute,
           value: testInfo.value
@@ -264,7 +264,7 @@ describe('CentreSummaryComponent', () => {
         result: Promise.resolve('test')
       } as any);
 
-      ngZone.run(() => store.dispatch(new CentreStoreActions.GetCentreSuccess({ centre })));
+      ngZone.run(() => store.dispatch(CentreStoreActions.getCentreSuccess({ centre })));
       fixture.detectChanges();
 
       const componentUpdateFuncs = [
@@ -277,7 +277,7 @@ describe('CentreSummaryComponent', () => {
         fixture.detectChanges();
         tick(1000);
         expect(store.dispatch).toHaveBeenCalled();
-        ngZone.run(() => store.dispatch(new CentreStoreActions.UpdateCentreSuccess({ centre })));
+        ngZone.run(() => store.dispatch(CentreStoreActions.updateCentreSuccess({ centre })));
         tick(1000);
       });
 
@@ -286,7 +286,7 @@ describe('CentreSummaryComponent', () => {
     }));
 
     it('functions that change the centre state', fakeAsync(() => {
-      ngZone.run(() => store.dispatch(new CentreStoreActions.GetCentreSuccess({ centre })));
+      ngZone.run(() => store.dispatch(CentreStoreActions.getCentreSuccess({ centre })));
       fixture.detectChanges();
 
       const testData = [
@@ -301,7 +301,7 @@ describe('CentreSummaryComponent', () => {
         tick(1000);
 
         expect(storeListener.mock.calls.length).toBe(index + 1);
-        expect(storeListener.mock.calls[index][0]).toEqual(new CentreStoreActions.UpdateCentreRequest({
+        expect(storeListener.mock.calls[index][0]).toEqual(CentreStoreActions.updateCentreRequest({
           centre,
           attributeName: 'state',
           value: testInfo.value

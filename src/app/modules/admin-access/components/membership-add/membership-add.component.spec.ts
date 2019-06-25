@@ -86,7 +86,7 @@ describe('MembershipAddComponent', () => {
       component.description.setValue(membership.description);
       component.onSubmit();
 
-      const expectedAction = new MembershipStoreActions.AddMembershipRequest({
+      const expectedAction = MembershipStoreActions.addMembershipRequest({
         membership: new Membership().deserialize({
           name: membership.name,
           description: membership.description
@@ -96,7 +96,7 @@ describe('MembershipAddComponent', () => {
       expect(storeListener.mock.calls.length).toBe(1);
       expect(storeListener.mock.calls[0][0]).toEqual(expectedAction);
 
-      const action = new MembershipStoreActions.AddMembershipSuccess({ membership });
+      const action = MembershipStoreActions.addMembershipSuccess({ membership });
       store.dispatch(action);
       fixture.detectChanges();
       flush();
@@ -135,7 +135,7 @@ describe('MembershipAddComponent', () => {
         component.description.setValue(membership.description);
         component.onSubmit();
 
-        store.dispatch(new MembershipStoreActions.AddMembershipFailure({ error } as any ));
+        store.dispatch(MembershipStoreActions.addMembershipFailure({ error } as any ));
         flush();
         fixture.detectChanges();
         expect(toastrErrorListener.mock.calls.length).toBe(1);

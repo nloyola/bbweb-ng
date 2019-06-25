@@ -103,7 +103,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     const user = this.userSubject.value.entity;
     this.modalService.open(this.updateNameModal, { size: 'lg' }).result
       .then(value => {
-        this.store$.dispatch(new UserStoreActions.UpdateUserRequest({
+        this.store$.dispatch(UserStoreActions.updateUserRequest({
           user,
           attributeName: 'name',
           value
@@ -117,7 +117,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     const user = this.userSubject.value.entity;
     this.modalService.open(this.updateEmailModal, { size: 'lg' }).result
       .then(value => {
-        this.store$.dispatch(new UserStoreActions.UpdateUserRequest({
+        this.store$.dispatch(UserStoreActions.updateUserRequest({
           user,
           attributeName: 'email',
           value
@@ -131,7 +131,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     const user = this.userSubject.value.entity;
     this.modalService.open(this.updatePasswordModal, { size: 'lg' }).result
       .then(value => {
-        this.store$.dispatch(new UserStoreActions.UpdateUserRequest({
+        this.store$.dispatch(UserStoreActions.updateUserRequest({
           user,
           attributeName: 'password',
           value
@@ -145,7 +145,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     const user = this.userSubject.value.entity;
     this.modalService.open(this.updateAvatarUrlModal, { size: 'lg' }).result
       .then(value => {
-        this.store$.dispatch(new UserStoreActions.UpdateUserRequest({
+        this.store$.dispatch(UserStoreActions.updateUserRequest({
           user,
           attributeName: 'avatarUrl',
           value
@@ -169,7 +169,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
 
   private changeState(action: 'activate' | 'lock' | 'unlock') {
     const user = this.userSubject.value.entity;
-    this.store$.dispatch(new UserStoreActions.UpdateUserRequest({
+    this.store$.dispatch(UserStoreActions.updateUserRequest({
       user,
       attributeName: 'state',
       value: action

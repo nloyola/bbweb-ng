@@ -80,7 +80,7 @@ export class CentreAddComponent implements OnInit, OnDestroy {
 
   onSubmit() {
     const centre = new Centre().deserialize(this.form.value);
-    this.store$.dispatch(new CentreStoreActions.AddCentreRequest({ centre }));
+    this.store$.dispatch(CentreStoreActions.addCentreRequest({ centre }));
   }
 
   onCancel() {

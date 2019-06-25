@@ -1,7 +1,7 @@
 import { PagedReplyEntityIds, SearchParams } from '@app/domain';
 import { Membership } from '@app/domain/access';
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity';
-import { MembershipActions, MembershipActionTypes } from './membership.actions';
+import * as MembershipActions from './membership.actions';
 
 export interface State extends EntityState<Membership> {
   lastAddedId: string;
@@ -21,38 +21,38 @@ export const initialState: State = adapter.getInitialState({
   searchReplies: {}
 });
 
-export function reducer(state = initialState, action: MembershipActions): State {
+export function reducer(state = initialState, action: MembershipActions.MembershipActionsUnion): State {
   switch (action.type) {
-    case MembershipActionTypes.AddMembershipRequest: {
+    case MembershipActions.addMembershipRequest.type: {
       return {
         ...state,
         error: null
       };
     }
 
-    case MembershipActionTypes.SearchMembershipsRequest: {
+    case MembershipActions.searchMembershipsRequest.type: {
       return {
         ...state,
-        lastSearch: action.payload.searchParams,
+        lastSearch: action.searchParams,
         searchActive: true,
         error: null
       };
     }
 
-    case MembershipActionTypes.SearchMembershipsFailure: {
+    case MembershipActions.searchMembershipsFailure.type: {
       return {
         ...state,
         lastSearch: null,
         searchActive: false,
         error: {
-          type: MembershipActionTypes.SearchMembershipsFailure,
-          error: action.payload.error
+          actionType: MembershipActions.searchMembershipsFailure.type,
+          error: action.error
         }
       };
     }
 
-    case MembershipActionTypes.SearchMembershipsSuccess: {
-      const pagedReply = action.payload.pagedReply;
+    case MembershipActions.searchMembershipsSuccess.type: {
+      const pagedReply = action.pagedReply;
       const queryString = state.lastSearch.queryString();
       const newReply = {};
       newReply[queryString] = {
@@ -73,7 +73,7 @@ export function reducer(state = initialState, action: MembershipActions): State 
       });
     }
 
-    case MembershipActionTypes.AddMembershipRequest: {
+    case MembershipActions.addMembershipRequest.type: {
       return {
         ...state,
         lastAddedId: null,
@@ -81,40 +81,40 @@ export function reducer(state = initialState, action: MembershipActions): State 
       };
     }
 
-    case MembershipActionTypes.AddMembershipSuccess: {
-      return adapter.addOne(action.payload.membership, {
+    case MembershipActions.addMembershipSuccess.type: {
+      return adapter.addOne(action.membership, {
         ...state,
-        lastAddedId: action.payload.membership.id
+        lastAddedId: action.membership.id
       });
     }
 
-    case MembershipActionTypes.UpdateMembershipSuccess: {
-      return adapter.upsertOne(action.payload.membership, state);
+    case MembershipActions.updateMembershipSuccess.type: {
+      return adapter.upsertOne(action.membership, state);
     }
 
-    case MembershipActionTypes.GetMembershipRequest: {
+    case MembershipActions.getMembershipRequest.type: {
       return {
         ...state,
         lastAddedId: null
       };
     }
 
-    case MembershipActionTypes.GetMembershipSuccess: {
-      return adapter.addOne(action.payload.membership, state);
+    case MembershipActions.getMembershipSuccess.type: {
+      return adapter.addOne(action.membership, state);
     }
 
-    case MembershipActionTypes.RemoveMembershipSuccess: {
-      return adapter.removeOne(action.payload.membershipId, state);
+    case MembershipActions.removeMembershipSuccess.type: {
+      return adapter.removeOne(action.membershipId, state);
     }
 
-    case MembershipActionTypes.GetMembershipFailure:
-    case MembershipActionTypes.AddMembershipFailure:
-    case MembershipActionTypes.UpdateMembershipFailure:
-    case MembershipActionTypes.RemoveMembershipFailure:
+    case MembershipActions.getMembershipFailure.type:
+    case MembershipActions.addMembershipFailure.type:
+    case MembershipActions.updateMembershipFailure.type:
+    case MembershipActions.removeMembershipFailure.type:
       return {
         ...state,
         error: {
-          error: action.payload.error,
+          error: action.error,
           actionType: action.type
         }
       };

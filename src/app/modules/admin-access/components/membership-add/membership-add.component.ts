@@ -80,7 +80,7 @@ export class MembershipAddComponent implements OnInit, OnDestroy {
 
   onSubmit() {
     const membership = new Membership().deserialize(this.form.value);
-    this.store$.dispatch(new MembershipStoreActions.AddMembershipRequest({ membership }));
+    this.store$.dispatch(MembershipStoreActions.addMembershipRequest({ membership }));
   }
 
   onCancel() {

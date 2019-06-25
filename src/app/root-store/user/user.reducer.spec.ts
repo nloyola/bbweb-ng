@@ -21,7 +21,7 @@ describe('User Reducer', () => {
   describe('for user counts', () => {
 
     it('GetUserCountsRequest', () => {
-      const action = new UserStoreActions.GetUserCountsRequest();
+      const action = UserStoreActions.getUserCountsRequest();
       const state = UserStoreReducer.reducer(undefined, action);
 
       expect(state).toEqual({
@@ -31,7 +31,7 @@ describe('User Reducer', () => {
 
     it('GetUserCountsSuccess', () => {
       const userCounts = factory.userCounts();
-      const action = new UserStoreActions.GetUserCountsSuccess({ userCounts });
+      const action = UserStoreActions.getUserCountsSuccess({ userCounts });
       const state = UserStoreReducer.reducer(undefined, action);
 
       expect(state).toEqual({
@@ -49,14 +49,14 @@ describe('User Reducer', () => {
           }
         }
       };
-      const action = new UserStoreActions.GetUserCountsFailure(payload);
+      const action = UserStoreActions.getUserCountsFailure(payload);
       const state = UserStoreReducer.reducer(undefined, action);
 
       expect(state).toEqual({
         ...UserStoreReducer.initialState,
         error: {
           actionType: action.type,
-          error: action.payload.error
+          error: action.error
         }
       });
     });
@@ -69,7 +69,7 @@ describe('User Reducer', () => {
       const payload = {
         searchParams: new SearchParams()
       };
-      const action = new UserStoreActions.SearchUsersRequest(payload);
+      const action = UserStoreActions.searchUsersRequest(payload);
       const state = UserStoreReducer.reducer(undefined, action);
 
       expect(state).toEqual({
@@ -84,7 +84,7 @@ describe('User Reducer', () => {
       const payload = {
         pagedReply: factory.pagedReply<User>([ user ])
       };
-      const action = new UserStoreActions.SearchUsersSuccess(payload);
+      const action = UserStoreActions.searchUsersSuccess(payload);
       const state = UserStoreReducer.reducer(
         {
           ...UserStoreReducer.initialState,
@@ -116,15 +116,15 @@ describe('User Reducer', () => {
           }
         }
       };
-      const action = new UserStoreActions.SearchUsersFailure(payload);
+      const action = UserStoreActions.searchUsersFailure(payload);
       const state = UserStoreReducer.reducer(undefined, action);
 
       expect(state).toEqual({
         ...UserStoreReducer.initialState,
         lastSearch: null,
         error: {
-          type: action.type,
-          error: action.payload.error
+          actionType: action.type,
+          error: action.error
         }
       });
     });
@@ -135,7 +135,7 @@ describe('User Reducer', () => {
 
     it('UpdateUserRequest', () => {
       const user = new User().deserialize(factory.user());
-      const action = new UserStoreActions.UpdateUserRequest({
+      const action = UserStoreActions.updateUserRequest({
         user,
         attributeName: 'name',
         value: factory.stringNext()
@@ -149,7 +149,7 @@ describe('User Reducer', () => {
 
     it('UpdateUserSuccess', () => {
       const user = new User().deserialize(factory.user());
-      const action = new UserStoreActions.UpdateUserSuccess({ user });
+      const action = UserStoreActions.updateUserSuccess({ user });
       const state = UserStoreReducer.reducer(undefined, action);
 
       expect(state.error).toBeNull();
@@ -166,7 +166,7 @@ describe('User Reducer', () => {
           }
         }
       };
-      const action = new UserStoreActions.UpdateUserFailure(payload);
+      const action = UserStoreActions.updateUserFailure(payload);
       const state = UserStoreReducer.reducer(undefined, action);
 
       expect(state).toEqual({
@@ -174,7 +174,7 @@ describe('User Reducer', () => {
         lastSearch: null,
         error: {
           actionType: action.type,
-          error: action.payload.error
+          error: action.error
         }
       });
     });
@@ -186,7 +186,7 @@ describe('User Reducer', () => {
     it('GetUserRequest', () => {
       const user = factory.user();
       const payload = { slug: user.slug };
-      const action = new UserStoreActions.GetUserRequest(payload);
+      const action = UserStoreActions.getUserRequest(payload);
       const state = UserStoreReducer.reducer(undefined, action);
 
       expect(state).toEqual({
@@ -197,7 +197,7 @@ describe('User Reducer', () => {
     it('GetUserSuccess', () => {
       const user = new User().deserialize(factory.user());
       const payload = { user };
-      const action = new UserStoreActions.GetUserSuccess(payload);
+      const action = UserStoreActions.getUserSuccess(payload);
       const state = UserStoreReducer.reducer(undefined, action);
 
       expect(state.ids).toContain(user.id);
@@ -213,7 +213,7 @@ describe('User Reducer', () => {
           }
         }
       };
-      const action = new UserStoreActions.GetUserFailure(payload);
+      const action = UserStoreActions.getUserFailure(payload);
       const state = UserStoreReducer.reducer(undefined, action);
 
       expect(state).toEqual({
@@ -221,7 +221,7 @@ describe('User Reducer', () => {
         lastSearch: null,
         error: {
           actionType: action.type,
-          error: action.payload.error
+          error: action.error
         }
       });
     });

@@ -4,128 +4,84 @@ import { UserCounts } from '@app/domain/users/user-counts.model';
 import { SearchParams, PagedReply } from '@app/domain';
 import { User } from '@app/domain/users';
 import { UserUpdateAttribute, PasswordUpdateValues } from '@app/core/services';
+import { props, createAction, union } from '@ngrx/store';
 
-// TODO: Update to use createAction introduced in NGRX 7.4
+export const getUserCountsRequest = createAction(
+  '[User] Get User Count Request',
+);
 
-interface UserUpdateRequestPayload {
-  user: User;
-  attributeName: UserUpdateAttribute;
-  value: string | PasswordUpdateValues;
-}
+export const getUserCountsSuccess = createAction(
+  '[Centre] Get Centre Count Request',
+  props<{ userCounts: UserCounts }>()
+);
 
-export enum UserActionTypes {
-  GetUserCountsRequest = '[User] Get User Count Request',
-  GetUserCountsSuccess = '[User] Get User Count Success',
-  GetUserCountsFailure = '[User] Get User Count Failure',
+export const getUserCountsFailure = createAction(
+  '[Centre] Get Centre Count Failure',
+  props<{ error: any }>()
+);
 
-  SearchUsersRequest = '[User] Search Users Request',
-  SearchUsersSuccess = '[User] Search Users Success',
-  SearchUsersFailure = '[Users] Search Users Failure',
+export const searchUsersRequest = createAction(
+  '[User] Search Users Request',
+  props<{ searchParams: SearchParams }>()
+);
 
-  /*
-   * Adding users done with auth-store
-   */
+export const searchUsersSuccess = createAction(
+  '[User] Search Users Success',
+  props<{ pagedReply: PagedReply<User> }>()
+);
 
-  GetUserRequest = '[User] Get User Request',
-  GetUserSuccess = '[User] Get User Success',
-  GetUserFailure = '[User] Get User Failure',
+export const searchUsersFailure = createAction(
+  '[User] Search Users Failure',
+  props<{ error: any }>()
+);
 
-  UpdateUserRequest = '[User] Update User Request',
-  UpdateUserSuccess = '[User] Update User Success',
-  UpdateUserFailure = '[User] Update User Failure',
+export const getUserRequest = createAction(
+  '[User] Get User Request',
+  props<{ slug: string }>()
+);
 
-}
+export const getUserSuccess = createAction(
+  '[User] Get User Success',
+  props<{ user: User }>()
+);
 
-@ShowSpinner()
-export class GetUserCountsRequest implements Action {
-  readonly type = UserActionTypes.GetUserCountsRequest;
-}
+export const getUserFailure = createAction(
+  '[User] Get User Failure',
+  props<{ error: any }>()
+);
 
-/* tslint:disable:max-classes-per-file */
-@HideSpinner(UserActionTypes.GetUserCountsRequest)
-export class GetUserCountsSuccess implements Action {
-  readonly type = UserActionTypes.GetUserCountsSuccess;
+export const updateUserRequest = createAction(
+  '[User] Update User Request',
+  props<{ 
+    user: User;
+    attributeName: UserUpdateAttribute;
+    value: string | PasswordUpdateValues;
+  }>()
+);
 
-  constructor(public payload: { userCounts: UserCounts }) { }
-}
+export const updateUserSuccess = createAction(
+  '[User] Update User Success',
+  props<{ user: User }>()
+);
 
-@HideSpinner(UserActionTypes.GetUserCountsRequest)
-export class GetUserCountsFailure implements Action {
-  readonly type = UserActionTypes.GetUserCountsFailure;
+export const updateUserFailure = createAction(
+  '[User] Update User Failure',
+  props<{ error: any }>()
+);
 
-  constructor(public payload: { error: any }) { }
-}
 
-export class SearchUsersRequest implements Action {
-  readonly type = UserActionTypes.SearchUsersRequest;
-
-  constructor(public payload: { searchParams: SearchParams }) { }
-}
-
-export class SearchUsersSuccess implements Action {
-  readonly type = UserActionTypes.SearchUsersSuccess;
-
-  constructor(public payload: { pagedReply: PagedReply<User> }) { }
-}
-
-export class SearchUsersFailure implements Action {
-  readonly type = UserActionTypes.SearchUsersFailure;
-
-  constructor(public payload: { error: any }) { }
-}
-
-@ShowSpinner()
-export class GetUserRequest implements Action {
-  readonly type = UserActionTypes.GetUserRequest;
-
-  constructor(public payload: { slug: string }) { }
-}
-
-@HideSpinner(UserActionTypes.GetUserRequest)
-export class GetUserSuccess implements Action {
-  readonly type = UserActionTypes.GetUserSuccess;
-
-  constructor(public payload: { user: User }) { }
-}
-
-@HideSpinner(UserActionTypes.GetUserRequest)
-export class GetUserFailure implements Action {
-  readonly type = UserActionTypes.GetUserFailure;
-
-  constructor(public payload: { error: any }) { }
-}
-
-@ShowSpinner()
-export class UpdateUserRequest implements Action {
-  readonly type = UserActionTypes.UpdateUserRequest;
-
-  constructor(public payload: UserUpdateRequestPayload) { }
-}
-
-@HideSpinner(UserActionTypes.UpdateUserRequest)
-export class UpdateUserSuccess implements Action {
-  readonly type = UserActionTypes.UpdateUserSuccess;
-
-  constructor(public payload: { user: User }) { }
-}
-
-@HideSpinner(UserActionTypes.UpdateUserRequest)
-export class UpdateUserFailure implements Action {
-  readonly type = UserActionTypes.UpdateUserFailure;
-
-  constructor(public payload: { error: any }) { }
-}
-
-export type UserActions =
-  GetUserCountsRequest
-  | GetUserCountsSuccess
-  | GetUserCountsFailure
-  | SearchUsersRequest
-  | SearchUsersSuccess
-  | SearchUsersFailure
-  | GetUserRequest
-  | GetUserSuccess
-  | GetUserFailure
-  | UpdateUserRequest
-  | UpdateUserSuccess
-  | UpdateUserFailure;
+  const all = union({
+    getUserCountsRequest,
+    getUserCountsSuccess,
+    getUserCountsFailure,
+    searchUsersRequest,
+    searchUsersSuccess,
+    searchUsersFailure,
+    getUserRequest,
+    getUserSuccess,
+    getUserFailure,
+    updateUserRequest,
+    updateUserSuccess,
+    updateUserFailure
+  });
+  export type UserActionsUnion = typeof all;

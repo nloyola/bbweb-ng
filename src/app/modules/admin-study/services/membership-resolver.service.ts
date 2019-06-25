@@ -15,7 +15,7 @@ export class MembershipResolver implements Resolve<Membership> {
 
   resolve(route: ActivatedRouteSnapshot, _state: RouterStateSnapshot): Observable<Membership> {
     const slug = route.paramMap.get('slug');
-    this.store$.dispatch(new MembershipStoreActions.GetMembershipRequest({ slug }));
+    this.store$.dispatch(MembershipStoreActions.getMembershipRequest({ slug }));
 
     return race<any>(
       this.store$.pipe(

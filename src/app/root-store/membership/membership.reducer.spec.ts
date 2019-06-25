@@ -24,7 +24,7 @@ describe('Membership Reducer', () => {
       const payload = {
         searchParams: new SearchParams()
       };
-      const action = new MembershipStoreActions.SearchMembershipsRequest(payload);
+      const action = MembershipStoreActions.searchMembershipsRequest(payload);
       const state = MembershipStoreReducer.reducer(undefined, action);
 
       expect(state).toEqual({
@@ -39,7 +39,7 @@ describe('Membership Reducer', () => {
       const payload = {
         pagedReply: factory.pagedReply<Membership>([ membership ])
       };
-      const action = new MembershipStoreActions.SearchMembershipsSuccess(payload);
+      const action = MembershipStoreActions.searchMembershipsSuccess(payload);
       const state = MembershipStoreReducer.reducer(
         {
           ...MembershipStoreReducer.initialState,
@@ -71,15 +71,15 @@ describe('Membership Reducer', () => {
           }
         }
       };
-      const action = new MembershipStoreActions.SearchMembershipsFailure(payload);
+      const action = MembershipStoreActions.searchMembershipsFailure(payload);
       const state = MembershipStoreReducer.reducer(undefined, action);
 
       expect(state).toEqual({
         ...MembershipStoreReducer.initialState,
         lastSearch: null,
         error: {
-          type: action.type,
-          error: action.payload.error
+          actionType: action.type,
+          error: action.error
         }
       });
     });
@@ -90,7 +90,7 @@ describe('Membership Reducer', () => {
 
     it('AddMembershipRequest', () => {
       const membership = new Membership().deserialize(factory.membership());
-      const action = new MembershipStoreActions.AddMembershipRequest({ membership });
+      const action = MembershipStoreActions.addMembershipRequest({ membership });
       const state = MembershipStoreReducer.reducer(undefined, action);
 
       expect(state.lastAddedId).toBeNull();
@@ -100,7 +100,7 @@ describe('Membership Reducer', () => {
     it('AddMembershipSuccess', () => {
       const membership = new Membership().deserialize(factory.membership());
       const payload = { membership };
-      const action = new MembershipStoreActions.AddMembershipSuccess(payload);
+      const action = MembershipStoreActions.addMembershipSuccess(payload);
       const state = MembershipStoreReducer.reducer(undefined, action);
 
       expect(state.ids).toContain(membership.id);
@@ -116,7 +116,7 @@ describe('Membership Reducer', () => {
           }
         }
       };
-      const action = new MembershipStoreActions.AddMembershipFailure(payload);
+      const action = MembershipStoreActions.addMembershipFailure(payload);
       const state = MembershipStoreReducer.reducer(undefined, action);
 
       expect(state).toEqual({
@@ -134,7 +134,7 @@ describe('Membership Reducer', () => {
 
     it('UpdateMembershipRequest', () => {
       const membership = new Membership().deserialize(factory.membership());
-      const action = new MembershipStoreActions.UpdateMembershipRequest({
+      const action = MembershipStoreActions.updateMembershipRequest({
         membership,
         attributeName: 'name',
         value: factory.stringNext()
@@ -148,7 +148,7 @@ describe('Membership Reducer', () => {
 
     it('UpdateMembershipSuccess', () => {
       const membership = new Membership().deserialize(factory.membership());
-      const action = new MembershipStoreActions.UpdateMembershipSuccess({ membership });
+      const action = MembershipStoreActions.updateMembershipSuccess({ membership });
       const state = MembershipStoreReducer.reducer(undefined, action);
 
       expect(state.error).toBeNull();
@@ -165,7 +165,7 @@ describe('Membership Reducer', () => {
           }
         }
       };
-      const action = new MembershipStoreActions.UpdateMembershipFailure(payload);
+      const action = MembershipStoreActions.updateMembershipFailure(payload);
       const state = MembershipStoreReducer.reducer(undefined, action);
 
       expect(state).toEqual({
@@ -173,7 +173,7 @@ describe('Membership Reducer', () => {
         lastSearch: null,
         error: {
           actionType: action.type,
-          error: action.payload.error
+          error: action.error
         }
       });
     });
@@ -185,7 +185,7 @@ describe('Membership Reducer', () => {
     it('GetMembershipRequest', () => {
       const membership = new Membership().deserialize(factory.membership());
       const payload = { slug: membership.slug };
-      const action = new MembershipStoreActions.GetMembershipRequest(payload);
+      const action = MembershipStoreActions.getMembershipRequest(payload);
       const state = MembershipStoreReducer.reducer(undefined, action);
 
       expect(state).toEqual({
@@ -196,7 +196,7 @@ describe('Membership Reducer', () => {
     it('GetMembershipSuccess', () => {
       const membership = new Membership().deserialize(factory.membership());
       const payload = { membership };
-      const action = new MembershipStoreActions.GetMembershipSuccess(payload);
+      const action = MembershipStoreActions.getMembershipSuccess(payload);
       const state = MembershipStoreReducer.reducer(undefined, action);
 
       expect(state.ids).toContain(membership.id);
@@ -212,7 +212,7 @@ describe('Membership Reducer', () => {
           }
         }
       };
-      const action = new MembershipStoreActions.GetMembershipFailure(payload);
+      const action = MembershipStoreActions.getMembershipFailure(payload);
       const state = MembershipStoreReducer.reducer(undefined, action);
 
       expect(state).toEqual({
@@ -220,7 +220,7 @@ describe('Membership Reducer', () => {
         lastSearch: null,
         error: {
           actionType: action.type,
-          error: action.payload.error
+          error: action.error
         }
       });
     });
@@ -244,7 +244,7 @@ describe('Membership Reducer', () => {
 
     it('RemoveMembershipSuccess', () => {
       const payload = { membershipId: membership.id };
-      const action = new MembershipStoreActions.RemoveMembershipSuccess(payload);
+      const action = MembershipStoreActions.removeMembershipSuccess(payload);
       const state = MembershipStoreReducer.reducer(initialState, action);
 
       expect(state.ids).not.toContain(membership.id);
@@ -260,7 +260,7 @@ describe('Membership Reducer', () => {
           }
         }
       };
-      const action = new MembershipStoreActions.RemoveMembershipFailure(payload);
+      const action = MembershipStoreActions.removeMembershipFailure(payload);
       const state = MembershipStoreReducer.reducer(initialState, action);
       expect(state.error).toEqual({
         actionType: action.type,

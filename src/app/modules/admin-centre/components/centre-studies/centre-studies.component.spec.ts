@@ -74,7 +74,7 @@ describe('CentreStudiesComponent', () => {
   xit('dispatches an event when user types a study name', fakeAsync(() => {
     // TODO: cannot get this test to work - 2019-02-22
     createMockActivatedRouteSpies(centre);
-    store.dispatch(new CentreStoreActions.GetCentreSuccess({ centre }));
+    store.dispatch(CentreStoreActions.getCentreSuccess({ centre }));
     fixture.detectChanges();
 
     const storeListener = jest.spyOn(store, 'dispatch');
@@ -93,7 +93,7 @@ describe('CentreStudiesComponent', () => {
 
   it('study state label is valid', () => {
     createMockActivatedRouteSpies(centre);
-    store.dispatch(new CentreStoreActions.GetCentreSuccess({ centre }));
+    store.dispatch(CentreStoreActions.getCentreSuccess({ centre }));
     fixture.detectChanges();
 
     Object.values(StudyState).forEach(state => {
@@ -109,7 +109,7 @@ describe('CentreStudiesComponent', () => {
 
   it('selecting a study dispatches an event', () => {
     createMockActivatedRouteSpies(centre);
-    store.dispatch(new CentreStoreActions.GetCentreSuccess({ centre }));
+    store.dispatch(CentreStoreActions.getCentreSuccess({ centre }));
     fixture.detectChanges();
 
     const study = new Study().deserialize(factory.study());
@@ -119,7 +119,7 @@ describe('CentreStudiesComponent', () => {
 
     expect(storeListener.mock.calls.length).toBe(1);
     expect(storeListener.mock.calls[0][0]).toEqual(
-      new CentreStoreActions.UpdateCentreRequest({
+      CentreStoreActions.updateCentreRequest({
         centre,
         attributeName: 'studyAdd',
         value: study.id
@@ -142,7 +142,7 @@ describe('CentreStudiesComponent', () => {
 
     it('dispatches an event', async(() => {
       createMockActivatedRouteSpies(centre);
-      store.dispatch(new CentreStoreActions.GetCentreSuccess({ centre }));
+      store.dispatch(CentreStoreActions.getCentreSuccess({ centre }));
       fixture.detectChanges();
 
       const storeListener = jest.spyOn(store, 'dispatch');
@@ -154,7 +154,7 @@ describe('CentreStudiesComponent', () => {
 
         expect(storeListener.mock.calls.length).toBe(1);
         expect(storeListener.mock.calls[0][0]).toEqual(
-          new CentreStoreActions.UpdateCentreRequest({
+          CentreStoreActions.updateCentreRequest({
             centre,
             attributeName: 'studyRemove',
             value: study.id
@@ -166,7 +166,7 @@ describe('CentreStudiesComponent', () => {
       const toastrListener = jest.spyOn(toastr, 'success');
 
       createMockActivatedRouteSpies(centre);
-      store.dispatch(new CentreStoreActions.GetCentreSuccess({ centre }));
+      store.dispatch(CentreStoreActions.getCentreSuccess({ centre }));
       flush();
       fixture.detectChanges();
 
@@ -174,7 +174,7 @@ describe('CentreStudiesComponent', () => {
       flush();
       fixture.detectChanges();
 
-      store.dispatch(new CentreStoreActions.UpdateCentreSuccess({ centre }));
+      store.dispatch(CentreStoreActions.updateCentreSuccess({ centre }));
       flush();
       fixture.detectChanges();
       expect(toastrListener.mock.calls.length).toBe(1);
@@ -196,7 +196,7 @@ describe('CentreStudiesComponent', () => {
       const toastrListener = jest.spyOn(toastr, 'error');
 
       createMockActivatedRouteSpies(centre);
-      store.dispatch(new CentreStoreActions.GetCentreSuccess({ centre }));
+      store.dispatch(CentreStoreActions.getCentreSuccess({ centre }));
       flush();
       fixture.detectChanges();
 
@@ -205,7 +205,7 @@ describe('CentreStudiesComponent', () => {
       fixture.detectChanges();
 
       errors.forEach((error, index) => {
-        store.dispatch(new CentreStoreActions.UpdateCentreFailure({ error }));
+        store.dispatch(CentreStoreActions.updateCentreFailure({ error }));
         flush();
         fixture.detectChanges();
         expect(toastrListener.mock.calls.length).toBe(index + 1);

@@ -9,71 +9,67 @@ import * as CentreActions from './centre.actions';
 @Injectable()
 export class CentreStoreEffects {
 
-  constructor(private actions$: Actions<CentreActions.CentreActions>,
+  constructor(private actions$: Actions<CentreActions.CentreActionsUnion>,
               private centreService: CentreService) { }
 
   @Effect()
   getRequest$: Observable<Action> = this.actions$.pipe(
-    ofType(CentreActions.ActionTypes.GetCentreRequest),
-    map(action => action.payload),
+    ofType(CentreActions.getCentreRequest.type),
     switchMap(
-      payload =>
-        this.centreService.get(payload.slug)
+      props =>
+        this.centreService.get(props.slug)
         .pipe(
-          map(centre => new CentreActions.GetCentreSuccess({ centre })),
-          catchError(error => observableOf(new CentreActions.GetCentreFailure({ error }))))
+          map(centre => CentreActions.getCentreSuccess({ centre })),
+          catchError(error => observableOf(CentreActions.getCentreFailure({ error }))))
     )
   );
 
   @Effect()
   searchRequest$: Observable<Action> = this.actions$.pipe(
-    ofType(CentreActions.ActionTypes.SearchCentresRequest),
-    map(action => action.payload),
+    ofType(CentreActions.searchCentresRequest.type),
     switchMap(
-      payload =>
-        this.centreService.search(payload.searchParams)
+      props =>
+        this.centreService.search(props.searchParams)
         .pipe(
-          map(pagedReply => new CentreActions.SearchCentresSuccess({ pagedReply })),
-          catchError(error => observableOf(new CentreActions.SearchCentresFailure({ error }))))
+          map(pagedReply => CentreActions.searchCentresSuccess({ pagedReply })),
+          catchError(error => observableOf(CentreActions.searchCentresFailure({ error }))))
     )
   );
 
   @Effect()
   addRequest$: Observable<Action> = this.actions$.pipe(
-    ofType(CentreActions.ActionTypes.AddCentreRequest),
-    map(action => action.payload),
+    ofType(CentreActions.addCentreRequest.type),
     switchMap(
-      payload =>
-        this.centreService.add(payload.centre)
+      props =>
+        this.centreService.add(props.centre)
         .pipe(
-          map(centre => new CentreActions.AddCentreSuccess({ centre })),
-          catchError(error => observableOf(new CentreActions.AddCentreFailure({ error }))))
+          map(centre => CentreActions.addCentreSuccess({ centre })),
+          catchError(error => observableOf(CentreActions.addCentreFailure({ error }))))
     )
   );
 
   @Effect()
   updateRequest$: Observable<Action> = this.actions$.pipe(
-    ofType(CentreActions.ActionTypes.UpdateCentreRequest),
-    map(action => action.payload),
+    ofType(CentreActions.updateCentreRequest.type),
     switchMap(
-      payload =>
-        this.centreService.update(payload.centre, payload.attributeName, payload.value)
+      props =>
+        this.centreService.update(props.centre, props.attributeName, props.value)
         .pipe(
-          map(centre => new CentreActions.UpdateCentreSuccess({ centre })),
-          catchError(error => observableOf(new CentreActions.UpdateCentreFailure({ error }))))
+          map(centre => CentreActions.updateCentreSuccess({ centre })),
+          catchError(error => observableOf(CentreActions.updateCentreFailure({ error }))))
     )
   );
 
   @Effect()
   countsRequest$: Observable<Action> = this.actions$.pipe(
-    ofType(CentreActions.ActionTypes.GetCentreCountsRequest),
+    ofType(CentreActions.getCentreCountsRequest.type),
     switchMap(
       () =>
         this.centreService.counts()
         .pipe(
           // delay(5000),
-          map(centreCounts => new CentreActions.GetCentreCountsSuccess({ centreCounts })),
-          catchError(error => observableOf(new CentreActions.GetCentreCountsFailure({ error }))))
+          map(centreCounts => CentreActions.getCentreCountsSuccess({ centreCounts })),
+          catchError(error => observableOf(CentreActions.getCentreCountsFailure({ error }))))
     )
   );
 

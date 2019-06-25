@@ -91,7 +91,7 @@ describe('CentreAddComponent', () => {
       component.description.setValue(centre.description);
       component.onSubmit();
 
-      const expectedAction = new CentreStoreActions.AddCentreRequest({
+      const expectedAction = CentreStoreActions.addCentreRequest({
         centre: new Centre().deserialize({
           name: centre.name,
           description: centre.description
@@ -101,7 +101,7 @@ describe('CentreAddComponent', () => {
       expect(storeListener.mock.calls.length).toBe(1);
       expect(storeListener.mock.calls[0][0]).toEqual(expectedAction);
 
-      const action = new CentreStoreActions.AddCentreSuccess({ centre });
+      const action = CentreStoreActions.addCentreSuccess({ centre });
       store.dispatch(action);
       fixture.detectChanges();
       flush();
@@ -139,7 +139,7 @@ describe('CentreAddComponent', () => {
         component.description.setValue(centre.description);
         component.onSubmit();
 
-        const action = new CentreStoreActions.AddCentreFailure({ error } as any );
+        const action = CentreStoreActions.addCentreFailure({ error } as any );
         store.dispatch(action);
         flush();
         fixture.detectChanges();

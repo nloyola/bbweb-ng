@@ -38,8 +38,8 @@ describe('centre-store effects', () => {
 
     it('should respond with success', () => {
       const centreCounts = factory.centreCounts();
-      const action = new CentreStoreActions.GetCentreCountsRequest;
-      const completion = new CentreStoreActions.GetCentreCountsSuccess({ centreCounts });
+      const action = CentreStoreActions.getCentreCountsRequest({ searchParams: new SearchParams() });
+      const completion = CentreStoreActions.getCentreCountsSuccess({ centreCounts });
       spyOn(centreService, 'counts').and.returnValue(of(centreCounts));
 
       actions = hot('--a-', { a: action });
@@ -55,8 +55,8 @@ describe('centre-store effects', () => {
           message: 'simulated error'
         }
       };
-      const action = new CentreStoreActions.GetCentreCountsRequest();
-      const completion = new CentreStoreActions.GetCentreCountsFailure({ error });
+      const action = CentreStoreActions.getCentreCountsRequest({ searchParams: new SearchParams() });
+      const completion = CentreStoreActions.getCentreCountsFailure({ error });
       spyOn(centreService, 'counts').and.returnValue(throwError(error));
 
       actions = hot('--a-', { a: action });
@@ -72,8 +72,8 @@ describe('centre-store effects', () => {
       const searchParams = new SearchParams();
       const centre = new Centre().deserialize(factory.centre());
       const pagedReply = factory.pagedReply([ centre ]);
-      const action = new CentreStoreActions.SearchCentresRequest({ searchParams });
-      const completion = new CentreStoreActions.SearchCentresSuccess({ pagedReply });
+      const action = CentreStoreActions.searchCentresRequest({ searchParams });
+      const completion = CentreStoreActions.searchCentresSuccess({ pagedReply });
       spyOn(centreService, 'search').and.returnValue(of(pagedReply));
 
       actions = hot('--a-', { a: action });
@@ -90,8 +90,8 @@ describe('centre-store effects', () => {
           message: 'simulated error'
         }
       };
-      const action = new CentreStoreActions.SearchCentresRequest({ searchParams });
-      const completion = new CentreStoreActions.SearchCentresFailure({ error });
+      const action = CentreStoreActions.searchCentresRequest({ searchParams });
+      const completion = CentreStoreActions.searchCentresFailure({ error });
       spyOn(centreService, 'search').and.returnValue(throwError(error));
 
       actions = hot('--a-', { a: action });
@@ -105,8 +105,8 @@ describe('centre-store effects', () => {
 
     it('should respond with success', () => {
       const centre = new Centre().deserialize(factory.centre());
-      const action = new CentreStoreActions.AddCentreRequest({ centre });
-      const completion = new CentreStoreActions.AddCentreSuccess({ centre });
+      const action = CentreStoreActions.addCentreRequest({ centre });
+      const completion = CentreStoreActions.addCentreSuccess({ centre });
       spyOn(centreService, 'add').and.returnValue(of(centre));
 
       actions = hot('--a-', { a: action });
@@ -123,8 +123,8 @@ describe('centre-store effects', () => {
           message: 'simulated error'
         }
       };
-      const action = new CentreStoreActions.AddCentreRequest({ centre });
-      const completion = new CentreStoreActions.AddCentreFailure({ error });
+      const action = CentreStoreActions.addCentreRequest({ centre });
+      const completion = CentreStoreActions.addCentreFailure({ error });
       spyOn(centreService, 'add').and.returnValue(throwError(error));
 
       actions = hot('--a-', { a: action });
@@ -138,8 +138,8 @@ describe('centre-store effects', () => {
 
     it('should respond with success', () => {
       const centre = new Centre().deserialize(factory.centre());
-      const action = new CentreStoreActions.GetCentreRequest({ slug: centre.slug });
-      const completion = new CentreStoreActions.GetCentreSuccess({ centre });
+      const action = CentreStoreActions.getCentreRequest({ slug: centre.slug });
+      const completion = CentreStoreActions.getCentreSuccess({ centre });
       spyOn(centreService, 'get').and.returnValue(of(centre));
 
       actions = hot('--a-', { a: action });
@@ -156,8 +156,8 @@ describe('centre-store effects', () => {
           message: 'simulated error'
         }
       };
-      const action = new CentreStoreActions.GetCentreRequest({ slug: centre.slug });
-      const completion = new CentreStoreActions.GetCentreFailure({ error });
+      const action = CentreStoreActions.getCentreRequest({ slug: centre.slug });
+      const completion = CentreStoreActions.getCentreFailure({ error });
       spyOn(centreService, 'get').and.returnValue(throwError(error));
 
       actions = hot('--a-', { a: action });
@@ -175,7 +175,7 @@ describe('centre-store effects', () => {
 
     beforeEach(() => {
       centre = new Centre().deserialize(factory.centre());
-      action = new CentreStoreActions.UpdateCentreRequest({
+      action = CentreStoreActions.updateCentreRequest({
         centre,
         attributeName: 'name',
         value: factory.stringNext()
@@ -184,7 +184,7 @@ describe('centre-store effects', () => {
     });
 
     it('should respond with success', () => {
-      const completion = new CentreStoreActions.UpdateCentreSuccess({ centre });
+      const completion = CentreStoreActions.updateCentreSuccess({ centre });
 
       centreListener.mockReturnValue(of(centre));
       actions = hot('--a-', { a: action });
@@ -198,7 +198,7 @@ describe('centre-store effects', () => {
           message: 'simulated error'
         }
       };
-      const completion = new CentreStoreActions.UpdateCentreFailure({ error });
+      const completion = CentreStoreActions.updateCentreFailure({ error });
 
       centreListener.mockReturnValue(throwError(error));
       actions = hot('--a-', { a: action });

@@ -40,8 +40,8 @@ describe('membership-store effects', () => {
       const searchParams = new SearchParams();
       const membership = new Membership().deserialize(factory.membership());
       const pagedReply = factory.pagedReply([ membership ]);
-      const action = new MembershipStoreActions.SearchMembershipsRequest({ searchParams });
-      const completion = new MembershipStoreActions.SearchMembershipsSuccess({ pagedReply });
+      const action = MembershipStoreActions.searchMembershipsRequest({ searchParams });
+      const completion = MembershipStoreActions.searchMembershipsSuccess({ pagedReply });
       spyOn(membershipService, 'search').and.returnValue(of(pagedReply));
 
       actions = hot('--a-', { a: action });
@@ -58,8 +58,8 @@ describe('membership-store effects', () => {
           message: 'simulated error'
         }
       };
-      const action = new MembershipStoreActions.SearchMembershipsRequest({ searchParams });
-      const completion = new MembershipStoreActions.SearchMembershipsFailure({ error });
+      const action = MembershipStoreActions.searchMembershipsRequest({ searchParams });
+      const completion = MembershipStoreActions.searchMembershipsFailure({ error });
       spyOn(membershipService, 'search').and.returnValue(throwError(error));
 
       actions = hot('--a-', { a: action });
@@ -73,8 +73,8 @@ describe('membership-store effects', () => {
 
     it('should respond with success', () => {
       const membership = new Membership().deserialize(factory.membership());
-      const action = new MembershipStoreActions.AddMembershipRequest({ membership });
-      const completion = new MembershipStoreActions.AddMembershipSuccess({ membership });
+      const action = MembershipStoreActions.addMembershipRequest({ membership });
+      const completion = MembershipStoreActions.addMembershipSuccess({ membership });
       spyOn(membershipService, 'add').and.returnValue(of(membership));
 
       actions = hot('--a-', { a: action });
@@ -91,8 +91,8 @@ describe('membership-store effects', () => {
           message: 'simulated error'
         }
       };
-      const action = new MembershipStoreActions.AddMembershipRequest({ membership });
-      const completion = new MembershipStoreActions.AddMembershipFailure({ error });
+      const action = MembershipStoreActions.addMembershipRequest({ membership });
+      const completion = MembershipStoreActions.addMembershipFailure({ error });
       spyOn(membershipService, 'add').and.returnValue(throwError(error));
 
       actions = hot('--a-', { a: action });
@@ -106,8 +106,8 @@ describe('membership-store effects', () => {
 
     it('should respond with success', () => {
       const membership = new Membership().deserialize(factory.membership());
-      const action = new MembershipStoreActions.GetMembershipRequest({ slug: membership.slug });
-      const completion = new MembershipStoreActions.GetMembershipSuccess({ membership });
+      const action = MembershipStoreActions.getMembershipRequest({ slug: membership.slug });
+      const completion = MembershipStoreActions.getMembershipSuccess({ membership });
       spyOn(membershipService, 'get').and.returnValue(of(membership));
 
       actions = hot('--a-', { a: action });
@@ -124,8 +124,8 @@ describe('membership-store effects', () => {
           message: 'simulated error'
         }
       };
-      const action = new MembershipStoreActions.GetMembershipRequest({ slug: membership.slug });
-      const completion = new MembershipStoreActions.GetMembershipFailure({ error });
+      const action = MembershipStoreActions.getMembershipRequest({ slug: membership.slug });
+      const completion = MembershipStoreActions.getMembershipFailure({ error });
       spyOn(membershipService, 'get').and.returnValue(throwError(error));
 
       actions = hot('--a-', { a: action });
@@ -143,7 +143,7 @@ describe('membership-store effects', () => {
 
     beforeEach(() => {
       membership = new Membership().deserialize(factory.membership());
-      action = new MembershipStoreActions.UpdateMembershipRequest({
+      action = MembershipStoreActions.updateMembershipRequest({
         membership,
         attributeName: 'name',
         value: factory.stringNext()
@@ -152,7 +152,7 @@ describe('membership-store effects', () => {
     });
 
     it('should respond with success', () => {
-      const completion = new MembershipStoreActions.UpdateMembershipSuccess({ membership });
+      const completion = MembershipStoreActions.updateMembershipSuccess({ membership });
 
       membershipListener.mockReturnValue(of(membership));
       actions = hot('--a-', { a: action });
@@ -166,7 +166,7 @@ describe('membership-store effects', () => {
           message: 'simulated error'
         }
       };
-      const completion = new MembershipStoreActions.UpdateMembershipFailure({ error });
+      const completion = MembershipStoreActions.updateMembershipFailure({ error });
 
       membershipListener.mockReturnValue(throwError(error));
       actions = hot('--a-', { a: action });
@@ -181,12 +181,12 @@ describe('membership-store effects', () => {
 
     beforeEach(() => {
       membership = new Membership().deserialize(factory.membership());
-      action = new MembershipStoreActions.RemoveMembershipRequest({ membership });
+      action = MembershipStoreActions.removeMembershipRequest({ membership });
       jest.spyOn(membershipService, 'removeMembership');
     });
 
     it('should respond with success', () => {
-      const completion = new MembershipStoreActions.RemoveMembershipSuccess({
+      const completion = MembershipStoreActions.removeMembershipSuccess({
         membershipId: membership.id
       });
 
@@ -202,7 +202,7 @@ describe('membership-store effects', () => {
           message: 'simulated error'
         }
       };
-      const completion = new MembershipStoreActions.RemoveMembershipFailure({ error });
+      const completion = MembershipStoreActions.removeMembershipFailure({ error });
 
       jest.spyOn(membershipService, 'removeMembership').mockReturnValue(throwError(error));
       actions = hot('--a-', { a: action });

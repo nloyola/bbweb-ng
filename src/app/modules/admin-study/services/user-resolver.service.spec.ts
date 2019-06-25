@@ -39,7 +39,7 @@ describe('UserResolver', () => {
     const user = new User().deserialize(factory.user());
     const route = new ActivatedRouteSnapshot();
     route.params = { slug: user.slug };
-    store.dispatch(new UserStoreActions.GetUserSuccess({ user }));
+    store.dispatch(UserStoreActions.getUserSuccess({ user }));
     const expected = cold('(b|)', { b: user });
     expect(resolver.resolve(route, null)).toBeObservable(expected);
   });
@@ -56,7 +56,7 @@ describe('UserResolver', () => {
       error: { message: 'simulated error' },
       status: 404
     };
-    store.dispatch(new UserStoreActions.GetUserFailure({ error }));
+    store.dispatch(UserStoreActions.getUserFailure({ error }));
 
     // the resolver will dispatch the getStudyRequest request action which clears an error,
     // to avoid the error getting cleared, we mock dispatch to do nothing
@@ -64,7 +64,7 @@ describe('UserResolver', () => {
 
     const expected = cold('(b|)', {
       b: {
-        actionType: UserStoreActions.UserActionTypes.GetUserFailure,
+        actionType: UserStoreActions.getUserFailure.type,
         error
       }
     });

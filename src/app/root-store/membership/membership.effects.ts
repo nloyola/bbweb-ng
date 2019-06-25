@@ -9,73 +9,68 @@ import * as MembershipActions from './membership.actions';
 @Injectable()
 export class MembershipStoreEffects {
 
-  constructor(private actions$: Actions<MembershipActions.MembershipActions>,
+  constructor(private actions$: Actions<MembershipActions.MembershipActionsUnion>,
               private membershipService: MembershipService, ) { }
 
   @Effect()
   getRequest$: Observable<Action> = this.actions$.pipe(
-    ofType(MembershipActions.MembershipActionTypes.GetMembershipRequest),
-    map(action => action.payload),
+    ofType(MembershipActions.getMembershipRequest.type),
     switchMap(
-      payload =>
-        this.membershipService.get(payload.slug)
+      action =>
+        this.membershipService.get(action.slug)
         .pipe(
-          map(membership => new MembershipActions.GetMembershipSuccess({ membership })),
-          catchError(error => observableOf(new MembershipActions.GetMembershipFailure({ error }))))
+          map(membership => MembershipActions.getMembershipSuccess({ membership })),
+          catchError(error => observableOf(MembershipActions.getMembershipFailure({ error }))))
     )
   );
 
   @Effect()
   searchRequest$: Observable<Action> = this.actions$.pipe(
-    ofType(MembershipActions.MembershipActionTypes.SearchMembershipsRequest),
-    map(action => action.payload),
+    ofType(MembershipActions.searchMembershipsRequest.type),
     switchMap(
-      payload =>
-        this.membershipService.search(payload.searchParams)
+      action =>
+        this.membershipService.search(action.searchParams)
         .pipe(
-          map(pagedReply => new MembershipActions.SearchMembershipsSuccess({ pagedReply })),
-          catchError(error => observableOf(new MembershipActions.SearchMembershipsFailure({ error }))))
+          map(pagedReply => MembershipActions.searchMembershipsSuccess({ pagedReply })),
+          catchError(error => observableOf(MembershipActions.searchMembershipsFailure({ error }))))
     )
   );
 
   @Effect()
   addRequest$: Observable<Action> = this.actions$.pipe(
-    ofType(MembershipActions.MembershipActionTypes.AddMembershipRequest),
-    map(action => action.payload),
+    ofType(MembershipActions.addMembershipRequest.type),
     switchMap(
-      payload =>
-        this.membershipService.add(payload.membership)
+      action =>
+        this.membershipService.add(action.membership)
         .pipe(
-          map(membership => new MembershipActions.AddMembershipSuccess({ membership })),
-          catchError(error => observableOf(new MembershipActions.AddMembershipFailure({ error }))))
+          map(membership => MembershipActions.addMembershipSuccess({ membership })),
+          catchError(error => observableOf(MembershipActions.addMembershipFailure({ error }))))
     )
   );
 
   @Effect()
   updateRequest$: Observable<Action> = this.actions$.pipe(
-    ofType(MembershipActions.MembershipActionTypes.UpdateMembershipRequest),
-    map(action => action.payload),
+    ofType(MembershipActions.updateMembershipRequest.type),
     switchMap(
-      payload =>
-        this.membershipService.update(payload.membership, payload.attributeName, payload.value)
+      action =>
+        this.membershipService.update(action.membership, action.attributeName, action.value)
         .pipe(
-          map(membership => new MembershipActions.UpdateMembershipSuccess({ membership })),
-          catchError(error => observableOf(new MembershipActions.UpdateMembershipFailure({ error }))))
+          map(membership => MembershipActions.updateMembershipSuccess({ membership })),
+          catchError(error => observableOf(MembershipActions.updateMembershipFailure({ error }))))
     )
   );
 
   @Effect()
   removeMembershipRequest$: Observable<Action> =
     this.actions$.pipe(
-      ofType(MembershipActions.MembershipActionTypes.RemoveMembershipRequest),
-      map(action => action.payload),
+      ofType(MembershipActions.removeMembershipRequest.type),
       switchMap(
-        payload =>
-          this.membershipService.removeMembership(payload.membership)
+        action =>
+          this.membershipService.removeMembership(action.membership)
           .pipe(
             // delay(2000),
-            map(membershipId => new MembershipActions.RemoveMembershipSuccess({ membershipId })),
-            catchError(error => observableOf(new MembershipActions.RemoveMembershipFailure({ error }))))));
+            map(membershipId => MembershipActions.removeMembershipSuccess({ membershipId })),
+            catchError(error => observableOf(MembershipActions.removeMembershipFailure({ error }))))));
 
 
 }

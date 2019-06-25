@@ -15,7 +15,7 @@ export class CentreAddTypeahead extends EntityTypeahead<Centre> {
 
   protected termMapper(term: string): Observable<Centre[]> {
     const searchParams = new SearchParams(`name:like:${term}`);
-    this.store$.dispatch(new CentreStoreActions.SearchCentresRequest({ searchParams }));
+    this.store$.dispatch(CentreStoreActions.searchCentresRequest({ searchParams }));
 
     return this.store$.pipe(
       select(CentreStoreSelectors.selectCentreSearchRepliesAndEntities),

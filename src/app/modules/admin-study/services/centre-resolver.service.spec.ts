@@ -46,7 +46,7 @@ describe('CentreResolver', () => {
     const centre = new Centre().deserialize(factory.centre());
     const route = new ActivatedRouteSnapshot();
     route.params = { slug: centre.slug };
-    const action = new CentreStoreActions.GetCentreSuccess({ centre });
+    const action = CentreStoreActions.getCentreSuccess({ centre });
     store.dispatch(action);
     const expected = cold('(b|)', { b: centre });
     expect(resolver.resolve(route, null)).toBeObservable(expected);
@@ -61,12 +61,12 @@ describe('CentreResolver', () => {
     };
     const route = new ActivatedRouteSnapshot();
     route.params = { slug: 'test' };
-    const action = new CentreStoreActions.GetCentreFailure({ error });
+    const action = CentreStoreActions.getCentreFailure({ error });
     store.dispatch(action);
     const expected = cold('(b|)', {
       b: {
         error,
-        actionType: CentreStoreActions.ActionTypes.GetCentreFailure
+        actionType: CentreStoreActions.getCentreFailure.type
       }
     });
     ngZone.run(() => {

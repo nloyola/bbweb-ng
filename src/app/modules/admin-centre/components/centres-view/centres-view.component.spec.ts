@@ -69,7 +69,7 @@ describe('CentresViewComponent', () => {
 
   it('centre counts are mapped correctly', () => {
     const centreCounts = factory.centreCounts();
-    const action = new CentreStoreActions.GetCentreCountsSuccess({ centreCounts });
+    const action = CentreStoreActions.getCentreCountsSuccess({ centreCounts });
     store.dispatch(action);
 
     component['centreCountData$'].subscribe((countMap: CentreCountsUIMap) => {
@@ -88,7 +88,7 @@ describe('CentresViewComponent', () => {
     filters.forEach(value => {
       component.onFiltersUpdated(value);
 
-      const action = new CentreStoreActions.SearchCentresRequest({
+      const action = CentreStoreActions.searchCentresRequest({
         searchParams: new SearchParams('name:like:test', undefined, 1, 5)
       });
 
@@ -100,7 +100,7 @@ describe('CentresViewComponent', () => {
     spyOn(store, 'dispatch').and.callThrough();
     component.sortFieldSelected('name');
 
-    const action = new CentreStoreActions.SearchCentresRequest({
+    const action = CentreStoreActions.searchCentresRequest({
       searchParams: new SearchParams('', 'name', 1, 5)
     });
 
@@ -113,7 +113,7 @@ describe('CentresViewComponent', () => {
       spyOn(store, 'dispatch').and.callThrough();
       component.paginationPageChanged(1);
 
-      const action = new CentreStoreActions.SearchCentresRequest({
+      const action = CentreStoreActions.searchCentresRequest({
         searchParams: new SearchParams('', undefined, 1, 5)
       });
 
@@ -140,7 +140,7 @@ describe('CentresViewComponent', () => {
   it('displays that there are no centres in the system', () => {
     const pagedReply = factory.pagedReply([]);
     pagedReply.searchParams.filter = '';
-    const action = new CentreStoreActions.SearchCentresSuccess({ pagedReply });
+    const action = CentreStoreActions.searchCentresSuccess({ pagedReply });
     store.dispatch(action);
     fixture.detectChanges();
 
@@ -153,7 +153,7 @@ describe('CentresViewComponent', () => {
   it('displays that there are no results for the filters', () => {
     const pagedReply = factory.pagedReply([]);
     pagedReply.searchParams.filter = 'name:like:test';
-    const action = new CentreStoreActions.SearchCentresSuccess({ pagedReply });
+    const action = CentreStoreActions.searchCentresSuccess({ pagedReply });
     store.dispatch(action);
     fixture.detectChanges();
 
@@ -165,7 +165,7 @@ describe('CentresViewComponent', () => {
 
   it('displays centres', () => {
     const centre = new Centre().deserialize(factory.centre());
-    const action = new CentreStoreActions.SearchCentresSuccess({
+    const action = CentreStoreActions.searchCentresSuccess({
       pagedReply: factory.pagedReply([ centre ])
     });
     store.dispatch(action);

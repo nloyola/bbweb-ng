@@ -61,7 +61,7 @@ describe('CentreViewComponent', () => {
     fixture = TestBed.createComponent(CentreViewComponent);
     component = fixture.componentInstance;
     createMockActivatedRouteSpies(centre);
-    store.dispatch(new CentreStoreActions.GetCentreSuccess({ centre }));
+    store.dispatch(CentreStoreActions.getCentreSuccess({ centre }));
   });
 
   it('should create', () => {

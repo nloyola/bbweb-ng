@@ -107,7 +107,7 @@ export class CentreSummaryComponent implements OnInit, OnDestroy {
       };
       this.modalService.open(this.updateNameModal).result
         .then(value => {
-          this.store$.dispatch(new CentreStoreActions.UpdateCentreRequest({
+          this.store$.dispatch(CentreStoreActions.updateCentreRequest({
             centre,
             attributeName: 'name',
             value
@@ -126,7 +126,7 @@ export class CentreSummaryComponent implements OnInit, OnDestroy {
       };
       this.modalService.open(this.updateDescriptionModal, { size: 'lg' }).result
         .then(value => {
-          this.store$.dispatch(new CentreStoreActions.UpdateCentreRequest({
+          this.store$.dispatch(CentreStoreActions.updateCentreRequest({
             centre,
             attributeName: 'description',
             value: value ? value : undefined
@@ -147,7 +147,7 @@ export class CentreSummaryComponent implements OnInit, OnDestroy {
 
   private changeState(action: string) {
     const centre = this.centreSubject.value.entity;
-    this.store$.dispatch(new CentreStoreActions.UpdateCentreRequest({
+    this.store$.dispatch(CentreStoreActions.updateCentreRequest({
       centre,
       attributeName: 'state',
       value: action

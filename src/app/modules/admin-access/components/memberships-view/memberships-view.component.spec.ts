@@ -60,7 +60,7 @@ describe('MembershipsViewComponent', () => {
   it('membership count initialized', () => {
     const memberships = [];
     const pagedReply = factory.pagedReply(memberships);
-    store.dispatch(new MembershipStoreActions.SearchMembershipsSuccess({ pagedReply }));
+    store.dispatch(MembershipStoreActions.searchMembershipsSuccess({ pagedReply }));
 
     component.membershipPageInfo$.subscribe((pageInfo: any) => {
       expect(pageInfo.total).toBe(memberships.length);
@@ -76,7 +76,7 @@ describe('MembershipsViewComponent', () => {
       filters.forEach(value => {
         component.onFiltersUpdated(value);
 
-        const action = new MembershipStoreActions.SearchMembershipsRequest({
+        const action = MembershipStoreActions.searchMembershipsRequest({
           searchParams: new SearchParams('name:like:test', undefined, 1, 5)
         });
 
@@ -88,7 +88,7 @@ describe('MembershipsViewComponent', () => {
     it('displays that there are no matches for the name filter', () => {
       const pagedReply = factory.pagedReply([]);
       pagedReply.searchParams.filter = 'name:like:test';
-      store.dispatch(new MembershipStoreActions.SearchMembershipsSuccess({ pagedReply }));
+      store.dispatch(MembershipStoreActions.searchMembershipsSuccess({ pagedReply }));
       fixture.detectChanges();
 
       const de = fixture.debugElement;
@@ -103,7 +103,7 @@ describe('MembershipsViewComponent', () => {
     const storeListener = jest.spyOn(store, 'dispatch');
     component.sortFieldSelected('name');
 
-    const action = new MembershipStoreActions.SearchMembershipsRequest({
+    const action = MembershipStoreActions.searchMembershipsRequest({
       searchParams: new SearchParams('', 'name', 1, 5)
     });
 
@@ -122,7 +122,7 @@ describe('MembershipsViewComponent', () => {
     it('reloads page when a new page is selected', () => {
       component.paginationPageChanged(1);
 
-      const action = new MembershipStoreActions.SearchMembershipsRequest({
+      const action = MembershipStoreActions.searchMembershipsRequest({
         searchParams: new SearchParams('', undefined, 1, 5)
       });
 
@@ -148,7 +148,7 @@ describe('MembershipsViewComponent', () => {
   it('displays memberships', () => {
     const membership = new Membership().deserialize(factory.membership());
     const pagedReply = factory.pagedReply([ membership ]);
-    store.dispatch(new MembershipStoreActions.SearchMembershipsSuccess({ pagedReply }));
+    store.dispatch(MembershipStoreActions.searchMembershipsSuccess({ pagedReply }));
     fixture.detectChanges();
 
     const de = fixture.debugElement;

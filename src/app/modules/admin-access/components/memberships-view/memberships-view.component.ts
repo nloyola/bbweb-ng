@@ -93,7 +93,7 @@ export class MembershipsViewComponent implements OnInit, OnDestroy {
   }
 
   private applySearchParams() {
-    this.store$.dispatch(new MembershipStoreActions.SearchMembershipsRequest({
+    this.store$.dispatch(MembershipStoreActions.searchMembershipsRequest({
       searchParams: new SearchParams(this.getFilters().join(';'),
                                      this.sortField,
                                      this.currentPage,

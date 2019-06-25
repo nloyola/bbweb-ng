@@ -127,7 +127,7 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
     };
     this.modalService.open(this.updateNameModal, { size: 'lg' }).result
       .then(value => {
-        this.store$.dispatch(new MembershipStoreActions.UpdateMembershipRequest({
+        this.store$.dispatch(MembershipStoreActions.updateMembershipRequest({
           membership,
           attributeName: 'name',
           value
@@ -145,7 +145,7 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
     };
     this.modalService.open(this.updateDescriptionModal, { size: 'lg' }).result
       .then(value => {
-        this.store$.dispatch(new MembershipStoreActions.UpdateMembershipRequest({
+        this.store$.dispatch(MembershipStoreActions.updateMembershipRequest({
           membership,
           attributeName: 'description',
           value: value ? value : undefined
@@ -161,7 +161,7 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.user = userInfo;
     modalRef.result
       .then(() => {
-        this.store$.dispatch(new MembershipStoreActions.UpdateMembershipRequest({
+        this.store$.dispatch(MembershipStoreActions.updateMembershipRequest({
           membership,
           attributeName: 'userRemove',
           value: userInfo.id
@@ -175,7 +175,7 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
   studySelected(studyInfo: IUserInfo): void {
     const membership = this.membershipSubject.value;
     const removeStudy = () => {
-      this.store$.dispatch(new MembershipStoreActions.UpdateMembershipRequest({
+      this.store$.dispatch(MembershipStoreActions.updateMembershipRequest({
         membership,
         attributeName: 'studyRemove',
         value: studyInfo.id
@@ -196,7 +196,7 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
         // no more studies in set, ask user if membership should be for all studies?
         this.modalService.open(this.allStudiesModal).result
           .then(() => {
-            this.store$.dispatch(new MembershipStoreActions.UpdateMembershipRequest({
+            this.store$.dispatch(MembershipStoreActions.updateMembershipRequest({
               membership,
               attributeName: 'allStudies'
             }));
@@ -213,7 +213,7 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
   centreSelected(centreInfo: IUserInfo): void {
     const membership = this.membershipSubject.value;
     const removeCentre = () => {
-      this.store$.dispatch(new MembershipStoreActions.UpdateMembershipRequest({
+      this.store$.dispatch(MembershipStoreActions.updateMembershipRequest({
         membership,
         attributeName: 'centreRemove',
         value: centreInfo.id
@@ -234,7 +234,7 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
         // no more centres in set, ask user if membership should be for all centres?
         this.modalService.open(this.allCentresModal).result
           .then(() => {
-            this.store$.dispatch(new MembershipStoreActions.UpdateMembershipRequest({
+            this.store$.dispatch(MembershipStoreActions.updateMembershipRequest({
               membership,
               attributeName: 'allCentres'
             }));
@@ -253,7 +253,7 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
     const modalRef = this.modalService.open(this.removeMembershipModal);
     modalRef.result
       .then(() => {
-        this.store$.dispatch(new MembershipStoreActions.RemoveMembershipRequest({
+        this.store$.dispatch(MembershipStoreActions.removeMembershipRequest({
           membership
         }));
         this.updatedMessage$.next('Memberhsip Removed');
@@ -275,7 +275,7 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((user: User) => {
         const membership = this.membershipSubject.value;
-        this.store$.dispatch(new MembershipStoreActions.UpdateMembershipRequest({
+        this.store$.dispatch(MembershipStoreActions.updateMembershipRequest({
           membership,
           attributeName: 'userAdd',
           value: user.id
@@ -299,7 +299,7 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((study: Study) => {
         const membership = this.membershipSubject.value;
-        this.store$.dispatch(new MembershipStoreActions.UpdateMembershipRequest({
+        this.store$.dispatch(MembershipStoreActions.updateMembershipRequest({
           membership,
           attributeName: 'studyAdd',
           value: study.id
@@ -323,7 +323,7 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((centre: Centre) => {
         const membership = this.membershipSubject.value;
-        this.store$.dispatch(new MembershipStoreActions.UpdateMembershipRequest({
+        this.store$.dispatch(MembershipStoreActions.updateMembershipRequest({
           membership,
           attributeName: 'centreAdd',
           value: centre.id

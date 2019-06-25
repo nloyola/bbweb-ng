@@ -38,8 +38,8 @@ describe('user-store effects', () => {
 
     it('should respond with success', () => {
       const userCounts = factory.userCounts();
-      const action = new UserStoreActions.GetUserCountsRequest();
-      const completion = new UserStoreActions.GetUserCountsSuccess({ userCounts });
+      const action = UserStoreActions.getUserCountsRequest();
+      const completion = UserStoreActions.getUserCountsSuccess({ userCounts });
       spyOn(userService, 'counts').and.returnValue(of(userCounts));
 
       actions = hot('--a-', { a: action });
@@ -55,8 +55,8 @@ describe('user-store effects', () => {
           message: 'simulated error'
         }
       };
-      const action = new UserStoreActions.GetUserCountsRequest();
-      const completion = new UserStoreActions.GetUserCountsFailure({ error });
+      const action = UserStoreActions.getUserCountsRequest();
+      const completion = UserStoreActions.getUserCountsFailure({ error });
       spyOn(userService, 'counts').and.returnValue(throwError(error));
 
       actions = hot('--a-', { a: action });
@@ -72,8 +72,8 @@ describe('user-store effects', () => {
       const searchParams = new SearchParams();
       const user = new User().deserialize(factory.user());
       const pagedReply = factory.pagedReply([ user ]);
-      const action = new UserStoreActions.SearchUsersRequest({ searchParams });
-      const completion = new UserStoreActions.SearchUsersSuccess({ pagedReply });
+      const action = UserStoreActions.searchUsersRequest({ searchParams });
+      const completion = UserStoreActions.searchUsersSuccess({ pagedReply });
       spyOn(userService, 'search').and.returnValue(of(pagedReply));
 
       actions = hot('--a-', { a: action });
@@ -90,8 +90,8 @@ describe('user-store effects', () => {
           message: 'simulated error'
         }
       };
-      const action = new UserStoreActions.SearchUsersRequest({ searchParams });
-      const completion = new UserStoreActions.SearchUsersFailure({ error });
+      const action = UserStoreActions.searchUsersRequest({ searchParams });
+      const completion = UserStoreActions.searchUsersFailure({ error });
       spyOn(userService, 'search').and.returnValue(throwError(error));
 
       actions = hot('--a-', { a: action });
@@ -105,8 +105,8 @@ describe('user-store effects', () => {
 
     it('should respond with success', () => {
       const user = new User().deserialize(factory.user());
-      const action = new UserStoreActions.GetUserRequest({ slug: user.slug });
-      const completion = new UserStoreActions.GetUserSuccess({ user });
+      const action = UserStoreActions.getUserRequest({ slug: user.slug });
+      const completion = UserStoreActions.getUserSuccess({ user });
       spyOn(userService, 'get').and.returnValue(of(user));
 
       actions = hot('--a-', { a: action });
@@ -123,8 +123,8 @@ describe('user-store effects', () => {
           message: 'simulated error'
         }
       };
-      const action = new UserStoreActions.GetUserRequest({ slug: user.slug });
-      const completion = new UserStoreActions.GetUserFailure({ error });
+      const action = UserStoreActions.getUserRequest({ slug: user.slug });
+      const completion = UserStoreActions.getUserFailure({ error });
       spyOn(userService, 'get').and.returnValue(throwError(error));
 
       actions = hot('--a-', { a: action });
@@ -142,7 +142,7 @@ describe('user-store effects', () => {
 
     beforeEach(() => {
       user = new User().deserialize(factory.user());
-      action = new UserStoreActions.UpdateUserRequest({
+      action = UserStoreActions.updateUserRequest({
         user,
         attributeName: 'name',
         value: factory.stringNext()
@@ -151,7 +151,7 @@ describe('user-store effects', () => {
     });
 
     it('should respond with success', () => {
-      const completion = new UserStoreActions.UpdateUserSuccess({ user });
+      const completion = UserStoreActions.updateUserSuccess({ user });
 
       userListener.mockReturnValue(of(user));
       actions = hot('--a-', { a: action });
@@ -165,7 +165,7 @@ describe('user-store effects', () => {
           message: 'simulated error'
         }
       };
-      const completion = new UserStoreActions.UpdateUserFailure({ error });
+      const completion = UserStoreActions.updateUserFailure({ error });
 
       userListener.mockReturnValue(throwError(error));
       actions = hot('--a-', { a: action });

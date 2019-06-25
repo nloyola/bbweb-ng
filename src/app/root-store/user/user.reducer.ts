@@ -2,7 +2,7 @@ import { PagedReplyEntityIds, SearchParams } from '@app/domain';
 import { User } from '@app/domain/users';
 import { UserCounts } from '@app/domain/users/user-counts.model';
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity';
-import { UserActions, UserActionTypes } from './user.actions';
+import * as UserActions from './user.actions';
 
 export interface State extends EntityState<User> {
   lastSearch?: SearchParams;
@@ -22,45 +22,45 @@ export const initialState: State = adapter.getInitialState({
   userCounts: {} as any
 });
 
-export function reducer(state = initialState, action: UserActions): State {
+export function reducer(state = initialState, action: UserActions.UserActionsUnion): State {
   switch (action.type) {
-    case UserActionTypes.GetUserCountsRequest: {
+    case UserActions.getUserCountsRequest.type: {
       return {
         ...state,
         error: null
       };
     }
 
-    case UserActionTypes.GetUserCountsSuccess: {
+    case UserActions.getUserCountsSuccess.type: {
       return {
         ...state,
-        userCounts: action.payload.userCounts
+        userCounts: action.userCounts
       };
     }
 
-    case UserActionTypes.SearchUsersRequest: {
+    case UserActions.searchUsersRequest.type: {
       return {
         ...state,
-        lastSearch: action.payload.searchParams,
+        lastSearch: action.searchParams,
         searchActive: true,
         error: null
       };
     }
 
-    case UserActionTypes.SearchUsersFailure: {
+    case UserActions.searchUsersFailure.type: {
       return {
         ...state,
         lastSearch: null,
         searchActive: false,
         error: {
-          type: UserActionTypes.SearchUsersFailure,
-          error: action.payload.error
+          actionType: UserActions.searchUsersFailure.type,
+          error: action.error
         }
       };
     }
 
-    case UserActionTypes.SearchUsersSuccess: {
-      const pagedReply = action.payload.pagedReply;
+    case UserActions.searchUsersSuccess.type: {
+      const pagedReply = action.pagedReply;
       const queryString = state.lastSearch.queryString();
       const newReply = {};
       newReply[queryString] = {
@@ -81,39 +81,39 @@ export function reducer(state = initialState, action: UserActions): State {
       });
     }
 
-    case UserActionTypes.UpdateUserRequest: {
+    case UserActions.updateUserRequest.type: {
       return {
         ...state,
         error: null
       };
     }
 
-    case UserActionTypes.UpdateUserSuccess: {
+    case UserActions.updateUserSuccess.type: {
       const user: User = new User().deserialize({
-        ...action.payload.user as any,
-        avatarUrl: action.payload.user.avatarUrl ? action.payload.user.avatarUrl : undefined
+        ...action.user as any,
+        avatarUrl: action.user.avatarUrl ? action.user.avatarUrl : undefined
       });
       return adapter.upsertOne(user, state);
     }
 
-    case UserActionTypes.GetUserRequest: {
+    case UserActions.getUserRequest.type: {
       return {
         ...state,
         error: null
       };
     }
 
-    case UserActionTypes.GetUserSuccess: {
-      return adapter.upsertOne(action.payload.user, state);
+    case UserActions.getUserSuccess.type: {
+      return adapter.upsertOne(action.user, state);
     }
 
-    case UserActionTypes.GetUserCountsFailure:
-    case UserActionTypes.GetUserFailure:
-    case UserActionTypes.UpdateUserFailure:
+    case UserActions.getUserCountsFailure.type:
+    case UserActions.getUserFailure.type:
+    case UserActions.updateUserFailure.type:
       return {
         ...state,
         error: {
-          error: action.payload.error,
+          error: action.error,
           actionType: action.type
         }
       };

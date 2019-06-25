@@ -72,7 +72,7 @@ export class CentresViewComponent implements OnInit, OnDestroy {
       filter(page => page !== undefined),
       map(page => page.entities.map(e => new CentreUI(e))));
 
-    this.store$.dispatch(new CentreStoreActions.GetCentreCountsRequest());
+      this.store$.dispatch(CentreStoreActions.getCentreCountsRequest({ searchParams: new SearchParams() }));
     this.applySearchParams();
   }
 
@@ -114,7 +114,7 @@ export class CentresViewComponent implements OnInit, OnDestroy {
   }
 
   private applySearchParams() {
-    this.store$.dispatch(new CentreStoreActions.SearchCentresRequest({
+    this.store$.dispatch(CentreStoreActions.searchCentresRequest({
       searchParams: new SearchParams(this.getFilters().join(';'),
                                      this.sortField,
                                      this.currentPage,

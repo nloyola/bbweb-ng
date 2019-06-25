@@ -110,7 +110,7 @@ describe('CentreLocationsComponent', () => {
       }
     ];
 
-    store.dispatch(new CentreStoreActions.GetCentreSuccess({ centre }));
+    store.dispatch(CentreStoreActions.getCentreSuccess({ centre }));
     fixture.detectChanges();
 
     testData.forEach((testInfo, index) => {
@@ -132,7 +132,7 @@ describe('CentreLocationsComponent', () => {
     ];
     /* tslint:enable:no-shadowed-variable */
 
-    store.dispatch(new CentreStoreActions.GetCentreSuccess({ centre }));
+    store.dispatch(CentreStoreActions.getCentreSuccess({ centre }));
     fixture.detectChanges();
 
     testData.forEach((testInfo, index) => {
@@ -158,7 +158,7 @@ describe('CentreLocationsComponent', () => {
     ];
 
     fixture.detectChanges();
-    store.dispatch(new CentreStoreActions.GetCentreSuccess({ centre }));
+    store.dispatch(CentreStoreActions.getCentreSuccess({ centre }));
     fixture.detectChanges();
 
     testData.forEach(testInfo => {
@@ -181,20 +181,20 @@ describe('CentreLocationsComponent', () => {
         result: Promise.resolve('OK')
       } as any);
 
-      store.dispatch(new CentreStoreActions.GetCentreSuccess({ centre }));
+      store.dispatch(CentreStoreActions.getCentreSuccess({ centre }));
       fixture.detectChanges();
       const storeListner = jest.spyOn(store, 'dispatch');
       component.remove(location);
 
       flush();
-      const expectedAction = new CentreStoreActions.UpdateCentreRequest({
+      const expectedAction = CentreStoreActions.updateCentreRequest({
         centre,
         attributeName: 'locationRemove',
         value: location
       });
       expect(storeListner.mock.calls.length).toBe(1);
       expect(storeListner.mock.calls[0][0]).toEqual(expectedAction);
-      store.dispatch(new CentreStoreActions.UpdateCentreSuccess({ centre: centreNoLocations }));
+      store.dispatch(CentreStoreActions.updateCentreSuccess({ centre: centreNoLocations }));
 
       flush();
       fixture.detectChanges();
@@ -227,14 +227,14 @@ describe('CentreLocationsComponent', () => {
       } as any);
       jest.spyOn(toastr, 'error').mockReturnValue(null);
 
-      store.dispatch(new CentreStoreActions.GetCentreSuccess({ centre }));
+      store.dispatch(CentreStoreActions.getCentreSuccess({ centre }));
       fixture.detectChanges();
 
       errors.forEach(error => {
         component.remove(centre.locations[0]);
         flush();
         fixture.detectChanges();
-        store.dispatch(new CentreStoreActions.UpdateCentreFailure({ error }));
+        store.dispatch(CentreStoreActions.updateCentreFailure({ error }));
 
         flush();
         fixture.detectChanges();

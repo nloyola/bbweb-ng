@@ -72,7 +72,7 @@ export class UsersViewComponent implements OnInit, OnDestroy {
       filter(page => page !== undefined),
       map(page => page.entities.map(e => new UserUI(e))));
 
-    this.store$.dispatch(new UserStoreActions.GetUserCountsRequest());
+    this.store$.dispatch(UserStoreActions.getUserCountsRequest());
     this.applySearchParams();
   }
 
@@ -119,7 +119,7 @@ export class UsersViewComponent implements OnInit, OnDestroy {
   }
 
   private applySearchParams() {
-    this.store$.dispatch(new UserStoreActions.SearchUsersRequest({
+    this.store$.dispatch(UserStoreActions.searchUsersRequest({
       searchParams: new SearchParams(this.getFilters().join(';'),
                                      this.sortField,
                                      this.currentPage,

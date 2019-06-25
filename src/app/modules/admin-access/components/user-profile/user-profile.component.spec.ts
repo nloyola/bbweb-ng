@@ -74,7 +74,7 @@ describe('UserProfileComponent', () => {
   });
 
   it('navigates to new path when user name is changed', fakeAsync(() => {
-    store.dispatch(new UserStoreActions.GetUserSuccess({ user }));
+    store.dispatch(UserStoreActions.getUserSuccess({ user }));
     fixture.detectChanges();
 
     const newNameAndSlug = factory.nameAndSlug();
@@ -91,7 +91,7 @@ describe('UserProfileComponent', () => {
     flush();
     fixture.detectChanges();
 
-    store.dispatch(new UserStoreActions.UpdateUserSuccess({ user: userWithNewName }));
+    store.dispatch(UserStoreActions.updateUserSuccess({ user: userWithNewName }));
     flush();
     fixture.detectChanges();
 
@@ -106,14 +106,14 @@ describe('UserProfileComponent', () => {
     beforeEach(() => {
       context.fixture = fixture;
       context.componentInitialize = () => {
-        store.dispatch(new UserStoreActions.GetUserSuccess({ user }));
+        store.dispatch(UserStoreActions.getUserSuccess({ user }));
       };
       context.componentValidateInitialization = () => undefined;
       context.dispatchSuccessAction = () => {
-        store.dispatch(new UserStoreActions.UpdateUserSuccess({ user }));
+        store.dispatch(UserStoreActions.updateUserSuccess({ user }));
       };
       context.createExpectedFailureAction =
-        (error) => new UserStoreActions.UpdateUserFailure({ error });
+        (error) => UserStoreActions.updateUserFailure({ error });
       context.duplicateAttibuteValueError = 'EmailNotAvailable: user with email already exists';
     });
 
@@ -130,13 +130,13 @@ describe('UserProfileComponent', () => {
           name: newName
         });
 
-        context.expectedSuccessAction = new UserStoreActions.UpdateUserRequest({
+        context.expectedSuccessAction = UserStoreActions.updateUserRequest({
           user,
           attributeName: 'name',
           value: newName
         });
         context.dispatchSuccessAction = () => {
-          store.dispatch(new UserStoreActions.UpdateUserSuccess({ user: userWithUpdatedSlug }));
+          store.dispatch(UserStoreActions.updateUserSuccess({ user: userWithUpdatedSlug }));
         };
       });
 
@@ -150,7 +150,7 @@ describe('UserProfileComponent', () => {
         const newValue = faker.internet.email();
         context.modalReturnValue = { result: Promise.resolve(newValue) };
         context.updateEntity = () => { component.updateEmail(); };
-        context.expectedSuccessAction = new UserStoreActions.UpdateUserRequest({
+        context.expectedSuccessAction = UserStoreActions.updateUserRequest({
           user,
           attributeName: 'email',
           value: newValue
@@ -170,7 +170,7 @@ describe('UserProfileComponent', () => {
         };
         context.modalReturnValue = { result: Promise.resolve(newValue) };
         context.updateEntity = () => { component.updatePassword(); };
-        context.expectedSuccessAction = new UserStoreActions.UpdateUserRequest({
+        context.expectedSuccessAction = UserStoreActions.updateUserRequest({
           user,
           attributeName: 'password',
           value: newValue
@@ -187,7 +187,7 @@ describe('UserProfileComponent', () => {
         const newValue = faker.internet.url();
         context.modalReturnValue = { result: Promise.resolve(newValue) };
         context.updateEntity = () => { component.updateAvatarUrl(); };
-        context.expectedSuccessAction = new UserStoreActions.UpdateUserRequest({
+        context.expectedSuccessAction = UserStoreActions.updateUserRequest({
           user,
           attributeName: 'avatarUrl',
           value: newValue
@@ -204,7 +204,7 @@ describe('UserProfileComponent', () => {
         const newValue = 'activate';
         context.modalReturnValue = undefined;
         context.updateEntity = () => { component.activate(); };
-        context.expectedSuccessAction = new UserStoreActions.UpdateUserRequest({
+        context.expectedSuccessAction = UserStoreActions.updateUserRequest({
           user,
           attributeName: 'state',
           value: newValue
@@ -221,7 +221,7 @@ describe('UserProfileComponent', () => {
         const newValue = 'lock';
         context.modalReturnValue = undefined;
         context.updateEntity = () => { component.lock(); };
-        context.expectedSuccessAction = new UserStoreActions.UpdateUserRequest({
+        context.expectedSuccessAction = UserStoreActions.updateUserRequest({
           user,
           attributeName: 'state',
           value: newValue
@@ -238,7 +238,7 @@ describe('UserProfileComponent', () => {
         const newValue = 'unlock';
         context.modalReturnValue = undefined;
         context.updateEntity = () => { component.unlock(); };
-        context.expectedSuccessAction = new UserStoreActions.UpdateUserRequest({
+        context.expectedSuccessAction = UserStoreActions.updateUserRequest({
           user,
           attributeName: 'state',
           value: newValue

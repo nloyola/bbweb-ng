@@ -78,7 +78,7 @@ describe('MembershipViewComponent', () => {
   });
 
   it('navigates to new path when membership name is changed', fakeAsync(() => {
-    store.dispatch(new MembershipStoreActions.GetMembershipSuccess({ membership }));
+    store.dispatch(MembershipStoreActions.getMembershipSuccess({ membership }));
     fixture.detectChanges();
 
     const newNameAndSlug = factory.nameAndSlug();
@@ -95,7 +95,7 @@ describe('MembershipViewComponent', () => {
     flush();
     fixture.detectChanges();
 
-    store.dispatch(new MembershipStoreActions.UpdateMembershipSuccess({ membership: membershipWithNewName }));
+    store.dispatch(MembershipStoreActions.updateMembershipSuccess({ membership: membershipWithNewName }));
     flush();
     fixture.detectChanges();
 
@@ -110,14 +110,14 @@ describe('MembershipViewComponent', () => {
     beforeEach(() => {
       context.fixture = fixture;
       context.componentInitialize = () => {
-        store.dispatch(new MembershipStoreActions.GetMembershipSuccess({ membership }));
+        store.dispatch(MembershipStoreActions.getMembershipSuccess({ membership }));
       };
       context.componentValidateInitialization = () => undefined;
       context.dispatchSuccessAction = () => {
-        store.dispatch(new MembershipStoreActions.UpdateMembershipSuccess({ membership }));
+        store.dispatch(MembershipStoreActions.updateMembershipSuccess({ membership }));
       };
       context.createExpectedFailureAction =
-        (error) => new MembershipStoreActions.UpdateMembershipFailure({ error });
+        (error) => MembershipStoreActions.updateMembershipFailure({ error });
       context.duplicateAttibuteValueError = 'name already used';
     });
 
@@ -134,13 +134,13 @@ describe('MembershipViewComponent', () => {
           name: newName
         });
 
-        context.expectedSuccessAction = new MembershipStoreActions.UpdateMembershipRequest({
+        context.expectedSuccessAction = MembershipStoreActions.updateMembershipRequest({
           membership,
           attributeName: 'name',
           value: newName
         });
         context.dispatchSuccessAction = () => {
-          store.dispatch(new MembershipStoreActions.UpdateMembershipSuccess({
+          store.dispatch(MembershipStoreActions.updateMembershipSuccess({
             membership: membershipWithUpdatedSlug
           }));
         };
@@ -157,7 +157,7 @@ describe('MembershipViewComponent', () => {
         context.modalReturnValue = { result: Promise.resolve(newValue) };
         context.updateEntity = () => { component.updateDescription(); };
 
-        context.expectedSuccessAction = new MembershipStoreActions.UpdateMembershipRequest({
+        context.expectedSuccessAction = MembershipStoreActions.updateMembershipRequest({
           membership,
           attributeName: 'description',
           value: newValue
@@ -177,15 +177,15 @@ describe('MembershipViewComponent', () => {
     beforeEach(() => {
       baseContext = {
         dispatchParentEntity: (): void => {
-          store.dispatch(new MembershipStoreActions.GetMembershipSuccess({ membership }));
+          store.dispatch(MembershipStoreActions.getMembershipSuccess({ membership }));
           fixture.detectChanges();
         },
         dispatchUpdatedParentEntity: (): void => {
-          store.dispatch(new MembershipStoreActions.UpdateMembershipSuccess({ membership }));
+          store.dispatch(MembershipStoreActions.updateMembershipSuccess({ membership }));
           fixture.detectChanges();
         },
         dispatchUpdatedParentEntityWithError: (error: any): void => {
-          store.dispatch(new MembershipStoreActions.UpdateMembershipFailure({ error }));
+          store.dispatch(MembershipStoreActions.updateMembershipFailure({ error }));
           fixture.detectChanges();
         },
         modalReturnValue: {
@@ -212,7 +212,7 @@ describe('MembershipViewComponent', () => {
             checkAddUpdateRequest: (storeListener: any) => {
               expect(storeListener.mock.calls.length).toBe(1);
               expect(storeListener.mock.calls[0][0])
-                .toEqual(new MembershipStoreActions.UpdateMembershipRequest({
+                .toEqual(MembershipStoreActions.updateMembershipRequest({
                   membership,
                   attributeName: 'userAdd',
                   value: user.id
@@ -237,7 +237,7 @@ describe('MembershipViewComponent', () => {
             checkRemoveUpdateRequest: (storeListener: any) => {
               expect(storeListener.mock.calls.length).toBe(1);
               expect(storeListener.mock.calls[0][0])
-                .toEqual(new MembershipStoreActions.UpdateMembershipRequest({
+                .toEqual(MembershipStoreActions.updateMembershipRequest({
                   membership,
                   attributeName: 'userRemove',
                   value: user.id
@@ -268,7 +268,7 @@ describe('MembershipViewComponent', () => {
             checkAddUpdateRequest: (storeListener: any) => {
               expect(storeListener.mock.calls.length).toBe(1);
               expect(storeListener.mock.calls[0][0])
-                .toEqual(new MembershipStoreActions.UpdateMembershipRequest({
+                .toEqual(MembershipStoreActions.updateMembershipRequest({
                   membership,
                   attributeName: 'studyAdd',
                   value: study.id
@@ -317,7 +317,7 @@ describe('MembershipViewComponent', () => {
               checkRemoveUpdateRequest: (storeListener: any) => {
                 expect(storeListener.mock.calls.length).toBe(1);
                 expect(storeListener.mock.calls[0][0])
-                  .toEqual(new MembershipStoreActions.UpdateMembershipRequest({
+                  .toEqual(MembershipStoreActions.updateMembershipRequest({
                     membership,
                     attributeName: 'studyRemove',
                     value: study.id
@@ -346,7 +346,7 @@ describe('MembershipViewComponent', () => {
               checkRemoveUpdateRequest: (storeListener: any) => {
                 expect(storeListener.mock.calls.length).toBe(1);
                 expect(storeListener.mock.calls[0][0])
-                  .toEqual(new MembershipStoreActions.UpdateMembershipRequest({
+                  .toEqual(MembershipStoreActions.updateMembershipRequest({
                     membership,
                     attributeName: 'allStudies'
                   }));
@@ -379,7 +379,7 @@ describe('MembershipViewComponent', () => {
             checkAddUpdateRequest: (storeListener: any) => {
               expect(storeListener.mock.calls.length).toBe(1);
               expect(storeListener.mock.calls[0][0])
-                .toEqual(new MembershipStoreActions.UpdateMembershipRequest({
+                .toEqual(MembershipStoreActions.updateMembershipRequest({
                   membership,
                   attributeName: 'centreAdd',
                   value: centre.id
@@ -428,7 +428,7 @@ describe('MembershipViewComponent', () => {
               checkRemoveUpdateRequest: (storeListener: any) => {
                 expect(storeListener.mock.calls.length).toBe(1);
                 expect(storeListener.mock.calls[0][0])
-                  .toEqual(new MembershipStoreActions.UpdateMembershipRequest({
+                  .toEqual(MembershipStoreActions.updateMembershipRequest({
                     membership,
                     attributeName: 'centreRemove',
                     value: centre.id
@@ -457,7 +457,7 @@ describe('MembershipViewComponent', () => {
               checkRemoveUpdateRequest: (storeListener: any) => {
                 expect(storeListener.mock.calls.length).toBe(1);
                 expect(storeListener.mock.calls[0][0])
-                  .toEqual(new MembershipStoreActions.UpdateMembershipRequest({
+                  .toEqual(MembershipStoreActions.updateMembershipRequest({
                     membership,
                     attributeName: 'allCentres'
                   }));
@@ -480,7 +480,7 @@ describe('MembershipViewComponent', () => {
     let modalService: NgbModal;
 
     beforeEach(() => {
-      store.dispatch(new MembershipStoreActions.GetMembershipSuccess({ membership }));
+      store.dispatch(MembershipStoreActions.getMembershipSuccess({ membership }));
       fixture.detectChanges();
 
       modalService = TestBed.get(NgbModal);
@@ -493,7 +493,7 @@ describe('MembershipViewComponent', () => {
       flush();
       fixture.detectChanges();
 
-      const action = new MembershipStoreActions.RemoveMembershipRequest({ membership });
+      const action = MembershipStoreActions.removeMembershipRequest({ membership });
       expect(dispatchListener.mock.calls.length).toBe(1);
       expect(dispatchListener.mock.calls[0][0]).toEqual(action);
     }));
@@ -506,7 +506,7 @@ describe('MembershipViewComponent', () => {
       flush();
       fixture.detectChanges();
 
-      const action = new MembershipStoreActions.RemoveMembershipSuccess({ membershipId: membership.id });
+      const action = MembershipStoreActions.removeMembershipSuccess({ membershipId: membership.id });
       store.dispatch(action);
       flush();
       fixture.detectChanges();

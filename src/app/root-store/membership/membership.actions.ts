@@ -3,153 +3,102 @@ import { Action } from '@ngrx/store';
 import { SearchParams, PagedReply } from '@app/domain';
 import { Membership } from '@app/domain/access';
 import { MembershipUpdateAttribute } from '@app/core/services';
+import { props, createAction, union } from '@ngrx/store';
 
-// TODO: Update to use createAction introduced in NGRX 7.4
+export const searchMembershipsRequest = createAction(
+  '[Membership] Search Memberships Request',
+  props<{ searchParams: SearchParams }>()
+);
 
-interface MembershipUpdateRequestPayload {
-  membership: Membership;
-  attributeName: MembershipUpdateAttribute;
-  value?: string;
-}
+export const searchMembershipsSuccess = createAction(
+  '[Membership] Search Memberships Sucess',
+  props<{ pagedReply: PagedReply<Membership> }>()
+);
 
-export enum MembershipActionTypes {
-  SearchMembershipsRequest = '[Membership] Search Memberships Request',
-  SearchMembershipsSuccess = '[Membership] Search Memberships Success',
-  SearchMembershipsFailure = '[Memberships] Search Memberships Failure',
+export const searchMembershipsFailure = createAction(
+  '[Membership] Search Memberships Failure',
+  props<{ error: any }>()
+);
 
-  AddMembershipRequest = '[Membership] Add Membership Request',
-  AddMembershipSuccess = '[Membership] Add Membership Success',
-  AddMembershipFailure = '[Membership] Add Membership Failure',
+export const addMembershipRequest = createAction(
+  '[Membership] Add Membership Request',
+  props<{ membership: Membership }>()
+);
 
-  GetMembershipRequest = '[Membership] Get Membership Request',
-  GetMembershipSuccess = '[Membership] Get Membership Success',
-  GetMembershipFailure = '[Membership] Get Membership Failure',
+export const addMembershipSuccess = createAction(
+  '[Membership] Add Membership Success',
+  props<{ membership: Membership }>()
+);
 
-  UpdateMembershipRequest = '[Membership] Update Membership Request',
-  UpdateMembershipSuccess = '[Membership] Update Membership Success',
-  UpdateMembershipFailure = '[Membership] Update Membership Failure',
+export const addMembershipFailure = createAction(
+  '[Membership] Add Membership Failure',
+  props<{ error: any }>()
+);
 
-  RemoveMembershipRequest = '[Membership] Remove Membership Request',
-  RemoveMembershipSuccess = '[Membership] Remove Membership Success',
-  RemoveMembershipFailure = '[Membership] Remove Membership Failure',
-}
+export const getMembershipRequest = createAction(
+  '[Membership] Get Membership Request',
+  props<{ slug: string }>()
+);
 
-export class SearchMembershipsRequest implements Action {
-  readonly type = MembershipActionTypes.SearchMembershipsRequest;
+export const getMembershipSuccess = createAction(
+  '[Membership] Get Membership Success',
+  props<{ membership: Membership }>()
+);
 
-  constructor(public payload: { searchParams: SearchParams }) { }
-}
+export const getMembershipFailure = createAction(
+  '[Membership] Get Membership Failure',
+  props<{ error: any }>()
+);
 
-/* tslint:disable:max-classes-per-file */
-export class SearchMembershipsSuccess implements Action {
-  readonly type = MembershipActionTypes.SearchMembershipsSuccess;
+export const updateMembershipRequest = createAction(
+  '[Membership] Update Membership Request',
+  props<{
+    membership: Membership;
+    attributeName: MembershipUpdateAttribute;
+    value?: string;
+   }>()
+);
 
-  constructor(public payload: { pagedReply: PagedReply<Membership> }) { }
-}
+export const updateMembershipSuccess = createAction(
+  '[Membership] Update Membership Success',
+  props<{ membership: Membership }>()
+);
 
-export class SearchMembershipsFailure implements Action {
-  readonly type = MembershipActionTypes.SearchMembershipsFailure;
+export const updateMembershipFailure = createAction(
+  '[Membership] Update Membership Failure',
+  props<{ error: any }>()
+);
 
-  constructor(public payload: { error: any }) { }
-}
+export const removeMembershipRequest = createAction(
+  '[Membership] Remove Membership Request',
+  props<{ membership: Membership }>()
+);
 
-@ShowSpinner()
-export class AddMembershipRequest implements Action {
-  readonly type = MembershipActionTypes.AddMembershipRequest;
+export const removeMembershipSuccess = createAction(
+  '[Membership] Remove Membership Success',
+  props<{ membershipId: string }>()
+);
 
-  constructor(public payload: { membership: Membership }) { }
-}
+export const removeMembershipFailure = createAction(
+  '[Membership] Remove Membership Failure',
+  props<{ error:any }>()
+);
 
-@HideSpinner(MembershipActionTypes.AddMembershipRequest)
-export class AddMembershipSuccess implements Action {
-  readonly type = MembershipActionTypes.AddMembershipSuccess;
-
-  constructor(public payload: { membership: Membership }) { }
-}
-
-@HideSpinner(MembershipActionTypes.AddMembershipRequest)
-export class AddMembershipFailure implements Action {
-  readonly type = MembershipActionTypes.AddMembershipFailure;
-
-  constructor(public payload: { error: any }) { }
-}
-
-@ShowSpinner()
-export class GetMembershipRequest implements Action {
-  readonly type = MembershipActionTypes.GetMembershipRequest;
-
-  constructor(public payload: { slug: string }) { }
-}
-
-@HideSpinner(MembershipActionTypes.GetMembershipRequest)
-export class GetMembershipSuccess implements Action {
-  readonly type = MembershipActionTypes.GetMembershipSuccess;
-
-  constructor(public payload: { membership: Membership }) { }
-}
-
-@HideSpinner(MembershipActionTypes.GetMembershipRequest)
-export class GetMembershipFailure implements Action {
-  readonly type = MembershipActionTypes.GetMembershipFailure;
-
-  constructor(public payload: { error: any }) { }
-}
-
-@ShowSpinner()
-export class UpdateMembershipRequest implements Action {
-  readonly type = MembershipActionTypes.UpdateMembershipRequest;
-
-  constructor(public payload: MembershipUpdateRequestPayload) { }
-}
-
-@HideSpinner(MembershipActionTypes.UpdateMembershipRequest)
-export class UpdateMembershipSuccess implements Action {
-  readonly type = MembershipActionTypes.UpdateMembershipSuccess;
-
-  constructor(public payload: { membership: Membership }) { }
-}
-
-@HideSpinner(MembershipActionTypes.UpdateMembershipRequest)
-export class UpdateMembershipFailure implements Action {
-  readonly type = MembershipActionTypes.UpdateMembershipFailure;
-
-  constructor(public payload: { error: any }) { }
-}
-
-@ShowSpinner()
-export class RemoveMembershipRequest implements Action {
-  readonly type = MembershipActionTypes.RemoveMembershipRequest;
-
-  constructor(public payload: { membership: Membership }) { }
-}
-
-@HideSpinner(MembershipActionTypes.RemoveMembershipRequest)
-export class RemoveMembershipSuccess implements Action {
-  readonly type = MembershipActionTypes.RemoveMembershipSuccess;
-
-  constructor(public payload: { membershipId: string }) { }
-}
-
-@HideSpinner(MembershipActionTypes.RemoveMembershipRequest)
-export class RemoveMembershipFailure implements Action {
-  readonly type = MembershipActionTypes.RemoveMembershipFailure;
-
-  constructor(public payload: { error: any }) { }
-}
-
-export type MembershipActions =
-  SearchMembershipsRequest
-  | SearchMembershipsSuccess
-  | SearchMembershipsFailure
-  | AddMembershipRequest
-  | AddMembershipSuccess
-  | AddMembershipFailure
-  | GetMembershipRequest
-  | GetMembershipSuccess
-  | GetMembershipFailure
-  | UpdateMembershipRequest
-  | UpdateMembershipSuccess
-  | UpdateMembershipFailure
-  | RemoveMembershipRequest
-  | RemoveMembershipSuccess
-  | RemoveMembershipFailure;
+const all = union({
+  searchMembershipsRequest,
+  searchMembershipsSuccess,
+  searchMembershipsFailure,
+  addMembershipRequest,
+  addMembershipSuccess,
+  addMembershipFailure,
+  getMembershipRequest,
+  getMembershipSuccess,
+  getMembershipFailure,
+  updateMembershipRequest,
+  updateMembershipSuccess,
+  updateMembershipFailure,
+  removeMembershipRequest,
+  removeMembershipSuccess,
+  removeMembershipFailure
+});
+export type MembershipActionsUnion = typeof all;

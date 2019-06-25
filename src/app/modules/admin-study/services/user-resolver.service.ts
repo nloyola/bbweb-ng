@@ -15,7 +15,7 @@ export class UserResolver implements Resolve<User> {
 
   resolve(route: ActivatedRouteSnapshot, _state: RouterStateSnapshot): Observable<User> {
     const slug = route.paramMap.get('slug');
-    this.store$.dispatch(new UserStoreActions.GetUserRequest({ slug }));
+    this.store$.dispatch(UserStoreActions.getUserRequest({ slug }));
 
     return race<any>(
       this.store$.pipe(

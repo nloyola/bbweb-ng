@@ -9,58 +9,55 @@ import * as UserActions from './user.actions';
 @Injectable()
 export class UserStoreEffects {
 
-  constructor(private actions$: Actions<UserActions.UserActions>,
+  constructor(private actions$: Actions<UserActions.UserActionsUnion>,
               private userService: UserService) { }
 
   @Effect()
   getRequest$: Observable<Action> = this.actions$.pipe(
-    ofType(UserActions.UserActionTypes.GetUserRequest),
-    map(action => action.payload),
+    ofType(UserActions.getUserRequest.type),
     switchMap(
-      payload =>
-        this.userService.get(payload.slug)
+      action =>
+        this.userService.get(action.slug)
         .pipe(
-          map(user => new UserActions.GetUserSuccess({ user })),
-          catchError(error => observableOf(new UserActions.GetUserFailure({ error }))))
+          map(user => UserActions.getUserSuccess({ user })),
+          catchError(error => observableOf(UserActions.getUserFailure({ error }))))
     )
   );
 
   @Effect()
   searchRequest$: Observable<Action> = this.actions$.pipe(
-    ofType(UserActions.UserActionTypes.SearchUsersRequest),
-    map(action => action.payload),
+    ofType(UserActions.searchUsersRequest.type),
     switchMap(
-      payload =>
-        this.userService.search(payload.searchParams)
+      action =>
+        this.userService.search(action.searchParams)
         .pipe(
-          map(pagedReply => new UserActions.SearchUsersSuccess({ pagedReply })),
-          catchError(error => observableOf(new UserActions.SearchUsersFailure({ error }))))
+          map(pagedReply => UserActions.searchUsersSuccess({ pagedReply })),
+          catchError(error => observableOf(UserActions.searchUsersFailure({ error }))))
     )
   );
 
   @Effect()
   updateRequest$: Observable<Action> = this.actions$.pipe(
-    ofType(UserActions.UserActionTypes.UpdateUserRequest),
-    map(action => action.payload),
+    ofType(UserActions.updateUserRequest.type),
     switchMap(
-      payload =>
-        this.userService.update(payload.user, payload.attributeName, payload.value)
+      action =>
+        this.userService.update(action.user, action.attributeName, action.value)
         .pipe(
-          map(user => new UserActions.UpdateUserSuccess({ user })),
-          catchError(error => observableOf(new UserActions.UpdateUserFailure({ error }))))
+          map(user => UserActions.updateUserSuccess({ user })),
+          catchError(error => observableOf(UserActions.updateUserFailure({ error }))))
     )
   );
 
   @Effect()
   countsRequest$: Observable<Action> = this.actions$.pipe(
-    ofType(UserActions.UserActionTypes.GetUserCountsRequest),
+    ofType(UserActions.getUserCountsRequest.type),
     switchMap(
       () =>
         this.userService.counts()
         .pipe(
           // delay(5000),
-          map(userCounts => new UserActions.GetUserCountsSuccess({ userCounts })),
-          catchError(error => observableOf(new UserActions.GetUserCountsFailure({ error }))))
+          map(userCounts => UserActions.getUserCountsSuccess({ userCounts })),
+          catchError(error => observableOf(UserActions.getUserCountsFailure({ error }))))
     )
   );
 

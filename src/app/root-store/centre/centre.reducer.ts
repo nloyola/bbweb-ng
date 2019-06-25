@@ -1,7 +1,7 @@
 import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 
 import { Centre } from '@app/domain/centres';
-import { CentreActions, ActionTypes } from './centre.actions';
+import * as CentreActions from './centre.actions';
 import { SearchParams, PagedReplyEntityIds } from '@app/domain';
 import { CentreCounts } from '@app/domain/centres/centre-counts.model';
 
@@ -25,46 +25,46 @@ export const initialState: State = adapter.getInitialState({
   centreCounts: {} as any
 });
 
-export function reducer(state = initialState, action: CentreActions): State {
+export function reducer(state = initialState, action: CentreActions.CentreActionsUnion): State {
   switch (action.type) {
-    case ActionTypes.GetCentreCountsRequest:
-    case ActionTypes.AddCentreRequest: {
+    case CentreActions.getCentreCountsRequest.type:
+    case CentreActions.addCentreRequest.type: {
       return {
         ...state,
         error: null
       };
     }
 
-    case ActionTypes.GetCentreCountsSuccess: {
+    case CentreActions.getCentreCountsSuccess.type: {
       return {
         ...state,
-        centreCounts: action.payload.centreCounts
+        centreCounts: action.centreCounts
       };
     }
 
-    case ActionTypes.SearchCentresRequest: {
+    case CentreActions.searchCentresRequest.type: {
       return {
         ...state,
-        lastSearch: action.payload.searchParams,
+        lastSearch: action.searchParams,
         searchActive: true,
         error: null
       };
     }
 
-    case ActionTypes.SearchCentresFailure: {
+    case CentreActions.searchCentresFailure.type: {
       return {
         ...state,
         lastSearch: null,
         searchActive: false,
         error: {
-          type: ActionTypes.SearchCentresFailure,
-          error: action.payload.error
+          actionType: action.type,
+          error: action.error
         }
       };
     }
 
-    case ActionTypes.SearchCentresSuccess: {
-      const pagedReply = action.payload.pagedReply;
+    case CentreActions.searchCentresSuccess.type: {
+      const pagedReply = action.pagedReply;
       const queryString = state.lastSearch.queryString();
       const newReply = {};
       newReply[queryString] = {
@@ -85,7 +85,7 @@ export function reducer(state = initialState, action: CentreActions): State {
       });
     }
 
-    case ActionTypes.AddCentreRequest: {
+    case CentreActions.addCentreRequest.type: {
       return {
         ...state,
         lastAddedId: null,
@@ -93,41 +93,41 @@ export function reducer(state = initialState, action: CentreActions): State {
       };
     }
 
-    case ActionTypes.AddCentreSuccess: {
-      return adapter.addOne(action.payload.centre, {
+    case CentreActions.addCentreSuccess.type: {
+      return adapter.addOne(action.centre, {
         ...state,
-        lastAddedId: action.payload.centre.id
+        lastAddedId: action.centre.id
       });
     }
 
-    case ActionTypes.UpdateCentreRequest: {
+    case CentreActions.updateCentreRequest.type: {
       return {
         ...state,
         error: null
       };
     }
 
-    case ActionTypes.UpdateCentreSuccess: {
+    case CentreActions.updateCentreSuccess.type: {
       return adapter.updateOne(
         {
-          id: action.payload.centre.id,
-          changes: action.payload.centre
+          id: action.centre.id,
+          changes: action.centre
         },
         state);
     }
 
-    case ActionTypes.GetCentreSuccess: {
-      return adapter.addOne(action.payload.centre, state);
+    case CentreActions.getCentreSuccess.type: {
+      return adapter.addOne(action.centre, state);
     }
 
-    case ActionTypes.GetCentreCountsFailure:
-    case ActionTypes.GetCentreFailure:
-    case ActionTypes.AddCentreFailure:
-    case ActionTypes.UpdateCentreFailure:
+    case CentreActions.getCentreCountsFailure.type:
+    case CentreActions.getCentreFailure.type:
+    case CentreActions.addCentreFailure.type:
+    case CentreActions.updateCentreFailure.type:
       return {
         ...state,
         error: {
-          error: action.payload.error,
+          error: action.error,
           actionType: action.type
         }
       };

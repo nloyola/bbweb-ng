@@ -15,7 +15,7 @@ export class UserAddTypeahead extends EntityTypeahead<User> {
 
   protected termMapper(term: string): Observable<User[]> {
     const searchParams = new SearchParams(`name:like:${term}`);
-    this.store$.dispatch(new UserStoreActions.SearchUsersRequest({ searchParams }));
+    this.store$.dispatch(UserStoreActions.searchUsersRequest({ searchParams }));
 
     return this.store$.pipe(
       select(UserStoreSelectors.selectUserSearchRepliesAndEntities),

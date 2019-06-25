@@ -19,7 +19,7 @@ describe('Centre Reducer', () => {
   describe('centre counts', () => {
 
     it('GetCentreCountsRequest', () => {
-      const action = new CentreStoreActions.GetCentreCountsRequest();
+      const action = CentreStoreActions.getCentreCountsRequest({ searchParams: new SearchParams() });
       const state = CentreStoreReducer.reducer(undefined, action);
 
       expect(state).toEqual({
@@ -29,7 +29,7 @@ describe('Centre Reducer', () => {
 
     it('GetCentreCountsSuccess', () => {
       const centreCounts = factory.centreCounts();
-      const action = new CentreStoreActions.GetCentreCountsSuccess({ centreCounts });
+      const action = CentreStoreActions.getCentreCountsSuccess({ centreCounts });
       const state = CentreStoreReducer.reducer(undefined, action);
 
       expect(state).toEqual({
@@ -47,14 +47,14 @@ describe('Centre Reducer', () => {
           }
         }
       };
-      const action = new CentreStoreActions.GetCentreCountsFailure(payload);
+      const action = CentreStoreActions.getCentreCountsFailure(payload);
       const state = CentreStoreReducer.reducer(undefined, action);
 
       expect(state).toEqual({
         ...CentreStoreReducer.initialState,
         error: {
           actionType: action.type,
-          error: action.payload.error
+          error: action.error
         }
       });
     });
@@ -67,7 +67,7 @@ describe('Centre Reducer', () => {
       const payload = {
         searchParams: new SearchParams()
       };
-      const action = new CentreStoreActions.SearchCentresRequest(payload);
+      const action = CentreStoreActions.searchCentresRequest(payload);
       const state = CentreStoreReducer.reducer(undefined, action);
 
       expect(state).toEqual({
@@ -82,7 +82,7 @@ describe('Centre Reducer', () => {
       const payload = {
         pagedReply: factory.pagedReply<Centre>([ centre ])
       };
-      const action = new CentreStoreActions.SearchCentresSuccess(payload);
+      const action = CentreStoreActions.searchCentresSuccess(payload);
       const state = CentreStoreReducer.reducer(
         {
           ...CentreStoreReducer.initialState,
@@ -114,15 +114,15 @@ describe('Centre Reducer', () => {
           }
         }
       };
-      const action = new CentreStoreActions.SearchCentresFailure(payload);
+      const action = CentreStoreActions.searchCentresFailure(payload);
       const state = CentreStoreReducer.reducer(undefined, action);
 
       expect(state).toEqual({
         ...CentreStoreReducer.initialState,
         lastSearch: null,
         error: {
-          type: action.type,
-          error: action.payload.error
+          actionType: action.type,
+          error: action.error
         }
       });
     });
@@ -134,7 +134,7 @@ describe('Centre Reducer', () => {
     it('AddCentreRequest', () => {
       const centre = new Centre().deserialize(factory.centre());
       const payload = { centre };
-      const action = new CentreStoreActions.AddCentreRequest(payload);
+      const action = CentreStoreActions.addCentreRequest(payload);
       const state = CentreStoreReducer.reducer(undefined, action);
 
       expect(state).toEqual({
@@ -145,7 +145,7 @@ describe('Centre Reducer', () => {
     it('AddCentreSuccess', () => {
       const centre = new Centre().deserialize(factory.centre());
       const payload = { centre };
-      const action = new CentreStoreActions.AddCentreSuccess(payload);
+      const action = CentreStoreActions.addCentreSuccess(payload);
       const state = CentreStoreReducer.reducer(undefined, action);
 
       expect(state.lastAddedId).toEqual(centre.id);
@@ -162,7 +162,7 @@ describe('Centre Reducer', () => {
           }
         }
       };
-      const action = new CentreStoreActions.AddCentreFailure(payload);
+      const action = CentreStoreActions.addCentreFailure(payload);
       const state = CentreStoreReducer.reducer(undefined, action);
 
       expect(state).toEqual({
@@ -170,7 +170,7 @@ describe('Centre Reducer', () => {
         lastSearch: null,
         error: {
           actionType: action.type,
-          error: action.payload.error
+          error: action.error
         }
       });
     });
@@ -182,7 +182,7 @@ describe('Centre Reducer', () => {
     it('GetCentreRequest', () => {
       const centre = factory.centre();
       const payload = { slug: centre.slug };
-      const action = new CentreStoreActions.GetCentreRequest(payload);
+      const action = CentreStoreActions.getCentreRequest(payload);
       const state = CentreStoreReducer.reducer(undefined, action);
 
       expect(state).toEqual({
@@ -193,7 +193,7 @@ describe('Centre Reducer', () => {
     it('GetCentreSuccess', () => {
       const centre = new Centre().deserialize(factory.centre());
       const payload = { centre };
-      const action = new CentreStoreActions.GetCentreSuccess(payload);
+      const action = CentreStoreActions.getCentreSuccess(payload);
       const state = CentreStoreReducer.reducer(undefined, action);
 
       expect(state.ids).toContain(centre.id);
@@ -209,7 +209,7 @@ describe('Centre Reducer', () => {
           }
         }
       };
-      const action = new CentreStoreActions.GetCentreFailure(payload);
+      const action = CentreStoreActions.getCentreFailure(payload);
       const state = CentreStoreReducer.reducer(undefined, action);
 
       expect(state).toEqual({
@@ -217,7 +217,7 @@ describe('Centre Reducer', () => {
         lastSearch: null,
         error: {
           actionType: action.type,
-          error: action.payload.error
+          error: action.error
         }
       });
     });
@@ -241,7 +241,7 @@ describe('Centre Reducer', () => {
 
     it('UpdateCentreSuccess', () => {
       const payload = { centre };
-      const initialAction = new CentreStoreActions.GetCentreSuccess(payload);
+      const initialAction = CentreStoreActions.getCentreSuccess(payload);
       let state = CentreStoreReducer.reducer(initialState, initialAction);
 
       const  updatedCentre = new Centre().deserialize({
@@ -250,7 +250,7 @@ describe('Centre Reducer', () => {
       });
       state = CentreStoreReducer.reducer(
         state,
-        new CentreStoreActions.UpdateCentreSuccess({ centre: updatedCentre }));
+        CentreStoreActions.updateCentreSuccess({ centre: updatedCentre }));
 
       expect(state.ids).toContain(centre.id);
       expect(state.entities[centre.id]).toEqual(updatedCentre);
@@ -265,7 +265,7 @@ describe('Centre Reducer', () => {
           }
         }
       };
-      const action = new CentreStoreActions.UpdateCentreFailure(payload);
+      const action = CentreStoreActions.updateCentreFailure(payload);
       const state = CentreStoreReducer.reducer(initialState, action);
       expect(state.error).toEqual({
         actionType: action.type,

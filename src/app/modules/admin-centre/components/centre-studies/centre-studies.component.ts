@@ -50,7 +50,7 @@ export class CentreStudiesComponent implements OnInit, OnDestroy {
       takeUntil(this.unsubscribe$)
     ).subscribe((study: Study) => {
       const centre = this.centreSubject.value.entity;
-      this.store$.dispatch(new CentreStoreActions.UpdateCentreRequest({
+      this.store$.dispatch(CentreStoreActions.updateCentreRequest({
         centre,
         attributeName: 'studyAdd',
         value: study.id
@@ -116,7 +116,7 @@ export class CentreStudiesComponent implements OnInit, OnDestroy {
       modalRef.componentInstance.study = study;
       modalRef.result
         .then(() => {
-          this.store$.dispatch(new CentreStoreActions.UpdateCentreRequest({
+          this.store$.dispatch(CentreStoreActions.updateCentreRequest({
             centre,
             attributeName: 'studyRemove',
             value: study.id

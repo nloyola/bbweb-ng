@@ -64,7 +64,7 @@ describe('UsersViewComponent', () => {
     it('user count initialized', () => {
       const users = [];
       const userCounts = factory.userCounts();
-      const action = new UserStoreActions.GetUserCountsSuccess({ userCounts });
+      const action = UserStoreActions.getUserCountsSuccess({ userCounts });
       store.dispatch(action);
       fixture.detectChanges();
 
@@ -79,7 +79,7 @@ describe('UsersViewComponent', () => {
       expect(comp[0].nativeElement.textContent).toContain('Retrieving counts');
 
       const userCounts = factory.userCounts();
-      const action = new UserStoreActions.GetUserCountsSuccess({ userCounts });
+      const action = UserStoreActions.getUserCountsSuccess({ userCounts });
       store.dispatch(action);
       flush();
       fixture.detectChanges();
@@ -108,7 +108,7 @@ describe('UsersViewComponent', () => {
         storeListener.mockClear();
         component.onFiltersUpdated(value);
 
-        const action = new UserStoreActions.SearchUsersRequest({ searchParams });
+        const action = UserStoreActions.searchUsersRequest({ searchParams });
 
         expect(storeListener.mock.calls.length).toBe(1);
         expect(storeListener.mock.calls[0][0]).toEqual(action);
@@ -118,7 +118,7 @@ describe('UsersViewComponent', () => {
     it('displays that there are no matches for the name filter', () => {
       const pagedReply = factory.pagedReply([]);
       pagedReply.searchParams.filter = 'name:like:test';
-      store.dispatch(new UserStoreActions.SearchUsersSuccess({ pagedReply }));
+      store.dispatch(UserStoreActions.searchUsersSuccess({ pagedReply }));
       fixture.detectChanges();
 
       const de = fixture.debugElement;
@@ -133,7 +133,7 @@ describe('UsersViewComponent', () => {
     const storeListener = jest.spyOn(store, 'dispatch');
     component.sortFieldSelected('name');
 
-    const action = new UserStoreActions.SearchUsersRequest({
+    const action = UserStoreActions.searchUsersRequest({
       searchParams: new SearchParams('', 'name', 1, 5)
     });
 
@@ -152,7 +152,7 @@ describe('UsersViewComponent', () => {
     it('reloads page when a new page is selected', () => {
       component.paginationPageChanged(1);
 
-      const action = new UserStoreActions.SearchUsersRequest({
+      const action = UserStoreActions.searchUsersRequest({
         searchParams: new SearchParams('', undefined, 1, 5)
       });
 
@@ -178,7 +178,7 @@ describe('UsersViewComponent', () => {
   it('displays users', () => {
     const user = new User().deserialize(factory.user());
     const pagedReply = factory.pagedReply([ user ]);
-    store.dispatch(new UserStoreActions.SearchUsersSuccess({ pagedReply }));
+    store.dispatch(UserStoreActions.searchUsersSuccess({ pagedReply }));
     fixture.detectChanges();
 
     const de = fixture.debugElement;

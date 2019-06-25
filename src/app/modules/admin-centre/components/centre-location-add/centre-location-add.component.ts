@@ -76,7 +76,7 @@ export class CentreLocationAddComponent implements OnInit, OnDestroy {
   onSubmit(location: Location): void {
     this.locationToSave = location;
     this.store$.dispatch(
-      new CentreStoreActions.UpdateCentreRequest({
+      CentreStoreActions.updateCentreRequest({
         centre: this.centre,
         attributeName: 'locationAdd',
         value: this.locationToSave

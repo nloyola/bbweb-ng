@@ -46,7 +46,7 @@ describe('MembershipResolver', () => {
     const membership = new Membership().deserialize(factory.membership());
     const route = new ActivatedRouteSnapshot();
     route.params = { slug: membership.slug };
-    const action = new MembershipStoreActions.GetMembershipSuccess({ membership });
+    const action = MembershipStoreActions.getMembershipSuccess({ membership });
     store.dispatch(action);
     const expected = cold('(b|)', { b: membership });
     expect(resolver.resolve(route, null)).toBeObservable(expected);
@@ -61,12 +61,12 @@ describe('MembershipResolver', () => {
     };
     const route = new ActivatedRouteSnapshot();
     route.params = { slug: 'test' };
-    const action = new MembershipStoreActions.GetMembershipFailure({ error });
+    const action = MembershipStoreActions.getMembershipFailure({ error });
     store.dispatch(action);
     const expected = cold('(b|)', {
       b: {
         error,
-        actionType: MembershipStoreActions.MembershipActionTypes.GetMembershipFailure
+        actionType: MembershipStoreActions.getMembershipFailure.type
       }
     });
     ngZone.run(() => {
