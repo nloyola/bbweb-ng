@@ -18,8 +18,7 @@
  * BROWSER POLYFILLS
  */
 
-// see https://github.com/jasmine/jasmine/issues/1523
-import 'core-js/es7/reflect';
+import 'core-js/features/reflect';
 
 /** IE9, IE10 and IE11 requires all of the following polyfills. **/
 // import 'core-js/es6/symbol';
