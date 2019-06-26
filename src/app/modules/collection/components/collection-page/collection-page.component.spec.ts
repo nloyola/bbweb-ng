@@ -19,8 +19,6 @@ describe('CollectionPageComponent', () => {
   let component: CollectionPageComponent;
   let fixture: ComponentFixture<CollectionPageComponent>;
   let store: Store<RootStoreState.State>;
-  let toastr: ToastrService;
-  let router: Router;
   const factory = new Factory();
 
   beforeEach(async(() => {

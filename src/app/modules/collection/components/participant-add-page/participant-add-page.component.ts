@@ -32,12 +32,13 @@ export class ParticipantAddPageComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.isLoading$ = this.store$.pipe(select(StudyStoreSelectors.selectCollectionStudiesSearchActive));
-    this.uniqueId$ = this.route.params.pipe(map(params => params['uniqueId']));
+    this.uniqueId$ = this.route.params.pipe(
+      map(params => params ? params['uniqueId'] : undefined));
 
     const studiesSelector = createSelector(
       StudyStoreSelectors.selectCollectionStudiesSearchRepliesAndEntities,
       StudyStoreSelectors.selectAllStudies,
-      (collectionStudies: Study[], studies: []) => ({ collectionStudies, studies }));
+      (collectionStudies: Study[], studies: Study[]) => ({ collectionStudies, studies }));
 
     this.collectionStudies$ = this.store$.pipe(
       select(studiesSelector),
@@ -63,9 +64,9 @@ export class ParticipantAddPageComponent implements OnInit, OnDestroy {
       select(ParticipantStoreSelectors.selectParticipantError),
       withLatestFrom(this.updatedMessage$),
       takeUntil(this.unsubscribe$)
-    ).subscribe(([ error, msg ]) => {
+    ).subscribe(([ error, _msg ]) => {
       let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
-      if (errMessage.match(/participant with unique ID already exists/)) {
+      if (errMessage && errMessage.match(/participant with unique ID already exists/)) {
         errMessage = `A participant with the ID ${this.participantToAdd.uniqueId} already exits.`;
       }
       this.toastr.error(errMessage, 'Add Error', { disableTimeOut: true });

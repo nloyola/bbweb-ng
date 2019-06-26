@@ -3,10 +3,10 @@ import { async, ComponentFixture, fakeAsync, flush, TestBed } from '@angular/cor
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
+import { annotationFromType } from '@app/domain/annotations';
 import { CollectionEvent, Participant, Specimen } from '@app/domain/participants';
 import { CollectionEventType, Study } from '@app/domain/studies';
-import { EventStoreActions, EventStoreReducer, EventTypeStoreActions, EventTypeStoreReducer, ParticipantStoreActions, ParticipantStoreReducer, RootStoreState, SpecimenStoreActions, SpecimenStoreReducer, StudyStoreActions, StudyStoreReducer } from '@app/root-store';
-import { NgrxRuntimeChecks } from '@app/root-store/root-store.module';
+import { EventStoreActions, EventStoreReducer, EventTypeStoreActions, EventTypeStoreReducer, NgrxRuntimeChecks, ParticipantStoreActions, ParticipantStoreReducer, RootStoreState, SpecimenStoreActions, SpecimenStoreReducer, StudyStoreActions, StudyStoreReducer } from '@app/root-store';
 import { NgbActiveModal, NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
 import { EntityUpdateComponentBehaviour } from '@test/behaviours/entity-update-component.behaviour';
@@ -17,8 +17,6 @@ import { cold } from 'jasmine-marbles';
 import { ToastrModule } from 'ngx-toastr';
 import { of as observableOf } from 'rxjs';
 import { EventViewComponent } from './event-view.component';
-import { annotationFromType } from '@app/domain/annotations';
-import { By } from '@angular/platform-browser';
 
 interface EntitiesOptions {
   study?: Study;

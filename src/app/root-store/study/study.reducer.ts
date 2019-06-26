@@ -1,5 +1,5 @@
 import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
-import { Study } from '@app/domain/studies';
+import { Study, StudyStateInfo } from '@app/domain/studies';
 import { SearchParams, PagedReplyEntityIds, PagedReply, EntityIds } from '@app/domain';
 import { StudyCounts } from '@app/domain/studies/study-counts.model';
 import * as StudyActions from './study.actions';
@@ -110,16 +110,14 @@ export function reducer(
     }
 
     case StudyActions.searchCollectionStudiesSuccess.type: {
-      const dtoData = action.studiesData.map(dto => ({
-        id: dto.id,
-        slug: dto.slug,
-        name: dto.name,
-        state: dto.state
-      } as Study));
+      const studyStateData = action.studiesData.map(dto => new StudyStateInfo().deserialize(dto));
+      if (state.searchCollectionStudiesState.lastSearch === undefined) {
+        throw new Error('last search is undefined');
+      }
       const queryString = state.searchCollectionStudiesState.lastSearch.queryString();
       const newIds = {};
       newIds[queryString] = action.studiesData.map(dto => dto.id);
-      return adapter.upsertMany(dtoData, {
+      const newState = {
         ...state,
         searchCollectionStudiesState: {
           ...state.searchCollectionStudiesState,
@@ -129,7 +127,8 @@ export function reducer(
           },
           searchActive: false
         }
-      });
+      };
+      return adapter.upsertMany(studyStateData as Study[], newState);
     }
 
     case StudyActions.addStudyRequest.type: {
