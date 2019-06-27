@@ -1,7 +1,6 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { async, ComponentFixture, fakeAsync, flush, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { By } from '@angular/platform-browser';
 import { ConcurrencySafeEntity } from '@app/domain';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { PagedEntitySelectorComponent } from './paged-entity-selector.component';
@@ -48,15 +47,13 @@ describe('PagedEntitySelectorComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('changes to page should emit an event', async(() => {
+  it('changes to page should emit an event', () => {
     fixture.detectChanges();
     let eventProduced = false;
     component.pageChange.subscribe(() => { eventProduced = true; });
 
     component.paginationPageChange(1);
-    fixture.whenStable().then(() => {
-      fixture.detectChanges();
-      expect(eventProduced).toBe(true);
-    });
-  }));
+    fixture.detectChanges();
+    expect(eventProduced).toBe(true);
+  });
 });
