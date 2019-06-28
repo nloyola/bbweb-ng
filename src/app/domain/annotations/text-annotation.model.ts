@@ -15,7 +15,8 @@ export class TextAnnotation extends Annotation {
 
   deserialize(input: IAnnotation): this {
     super.deserialize(input);
-    this.value = (input as any).stringValue;
+    const stringValue = (input as any).stringValue;
+    this.value = (stringValue) ? stringValue : null;
     return this;
   }
 }

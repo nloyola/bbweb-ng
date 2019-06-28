@@ -1,18 +1,20 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormsModule, ReactiveFormsModule, FormArray } from '@angular/forms';
-import { EventStoreReducer, EventTypeStoreReducer, NgrxRuntimeChecks, ParticipantStoreReducer, RootStoreState, StudyStoreReducer, EventTypeStoreActions } from '@app/root-store';
-import { Store, StoreModule } from '@ngrx/store';
-import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
-import { EventAddFormComponent } from './event-add-form.component';
+import { async, ComponentFixture, fakeAsync, TestBed, flush } from '@angular/core/testing';
+import { FormArray, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { ToastrModule } from 'ngx-toastr';
-import { CollectionEvent, Participant, Specimen } from '@app/domain/participants';
-import { CollectionEventType, Study, EventTypeInfo } from '@app/domain/studies';
+import { CollectionEvent, Participant } from '@app/domain/participants';
+import { CollectionEventType, EventTypeInfo, Study } from '@app/domain/studies';
+import { EventStoreActions, EventStoreReducer, EventTypeStoreActions, EventTypeStoreReducer, NgrxRuntimeChecks, ParticipantStoreReducer, RootStoreState, StudyStoreReducer } from '@app/root-store';
+import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
-import { of as observableOf } from 'rxjs';
-import { ActivatedRoute } from '@angular/router';
 import { MockActivatedRoute } from '@test/mocks';
+import { cold } from 'jasmine-marbles';
+import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
+import { ToastrModule, ToastrService } from 'ngx-toastr';
+import { EventAddFormComponent } from './event-add-form.component';
+import { TestUtils } from '@test/utils';
 
 interface EntitiesOptions {
   study?: Study;
@@ -31,6 +33,7 @@ describe('ParticipantAddEventComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
+        BrowserAnimationsModule,
         FormsModule,
         ReactiveFormsModule,
         OwlDateTimeModule,
@@ -146,7 +149,7 @@ describe('ParticipantAddEventComponent', () => {
       const eventTypeInfo = [ new EventTypeInfo().deserialize(factory.entityNameDto(eventType)) ];
       fixture.detectChanges();
 
-      component.form.get('eventType').setValue(eventType.id);
+      component.eventType.setValue(eventType.id);
       store.dispatch(EventTypeStoreActions.searchEventTypeNamesSuccess({ eventTypeInfo  }));
       store.dispatch(EventTypeStoreActions.getEventTypeSuccess({ eventType  }));
       fixture.detectChanges();
@@ -156,8 +159,136 @@ describe('ParticipantAddEventComponent', () => {
 
   });
 
-  it('selecting', () => {
+  it('selecting an event type dispatches an action', () => {
+    const { participant, eventType } = createEntities();
+    fixture.detectChanges();
+    component.eventType.setValue(eventType.id);
 
+    const storeListener = jest.spyOn(store, 'dispatch');
+    component.onEventTypeSelected();
+    fixture.detectChanges();
+
+    expect(storeListener.mock.calls.length).toBe(1);
+    expect(storeListener.mock.calls[0][0]).toEqual(EventTypeStoreActions.getEventTypeByIdRequest({
+      studyId: participant.study.id,
+      eventTypeId: eventType.id
+    }));
+  });
+
+  describe('when submitting', () => {
+
+    const testCommon = (event: CollectionEvent, eventType: CollectionEventType) => {
+      component.eventType.setValue(eventType.id);
+      const eventTypeInfo = [ new EventTypeInfo().deserialize(factory.entityNameDto(eventType)) ];
+      store.dispatch(EventTypeStoreActions.searchEventTypeNamesSuccess({ eventTypeInfo  }));
+      store.dispatch(EventTypeStoreActions.getEventTypeSuccess({ eventType  }));
+      fixture.detectChanges();
+
+      component.visitNumber.setValue(event.visitNumber);
+      component.timeCompleted.setValue(event.timeCompleted);
+      component.onSubmit();
+      fixture.detectChanges();
+
+      TestUtils.routerNavigateListener();
+    };
+
+    it('isSaving$ is used correctly', () => {
+      const { event, eventType } = createEntities();
+      fixture.detectChanges();
+      expect(component.isSaving$).toBeObservable(cold('a', { a: false }));
+
+      testCommon(event, eventType);
+      expect(component.isSaving$).toBeObservable(cold('a', { a: true }));
+
+      store.dispatch(EventStoreActions.addEventSuccess({ event  }));
+      fixture.detectChanges();
+      expect(component.isSaving$).toBeObservable(cold('a', { a: false }));
+    });
+
+    it('dispatches action to add an event', () => {
+      const { event, eventType } = createEntities();
+      fixture.detectChanges();
+
+      const storeListener = TestUtils.storeDispatchListener();
+      testCommon(event, eventType);
+
+      expect(storeListener.mock.calls.length).toBe(3);
+      const eventToAdd = new CollectionEvent().deserialize({
+        ...event,
+        id: undefined,
+        slug: undefined,
+        version: undefined,
+        annotations: [
+          {
+            annotationTypeId: eventType.annotationTypes[0].id,
+            valueType: eventType.annotationTypes[0].valueType,
+            id: null,
+            value: null
+          }
+        ]
+      });
+      expect(storeListener.mock.calls[2][0])
+        .toEqual(EventStoreActions.addEventRequest({ event: eventToAdd }));
+    });
+
+    it('user is informed', () => {
+      const { event, eventType } = createEntities();
+      fixture.detectChanges();
+
+      testCommon(event, eventType);
+
+      const toastrListener = TestUtils.toastrSuccessListener();
+      store.dispatch(EventStoreActions.addEventSuccess({ event  }));
+      fixture.detectChanges();
+      expect(toastrListener.mock.calls.length).toBe(1);
+    });
+
+    it('on submission failure', fakeAsync(() => {
+      const toastr = TestBed.get(ToastrService);
+      const toastrErrorListener = jest.spyOn(toastr, 'error').mockReturnValue(null);
+      const errors = [
+        {
+          status: 401,
+          statusText: 'Unauthorized'
+        },
+        {
+          status: 404,
+          error: {
+              message: 'simulated error'
+          }
+        },
+        {
+          status: 404,
+          error: {
+            message: 'already exists'
+          }
+        }
+      ];
+
+      const { event, eventType } = createEntities();
+      fixture.detectChanges();
+
+      errors.forEach(error => {
+        toastrErrorListener.mockClear();
+        testCommon(event, eventType);
+
+        const action = EventStoreActions.addEventFailure({ error });
+        store.dispatch(action);
+        flush();
+        fixture.detectChanges();
+        expect(toastrErrorListener.mock.calls.length).toBe(1);
+      });
+    }));
+  });
+
+  it('on cancel, navigates to correct state', () => {
+    const router = TestBed.get(Router);
+    const navigateListener = jest.spyOn(router, 'navigate').mockResolvedValue(true);
+    createEntities();
+    fixture.detectChanges();
+    component.onCancel();
+    expect(navigateListener.mock.calls.length).toBe(1);
+    expect(navigateListener.mock.calls[0][0]).toEqual([ '..' ]);
   });
 
   function createEntities(options: EntitiesOptions = {}) {

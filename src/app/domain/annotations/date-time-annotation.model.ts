@@ -16,9 +16,7 @@ export class DateTimeAnnotation extends Annotation {
   deserialize(input: IAnnotation): this {
     super.deserialize(input);
     const stringValue = (input as any).stringValue;
-    if (stringValue) {
-      this.value = new Date(stringValue);
-    }
+    this.value = (stringValue) ? new Date(stringValue): null;
     return this;
   }
 }

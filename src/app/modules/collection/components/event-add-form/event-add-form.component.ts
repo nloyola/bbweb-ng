@@ -22,12 +22,12 @@ export class EventAddFormComponent implements OnInit, OnDestroy {
 
   participant: Participant;
   eventTypes$: Observable<CollectionEventType[]>;
+  isSaving$ = new BehaviorSubject<boolean>(false);
   annotations: Annotation[];
   form: FormGroup;
   faCalendar = faCalendar;
 
   private eventTypesSubject = new BehaviorSubject(null);
-  private isSaving$ = new BehaviorSubject<boolean>(false);
   private addedMessage$ = new Subject<string>();
   private unsubscribe$ = new Subject<void>();
 

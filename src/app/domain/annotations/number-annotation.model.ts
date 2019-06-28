@@ -16,9 +16,7 @@ export class NumberAnnotation extends Annotation {
   deserialize(input: IAnnotation): this {
     super.deserialize(input);
     const numberValue = (input as any).numberValue;
-    if (numberValue) {
-      this.value = +numberValue;
-    }
+    this.value = (numberValue) ? +numberValue : null;
     return this;
   }
 }

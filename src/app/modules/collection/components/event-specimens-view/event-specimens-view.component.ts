@@ -57,8 +57,9 @@ export class EventSpecimensViewComponent implements OnInit, OnChanges {
 
     this.store$.pipe(
       select(SpecimenStoreSelectors.selectSpecimenLastRemovedId),
+      filter(id => id !== null),
       takeUntil(this.unsubscribe$)
-    ).subscribe(() => {
+    ).subscribe((x) => {
       this.applySearchParams();
     });
 
@@ -101,6 +102,7 @@ export class EventSpecimensViewComponent implements OnInit, OnChanges {
   }
 
   private applySearchParams() {
+    debugger;
     this.tableDataLoading = true;
     this.store$.dispatch(SpecimenStoreActions.searchSpecimensRequest({
       event: this.event,
