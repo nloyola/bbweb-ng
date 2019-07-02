@@ -40,8 +40,8 @@ describe('role-store effects', () => {
       const searchParams = new SearchParams();
       const role = new Role().deserialize(factory.role());
       const pagedReply = factory.pagedReply([ role ]);
-      const action = new RoleStoreActions.SearchRolesRequest({ searchParams });
-      const completion = new RoleStoreActions.SearchRolesSuccess({ pagedReply });
+      const action = RoleStoreActions.searchRolesRequest({ searchParams });
+      const completion = RoleStoreActions.searchRolesSuccess({ pagedReply });
       spyOn(roleService, 'search').and.returnValue(of(pagedReply));
 
       actions = hot('--a-', { a: action });
@@ -58,8 +58,8 @@ describe('role-store effects', () => {
           message: 'simulated error'
         }
       };
-      const action = new RoleStoreActions.SearchRolesRequest({ searchParams });
-      const completion = new RoleStoreActions.SearchRolesFailure({ error });
+      const action = RoleStoreActions.searchRolesRequest({ searchParams });
+      const completion = RoleStoreActions.searchRolesFailure({ error });
       spyOn(roleService, 'search').and.returnValue(throwError(error));
 
       actions = hot('--a-', { a: action });
@@ -73,8 +73,8 @@ describe('role-store effects', () => {
 
     it('should respond with success', () => {
       const role = new Role().deserialize(factory.role());
-      const action = new RoleStoreActions.GetRoleRequest({ slug: role.slug });
-      const completion = new RoleStoreActions.GetRoleSuccess({ role });
+      const action = RoleStoreActions.getRoleRequest({ slug: role.slug });
+      const completion = RoleStoreActions.getRoleSuccess({ role });
       spyOn(roleService, 'get').and.returnValue(of(role));
 
       actions = hot('--a-', { a: action });
@@ -91,8 +91,8 @@ describe('role-store effects', () => {
           message: 'simulated error'
         }
       };
-      const action = new RoleStoreActions.GetRoleRequest({ slug: role.slug });
-      const completion = new RoleStoreActions.GetRoleFailure({ error });
+      const action = RoleStoreActions.getRoleRequest({ slug: role.slug });
+      const completion = RoleStoreActions.getRoleFailure({ error });
       spyOn(roleService, 'get').and.returnValue(throwError(error));
 
       actions = hot('--a-', { a: action });
@@ -110,7 +110,7 @@ describe('role-store effects', () => {
 
     beforeEach(() => {
       role = new Role().deserialize(factory.role());
-      action = new RoleStoreActions.UpdateRoleRequest({
+      action = RoleStoreActions.updateRoleRequest({
         role,
         attributeName: 'userAdd',
         value: factory.stringNext()
@@ -119,7 +119,7 @@ describe('role-store effects', () => {
     });
 
     it('should respond with success', () => {
-      const completion = new RoleStoreActions.UpdateRoleSuccess({ role });
+      const completion = RoleStoreActions.updateRoleSuccess({ role });
 
       roleListener.mockReturnValue(of(role));
       actions = hot('--a-', { a: action });
@@ -133,7 +133,7 @@ describe('role-store effects', () => {
           message: 'simulated error'
         }
       };
-      const completion = new RoleStoreActions.UpdateRoleFailure({ error });
+      const completion = RoleStoreActions.updateRoleFailure({ error });
 
       roleListener.mockReturnValue(throwError(error));
       actions = hot('--a-', { a: action });

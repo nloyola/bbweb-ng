@@ -24,7 +24,7 @@ describe('Role Reducer', () => {
       const payload = {
         searchParams: new SearchParams()
       };
-      const action = new RoleStoreActions.SearchRolesRequest(payload);
+      const action = RoleStoreActions.searchRolesRequest(payload);
       const state = RoleStoreReducer.reducer(undefined, action);
 
       expect(state).toEqual({
@@ -39,7 +39,7 @@ describe('Role Reducer', () => {
       const payload = {
         pagedReply: factory.pagedReply<Role>([ role ])
       };
-      const action = new RoleStoreActions.SearchRolesSuccess(payload);
+      const action = RoleStoreActions.searchRolesSuccess(payload);
       const state = RoleStoreReducer.reducer(
         {
           ...RoleStoreReducer.initialState,
@@ -71,7 +71,7 @@ describe('Role Reducer', () => {
           }
         }
       };
-      const action = new RoleStoreActions.SearchRolesFailure(payload);
+      const action = RoleStoreActions.searchRolesFailure(payload);
       const state = RoleStoreReducer.reducer(undefined, action);
 
       expect(state).toEqual({
@@ -79,7 +79,7 @@ describe('Role Reducer', () => {
         lastSearch: null,
         error: {
           type: action.type,
-          error: action.payload.error
+          error: action.error
         }
       });
     });
@@ -90,7 +90,7 @@ describe('Role Reducer', () => {
 
     it('UpdateRoleRequest', () => {
       const role = new Role().deserialize(factory.role());
-      const action = new RoleStoreActions.UpdateRoleRequest({
+      const action = RoleStoreActions.updateRoleRequest({
         role,
         attributeName: 'userAdd',
         value: factory.stringNext()
@@ -104,7 +104,7 @@ describe('Role Reducer', () => {
 
     it('UpdateRoleSuccess', () => {
       const role = new Role().deserialize(factory.role());
-      const action = new RoleStoreActions.UpdateRoleSuccess({ role });
+      const action = RoleStoreActions.updateRoleSuccess({ role });
       const state = RoleStoreReducer.reducer(undefined, action);
 
       expect(state.error).toBeNull();
@@ -121,7 +121,7 @@ describe('Role Reducer', () => {
           }
         }
       };
-      const action = new RoleStoreActions.UpdateRoleFailure(payload);
+      const action = RoleStoreActions.updateRoleFailure(payload);
       const state = RoleStoreReducer.reducer(undefined, action);
 
       expect(state).toEqual({
@@ -129,7 +129,7 @@ describe('Role Reducer', () => {
         lastSearch: null,
         error: {
           actionType: action.type,
-          error: action.payload.error
+          error: action.error
         }
       });
     });
@@ -141,7 +141,7 @@ describe('Role Reducer', () => {
     it('GetRoleRequest', () => {
       const role = factory.role();
       const payload = { slug: role.slug };
-      const action = new RoleStoreActions.GetRoleRequest(payload);
+      const action = RoleStoreActions.getRoleRequest(payload);
       const state = RoleStoreReducer.reducer(undefined, action);
 
       expect(state).toEqual({
@@ -152,7 +152,7 @@ describe('Role Reducer', () => {
     it('GetRoleSuccess', () => {
       const role = new Role().deserialize(factory.role());
       const payload = { role };
-      const action = new RoleStoreActions.GetRoleSuccess(payload);
+      const action = RoleStoreActions.getRoleSuccess(payload);
       const state = RoleStoreReducer.reducer(undefined, action);
 
       expect(state.ids).toContain(role.id);
@@ -168,7 +168,7 @@ describe('Role Reducer', () => {
           }
         }
       };
-      const action = new RoleStoreActions.GetRoleFailure(payload);
+      const action = RoleStoreActions.getRoleFailure(payload);
       const state = RoleStoreReducer.reducer(undefined, action);
 
       expect(state).toEqual({
@@ -176,7 +176,7 @@ describe('Role Reducer', () => {
         lastSearch: null,
         error: {
           actionType: action.type,
-          error: action.payload.error
+          error: action.error
         }
       });
     });

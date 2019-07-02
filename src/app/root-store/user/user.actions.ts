@@ -7,7 +7,7 @@ import { UserUpdateAttribute, PasswordUpdateValues } from '@app/core/services';
 import { props, createAction, union } from '@ngrx/store';
 
 export const getUserCountsRequest = createAction(
-  '[User] Get User Count Request',
+  '[User] Get User Count Request'
 );
 
 export const getUserCountsSuccess = createAction(

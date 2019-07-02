@@ -3,8 +3,6 @@ import { SearchParams, PagedReply } from '@app/domain';
 import { Participant } from '@app/domain/participants';
 import { ParticipantUpdateAttribute } from '@app/core/services';
 
-// TODO: Update to use createAction introduced in NGRX 7.4
-
 export const searchParticipantsRequest = createAction(
   '[Participant] Search Participant Request',
   props<{ searchParams: SearchParams }>()

@@ -1,4 +1,4 @@
-import { Actions, ActionTypes } from './auth-store.actions';
+import * as AuthStoreActions from './auth-store.actions';
 import { User } from '@app/domain/users';
 import { AUTH_TOKEN_LOCAL_STORAGE_KEY } from '@app/core/services/auth.service';
 
@@ -23,78 +23,78 @@ export const initialState: State = {
   registeredUser: null
 };
 
-export function reducer(state = initialState, action: Actions): State {
+export function reducer(state = initialState, action: AuthStoreActions.AuthStoreActionsUnion): State {
   switch (action.type) {
-    case ActionTypes.LOGIN_REQUEST: {
+    case AuthStoreActions.loginRequestAction.type: {
       return {
         ...state,
         error: null,
         user: null
       };
     }
-    case ActionTypes.LOGIN_FAILURE: {
+    case AuthStoreActions.loginFailureAction.type: {
       return {
         ...state,
-        error: action.payload.error
+        error: action.error
       };
     }
-    case ActionTypes.LOGIN_CLEAR_FAILURE: {
+    case AuthStoreActions.loginClearFailureAction.type: {
       return {
         ...state,
         error: null
       };
     }
-    case ActionTypes.LOGIN_SUCCESS: {
+    case AuthStoreActions.loginSuccessAction.type: {
       return {
         ...state,
         error: null,
-        user: action.payload.user
+        user: action.user
       };
     }
-    case ActionTypes.LOGOUT_REQUEST: {
-      return {
-        ...state,
-        error: null,
-        user: null
-      };
-    }
-    case ActionTypes.LOGOUT_FAILURE: {
-      return {
-        ...state,
-        error: action.payload.error
-      };
-    }
-    case ActionTypes.LOGOUT_SUCCESS: {
+    case AuthStoreActions.logoutRequestAction.type: {
       return {
         ...state,
         error: null,
         user: null
       };
     }
-    case ActionTypes.REGISTER_REQUEST: {
+    case AuthStoreActions.logoutFailureAction.type: {
+      return {
+        ...state,
+        error: action.error
+      };
+    }
+    case AuthStoreActions.logoutSuccessAction.type: {
+      return {
+        ...state,
+        error: null,
+        user: null
+      };
+    }
+    case AuthStoreActions.registerRequestAction.type: {
       return {
         ...state,
         error: null,
         registeredUser: null
       };
     }
-    case ActionTypes.REGISTER_FAILURE: {
+    case AuthStoreActions.registerFailureAction.type: {
       return {
         ...state,
-        error: action.payload.error
+        error: action.error
       };
     }
-    case ActionTypes.REGISTER_CLEAR_FAILURE: {
+    case AuthStoreActions.registerClearFailureAction.type: {
       return {
         ...state,
         error: null
       };
     }
-    case ActionTypes.REGISTER_SUCCESS: {
+    case AuthStoreActions.registerSuccessAction.type: {
       return {
         ...state,
         error: null,
-        registeredUser: action.payload.user
+        registeredUser: action.user
       };
     }
     default: {

@@ -46,7 +46,7 @@ describe('AdminComponent', () => {
 
     roles.forEach(role => {
       const user = new User().deserialize({ roles: [ role ] } as any);
-      const action = new AuthStoreActions.LoginSuccessAction({ user });
+      const action = AuthStoreActions.loginSuccessAction({ user });
       store.dispatch(action);
 
       fixture.detectChanges();

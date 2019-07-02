@@ -93,7 +93,7 @@ export class RolesViewComponent implements OnInit, OnDestroy {
   }
 
   private applySearchParams() {
-    this.store$.dispatch(new RoleStoreActions.SearchRolesRequest({
+    this.store$.dispatch(RoleStoreActions.searchRolesRequest({
       searchParams: new SearchParams(this.getFilters().join(';'),
                                      this.sortField,
                                      this.currentPage,

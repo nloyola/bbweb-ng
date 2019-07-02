@@ -159,7 +159,7 @@ describe('RegisterComponent', () => {
       component.onSubmit();
       spyOn(toastrService, 'success').and.returnValue(null);
 
-      const action = new AuthStoreActions.RegisterSuccessAction({ user });
+      const action = AuthStoreActions.registerSuccessAction({ user });
       ngZone.run(() => store.dispatch(action));
       expect(toastrService.success).toHaveBeenCalled();
     });
@@ -192,7 +192,7 @@ describe('RegisterComponent', () => {
 
       spyOn(store, 'dispatch').and.callThrough();
       spyOn(toastrService, 'error').and.returnValue(null);
-      const registerClearFailureAction = new AuthStoreActions.RegisterClearFailureAction();
+      const registerClearFailureAction = AuthStoreActions.registerClearFailureAction();
 
       errors.forEach(error => {
         component.name.setValue(user.name);
@@ -200,7 +200,7 @@ describe('RegisterComponent', () => {
         component.password.setValue('test');
         component.onSubmit();
 
-        const action = new AuthStoreActions.RegisterFailureAction(error);
+        const action = AuthStoreActions.registerFailureAction(error);
         ngZone.run(() => store.dispatch(action));
         expect(toastrService.error).toHaveBeenCalled();
         expect(store.dispatch).toHaveBeenCalledWith(registerClearFailureAction);
@@ -215,7 +215,7 @@ describe('RegisterComponent', () => {
       component.email.setValue(user.email);
       component.password.setValue(password);
 
-      const action = new AuthStoreActions.RegisterRequestAction({
+      const action = AuthStoreActions.registerRequestAction({
         name: user.name,
         email: user.email,
         password

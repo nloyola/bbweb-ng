@@ -121,7 +121,7 @@ describe('LoginComponent', () => {
       component.password.setValue('test');
       component.onSubmit();
 
-      const action = new AuthStoreActions.LoginSuccessAction({ user });
+      const action = AuthStoreActions.loginSuccessAction({ user });
       ngZone.run(() => store.dispatch(action));
 
       fixture.whenStable().then(() => {
@@ -149,14 +149,14 @@ describe('LoginComponent', () => {
       spyOn(modalService, 'open').and
         .returnValue({ result: Promise.resolve('OK') });
 
-      const loginClearFailureAction = new AuthStoreActions.LoginClearFailureAction();
+      const loginClearFailureAction = AuthStoreActions.loginClearFailureAction();
 
       errors.forEach(error => {
         component.email.setValue(user.email);
         component.password.setValue('test');
         component.onSubmit();
 
-        const action = new AuthStoreActions.LoginFailureAction(error);
+        const action = AuthStoreActions.loginFailureAction(error);
         ngZone.run(() => store.dispatch(action));
 
         fixture.whenStable().then(() => {
@@ -175,7 +175,7 @@ describe('LoginComponent', () => {
       spyOn(modalService, 'open').and.returnValue({ result: Promise.reject('Cancel') });
       spyOn(router, 'navigate').and.callThrough();
 
-      const action = new AuthStoreActions.LoginFailureAction({ error: { status: 401 } });
+      const action = AuthStoreActions.loginFailureAction({ error: { status: 401 } });
       ngZone.run(() => store.dispatch(action));
 
       tick();

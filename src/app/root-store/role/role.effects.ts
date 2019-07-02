@@ -9,45 +9,42 @@ import * as RoleActions from './role.actions';
 @Injectable()
 export class RoleStoreEffects {
 
-  constructor(private actions$: Actions<RoleActions.RoleActions>,
+  constructor(private actions$: Actions<RoleActions.RoleActionsUnion>,
               private roleService: RoleService) { }
 
   @Effect()
   getRequest$: Observable<Action> = this.actions$.pipe(
-    ofType(RoleActions.RoleActionTypes.GetRoleRequest),
-    map(action => action.payload),
+    ofType(RoleActions.getRoleRequest.type),
     switchMap(
-      payload =>
-        this.roleService.get(payload.slug)
+      action =>
+        this.roleService.get(action.slug)
         .pipe(
-          map(role => new RoleActions.GetRoleSuccess({ role })),
-          catchError(error => observableOf(new RoleActions.GetRoleFailure({ error }))))
+          map(role => RoleActions.getRoleSuccess({ role })),
+          catchError(error => observableOf(RoleActions.getRoleFailure({ error }))))
     )
   );
 
   @Effect()
   searchRequest$: Observable<Action> = this.actions$.pipe(
-    ofType(RoleActions.RoleActionTypes.SearchRolesRequest),
-    map(action => action.payload),
+    ofType(RoleActions.searchRolesRequest.type),
     switchMap(
-      payload =>
-        this.roleService.search(payload.searchParams)
+      action =>
+        this.roleService.search(action.searchParams)
         .pipe(
-          map(pagedReply => new RoleActions.SearchRolesSuccess({ pagedReply })),
-          catchError(error => observableOf(new RoleActions.SearchRolesFailure({ error }))))
+          map(pagedReply => RoleActions.searchRolesSuccess({ pagedReply })),
+          catchError(error => observableOf(RoleActions.searchRolesFailure({ error }))))
     )
   );
 
   @Effect()
   updateRequest$: Observable<Action> = this.actions$.pipe(
-    ofType(RoleActions.RoleActionTypes.UpdateRoleRequest),
-    map(action => action.payload),
+    ofType(RoleActions.updateRoleRequest.type),
     switchMap(
-      payload =>
-        this.roleService.update(payload.role, payload.attributeName, payload.value)
+      action =>
+        this.roleService.update(action.role, action.attributeName, action.value)
         .pipe(
-          map(role => new RoleActions.UpdateRoleSuccess({ role })),
-          catchError(error => observableOf(new RoleActions.UpdateRoleFailure({ error }))))
+          map(role => RoleActions.updateRoleSuccess({ role })),
+          catchError(error => observableOf(RoleActions.updateRoleFailure({ error }))))
     )
   );
 

@@ -59,7 +59,7 @@ describe('RolesViewComponent', () => {
   it('role count initialized', () => {
     const roles = [];
     const pagedReply = factory.pagedReply(roles);
-    store.dispatch(new RoleStoreActions.SearchRolesSuccess({ pagedReply }));
+    store.dispatch(RoleStoreActions.searchRolesSuccess({ pagedReply }));
 
     component.rolePageInfo$.subscribe((pageInfo: any) => {
       expect(pageInfo.total).toBe(roles.length);
@@ -75,7 +75,7 @@ describe('RolesViewComponent', () => {
       filters.forEach(value => {
         component.onFiltersUpdated(value);
 
-        const action = new RoleStoreActions.SearchRolesRequest({
+        const action = RoleStoreActions.searchRolesRequest({
           searchParams: new SearchParams('name:like:test', undefined, 1, 5)
         });
 
@@ -87,7 +87,7 @@ describe('RolesViewComponent', () => {
     it('displays that there are no matches for the name filter', () => {
       const pagedReply = factory.pagedReply([]);
       pagedReply.searchParams.filter = 'name:like:test';
-      store.dispatch(new RoleStoreActions.SearchRolesSuccess({ pagedReply }));
+      store.dispatch(RoleStoreActions.searchRolesSuccess({ pagedReply }));
       fixture.detectChanges();
 
       const de = fixture.debugElement;
@@ -102,7 +102,7 @@ describe('RolesViewComponent', () => {
     const storeListener = jest.spyOn(store, 'dispatch');
     component.sortFieldSelected('name');
 
-    const action = new RoleStoreActions.SearchRolesRequest({
+    const action = RoleStoreActions.searchRolesRequest({
       searchParams: new SearchParams('', 'name', 1, 5)
     });
 
@@ -121,7 +121,7 @@ describe('RolesViewComponent', () => {
     it('reloads page when a new page is selected', () => {
       component.paginationPageChanged(1);
 
-      const action = new RoleStoreActions.SearchRolesRequest({
+      const action = RoleStoreActions.searchRolesRequest({
         searchParams: new SearchParams('', undefined, 1, 5)
       });
 
@@ -147,7 +147,7 @@ describe('RolesViewComponent', () => {
   it('displays roles', () => {
     const role = new Role().deserialize(factory.role());
     const pagedReply = factory.pagedReply([ role ]);
-    store.dispatch(new RoleStoreActions.SearchRolesSuccess({ pagedReply }));
+    store.dispatch(RoleStoreActions.searchRolesSuccess({ pagedReply }));
     fixture.detectChanges();
 
     const de = fixture.debugElement;

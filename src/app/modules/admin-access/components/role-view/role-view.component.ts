@@ -43,7 +43,7 @@ export class RoleViewComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((user: User) => {
         const role = this.roleSubject.value;
-        this.store$.dispatch(new RoleStoreActions.UpdateRoleRequest({
+        this.store$.dispatch(RoleStoreActions.updateRoleRequest({
           role,
           attributeName: 'userAdd',
           value: user.id
@@ -104,7 +104,7 @@ export class RoleViewComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.user = userInfo;
     modalRef.result
       .then(() => {
-        this.store$.dispatch(new RoleStoreActions.UpdateRoleRequest({
+        this.store$.dispatch(RoleStoreActions.updateRoleRequest({
           role,
           attributeName: 'userRemove',
           value: userInfo.id

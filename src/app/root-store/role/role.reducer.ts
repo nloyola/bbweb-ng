@@ -1,7 +1,7 @@
 import { PagedReplyEntityIds, SearchParams } from '@app/domain';
 import { Role } from '@app/domain/access';
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity';
-import { RoleActions, RoleActionTypes } from './role.actions';
+import * as RoleActions from './role.actions';
 
 export interface State extends EntityState<Role> {
   lastSearch?: SearchParams;
@@ -19,31 +19,31 @@ export const initialState: State = adapter.getInitialState({
   searchReplies: {}
 });
 
-export function reducer(state = initialState, action: RoleActions): State {
+export function reducer(state = initialState, action: RoleActions.RoleActionsUnion): State {
   switch (action.type) {
-    case RoleActionTypes.SearchRolesRequest: {
+    case RoleActions.searchRolesRequest.type: {
       return {
         ...state,
-        lastSearch: action.payload.searchParams,
+        lastSearch: action.searchParams,
         searchActive: true,
         error: null
       };
     }
 
-    case RoleActionTypes.SearchRolesFailure: {
+    case RoleActions.searchRolesFailure.type: {
       return {
         ...state,
         lastSearch: null,
         searchActive: false,
         error: {
-          type: RoleActionTypes.SearchRolesFailure,
-          error: action.payload.error
+          type: RoleActions.searchRolesFailure.type,
+          error: action.error
         }
       };
     }
 
-    case RoleActionTypes.SearchRolesSuccess: {
-      const pagedReply = action.payload.pagedReply;
+    case RoleActions.searchRolesSuccess.type: {
+      const pagedReply = action.pagedReply;
       const queryString = state.lastSearch.queryString();
       const newReply = {};
       newReply[queryString] = {
@@ -64,20 +64,20 @@ export function reducer(state = initialState, action: RoleActions): State {
       });
     }
 
-    case RoleActionTypes.UpdateRoleSuccess: {
-      return adapter.upsertOne(action.payload.role, state);
+    case RoleActions.updateRoleSuccess.type: {
+      return adapter.upsertOne(action.role, state);
     }
 
-    case RoleActionTypes.GetRoleSuccess: {
-      return adapter.addOne(action.payload.role, state);
+    case RoleActions.getRoleSuccess.type: {
+      return adapter.addOne(action.role, state);
     }
 
-    case RoleActionTypes.GetRoleFailure:
-    case RoleActionTypes.UpdateRoleFailure:
+    case RoleActions.getRoleFailure.type:
+    case RoleActions.updateRoleFailure.type:
       return {
         ...state,
         error: {
-          error: action.payload.error,
+          error: action.error,
           actionType: action.type
         }
       };

@@ -74,15 +74,15 @@ describe('RoleViewComponent', () => {
     beforeEach(() => {
       baseContext = {
         dispatchParentEntity: (): void => {
-          store.dispatch(new RoleStoreActions.GetRoleSuccess({ role }));
+          store.dispatch(RoleStoreActions.getRoleSuccess({ role }));
           fixture.detectChanges();
         },
         dispatchUpdatedParentEntity: (): void => {
-          store.dispatch(new RoleStoreActions.UpdateRoleSuccess({ role }));
+          store.dispatch(RoleStoreActions.updateRoleSuccess({ role }));
           fixture.detectChanges();
         },
         dispatchUpdatedParentEntityWithError: (error: any): void => {
-          store.dispatch(new RoleStoreActions.UpdateRoleFailure({ error }));
+          store.dispatch(RoleStoreActions.updateRoleFailure({ error }));
           fixture.detectChanges();
         },
         modalReturnValue: {
@@ -107,7 +107,7 @@ describe('RoleViewComponent', () => {
           checkAddUpdateRequest: (storeListener: any) => {
             expect(storeListener.mock.calls.length).toBe(1);
             expect(storeListener.mock.calls[0][0])
-              .toEqual(new RoleStoreActions.UpdateRoleRequest({
+              .toEqual(RoleStoreActions.updateRoleRequest({
                 role,
                 attributeName: 'userAdd',
                 value: user.id
@@ -131,7 +131,7 @@ describe('RoleViewComponent', () => {
           },
           checkRemoveUpdateRequest: (storeListener: any) => {
             expect(storeListener.mock.calls.length).toBe(1);
-            expect(storeListener.mock.calls[0][0]).toEqual(new RoleStoreActions.UpdateRoleRequest({
+            expect(storeListener.mock.calls[0][0]).toEqual(RoleStoreActions.updateRoleRequest({
               role,
               attributeName: 'userRemove',
               value: user.id

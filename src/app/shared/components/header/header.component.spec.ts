@@ -61,7 +61,7 @@ describe('HeaderComponent', () => {
         factory.role({ id: RoleIds.SpecimenCollector })
       ]
     }));
-    const action = new AuthStoreActions.LoginSuccessAction({ user });
+    const action = AuthStoreActions.loginSuccessAction({ user });
     store.dispatch(action);
 
     fixture.detectChanges();
@@ -72,7 +72,7 @@ describe('HeaderComponent', () => {
 
   it('calling logout dispatches an action and goes to home state', () => {
     ngZone.run(() => component.logout());
-    const action = new AuthStoreActions.LogoutRequestAction();
+    const action = AuthStoreActions.logoutRequestAction();
     expect(store.dispatch).toHaveBeenCalledWith(action);
     expect(router.navigate).toHaveBeenCalledWith(['/']);
   });

@@ -57,7 +57,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
         filter(err => err !== null),
         takeUntil(this.unsubscribe$))
       .subscribe((err: any) => {
-        this.store$.dispatch(new AuthStoreActions.RegisterClearFailureAction());
+        this.store$.dispatch(AuthStoreActions.registerClearFailureAction());
 
         let message: string;
         if (err.status) {
@@ -95,7 +95,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
-    this.store$.dispatch(new AuthStoreActions.RegisterRequestAction({
+    this.store$.dispatch(AuthStoreActions.registerRequestAction({
       name: this.registerForm.value.name,
       email: this.registerForm.value.email,
       password: this.registerForm.value.password

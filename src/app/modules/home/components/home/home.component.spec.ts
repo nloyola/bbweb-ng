@@ -64,7 +64,7 @@ describe('HomeComponent', () => {
         ...factory.user(),
         roles: [ role ]  as any
       });
-      const action = new AuthStoreActions.LoginSuccessAction({ user });
+      const action = AuthStoreActions.loginSuccessAction({ user });
       store.dispatch(action);
 
       fixture.detectChanges();
@@ -75,7 +75,7 @@ describe('HomeComponent', () => {
 
   it('should display alert if user does not have any roles', function() {
     const user = new User();
-    const action = new AuthStoreActions.LoginSuccessAction({ user });
+    const action = AuthStoreActions.loginSuccessAction({ user });
     store.dispatch(action);
 
     fixture.detectChanges();

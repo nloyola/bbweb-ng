@@ -1,91 +1,71 @@
 import { Action } from '@ngrx/store';
 import { User } from '@app/domain/users';
 import { ShowSpinner, HideSpinner } from '@app/core/decorators';
+import { props, createAction, union } from '@ngrx/store';
 
-// TODO: Update to use createAction introduced in NGRX 7.4
+export const loginRequestAction = createAction(
+  '[User Login] Login Request',
+  props<{ email: string, password: string }>()
+);
 
-export enum ActionTypes {
-  LOGIN_REQUEST = '[User Login] Login Request',
-  LOGIN_FAILURE = '[User Login] Login Failure',
-  LOGIN_CLEAR_FAILURE = '[User Login] Login Clear Failure',
-  LOGIN_SUCCESS = '[User Login] Login Success',
+export const loginFailureAction = createAction(
+  '[User Login] Login Failure',
+  props<{ error: any }>()
+);
 
-  LOGOUT_REQUEST = '[User Login] Logout Request',
-  LOGOUT_FAILURE = '[User Login] Logout Failure',
-  LOGOUT_SUCCESS = '[User Login] Logout Success',
+export const loginSuccessAction = createAction(
+  '[User Login] Login Success',
+  props<{ user: User }>()
+);
 
-  REGISTER_REQUEST = '[User Login] Register Request',
-  REGISTER_FAILURE = '[User Login] Register Failure',
-  REGISTER_CLEAR_FAILURE = '[User Login] Register Clear Failure',
-  REGISTER_SUCCESS = '[User Login] Register Success',
-}
+export const loginClearFailureAction = createAction(
+  '[User Login] Login Clear Failure'
+);
 
-@ShowSpinner()
-export class LoginRequestAction implements Action {
-  readonly type = ActionTypes.LOGIN_REQUEST;
-  constructor(public payload: { email: string, password: string }) { }
-}
+export const logoutRequestAction = createAction(
+  '[User Login] Logout Request'
+);
 
-/* tslint:disable:max-classes-per-file */
-@HideSpinner(ActionTypes.LOGIN_REQUEST)
-export class LoginFailureAction implements Action {
-  readonly type = ActionTypes.LOGIN_FAILURE;
-  constructor(public payload: { error: any }) { }
-}
+export const logoutFailureAction = createAction(
+  '[User Login] Logout Failure',
+  props<{ error: any }>()
+);
 
-@HideSpinner(ActionTypes.LOGIN_REQUEST)
-export class LoginSuccessAction implements Action {
-  readonly type = ActionTypes.LOGIN_SUCCESS;
-  constructor(public payload: { user: User }) { }
-}
+export const logoutSuccessAction = createAction(
+  '[User Login] Logout Success'
+);
 
-export class LoginClearFailureAction implements Action {
-  readonly type = ActionTypes.LOGIN_CLEAR_FAILURE;
-}
+export const registerRequestAction = createAction(
+  '[User Login] Register Request',
+  props<{ name: string, email: string, password: string }>()
+);
 
-export class LogoutRequestAction implements Action {
-  readonly type = ActionTypes.LOGOUT_REQUEST;
-}
+export const registerFailureAction = createAction(
+  '[User Login] Register Failure',
+  props<{ error: any }>()
+);
 
-export class LogoutFailureAction implements Action {
-  readonly type = ActionTypes.LOGOUT_FAILURE;
-  constructor(public payload: { error: any }) { }
-}
+export const registerSuccessAction = createAction(
+  '[User Login] Register Success',
+  props<{ user: User }>()
+);
 
-export class LogoutSuccessAction implements Action {
-  readonly type = ActionTypes.LOGOUT_SUCCESS;
-}
+export const registerClearFailureAction = createAction(
+  '[User Login] Register Clear Failure'
+);
 
-@ShowSpinner()
-export class RegisterRequestAction implements Action {
-  readonly type = ActionTypes.REGISTER_REQUEST;
-  constructor(public payload: { name: string, email: string, password: string }) { }
-}
+const all = union({
+  loginRequestAction,
+  loginFailureAction,
+  loginClearFailureAction,
+  loginSuccessAction,
+  logoutRequestAction,
+  logoutFailureAction,
+  logoutSuccessAction,
+  registerRequestAction,
+  registerFailureAction,
+  registerClearFailureAction,
+  registerSuccessAction
+});
 
-@HideSpinner(ActionTypes.REGISTER_REQUEST)
-export class RegisterFailureAction implements Action {
-  readonly type = ActionTypes.REGISTER_FAILURE;
-  constructor(public payload: { error: any }) { }
-}
-
-@HideSpinner(ActionTypes.REGISTER_REQUEST)
-export class RegisterSuccessAction implements Action {
-  readonly type = ActionTypes.REGISTER_SUCCESS;
-  constructor(public payload: { user: User }) { }
-}
-
-export class RegisterClearFailureAction implements Action {
-  readonly type = ActionTypes.REGISTER_CLEAR_FAILURE;
-}
-
-export type Actions = LoginRequestAction |
-  LoginFailureAction |
-  LoginClearFailureAction |
-  LoginSuccessAction |
-  LogoutRequestAction |
-  LogoutFailureAction |
-  LogoutSuccessAction |
-  RegisterRequestAction |
-  RegisterFailureAction |
-  RegisterClearFailureAction |
-  RegisterSuccessAction;
+export type AuthStoreActionsUnion = typeof all;

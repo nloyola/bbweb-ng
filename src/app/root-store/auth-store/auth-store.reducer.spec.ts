@@ -23,7 +23,7 @@ describe('auth-store-model reducer', () => {
       email: 'test@test.com',
       password: 'a random password'
     };
-    const action = new AuthStoreActions.LoginRequestAction(payload);
+    const action = AuthStoreActions.loginRequestAction(payload);
     const state = AuthStoreReducer.reducer(undefined, action);
 
     expect(state).toEqual({
@@ -40,7 +40,7 @@ describe('auth-store-model reducer', () => {
         }
       }
     };
-    const action = new AuthStoreActions.LoginFailureAction(payload);
+    const action = AuthStoreActions.loginFailureAction(payload);
     const state = AuthStoreReducer.reducer(undefined, action);
 
     expect(state).toEqual({
@@ -59,7 +59,7 @@ describe('auth-store-model reducer', () => {
         }
       }
     };
-    const action = new AuthStoreActions.LoginClearFailureAction();
+    const action = AuthStoreActions.loginClearFailureAction();
     const state = AuthStoreReducer.reducer(startState, action);
 
     expect(state).toEqual({
@@ -72,7 +72,7 @@ describe('auth-store-model reducer', () => {
     const payload = {
       user: new User().deserialize(factory.user())
     };
-    const action = new AuthStoreActions.LoginSuccessAction(payload);
+    const action = AuthStoreActions.loginSuccessAction(payload);
     const state = AuthStoreReducer.reducer(undefined, action);
 
     expect(state).toEqual({
@@ -82,7 +82,7 @@ describe('auth-store-model reducer', () => {
   });
 
   it('LogoutRequestAction', () => {
-    const action = new AuthStoreActions.LogoutRequestAction();
+    const action = AuthStoreActions.logoutRequestAction();
     const state = AuthStoreReducer.reducer(undefined, action);
 
     expect(state).toEqual({
@@ -99,7 +99,7 @@ describe('auth-store-model reducer', () => {
         }
       }
     };
-    const action = new AuthStoreActions.LogoutFailureAction(payload);
+    const action = AuthStoreActions.logoutFailureAction(payload);
     const state = AuthStoreReducer.reducer(undefined, action);
 
     expect(state).toEqual({
@@ -109,7 +109,7 @@ describe('auth-store-model reducer', () => {
   });
 
   it('LogoutSuccessAction', () => {
-    const action = new AuthStoreActions.LogoutSuccessAction();
+    const action = AuthStoreActions.logoutSuccessAction();
     const state = AuthStoreReducer.reducer(undefined, action);
 
     expect(state).toEqual({
@@ -125,7 +125,7 @@ describe('auth-store-model reducer', () => {
       email: rawUser.email,
       password: 'a random password'
     };
-    const action = new AuthStoreActions.RegisterRequestAction(payload);
+    const action = AuthStoreActions.registerRequestAction(payload);
     const state = AuthStoreReducer.reducer(undefined, action);
 
     expect(state).toEqual({
@@ -142,7 +142,7 @@ describe('auth-store-model reducer', () => {
         }
       }
     };
-    const action = new AuthStoreActions.RegisterFailureAction(payload);
+    const action = AuthStoreActions.registerFailureAction(payload);
     const state = AuthStoreReducer.reducer(undefined, action);
 
     expect(state).toEqual({
@@ -161,7 +161,7 @@ describe('auth-store-model reducer', () => {
         }
       }
     };
-    const action = new AuthStoreActions.RegisterClearFailureAction();
+    const action = AuthStoreActions.registerClearFailureAction();
     const state = AuthStoreReducer.reducer(startState, action);
 
     expect(state).toEqual({
@@ -174,7 +174,7 @@ describe('auth-store-model reducer', () => {
     const payload = {
       user: new User().deserialize(factory.user())
     };
-    const action = new AuthStoreActions.RegisterSuccessAction(payload);
+    const action = AuthStoreActions.registerSuccessAction(payload);
     const state = AuthStoreReducer.reducer(undefined, action);
 
     expect(state).toEqual({

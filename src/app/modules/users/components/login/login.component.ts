@@ -56,7 +56,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         filter(err => err !== null),
         takeUntil(this.unsubscribe$))
       .subscribe(() => {
-        this.store$.dispatch(new AuthStoreActions.LoginClearFailureAction());
+        this.store$.dispatch(AuthStoreActions.loginClearFailureAction());
         this.modalService
           .open(this.modal, { ariaLabelledBy: 'modal-basic-title' }).result
           .then(() => this.navigateToReturnUrl())
@@ -78,7 +78,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
-    this.store$.dispatch(new AuthStoreActions.LoginRequestAction({
+    this.store$.dispatch(AuthStoreActions.loginRequestAction({
       email: this.loginForm.value.email,
       password: this.loginForm.value.password
     }));

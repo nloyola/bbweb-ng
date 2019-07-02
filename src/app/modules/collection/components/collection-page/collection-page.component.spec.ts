@@ -60,7 +60,7 @@ describe('CollectionPageComponent', () => {
 
     it('should show loading', () => {
       const user = new User().deserialize(factory.user());
-      const action = new AuthStoreActions.LoginSuccessAction({ user });
+      const action = AuthStoreActions.loginSuccessAction({ user });
       store.dispatch(action);
 
       component.form.get('uniqueId').setValue('testId');
@@ -75,7 +75,7 @@ describe('CollectionPageComponent', () => {
         new StudyStateInfo().deserialize(factory.entityNameAndStateDto<Study, StudyState>(study))
       ];
 
-      store.dispatch(new AuthStoreActions.LoginSuccessAction({ user }));
+      store.dispatch(AuthStoreActions.loginSuccessAction({ user }));
       store.dispatch(StudyStoreActions.searchCollectionStudiesSuccess({ studiesData }));
       fixture.detectChanges();
 

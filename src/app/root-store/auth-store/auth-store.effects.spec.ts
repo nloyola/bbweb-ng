@@ -45,8 +45,8 @@ describe('auth-store effects', () => {
     });
 
     it('should respond with login success', () => {
-      const action = new AuthStoreActions.LoginRequestAction(credentials);
-      const completion = new AuthStoreActions.LoginSuccessAction({ user });
+      const action = AuthStoreActions.loginRequestAction(credentials);
+      const completion = AuthStoreActions.loginSuccessAction({ user });
       spyOn(authService, 'login').and.returnValue(of(user));
 
       actions = hot('--a-', { a: action });
@@ -62,8 +62,8 @@ describe('auth-store effects', () => {
           message: 'simulated error'
         }
       };
-      const action = new AuthStoreActions.LoginRequestAction(credentials);
-      const completion = new AuthStoreActions.LoginFailureAction({ error });
+      const action = AuthStoreActions.loginRequestAction(credentials);
+      const completion = AuthStoreActions.loginFailureAction({ error });
       spyOn(authService, 'login').and.returnValue(throwError(error));
 
       actions = hot('--a-', { a: action });
@@ -77,8 +77,8 @@ describe('auth-store effects', () => {
   describe('logoutRequestEffect', () => {
 
     it('should respond with logout success', () => {
-      const action = new AuthStoreActions.LogoutRequestAction();
-      const completion = new AuthStoreActions.LogoutSuccessAction();
+      const action = AuthStoreActions.logoutRequestAction();
+      const completion = AuthStoreActions.logoutSuccessAction();
       spyOn(authService, 'logout').and.returnValue(null);
 
       actions = hot('--a-', { a: action });
@@ -105,8 +105,8 @@ describe('auth-store effects', () => {
     });
 
     it('should respond with register success', () => {
-      const action = new AuthStoreActions.RegisterRequestAction(regInfo);
-      const completion = new AuthStoreActions.RegisterSuccessAction({ user });
+      const action = AuthStoreActions.registerRequestAction(regInfo);
+      const completion = AuthStoreActions.registerSuccessAction({ user });
       spyOn(authService, 'register').and.returnValue(of(user));
 
       actions = hot('--a-', { a: action });
@@ -122,8 +122,8 @@ describe('auth-store effects', () => {
           message: 'simulated error'
         }
       };
-      const action = new AuthStoreActions.RegisterRequestAction(regInfo);
-      const completion = new AuthStoreActions.RegisterFailureAction({ error });
+      const action = AuthStoreActions.registerRequestAction(regInfo);
+      const completion = AuthStoreActions.registerFailureAction({ error });
       spyOn(authService, 'register').and.returnValue(throwError(error));
 
       actions = hot('--a-', { a: action });

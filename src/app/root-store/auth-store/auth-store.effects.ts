@@ -9,41 +9,39 @@ import * as AuthActions from './auth-store.actions';
 @Injectable()
 export class AuthStoreEffects {
 
-  constructor(private actions$: Actions<AuthActions.Actions>,
+  constructor(private actions$: Actions<AuthActions.AuthStoreActionsUnion>,
               private authService: AuthService) { }
 
   @Effect()
   loginRequest$: Observable<Action> = this.actions$.pipe(
-    ofType(AuthActions.ActionTypes.LOGIN_REQUEST),
-    map(action => action.payload),
+    ofType(AuthActions.loginRequestAction.type),
     switchMap(
-      payload =>
-        this.authService.login(payload.email, payload.password)
+      action =>
+        this.authService.login(action.email, action.password)
         .pipe(
-          map(user => new AuthActions.LoginSuccessAction({ user })),
-          catchError(error => observableOf(new AuthActions.LoginFailureAction({ error }))))
+          map(user => AuthActions.loginSuccessAction({ user })),
+          catchError(error => observableOf(AuthActions.loginFailureAction({ error }))))
              )
   );
 
   @Effect()
   logoutRequest$: Observable<Action> = this.actions$.pipe(
-    ofType(AuthActions.ActionTypes.LOGOUT_REQUEST),
+    ofType(AuthActions.logoutRequestAction.type),
     switchMap(() => {
       this.authService.logout();
-      return observableOf(new AuthActions.LogoutSuccessAction());
+      return observableOf(AuthActions.logoutSuccessAction());
     })
   );
 
   @Effect()
   registerRequest$: Observable<Action> = this.actions$.pipe(
-    ofType(AuthActions.ActionTypes.REGISTER_REQUEST),
-    map(action => action.payload),
+    ofType(AuthActions.registerRequestAction),
     switchMap(
-      payload =>
-        this.authService.register(payload.name, payload.email, payload.password)
+      action =>
+        this.authService.register(action.name, action.email, action.password)
         .pipe(
-          map(user => new AuthActions.RegisterSuccessAction({ user })),
-          catchError(error => observableOf(new AuthActions.RegisterFailureAction({ error }))))
+          map(user => AuthActions.registerSuccessAction({ user })),
+          catchError(error => observableOf(AuthActions.registerFailureAction({ error }))))
     )
   );
 

@@ -46,7 +46,7 @@ describe('RoleResolver', () => {
     const role = new Role().deserialize(factory.role());
     const route = new ActivatedRouteSnapshot();
     route.params = { slug: role.slug };
-    const action = new RoleStoreActions.GetRoleSuccess({ role });
+    const action = RoleStoreActions.getRoleSuccess({ role });
     store.dispatch(action);
     const expected = cold('(b|)', { b: role });
     expect(resolver.resolve(route, null)).toBeObservable(expected);
@@ -61,12 +61,12 @@ describe('RoleResolver', () => {
     };
     const route = new ActivatedRouteSnapshot();
     route.params = { slug: 'test' };
-    const action = new RoleStoreActions.GetRoleFailure({ error });
+    const action = RoleStoreActions.getRoleFailure({ error });
     store.dispatch(action);
     const expected = cold('(b|)', {
       b: {
         error,
-        actionType: RoleStoreActions.RoleActionTypes.GetRoleFailure
+        actionType: RoleStoreActions.getRoleFailure.type
       }
     });
     ngZone.run(() => {

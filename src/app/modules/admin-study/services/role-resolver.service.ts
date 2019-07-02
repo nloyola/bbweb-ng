@@ -15,7 +15,7 @@ export class RoleResolver implements Resolve<Role> {
 
   resolve(route: ActivatedRouteSnapshot, _state: RouterStateSnapshot): Observable<Role> {
     const slug = route.paramMap.get('slug');
-    this.store$.dispatch(new RoleStoreActions.GetRoleRequest({ slug }));
+    this.store$.dispatch(RoleStoreActions.getRoleRequest({ slug }));
 
     return race<any>(
       this.store$.pipe(

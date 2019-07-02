@@ -3,98 +3,66 @@ import { Action } from '@ngrx/store';
 import { SearchParams, PagedReply } from '@app/domain';
 import { Role } from '@app/domain/access';
 import { RoleUpdateAttribute } from '@app/core/services';
+import { props, createAction, union } from '@ngrx/store';
 
-// TODO: Update to use createAction introduced in NGRX 7.4
+export const searchRolesRequest = createAction(
+  '[Role] Search Roles Request',
+  props<{ searchParams: SearchParams }>()
+);
 
-interface RoleUpdateRequestPayload {
-  role: Role;
-  attributeName: RoleUpdateAttribute;
-  value: string;
-}
+export const searchRolesSuccess = createAction(
+  '[Role] Search Roles Success',
+  props<{ pagedReply: PagedReply<Role> }>()
+);
 
-export enum RoleActionTypes {
-  SearchRolesRequest = '[Role] Search Roles Request',
-  SearchRolesSuccess = '[Role] Search Roles Success',
-  SearchRolesFailure = '[Roles] Search Roles Failure',
+export const searchRolesFailure = createAction(
+  '[Role] Search Roles Failure',
+  props<{ error: any }>()
+);
 
-  GetRoleRequest = '[Role] Get Role Request',
-  GetRoleSuccess = '[Role] Get Role Success',
-  GetRoleFailure = '[Role] Get Role Failure',
+export const getRoleRequest = createAction(
+  '[Role] Get Role Request',
+  props<{ slug: string }>()
+);
 
-  UpdateRoleRequest = '[Role] Update Role Request',
-  UpdateRoleSuccess = '[Role] Update Role Success',
-  UpdateRoleFailure = '[Role] Update Role Failure',
+export const getRoleSuccess = createAction(
+  '[Role] Get Role Success',
+  props<{ role: Role }>()
+);
 
-}
+export const getRoleFailure = createAction(
+  '[Role] Get Role Failure',
+  props<{ error: any }>()
+);
 
-export class SearchRolesRequest implements Action {
-  readonly type = RoleActionTypes.SearchRolesRequest;
+export const updateRoleRequest = createAction(
+  '[Role] Update Role Request',
+  props<{
+    role: Role;
+    attributeName: RoleUpdateAttribute;
+    value: string;
+   }>()
+);
 
-  constructor(public payload: { searchParams: SearchParams }) { }
-}
+export const updateRoleSuccess = createAction(
+  '[Role] Update Role Success',
+  props<{ role: Role }>()
+);
 
-/* tslint:disable:max-classes-per-file */
-export class SearchRolesSuccess implements Action {
-  readonly type = RoleActionTypes.SearchRolesSuccess;
+export const updateRoleFailure = createAction(
+  '[Role] Update Role Failure',
+  props<{ error: any }>()
+);
 
-  constructor(public payload: { pagedReply: PagedReply<Role> }) { }
-}
-
-export class SearchRolesFailure implements Action {
-  readonly type = RoleActionTypes.SearchRolesFailure;
-
-  constructor(public payload: { error: any }) { }
-}
-
-@ShowSpinner()
-export class GetRoleRequest implements Action {
-  readonly type = RoleActionTypes.GetRoleRequest;
-
-  constructor(public payload: { slug: string }) { }
-}
-
-@HideSpinner(RoleActionTypes.GetRoleRequest)
-export class GetRoleSuccess implements Action {
-  readonly type = RoleActionTypes.GetRoleSuccess;
-
-  constructor(public payload: { role: Role }) { }
-}
-
-@HideSpinner(RoleActionTypes.GetRoleRequest)
-export class GetRoleFailure implements Action {
-  readonly type = RoleActionTypes.GetRoleFailure;
-
-  constructor(public payload: { error: any }) { }
-}
-
-@ShowSpinner()
-export class UpdateRoleRequest implements Action {
-  readonly type = RoleActionTypes.UpdateRoleRequest;
-
-  constructor(public payload: RoleUpdateRequestPayload) { }
-}
-
-@HideSpinner(RoleActionTypes.UpdateRoleRequest)
-export class UpdateRoleSuccess implements Action {
-  readonly type = RoleActionTypes.UpdateRoleSuccess;
-
-  constructor(public payload: { role: Role }) { }
-}
-
-@HideSpinner(RoleActionTypes.UpdateRoleRequest)
-export class UpdateRoleFailure implements Action {
-  readonly type = RoleActionTypes.UpdateRoleFailure;
-
-  constructor(public payload: { error: any }) { }
-}
-
-export type RoleActions =
-  SearchRolesRequest
-  | SearchRolesSuccess
-  | SearchRolesFailure
-  | GetRoleRequest
-  | GetRoleSuccess
-  | GetRoleFailure
-  | UpdateRoleRequest
-  | UpdateRoleSuccess
-  | UpdateRoleFailure;
+const all = union({
+  searchRolesRequest,
+  searchRolesSuccess,
+  searchRolesFailure,
+  getRoleRequest,
+  getRoleSuccess,
+  getRoleFailure,
+  updateRoleRequest,
+  updateRoleSuccess,
+  updateRoleFailure
+});
+export type RoleActionsUnion = typeof all;
