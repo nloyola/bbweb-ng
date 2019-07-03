@@ -6,8 +6,9 @@ import { NameFilter, SearchFilter } from '@app/domain/search-filters';
 import { AuthStoreSelectors, ParticipantStoreActions, ParticipantStoreSelectors, RootStoreState, StudyStoreActions, StudyStoreSelectors } from '@app/root-store';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { select, Store } from '@ngrx/store';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, BehaviorSubject } from 'rxjs';
 import { filter, map, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
+
 
 @Component({
   selector: 'app-collection-page',
@@ -25,8 +26,9 @@ export class CollectionPageComponent implements OnInit, OnDestroy {
   currentPage = 1;
   studiesLimit = 5;
   form: FormGroup;
+  participantLoading$ = new BehaviorSubject<boolean>(false);
+  // participantLoading$ = new Subject<boolean>();
 
-  private participantLoading$ = new Subject<boolean>();
   private unsubscribe$ = new Subject<void>();
 
   constructor(private store$: Store<RootStoreState.State>,
