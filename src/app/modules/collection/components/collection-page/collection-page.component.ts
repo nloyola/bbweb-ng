@@ -1,13 +1,13 @@
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SearchParams, slugify } from '@app/domain';
-import { NameFilter, SearchFilter } from '@app/domain/search-filters';
+import { SearchParams } from '@app/domain';
+import { Participant } from '@app/domain/participants';
 import { AuthStoreSelectors, ParticipantStoreActions, ParticipantStoreSelectors, RootStoreState, StudyStoreActions, StudyStoreSelectors } from '@app/root-store';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { select, Store } from '@ngrx/store';
-import { Observable, Subject, BehaviorSubject } from 'rxjs';
-import { filter, map, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
+import { BehaviorSubject, Observable, Subject, throwError } from 'rxjs';
+import { filter, map, shareReplay, takeUntil, withLatestFrom } from 'rxjs/operators';
 
 
 @Component({
@@ -21,13 +21,13 @@ export class CollectionPageComponent implements OnInit, OnDestroy {
 
   isLoading$: Observable<boolean>;
   haveCollectionStudies$: Observable<boolean>;
+  participant$: Observable<Participant>;
   validUser$: Observable<boolean>;
   hasNoMatches$: Observable<boolean>;
   currentPage = 1;
   studiesLimit = 5;
   form: FormGroup;
   participantLoading$ = new BehaviorSubject<boolean>(false);
-  // participantLoading$ = new Subject<boolean>();
 
   private unsubscribe$ = new Subject<void>();
 
@@ -53,21 +53,29 @@ export class CollectionPageComponent implements OnInit, OnDestroy {
       select(AuthStoreSelectors.selectAuthUser),
       map(user => user.hasSpecimenCollectorRole()));
 
-    this.store$.pipe(
+    this.participant$ = this.store$.pipe(
       select(ParticipantStoreSelectors.selectAllParticipants),
       withLatestFrom(this.participantLoading$),
-      takeUntil(this.unsubscribe$)
-    ).subscribe(([ participants, loading]) => {
-      if (!loading) { return ; }
+      map(([ participants, loading]) => {
+        if (!loading) { return undefined; }
 
-      this.participantLoading$.next(false);
-      const participant = participants.find(p => p.uniqueId === this.form.value.uniqueId);
-      if (participant) {
+        const participant = participants.find(p => p.uniqueId === this.form.value.uniqueId);
+        if (participant) {
+          return participant;
+        }
+        throw new Error('participant not found');
+      }),
+      filter(participant => participant !== undefined),
+      takeUntil(this.unsubscribe$),
+      shareReplay());
+
+    this.participant$.subscribe(
+      participant => {
         this.router.navigate([ participant.slug ], { relativeTo: this.route });
-        return;
-      }
-      throw new Error('participant not found');
-    });
+      },
+      () => {
+        this.router.navigate([ '/server-error' ]);
+      });
 
     this.store$.pipe(
       select(ParticipantStoreSelectors.selectParticipantError),
