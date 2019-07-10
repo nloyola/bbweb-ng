@@ -15,6 +15,8 @@ import { SharedModule } from '@app/shared/shared.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrModule } from 'ngx-toastr';
 
+import {ErrorHandlerModule} from '@btapai/ng-error-handler';
+
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -29,7 +31,8 @@ import { ToastrModule } from 'ngx-toastr';
     RootStoreModule,
     BrowserAnimationsModule,
     MaterialModule,
-    ToastrModule.forRoot()
+    ToastrModule.forRoot(),
+    ErrorHandlerModule.forRoot()
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
