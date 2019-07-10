@@ -1,11 +1,11 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators, FormArray } from '@angular/forms';
-import { ModalInputTextOptions } from '@app/modules/modals/models';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { Subject } from 'rxjs';
-import { debounceTime, takeUntil } from 'rxjs/operators';
+import { FormBuilder, FormGroup, ValidatorFn } from '@angular/forms';
 import { Annotation } from '@app/domain/annotations';
 import { AnnotationsAddSubformComponent } from '@app/modules/collection/components/annotations-add-subform/annotations-add-subform.component';
+import { ModalInputOptions } from '@app/modules/modals/models';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { Subject, Observable } from 'rxjs';
+import { debounceTime, takeUntil, map, tap, shareReplay } from 'rxjs/operators';
 
 @Component({
   selector: 'app-modal-input-annotation',
@@ -16,11 +16,11 @@ export class ModalInputAnnotationComponent implements OnInit, OnDestroy {
 
   @Input() modal: NgbActiveModal;
   @Input() annotation: Annotation;
-  @Input() options: ModalInputTextOptions;
+  @Input() options: ModalInputOptions;
 
-  modalInputValid = false;
+  modalInputValid$: Observable<boolean>;
+  form: FormGroup;
 
-  protected form: FormGroup;
   protected validators: ValidatorFn[] = [];
   protected unsubscribe$: Subject<void> = new Subject<void>();
 
@@ -33,12 +33,10 @@ export class ModalInputAnnotationComponent implements OnInit, OnDestroy {
       })
     });
 
-    this.form.valueChanges.pipe(
+    this.modalInputValid$ = this.form.valueChanges.pipe(
       debounceTime(300),
-      takeUntil(this.unsubscribe$)
-    ).subscribe(() => {
-      this.modalInputValid = this.form.valid;
-    });
+      map(() => this.form.valid),
+      shareReplay());
   }
 
   ngOnDestroy() {

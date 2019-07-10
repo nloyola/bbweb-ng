@@ -1,6 +1,6 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ProcessingType } from '@app/domain/studies';
 import { ProcessingTypeStoreReducer } from '@app/root-store';
 import { NgrxRuntimeChecks } from '@app/root-store/root-store.module';
@@ -38,12 +38,11 @@ describe('ProcessingTypeInformationSubformComponent', () => {
 
   let component: TestComponent;
   let fixture: ComponentFixture<TestComponent>;
-  let factory: Factory;
+  const factory = new Factory();
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
-        FormsModule,
         ReactiveFormsModule,
         StoreModule.forRoot(
           { 'processing-type': ProcessingTypeStoreReducer.reducer },
@@ -62,7 +61,6 @@ describe('ProcessingTypeInformationSubformComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(TestComponent);
     component = fixture.componentInstance;
-    factory = new Factory();
   });
 
   it('should create', () => {

@@ -1,5 +1,5 @@
 import { ConcurrencySafeEntity, HasSlug, IConcurrencySafeEntity, JSONArray, JSONObject, applyMixins } from '@app/domain';
-import { Annotation, annotationFactory, IAnnotation, HasAnnotations, AnnotationType } from '../annotations';
+import { Annotation, IAnnotation, HasAnnotations, AnnotationType, AnnotationFactory } from '../annotations';
 import { CollectionEventType } from '../studies';
 
 /**
@@ -87,7 +87,8 @@ export class CollectionEvent extends ConcurrencySafeEntity implements ICollectio
     }
 
     if (input.annotations) {
-      this.annotations = input.annotations.map(a => annotationFactory(a));
+      this.annotations = input.annotations
+        .map(a => AnnotationFactory.annotationFactory(a));
     }
 
     return this;

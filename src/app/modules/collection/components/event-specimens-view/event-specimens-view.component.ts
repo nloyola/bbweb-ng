@@ -1,5 +1,5 @@
-import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
-import { MatSort, Sort } from '@angular/material';
+import { Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
+import { Sort } from '@angular/material';
 import { PagedReplyInfo, SearchParams } from '@app/domain';
 import { CollectionEvent, Participant, Specimen } from '@app/domain/participants';
 import { RootStoreState, SpecimenStoreActions, SpecimenStoreSelectors } from '@app/root-store';
@@ -7,7 +7,7 @@ import { faVial } from '@fortawesome/free-solid-svg-icons';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { select, Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
-import { filter, map, shareReplay, takeUntil, tap, startWith } from 'rxjs/operators';
+import { filter, map, shareReplay, takeUntil, tap } from 'rxjs/operators';
 import { SpecimenViewModalComponent } from '../specimen-view-modal/specimen-view-modal.component';
 
 // For an example see:
@@ -20,8 +20,8 @@ import { SpecimenViewModalComponent } from '../specimen-view-modal/specimen-view
 })
 export class EventSpecimensViewComponent implements OnInit, OnChanges {
 
-  @ViewChild('specimensTable', { static: true }) private specimensTable: ElementRef;
-  @ViewChild('removeSpecimenModal', { static: true }) private removeSpecimenModal: TemplateRef<any>;
+  @ViewChild('specimensTable', { static: true })  specimensTable: ElementRef;
+  @ViewChild('removeSpecimenModal', { static: true }) removeSpecimenModal: TemplateRef<any>;
 
   @Input() event: CollectionEvent;
   @Input() participant: Participant;
@@ -35,7 +35,6 @@ export class EventSpecimensViewComponent implements OnInit, OnChanges {
   specimensLimit = 5;
   sortField: string;
 
-  private updatedMessage$ = new Subject<string>();
   private unsubscribe$ = new Subject<void>();
 
   constructor(private store$: Store<RootStoreState.State>,
@@ -78,7 +77,9 @@ export class EventSpecimensViewComponent implements OnInit, OnChanges {
 
     // FIXME: not working 100%
     // scrolling works only in some cases
-    this.specimensTable.nativeElement.scrollIntoView({behavior: 'smooth', block: 'end'});
+    if (this.specimensTable.nativeElement.scrollIntoView) {
+      this.specimensTable.nativeElement.scrollIntoView({behavior: 'smooth', block: 'end'});
+    }
   }
 
   viewSpecimen(specimen: Specimen) {
@@ -94,7 +95,6 @@ export class EventSpecimensViewComponent implements OnInit, OnChanges {
     this.modalService.open(this.removeSpecimenModal, { size: 'lg' }).result
       .then(() => {
         this.store$.dispatch(SpecimenStoreActions.removeSpecimenRequest({ specimen }));
-        this.updatedMessage$.next('Specimen was removed');
       })
       .catch(() => {
         // user pressed the cancel button, do nothing

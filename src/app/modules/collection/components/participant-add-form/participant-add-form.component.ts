@@ -1,6 +1,6 @@
 import { Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Annotation, annotationFromType } from '@app/domain/annotations';
+import { Annotation, AnnotationFactory } from '@app/domain/annotations';
 import { Participant } from '@app/domain/participants';
 import { Study } from '@app/domain/studies';
 import { Observable, Subject } from 'rxjs';
@@ -56,7 +56,7 @@ export class ParticipantAddFormComponent implements OnInit, OnDestroy, OnChanges
       const study = this.studies.find(s => s.id === this.form.value.study);
       if (study) {
         this.selectedStudy = study;
-        this.annotations = study.annotationTypes.map(at => annotationFromType(at));
+        this.annotations = study.annotationTypes.map(at => AnnotationFactory.annotationFromType(at));
         this.annotationsGroup.setControl(
           'annotations',
           AnnotationsAddSubformComponent.buildSubForm(this.annotations, this.unsubscribe$));

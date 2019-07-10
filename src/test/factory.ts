@@ -274,6 +274,21 @@ export class Factory {
     };
   }
 
+  singleSelectAnnotationType(options: any = {}): IAnnotationType {
+    const annotationOptions = options.options ? options.options : [ 'opt1', 'opt2', 'opt3' ];
+    return this.annotationType({
+      valueType: ValueTypes.Select,
+      maxValueCount: 1,
+      options: annotationOptions
+    });
+  }
+
+  multipleSelectAnnotationType(options: any = {}): IAnnotationType {
+    const annotationType = this.singleSelectAnnotationType(options);
+    annotationType.maxValueCount = 2;
+    return annotationType;
+  }
+
   processedSpecimenDefinition(options = {}): IProcessedSpecimenDefinition {
     return {
       id:                      this.domainEntityIdNext(DomainEntities.PROCESSED_SPECIMEN_DEFINITION),

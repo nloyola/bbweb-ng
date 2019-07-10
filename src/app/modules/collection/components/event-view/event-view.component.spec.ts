@@ -3,7 +3,7 @@ import { async, ComponentFixture, fakeAsync, flush, TestBed } from '@angular/cor
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { annotationFromType } from '@app/domain/annotations';
+import { AnnotationFactory } from '@app/domain/annotations';
 import { CollectionEvent, Participant, Specimen } from '@app/domain/participants';
 import { CollectionEventType, Study } from '@app/domain/studies';
 import { EventStoreActions, EventStoreReducer, EventTypeStoreActions, EventTypeStoreReducer, NgrxRuntimeChecks, ParticipantStoreActions, ParticipantStoreReducer, RootStoreState, SpecimenStoreActions, SpecimenStoreReducer, StudyStoreActions, StudyStoreReducer } from '@app/root-store';
@@ -189,7 +189,7 @@ describe('EventViewComponent', () => {
         factory.collectionEventType({ annotationTypes: [ factory.annotationType() ] }));
       const entities = createEntities({ eventType });
       const { event } = entities;
-      const annotation = annotationFromType(eventType.annotationTypes[0]);
+      const annotation = AnnotationFactory.annotationFromType(eventType.annotationTypes[0]);
       context.fixture = fixture;
       context.componentInitialize = () => { dispatchEntities(entities); };
       context.componentValidateInitialization = () => undefined;

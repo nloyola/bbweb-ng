@@ -14,7 +14,7 @@ export namespace EventSpecCommon {
     specimen?: Specimen;
   }
 
-  export function createEntities(options: EntitiesOptions = {}, factory: Factory) {
+  export function createEntities(options: EntitiesOptions = {}, factory: Factory): EntitiesOptions {
     const study = (options.study !== undefined) ? options.study : new Study().deserialize(factory.study());
     const eventType = (options.eventType !== undefined)
       ? options.eventType : new CollectionEventType().deserialize(factory.collectionEventType({

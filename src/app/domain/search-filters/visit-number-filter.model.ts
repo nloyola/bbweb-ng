@@ -11,7 +11,7 @@ export class VisitNumberFilter extends SearchFilter {
 
   getValue(): string {
     if (this.value !== '') {
-      return 'visitNumber:like:' + this.value;
+      return 'visitNumber:eq:' + this.value;
     }
     return '';
   }

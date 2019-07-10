@@ -9,7 +9,7 @@ import { select, Store } from '@ngrx/store';
 import { Observable, Subject, BehaviorSubject } from 'rxjs';
 import { takeUntil, tap, withLatestFrom, filter } from 'rxjs/operators';
 import { AnnotationsAddSubformComponent } from '../annotations-add-subform/annotations-add-subform.component';
-import { annotationFromType, Annotation } from '@app/domain/annotations';
+import { Annotation, AnnotationFactory } from '@app/domain/annotations';
 import { faCalendar } from '@fortawesome/free-solid-svg-icons';
 import { ToastrService } from 'ngx-toastr';
 
@@ -53,7 +53,8 @@ export class EventAddFormComponent implements OnInit, OnDestroy {
 
         const selectedEventType = eventTypes.find(et => et.id === this.form.value.eventType);
         if (selectedEventType) {
-          this.annotations = selectedEventType.annotationTypes.map(at => annotationFromType(at));
+          this.annotations = selectedEventType.annotationTypes
+            .map(at => AnnotationFactory.annotationFromType(at));
           this.annotationsGroup.setControl(
             'annotations',
             AnnotationsAddSubformComponent.buildSubForm(this.annotations, this.unsubscribe$));

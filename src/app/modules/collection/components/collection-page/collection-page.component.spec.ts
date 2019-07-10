@@ -73,20 +73,15 @@ describe('CollectionPageComponent', () => {
 
     it('should show loading', () => {
       const user = new User().deserialize(factory.user());
-      const entities = createEntities({ user });
+      createEntities({ user });
       store.dispatch(AuthStoreActions.loginSuccessAction({ user }));
-
-      component.form.get('uniqueId').setValue('testId');
-      component.onSubmit();
       expect('loading').toBeTruthy();
     });
 
     it('on invalid user should show invalidUser template', () => {
-      const user = new User().deserialize(factory.user({
-        roles: []
-      }));
+      const user = new User().deserialize(factory.user());
+      expect(user.roles.length).toBeLessThanOrEqual(0);
       const entities = createEntities({ user });
-      const { study, studiesData } = entities;
 
       dispatchEntities(entities);
       fixture.detectChanges();
@@ -101,7 +96,7 @@ describe('CollectionPageComponent', () => {
 
   describe('when submitting', () => {
 
-    it('on submit getParticipantRequest action is dispatched', () => {
+    it('on submit the corresponding action is dispatched', () => {
       const entities = createEntities();
       const { participant } = entities;
       dispatchEntities(entities);
@@ -233,7 +228,11 @@ describe('CollectionPageComponent', () => {
     ];
     const participant = (options.participant !== undefined)
       ?  options.participant : new Participant().deserialize(factory.participant());
-    const user = (options.user !== undefined) ? options.user : new User().deserialize(factory.user());
+    const user = (options.user !== undefined) ? options.user : new User().deserialize(factory.user({
+      roles: [
+        factory.role({ id: RoleIds.SpecimenCollector })
+      ]
+    }));
     return { study, studiesData, participant, user  };
   }
 

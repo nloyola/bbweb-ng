@@ -9,7 +9,6 @@ import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { TruncatePipe } from '@app/shared/pipes';
 import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
-import { MockActivatedRoute } from '@test/mocks';
 import { EventTypesAddAndSelectComponent } from './event-types-add-and-select.component';
 
 describe('EventTypesAddAndSelectComponent', () => {
@@ -17,7 +16,6 @@ describe('EventTypesAddAndSelectComponent', () => {
   let component: EventTypesAddAndSelectComponent;
   let fixture: ComponentFixture<EventTypesAddAndSelectComponent>;
   let store: Store<RootStoreState.State>;
-  const mockActivatedRoute = new MockActivatedRoute();
   let factory: Factory;
 
   beforeEach(async(() => {
@@ -25,23 +23,13 @@ describe('EventTypesAddAndSelectComponent', () => {
 
     TestBed.configureTestingModule({
       imports: [
-        FormsModule,
-        ReactiveFormsModule,
-        RouterTestingModule,
         StoreModule.forRoot(
           {
-            'spinner': SpinnerStoreReducer.reducer,
             'study': StudyStoreReducer.reducer,
             'event-type': EventTypeStoreReducer.reducer
           },
           NgrxRuntimeChecks
         )
-      ],
-      providers: [
-        {
-          provide: ActivatedRoute,
-          useValue: mockActivatedRoute
-        }
       ],
       declarations: [
         EventTypesAddAndSelectComponent,
@@ -61,7 +49,6 @@ describe('EventTypesAddAndSelectComponent', () => {
 
   it('should create', () => {
     const study = new Study().deserialize(factory.study());
-    mockActivatedRouteSnapshot(study);
     component.study = study;
     fixture.detectChanges();
     expect(component).toBeTruthy();
@@ -73,7 +60,6 @@ describe('EventTypesAddAndSelectComponent', () => {
         ...factory.study(),
         state
       });
-      mockActivatedRouteSnapshot(study);
       component.study = study;
       component.ngOnInit();
       fixture.detectChanges();
@@ -91,7 +77,6 @@ describe('EventTypesAddAndSelectComponent', () => {
       ];
       const storeListener = jest.spyOn(store, 'dispatch');
 
-      mockActivatedRouteSnapshot(study);
       component.study = study;
       fixture.detectChanges();
       storeListener.mockReset();
@@ -117,7 +102,6 @@ describe('EventTypesAddAndSelectComponent', () => {
       jest.spyOn(store, 'dispatch');
 
       component.study = study;
-      mockActivatedRouteSnapshot(study);
       fixture.detectChanges();
       testData.forEach(testInfo => {
         jest.spyOn(testInfo.emitter, 'emit').mockReturnValue(null);
@@ -131,7 +115,6 @@ describe('EventTypesAddAndSelectComponent', () => {
   it('returns the correct recurring label for an event type', () => {
     const study = new Study().deserialize(factory.study());
     component.study = study;
-    mockActivatedRouteSnapshot(study);
     fixture.detectChanges();
 
     [ true, false ].forEach(recurring => {
@@ -143,21 +126,4 @@ describe('EventTypesAddAndSelectComponent', () => {
     });
   });
 
-  function mockActivatedRouteSnapshot(study: Study): void {
-    mockActivatedRoute.spyOnParent(() => ({
-      parent: {
-        snapshot: {
-          data: {
-            study
-          }
-        }
-      }
-    }));
-
-    mockActivatedRoute.spyOnSnapshot(() => ({
-      params: {
-        slug: study.slug
-      }
-    }));
-  }
 });

@@ -7,7 +7,7 @@ import { Dictionary } from '@ngrx/entity';
 import { select, Store, createSelector } from '@ngrx/store';
 import { Observable, Subject, combineLatest, BehaviorSubject } from 'rxjs';
 import { map, takeUntil, tap, withLatestFrom, shareReplay, take, filter } from 'rxjs/operators';
-import { annotationFromType, Annotation } from '@app/domain/annotations';
+import { Annotation, AnnotationFactory } from '@app/domain/annotations';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { SearchParams } from '@app/domain';
@@ -109,7 +109,7 @@ export class EventViewComponent implements OnInit, OnDestroy {
       }
 
       return entities.eventType.annotationTypes.map(at => {
-        const annotation = annotationFromType(at);
+        const annotation = AnnotationFactory.annotationFromType(at);
 
         const eventAnnotation =
           entities.event.annotations.find(a => a.annotationTypeId === annotation.annotationTypeId);

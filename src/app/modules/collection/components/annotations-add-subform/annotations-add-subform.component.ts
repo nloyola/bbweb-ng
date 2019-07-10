@@ -1,6 +1,6 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
-import { Annotation, annotationFromValueType, ValueTypes } from '@app/domain/annotations';
+import { Annotation, ValueTypes, AnnotationFactory, AnnotationType } from '@app/domain/annotations';
 import { faCalendar } from '@fortawesome/free-solid-svg-icons';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -56,12 +56,12 @@ export class AnnotationsAddSubformComponent {
       }
 
       formArray.push(new FormGroup({
-        id: new FormControl(annotation.annotationType.id),
-        text: new FormControl(annotation.annotationType.name),
-        valueType: new FormControl(annotation.annotationType.valueType),
+        id:            new FormControl(annotation.annotationType.id),
+        text:          new FormControl(annotation.annotationType.name),
+        valueType:     new FormControl(annotation.annotationType.valueType),
         maxValueCount: new FormControl(annotation.annotationType.maxValueCount),
-        options: new FormControl(annotation.annotationType.options),
-        field: control
+        options:       new FormControl(annotation.annotationType.options),
+        field:         control
       }));
     });
     return formArray;
@@ -77,8 +77,8 @@ export class AnnotationsAddSubformComponent {
   }
 
   static valueToAnnotations(annotationsGroup: FormGroup): Annotation[] {
-    return annotationsGroup.value.annotations.map(value => {
-      const annotation = annotationFromValueType(value.valueType);
+    return annotationsGroup.value.annotations.map((value: any) => {
+      const annotation = AnnotationFactory.annotationFromValueType(value.valueType);
       annotation.annotationTypeId = value.id;
 
       if (value.valueType === ValueTypes.Select) {

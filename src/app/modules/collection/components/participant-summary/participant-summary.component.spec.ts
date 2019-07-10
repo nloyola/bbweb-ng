@@ -3,19 +3,19 @@ import { async, ComponentFixture, fakeAsync, flush, TestBed } from '@angular/cor
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { annotationFromType } from '@app/domain/annotations';
+import { AnnotationFactory } from '@app/domain/annotations';
 import { Participant } from '@app/domain/participants';
 import { Study } from '@app/domain/studies';
-import { EventStoreReducer, ParticipantStoreActions, ParticipantStoreReducer, StudyStoreActions, StudyStoreReducer, RootStoreState } from '@app/root-store';
+import { EventStoreReducer, ParticipantStoreActions, ParticipantStoreReducer, RootStoreState, StudyStoreActions, StudyStoreReducer } from '@app/root-store';
+import { NgrxRuntimeChecks } from '@app/root-store/root-store.module';
 import { NgbActiveModal, NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
+import { EntityUpdateComponentBehaviour } from '@test/behaviours/entity-update-component.behaviour';
 import { Factory } from '@test/factory';
 import { MockActivatedRoute } from '@test/mocks';
 import { cold } from 'jasmine-marbles';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { ParticipantSummaryComponent } from './participant-summary.component';
-import { NgrxRuntimeChecks } from '@app/root-store/root-store.module';
-import { EntityUpdateComponentBehaviour } from '@test/behaviours/entity-update-component.behaviour';
 
 interface EntitiesOptions {
   study?: Study;
@@ -106,7 +106,7 @@ describe('ParticipantSummaryComponent', () => {
     const { participant } = createEntities({ study });
     dispatchEntities({ study, participant });
     fixture.detectChanges();
-    const annotation = annotationFromType(study.annotationTypes[0]);
+    const annotation = AnnotationFactory.annotationFromType(study.annotationTypes[0]);
     expect(component.annotations$).toBeObservable(cold('a', { a: [ annotation ] }));
   });
 
@@ -232,7 +232,7 @@ describe('ParticipantSummaryComponent', () => {
       const study = new Study().deserialize(factory.study({ annotationTypes: [ factory.annotationType() ] }));
       const entities = createEntities({ study });
       const { participant } = entities;
-      const annotation = annotationFromType(study.annotationTypes[0]);
+      const annotation = AnnotationFactory.annotationFromType(study.annotationTypes[0]);
       context.fixture = fixture;
       context.componentInitialize = () => { dispatchEntities(entities); };
       context.componentValidateInitialization = () => undefined;

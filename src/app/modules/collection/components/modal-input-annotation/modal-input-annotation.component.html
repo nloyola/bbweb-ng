@@ -1,4 +1,4 @@
-<app-modal-input [modalInputValid]="modalInputValid"
+<app-modal-input [modalInputValid]="modalInputValid$ | async"
                  (confirm)="confirm($event)"
                  (dismiss)="dismiss($event)">
   <span class="title">

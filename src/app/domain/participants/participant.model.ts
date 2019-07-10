@@ -1,5 +1,5 @@
 import { applyMixins, ConcurrencySafeEntity, EntityInfo, HasSlug, IConcurrencySafeEntity } from '@app/domain';
-import { Annotation, annotationFactory, AnnotationType, HasAnnotations, IAnnotation } from '@app/domain/annotations';
+import { Annotation, AnnotationType, HasAnnotations, IAnnotation, AnnotationFactory } from '@app/domain/annotations';
 import { IStudyInfo, Study } from '@app/domain/studies';
 
 /**
@@ -52,7 +52,8 @@ export class Participant extends ConcurrencySafeEntity implements IParticipant, 
     this.study = new EntityInfo().deserialize(input.study);
 
     if (input.annotations) {
-      this.annotations = input.annotations.map(a => annotationFactory(a));
+      this.annotations = input.annotations
+        .map(a => AnnotationFactory.annotationFactory(a));
     }
     return this;
   }

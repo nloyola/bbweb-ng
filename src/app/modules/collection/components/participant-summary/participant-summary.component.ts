@@ -7,7 +7,7 @@ import { Observable, Subject, BehaviorSubject } from 'rxjs';
 import { map, shareReplay, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
 import { Dictionary } from '@ngrx/entity';
 import { Study } from '@app/domain/studies';
-import { annotationFromType, Annotation } from '@app/domain/annotations';
+import { Annotation, AnnotationFactory } from '@app/domain/annotations';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { ModalInputTextOptions } from '@app/modules/modals/models';
@@ -118,7 +118,7 @@ export class ParticipantSummaryComponent implements OnInit, OnDestroy {
       if ((entities === undefined) || (entities.study === undefined)) { return []; }
 
       return entities.study.annotationTypes.map(at => {
-        const annotation = annotationFromType(at);
+        const annotation = AnnotationFactory.annotationFromType(at);
         const participantAnnotation =
           entities.participant.annotations.find(a => a.annotationTypeId === annotation.annotationTypeId);
         if (participantAnnotation) {
