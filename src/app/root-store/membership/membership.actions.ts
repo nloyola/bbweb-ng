@@ -81,7 +81,7 @@ export const removeMembershipSuccess = createAction(
 
 export const removeMembershipFailure = createAction(
   '[Membership] Remove Membership Failure',
-  props<{ error:any }>()
+  props<{ error: any }>()
 );
 
 const all = union({

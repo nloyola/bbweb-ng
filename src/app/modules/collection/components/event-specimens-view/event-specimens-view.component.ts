@@ -102,7 +102,6 @@ export class EventSpecimensViewComponent implements OnInit, OnChanges {
   }
 
   private applySearchParams() {
-    debugger;
     this.tableDataLoading = true;
     this.store$.dispatch(SpecimenStoreActions.searchSpecimensRequest({
       event: this.event,

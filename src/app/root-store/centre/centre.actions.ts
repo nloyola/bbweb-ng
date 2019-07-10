@@ -68,10 +68,10 @@ export const getCentreFailure = createAction(
 
 export const updateCentreRequest = createAction(
   '[Centre] Update Centre Request',
-  props<{ 
+  props<{
     centre: Centre;
     attributeName: CentreUpdateAttribute;
-    value: string | Location; 
+    value: string | Location;
    }>()
 );
 

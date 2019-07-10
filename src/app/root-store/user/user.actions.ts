@@ -52,7 +52,7 @@ export const getUserFailure = createAction(
 
 export const updateUserRequest = createAction(
   '[User] Update User Request',
-  props<{ 
+  props<{
     user: User;
     attributeName: UserUpdateAttribute;
     value: string | PasswordUpdateValues;
@@ -70,18 +70,18 @@ export const updateUserFailure = createAction(
 );
 
 
-  const all = union({
-    getUserCountsRequest,
-    getUserCountsSuccess,
-    getUserCountsFailure,
-    searchUsersRequest,
-    searchUsersSuccess,
-    searchUsersFailure,
-    getUserRequest,
-    getUserSuccess,
-    getUserFailure,
-    updateUserRequest,
-    updateUserSuccess,
-    updateUserFailure
-  });
-  export type UserActionsUnion = typeof all;
+const all = union({
+  getUserCountsRequest,
+  getUserCountsSuccess,
+  getUserCountsFailure,
+  searchUsersRequest,
+  searchUsersSuccess,
+  searchUsersFailure,
+  getUserRequest,
+  getUserSuccess,
+  getUserFailure,
+  updateUserRequest,
+  updateUserSuccess,
+  updateUserFailure
+});
+export type UserActionsUnion = typeof all;
