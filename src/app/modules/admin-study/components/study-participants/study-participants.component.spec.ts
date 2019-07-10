@@ -105,7 +105,6 @@ describe('StudyParticipantsComponent', () => {
     const spy = jest.spyOn(router, 'navigate');
     const annotationType = study.annotationTypes[0];
 
-    /* tslint:disable:no-shadowed-variable */
     const testData = [
       {
         componentFunc: (component) => component.add(),
@@ -116,7 +115,6 @@ describe('StudyParticipantsComponent', () => {
         relativePath: `../${annotationType.id}`
       }
     ];
-    /* tslint:enable:no-shadowed-variable */
 
     store.dispatch(StudyStoreActions.getStudySuccess({ study }));
     fixture.detectChanges();

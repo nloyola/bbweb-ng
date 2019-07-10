@@ -267,7 +267,6 @@ describe('ProcessingTypeViewContainerComponent', () => {
 
   describe('common behaviour', () => {
 
-    /* tslint:disable:no-shadowed-variable */
     const componentUpdateFuncs = [
       (component, processingType) => component.updateName(),
       (component, processingType) => component.updateDescription(),
@@ -277,7 +276,6 @@ describe('ProcessingTypeViewContainerComponent', () => {
       (component, processingType) => component.updateOutputSpecimen(),
       (component, processingType) => component.removeProcessingType()
     ];
-    /* tslint:disable:no-shadowed-variable */
 
     it('functions should open a modal', () => {
       const entities = createEntities();

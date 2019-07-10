@@ -486,7 +486,6 @@ describe('EventTypeViewContainer', () => {
     return eventType;
   }
 
-  /* tslint:disable:no-shadowed-variable */
   function componentSetup(study: Study, eventType: CollectionEventType): void {
     store.dispatch(StudyStoreActions.getStudySuccess({ study }));
     store.dispatch(EventTypeStoreActions.getEventTypeSuccess({ eventType }));
@@ -523,6 +522,5 @@ describe('EventTypeViewContainer', () => {
       }
     }));
   }
-  /* tslint:enable:no-shadowed-variable */
 
 });

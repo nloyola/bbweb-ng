@@ -124,13 +124,11 @@ describe('CentreLocationsComponent', () => {
     const spy = jest.spyOn(modalService, 'open');
     const location = centre.locations[0];
 
-    /* tslint:disable:no-shadowed-variable */
     const testData = [
       {
         componentFunc: (component) => component.remove(location),
       }
     ];
-    /* tslint:enable:no-shadowed-variable */
 
     store.dispatch(CentreStoreActions.getCentreSuccess({ centre }));
     fixture.detectChanges();
