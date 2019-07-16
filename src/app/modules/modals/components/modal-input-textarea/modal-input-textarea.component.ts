@@ -8,9 +8,13 @@ import { FormBuilder } from '@angular/forms';
   templateUrl: './modal-input-textarea.component.html',
   styleUrls: ['./modal-input-textarea.component.scss']
 })
-export class ModalInputTextareaComponent extends ModalInputTextComponent implements OnInit {
+export class ModalInputTextareaComponent extends ModalInputTextComponent {
 
   @Input() options: ModalInputTextareaOptions;
+
+  constructor(formBuilder: FormBuilder) {
+    super(formBuilder);
+  }
 
   ngOnInit() {
     this.options = {
@@ -18,6 +22,7 @@ export class ModalInputTextareaComponent extends ModalInputTextComponent impleme
       rows: this.options.rows ? this.options.rows : 3,
       cols: this.options.cols ? this.options.cols : 10
     };
+    debugger;
     super.ngOnInit();
   }
 

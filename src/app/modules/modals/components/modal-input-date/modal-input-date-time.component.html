@@ -3,7 +3,7 @@
                   (dismiss)="dismiss($event)">
   <span class="title">{{ title }}</span>
   <form class="body form-horizontal"
-        [formGroup]="modalInputForm"
+        [formGroup]="form"
         autocomplete="on"
         novalidate>
 
@@ -12,10 +12,10 @@
       <div class="input-group col-md-8">
         <input class="form-control"
                type="text"
-               formControlName="text"
+               formControlName="input"
                [owlDateTime]="dt"
                i18n-placeholder
-               placeholder="Date Time"
+               placeholder="Date and Time"
                ngbAutoFocus>
         <owl-date-time #dt></owl-date-time>
         <div class="input-group-append">
@@ -24,9 +24,12 @@
           </button>
         </div>
       </div>
-      <div class="col-md-8 offset-3" *ngIf="text.invalid && text.touched">
-        <div class="text-danger small" *ngIf="text.errors.required" i18n>
-          An date and time is required
+      <div class="col-md-8 offset-3" *ngIf="input.invalid && input.touched">
+        <div class="text-danger small" *ngIf="input.errors.required" i18n>
+          Please enter a date and time
+        </div>
+        <div class="text-danger small" *ngIf="input.errors.owlDateTimeParse" i18n>
+          Please enter a valid date and time
         </div>
       </div>
     </div>

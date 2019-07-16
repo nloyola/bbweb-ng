@@ -2,6 +2,9 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ModalInputTextComponent } from './modal-input-text.component';
 import { ModalInputComponent } from '../modal-input/modal-input.component';
+import { By } from '@angular/platform-browser';
+import * as faker from 'faker';
+import { ModalInputComponentBehaviour } from '@test/behaviours/modal-input-component.behaviour';
 
 describe('ModalInputTextComponent', () => {
   let component: ModalInputTextComponent;
@@ -30,5 +33,26 @@ describe('ModalInputTextComponent', () => {
     component.options = {};
     fixture.detectChanges();
     expect(component).toBeTruthy();
+  });
+
+  describe('shared behaviour', () => {
+
+    const context: ModalInputComponentBehaviour.Context<ModalInputTextComponent, string> = {};
+
+    beforeEach(() => {
+      context.fixture             = fixture;
+      context.assignOptions       = (options) => { component.options = options; };
+      context.assignMockModal     = (mockModal) => { component.modal = mockModal; };
+      context.assignInputValue    = (value) => { component.input.setValue(value); };
+      context.getValidValue       = () => faker.lorem.words(3);
+      context.inputElement        = () => fixture.debugElement.query(By.css('input'));
+      context.markInputAsTouched  = () => { component.input.markAllAsTouched(); };
+      context.requiredText        = 'A value is required';
+      context.confirm             = () => component.confirm();
+      context.dismiss             = () => component.dismiss();
+    });
+
+    ModalInputComponentBehaviour.sharedBehaviour(context);
+
   });
 });

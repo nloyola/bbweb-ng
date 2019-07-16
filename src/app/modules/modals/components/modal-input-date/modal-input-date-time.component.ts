@@ -1,23 +1,25 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
-import { ModalInputTextComponent } from '@app/modules/modals/components/modal-input-text/modal-input-text.component';
+import { FormBuilder, Validators } from '@angular/forms';
 import { faCalendar } from '@fortawesome/free-solid-svg-icons';
+import { ModalInputBaseComponent } from '../modal-input-base.component';
 
 @Component({
   selector: 'app-modal-input-date-time',
   templateUrl: './modal-input-date-time.component.html',
   styleUrls: ['./modal-input-date-time.component.scss']
 })
-export class ModalInputDateTimeComponent extends ModalInputTextComponent implements OnInit {
+export class ModalInputDateTimeComponent extends ModalInputBaseComponent<Date> implements OnInit {
 
   faCalendar = faCalendar;
 
   constructor(formBuilder: FormBuilder) {
     super(formBuilder);
-    this.options = {};
   }
 
   ngOnInit() {
+    if (this.options.required) {
+      this.validators.push(Validators.required);
+    }
     super.ngOnInit();
   }
 }

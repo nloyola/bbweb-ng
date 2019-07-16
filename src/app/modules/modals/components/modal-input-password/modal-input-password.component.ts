@@ -9,7 +9,7 @@ import { User } from '@app/domain/users';
   templateUrl: './modal-input-password.component.html',
   styleUrls: ['./modal-input-password.component.scss']
 })
-export class ModalInputPasswordComponent extends ModalInputTextComponent implements OnInit {
+export class ModalInputPasswordComponent extends ModalInputTextComponent {
 
   @Input() user: User;
 
@@ -24,25 +24,27 @@ export class ModalInputPasswordComponent extends ModalInputTextComponent impleme
       minLength: 8
     };
     super.ngOnInit();
-    this.modalInputForm.addControl('password',
-                                   new FormControl('', [ Validators.required, Validators.minLength(8) ]));
-    this.modalInputForm.addControl('confirmPassword',
-                                   new FormControl('', [ Validators.required, Validators.minLength(8) ]));
-    this.modalInputForm.setValidators(PasswordValidation.matchingPasswords());
+    this.form.addControl(
+      'password',
+      new FormControl('', [ Validators.required, Validators.minLength(8) ]));
+    this.form.addControl(
+      'confirmPassword',
+      new FormControl('', [ Validators.required, Validators.minLength(8) ]));
+    this.form.setValidators(PasswordValidation.matchingPasswords());
   }
 
   get password(): AbstractControl {
-    return this.modalInputForm.get('password');
+    return this.form.get('password');
   }
 
   get confirmPassword(): AbstractControl {
-    return this.modalInputForm.get('confirmPassword');
+    return this.form.get('confirmPassword');
   }
 
   confirm(): void {
     this.modal.close({
-      currentPassword: this.modalInputForm.value.text,
-      newPassword: this.modalInputForm.value.password
+      currentPassword: this.form.value.input,
+      newPassword: this.form.value.password
     });
   }
 

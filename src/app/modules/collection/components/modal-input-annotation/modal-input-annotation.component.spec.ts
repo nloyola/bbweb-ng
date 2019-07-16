@@ -106,7 +106,6 @@ describe('ModalInputAnnotationComponent', () => {
     });
 
     it('throws an error if annotationsGroup has more than one annotation', () => {
-      const formBuilder = TestBed.get(FormBuilder);
       const closeListener = jest.fn();
       const mockModal = {
         close: closeListener,

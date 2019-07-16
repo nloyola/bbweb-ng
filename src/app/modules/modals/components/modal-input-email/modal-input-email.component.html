@@ -3,7 +3,7 @@
                   (dismiss)="dismiss($event)">
   <span class="title">{{ title }}</span>
   <form class="body form-horizontal"
-        [formGroup]="modalInputForm"
+        [formGroup]="form"
         autocomplete="on"
         novalidate>
 
@@ -11,14 +11,14 @@
       <label for="email" class="col-md-3 col-form-label" i18n>{{ label }}</label>
       <div class="col-md-8">
         <input class="form-control"
-               formControlName="text"
+               formControlName="input"
                ngbAutoFocus>
       </div>
-      <div class="col-md-8 offset-3" *ngIf="text.invalid && text.touched">
-        <div class="text-danger small" *ngIf="text.errors.required" i18n>
+      <div class="col-md-8 offset-3" *ngIf="input.invalid && input.touched">
+        <div class="text-danger small" *ngIf="input.errors.required" i18n>
           An email address is required
         </div>
-        <div class="text-danger small" *ngIf="text.errors.email" i18n>
+        <div class="text-danger small" *ngIf="input.errors.email" i18n>
           Email address is not valid
         </div>
       </div>
