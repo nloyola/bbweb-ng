@@ -1,5 +1,5 @@
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { NgModule } from '@angular/core';
+import { NgModule, Injectable, ErrorHandler } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from '@app/app-routing.module';
@@ -15,7 +15,18 @@ import { SharedModule } from '@app/shared/shared.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrModule } from 'ngx-toastr';
 
-import {ErrorHandlerModule} from '@btapai/ng-error-handler';
+import { ErrorHandlerModule, ERROR_HANDLER_CONFIG, ErrorHandlerConfig } from '@btapai/ng-error-handler';
+
+@Injectable()
+class UIErrorHandler extends ErrorHandler {
+  constructor() {
+    super();
+  }
+  handleError(error) {
+    super.handleError(error);
+    //alert(`Error occurred:${error.message}`);
+  }
+}
 
 @NgModule({
   declarations: [AppComponent],
@@ -31,14 +42,14 @@ import {ErrorHandlerModule} from '@btapai/ng-error-handler';
     RootStoreModule,
     BrowserAnimationsModule,
     MaterialModule,
-    ToastrModule.forRoot(),
-    ErrorHandlerModule.forRoot()
+    ToastrModule.forRoot()
+    // ErrorHandlerModule.forRoot()
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+    { provide: ErrorHandler, useClass: UIErrorHandler }
   ],
   bootstrap: [AppComponent]
 })
-
-export class AppModule { }
+export class AppModule {}

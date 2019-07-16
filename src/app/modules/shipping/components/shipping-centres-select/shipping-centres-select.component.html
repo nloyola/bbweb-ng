@@ -1,0 +1,60 @@
+<app-paged-entity-selector
+  [pageInfo]="pageInfo$ | async"
+  [isLoading]="isLoading$ | async"
+  [entitiesLimit]="centresLimit"
+  [(page)]="currentPage"
+  [heading]="heading"
+  [footer]="footer"
+  [noEntitiesToDisplay]="noEntitiesToDisplay"
+  [noResultsToDisplay]="noResultsToDisplay"
+  [loadingContent]="showLoading"
+  (filterUpdated)="onFiltersUpdated($event)"
+  (pageChange)="paginationPageChange($event)"
+>
+  <ng-template let-entity>
+    <li class="list-group-item" *ngIf="entity">
+      <a href="#" (click)="!!centreSelected(entity)">
+        <small>{{ entity.name }}</small>
+      </a>
+    </li>
+  </ng-template>
+</app-paged-entity-selector>
+
+<ng-template #heading>
+  <small i18n>Shipping Centres</small>
+</ng-template>
+
+<ng-template #footer>
+  <form [formGroup]="filterForm" novalidate>
+    <div class="form-group">
+      <label class="small" for="nameFilter" i18n>
+        Name filter:
+      </label>
+      <input type="text" class="form-control form-control-sm" formControlName="name" />
+    </div>
+  </form>
+</ng-template>
+
+<ng-template #noEntitiesToDisplay>
+  <div class="alert alert-warning" role="alert">
+    <mat-icon>warning</mat-icon>
+    <ng-container i18n>
+      This participant does not have any events yet
+    </ng-container>
+  </div>
+</ng-template>
+
+<ng-template #noResultsToDisplay>
+  <div class="alert alert-warning" role="alert">
+    <mat-icon>warning</mat-icon>
+    <ng-container i18n>
+      There are no events that match your criteria
+    </ng-container>
+  </div>
+</ng-template>
+
+<ng-template #showLoading>
+  <app-spinner name="loading" [show]="true" i18n>
+    <small>Loading...</small>
+  </app-spinner>
+</ng-template>

@@ -1,0 +1,127 @@
+<div class="row">
+  <div class="col-sm-12 mt-4">
+    <div class="card">
+      <div class="card-header bg-primary text-light" i18n>Add Shipment</div>
+      <div class="card-body">
+        <form class="form-horizontal" [formGroup]="form" autocomplete="on" (ngSubmit)="onSubmit()" novalidate>
+          <!-- COURIER NAME -->
+          <div class="form-group row">
+            <label for="courierName" class="col-md-3 col-form-label" i18n>Courier Name</label>
+            <div class="col-md-9">
+              <input
+                #courierNameInput
+                class="form-control"
+                type="text"
+                formControlName="courierName"
+                i18n-placeholder
+                placeholder="The name of the courier company"
+              />
+            </div>
+            <div class="col-md-9 offset-3" *ngIf="courierName.invalid && courierName.touched">
+              <div class="text-danger small" *ngIf="courierName.errors.required" i18n>
+                A courier name is required
+              </div>
+            </div>
+          </div>
+
+          <!-- TRACKING NUMBER -->
+          <div class="form-group row">
+            <label for="trackingNumber" class="col-md-3 col-form-label" i18n>Tracking Number</label>
+            <div class="col-md-9">
+              <input
+                #trackingNumberInput
+                class="form-control"
+                type="text"
+                formControlName="trackingNumber"
+                i18n-placeholder
+                placeholder="The number used to track the package"
+              />
+            </div>
+            <div class="col-md-9 offset-3" *ngIf="trackingNumber.invalid && trackingNumber.touched">
+              <div class="text-danger small" *ngIf="trackingNumber.errors.required" i18n>
+                A tracking number is required
+              </div>
+            </div>
+          </div>
+
+          <!-- FROM CENTRE -->
+          <div class="form-group row">
+            <label for="fromCentre" class="col-md-3 col-form-label" i18n>From Centre</label>
+            <div class="col-md-9">
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="fromCentreTypeahead.selectedEntity"
+                [ngModelOptions]="{standalone: true}"
+                [ngbTypeahead]="fromCentreTypeahead.getEntities"
+                i18n-placeholder
+                placeholder="The location of the centre this shipment is coming from"
+                [inputFormatter]="fromCentreTypeahead.typeaheadFormatter"
+                [resultFormatter]="fromCentreTypeahead.typeaheadFormatter"
+                (selectItem)="fromCentreTypeahead.onEntitySelected($event)"
+                [editable]="false"
+                required
+              />
+            </div>
+            <div class="col-md-9 offset-3" *ngIf="fromCentre.invalid && fromCentre.touched">
+              <div class="text-danger small" *ngIf="fromCentre.errors.required" i18n>
+                A from centre is required
+              </div>
+            </div>
+          </div>
+
+          <!-- TO CENTRE -->
+          <div class="form-group row">
+            <label for="toCentre" class="col-md-3 col-form-label" i18n>To Centre</label>
+            <div class="col-md-9">
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="toCentreTypeahead.selectedEntity"
+                [ngModelOptions]="{standalone: true}"
+                [ngbTypeahead]="toCentreTypeahead.getEntities"
+                i18n-placeholder
+                placeholder="The location of the centre this shipment is coming to"
+                [inputFormatter]="toCentreTypeahead.typeaheadFormatter"
+                [resultFormatter]="toCentreTypeahead.typeaheadFormatter"
+                (selectItem)="toCentreTypeahead.onEntitySelected($event)"
+                [editable]="false"
+                required
+              />
+            </div>
+            <div class="col-md-9 offset-3" *ngIf="toCentre.invalid && toCentre.touched">
+              <div class="text-danger small" *ngIf="toCentre.errors.required" i18n>
+                A to centre is required
+              </div>
+            </div>
+          </div>
+
+          <!-- BUTTONS  -->
+          <div class="form-group row">
+            <div class="col-md-9 offset-3">
+              <button
+                class="btn btn-primary mr-2"
+                type="submit"
+                [disabled]="form.invalid || (isSaving$ | async)"
+                i18n
+              >
+                <ng-container *ngIf="(isSaving$ | async) === false">
+                  Submit
+                </ng-container>
+                <app-spinner name="shipmentSaving" [show]="isSaving$ | async">
+                  Saving
+                </app-spinner>
+              </button>
+              <button class="btn btn-secondary" type="button" (click)="onCancel()" i18n>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<pre>
+form errors: {{ fromCentre.errors | json }}
+</pre>

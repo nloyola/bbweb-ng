@@ -1,20 +1,21 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { Tab, IdToTab } from '@app/domain';
-import { Study } from '@app/domain/studies';
-import { RootStoreState, StudyStoreSelectors } from '@app/root-store';
-import { NgbTabChangeEvent } from '@ng-bootstrap/ng-bootstrap';
-import { select, Store } from '@ngrx/store';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
+import { Centre } from '@app/domain/centres';
+import { IdToTab } from '@app/domain';
+import { Store, select } from '@ngrx/store';
+import { RootStoreState, CentreStoreSelectors } from '@app/root-store';
+import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { filter, map, takeUntil } from 'rxjs/operators';
+import { Study } from '@app/domain/studies';
+import { NgbTabChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: 'app-study-view',
-  templateUrl: './study-view.component.html',
-  styleUrls: ['./study-view.component.scss']
+  selector: 'app-centre-shipments-page',
+  templateUrl: './centre-shipments-page.component.html',
+  styleUrls: ['./centre-shipments-page.component.scss']
 })
-export class StudyViewComponent implements OnInit, OnDestroy {
-  study$: Observable<Study>;
+export class CentreShipmentsPageComponent implements OnInit, OnDestroy {
+  centre$: Observable<Centre>;
   tabIds: string[];
   activeTabId: string;
 
@@ -27,28 +28,25 @@ export class StudyViewComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute
   ) {
     this.tabData = {
-      summary: {
-        heading: 'Summary'
+      incoming: {
+        heading: 'Incoming'
       },
-      participants: {
-        heading: 'Participants'
+      outgoing: {
+        heading: 'Outgoing'
       },
-      collection: {
-        heading: 'Collection'
-      },
-      processing: {
-        heading: 'Processing'
+      completed: {
+        heading: 'Completed'
       }
     };
     this.tabIds = Object.keys(this.tabData);
   }
 
   ngOnInit() {
-    this.study$ = this.store$.pipe(
-      select(StudyStoreSelectors.selectAllStudies),
+    this.centre$ = this.store$.pipe(
+      select(CentreStoreSelectors.selectAllCentres),
       filter(s => s.length > 0),
-      map((studies: Study[]) => studies.find(s => s.slug === this.route.snapshot.params.slug)),
-      filter(study => study !== undefined),
+      map((centres: Centre[]) => centres.find(s => s.slug === this.route.snapshot.params.slug)),
+      filter(centre => centre !== undefined),
       takeUntil(this.unsubscribe$)
     );
 
@@ -70,7 +68,7 @@ export class StudyViewComponent implements OnInit, OnDestroy {
   }
 
   public tabSelection(event: NgbTabChangeEvent) {
-    this.router.navigate(['/admin/studies', this.route.snapshot.params.slug, event.nextId]);
+    this.router.navigate(['/shipping', this.route.snapshot.params.slug, event.nextId]);
   }
 
   private getActiveTabId(routeUrl: string): string {

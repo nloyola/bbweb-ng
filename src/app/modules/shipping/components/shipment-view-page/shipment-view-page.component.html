@@ -1,0 +1,66 @@
+<mat-horizontal-stepper [linear]="'true'" (selectionChange)="stepClick($event)" #stepper>
+  <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
+    <button mat-stroked-button color="warn">Remove</button>
+    <button mat-stroked-button color="primary">Tag as packed</button>
+    <button mat-stroked-button color="primary">Tag as sent</button>
+  </span>
+  <mat-step [stepControl]="infoFormGroup">
+    <ng-template matStepLabel>Information</ng-template>
+
+    <div>
+      <button class="btn btn-primary mr-2" [disabled]="infoSubForm.invalid" matStepperNext i18n>
+        Next
+      </button>
+      <button class="btn btn-secondary" (click)="onCancel()" i18n>Cancel</button>
+    </div>
+  </mat-step>
+
+  <div class="pb-2 mt-4 mb-2 border-bottom" *ngIf="shipment$ | async as shipment">
+    <h1>{{ shipment.courierName }}: {{ shipment.trackingNumber }}</h1>
+    <small i18n>Add items to ship</small>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-12 mt-4">
+      <div class="card">
+        <div class="card-header bg-primary text-light" i18n>Shipment Information</div>
+        <div class="card-body">
+          <table>
+            <tr>
+              <td>
+                <b>Courier</b>
+              </td>
+              <td>
+                {{ shipment.courierName }}
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <b>Tracking Number</b>
+              </td>
+              <td>
+                {{ shipment.trackingNumber }}
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <b>From</b>
+              </td>
+              <td>
+                {{ shipment.fromCentre }}
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <b>To</b>
+              </td>
+              <td>
+                {{ shipment.toCentre }}
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</mat-horizontal-stepper>

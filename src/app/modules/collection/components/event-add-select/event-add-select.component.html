@@ -3,6 +3,7 @@
                            [entitiesLimit]="eventsLimit"
                            [(page)]="currentPage"
                            [heading]="heading"
+                           [footer]="footer"
                            [noEntitiesToDisplay]="noEntitiesToDisplay"
                            [noResultsToDisplay]="noResultsToDisplay"
                            [loadingContent]="showLoading"
@@ -36,6 +37,17 @@
       </a>
     </div>
   </span>
+</ng-template>
+
+<ng-template #footer>
+  <form [formGroup]="filterForm" novalidate>
+    <div class="form-group">
+      <label class="small" for="nameFilter" i18n>
+        Visit# filter:
+      </label>
+      <input type="text" class="form-control form-control-sm" formControlName="name" />
+    </div>
+  </form>
 </ng-template>
 
 <ng-template #noEntitiesToDisplay>

@@ -1,0 +1,12 @@
+<app-shipments-table-view
+  mode="completed"
+  [shipments]="shipments$ | async"
+  [numPages]="maxPages$ | async"
+  [totalShipments]="totalShipments$ | async"
+  (sortBy)="sortBy($event)"
+  (filterByCourierName)="filterByCourierName($event)"
+  (filterByTrackingNumber)="filterByTrackingNumber($event)"
+  (filterByState)="filterByState($event)"
+  (pageChanged)="paginationPageChange($event)"
+>
+</app-shipments-table-view>

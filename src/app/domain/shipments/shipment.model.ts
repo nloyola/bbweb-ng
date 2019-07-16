@@ -3,7 +3,6 @@ import { CentreLocationInfo } from '@app/domain/centres';
 import { ShipmentState } from './shipment-state.enum';
 
 export interface IShipment extends IConcurrencySafeEntity {
-
   /** The state this shipment is in. */
   state: ShipmentState;
 
@@ -29,15 +28,13 @@ export interface IShipment extends IConcurrencySafeEntity {
   timeReceived?: Date;
 
   /** The date and time when the shipment was unpacked. */
-  timeUpacked?: Date;
+  timeUnpacked?: Date;
 
   /** The date and time when all the specimens and containers were unpacked from the shipment. */
   timeCompleted?: Date;
-
 }
 
 export class Shipment extends ConcurrencySafeEntity {
-
   state: ShipmentState;
   courierName: string;
   trackingNumber: string;
@@ -81,7 +78,7 @@ export class Shipment extends ConcurrencySafeEntity {
    * A predicate to test if the shipment's state is NOT CREATED or UNPACKED.
    */
   isNotCreatedNorUnpacked() {
-    return (this.state !== ShipmentState.Created) && (this.state !== ShipmentState.Unpacked);
+    return this.state !== ShipmentState.Created && this.state !== ShipmentState.Unpacked;
   }
 
   deserialize(input: IShipment): this {
@@ -98,29 +95,46 @@ export class Shipment extends ConcurrencySafeEntity {
     if (input.timeReceived) {
       this.timeReceived = new Date(input.timeReceived);
     }
-    if (input.timeUpacked) {
-      this.timeUpacked = new Date(input.timeUpacked);
+    if (input.timeUnpacked) {
+      this.timeUpacked = new Date(input.timeUnpacked);
     }
     if (input.timeCompleted) {
       this.timeCompleted = new Date(input.timeCompleted);
     }
 
     if (input.fromLocationInfo) {
-      this.fromLocationInfo =
-        new CentreLocationInfo().deserialize(input.fromLocationInfo);
+      this.fromLocationInfo = new CentreLocationInfo().deserialize(input.fromLocationInfo);
     }
     if (input.toLocationInfo) {
-      this.toLocationInfo =
-        new CentreLocationInfo().deserialize(input.toLocationInfo);
+      this.toLocationInfo = new CentreLocationInfo().deserialize(input.toLocationInfo);
     }
 
-    [ 'timePacked', 'timeSent', 'timeReceived', 'timeUpacked', 'timeCompleted' ]
-      .forEach(time => {
-        if (input[time]) {
-          this[time] = new Date(input[time] as string);
-        }
-      });
+    ['timePacked', 'timeSent', 'timeReceived', 'timeUpacked', 'timeCompleted'].forEach(time => {
+      if (input[time]) {
+        this[time] = new Date(input[time] as string);
+      }
+    });
 
     return this;
+  }
+
+  getTime(): Date {
+    switch (this.state) {
+      case ShipmentState.Created:
+        return this.timeAdded;
+      case ShipmentState.Packed:
+        return this.timePacked;
+      case ShipmentState.Sent:
+        return this.timeSent;
+      case ShipmentState.Received:
+        return this.timeReceived;
+      case ShipmentState.Unpacked:
+        return this.timeUpacked;
+      case ShipmentState.Completed:
+        return this.timeCompleted;
+
+      default:
+        throw new Error(`shipment does not have a time for current state: ${this.state}`);
+    }
   }
 }
