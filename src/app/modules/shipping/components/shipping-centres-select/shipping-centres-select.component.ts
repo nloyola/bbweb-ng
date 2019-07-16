@@ -63,7 +63,7 @@ export class ShippingCentresSelectComponent implements OnInit {
           this.filterValues = f.getValue() + ';state::enabled';
         } else {
           this.filterValues = 'state::enabled';
-        }
+  }
         this.applySearchParams();
       });
 

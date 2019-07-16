@@ -27,12 +27,12 @@
   <div class="card-footer pb-1" *ngIf="pageInfo?.showPagination">
     <ngb-pagination
       size="sm"
-      [collectionSize]="pageInfo.total"
-      [(page)]="page"
-      [maxSize]="entitiesLimit"
-      [pageSize]="entitiesLimit"
-      [rotate]="false"
-      [boundaryLinks]="true"
+                    [collectionSize]="pageInfo.total"
+                    [(page)]="page"
+                    [maxSize]="entitiesLimit"
+                    [pageSize]="entitiesLimit"
+                    [rotate]="false"
+                    [boundaryLinks]="true"
       (pageChange)="paginationPageChange($event)"
     >
     </ngb-pagination>

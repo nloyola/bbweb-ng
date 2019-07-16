@@ -86,10 +86,10 @@ export class ShipmentsTableViewComponent implements OnInit, OnChanges, OnDestroy
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.shipments && changes.shipments.currentValue) {
-      this.shipments = changes.shipments.currentValue.map((s: any) =>
-        s instanceof Shipment ? s : new Shipment().deserialize(s)
-      );
-    }
+        this.shipments = changes.shipments.currentValue.map((s: any) =>
+          s instanceof Shipment ? s : new Shipment().deserialize(s)
+        );
+      }
 
     if (changes.numPages) {
       this.numPages = changes.numPages.currentValue;

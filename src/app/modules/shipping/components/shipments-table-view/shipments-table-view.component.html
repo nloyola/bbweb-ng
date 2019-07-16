@@ -95,13 +95,13 @@
         <small>{{ shipment.state }}</small>
       </td>
     </tr>
-    <tr *ngIf="shipments.length <= 0">
-      <td colspan="6">
-        <div class="alert alert-warning">
-          <span i18n>No shipments found.</span>
-        </div>
-      </td>
-    </tr>
+      <tr *ngIf="shipments.length <= 0">
+        <td colspan="6">
+          <div class="alert alert-warning">
+            <span i18n>No shipments found.</span>
+          </div>
+        </td>
+      </tr>
   </table>
 </form>
 
@@ -120,3 +120,10 @@
   >
   </ngb-pagination>
 </div>
+       </td>
+  </tr>
+
+  <tr *ngIf="tableDataLoading">
+    <td colspan="5" class="text-center" i18n>Loading ...</td>
+  </tr>
+</table>

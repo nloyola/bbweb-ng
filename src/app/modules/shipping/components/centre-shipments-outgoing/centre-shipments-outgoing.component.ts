@@ -33,7 +33,7 @@ export class CentreShipmentsOutgoingComponent extends CentreShipmentsBaseCompone
       .join(';');
     if (filterValues !== '') {
       filters += ';' + filterValues;
-    }
+  }
 
     return filters;
   }

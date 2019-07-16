@@ -15,6 +15,7 @@
                 formControlName="courierName"
                 i18n-placeholder
                 placeholder="The name of the courier company"
+                autocomplete="on"
               />
             </div>
             <div class="col-md-9 offset-3" *ngIf="courierName.invalid && courierName.touched">
@@ -35,6 +36,7 @@
                 formControlName="trackingNumber"
                 i18n-placeholder
                 placeholder="The number used to track the package"
+                autocomplete="on"
               />
             </div>
             <div class="col-md-9 offset-3" *ngIf="trackingNumber.invalid && trackingNumber.touched">
@@ -122,6 +124,3 @@
     </div>
   </div>
 </div>
-<pre>
-form errors: {{ fromCentre.errors | json }}
-</pre>

@@ -13,7 +13,7 @@
 >
   <ng-template let-entity>
     <li class="list-group-item" *ngIf="entity">
-      <a href="#" (click)="!!centreSelected(entity)">
+      <a href="#" (click)="!!centreSelected(entityvu)">
         <small>{{ entity.name }}</small>
       </a>
     </li>
@@ -22,6 +22,18 @@
 
 <ng-template #heading>
   <small i18n>Shipping Centres</small>
+  <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
+    <button class="btn btn-sm btn-outline-secondary" type="button" id="eventTypeMenu" ngbDropdownToggle>
+      <mat-icon inline="true">more_vert</mat-icon>
+    </button>
+
+    <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="eventTypeMenu">
+      <a class="dropdown-item" (click)="add()">
+        <mat-icon class="success-icon mr-1">add_circle</mat-icon>
+        <ng-container i18n>Add Centre</ng-container>
+      </a>
+    </div>
+  </span>
 </ng-template>
 
 <ng-template #footer>
