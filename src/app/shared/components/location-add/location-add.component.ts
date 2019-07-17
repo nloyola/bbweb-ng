@@ -21,7 +21,7 @@ export class LocationAddComponent implements OnInit {
   @Output() submitted = new EventEmitter<Location>();
   @Output() cancelled = new EventEmitter<any>();
 
-  @ViewChild('nameInput', { static: false }) nameInput: ElementRef;
+  @ViewChild('nameInput', { static: true }) nameInput: ElementRef;
 
   title: string;
   form: FormGroup;

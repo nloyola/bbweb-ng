@@ -16,7 +16,7 @@ import { filter, takeUntil } from 'rxjs/operators';
 })
 export class LoginComponent implements OnInit, OnDestroy {
 
-  @ViewChild('modal', { static: false }) private modal: ElementRef;
+  @ViewChild('modal', { static: true }) private modal: ElementRef;
 
   private unsubscribe$: Subject<void> = new Subject<void>();
   isLoggingIn$: Observable<boolean>;
