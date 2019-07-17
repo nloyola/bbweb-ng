@@ -7,7 +7,7 @@ import { ModalInputBaseComponent } from '../modal-input-base.component';
   templateUrl: './modal-input-number.component.html',
   styleUrls: ['./modal-input-number.component.scss']
 })
-export class ModalInputNumberComponent extends ModalInputBaseComponent<number> {
+export class ModalInputNumberComponent extends ModalInputBaseComponent<number> implements OnInit, OnDestroy {
 
   constructor(formBuilder: FormBuilder) {
     super(formBuilder);

@@ -15,7 +15,6 @@ describe('ModalInputAnnotationComponent', () => {
   let component: ModalInputAnnotationComponent;
   let fixture: ComponentFixture<ModalInputAnnotationComponent>;
   const factory = new Factory();
-  let annotation: Annotation;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({

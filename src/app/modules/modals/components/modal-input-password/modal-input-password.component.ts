@@ -9,7 +9,7 @@ import { User } from '@app/domain/users';
   templateUrl: './modal-input-password.component.html',
   styleUrls: ['./modal-input-password.component.scss']
 })
-export class ModalInputPasswordComponent extends ModalInputTextComponent {
+export class ModalInputPasswordComponent extends ModalInputTextComponent implements OnInit, OnDestroy {
 
   @Input() user: User;
 

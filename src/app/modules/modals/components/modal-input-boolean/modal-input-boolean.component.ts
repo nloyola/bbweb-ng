@@ -9,7 +9,8 @@ import { ModalInputBaseComponent } from '../modal-input-base.component';
   templateUrl: './modal-input-boolean.component.html',
   styleUrls: ['./modal-input-boolean.component.scss']
 })
-export class ModalInputBooleanComponent extends ModalInputBaseComponent<boolean> {
+export class ModalInputBooleanComponent extends ModalInputBaseComponent<boolean>
+  implements OnInit, OnDestroy {
 
   constructor(formBuilder: FormBuilder) {
     super(formBuilder);

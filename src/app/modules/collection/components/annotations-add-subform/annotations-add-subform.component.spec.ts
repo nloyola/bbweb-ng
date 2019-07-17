@@ -30,8 +30,9 @@ describe('AnnotationsAddSubformComponent', () => {
 
     ngOnInit() {
       this.annotationsGroup = this.formBuilder.group({
-          annotations: AnnotationsAddSubformComponent.buildSubForm(this.annotations, this.unsubscribe$)
-        })
+        annotations: AnnotationsAddSubformComponent.buildSubForm(
+          this.annotations, this.unsubscribe$)
+      });
       this.form = this.formBuilder.group({ annotationsGroup: this.annotationsGroup });
     }
 
@@ -123,7 +124,8 @@ describe('AnnotationsAddSubformComponent', () => {
         selectOptionsElements[0].parent.nativeElement.dispatchEvent(new Event('change'));
         fixture.detectChanges();
 
-        const updatedAnnotations = AnnotationsAddSubformComponent.valueToAnnotations(component.annotationsGroup);
+        const updatedAnnotations = AnnotationsAddSubformComponent.valueToAnnotations(
+          component.annotationsGroup);
         expect(updatedAnnotations.length).toBe(1);
         expect(updatedAnnotations[0].serverAnnotation().selectedValues.length).toBe(1);
         expect(updatedAnnotations[0].serverAnnotation().selectedValues).toContain(annotationType.options[0]);
@@ -141,7 +143,8 @@ describe('AnnotationsAddSubformComponent', () => {
         annotationOptionsElements[0].nativeElement.click();
         fixture.detectChanges();
 
-        const updatedAnnotations = AnnotationsAddSubformComponent.valueToAnnotations(component.annotationsGroup);
+        const updatedAnnotations =
+          AnnotationsAddSubformComponent.valueToAnnotations(component.annotationsGroup);
         expect(updatedAnnotations.length).toBe(1);
         expect(updatedAnnotations[0].serverAnnotation().selectedValues.length).toBe(1);
         expect(updatedAnnotations[0].serverAnnotation().selectedValues).toContain(annotationType.options[0]);

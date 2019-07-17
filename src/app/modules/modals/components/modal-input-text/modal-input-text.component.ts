@@ -11,7 +11,7 @@ import { ModalInputBaseComponent } from '../modal-input-base.component';
   templateUrl: './modal-input-text.component.html',
   styleUrls: ['./modal-input-text.component.scss']
 })
-export class ModalInputTextComponent extends ModalInputBaseComponent<string> {
+export class ModalInputTextComponent extends ModalInputBaseComponent<string> implements OnInit, OnDestroy {
 
   @Input() options: ModalInputTextOptions;
 

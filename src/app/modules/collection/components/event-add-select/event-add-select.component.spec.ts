@@ -48,7 +48,7 @@ describe('EventAddSelectComponent', () => {
     it('makes a request from the server', () => {
       const entities = createEntities();
       const storeListener = jest.spyOn(store, 'dispatch');
-      const filterValue = '1;'
+      const filterValue = '1';
       const filter = new VisitNumberFilter();
       filter.setValue(filterValue);
       const testData = [
