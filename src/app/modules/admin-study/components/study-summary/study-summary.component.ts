@@ -24,8 +24,8 @@ interface StoreData {
 })
 export class StudySummaryComponent implements OnInit, OnDestroy {
 
-  @ViewChild('updateNameModal', { static: true }) updateNameModal: TemplateRef<any>;
-  @ViewChild('updateDescriptionModal', { static: true }) updateDescriptionModal: TemplateRef<any>;
+  @ViewChild('updateNameModal', { static: false }) updateNameModal: TemplateRef<any>;
+  @ViewChild('updateDescriptionModal', { static: false }) updateDescriptionModal: TemplateRef<any>;
 
   isLoading$: Observable<boolean>;
   study$: Observable<StudyUI>;

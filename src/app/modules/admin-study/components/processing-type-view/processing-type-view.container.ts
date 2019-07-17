@@ -30,10 +30,10 @@ interface StoreData {
 })
 export class ProcessingTypeViewContainerComponent implements OnInit, OnDestroy {
 
-  @ViewChild('updateNameModal', { static: true }) updateNameModal: TemplateRef<any>;
-  @ViewChild('updateDescriptionModal', { static: true }) updateDescriptionModal: TemplateRef<any>;
-  @ViewChild('updateEnabledModal', { static: true }) updateEnabledModal: TemplateRef<any>;
-  @ViewChild('processingTypeInUseModal', { static: true }) processingTypeInUseModal: TemplateRef<any>;
+  @ViewChild('updateNameModal', { static: false }) updateNameModal: TemplateRef<any>;
+  @ViewChild('updateDescriptionModal', { static: false }) updateDescriptionModal: TemplateRef<any>;
+  @ViewChild('updateEnabledModal', { static: false }) updateEnabledModal: TemplateRef<any>;
+  @ViewChild('processingTypeInUseModal', { static: false }) processingTypeInUseModal: TemplateRef<any>;
 
   isLoading$: Observable<boolean>;
 

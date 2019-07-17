@@ -19,8 +19,8 @@ import { Dictionary } from '@ngrx/entity';
 })
 export class CentreSummaryComponent implements OnInit, OnDestroy {
 
-  @ViewChild('updateNameModal', { static: true }) updateNameModal: TemplateRef<any>;
-  @ViewChild('updateDescriptionModal', { static: true }) updateDescriptionModal: TemplateRef<any>;
+  @ViewChild('updateNameModal', { static: false }) updateNameModal: TemplateRef<any>;
+  @ViewChild('updateDescriptionModal', { static: false }) updateDescriptionModal: TemplateRef<any>;
 
   isLoading$: Observable<boolean>;
   isEnableAllowed$: Observable<boolean>;
