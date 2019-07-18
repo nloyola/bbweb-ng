@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { PasswordValidation } from '@app/core/password-validation';
 import { ModalInputTextComponent } from '@app/modules/modals/components/modal-input-text/modal-input-text.component';
@@ -9,7 +9,8 @@ import { User } from '@app/domain/users';
   templateUrl: './modal-input-password.component.html',
   styleUrls: ['./modal-input-password.component.scss']
 })
-export class ModalInputPasswordComponent extends ModalInputTextComponent implements OnInit, OnDestroy {
+export class ModalInputPasswordComponent extends ModalInputTextComponent
+implements OnInit, OnDestroy {
 
   @Input() user: User;
 
