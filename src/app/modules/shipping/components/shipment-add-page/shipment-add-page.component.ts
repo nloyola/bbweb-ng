@@ -139,14 +139,14 @@ export class ShipmentAddPageComponent implements OnInit, OnDestroy {
     centreToFilterFn: () => String
   ): CentreResultsMapper {
     return (centres: Centre[]) => {
+      formControl.markAsTouched();
       if (centres.length <= 0) {
         formControl.setValue('');
-      }
-      formControl.markAsTouched();
-
-      const centreToFilterId = centreToFilterFn();
-      if (centreToFilterId !== undefined) {
-        return centres.filter(entity => entity.id !== centreToFilterId);
+      } else {
+        const centreToFilterId = centreToFilterFn();
+        if (centreToFilterId !== undefined) {
+          return centres.filter(entity => entity.id !== centreToFilterId);
+        }
       }
       return centres;
     };

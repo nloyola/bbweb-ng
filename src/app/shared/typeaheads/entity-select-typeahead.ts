@@ -1,6 +1,6 @@
 import { ConcurrencySafeEntity } from '@app/domain';
 import { NgbTypeaheadSelectItemEvent } from '@ng-bootstrap/ng-bootstrap';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, of } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, map, switchMap } from 'rxjs/operators';
 
 export abstract class EntitySelectTypeahead<T extends ConcurrencySafeEntity> {
@@ -13,10 +13,9 @@ export abstract class EntitySelectTypeahead<T extends ConcurrencySafeEntity> {
   constructor(private resultsMapper: (entities: T[]) => T[]) {
     this.getEntities = (text$: Observable<string>) =>
       text$.pipe(
-        debounceTime(200),
+        debounceTime(500),
         distinctUntilChanged(),
-        filter(term => term.length > 0),
-        switchMap(term => this.termMapper(term)),
+        switchMap(term => (term.trim() === '' ? of([]) : this.termMapper(term))),
         map(this.resultsMapper)
       );
   }

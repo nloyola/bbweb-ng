@@ -17,7 +17,8 @@
 </div>
 
 <div class="row" *ngIf="validUser$ | async as validUser; else invalidUser">
-  <app-shipping-centres-select (selected)="centreSelected($event)"> </app-shipping-centres-select>
+  <app-shipping-centres-select (selected)="centreSelected($event)">
+  </app-shipping-centres-select>
 </div>
 
 <ng-template #invalidUser>

@@ -6,8 +6,10 @@ import { select, Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 
+export type CentreResultsMapper = (entities: Centre[]) => Centre[];
+
 export class CentreSelectTypeahead extends EntitySelectTypeahead<Centre> {
-  constructor(private store$: Store<RootStoreState.State>, resultsMapper: (entities: Centre[]) => Centre[]) {
+  constructor(private store$: Store<RootStoreState.State>, resultsMapper: CentreResultsMapper) {
     super(resultsMapper);
   }
 
