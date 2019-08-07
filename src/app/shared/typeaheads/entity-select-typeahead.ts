@@ -3,8 +3,7 @@ import { NgbTypeaheadSelectItemEvent } from '@ng-bootstrap/ng-bootstrap';
 import { Observable, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, map, switchMap } from 'rxjs/operators';
 
-export abstract class EntityTypeahead<T extends ConcurrencySafeEntity> {
-
+export abstract class EntitySelectTypeahead<T extends ConcurrencySafeEntity> {
   selectedEntity: T;
 
   selected$: Subject<T> = new Subject<T>();
@@ -18,7 +17,8 @@ export abstract class EntityTypeahead<T extends ConcurrencySafeEntity> {
         distinctUntilChanged(),
         filter(term => term.length > 0),
         switchMap(term => this.termMapper(term)),
-        map(this.resultsMapper));
+        map(this.resultsMapper)
+      );
   }
 
   onEntitySelected(item: NgbTypeaheadSelectItemEvent): void {
@@ -32,5 +32,4 @@ export abstract class EntityTypeahead<T extends ConcurrencySafeEntity> {
   abstract typeaheadFormatter(value: T): string;
 
   protected abstract termMapper(term: string): Observable<T[]>;
-
 }
