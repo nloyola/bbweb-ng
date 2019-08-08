@@ -10,6 +10,7 @@ import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
+import { StepperSelectionEvent } from '@angular/cdk/stepper';
 
 @Component({
   selector: 'app-shipment-add-page',
@@ -150,5 +151,12 @@ export class ShipmentAddPageComponent implements OnInit, OnDestroy {
       }
       return centres;
     };
+  }
+
+  stepClick(event: StepperSelectionEvent) {
+    if (event.selectedIndex < 3) {
+      return;
+    } else {
+    }
   }
 }

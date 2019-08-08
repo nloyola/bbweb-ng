@@ -15,7 +15,11 @@ import { ShippingPageComponent } from './components/shipping-page/shipping-page.
 import { ShippingRoutingModule } from './shipping-routing.module';
 import { ShipmentAddPageComponent } from './components/shipment-add-page/shipment-add-page.component';
 import { ShipmentViewPageComponent } from './components/shipment-view-page/shipment-view-page.component';
-import { ShipmentInformationComponent } from './components/shipment-information/shipment-information.component';
+import { ShipmentInformationCardComponent } from './components/shipment-information-card/shipment-information-card.component';
+import { ShipmentAddItemsPageComponent } from './components/shipment-add-items-page/shipment-add-items-page.component';
+import { ShipmentAddSpecimensCardComponent } from './components/shipment-add-specimens-card/shipment-add-specimens-card.component';
+import { ModalInputModule } from '../modals/modals.module';
+import { ShipmentSpecimensTableComponent } from './components/shipment-specimens-table/shipment-specimens-table.component';
 
 @NgModule({
   imports: [
@@ -27,7 +31,8 @@ import { ShipmentInformationComponent } from './components/shipment-information/
     ShippingRoutingModule,
     NgbModule,
     MatTableModule,
-    MatSortModule
+    MatSortModule,
+    ModalInputModule
   ],
   declarations: [
     ShippingPageComponent,
@@ -39,7 +44,10 @@ import { ShipmentInformationComponent } from './components/shipment-information/
     ShipmentsTableViewComponent,
     ShipmentAddPageComponent,
     ShipmentViewPageComponent,
-    ShipmentInformationComponent
+    ShipmentInformationCardComponent,
+    ShipmentAddItemsPageComponent,
+    ShipmentAddSpecimensCardComponent,
+    ShipmentSpecimensTableComponent
   ]
 })
-export class ShippingModule {}
+export class ShippingModule { }

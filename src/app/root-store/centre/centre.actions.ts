@@ -1,10 +1,7 @@
-import { HideSpinner, ShowSpinner } from '@app/core/decorators';
+import { CentreUpdateAttribute } from '@app/core/services';
 import { Location, PagedReply, SearchParams } from '@app/domain';
 import { Centre, CentreCounts } from '@app/domain/centres';
-import { Action } from '@ngrx/store';
-import { HttpErrorResponse } from '@angular/common/http';
-import { CentreUpdateAttribute } from '@app/core/services';
-import { props, createAction, union } from '@ngrx/store';
+import { createAction, props, union } from '@ngrx/store';
 
 export const getCentreCountsRequest = createAction(
   '[Centre] Get Centre Count Request',
@@ -31,40 +28,34 @@ export const searchCentresSuccess = createAction(
   props<{ pagedReply: PagedReply<Centre> }>()
 );
 
-export const searchCentresFailure = createAction(
-  '[Centre] Search Centres Failure',
+export const searchCentresFailure = createAction('[Centre] Search Centres Failure', props<{ error: any }>());
+
+export const searchLocationsRequest = createAction(
+  '[Centre] Search Locations Request',
+  props<{ searchParams: SearchParams }>()
+);
+
+export const searchLocationsSuccess = createAction(
+  '[Centre] Search Locations Success',
+  props<{ pagedReply: PagedReply<Centre> }>()
+);
+
+export const searchLocationsFailure = createAction(
+  '[Centre] Search Locations Failure',
   props<{ error: any }>()
 );
 
-export const addCentreRequest = createAction(
-  '[Centre] Add Centre Request',
-  props<{ centre: Centre }>()
-);
+export const addCentreRequest = createAction('[Centre] Add Centre Request', props<{ centre: Centre }>());
 
-export const addCentreSuccess = createAction(
-  '[Centre] Add Centre Success',
-  props<{ centre: Centre }>()
-);
+export const addCentreSuccess = createAction('[Centre] Add Centre Success', props<{ centre: Centre }>());
 
-export const addCentreFailure = createAction(
-  '[Centre] Add Centre Failure',
-  props<{ error: any }>()
-);
+export const addCentreFailure = createAction('[Centre] Add Centre Failure', props<{ error: any }>());
 
-export const getCentreRequest = createAction(
-  '[Centre] Get Centre Request',
-  props<{ slug: string }>()
-);
+export const getCentreRequest = createAction('[Centre] Get Centre Request', props<{ slug: string }>());
 
-export const getCentreSuccess = createAction(
-  '[Centre] Get Centre Success',
-  props<{ centre: Centre }>()
-);
+export const getCentreSuccess = createAction('[Centre] Get Centre Success', props<{ centre: Centre }>());
 
-export const getCentreFailure = createAction(
-  '[Centre] Get Centre Failure',
-  props<{ error: any }>()
-);
+export const getCentreFailure = createAction('[Centre] Get Centre Failure', props<{ error: any }>());
 
 export const updateCentreRequest = createAction(
   '[Centre] Update Centre Request',
@@ -72,18 +63,15 @@ export const updateCentreRequest = createAction(
     centre: Centre;
     attributeName: CentreUpdateAttribute;
     value: string | Location;
-   }>()
+  }>()
 );
 
 export const updateCentreSuccess = createAction(
   '[Centre] Update Centre Success',
-  props<{ centre: Centre  }>()
+  props<{ centre: Centre }>()
 );
 
-export const updateCentreFailure = createAction(
-  '[Centre] Update Centre Failure',
-  props<{ error: any  }>()
-);
+export const updateCentreFailure = createAction('[Centre] Update Centre Failure', props<{ error: any }>());
 
 const all = union({
   getCentreCountsRequest,

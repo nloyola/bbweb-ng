@@ -3,7 +3,7 @@ import { Centre } from '@app/domain/centres';
 import { RootStoreState, CentreStoreActions, CentreStoreSelectors } from '@app/root-store';
 import { EntitySelectTypeahead } from './entity-select-typeahead';
 import { select, Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 
 export type CentreResultsMapper = (entities: Centre[]) => Centre[];

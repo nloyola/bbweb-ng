@@ -1,0 +1,117 @@
+<div class="row">
+  <div class="col-sm-12 mt-4">
+    <div class="card">
+      <div class="card-header bg-primary text-light" *ngIf="(isLoading$ | async) !== false; else showLoading">
+        Shipment information
+        <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
+          <button class="btn btn-sm btn-light mr-1" type="button" id="shipmentSummaryMenu" ngbDropdownToggle>
+            <mat-icon inline="true">more_vert</mat-icon>
+          </button>
+
+          <button
+            class="btn btn-sm btn-light"
+            type="button"
+            (click)="isCardCollapsed = !isCardCollapsed"
+            [attr.aria-expanded]="!isCollapsed"
+            aria-controls="infoCollapse"
+          >
+            <mat-icon *ngIf="!isCardCollapsed" inline="true">keyboard_arrow_down</mat-icon>
+            <mat-icon *ngIf="isCardCollapsed" inline="true">keyboard_arrow_right</mat-icon>
+          </button>
+
+          <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="shipmentSummaryMenu">
+            <a class="dropdown-item" (click)="updateCourier()">
+              <mat-icon class="success-icon mr-1">edit</mat-icon>
+              <ng-container i18n>Update Courier</ng-container>
+            </a>
+            <a class="dropdown-item" (click)="updateTrackingNumber()">
+              <mat-icon class="success-icon mr-1">edit</mat-icon>
+              <ng-container i18n>Update Tracking Number</ng-container>
+            </a>
+            <a class="dropdown-item" (click)="updateFromLocation()">
+              <mat-icon class="success-icon mr-1">edit</mat-icon>
+              <ng-container i18n>Update From Centre</ng-container>
+            </a>
+            <a class="dropdown-item" (click)="updateToLocation()">
+              <mat-icon class="success-icon mr-1">edit</mat-icon>
+              <ng-container i18n>Update To Centre</ng-container>
+            </a>
+
+            <a class="dropdown-item" (click)="removeShipment()">
+              <mat-icon class="danger-icon mr-1">remove_circle</mat-icon>
+              <ng-container i18n>Remove this Shipment</ng-container>
+            </a>
+          </div>
+        </span>
+      </div>
+
+      <div [ngbCollapse]="isCardCollapsed" id="infoCollapse">
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">
+            <div class="row">
+              <div class="col-md-2">
+                <strong i18n>Courier:</strong>
+              </div>
+              <div class="col-md-10">
+                {{ shipment.courierName }}
+              </div>
+            </div>
+          </li>
+
+          <li class="list-group-item">
+            <div class="row">
+              <div class="col-md-2">
+                <strong i18n>Tracking Number:</strong>
+              </div>
+              <div class="col-md-10">
+                {{ shipment.trackingNumber }}
+              </div>
+            </div>
+          </li>
+
+          <li class="list-group-item">
+            <div class="row">
+              <div class="col-md-2">
+                <strong i18n>From:</strong>
+              </div>
+              <div class="col-md-10">
+                {{ shipment.fromLocationInfo.name }}
+              </div>
+            </div>
+          </li>
+
+          <li class="list-group-item">
+            <div class="row">
+              <div class="col-md-2">
+                <strong i18n>To:</strong>
+              </div>
+              <div class="col-md-10">
+                {{ shipment.toLocationInfo.name }}
+              </div>
+            </div>
+          </li>
+          <li class="list-group-item m-0 p-0">
+            <app-entity-status
+              [timeAdded]="shipment.timeAdded"
+              [timeModified]="shipment.timeModified"
+              [useBadges]="false"
+            >
+            </app-entity-status>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #updateCourierModal let-modal>
+  <app-modal-input-text
+    [modal]="modal"
+    [title]="'Update Courier'"
+    [label]="'New courier name'"
+    [value]="shipment.courierName"
+    [options]="updateCourierModalOptions"
+    (onConfirm)="confirm($event)"
+  >
+  </app-modal-input-text>
+</ng-template>

@@ -19,12 +19,13 @@
           ><b>{{ sourceLabel }}</b></small
         >
       </th>
-      <th mat-sort-header="date">
+      <th>
         <small i18n><b>Date</b></small>
       </th>
       <th *ngIf="mode !== 'completed'" mat-sort-header="state">
         <small i18n><b>State</b></small>
       </th>
+      <th></th>
     </tr>
 
     <tr>
@@ -76,6 +77,7 @@
           </div>
         </div>
       </td>
+      <th></th>
     </tr>
 
     <tr *ngFor="let shipment of shipments">
@@ -94,14 +96,32 @@
       <td *ngIf="mode !== 'completed'">
         <small>{{ shipment.state }}</small>
       </td>
-    </tr>
-      <tr *ngIf="shipments.length <= 0">
-        <td colspan="6">
-          <div class="alert alert-warning">
-            <span i18n>No shipments found.</span>
+      <td>
+        <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
+          <button class="btn btn-sm btn-outline-secondary" type="button" id="shipmentMenu" ngbDropdownToggle>
+            <mat-icon inline="true">more_vert</mat-icon>
+          </button>
+
+          <div class="dropdown-menu" ngbDropdownMenu role="menu" aria-labelledby="shipmentMenu">
+            <a class="dropdown-item" (click)="viewShipment(shipment)">
+              <mat-icon class="success-icon mr-1">search</mat-icon>
+              <span i18n>View shipment</span>
+            </a>
+            <a class="dropdown-item" (click)="removeShipment(shipment)">
+              <mat-icon class="danger-icon mr-1">remove_circle</mat-icon>
+              <span i18n>Remove shipment</span>
+            </a>
           </div>
-        </td>
-      </tr>
+        </span>
+      </td>
+    </tr>
+    <tr *ngIf="shipments.length <= 0">
+      <td colspan="6">
+        <div class="alert alert-warning">
+          <span i18n>No shipments found.</span>
+        </div>
+      </td>
+    </tr>
   </table>
 </form>
 

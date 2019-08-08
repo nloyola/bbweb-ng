@@ -8,7 +8,7 @@ export interface State extends EntityState<Shipment> {
   lastRemovedId: string;
   lastSearch?: SearchParams;
   searchActive?: boolean;
-  searchReplies?: { [ url: string ]: PagedReplyEntityIds };
+  searchReplies?: { [url: string]: PagedReplyEntityIds };
   canAddSpecimenInventoryIds: string[];
   error?: any;
 }
@@ -22,13 +22,10 @@ export const initialState: State = adapter.getInitialState({
   searchActive: false,
   searchReplies: {},
   canAddSpecimenInventoryIds: [],
-  error: null,
+  error: null
 });
 
-export function reducer(
-  state = initialState,
-  action: ShipmentActions.ShipmentActionsUnion
-): State {
+export function reducer(state = initialState, action: ShipmentActions.ShipmentActionsUnion): State {
   switch (action.type) {
     case ShipmentActions.searchShipmentsRequest.type: {
       return {
@@ -43,11 +40,11 @@ export function reducer(
       const queryString = state.lastSearch.queryString();
       const newReply = {};
       newReply[queryString] = {
-        entityIds:    action.pagedReply.entities.map(shipment => shipment.id),
+        entityIds: action.pagedReply.entities.map(shipment => shipment.id),
         searchParams: action.pagedReply.searchParams,
-        offset:       action.pagedReply.offset,
-        total:        action.pagedReply.total,
-        maxPages:     action.pagedReply.maxPages
+        offset: action.pagedReply.offset,
+        total: action.pagedReply.total,
+        maxPages: action.pagedReply.maxPages
       };
 
       return adapter.upsertMany(action.pagedReply.entities, {
@@ -128,7 +125,8 @@ export function reducer(
           id: action.shipment.id,
           changes: action.shipment
         },
-        state);
+        state
+      );
     }
 
     case ShipmentActions.updateShipmentFailure.type: {
@@ -175,10 +173,7 @@ export function reducer(
     case ShipmentActions.canAddSpecimenSuccess.type: {
       return {
         ...state,
-        canAddSpecimenInventoryIds: [
-          ...state.canAddSpecimenInventoryIds,
-          action.specimen.inventoryId
-        ]
+        canAddSpecimenInventoryIds: [...state.canAddSpecimenInventoryIds, action.specimen.inventoryId]
       };
     }
 
@@ -222,12 +217,10 @@ export function reducer(
     }
 
     case ShipmentActions.removeShipmentSuccess.type: {
-      return adapter.removeOne(
-        action.shipmentId,
-        {
-          ...state,
-          lastRemovedId: action.shipmentId
-        });
+      return adapter.removeOne(action.shipmentId, {
+        ...state,
+        lastRemovedId: action.shipmentId
+      });
     }
 
     case ShipmentActions.removeShipmentFailure.type: {
@@ -239,14 +232,8 @@ export function reducer(
         }
       };
     }
-
   }
   return state;
 }
 
-export const {
-  selectIds,
-  selectEntities,
-  selectAll,
-  selectTotal,
-} = adapter.getSelectors();
+export const { selectIds, selectEntities, selectAll, selectTotal } = adapter.getSelectors();

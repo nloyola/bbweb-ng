@@ -48,6 +48,6 @@ export class ShippingPageComponent implements OnInit, OnDestroy {
   }
 
   add() {
-    this.router.navigate(['add'], { relativeTo: this.route });
+    this.router.navigate(['/shipping/add']);
   }
 }

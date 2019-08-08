@@ -8,6 +8,9 @@ import { CentreShipmentsIncomingComponent } from './components/centre-shipments-
 import { CentreShipmentsOutgoingComponent } from './components/centre-shipments-outgoing/centre-shipments-outgoing.component';
 import { CentreShipmentsCompletedComponent } from './components/centre-shipments-completed/centre-shipments-completed.component';
 import { ShipmentAddPageComponent } from './components/shipment-add-page/shipment-add-page.component';
+import { ShipmentResolver } from '../admin-study/services/shipment-resolver.service';
+import { ShipmentAddItemsPageComponent } from './components/shipment-add-items-page/shipment-add-items-page.component';
+import { ShipmentViewPageComponent } from './components/shipment-view-page/shipment-view-page.component';
 
 const routes: Routes = [
   {
@@ -26,10 +29,23 @@ const routes: Routes = [
         }
       },
       {
-        path: 'shipment-view',
-        component: ShipmentAddPageComponent,
+        path: 'add-items/:id',
+        component: ShipmentAddItemsPageComponent,
+        resolve: {
+          shipment: ShipmentResolver
+        },
         data: {
-          breadcrumbs: '{{shipment.courierName}} {{shipment.trackingNumber}}'
+          breadcrumbs: 'Add Items to Shipment'
+        }
+      },
+      {
+        path: 'view/:id',
+        component: ShipmentViewPageComponent,
+        resolve: {
+          shipment: ShipmentResolver
+        },
+        data: {
+          breadcrumbs: '{{shipment.courierName}}: {{shipment.trackingNumber}}'
         }
       },
       {
@@ -77,4 +93,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class ShippingRoutingModule {}
+export class ShippingRoutingModule { }

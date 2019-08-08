@@ -1,3 +1,15 @@
+<mat-horizontal-stepper [linear]="'true'">
+  <mat-step>
+    <ng-template matStepLabel>Information</ng-template>
+  </mat-step>
+  <mat-step>
+    <ng-template matStepLabel>Add Items</ng-template>
+  </mat-step>
+  <mat-step>
+    <ng-template matStepLabel>Packed</ng-template>
+  </mat-step>
+</mat-horizontal-stepper>
+
 <div class="row">
   <div class="col-sm-12 mt-4">
     <div class="card">
@@ -54,7 +66,7 @@
                 type="text"
                 class="form-control"
                 [(ngModel)]="fromCentreTypeahead.selectedEntity"
-                [ngModelOptions]="{standalone: true}"
+                [ngModelOptions]="{ standalone: true }"
                 [ngbTypeahead]="fromCentreTypeahead.getEntities"
                 i18n-placeholder
                 placeholder="The location of the centre this shipment is coming from"
@@ -80,7 +92,7 @@
                 type="text"
                 class="form-control"
                 [(ngModel)]="toCentreTypeahead.selectedEntity"
-                [ngModelOptions]="{standalone: true}"
+                [ngModelOptions]="{ standalone: true }"
                 [ngbTypeahead]="toCentreTypeahead.getEntities"
                 i18n-placeholder
                 placeholder="The location of the centre this shipment is coming to"

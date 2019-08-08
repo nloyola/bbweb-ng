@@ -16,7 +16,7 @@ import { StepperSelectionEvent } from '@angular/cdk/stepper';
   styleUrls: ['./shipment-view-page.component.scss']
 })
 export class ShipmentViewPageComponent implements OnInit, OnDestroy {
-  shipment$: Observable<Shipment>;
+  shipment: Shipment;
 
   private unsubscribe$: Subject<void> = new Subject<void>();
 
@@ -27,6 +27,8 @@ export class ShipmentViewPageComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    this.shipment = this.route.snapshot.data.shipment;
+
     this.router.events
       .pipe(
         filter(x => x instanceof NavigationEnd),
