@@ -2,7 +2,13 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EntityStateInfo, LabelledId, PagedReplyInfo, SearchFilterValues, SearchParams } from '@app/domain';
 import { NameFilter, SearchFilter, StateFilter } from '@app/domain/search-filters';
-import { Study, studyCountsToUIMap, StudyCountsUIMap, StudyState, StudyStateUIMap } from '@app/domain/studies';
+import {
+  Study,
+  studyCountsToUIMap,
+  StudyCountsUIMap,
+  StudyState,
+  StudyStateUIMap
+} from '@app/domain/studies';
 import { StudyUI } from '@app/domain/studies/study-ui.model';
 import { RootStoreState, StudyStoreActions, StudyStoreSelectors } from '@app/root-store';
 import { select, Store } from '@ngrx/store';
@@ -15,7 +21,6 @@ import { filter, map, shareReplay, takeUntil } from 'rxjs/operators';
   styleUrls: ['./studies-view.component.scss']
 })
 export class StudiesViewComponent implements OnInit, OnDestroy {
-
   isCountsLoading$: Observable<boolean>;
   isLoading$: Observable<boolean>;
   hasLoaded$: Observable<boolean>;
@@ -32,12 +37,14 @@ export class StudiesViewComponent implements OnInit, OnDestroy {
   currentPage = 1;
   studyToAdd: any;
 
-  private filters: { [ name: string ]: SearchFilter };
+  private filters: { [name: string]: SearchFilter };
   private unsubscribe$ = new Subject<void>();
 
-  constructor(private store$: Store<RootStoreState.State>,
-              private router: Router,
-              private route: ActivatedRoute) {
+  constructor(
+    private store$: Store<RootStoreState.State>,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {
     this.stateData = Object.values(StudyState).map(state => ({
       id: state.toLowerCase(),
       label: StudyStateUIMap.get(state).stateLabel
@@ -48,29 +55,28 @@ export class StudiesViewComponent implements OnInit, OnDestroy {
       stateFilter: new StateFilter(this.stateData, 'all', true)
     };
 
-    this.sortChoices = [
-      { id: 'name', label: 'Name' },
-      { id: 'state', label: 'State' }
-    ];
+    this.sortChoices = [{ id: 'name', label: 'Name' }, { id: 'state', label: 'State' }];
   }
 
   ngOnInit() {
-    this.isLoading$ = this.store$.pipe(
-      select(StudyStoreSelectors.selectStudiesSearchActive));
+    this.isLoading$ = this.store$.pipe(select(StudyStoreSelectors.selectStudiesSearchActive));
 
     this.studyCountData$ = this.store$.pipe(
       select(StudyStoreSelectors.selectStudyCounts),
       map(studyCountsToUIMap),
-      takeUntil(this.unsubscribe$));
+      takeUntil(this.unsubscribe$)
+    );
 
     this.studyPageInfo$ = this.store$.pipe(
       select(StudyStoreSelectors.selectStudySearchRepliesAndEntities),
       takeUntil(this.unsubscribe$),
-      shareReplay());
+      shareReplay()
+    );
 
     this.studies$ = this.studyPageInfo$.pipe(
       filter(page => page !== undefined),
-      map(page => page.entities.map(e => new StudyUI(e))));
+      map(page => page.entities.map(e => new StudyUI(e)))
+    );
 
     this.store$.dispatch(StudyStoreActions.getStudyCountsRequest());
     this.applySearchParams();
@@ -99,12 +105,14 @@ export class StudiesViewComponent implements OnInit, OnDestroy {
   }
 
   public paginationPageChanged(page: number) {
-    if (isNaN(page)) { return; }
+    if (isNaN(page)) {
+      return;
+    }
     this.applySearchParams();
   }
 
   public studySelected(study: StudyUI): void {
-    this.router.navigate([ study.slug, 'summary' ], { relativeTo: this.route });
+    this.router.navigate([study.slug, 'summary'], { relativeTo: this.route });
   }
 
   private getFilters() {
@@ -114,11 +122,12 @@ export class StudiesViewComponent implements OnInit, OnDestroy {
   }
 
   private applySearchParams() {
-    this.store$.dispatch(StudyStoreActions.searchStudiesRequest({
-      searchParams: new SearchParams(this.getFilters().join(';'),
-                                     this.sortField,
-                                     this.currentPage,
-                                     this.studiesLimit)
-    }));
+    const searchParams = {
+      filter: this.getFilters().join(';'),
+      sort: this.sortField,
+      page: this.currentPage,
+      limit: this.studiesLimit
+    };
+    this.store$.dispatch(StudyStoreActions.searchStudiesRequest({ searchParams }));
   }
 }

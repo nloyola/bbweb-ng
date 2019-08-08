@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { JSONArray, JSONObject, PagedReply, SearchParams } from '@app/domain';
+import { JSONArray, JSONObject, PagedReply, SearchParams, searchParamsToHttpParams } from '@app/domain';
 import { ApiReply } from '@app/domain/api-reply.model';
 import { Specimen } from '@app/domain/participants';
 import { Shipment, ShipmentItemState } from '@app/domain/shipments';
@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 export type ShipmentUpdateAttribute =
-  'courierName'
+  | 'courierName'
   | 'trackingNumber'
   | 'fromLocation'
   | 'toLocation'
@@ -18,7 +18,6 @@ export type ShipmentUpdateAttribute =
   providedIn: 'root'
 })
 export class ShipmentService {
-
   readonly BASE_URL = '/api/shipments';
 
   constructor(private http: HttpClient) {}
@@ -29,33 +28,34 @@ export class ShipmentService {
    * @param {string} slug the slug of the shipment to retrieve.
    */
   get(id: string): Observable<Shipment> {
-    return this.http.get<ApiReply>(`${this.BASE_URL}/${id}`)
-      .pipe(map(this.replyToShipment));
+    return this.http.get<ApiReply>(`${this.BASE_URL}/${id}`).pipe(map(this.replyToShipment));
   }
 
   /**
    * Used to search Shipments.
    */
   search(searchParams: SearchParams): Observable<PagedReply<Shipment>> {
-    return this.http.get<ApiReply>(`${this.BASE_URL}/list`, { params: searchParams.httpParams() })
-      .pipe(
-        // delay(1000),
-        map((reply: ApiReply) => {
-          const jObj = reply.data as JSONObject;
-          if (reply && reply.data && jObj.items) {
-            const entities: Shipment[] = (jObj.items as JSONArray)
-              .map(obj => new Shipment().deserialize(obj as any));
+    let params = searchParamsToHttpParams(searchParams);
+    return this.http.get<ApiReply>(`${this.BASE_URL}/list`, { params }).pipe(
+      // delay(1000),
+      map((reply: ApiReply) => {
+        const jObj = reply.data as JSONObject;
+        if (reply && reply.data && jObj.items) {
+          const entities: Shipment[] = (jObj.items as JSONArray).map(obj =>
+            new Shipment().deserialize(obj as any)
+          );
 
-            return {
-              searchParams,
-              entities,
-              offset: jObj.offset as number,
-              total: jObj.total as number,
-              maxPages: jObj.maxPages as number
-            };
-          }
-          throw new Error('expected a paged reply');
-        }));
+          return {
+            searchParams,
+            entities,
+            offset: jObj.offset as number,
+            total: jObj.total as number,
+            maxPages: jObj.maxPages as number
+          };
+        }
+        throw new Error('expected a paged reply');
+      })
+    );
   }
 
   add(shipment: Shipment): Observable<Shipment> {
@@ -67,7 +67,8 @@ export class ShipmentService {
     };
     return this.http.post<ApiReply>(`${this.BASE_URL}/`, json).pipe(
       // delay(2000),
-      map(this.replyToShipment));
+      map(this.replyToShipment)
+    );
   }
 
   update(
@@ -146,7 +147,8 @@ export class ShipmentService {
           return new Specimen().deserialize(reply.data as any);
         }
         throw new Error('expected a specimen object');
-      }));
+      })
+    );
   }
 
   /**
@@ -201,18 +203,19 @@ export class ShipmentService {
     return this.tagSpecimens(shipment, inventoryIds, ShipmentItemState.Extra);
   }
 
-
   /**
    * Removes this shipment from the system.
    */
   remove(shipment: Shipment): Observable<string> {
     const url = `${this.BASE_URL}/${shipment.id}/${shipment.version}`;
-    return this.http.delete<ApiReply>(url).pipe(map((reply: ApiReply) => {
-      if (reply && reply.data) {
-        return shipment.id;
-      }
-      throw new Error('expected a valid reply');
-    }));
+    return this.http.delete<ApiReply>(url).pipe(
+      map((reply: ApiReply) => {
+        if (reply && reply.data) {
+          return shipment.id;
+        }
+        throw new Error('expected a valid reply');
+      })
+    );
   }
 
   private replyToShipment(reply: ApiReply): Shipment {
@@ -227,7 +230,7 @@ export class ShipmentService {
     specimenInventoryIds: string[],
     urlPath: string
   ): Observable<Shipment> {
-    const json =  { specimenInventoryIds };
+    const json = { specimenInventoryIds };
     const url = `${this.BASE_URL}/specimens/${urlPath}/${shipment.id}`;
     return this.http.post<ApiReply>(url, json).pipe(map(this.replyToShipment));
   }

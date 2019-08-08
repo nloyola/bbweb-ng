@@ -63,7 +63,7 @@ export class ShippingCentresSelectComponent implements OnInit {
           this.filterValues = f.getValue() + ';state::enabled';
         } else {
           this.filterValues = 'state::enabled';
-  }
+        }
         this.applySearchParams();
       });
 
@@ -88,10 +88,12 @@ export class ShippingCentresSelectComponent implements OnInit {
   }
 
   private applySearchParams() {
-    this.store$.dispatch(
-      CentreStoreActions.searchCentresRequest({
-        searchParams: new SearchParams(this.filterValues, this.sortField, this.currentPage, this.centresLimit)
-      })
-    );
+    const searchParams = {
+      filter: this.filterValues,
+      sort: this.sortField,
+      page: this.currentPage,
+      limit: this.centresLimit
+    };
+    this.store$.dispatch(CentreStoreActions.searchCentresRequest({ searchParams }));
   }
 }

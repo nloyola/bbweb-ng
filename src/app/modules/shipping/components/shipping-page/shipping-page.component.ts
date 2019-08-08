@@ -29,7 +29,11 @@ export class ShippingPageComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    const searchParams = new SearchParams('state::enabled', null, 1, 5);
+    const searchParams = {
+      filter: 'state::enabled',
+      page: 1,
+      limit: 5
+    };
     this.store$.dispatch(CentreStoreActions.searchCentresRequest({ searchParams }));
 
     this.validUser$ = this.store$.pipe(

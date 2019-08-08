@@ -140,7 +140,7 @@ export class ShipmentSpecimensTableComponent implements OnInit, OnChanges, OnDes
   }
 
   protected updateSpecimens(): void {
-    const searchParams = new SearchParams(null, null, this.currentPage);
+    const searchParams = { page: this.currentPage };
     this.store$.dispatch(
       ShipmentSpecimenStoreActions.searchShipmentSpecimensRequest({
         shipment: this.shipment,

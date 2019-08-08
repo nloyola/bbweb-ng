@@ -5,7 +5,6 @@ import * as SpecimenActions from './specimen.actions';
 import { initialState, reducer } from './specimen.reducer';
 
 describe('Specimen Reducer', () => {
-
   const factory = new Factory();
 
   describe('unknown action', () => {
@@ -19,10 +18,9 @@ describe('Specimen Reducer', () => {
   });
 
   describe('when searching for specimens', () => {
-
     it('SearchSpecimensRequest', () => {
       const event = new CollectionEvent().deserialize(factory.collectionEvent());
-      const searchParams = new SearchParams();
+      const searchParams = {};
       const action = SpecimenActions.searchSpecimensRequest({ event, searchParams });
       const state = reducer(undefined, action);
 
@@ -35,22 +33,23 @@ describe('Specimen Reducer', () => {
 
     it('SearchSpecimensSuccess', () => {
       const specimen = new Specimen().deserialize(factory.specimen());
-      const pagedReply = factory.pagedReply<Specimen>([ specimen ]);
+      const pagedReply = factory.pagedReply<Specimen>([specimen]);
       const action = SpecimenActions.searchSpecimensSuccess({ pagedReply });
       const state = reducer(
         {
           ...initialState,
           lastSearch: pagedReply.searchParams
         },
-        action);
+        action
+      );
 
-      const searchReply: { [ key: string]: PagedReplyEntityIds } = {};
-      searchReply[pagedReply.searchParams.queryString()] = {
+      const searchReply = {};
+      searchReply[JSON.stringify(pagedReply.searchParams)] = {
         searchParams: pagedReply.searchParams,
-        offset:       pagedReply.offset,
-        total:        pagedReply.total,
-        entityIds:    pagedReply.entities.map(e => e.id),
-        maxPages:     pagedReply.maxPages
+        offset: pagedReply.offset,
+        total: pagedReply.total,
+        entityIds: pagedReply.entities.map(e => e.id),
+        maxPages: pagedReply.maxPages
       };
 
       expect(state.searchReplies).toEqual(searchReply);
@@ -62,9 +61,9 @@ describe('Specimen Reducer', () => {
     it('SearchSpecimensFailure', () => {
       const error = {
         status: 404,
-          error: {
-            message: 'simulated error'
-          }
+        error: {
+          message: 'simulated error'
+        }
       };
       const action = SpecimenActions.searchSpecimensFailure({ error });
       const state = reducer(undefined, action);
@@ -78,11 +77,9 @@ describe('Specimen Reducer', () => {
         }
       });
     });
-
   });
 
   describe('when getting a specimen', () => {
-
     let specimen: Specimen;
 
     beforeEach(() => {
@@ -125,17 +122,15 @@ describe('Specimen Reducer', () => {
         }
       });
     });
-
   });
 
   describe('when adding a specimen', () => {
-
     let event: CollectionEvent;
     let specimens: Specimen[];
 
     beforeEach(() => {
       event = new CollectionEvent().deserialize(factory.collectionEvent());
-      specimens = [ new Specimen().deserialize(factory.specimen()) ];
+      specimens = [new Specimen().deserialize(factory.specimen())];
     });
 
     it('AddSpecimenRequest', () => {
@@ -172,11 +167,9 @@ describe('Specimen Reducer', () => {
         }
       });
     });
-
   });
 
   describe('when removing a specimen', () => {
-
     let specimen: Specimen;
 
     beforeEach(() => {
@@ -193,7 +186,7 @@ describe('Specimen Reducer', () => {
     it('removeSpecimenSuccess', () => {
       const testInitialState = {
         ...initialState,
-        ids: [ specimen.id ],
+        ids: [specimen.id],
         entities: {}
       };
       testInitialState['entities'][specimen.id] = specimen;
@@ -227,7 +220,5 @@ describe('Specimen Reducer', () => {
         }
       });
     });
-
   });
-
 });

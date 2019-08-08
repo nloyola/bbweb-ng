@@ -5,7 +5,6 @@ import { Observable } from 'rxjs';
 import '@test/matchers/server-api.matchers';
 
 export namespace PagedQueryBehaviour {
-
   export interface Context<T extends ConcurrencySafeEntity> {
     url?: string;
     replyItems?: any;
@@ -14,16 +13,14 @@ export namespace PagedQueryBehaviour {
   }
 
   export function sharedBehaviour<T extends ConcurrencySafeEntity>(context: Context<T>) {
-
     describe('shared behaviour', () => {
-
       let httpMock: HttpTestingController;
       let reply: any;
 
       beforeEach(() => {
         httpMock = TestBed.get(HttpTestingController);
         reply = {
-          items: [ context.replyItems ],
+          items: [context.replyItems],
           page: 1,
           limit: 10,
           offset: 0,
@@ -32,8 +29,7 @@ export namespace PagedQueryBehaviour {
       });
 
       it('can retrieve entities', done => {
-        const params = new SearchParams();
-        const obs = context.search(params);
+        const obs = context.search({});
         obs.subscribe((pr: PagedReply<T>) => {
           context.subscription(pr);
           expect(pr.offset).toBe(reply.offset);
@@ -49,7 +45,7 @@ export namespace PagedQueryBehaviour {
 
       it('uses the `filter` query parameter', done => {
         const filter = 'name:like:test';
-        const params = new SearchParams(filter);
+        const params = { filter };
         context.search(params).subscribe((pr: PagedReply<T>) => {
           expect(pr.entities.length).toBe(context.replyItems.length);
           expect(pr.offset).toBe(reply.offset);
@@ -68,7 +64,7 @@ export namespace PagedQueryBehaviour {
 
       it('uses the `sort` query parameter', done => {
         const sort = '-name';
-        const params = new SearchParams(undefined, sort);
+        const params = { sort };
         context.search(params).subscribe((pr: PagedReply<T>) => {
           expect(pr.entities.length).toBe(context.replyItems.length);
           done();
@@ -84,7 +80,7 @@ export namespace PagedQueryBehaviour {
 
       it('uses the `page` query parameter', done => {
         const page = 2;
-        const params = new SearchParams(undefined, undefined, page);
+        const params = { page };
         context.search(params).subscribe((pr: PagedReply<T>) => {
           expect(pr.entities.length).toBe(context.replyItems.length);
           done();
@@ -93,14 +89,14 @@ export namespace PagedQueryBehaviour {
         const req = httpMock.expectOne(r => r.url === context.url);
         expect(req.request.method).toBe('GET');
         expect(req.request.params.keys()).not.toEqual([]);
-        expect(req.request.params.get('page')).toBe(String(page));
+        expect(req.request.params.get('page')).toBe(page);
 
         req.flush({ status: 'success', data: reply });
       });
 
       it('uses the `limit` query parameter', done => {
         const limit = 10;
-        const params = new SearchParams(undefined, undefined, undefined, limit);
+        const params = { limit };
         context.search(params).subscribe((pr: PagedReply<T>) => {
           expect(pr.entities.length).toBe(context.replyItems.length);
           done();
@@ -109,18 +105,16 @@ export namespace PagedQueryBehaviour {
         const req = httpMock.expectOne(r => r.url === context.url);
         expect(req.request.method).toBe('GET');
         expect(req.request.params.keys()).not.toEqual([]);
-        expect(req.request.params.get('limit')).toBe(String(limit));
+        expect(req.request.params.get('limit')).toBe(limit);
 
         req.flush({ status: 'success', data: reply });
       });
 
       it('handles an error reply correctly', () => {
-        const params = new SearchParams();
+        const params = {};
         const obs = context.search(params);
         expect(obs).toBeHttpError(httpMock, 'GET', context.url, 'expected a paged reply');
       });
-
     });
-
   }
 }

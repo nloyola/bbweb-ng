@@ -1,13 +1,26 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ApiReply, PagedReply, SearchParams, JSONArray, JSONValue, JSONObject } from '@app/domain';
+import {
+  ApiReply,
+  PagedReply,
+  SearchParams,
+  JSONArray,
+  JSONValue,
+  JSONObject,
+  searchParamsToHttpParams
+} from '@app/domain';
 import { AnnotationType } from '@app/domain/annotations';
-import { CollectedSpecimenDefinition, CollectedSpecimenDefinitionName, CollectionEventType, EventTypeInfo } from '@app/domain/studies';
+import {
+  CollectedSpecimenDefinition,
+  CollectedSpecimenDefinitionName,
+  CollectionEventType,
+  EventTypeInfo
+} from '@app/domain/studies';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 export type EventTypeUpdateAttribute =
-  'name'
+  | 'name'
   | 'description'
   | 'recurring'
   | 'addOrUpdateAnnotationType'
@@ -19,7 +32,6 @@ export type EventTypeUpdateAttribute =
   providedIn: 'root'
 })
 export class EventTypeService {
-
   readonly BASE_URL = '/api/studies/cetypes';
 
   constructor(private http: HttpClient) {}
@@ -33,25 +45,26 @@ export class EventTypeService {
    *
    * @returns The studies within a PagedReply.
    */
-  search(studySlug: String, searchParams: SearchParams): Observable<PagedReply<CollectionEventType>> {
-    return this.http.get<ApiReply>(`${this.BASE_URL}/${studySlug}`,
-                                   { params: searchParams.httpParams() })
-      .pipe(
-        map((reply: ApiReply) => {
-          const jObj = reply.data as JSONObject;
-          if (reply && reply.data && jObj.items) {
-            const entities: CollectionEventType[] = (jObj.items as JSONArray)
-              .map(obj => new CollectionEventType().deserialize(obj as any));
-            return {
-              searchParams,
-              entities,
-              offset: jObj.offset as number,
-              total: jObj.total as number,
-              maxPages: jObj.maxPages as number
-            };
-          }
-          throw new Error('expected a paged reply');
-        }));
+  search(studySlug: string, searchParams: SearchParams): Observable<PagedReply<CollectionEventType>> {
+    let params = searchParamsToHttpParams(searchParams);
+    return this.http.get<ApiReply>(`${this.BASE_URL}/${studySlug}`, { params }).pipe(
+      map((reply: ApiReply) => {
+        const jObj = reply.data as JSONObject;
+        if (reply && reply.data && jObj.items) {
+          const entities: CollectionEventType[] = (jObj.items as JSONArray).map(obj =>
+            new CollectionEventType().deserialize(obj as any)
+          );
+          return {
+            searchParams,
+            entities,
+            offset: jObj.offset as number,
+            total: jObj.total as number,
+            maxPages: jObj.maxPages as number
+          };
+        }
+        throw new Error('expected a paged reply');
+      })
+    );
   }
 
   /**
@@ -60,8 +73,9 @@ export class EventTypeService {
    * @param studySlug the slug of the {@link Study}.
    * @param eventTypeSlug the slug of the {@link CollectionEventType} to retrieve.
    */
-  get(studySlug: String, eventTypeSlug: string): Observable<CollectionEventType> {
-    return this.http.get<ApiReply>(`${this.BASE_URL}/${studySlug}/${eventTypeSlug}`)
+  get(studySlug: string, eventTypeSlug: string): Observable<CollectionEventType> {
+    return this.http
+      .get<ApiReply>(`${this.BASE_URL}/${studySlug}/${eventTypeSlug}`)
       .pipe(map(this.replyToEventType));
   }
 
@@ -69,7 +83,8 @@ export class EventTypeService {
    * Retrieves a CollectionEventType from the server.
    */
   getById(studyId: string, eventTypeId: string): Observable<CollectionEventType> {
-    return this.http.get<ApiReply>(`${this.BASE_URL}/id/${studyId}/${eventTypeId}`)
+    return this.http
+      .get<ApiReply>(`${this.BASE_URL}/id/${studyId}/${eventTypeId}`)
       .pipe(map(this.replyToEventType));
   }
 
@@ -77,15 +92,15 @@ export class EventTypeService {
    * Retrieves event type names for a {@link domain.studies.Study Study} from the server.
    */
   searchNames(studyId: string, searchParams: SearchParams): Observable<EventTypeInfo[]> {
-    return this.http.get<ApiReply>(`${this.BASE_URL}/names/${studyId}`,
-                                   { params: searchParams.httpParams() })
-      .pipe(map((reply: ApiReply) => {
+    let params = searchParamsToHttpParams(searchParams);
+    return this.http.get<ApiReply>(`${this.BASE_URL}/names/${studyId}`, { params }).pipe(
+      map((reply: ApiReply) => {
         if (reply && reply.data) {
-          return (reply.data as JSONArray)
-            .map(obj => new EventTypeInfo().deserialize(obj as any));
+          return (reply.data as JSONArray).map(obj => new EventTypeInfo().deserialize(obj as any));
         }
         throw new Error('expected a collection event type names array');
-      }));
+      })
+    );
   }
 
   /**
@@ -94,15 +109,17 @@ export class EventTypeService {
    *
    * @param studySlug The slug of the {@link Study} to return results for.
    */
-  getSpecimenDefinitionNames(studySlug: String): Observable<CollectedSpecimenDefinitionName[]> {
-    return this.http.get<ApiReply>(`${this.BASE_URL}/spcdefs/${studySlug}`)
-      .pipe(map((reply: ApiReply) => {
+  getSpecimenDefinitionNames(studySlug: string): Observable<CollectedSpecimenDefinitionName[]> {
+    return this.http.get<ApiReply>(`${this.BASE_URL}/spcdefs/${studySlug}`).pipe(
+      map((reply: ApiReply) => {
         if (reply && reply.data) {
-          return (reply.data as JSONArray)
-            .map(info => new CollectedSpecimenDefinitionName().deserialize(info as any));
+          return (reply.data as JSONArray).map(info =>
+            new CollectedSpecimenDefinitionName().deserialize(info as any)
+          );
         }
         throw new Error('expected a collected specimen definition names array');
-      }));
+      })
+    );
   }
 
   add(eventType: CollectionEventType): Observable<CollectionEventType> {
@@ -112,7 +129,8 @@ export class EventTypeService {
       recurring: eventType.recurring,
       studyId: eventType.studyId
     };
-    return this.http.post<ApiReply>(`${this.BASE_URL}/${eventType.studyId}`, json)
+    return this.http
+      .post<ApiReply>(`${this.BASE_URL}/${eventType.studyId}`, json)
       .pipe(map(this.replyToEventType));
   }
 
@@ -129,15 +147,15 @@ export class EventTypeService {
 
     switch (attributeName) {
       case 'name':
-        json = { ...json, name: value } as  any;
+        json = { ...json, name: value } as any;
         url = `${this.BASE_URL}/name/${eventType.id}`;
         break;
       case 'description':
-        json = { ...json, description: value } as  any;
+        json = { ...json, description: value } as any;
         url = `${this.BASE_URL}/description/${eventType.id}`;
         break;
       case 'recurring':
-        json = { ...json, recurring: value } as  any;
+        json = { ...json, recurring: value } as any;
         url = `${this.BASE_URL}/recurring/${eventType.id}`;
         break;
       case 'addOrUpdateAnnotationType':
@@ -158,13 +176,14 @@ export class EventTypeService {
 
   removeEventType(eventType: CollectionEventType): Observable<string> {
     const url = `${this.BASE_URL}/${eventType.studyId}/${eventType.id}/${eventType.version}`;
-    return this.http.delete<ApiReply>(url)
-      .pipe(map((reply: ApiReply) => {
+    return this.http.delete<ApiReply>(url).pipe(
+      map((reply: ApiReply) => {
         if (reply && reply.data) {
           return eventType.id;
         }
         throw new Error('expected a valid reply');
-      }));
+      })
+    );
   }
 
   private replyToEventType(reply: ApiReply): CollectionEventType {
@@ -189,7 +208,8 @@ export class EventTypeService {
     }
     return this.http.post<ApiReply>(url, json).pipe(
       // delay(2000),
-      map(this.replyToEventType));
+      map(this.replyToEventType)
+    );
   }
 
   private removeAnnotationType(
@@ -200,8 +220,7 @@ export class EventTypeService {
     const url = `${this.BASE_URL}/annottype/${eventType.studyId}/${eventType.id}/${eventType.version}/${annotationTypeId}`;
     /* tslint:enable:max-line-length */
 
-    return this.http.delete<ApiReply>(url)
-      .pipe(map(this.replyToEventType));
+    return this.http.delete<ApiReply>(url).pipe(map(this.replyToEventType));
   }
 
   private addOrUpdateSpecimenDefinition(
@@ -219,19 +238,18 @@ export class EventTypeService {
     }
     return this.http.post<ApiReply>(url, json).pipe(
       // delay(2000),
-      map(this.replyToEventType));
+      map(this.replyToEventType)
+    );
   }
 
   private removeSpecimenDefinition(
     eventType: CollectionEventType,
     specimenDefinitionId: string
   ): Observable<CollectionEventType> {
-      /* tslint:disable:max-line-length */
+    /* tslint:disable:max-line-length */
     const url = `${this.BASE_URL}/spcdef/${eventType.studyId}/${eventType.id}/${eventType.version}/${specimenDefinitionId}`;
-      /* tslint:enable:max-line-length */
+    /* tslint:enable:max-line-length */
 
-    return this.http.delete<ApiReply>(url)
-      .pipe(map(this.replyToEventType));
+    return this.http.delete<ApiReply>(url).pipe(map(this.replyToEventType));
   }
-
 }

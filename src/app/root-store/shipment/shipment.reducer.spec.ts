@@ -1,12 +1,11 @@
-import { reducer, initialState } from './shipment.reducer';
-import { SearchParams, PagedReplyEntityIds } from '@app/domain';
+import { PagedReplyEntityIds } from '@app/domain';
+import { Specimen } from '@app/domain/participants';
+import { Shipment, ShipmentItemState } from '@app/domain/shipments';
 import { Factory } from '@test/factory';
 import * as ShipmentActions from './shipment.actions';
-import { Shipment, ShipmentItemState } from '@app/domain/shipments';
-import { Specimen } from '@app/domain/participants';
+import { initialState, reducer } from './shipment.reducer';
 
 describe('Shipment Reducer', () => {
-
   const factory = new Factory();
 
   describe('unknown action', () => {
@@ -20,9 +19,8 @@ describe('Shipment Reducer', () => {
   });
 
   describe('when searching for shipments', () => {
-
     it('SearchShipmentsRequest', () => {
-      const searchParams = new SearchParams();
+      const searchParams = {};
       const action = ShipmentActions.searchShipmentsRequest({ searchParams });
       const state = reducer(undefined, action);
 
@@ -35,22 +33,23 @@ describe('Shipment Reducer', () => {
 
     it('SearchShipmentsSuccess', () => {
       const shipment = new Shipment().deserialize(factory.shipment());
-      const pagedReply = factory.pagedReply<Shipment>([ shipment ]);
+      const pagedReply = factory.pagedReply<Shipment>([shipment]);
       const action = ShipmentActions.searchShipmentsSuccess({ pagedReply });
       const state = reducer(
         {
           ...initialState,
           lastSearch: pagedReply.searchParams
         },
-        action);
+        action
+      );
 
-      const searchReply: { [ key: string]: PagedReplyEntityIds } = {};
-      searchReply[pagedReply.searchParams.queryString()] = {
+      const searchReply = {};
+      searchReply[JSON.stringify(pagedReply.searchParams)] = {
         searchParams: pagedReply.searchParams,
-        offset:       pagedReply.offset,
-        total:        pagedReply.total,
-        entityIds:    pagedReply.entities.map(e => e.id),
-        maxPages:     pagedReply.maxPages
+        offset: pagedReply.offset,
+        total: pagedReply.total,
+        entityIds: pagedReply.entities.map(e => e.id),
+        maxPages: pagedReply.maxPages
       };
 
       expect(state.searchReplies).toEqual(searchReply);
@@ -62,9 +61,9 @@ describe('Shipment Reducer', () => {
     it('SearchShipmentsFailure', () => {
       const error = {
         status: 404,
-          error: {
-            message: 'simulated error'
-          }
+        error: {
+          message: 'simulated error'
+        }
       };
       const action = ShipmentActions.searchShipmentsFailure({ error });
       const state = reducer(undefined, action);
@@ -78,11 +77,9 @@ describe('Shipment Reducer', () => {
         }
       });
     });
-
   });
 
   describe('when getting a shipment', () => {
-
     let shipment: Shipment;
 
     beforeEach(() => {
@@ -125,11 +122,9 @@ describe('Shipment Reducer', () => {
         }
       });
     });
-
   });
 
   describe('when adding a shipment', () => {
-
     let shipment: Shipment;
 
     beforeEach(() => {
@@ -173,11 +168,9 @@ describe('Shipment Reducer', () => {
         }
       });
     });
-
   });
 
   describe('for updating a shipment', () => {
-
     let shipment: Shipment;
     let testInitialState: any;
 
@@ -185,7 +178,7 @@ describe('Shipment Reducer', () => {
       shipment = new Shipment().deserialize(factory.shipment());
       testInitialState = {
         ...initialState,
-        ids: [ shipment.id ],
+        ids: [shipment.id],
         entities: {}
       };
       testInitialState['entities'][shipment.id] = {};
@@ -195,13 +188,11 @@ describe('Shipment Reducer', () => {
       const initialAction = ShipmentActions.getShipmentSuccess({ shipment });
       let state = reducer(initialState, initialAction);
 
-      const  updatedShipment = new Shipment().deserialize({
-        ...shipment as any,
+      const updatedShipment = new Shipment().deserialize({
+        ...(shipment as any),
         timePacked: new Date()
       });
-      state = reducer(
-        state,
-        ShipmentActions.updateShipmentSuccess({ shipment: updatedShipment }));
+      state = reducer(state, ShipmentActions.updateShipmentSuccess({ shipment: updatedShipment }));
 
       expect(state.ids).toContain(shipment.id);
       expect(state.entities[shipment.id]).toEqual(updatedShipment);
@@ -223,17 +214,15 @@ describe('Shipment Reducer', () => {
         error: payload.error
       });
     });
-
   });
 
   describe('when adding specimens to a shipment', () => {
-
     let shipment: Shipment;
     let specimens: Specimen[];
 
     beforeEach(() => {
       shipment = new Shipment().deserialize(factory.shipment());
-      specimens = [ new Specimen().deserialize(factory.specimen()) ];
+      specimens = [new Specimen().deserialize(factory.specimen())];
     });
 
     it('addSpecimensRequest', () => {
@@ -275,11 +264,9 @@ describe('Shipment Reducer', () => {
         }
       });
     });
-
   });
 
   describe('when querying if a specimen can be added to a shipment', () => {
-
     let shipment: Shipment;
     let specimen: Specimen;
 
@@ -298,7 +285,7 @@ describe('Shipment Reducer', () => {
     it('canAddSpecimensSuccess', () => {
       const action = ShipmentActions.canAddSpecimenSuccess({ specimen });
       const state = reducer(undefined, action);
-      expect(state.canAddSpecimenInventoryIds).toEqual(expect.arrayContaining([ specimen.inventoryId ]));
+      expect(state.canAddSpecimenInventoryIds).toEqual(expect.arrayContaining([specimen.inventoryId]));
     });
 
     it('canAddSpecimensFailure', () => {
@@ -322,17 +309,15 @@ describe('Shipment Reducer', () => {
         }
       });
     });
-
   });
 
   describe('when tagging specimens in a shipment', () => {
-
     let shipment: Shipment;
     let specimens: Specimen[];
 
     beforeEach(() => {
       shipment = new Shipment().deserialize(factory.shipment());
-      specimens = [ new Specimen().deserialize(factory.specimen()) ];
+      specimens = [new Specimen().deserialize(factory.specimen())];
     });
 
     it('tagSpecimensRequest', () => {
@@ -375,11 +360,9 @@ describe('Shipment Reducer', () => {
         }
       });
     });
-
   });
 
   describe('when removing a shipment', () => {
-
     let shipment: Shipment;
 
     beforeEach(() => {
@@ -396,7 +379,7 @@ describe('Shipment Reducer', () => {
     it('removeShipmentSuccess', () => {
       const testInitialState = {
         ...initialState,
-        ids: [ shipment.id ],
+        ids: [shipment.id],
         entities: {}
       };
       testInitialState['entities'][shipment.id] = shipment;
@@ -430,7 +413,5 @@ describe('Shipment Reducer', () => {
         }
       });
     });
-
   });
-
 });

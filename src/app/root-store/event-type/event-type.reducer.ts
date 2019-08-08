@@ -1,5 +1,11 @@
-import { PagedReplyEntityIds, SearchParams, EntityIds } from '@app/domain';
+import {
+  SearchTermToEntityIdsByEntityIdHash,
+  SearchParams,
+  SearchTermToPagedReplyByEntityHash,
+  searchParams2Term
+} from '@app/domain';
 import { CollectedSpecimenDefinitionName, CollectionEventType } from '@app/domain/studies';
+import { SearchState } from '@app/root-store';
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity';
 import * as EventTypeActions from './event-type.actions';
 
@@ -8,57 +14,41 @@ export interface LastSearch {
   params: SearchParams;
 }
 
-export interface PagedReplyHash {
-  [ id: string ]: { [ url: string ]: PagedReplyEntityIds };
-}
-
-export interface EntityIdsHash {
-  [ id: string ]: { [ url: string ]: EntityIds };
-}
-
 export interface SpecimenDefinitionNamesByStudy {
-  [ slug: string ]: CollectedSpecimenDefinitionName[];
-}
-
-export interface SearchState<T> {
-  lastSearch?: LastSearch;
-  searchReplies?: T;
-  searchActive?: boolean;
+  [slug: string]: CollectedSpecimenDefinitionName[];
 }
 
 export interface State extends EntityState<CollectionEventType> {
-  searchState: SearchState<PagedReplyHash>;
-  namesSearchState: SearchState<EntityIdsHash>;
+  searchState: SearchState<SearchTermToPagedReplyByEntityHash, LastSearch>;
+  namesSearchState: SearchState<SearchTermToEntityIdsByEntityIdHash, LastSearch>;
   specimenDefinitionNames: SpecimenDefinitionNamesByStudy;
   lastAddedId: string;
   lastRemovedId: string;
   error?: any;
 }
 
-export const adapter: EntityAdapter<CollectionEventType> =
-  createEntityAdapter<CollectionEventType>();
+export const adapter: EntityAdapter<CollectionEventType> = createEntityAdapter<CollectionEventType>();
 
 export const initialState: State = adapter.getInitialState({
   lastSearch: null,
   searchState: {
     lastSearch: null,
-    searchReplies: {},
     searchActive: false,
+    replies: {}
   },
   namesSearchState: {
     lastSearch: null,
-    searchReplies: {},
     searchActive: false,
+    replies: {}
   },
   specimenDefinitionNames: {},
   lastAddedId: null,
   lastRemovedId: null,
-  error: null,
+  error: null
 });
 
 export function reducer(state = initialState, action: EventTypeActions.EventTypeActionsUnion): State {
   switch (action.type) {
-
     case EventTypeActions.searchEventTypesRequest.type: {
       return {
         ...state,
@@ -85,16 +75,16 @@ export function reducer(state = initialState, action: EventTypeActions.EventType
         error: {
           error: action.error,
           actionType: action.type
-        },
+        }
       };
     }
 
     case EventTypeActions.searchEventTypesSuccess.type: {
       const pagedReply = action.pagedReply;
       const studyId = state.searchState.lastSearch.studyId;
-      const queryString = state.searchState.lastSearch.params.queryString();
+      const searchTerm = searchParams2Term(state.searchState.lastSearch.params);
       const newReply = {};
-      newReply[queryString] = {
+      newReply[searchTerm] = {
         entityIds: pagedReply.entities.map(et => et.id),
         searchParams: pagedReply.searchParams,
         offset: pagedReply.offset,
@@ -104,7 +94,7 @@ export function reducer(state = initialState, action: EventTypeActions.EventType
 
       const studyReplies = {};
       studyReplies[studyId] = {
-        ...state.searchState.searchReplies[studyId],
+        ...state.searchState.replies[studyId],
         ...newReply
       };
 
@@ -113,8 +103,8 @@ export function reducer(state = initialState, action: EventTypeActions.EventType
         searchState: {
           ...state.searchState,
           searchActive: false,
-          searchReplies: {
-            ...state.searchState.searchReplies,
+          replies: {
+            ...state.searchState.replies,
             ...studyReplies
           }
         }
@@ -147,28 +137,28 @@ export function reducer(state = initialState, action: EventTypeActions.EventType
         error: {
           error: action.error,
           actionType: action.type
-        },
+        }
       };
     }
 
     case EventTypeActions.searchEventTypeNamesSuccess.type: {
       const studyId = state.namesSearchState.lastSearch.studyId;
-      const queryString = state.namesSearchState.lastSearch.params.queryString();
       const newReply = {};
-      newReply[queryString] = action.eventTypeInfo.map(et => et.id);
+      const searchTerm = JSON.stringify(state.namesSearchState.lastSearch.params);
+      newReply[searchTerm] = action.eventTypeData.map(et => et.id);
 
       const studyReplies = {};
       studyReplies[studyId] = {
-        ...state.namesSearchState.searchReplies[studyId],
+        ...state.namesSearchState.replies[studyId],
         ...newReply
       };
 
-      return adapter.upsertMany(action.eventTypeInfo as CollectionEventType[], {
+      return adapter.upsertMany(action.eventTypeData as CollectionEventType[], {
         ...state,
         namesSearchState: {
           ...state.namesSearchState,
-          searchReplies: {
-            ...state.namesSearchState.searchReplies,
+          replies: {
+            ...state.namesSearchState.replies,
             ...studyReplies
           },
           searchActive: false
@@ -203,7 +193,8 @@ export function reducer(state = initialState, action: EventTypeActions.EventType
           id: action.eventType.id,
           changes: action.eventType
         },
-        state);
+        state
+      );
     }
 
     case EventTypeActions.removeEventTypeRequest.type:
@@ -225,7 +216,7 @@ export function reducer(state = initialState, action: EventTypeActions.EventType
         error: {
           error: action.error,
           actionType: action.type
-        },
+        }
       };
 
     case EventTypeActions.getSpecimenDefinitionNamesSuccess.type: {
@@ -256,7 +247,7 @@ export function reducer(state = initialState, action: EventTypeActions.EventType
         error: {
           error: action.error,
           actionType: action.type
-        },
+        }
       };
 
     default: {
@@ -265,9 +256,4 @@ export function reducer(state = initialState, action: EventTypeActions.EventType
   }
 }
 
-export const {
-  selectIds,
-  selectEntities,
-  selectAll,
-  selectTotal,
-} = adapter.getSelectors();
+export const { selectIds, selectEntities, selectAll, selectTotal } = adapter.getSelectors();

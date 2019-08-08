@@ -1,10 +1,9 @@
-import { SearchParams } from '@app/domain';
 import { Centre } from '@app/domain/centres';
-import { RootStoreState, CentreStoreActions, CentreStoreSelectors } from '@app/root-store';
-import { EntitySelectTypeahead } from './entity-select-typeahead';
+import { CentreStoreActions, CentreStoreSelectors, RootStoreState } from '@app/root-store';
 import { select, Store } from '@ngrx/store';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
+import { EntitySelectTypeahead } from './entity-select-typeahead';
 
 export type CentreResultsMapper = (entities: Centre[]) => Centre[];
 
@@ -14,7 +13,7 @@ export class CentreSelectTypeahead extends EntitySelectTypeahead<Centre> {
   }
 
   protected termMapper(term: string): Observable<Centre[]> {
-    const searchParams = new SearchParams(`name:like:${term}`);
+    const searchParams = { filter: `name:like:${term}` };
     this.store$.dispatch(CentreStoreActions.searchCentresRequest({ searchParams }));
 
     return this.store$.pipe(
@@ -24,7 +23,7 @@ export class CentreSelectTypeahead extends EntitySelectTypeahead<Centre> {
     );
   }
 
-  typeaheadFormatter(centre: Centre): string {
+  formatter(centre: Centre): string {
     return centre.name;
   }
 }

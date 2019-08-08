@@ -1,59 +1,52 @@
-import { reducer, initialState } from './membership.reducer';
-import { MembershipStoreActions, MembershipStoreReducer } from '.';
-import { SearchParams, PagedReplyEntityIds } from '@app/domain';
-import { Factory } from '@test/factory';
+import { SearchTermToPagedReplyHash } from '@app/domain';
 import { Membership } from '@app/domain/access';
+import { Factory } from '@test/factory';
+import { MembershipStoreActions, MembershipStoreReducer } from '.';
+import { initialState, reducer } from './membership.reducer';
 
 describe('Membership Reducer', () => {
-
   const factory = new Factory();
 
   describe('unknown action', () => {
     it('should return the initial state', () => {
       const action = {} as any;
-
       const result = reducer(initialState, action);
-
       expect(result).toBe(initialState);
     });
   });
 
   describe('when searching for memberships', () => {
-
     it('SearchMembershipsRequest', () => {
-      const payload = {
-        searchParams: new SearchParams()
-      };
-      const action = MembershipStoreActions.searchMembershipsRequest(payload);
+      const searchParams = {};
+      const action = MembershipStoreActions.searchMembershipsRequest({ searchParams });
       const state = MembershipStoreReducer.reducer(undefined, action);
 
       expect(state).toEqual({
         ...MembershipStoreReducer.initialState,
-        lastSearch: payload.searchParams,
+        lastSearch: searchParams,
         searchActive: true
       });
     });
 
     it('SearchMembershipsSuccess', () => {
       const membership = new Membership().deserialize(factory.membership());
-      const payload = {
-        pagedReply: factory.pagedReply<Membership>([ membership ])
-      };
-      const action = MembershipStoreActions.searchMembershipsSuccess(payload);
+      const pagedReply = factory.pagedReply<Membership>([membership]);
+      const action = MembershipStoreActions.searchMembershipsSuccess({ pagedReply });
       const state = MembershipStoreReducer.reducer(
         {
           ...MembershipStoreReducer.initialState,
-          lastSearch: payload.pagedReply.searchParams
+          lastSearch: pagedReply.searchParams
         },
-        action);
+        action
+      );
 
-      const searchReply: { [ key: string]: PagedReplyEntityIds } = {};
-      searchReply[payload.pagedReply.searchParams.queryString()] = {
-        searchParams: payload.pagedReply.searchParams,
-        offset: payload.pagedReply.offset,
-        total: payload.pagedReply.total,
-        entityIds: payload.pagedReply.entities.map(e => e.id),
-        maxPages: payload.pagedReply.maxPages
+      const searchReply: SearchTermToPagedReplyHash = {};
+      searchReply[JSON.stringify(pagedReply.searchParams)] = {
+        searchParams: pagedReply.searchParams,
+        offset: pagedReply.offset,
+        total: pagedReply.total,
+        entityIds: pagedReply.entities.map(e => e.id),
+        maxPages: pagedReply.maxPages
       };
 
       expect(state.searchReplies).toEqual(searchReply);
@@ -83,11 +76,9 @@ describe('Membership Reducer', () => {
         }
       });
     });
-
   });
 
   describe('for adding a membership', () => {
-
     it('AddMembershipRequest', () => {
       const membership = new Membership().deserialize(factory.membership());
       const action = MembershipStoreActions.addMembershipRequest({ membership });
@@ -131,7 +122,6 @@ describe('Membership Reducer', () => {
   });
 
   describe('when updating memberships', () => {
-
     it('UpdateMembershipRequest', () => {
       const membership = new Membership().deserialize(factory.membership());
       const action = MembershipStoreActions.updateMembershipRequest({
@@ -142,7 +132,7 @@ describe('Membership Reducer', () => {
       const state = MembershipStoreReducer.reducer(undefined, action);
 
       expect(state).toEqual({
-        ...MembershipStoreReducer.initialState,
+        ...MembershipStoreReducer.initialState
       });
     });
 
@@ -177,11 +167,9 @@ describe('Membership Reducer', () => {
         }
       });
     });
-
   });
 
   describe('when getting a single membership', () => {
-
     it('GetMembershipRequest', () => {
       const membership = new Membership().deserialize(factory.membership());
       const payload = { slug: membership.slug };
@@ -189,7 +177,7 @@ describe('Membership Reducer', () => {
       const state = MembershipStoreReducer.reducer(undefined, action);
 
       expect(state).toEqual({
-        ...MembershipStoreReducer.initialState,
+        ...MembershipStoreReducer.initialState
       });
     });
 
@@ -224,11 +212,9 @@ describe('Membership Reducer', () => {
         }
       });
     });
-
   });
 
   describe('for removing a membership', () => {
-
     let membership: Membership;
     let testInitialState: any;
 
@@ -236,7 +222,7 @@ describe('Membership Reducer', () => {
       membership = new Membership().deserialize(factory.membership());
       testInitialState = {
         ...MembershipStoreReducer.initialState,
-        ids: [ membership.id ],
+        ids: [membership.id],
         entities: {}
       };
       testInitialState['entities'][membership.id] = membership;
@@ -268,5 +254,4 @@ describe('Membership Reducer', () => {
       });
     });
   });
-
 });

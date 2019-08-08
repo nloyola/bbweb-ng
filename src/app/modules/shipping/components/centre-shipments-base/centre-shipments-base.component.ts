@@ -1,12 +1,12 @@
 import { OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { PagedReplyInfo, SearchParams } from '@app/domain';
+import { PagedReplyInfo } from '@app/domain';
 import { Centre } from '@app/domain/centres';
 import { StateFilter } from '@app/domain/search-filters';
 import { CourierNameFilter } from '@app/domain/search-filters/courier-name-filter.model';
 import { TrackingNumberFilter } from '@app/domain/search-filters/tracking-number-filter.model';
 import { Shipment, ShipmentState } from '@app/domain/shipments';
-import { RootStoreState, ShipmentStoreSelectors, ShipmentStoreActions } from '@app/root-store';
+import { RootStoreState, ShipmentStoreActions, ShipmentStoreSelectors } from '@app/root-store';
 import { select, Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
 import { filter, map, shareReplay } from 'rxjs/operators';
@@ -86,15 +86,11 @@ export abstract class CentreShipmentsBaseComponent implements OnInit, OnDestroy 
   protected abstract updateFilters(): string;
 
   protected updateShipments(): void {
-    const filters = this.updateFilters();
-    this.store$.dispatch(
-      ShipmentStoreActions.searchShipmentsRequest({
-        searchParams: new SearchParams(filters, this.sortField, this.currentPage)
-      })
-    );
+    const searchParams = {
+      filter: this.updateFilters(),
+      sort: this.sortField,
+      page: this.currentPage
+    };
+    this.store$.dispatch(ShipmentStoreActions.searchShipmentsRequest({ searchParams }));
   }
 }
-
-// map((shipments: Shipment[]) => shipments.filter(s => s.fromLocationInfo.centreId === centre.id))
-
-// map(shipments => shipments.filter(s => s.state === ShipmentState.Completed));

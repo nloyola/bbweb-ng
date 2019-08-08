@@ -13,7 +13,6 @@ import { Observable, of, throwError } from 'rxjs';
 import { StudyStoreEffects } from './study.effects';
 
 describe('study-store effects', () => {
-
   let effects: StudyStoreEffects;
   let actions: Observable<any>;
   let studyService: StudyService;
@@ -21,13 +20,8 @@ describe('study-store effects', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        HttpClientTestingModule
-      ],
-      providers: [
-        StudyStoreEffects,
-        provideMockActions(() => actions)
-      ]
+      imports: [HttpClientTestingModule],
+      providers: [StudyStoreEffects, provideMockActions(() => actions)]
     });
 
     effects = TestBed.get(StudyStoreEffects);
@@ -36,7 +30,6 @@ describe('study-store effects', () => {
   });
 
   describe('getStudyCountsRequestEffect', () => {
-
     it('should respond with success', () => {
       const studyCounts = factory.studyCounts();
       const action = StudyStoreActions.getStudyCountsRequest();
@@ -68,11 +61,10 @@ describe('study-store effects', () => {
   });
 
   describe('searchStudiesRequestEffect', () => {
-
     it('should respond with success', () => {
-      const searchParams = new SearchParams();
+      const searchParams = {};
       const study = new Study().deserialize(factory.study());
-      const pagedReply = factory.pagedReply([ study ]);
+      const pagedReply = factory.pagedReply([study]);
       const action = StudyStoreActions.searchStudiesRequest({ searchParams });
       const completion = StudyStoreActions.searchStudiesSuccess({ pagedReply });
       spyOn(studyService, 'search').and.returnValue(of(pagedReply));
@@ -84,7 +76,7 @@ describe('study-store effects', () => {
     });
 
     it('should respond with failure', () => {
-      const searchParams = new SearchParams();
+      const searchParams = {};
       const error = {
         status: 404,
         error: {
@@ -103,12 +95,11 @@ describe('study-store effects', () => {
   });
 
   describe('searchCollectionStudiesRequestEffect', () => {
-
     it('should respond with success', () => {
-      const searchParams = new SearchParams();
+      const searchParams = {};
       const study = new Study().deserialize(factory.study());
       const dto = new StudyStateInfo().deserialize(factory.entityNameAndStateDto(study));
-      const studiesData = [ dto ];
+      const studiesData = [dto];
       const action = StudyStoreActions.searchCollectionStudiesRequest({ searchParams });
       const completion = StudyStoreActions.searchCollectionStudiesSuccess({ studiesData });
       spyOn(studyService, 'searchCollectionStudies').and.returnValue(of(studiesData));
@@ -120,7 +111,7 @@ describe('study-store effects', () => {
     });
 
     it('should respond with failure', () => {
-      const searchParams = new SearchParams();
+      const searchParams = {};
       const error = {
         status: 404,
         error: {
@@ -139,7 +130,6 @@ describe('study-store effects', () => {
   });
 
   describe('addStudyRequestEffect', () => {
-
     it('should respond with success', () => {
       const study = new Study().deserialize(factory.study());
       const action = StudyStoreActions.addStudyRequest({ study });
@@ -172,7 +162,6 @@ describe('study-store effects', () => {
   });
 
   describe('getStudyRequestEffect', () => {
-
     it('should respond with success', () => {
       const study = new Study().deserialize(factory.study());
       const action = StudyStoreActions.getStudyRequest({ slug: study.slug });
@@ -205,7 +194,6 @@ describe('study-store effects', () => {
   });
 
   describe('updateRequestEffect', () => {
-
     let study: Study;
     let action: Action;
 
@@ -243,7 +231,6 @@ describe('study-store effects', () => {
   });
 
   describe('addOrUpdateAnnotationTypeRequestEffect', () => {
-
     let annotationType: AnnotationType;
     let study: Study;
     let action: Action;
@@ -251,7 +238,7 @@ describe('study-store effects', () => {
     beforeEach(() => {
       const rawAnnotationType = factory.annotationType();
       annotationType = new AnnotationType().deserialize(factory.annotationType());
-      study = new Study().deserialize(factory.study({ annotationTypes: [ rawAnnotationType ]}));
+      study = new Study().deserialize(factory.study({ annotationTypes: [rawAnnotationType] }));
       action = StudyStoreActions.updateStudyAddOrUpdateAnnotationTypeRequest({
         study,
         annotationType
@@ -283,7 +270,6 @@ describe('study-store effects', () => {
   });
 
   describe('removeAnnotationTypeRequestEffect', () => {
-
     let annotationType: AnnotationType;
     let study: Study;
     let action: Action;
@@ -291,7 +277,7 @@ describe('study-store effects', () => {
     beforeEach(() => {
       const rawAnnotationType = factory.annotationType();
       annotationType = new AnnotationType().deserialize(factory.annotationType());
-      study = new Study().deserialize(factory.study({ annotationTypes: [ rawAnnotationType ]}));
+      study = new Study().deserialize(factory.study({ annotationTypes: [rawAnnotationType] }));
       action = StudyStoreActions.updateStudyRemoveAnnotationTypeRequest({
         study,
         annotationTypeId: annotationType.id
@@ -323,7 +309,6 @@ describe('study-store effects', () => {
   });
 
   describe('enableAllowedRequestEffect', () => {
-
     let study: Study;
     let action: Action;
 
@@ -359,5 +344,4 @@ describe('study-store effects', () => {
       expect(effects.enableAllowedRequest$).toBeObservable(cold('--b', { b: completion }));
     });
   });
-
 });

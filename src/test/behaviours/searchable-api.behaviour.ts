@@ -5,9 +5,12 @@ import '@test/matchers/server-api.matchers';
 import { Observable } from 'rxjs';
 
 export namespace SearchableApiBehaviour {
-
   /* tslint:disable-next-line:max-line-length */
-  export interface Context<E extends IDomainEntity & HasSlug & HasName, S, T extends IEntityInfoAndState<E, S>> {
+  export interface Context<
+    E extends IDomainEntity & HasSlug & HasName,
+    S,
+    T extends IEntityInfoAndState<E, S>
+  > {
     url?: string;
     replyItems?: any;
     search?(searchParams: SearchParams): Observable<T[]>;
@@ -15,12 +18,12 @@ export namespace SearchableApiBehaviour {
   }
 
   /* tslint:disable-next-line:max-line-length */
-  export function sharedBehaviour<E extends IDomainEntity & HasSlug & HasName, S, T extends IEntityInfoAndState<E, S>>(
-    context: Context<E, S, T>
-  ) {
-
+  export function sharedBehaviour<
+    E extends IDomainEntity & HasSlug & HasName,
+    S,
+    T extends IEntityInfoAndState<E, S>
+  >(context: Context<E, S, T>) {
     describe('shared behaviour', () => {
-
       let httpMock: HttpTestingController;
       let reply: any;
 
@@ -30,7 +33,7 @@ export namespace SearchableApiBehaviour {
       });
 
       it('can retrieve entities', done => {
-        const params = new SearchParams();
+        const params = {};
         const obs = context.search(params);
         obs.subscribe((entities: T[]) => {
           context.subscription(entities);
@@ -45,7 +48,7 @@ export namespace SearchableApiBehaviour {
 
       it('uses the `filter` query parameter', done => {
         const filter = 'name:like:test';
-        const params = new SearchParams(filter);
+        const params = { filter };
         context.search(params).subscribe((entities: T[]) => {
           context.subscription(entities);
           done();
@@ -61,7 +64,7 @@ export namespace SearchableApiBehaviour {
 
       it('uses the `sort` query parameter', done => {
         const sort = '-name';
-        const params = new SearchParams(undefined, sort);
+        const params = { sort };
         context.search(params).subscribe((entities: T[]) => {
           context.subscription(entities);
           done();
@@ -77,7 +80,7 @@ export namespace SearchableApiBehaviour {
 
       it('uses the `page` query parameter', done => {
         const page = 2;
-        const params = new SearchParams(undefined, undefined, page);
+        const params = { page };
         context.search(params).subscribe((entities: T[]) => {
           context.subscription(entities);
           done();
@@ -86,14 +89,14 @@ export namespace SearchableApiBehaviour {
         const req = httpMock.expectOne(r => r.url === context.url);
         expect(req.request.method).toBe('GET');
         expect(req.request.params.keys()).not.toEqual([]);
-        expect(req.request.params.get('page')).toBe(String(page));
+        expect(req.request.params.get('page')).toBe(page);
 
         req.flush({ status: 'success', data: reply });
       });
 
       it('uses the `limit` query parameter', done => {
         const limit = 10;
-        const params = new SearchParams(undefined, undefined, undefined, limit);
+        const params = { limit };
         context.search(params).subscribe((entities: T[]) => {
           context.subscription(entities);
           done();
@@ -102,18 +105,16 @@ export namespace SearchableApiBehaviour {
         const req = httpMock.expectOne(r => r.url === context.url);
         expect(req.request.method).toBe('GET');
         expect(req.request.params.keys()).not.toEqual([]);
-        expect(req.request.params.get('limit')).toBe(String(limit));
+        expect(req.request.params.get('limit')).toBe(limit);
 
         req.flush({ status: 'success', data: reply });
       });
 
       it('handles an error reply correctly', () => {
-        const params = new SearchParams();
+        const params = {};
         const obs = context.search(params);
         expect(obs).toBeHttpError(httpMock, 'GET', context.url, 'expected a paged reply');
       });
-
     });
-
   }
 }

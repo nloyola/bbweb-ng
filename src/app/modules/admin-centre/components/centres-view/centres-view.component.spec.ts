@@ -21,13 +21,13 @@ describe('CentresViewComponent', () => {
   const factory = new Factory();
 
   @Component({ template: 'Test component' })
-  class TestComponent { }
+  class TestComponent {}
 
   const routes: Routes = [
     {
       path: ':slug/summary',
       component: TestComponent
-    },
+    }
   ];
 
   beforeEach(async(() => {
@@ -36,19 +36,16 @@ describe('CentresViewComponent', () => {
         RouterTestingModule.withRoutes(routes),
         StoreModule.forRoot(
           {
-            'centre': CentreStoreReducer.reducer,
-            'spinner': SpinnerStoreReducer.reducer
+            centre: CentreStoreReducer.reducer,
+            spinner: SpinnerStoreReducer.reducer
           },
-          NgrxRuntimeChecks),
+          NgrxRuntimeChecks
+        ),
         ToastrModule.forRoot()
       ],
-      declarations: [
-        TestComponent,
-        CentresViewComponent
-      ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
-    .compileComponents();
+      declarations: [TestComponent, CentresViewComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -81,18 +78,22 @@ describe('CentresViewComponent', () => {
   it('reloads page when a filter is modified', () => {
     spyOn(store, 'dispatch').and.callThrough();
     const filters: SearchFilterValues[] = [
-      { name: 'test' },
-      { stateId: CentreState.Disabled }
+      { name: 'test' }
+      //{ stateId: CentreState.Disabled }
     ];
+
+    const dispatchListener = jest.spyOn(store, 'dispatch');
 
     filters.forEach(value => {
       component.onFiltersUpdated(value);
-
-      const action = CentreStoreActions.searchCentresRequest({
-        searchParams: new SearchParams('name:like:test', undefined, 1, 5)
-      });
-
-      expect(store.dispatch).toHaveBeenCalledWith(action);
+      const searchParams = {
+        filter: 'name:like:test',
+        page: 1,
+        limit: 5
+      };
+      const action = CentreStoreActions.searchCentresRequest({ searchParams });
+      expect(dispatchListener.mock.calls.length).toBe(1);
+      expect(dispatchListener.mock.calls[0][0]).toEqual(action);
     });
   });
 
@@ -100,23 +101,26 @@ describe('CentresViewComponent', () => {
     spyOn(store, 'dispatch').and.callThrough();
     component.sortFieldSelected('name');
 
-    const action = CentreStoreActions.searchCentresRequest({
-      searchParams: new SearchParams('', 'name', 1, 5)
-    });
-
+    const searchParams = {
+      filter: '',
+      sort: 'name',
+      page: 1,
+      limit: 5
+    };
+    const action = CentreStoreActions.searchCentresRequest({ searchParams });
     expect(store.dispatch).toHaveBeenCalledWith(action);
   });
 
   describe('when a new page is selected', () => {
-
     it('reloads page when a new page is selected', () => {
       spyOn(store, 'dispatch').and.callThrough();
       component.paginationPageChanged(1);
-
-      const action = CentreStoreActions.searchCentresRequest({
-        searchParams: new SearchParams('', undefined, 1, 5)
-      });
-
+      const searchParams = {
+        filter: '',
+        page: 1,
+        limit: 5
+      };
+      const action = CentreStoreActions.searchCentresRequest({ searchParams });
       expect(store.dispatch).toHaveBeenCalledWith(action);
     });
 
@@ -124,9 +128,7 @@ describe('CentresViewComponent', () => {
       spyOn(store, 'dispatch').and.callThrough();
       component.paginationPageChanged('test' as any);
       expect(store.dispatch).not.toHaveBeenCalled();
-
     });
-
   });
 
   it('route is changed when a centre is selected', () => {
@@ -134,40 +136,73 @@ describe('CentresViewComponent', () => {
     spyOn(router, 'navigate').and.callThrough();
     ngZone.run(() => component.centreSelected(centre));
     expect(router.navigate).toHaveBeenCalled();
-    expect((router.navigate as any).calls.mostRecent().args[0]).toEqual([ centre.slug, 'summary' ]);
+    expect((router.navigate as any).calls.mostRecent().args[0]).toEqual([centre.slug, 'summary']);
   });
 
   it('displays that there are no centres in the system', () => {
-    const pagedReply = factory.pagedReply([]);
-    pagedReply.searchParams.filter = '';
+    const emptyPagedReply = factory.pagedReply([]);
+    const pagedReply = {
+      ...emptyPagedReply,
+      searchParams: {
+        ...emptyPagedReply.searchParams,
+        filter: '',
+        sort: undefined,
+        page: 1,
+        limit: 5
+      }
+    };
     const action = CentreStoreActions.searchCentresSuccess({ pagedReply });
     store.dispatch(action);
     fixture.detectChanges();
 
     const de = fixture.debugElement;
     expect(de.nativeElement.querySelectorAll('.list-group-item').length).toBe(0);
-    expect(de.nativeElement.querySelector('.alert').textContent)
-      .toContain('No centres have been added yet.');
+    expect(de.nativeElement.querySelector('.alert').textContent).toContain('No centres have been added yet.');
   });
 
   it('displays that there are no results for the filters', () => {
-    const pagedReply = factory.pagedReply([]);
-    pagedReply.searchParams.filter = 'name:like:test';
-    const action = CentreStoreActions.searchCentresSuccess({ pagedReply });
-    store.dispatch(action);
+    const emptyPagedReply = factory.pagedReply([]);
+    const searchParams = {
+      ...emptyPagedReply.searchParams,
+      filter: 'name:like:test',
+      page: 1,
+      limit: 5
+    };
+    const pagedReply = {
+      ...emptyPagedReply,
+      searchParams: {
+        ...emptyPagedReply.searchParams,
+        ...searchParams
+      }
+    };
+    store.dispatch(CentreStoreActions.searchCentresRequest({ searchParams }));
+    store.dispatch(CentreStoreActions.searchCentresSuccess({ pagedReply }));
     fixture.detectChanges();
 
     const de = fixture.debugElement;
     expect(de.nativeElement.querySelectorAll('.list-group-item').length).toBe(0);
-    expect(de.nativeElement.querySelector('.alert').textContent)
-      .toContain('There are no centres that match your criteria.');
+    expect(de.nativeElement.querySelector('.alert').textContent).toContain(
+      'There are no centres that match your criteria.'
+    );
   });
 
   it('displays centres', () => {
     const centre = new Centre().deserialize(factory.centre());
-    const action = CentreStoreActions.searchCentresSuccess({
-      pagedReply: factory.pagedReply([ centre ])
-    });
+    const emptyPagedReply = factory.pagedReply([centre]);
+    const searchParams = {
+      ...emptyPagedReply.searchParams,
+      filter: '',
+      page: 1,
+      limit: 5
+    };
+    const pagedReply = {
+      ...emptyPagedReply,
+      searchParams: {
+        ...emptyPagedReply.searchParams,
+        ...searchParams
+      }
+    };
+    const action = CentreStoreActions.searchCentresSuccess({ pagedReply });
     store.dispatch(action);
     fixture.detectChanges();
 

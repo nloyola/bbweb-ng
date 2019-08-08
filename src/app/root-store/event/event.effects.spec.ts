@@ -12,7 +12,6 @@ import * as EventActions from './event.actions';
 import { EventStoreEffects } from './event.effects';
 
 describe('collectionEvent-store effects', () => {
-
   let effects: EventStoreEffects;
   let actions: Observable<any>;
   let collectionEventService: CollectionEventService;
@@ -20,13 +19,8 @@ describe('collectionEvent-store effects', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        HttpClientTestingModule
-      ],
-      providers: [
-        EventStoreEffects,
-        provideMockActions(() => actions)
-      ]
+      imports: [HttpClientTestingModule],
+      providers: [EventStoreEffects, provideMockActions(() => actions)]
     });
 
     effects = TestBed.get(EventStoreEffects);
@@ -35,12 +29,11 @@ describe('collectionEvent-store effects', () => {
   });
 
   describe('searchEventsRequestEffect', () => {
-
     it('should respond with success', () => {
       const participant = new Participant().deserialize(factory.participant());
-      const searchParams = new SearchParams();
+      const searchParams = {};
       const collectionEvent = new CollectionEvent().deserialize(factory.collectionEvent());
-      const pagedReply = factory.pagedReply([ collectionEvent ]);
+      const pagedReply = factory.pagedReply([collectionEvent]);
       const action = EventActions.searchEventsRequest({ participant, searchParams });
       const completion = EventActions.searchEventsSuccess({ pagedReply });
       spyOn(collectionEventService, 'search').and.returnValue(of(pagedReply));
@@ -53,7 +46,7 @@ describe('collectionEvent-store effects', () => {
 
     it('should respond with failure', () => {
       const participant = new Participant().deserialize(factory.participant());
-      const searchParams = new SearchParams();
+      const searchParams = {};
       const error = {
         status: 404,
         error: {
@@ -72,7 +65,6 @@ describe('collectionEvent-store effects', () => {
   });
 
   describe('addEventRequestEffect', () => {
-
     it('should respond with success', () => {
       const event = new CollectionEvent().deserialize(factory.collectionEvent());
       const action = EventActions.addEventRequest({ event });
@@ -105,7 +97,6 @@ describe('collectionEvent-store effects', () => {
   });
 
   describe('getEventRequestEffect', () => {
-
     it('should respond with success', () => {
       const event = new CollectionEvent().deserialize(factory.collectionEvent());
       const action = EventActions.getEventRequest({ id: event.id });
@@ -138,7 +129,6 @@ describe('collectionEvent-store effects', () => {
   });
 
   describe('updateRequestEffect', () => {
-
     let event: CollectionEvent;
     let action: Action;
     let collectionEventListener: any;
@@ -177,7 +167,6 @@ describe('collectionEvent-store effects', () => {
   });
 
   describe('removeEventRequestEffect', () => {
-
     let event: CollectionEvent;
     let action: Action;
 
@@ -208,5 +197,4 @@ describe('collectionEvent-store effects', () => {
       expect(effects.removeEventRequest$).toBeObservable(cold('--b', { b: completion }));
     });
   });
-
 });

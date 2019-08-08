@@ -1,11 +1,10 @@
-import { PagedReplyEntityIds, SearchParams } from '@app/domain';
-import { ShipmentSpecimen, Shipment } from '@app/domain/shipments';
+import { PagedReplyEntityIds } from '@app/domain';
+import { Shipment, ShipmentSpecimen } from '@app/domain/shipments';
 import { Factory } from '@test/factory';
 import * as ShipmentSpecimenActions from './shipment-specimen.actions';
 import { initialState, reducer } from './shipment-specimen.reducer';
 
 describe('ShipmentSpecimen Reducer', () => {
-
   const factory = new Factory();
 
   describe('unknown action', () => {
@@ -19,10 +18,9 @@ describe('ShipmentSpecimen Reducer', () => {
   });
 
   describe('when searching for shipment specimens', () => {
-
     it('SearchShipmentSpecimensRequest', () => {
       const shipment = new Shipment().deserialize(factory.shipment());
-      const searchParams = new SearchParams();
+      const searchParams = {};
       const action = ShipmentSpecimenActions.searchShipmentSpecimensRequest({
         shipment,
         searchParams
@@ -38,22 +36,23 @@ describe('ShipmentSpecimen Reducer', () => {
 
     it('SearchShipmentSpecimensSuccess', () => {
       const shipmentSpecimen = new ShipmentSpecimen().deserialize(factory.shipmentSpecimen());
-      const pagedReply = factory.pagedReply<ShipmentSpecimen>([ shipmentSpecimen ]);
+      const pagedReply = factory.pagedReply<ShipmentSpecimen>([shipmentSpecimen]);
       const action = ShipmentSpecimenActions.searchShipmentSpecimensSuccess({ pagedReply });
       const state = reducer(
         {
           ...initialState,
           lastSearch: pagedReply.searchParams
         },
-        action);
+        action
+      );
 
-      const searchReply: { [ key: string]: PagedReplyEntityIds } = {};
-      searchReply[pagedReply.searchParams.queryString()] = {
+      const searchReply: { [key: string]: PagedReplyEntityIds } = {};
+      searchReply[JSON.stringify(pagedReply.searchParams)] = {
         searchParams: pagedReply.searchParams,
-        offset:       pagedReply.offset,
-        total:        pagedReply.total,
-        entityIds:    pagedReply.entities.map(e => e.id),
-        maxPages:     pagedReply.maxPages
+        offset: pagedReply.offset,
+        total: pagedReply.total,
+        entityIds: pagedReply.entities.map(e => e.id),
+        maxPages: pagedReply.maxPages
       };
 
       expect(state.searchReplies).toEqual(searchReply);
@@ -65,9 +64,9 @@ describe('ShipmentSpecimen Reducer', () => {
     it('SearchShipmentSpecimensFailure', () => {
       const error = {
         status: 404,
-          error: {
-            message: 'simulated error'
-          }
+        error: {
+          message: 'simulated error'
+        }
       };
       const action = ShipmentSpecimenActions.searchShipmentSpecimensFailure({ error });
       const state = reducer(undefined, action);
@@ -81,11 +80,9 @@ describe('ShipmentSpecimen Reducer', () => {
         }
       });
     });
-
   });
 
   describe('when getting a shipment specimen', () => {
-
     let shipmentSpecimen: ShipmentSpecimen;
 
     beforeEach(() => {
@@ -128,11 +125,9 @@ describe('ShipmentSpecimen Reducer', () => {
         }
       });
     });
-
   });
 
   describe('when removing a shipment specimen', () => {
-
     let shipmentSpecimen: ShipmentSpecimen;
 
     beforeEach(() => {
@@ -149,7 +144,7 @@ describe('ShipmentSpecimen Reducer', () => {
     it('removeShipmentSpecimenSuccess', () => {
       const testInitialState = {
         ...initialState,
-        ids: [ shipmentSpecimen.id ],
+        ids: [shipmentSpecimen.id],
         entities: {}
       };
       testInitialState['entities'][shipmentSpecimen.id] = shipmentSpecimen;
@@ -185,7 +180,5 @@ describe('ShipmentSpecimen Reducer', () => {
         }
       });
     });
-
   });
-
 });

@@ -3,9 +3,14 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { SearchFilterValues, SearchParams } from '@app/domain';
+import { SearchFilterValues } from '@app/domain';
 import { Membership } from '@app/domain/access';
-import { MembershipStoreActions, MembershipStoreReducer, NgrxRuntimeChecks, RootStoreState } from '@app/root-store';
+import {
+  MembershipStoreActions,
+  MembershipStoreReducer,
+  NgrxRuntimeChecks,
+  RootStoreState
+} from '@app/root-store';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { TruncatePipe } from '@app/shared/pipes';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -29,19 +34,15 @@ describe('MembershipsViewComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            'membership': MembershipStoreReducer.reducer,
-            'spinner': SpinnerStoreReducer.reducer
+            membership: MembershipStoreReducer.reducer,
+            spinner: SpinnerStoreReducer.reducer
           },
           NgrxRuntimeChecks
         )
       ],
-      declarations: [
-        MembershipsViewComponent,
-        TruncatePipe
-      ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
-    .compileComponents();
+      declarations: [MembershipsViewComponent, TruncatePipe],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -68,16 +69,15 @@ describe('MembershipsViewComponent', () => {
   });
 
   describe('for name filter', () => {
-
     it('reloads page when name filter is modified', () => {
       const storeListener = jest.spyOn(store, 'dispatch');
-      const filters: SearchFilterValues[] = [ { name: 'test' } ];
+      const filters: SearchFilterValues[] = [{ name: 'test' }];
 
       filters.forEach(value => {
         component.onFiltersUpdated(value);
 
         const action = MembershipStoreActions.searchMembershipsRequest({
-          searchParams: new SearchParams('name:like:test', undefined, 1, 5)
+          searchParams: { filter: 'name:like:test', sort: undefined, page: 1, limit: 5 }
         });
 
         expect(storeListener.mock.calls.length).toBe(1);
@@ -87,16 +87,19 @@ describe('MembershipsViewComponent', () => {
 
     it('displays that there are no matches for the name filter', () => {
       const pagedReply = factory.pagedReply([]);
-      pagedReply.searchParams.filter = 'name:like:test';
+      pagedReply.searchParams = {
+        ...pagedReply.searchParams,
+        filter: 'name:like:test'
+      };
       store.dispatch(MembershipStoreActions.searchMembershipsSuccess({ pagedReply }));
       fixture.detectChanges();
 
       const de = fixture.debugElement;
       expect(de.nativeElement.querySelectorAll('.list-group-item').length).toBe(0);
-      expect(de.nativeElement.querySelector('.alert').textContent)
-        .toContain('warning There are no memberships that match your criteria.');
+      expect(de.nativeElement.querySelector('.alert').textContent).toContain(
+        'warning There are no memberships that match your criteria.'
+      );
     });
-
   });
 
   it('reloads page when a sort is selected', () => {
@@ -104,7 +107,7 @@ describe('MembershipsViewComponent', () => {
     component.sortFieldSelected('name');
 
     const action = MembershipStoreActions.searchMembershipsRequest({
-      searchParams: new SearchParams('', 'name', 1, 5)
+      searchParams: { filter: '', sort: 'name', page: 1, limit: 5 }
     });
 
     expect(storeListener.mock.calls.length).toBe(1);
@@ -112,7 +115,6 @@ describe('MembershipsViewComponent', () => {
   });
 
   describe('when a new page is selected', () => {
-
     let storeListener: any;
 
     beforeEach(() => {
@@ -123,7 +125,7 @@ describe('MembershipsViewComponent', () => {
       component.paginationPageChanged(1);
 
       const action = MembershipStoreActions.searchMembershipsRequest({
-        searchParams: new SearchParams('', undefined, 1, 5)
+        searchParams: { filter: '', sort: undefined, page: 1, limit: 5 }
       });
 
       expect(storeListener.mock.calls.length).toBe(1);
@@ -134,7 +136,6 @@ describe('MembershipsViewComponent', () => {
       component.paginationPageChanged('test' as any);
       expect(storeListener.mock.calls.length).toBe(0);
     });
-
   });
 
   it('route is changed when a membership is selected', () => {
@@ -142,12 +143,12 @@ describe('MembershipsViewComponent', () => {
     const routerListener = jest.spyOn(router, 'navigate').mockResolvedValue(true);
     component.membershipSelected(membership);
     expect(routerListener.mock.calls.length).toBe(1);
-    expect(routerListener.mock.calls[0][0]).toEqual([ 'view', membership.slug, 'summary' ]);
+    expect(routerListener.mock.calls[0][0]).toEqual(['view', membership.slug, 'summary']);
   });
 
   it('displays memberships', () => {
     const membership = new Membership().deserialize(factory.membership());
-    const pagedReply = factory.pagedReply([ membership ]);
+    const pagedReply = factory.pagedReply([membership]);
     store.dispatch(MembershipStoreActions.searchMembershipsSuccess({ pagedReply }));
     fixture.detectChanges();
 
@@ -155,5 +156,4 @@ describe('MembershipsViewComponent', () => {
     expect(de.nativeElement.querySelectorAll('.list-group-item').length).toBe(1);
     expect(de.nativeElement.querySelectorAll('.card-footer').length).toBe(1);
   });
-
 });

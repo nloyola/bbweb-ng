@@ -28,6 +28,7 @@ import { EntitySelectorComponent } from './components/entity-selector/entity-sel
 import { UnauthorizedPageComponent } from './components/unauthorized-page/unauthorized-page.component';
 import { ServerErrorPageComponent } from './components/server-error-page/server-error-page.component';
 import { PagedEntitySelectorComponent } from './components/paged-entity-selector/paged-entity-selector.component';
+import { LocalTimePipe } from './pipes';
 
 @NgModule({
   imports: [
@@ -48,6 +49,7 @@ import { PagedEntitySelectorComponent } from './components/paged-entity-selector
     EntityFiltersComponent,
     TimeagoPipe,
     TruncatePipe,
+    LocalTimePipe,
     EntityStatusComponent,
     EntitySummaryComponent,
     TruncateToggleComponent,
@@ -87,4 +89,4 @@ import { PagedEntitySelectorComponent } from './components/paged-entity-selector
     LocationAddComponent
   ]
 })
-export class SharedModule { }
+export class SharedModule {}

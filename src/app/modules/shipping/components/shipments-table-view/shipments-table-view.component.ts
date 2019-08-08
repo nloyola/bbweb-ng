@@ -42,6 +42,7 @@ export class ShipmentsTableViewComponent implements OnInit, OnChanges, OnDestroy
   private unsubscribe$ = new Subject<void>();
 
   constructor(private router: Router, private route: ActivatedRoute, private formBuilder: FormBuilder) {
+    this.currentPage = 1;
     this.shipmentStates = Object.values(ShipmentState).filter(state => state !== ShipmentState.Completed);
   }
 
@@ -141,6 +142,7 @@ export class ShipmentsTableViewComponent implements OnInit, OnChanges, OnDestroy
     if (isNaN(page)) {
       return;
     }
+    this.currentPage = page;
     this.pageChanged.emit(page);
   }
 

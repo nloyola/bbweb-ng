@@ -1,4 +1,14 @@
-import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges,
+  ViewChild
+} from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AnnotationType, MaxValueCount, ValueTypes } from '@app/domain/annotations';
 import { Observable } from 'rxjs';
@@ -8,7 +18,6 @@ import { Observable } from 'rxjs';
   templateUrl: './annotation-type-add.component.html'
 })
 export class AnnotationTypeAddComponent implements OnInit, OnChanges {
-
   /* tslint:disable-next-line:no-input-rename */
   @Input('isSaving') isSaving$: Observable<boolean>;
 
@@ -22,7 +31,7 @@ export class AnnotationTypeAddComponent implements OnInit, OnChanges {
 
   form: FormGroup;
   valueTypes: string[];
-  valueTypeLabels: { [ key: string]: string };
+  valueTypeLabels: { [key: string]: string };
   title: string;
 
   protected parentStateRelativePath: string;
@@ -30,7 +39,7 @@ export class AnnotationTypeAddComponent implements OnInit, OnChanges {
   constructor(private formBuilder: FormBuilder) {
     this.valueTypes = Object.values(ValueTypes);
     this.valueTypeLabels = {};
-    Object.values(ValueTypes).forEach(vt => this.valueTypeLabels[vt] = vt.toUpperCase());
+    Object.values(ValueTypes).forEach(vt => (this.valueTypeLabels[vt] = vt.toUpperCase()));
   }
 
   ngOnInit() {
@@ -42,20 +51,20 @@ export class AnnotationTypeAddComponent implements OnInit, OnChanges {
     this.title = this.annotationType.isNew() ? 'Add Annotation' : 'Update Annotation';
     const valueType = this.annotationType.valueType ? this.annotationType.valueType : '';
     const maxValueCount = this.annotationType.maxValueCount
-      ? this.annotationType.maxValueCount : MaxValueCount.None;
+      ? this.annotationType.maxValueCount
+      : MaxValueCount.None;
 
-    this.form = this.formBuilder.group(
-      {
-        name: [ this.annotationType.name, [ Validators.required ]],
-        description: [ this.annotationType.description ],
-        required: [ this.annotationType.required ],
-        valueType: [ valueType, [ Validators.required ]],
-        maxValueCount: [ maxValueCount, [ Validators.required ]],
-        optionsGroup: this.formBuilder.array([])
-      });
+    this.form = this.formBuilder.group({
+      name: [this.annotationType.name, [Validators.required]],
+      description: [this.annotationType.description],
+      required: [this.annotationType.required],
+      valueType: [valueType, [Validators.required]],
+      maxValueCount: [maxValueCount, [Validators.required]],
+      optionsGroup: this.formBuilder.array([])
+    });
 
     if (this.isValueTypeSelect()) {
-      this.annotationType.options.forEach((option: String) => {
+      this.annotationType.options.forEach((option: string) => {
         this.options.push(this.formBuilder.control(option, Validators.required));
       });
     }
@@ -141,10 +150,11 @@ export class AnnotationTypeAddComponent implements OnInit, OnChanges {
     this.required.setValue(this.annotationType.required);
     this.valueType.setValue(this.annotationType.valueType);
     this.maxValueCount.setValue(
-      this.annotationType.maxValueCount ? this.annotationType.maxValueCount : MaxValueCount.None);
+      this.annotationType.maxValueCount ? this.annotationType.maxValueCount : MaxValueCount.None
+    );
 
     if (this.isValueTypeSelect()) {
-      this.annotationType.options.forEach((option: String) => {
+      this.annotationType.options.forEach((option: string) => {
         this.options.push(this.formBuilder.control(option, Validators.required));
       });
     }
@@ -158,15 +168,14 @@ export class AnnotationTypeAddComponent implements OnInit, OnChanges {
       valueType: this.form.value.valueType,
       maxValueCount: this.isValueTypeSelect() ? this.form.value.maxValueCount : undefined,
       required: this.form.value.required !== null ? this.form.value.required : false,
-      options: this.form.value.optionsGroup,
+      options: this.form.value.optionsGroup
     });
     return annotationType;
   }
 
   private checkInvalidIndex(index: number): void {
-    if ((index < 0) || (index >= this.options.length)) {
+    if (index < 0 || index >= this.options.length) {
       throw new Error('invalid option index: ' + index);
     }
   }
-
 }

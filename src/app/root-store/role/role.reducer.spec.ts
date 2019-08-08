@@ -5,7 +5,6 @@ import { Factory } from '@test/factory';
 import { Role } from '@app/domain/access';
 
 describe('Role Reducer', () => {
-
   const factory = new Factory();
 
   describe('unknown action', () => {
@@ -19,10 +18,9 @@ describe('Role Reducer', () => {
   });
 
   describe('when searching for roles', () => {
-
     it('SearchRolesRequest', () => {
       const payload = {
-        searchParams: new SearchParams()
+        searchParams: {}
       };
       const action = RoleStoreActions.searchRolesRequest(payload);
       const state = RoleStoreReducer.reducer(undefined, action);
@@ -37,7 +35,7 @@ describe('Role Reducer', () => {
     it('SearchRolesSuccess', () => {
       const role = new Role().deserialize(factory.role());
       const payload = {
-        pagedReply: factory.pagedReply<Role>([ role ])
+        pagedReply: factory.pagedReply<Role>([role])
       };
       const action = RoleStoreActions.searchRolesSuccess(payload);
       const state = RoleStoreReducer.reducer(
@@ -45,10 +43,11 @@ describe('Role Reducer', () => {
           ...RoleStoreReducer.initialState,
           lastSearch: payload.pagedReply.searchParams
         },
-        action);
+        action
+      );
 
-      const searchReply: { [ key: string]: PagedReplyEntityIds } = {};
-      searchReply[payload.pagedReply.searchParams.queryString()] = {
+      const searchReply: { [key: string]: PagedReplyEntityIds } = {};
+      searchReply[JSON.stringify(payload.pagedReply.searchParams)] = {
         searchParams: payload.pagedReply.searchParams,
         offset: payload.pagedReply.offset,
         total: payload.pagedReply.total,
@@ -83,11 +82,9 @@ describe('Role Reducer', () => {
         }
       });
     });
-
   });
 
   describe('when updating roles', () => {
-
     it('UpdateRoleRequest', () => {
       const role = new Role().deserialize(factory.role());
       const action = RoleStoreActions.updateRoleRequest({
@@ -98,7 +95,7 @@ describe('Role Reducer', () => {
       const state = RoleStoreReducer.reducer(undefined, action);
 
       expect(state).toEqual({
-        ...RoleStoreReducer.initialState,
+        ...RoleStoreReducer.initialState
       });
     });
 
@@ -133,11 +130,9 @@ describe('Role Reducer', () => {
         }
       });
     });
-
   });
 
   describe('when getting a single role', () => {
-
     it('GetRoleRequest', () => {
       const role = factory.role();
       const payload = { slug: role.slug };
@@ -145,7 +140,7 @@ describe('Role Reducer', () => {
       const state = RoleStoreReducer.reducer(undefined, action);
 
       expect(state).toEqual({
-        ...RoleStoreReducer.initialState,
+        ...RoleStoreReducer.initialState
       });
     });
 
@@ -180,7 +175,5 @@ describe('Role Reducer', () => {
         }
       });
     });
-
   });
-
 });

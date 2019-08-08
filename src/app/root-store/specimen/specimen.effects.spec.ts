@@ -12,7 +12,6 @@ import * as SpecimenActions from './specimen.actions';
 import { SpecimenStoreEffects } from './specimen.effects';
 
 describe('specimen-store effects', () => {
-
   let effects: SpecimenStoreEffects;
   let actions: Observable<any>;
   let specimenService: SpecimenService;
@@ -20,13 +19,8 @@ describe('specimen-store effects', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        HttpClientTestingModule
-      ],
-      providers: [
-        SpecimenStoreEffects,
-        provideMockActions(() => actions)
-      ]
+      imports: [HttpClientTestingModule],
+      providers: [SpecimenStoreEffects, provideMockActions(() => actions)]
     });
 
     effects = TestBed.get(SpecimenStoreEffects);
@@ -35,12 +29,11 @@ describe('specimen-store effects', () => {
   });
 
   describe('searchSpecimensRequestEffect', () => {
-
     it('should respond with success', () => {
       const event = new CollectionEvent().deserialize(factory.collectionEvent());
-      const searchParams = new SearchParams();
+      const searchParams = {};
       const specimen = new Specimen().deserialize(factory.specimen());
-      const pagedReply = factory.pagedReply([ specimen ]);
+      const pagedReply = factory.pagedReply([specimen]);
       const action = SpecimenActions.searchSpecimensRequest({ event, searchParams });
       const completion = SpecimenActions.searchSpecimensSuccess({ pagedReply });
       spyOn(specimenService, 'search').and.returnValue(of(pagedReply));
@@ -53,7 +46,7 @@ describe('specimen-store effects', () => {
 
     it('should respond with failure', () => {
       const event = new CollectionEvent().deserialize(factory.collectionEvent());
-      const searchParams = new SearchParams();
+      const searchParams = {};
       const error = {
         status: 404,
         error: {
@@ -72,10 +65,9 @@ describe('specimen-store effects', () => {
   });
 
   describe('addSpecimenRequestEffect', () => {
-
     it('should respond with success', () => {
       const event = new CollectionEvent().deserialize(factory.collectionEvent());
-      const specimens = [ new Specimen().deserialize(factory.specimen()) ];
+      const specimens = [new Specimen().deserialize(factory.specimen())];
       const action = SpecimenActions.addSpecimensRequest({ event, specimens });
       const completion = SpecimenActions.addSpecimensSuccess({ event });
       spyOn(specimenService, 'add').and.returnValue(of(event));
@@ -88,7 +80,7 @@ describe('specimen-store effects', () => {
 
     it('should respond with failure', () => {
       const event = new CollectionEvent().deserialize(factory.collectionEvent());
-      const specimens = [ new Specimen().deserialize(factory.specimen()) ];
+      const specimens = [new Specimen().deserialize(factory.specimen())];
       const error = {
         status: 404,
         error: {
@@ -107,7 +99,6 @@ describe('specimen-store effects', () => {
   });
 
   describe('getSpecimenRequestEffect', () => {
-
     it('should respond with success', () => {
       const specimen = new Specimen().deserialize(factory.specimen());
       const action = SpecimenActions.getSpecimenRequest({ id: specimen.id });
@@ -140,7 +131,6 @@ describe('specimen-store effects', () => {
   });
 
   describe('removeSpecimenRequestEffect', () => {
-
     let specimen: Specimen;
     let action: Action;
 
@@ -171,5 +161,4 @@ describe('specimen-store effects', () => {
       expect(effects.removeSpecimenRequest$).toBeObservable(cold('--b', { b: completion }));
     });
   });
-
 });

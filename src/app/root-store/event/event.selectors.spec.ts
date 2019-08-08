@@ -1,12 +1,11 @@
-import { Factory } from '@test/factory';
-import { SearchParams, PagedReplyEntityIds } from '@app/domain';
+import { PagedReplyEntityIds } from '@app/domain';
 import { CollectionEvent } from '@app/domain/participants';
-import { EntityAdapter, createEntityAdapter } from '@ngrx/entity';
-import { reducer, initialState } from './event.reducer';
+import { createEntityAdapter, EntityAdapter } from '@ngrx/entity';
+import { Factory } from '@test/factory';
+import { initialState } from './event.reducer';
 import * as selectors from './event.selectors';
 
 describe('collection event store selectors', () => {
-
   const factory = new Factory();
 
   it('selectCollectionEventLastAdded', () => {
@@ -19,8 +18,7 @@ describe('collection event store selectors', () => {
     };
 
     expect(selectors.selectCollectionEventLastAddedId(state)).toBe(collectionEvent.id);
-  })
-;
+  });
   it('selectCollectionEventLastRemoved', () => {
     const collectionEvent = factory.collectionEvent();
     const state = {
@@ -45,7 +43,7 @@ describe('collection event store selectors', () => {
   });
 
   it('selectCollectionEventLastSearch', () => {
-    const searchParams = new SearchParams();
+    const searchParams = {};
     const state = {
       event: {
         ...initialState,
@@ -58,14 +56,14 @@ describe('collection event store selectors', () => {
 
   it('selectCollectionEventSearchReplies', () => {
     const collectionEvent = new CollectionEvent().deserialize(factory.collectionEvent());
-    const pagedReply = factory.pagedReply<CollectionEvent>([ collectionEvent ]);
-    const searchReplies: { [ key: string]: PagedReplyEntityIds } = {};
-    searchReplies[pagedReply.searchParams.queryString()] = {
+    const pagedReply = factory.pagedReply<CollectionEvent>([collectionEvent]);
+    const searchReplies: { [key: string]: PagedReplyEntityIds } = {};
+    searchReplies[JSON.stringify(pagedReply.searchParams)] = {
       searchParams: pagedReply.searchParams,
       offset: pagedReply.offset,
       total: pagedReply.total,
       entityIds: pagedReply.entities.map(e => e.id),
-      maxPages: pagedReply.maxPages,
+      maxPages: pagedReply.maxPages
     };
     const state = {
       event: {
@@ -83,22 +81,21 @@ describe('collection event store selectors', () => {
       selectId: (s: CollectionEvent) => s.id
     });
     const state = {
-      event: adapter.addAll([ collectionEvent ], initialState)
+      event: adapter.addAll([collectionEvent], initialState)
     };
 
-    expect(selectors.selectAllCollectionEvents(state)).toEqual([ collectionEvent ]);
+    expect(selectors.selectAllCollectionEvents(state)).toEqual([collectionEvent]);
   });
 
   describe('selectCollectionEventSearchRepliesAndEntities', () => {
-
     it('when search has completed', () => {
       const collectionEvent = new CollectionEvent().deserialize(factory.collectionEvent());
       const adapter: EntityAdapter<CollectionEvent> = createEntityAdapter<CollectionEvent>({
         selectId: (s: CollectionEvent) => s.id
       });
-      const pagedReply = factory.pagedReply<CollectionEvent>([ collectionEvent ]);
-      const searchReplies: { [ key: string]: PagedReplyEntityIds } = {};
-      searchReplies[pagedReply.searchParams.queryString()] = {
+      const pagedReply = factory.pagedReply<CollectionEvent>([collectionEvent]);
+      const searchReplies: { [key: string]: PagedReplyEntityIds } = {};
+      searchReplies[JSON.stringify(pagedReply.searchParams)] = {
         searchParams: pagedReply.searchParams,
         offset: pagedReply.offset,
         total: pagedReply.total,
@@ -106,7 +103,7 @@ describe('collection event store selectors', () => {
         maxPages: pagedReply.maxPages
       };
       const state = {
-        event: adapter.addAll([ collectionEvent ], {
+        event: adapter.addAll([collectionEvent], {
           ...initialState,
           searchActive: false,
           lastSearch: pagedReply.searchParams,
@@ -115,7 +112,7 @@ describe('collection event store selectors', () => {
       };
 
       expect(selectors.selectCollectionEventSearchRepliesAndEntities(state)).toEqual({
-        entities: [ collectionEvent ],
+        entities: [collectionEvent],
         hasNoEntitiesToDisplay: false,
         hasNoResultsToDisplay: false,
         hasResultsToDisplay: true,
@@ -142,9 +139,9 @@ describe('collection event store selectors', () => {
       const adapter: EntityAdapter<CollectionEvent> = createEntityAdapter<CollectionEvent>({
         selectId: (s: CollectionEvent) => s.id
       });
-      const pagedReply = factory.pagedReply<CollectionEvent>([ collectionEvent ]);
+      const pagedReply = factory.pagedReply<CollectionEvent>([collectionEvent]);
       const state = {
-        event: adapter.addAll([ collectionEvent ], {
+        event: adapter.addAll([collectionEvent], {
           ...initialState,
           searchActive: false,
           lastSearch: pagedReply.searchParams,
@@ -154,7 +151,6 @@ describe('collection event store selectors', () => {
 
       expect(selectors.selectCollectionEventSearchRepliesAndEntities(state)).toBeUndefined();
     });
-
   });
 
   it('selectCollectionEventLastRemoved', () => {
@@ -163,7 +159,7 @@ describe('collection event store selectors', () => {
       selectId: (s: CollectionEvent) => s.id
     });
     const state = {
-      event: adapter.addAll([ collectionEvent ], {
+      event: adapter.addAll([collectionEvent], {
         ...initialState,
         lastRemovedId: collectionEvent.id
       })
@@ -171,5 +167,4 @@ describe('collection event store selectors', () => {
 
     expect(selectors.selectCollectionEventLastRemoved(state)).toEqual(collectionEvent);
   });
-
 });

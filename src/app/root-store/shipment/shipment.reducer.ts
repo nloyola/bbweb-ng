@@ -1,14 +1,14 @@
 import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 import { Shipment } from '@app/domain/shipments';
 import * as ShipmentActions from './shipment.actions';
-import { SearchParams, PagedReplyEntityIds } from '@app/domain';
+import { SearchParams, PagedReplyEntityIds, searchParams2Term } from '@app/domain';
 
 export interface State extends EntityState<Shipment> {
   lastAddedId: string;
   lastRemovedId: string;
   lastSearch?: SearchParams;
   searchActive?: boolean;
-  searchReplies?: { [url: string]: PagedReplyEntityIds };
+  searchReplies?: { [ url: string ]: PagedReplyEntityIds };
   canAddSpecimenInventoryIds: string[];
   error?: any;
 }
@@ -37,14 +37,14 @@ export function reducer(state = initialState, action: ShipmentActions.ShipmentAc
     }
 
     case ShipmentActions.searchShipmentsSuccess.type: {
-      const queryString = state.lastSearch.queryString();
+      const searchTerm = searchParams2Term(state.lastSearch);
       const newReply = {};
-      newReply[queryString] = {
-        entityIds: action.pagedReply.entities.map(shipment => shipment.id),
+      newReply[searchTerm] = {
+        entityIds:    action.pagedReply.entities.map(shipment => shipment.id),
         searchParams: action.pagedReply.searchParams,
-        offset: action.pagedReply.offset,
-        total: action.pagedReply.total,
-        maxPages: action.pagedReply.maxPages
+        offset:       action.pagedReply.offset,
+        total:        action.pagedReply.total,
+        maxPages:     action.pagedReply.maxPages
       };
 
       return adapter.upsertMany(action.pagedReply.entities, {
@@ -218,9 +218,9 @@ export function reducer(state = initialState, action: ShipmentActions.ShipmentAc
 
     case ShipmentActions.removeShipmentSuccess.type: {
       return adapter.removeOne(action.shipmentId, {
-        ...state,
-        lastRemovedId: action.shipmentId
-      });
+          ...state,
+          lastRemovedId: action.shipmentId
+        });
     }
 
     case ShipmentActions.removeShipmentFailure.type: {

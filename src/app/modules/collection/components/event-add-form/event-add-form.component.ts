@@ -4,10 +4,16 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { SearchParams } from '@app/domain';
 import { Participant, CollectionEvent } from '@app/domain/participants';
 import { CollectionEventType } from '@app/domain/studies';
-import { EventTypeStoreActions, EventTypeStoreSelectors, RootStoreState, EventStoreActions, EventStoreSelectors } from '@app/root-store';
+import {
+  EventTypeStoreActions,
+  EventTypeStoreSelectors,
+  RootStoreState,
+  EventStoreActions,
+  EventStoreSelectors
+} from '@app/root-store';
 import { select, Store } from '@ngrx/store';
 import { Observable, Subject, BehaviorSubject } from 'rxjs';
-import { takeUntil, tap, withLatestFrom, filter } from 'rxjs/operators';
+import { takeUntil, tap, withLatestFrom, filter, shareReplay } from 'rxjs/operators';
 import { AnnotationsAddSubformComponent } from '../annotations-add-subform/annotations-add-subform.component';
 import { Annotation, AnnotationFactory } from '@app/domain/annotations';
 import { faCalendar } from '@fortawesome/free-solid-svg-icons';
@@ -19,7 +25,6 @@ import { ToastrService } from 'ngx-toastr';
   styleUrls: ['./event-add-form.component.scss']
 })
 export class EventAddFormComponent implements OnInit, OnDestroy {
-
   participant: Participant;
   eventTypes$: Observable<CollectionEventType[]>;
   isSaving$ = new BehaviorSubject<boolean>(false);
@@ -31,69 +36,83 @@ export class EventAddFormComponent implements OnInit, OnDestroy {
   private addedMessage$ = new Subject<string>();
   private unsubscribe$ = new Subject<void>();
 
-  constructor(private store$: Store<RootStoreState.State>,
-              private formBuilder: FormBuilder,
-              private router: Router,
-              private route: ActivatedRoute,
-              private toastr: ToastrService) { }
+  constructor(
+    private store$: Store<RootStoreState.State>,
+    private formBuilder: FormBuilder,
+    private router: Router,
+    private route: ActivatedRoute,
+    private toastr: ToastrService
+  ) {}
 
   ngOnInit() {
     this.participant = this.route.parent.parent.snapshot.data.participant;
     this.form = this.formBuilder.group({
-      eventType: [ '', [ Validators.required ]],
-      visitNumber: [ '', [ Validators.required ]],
-      timeCompleted: [ '', [ Validators.required ]],
+      eventType: ['', [Validators.required]],
+      visitNumber: ['', [Validators.required]],
+      timeCompleted: ['', [Validators.required]],
       annotationsGroup: this.formBuilder.group({ annotations: new FormArray([]) })
     });
 
     this.eventTypes$ = this.store$.pipe(
       select(EventTypeStoreSelectors.selectLastNamesSearchEntities),
       tap(eventTypes => {
-        if (eventTypes === undefined) { return; }
+        if (eventTypes === undefined) {
+          return;
+        }
 
         const selectedEventType = eventTypes.find(et => et.id === this.form.value.eventType);
         if (selectedEventType) {
-          this.annotations = selectedEventType.annotationTypes
-            .map(at => AnnotationFactory.annotationFromType(at));
+          this.annotations = selectedEventType.annotationTypes.map(at =>
+            AnnotationFactory.annotationFromType(at)
+          );
           this.annotationsGroup.setControl(
             'annotations',
-            AnnotationsAddSubformComponent.buildSubForm(this.annotations, this.unsubscribe$));
+            AnnotationsAddSubformComponent.buildSubForm(this.annotations, this.unsubscribe$)
+          );
         }
       }),
-      // tap(x => console.log('eventTypes$', x)),
-      takeUntil(this.unsubscribe$));
+      //tap(x => console.log('eventTypes$', x)),
+      takeUntil(this.unsubscribe$),
+      shareReplay()
+    );
 
     this.eventTypes$.pipe(takeUntil(this.unsubscribe$)).subscribe(this.eventTypesSubject);
 
-    this.store$.pipe(
-      select(EventStoreSelectors.selectCollectionEventLastAdded),
-      withLatestFrom(this.addedMessage$),
-      takeUntil(this.unsubscribe$)
-    ).subscribe(([ event, msg ]) => {
-      const participant = this.route.parent.parent.snapshot.data.participant;
-      this.isSaving$.next(false);
-      this.toastr.success(msg, 'Add Successful');
-      this.router.navigate([ `/collection/${participant.slug}/collection/view/${event.visitNumber}` ]);
-    });
+    this.store$
+      .pipe(
+        select(EventStoreSelectors.selectCollectionEventLastAdded),
+        withLatestFrom(this.addedMessage$),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe(([event, msg]) => {
+        const participant = this.route.parent.parent.snapshot.data.participant;
+        this.isSaving$.next(false);
+        this.toastr.success(msg, 'Add Successful');
+        this.router.navigate([`/collection/${participant.slug}/collection/view/${event.visitNumber}`]);
+      });
 
-    this.store$.pipe(
-      select(EventStoreSelectors.selectCollectionEventError),
-      filter(error => error !== undefined),
-      withLatestFrom(this.addedMessage$),
-      takeUntil(this.unsubscribe$)
-    ).subscribe(([ error, _msg ]) => {
-      let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
-      if (errMessage.match(/already exists/)) {
-        errMessage = `That visit number already exists for this participant.`;
-      }
-      this.toastr.error(errMessage, 'Add Error', { disableTimeOut: true });
-      this.isSaving$.next(false);
-    });
+    this.store$
+      .pipe(
+        select(EventStoreSelectors.selectCollectionEventError),
+        filter(error => error !== undefined),
+        withLatestFrom(this.addedMessage$),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe(([error, _msg]) => {
+        let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
+        if (errMessage.match(/already exists/)) {
+          errMessage = `That visit number already exists for this participant.`;
+        }
+        this.toastr.error(errMessage, 'Add Error', { disableTimeOut: true });
+        this.isSaving$.next(false);
+      });
 
-    this.store$.dispatch(EventTypeStoreActions.searchEventTypeNamesRequest({
-      studyId: this.participant.study.id,
-      searchParams: new SearchParams()
-    }));
+    this.store$.dispatch(
+      EventTypeStoreActions.searchEventTypeNamesRequest({
+        studyId: this.participant.study.id,
+        searchParams: {}
+      })
+    );
   }
 
   ngOnDestroy() {
@@ -122,10 +141,12 @@ export class EventAddFormComponent implements OnInit, OnDestroy {
   }
 
   onEventTypeSelected() {
-    this.store$.dispatch(EventTypeStoreActions.getEventTypeByIdRequest({
-      studyId: this.participant.study.id,
-      eventTypeId: this.form.value.eventType
-    }));
+    this.store$.dispatch(
+      EventTypeStoreActions.getEventTypeByIdRequest({
+        studyId: this.participant.study.id,
+        eventTypeId: this.form.value.eventType
+      })
+    );
   }
 
   onSubmit(): void {
@@ -145,7 +166,6 @@ export class EventAddFormComponent implements OnInit, OnDestroy {
   }
 
   onCancel(): void {
-    this.router.navigate([ '..' ], { relativeTo: this.route });
+    this.router.navigate(['..'], { relativeTo: this.route });
   }
-
 }

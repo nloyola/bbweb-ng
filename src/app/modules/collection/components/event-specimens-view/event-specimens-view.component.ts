@@ -1,4 +1,13 @@
-import { Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+  TemplateRef,
+  ViewChild
+} from '@angular/core';
 import { Sort } from '@angular/material';
 import { PagedReplyInfo, SearchParams } from '@app/domain';
 import { CollectionEvent, Participant, Specimen } from '@app/domain/participants';
@@ -19,8 +28,7 @@ import { SpecimenViewModalComponent } from '../specimen-view-modal/specimen-view
   styleUrls: ['./event-specimens-view.component.scss']
 })
 export class EventSpecimensViewComponent implements OnInit, OnChanges {
-
-  @ViewChild('specimensTable', { static: true })  specimensTable: ElementRef;
+  @ViewChild('specimensTable', { static: true }) specimensTable: ElementRef;
   @ViewChild('removeSpecimenModal', { static: false }) removeSpecimenModal: TemplateRef<any>;
 
   @Input() event: CollectionEvent;
@@ -37,8 +45,7 @@ export class EventSpecimensViewComponent implements OnInit, OnChanges {
 
   private unsubscribe$ = new Subject<void>();
 
-  constructor(private store$: Store<RootStoreState.State>,
-              private modalService: NgbModal) { }
+  constructor(private store$: Store<RootStoreState.State>, private modalService: NgbModal) {}
 
   ngOnInit() {
     this.sortField = 'inventoryId';
@@ -47,21 +54,26 @@ export class EventSpecimensViewComponent implements OnInit, OnChanges {
     this.specimensPageInfo$ = this.store$.pipe(
       select(SpecimenStoreSelectors.selectSpecimenSearchRepliesAndEntities),
       takeUntil(this.unsubscribe$),
-      shareReplay());
+      shareReplay()
+    );
 
     this.specimens$ = this.specimensPageInfo$.pipe(
       filter(page => page !== undefined),
-      tap(() => { this.tableDataLoading = false; }),
-      map(page => page.entities));
+      tap(() => {
+        this.tableDataLoading = false;
+      }),
+      map(page => page.entities)
+    );
 
-    this.store$.pipe(
-      select(SpecimenStoreSelectors.selectSpecimenLastRemovedId),
-      filter(id => id !== null),
-      takeUntil(this.unsubscribe$)
-    ).subscribe((x) => {
-      this.applySearchParams();
-    });
-
+    this.store$
+      .pipe(
+        select(SpecimenStoreSelectors.selectSpecimenLastRemovedId),
+        filter(id => id !== null),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe(x => {
+        this.applySearchParams();
+      });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -72,13 +84,15 @@ export class EventSpecimensViewComponent implements OnInit, OnChanges {
   }
 
   paginationPageChanged(page: number) {
-    if (isNaN(page)) { return; }
+    if (isNaN(page)) {
+      return;
+    }
     this.applySearchParams();
 
     // FIXME: not working 100%
     // scrolling works only in some cases
     if (this.specimensTable.nativeElement.scrollIntoView) {
-      this.specimensTable.nativeElement.scrollIntoView({behavior: 'smooth', block: 'end'});
+      this.specimensTable.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'end' });
     }
   }
 
@@ -92,8 +106,9 @@ export class EventSpecimensViewComponent implements OnInit, OnChanges {
   removeSpecimen(specimen: Specimen) {
     this.specimenToRemove = specimen;
 
-    this.modalService.open(this.removeSpecimenModal, { size: 'lg' }).result
-      .then(() => {
+    this.modalService
+      .open(this.removeSpecimenModal, { size: 'lg' })
+      .result.then(() => {
         this.store$.dispatch(SpecimenStoreActions.removeSpecimenRequest({ specimen }));
       })
       .catch(() => {
@@ -103,13 +118,17 @@ export class EventSpecimensViewComponent implements OnInit, OnChanges {
 
   private applySearchParams() {
     this.tableDataLoading = true;
-    this.store$.dispatch(SpecimenStoreActions.searchSpecimensRequest({
-      event: this.event,
-      searchParams: new SearchParams('', // this.getFilters().join(';'),
-                                     this.sortField,
-                                     this.currentPage,
-                                     this.specimensLimit)
-    }));
+    const searchParams = {
+      sort: this.sortField,
+      page: this.currentPage,
+      limit: this.specimensLimit
+    };
+    this.store$.dispatch(
+      SpecimenStoreActions.searchSpecimensRequest({
+        event: this.event,
+        searchParams
+      })
+    );
   }
 
   sortData(sort: Sort) {
@@ -129,5 +148,4 @@ export class EventSpecimensViewComponent implements OnInit, OnChanges {
     this.currentPage = 1;
     this.applySearchParams();
   }
-
 }

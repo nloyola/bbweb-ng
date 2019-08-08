@@ -1,13 +1,13 @@
 import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 import { ShipmentSpecimen } from '@app/domain/shipments';
 import * as ShipmentSpecimenActions from './shipment-specimen.actions';
-import { SearchParams, PagedReplyEntityIds } from '@app/domain';
+import { SearchParams, PagedReplyEntityIds, searchParams2Term } from '@app/domain';
 
 export interface State extends EntityState<ShipmentSpecimen> {
   lastRemovedId: string;
   lastSearch?: SearchParams;
   searchActive?: boolean;
-  searchReplies?: { [ url: string ]: PagedReplyEntityIds };
+  searchReplies?: { [url: string]: PagedReplyEntityIds };
   error?: any;
 }
 
@@ -18,7 +18,7 @@ export const initialState: State = adapter.getInitialState({
   lastSearch: null,
   searchActive: false,
   searchReplies: {},
-  error: null,
+  error: null
 });
 
 export function reducer(
@@ -26,7 +26,6 @@ export function reducer(
   action: ShipmentSpecimenActions.ShipmentSpecimenActionsUnion
 ): State {
   switch (action.type) {
-
     case ShipmentSpecimenActions.searchShipmentSpecimensRequest.type: {
       return {
         ...state,
@@ -37,14 +36,14 @@ export function reducer(
     }
 
     case ShipmentSpecimenActions.searchShipmentSpecimensSuccess.type: {
-      const queryString = state.lastSearch.queryString();
+      const searchTerm = searchParams2Term(state.lastSearch);
       const newReply = {};
-      newReply[queryString] = {
-        entityIds:    action.pagedReply.entities.map(shipment => shipment.id),
+      newReply[searchTerm] = {
+        entityIds: action.pagedReply.entities.map(shipment => shipment.id),
         searchParams: action.pagedReply.searchParams,
-        offset:       action.pagedReply.offset,
-        total:        action.pagedReply.total,
-        maxPages:     action.pagedReply.maxPages
+        offset: action.pagedReply.offset,
+        total: action.pagedReply.total,
+        maxPages: action.pagedReply.maxPages
       };
 
       return adapter.upsertMany(action.pagedReply.entities, {
@@ -97,12 +96,10 @@ export function reducer(
     }
 
     case ShipmentSpecimenActions.removeShipmentSpecimenSuccess.type: {
-      return adapter.removeOne(
-        action.shipmentSpecimenId,
-        {
-          ...state,
-          lastRemovedId: action.shipmentSpecimenId
-        });
+      return adapter.removeOne(action.shipmentSpecimenId, {
+        ...state,
+        lastRemovedId: action.shipmentSpecimenId
+      });
     }
 
     case ShipmentSpecimenActions.removeShipmentSpecimenFailure.type: {
@@ -121,9 +118,4 @@ export function reducer(
   }
 }
 
-export const {
-  selectIds,
-  selectEntities,
-  selectAll,
-  selectTotal,
-} = adapter.getSelectors();
+export const { selectIds, selectEntities, selectAll, selectTotal } = adapter.getSelectors();

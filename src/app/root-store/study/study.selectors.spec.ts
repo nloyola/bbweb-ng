@@ -1,4 +1,4 @@
-import { PagedReplyEntityIds, PagedReplyInfo, SearchParams } from '@app/domain';
+import { PagedReplyEntityIds, PagedReplyInfo, SearchParams, SearchTermToPagedReplyHash } from '@app/domain';
 import { Study } from '@app/domain/studies';
 import { createEntityAdapter, EntityAdapter } from '@ngrx/entity';
 import { Factory } from '@test/factory';
@@ -6,11 +6,10 @@ import { initialState } from './study.reducer';
 import * as Selectors from './study.selectors';
 
 describe('study-store selectors', () => {
-
   interface SearchBehavoiurContext {
     selectSearchActive?: (state: any) => boolean;
     selectLastSearch?: (state: any) => SearchParams;
-    selectSearchReplies?: (state: any) => { [ url: string ]: PagedReplyEntityIds };
+    selectSearchReplies?: (state: any) => SearchTermToPagedReplyHash;
     selectSearchRepliesAndEntities?: (state: any) => PagedReplyInfo<Study>;
     stateKey?: string;
   }
@@ -51,10 +50,10 @@ describe('study-store selectors', () => {
       selectId: (s: Study) => s.id
     });
     const state = {
-      study: adapter.addAll([ study ], initialState)
+      study: adapter.addAll([study], initialState)
     };
 
-    expect(Selectors.selectAllStudies(state)).toEqual([ study ]);
+    expect(Selectors.selectAllStudies(state)).toEqual([study]);
   });
 
   it('selectStudyLastAdded', () => {
@@ -63,7 +62,7 @@ describe('study-store selectors', () => {
       selectId: (s: Study) => s.id
     });
     const state = {
-      study: adapter.addAll([ study ], {
+      study: adapter.addAll([study], {
         ...initialState,
         lastAddedId: study.id
       })
@@ -89,43 +88,42 @@ describe('study-store selectors', () => {
   });
 
   describe('when searching studies', () => {
-
     describe('for replies', () => {
-
       it('select search replies', () => {
         const study = new Study().deserialize(factory.study());
-        const pagedReply = factory.pagedReply<Study>([ study ]);
-        const searchReplies: { [ key: string]: PagedReplyEntityIds } = {};
-        searchReplies[pagedReply.searchParams.queryString()] = {
+        const pagedReply = factory.pagedReply<Study>([study]);
+        const searchTerm = JSON.stringify(pagedReply.searchParams);
+        const replies: { [searchTerm: string]: PagedReplyEntityIds } = {};
+        replies[searchTerm] = {
           searchParams: pagedReply.searchParams,
           offset: pagedReply.offset,
           total: pagedReply.total,
           entityIds: pagedReply.entities.map(e => e.id),
-          maxPages: pagedReply.maxPages,
+          maxPages: pagedReply.maxPages
         };
         const state = {
           study: {
             ...initialState,
             searchState: {
               ...initialState.searchState,
-              searchReplies
+              replies
             }
           }
         };
 
-        expect(Selectors.selectStudiesSearchReplies(state)).toBe(searchReplies);
+        expect(Selectors.selectStudiesSearchReplies(state)).toBe(replies);
       });
 
       describe('select search replies and entities', () => {
-
         it('when search has completed', () => {
           const study = new Study().deserialize(factory.study());
           const adapter: EntityAdapter<Study> = createEntityAdapter<Study>({
             selectId: (s: Study) => s.id
           });
-          const pagedReply = factory.pagedReply<Study>([ study ]);
-          const searchReplies: { [ key: string]: PagedReplyEntityIds } = {};
-          searchReplies[pagedReply.searchParams.queryString()] = {
+          const pagedReply = factory.pagedReply<Study>([study]);
+          const searchTerm = JSON.stringify(pagedReply.searchParams);
+          const replies = {};
+          replies[searchTerm] = {
             searchParams: pagedReply.searchParams,
             offset: pagedReply.offset,
             total: pagedReply.total,
@@ -133,19 +131,19 @@ describe('study-store selectors', () => {
             maxPages: pagedReply.maxPages
           };
           const state = {
-            study: adapter.addAll([ study ], {
+            study: adapter.addAll([study], {
               ...initialState,
               searchState: {
                 ...initialState.searchState,
                 searchActive: false,
                 lastSearch: pagedReply.searchParams,
-                searchReplies
+                replies
               }
             })
           };
 
           expect(Selectors.selectStudySearchRepliesAndEntities(state)).toEqual({
-            entities: [ study ],
+            entities: [study],
             hasNoEntitiesToDisplay: false,
             hasNoResultsToDisplay: false,
             hasResultsToDisplay: true,
@@ -165,14 +163,14 @@ describe('study-store selectors', () => {
           const adapter: EntityAdapter<Study> = createEntityAdapter<Study>({
             selectId: (s: Study) => s.id
           });
-          const pagedReply = factory.pagedReply<Study>([ study ]);
+          const pagedReply = factory.pagedReply<Study>([study]);
           const state = {
-            study: adapter.addAll([ study ], {
+            study: adapter.addAll([study], {
               ...initialState,
               searchState: {
-              ...initialState.searchState,
+                ...initialState.searchState,
                 searchReplies: {
-                  ...initialState.searchState.searchReplies,
+                  ...initialState.searchState.replies,
                   searchActive: false,
                   lastSearch: pagedReply.searchParams,
                   searchReplies: {}
@@ -183,13 +181,10 @@ describe('study-store selectors', () => {
 
           expect(Selectors.selectStudySearchRepliesAndEntities(state)).toBeUndefined();
         });
-
       });
-
     });
 
     describe('common', () => {
-
       const context: SearchBehavoiurContext = {};
 
       beforeEach(() => {
@@ -199,20 +194,15 @@ describe('study-store selectors', () => {
       });
 
       sharedSearchBehaviour(context);
-
     });
-
   });
 
   describe('when searching collection studies', () => {
-
     const context: SearchBehavoiurContext = {};
 
     beforeEach(() => {
-      context.selectSearchActive =
-        (state: any) => Selectors.selectCollectionStudiesSearchActive(state);
-      context.selectLastSearch =
-        (state: any) => Selectors.selectCollectionStudiesLastSearch(state);
+      context.selectSearchActive = (state: any) => Selectors.selectCollectionStudiesSearchActive(state);
+      context.selectLastSearch = (state: any) => Selectors.selectCollectionStudiesLastSearch(state);
       // context.selectSearchReplies =
       //   (state: any) => Selectors.selectCollectionStudiesSearchReplies(state);
       // context.selectSearchRepliesAndEntities =
@@ -221,13 +211,10 @@ describe('study-store selectors', () => {
     });
 
     sharedSearchBehaviour(context);
-
   });
 
   function sharedSearchBehaviour(context: SearchBehavoiurContext) {
-
     describe('shared behaviour', () => {
-
       it('select search active', () => {
         const state = { study: { ...initialState } };
         state['study'][context.stateKey] = {
@@ -239,7 +226,7 @@ describe('study-store selectors', () => {
       });
 
       it('select last search', () => {
-        const searchParams = new SearchParams();
+        const searchParams = {};
         const state = { study: { ...initialState } };
         state['study'][context.stateKey] = {
           ...initialState[context.stateKey],
@@ -248,8 +235,6 @@ describe('study-store selectors', () => {
 
         expect(context.selectLastSearch(state)).toBe(searchParams);
       });
-
     });
   }
-
 });

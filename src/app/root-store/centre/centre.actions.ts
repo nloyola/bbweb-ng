@@ -1,6 +1,6 @@
-import { CentreUpdateAttribute } from '@app/core/services';
+import { CentreUpdateAttribute, CentreLocationsSearchReply } from '@app/core/services';
 import { Location, PagedReply, SearchParams } from '@app/domain';
-import { Centre, CentreCounts } from '@app/domain/centres';
+import { Centre, CentreCounts, CentreLocationInfo } from '@app/domain/centres';
 import { createAction, props, union } from '@ngrx/store';
 
 export const getCentreCountsRequest = createAction(
@@ -32,12 +32,12 @@ export const searchCentresFailure = createAction('[Centre] Search Centres Failur
 
 export const searchLocationsRequest = createAction(
   '[Centre] Search Locations Request',
-  props<{ searchParams: SearchParams }>()
+  props<{ filter: string }>()
 );
 
 export const searchLocationsSuccess = createAction(
   '[Centre] Search Locations Success',
-  props<{ pagedReply: PagedReply<Centre> }>()
+  props<{ searchReply: CentreLocationsSearchReply }>()
 );
 
 export const searchLocationsFailure = createAction(
@@ -80,6 +80,9 @@ const all = union({
   searchCentresRequest,
   searchCentresSuccess,
   searchCentresFailure,
+  searchLocationsRequest,
+  searchLocationsSuccess,
+  searchLocationsFailure,
   addCentreRequest,
   addCentreSuccess,
   addCentreFailure,

@@ -1,11 +1,11 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
+import { async, ComponentFixture, fakeAsync, flush, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { By } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { SearchParams } from '@app/domain';
 import { User, UserState, UserUI } from '@app/domain/users';
-import { UserStoreActions, UserStoreReducer, RootStoreState, NgrxRuntimeChecks } from '@app/root-store';
+import { NgrxRuntimeChecks, RootStoreState, UserStoreActions, UserStoreReducer } from '@app/root-store';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { EntityFiltersComponent } from '@app/shared/components/entity-filters/entity-filters.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -13,7 +13,6 @@ import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
 import { UserCountsComponent } from '../user-counts/user-counts.component';
 import { UsersViewComponent } from './users-view.component';
-import { By } from '@angular/platform-browser';
 
 describe('UsersViewComponent', () => {
   let component: UsersViewComponent;
@@ -31,19 +30,15 @@ describe('UsersViewComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            'user': UserStoreReducer.reducer,
-            'spinner': SpinnerStoreReducer.reducer
+            user: UserStoreReducer.reducer,
+            spinner: SpinnerStoreReducer.reducer
           },
-          NgrxRuntimeChecks)
+          NgrxRuntimeChecks
+        )
       ],
-      declarations: [
-        EntityFiltersComponent,
-        UsersViewComponent,
-        UserCountsComponent
-      ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
-    .compileComponents();
+      declarations: [EntityFiltersComponent, UsersViewComponent, UserCountsComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -60,9 +55,7 @@ describe('UsersViewComponent', () => {
   });
 
   describe('for total count', () => {
-
     it('user count initialized', () => {
-      const users = [];
       const userCounts = factory.userCounts();
       const action = UserStoreActions.getUserCountsSuccess({ userCounts });
       store.dispatch(action);
@@ -85,22 +78,20 @@ describe('UsersViewComponent', () => {
       fixture.detectChanges();
       expect(comp[0].nativeElement.textContent).not.toContain('Retrieving counts');
     }));
-
   });
 
   describe('for name filter', () => {
-
     it('reloads page when name filter is modified', () => {
       const storeListener = jest.spyOn(store, 'dispatch');
       const filters: any[] = [
         {
           value: { name: 'test' },
-          searchParams: new SearchParams('name:like:test', undefined, 1, 5)
+          searchParams: { filter: 'name:like:test', sort: undefined, page: 1, limit: 5 }
         },
         {
           value: { stateId: UserState.Active },
-          searchParams: new SearchParams('state::active', undefined, 1, 5)
-        },
+          searchParams: { filter: 'state::active', sort: undefined, page: 1, limit: 5 }
+        }
       ];
 
       filters.forEach(filter => {
@@ -117,16 +108,19 @@ describe('UsersViewComponent', () => {
 
     it('displays that there are no matches for the name filter', () => {
       const pagedReply = factory.pagedReply([]);
-      pagedReply.searchParams.filter = 'name:like:test';
+      pagedReply.searchParams = {
+        ...pagedReply.searchParams,
+        filter: 'name:like:test'
+      };
       store.dispatch(UserStoreActions.searchUsersSuccess({ pagedReply }));
       fixture.detectChanges();
 
       const de = fixture.debugElement;
       expect(de.nativeElement.querySelectorAll('.list-group-item').length).toBe(0);
-      expect(de.nativeElement.querySelector('.alert').textContent)
-        .toContain('warning There are no users that match your criteria.');
+      expect(de.nativeElement.querySelector('.alert').textContent).toContain(
+        'warning There are no users that match your criteria.'
+      );
     });
-
   });
 
   it('reloads page when a sort is selected', () => {
@@ -134,7 +128,7 @@ describe('UsersViewComponent', () => {
     component.sortFieldSelected('name');
 
     const action = UserStoreActions.searchUsersRequest({
-      searchParams: new SearchParams('', 'name', 1, 5)
+      searchParams: { filter: '', sort: 'name', page: 1, limit: 5 }
     });
 
     expect(storeListener.mock.calls.length).toBe(1);
@@ -142,7 +136,6 @@ describe('UsersViewComponent', () => {
   });
 
   describe('when a new page is selected', () => {
-
     let storeListener: any;
 
     beforeEach(() => {
@@ -153,7 +146,7 @@ describe('UsersViewComponent', () => {
       component.paginationPageChanged(1);
 
       const action = UserStoreActions.searchUsersRequest({
-        searchParams: new SearchParams('', undefined, 1, 5)
+        searchParams: { filter: '', sort: undefined, page: 1, limit: 5 }
       });
 
       expect(storeListener.mock.calls.length).toBe(1);
@@ -164,7 +157,6 @@ describe('UsersViewComponent', () => {
       component.paginationPageChanged('test' as any);
       expect(storeListener.mock.calls.length).toBe(0);
     });
-
   });
 
   it('route is changed when a user is selected', () => {
@@ -172,12 +164,12 @@ describe('UsersViewComponent', () => {
     const routerListener = jest.spyOn(router, 'navigate').mockResolvedValue(true);
     component.userSelected(user);
     expect(routerListener.mock.calls.length).toBe(1);
-    expect(routerListener.mock.calls[0][0]).toEqual([ 'view', user.slug, 'summary' ]);
+    expect(routerListener.mock.calls[0][0]).toEqual(['view', user.slug, 'summary']);
   });
 
   it('displays users', () => {
     const user = new User().deserialize(factory.user());
-    const pagedReply = factory.pagedReply([ user ]);
+    const pagedReply = factory.pagedReply([user]);
     store.dispatch(UserStoreActions.searchUsersSuccess({ pagedReply }));
     fixture.detectChanges();
 

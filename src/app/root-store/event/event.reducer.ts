@@ -8,7 +8,7 @@ export interface State extends EntityState<CollectionEvent> {
   lastRemovedId: string;
   lastSearch?: SearchParams;
   searchActive?: boolean;
-  searchReplies?: { [ url: string ]: PagedReplyEntityIds };
+  searchReplies?: { [url: string]: PagedReplyEntityIds };
   error?: any;
 }
 
@@ -20,13 +20,10 @@ export const initialState: State = adapter.getInitialState({
   lastSearch: null,
   searchActive: false,
   searchReplies: {},
-  error: null,
+  error: null
 });
 
-export function reducer(
-  state = initialState,
-  action: CollectionEventActions.EventActionsUnion
-): State {
+export function reducer(state = initialState, action: CollectionEventActions.EventActionsUnion): State {
   switch (action.type) {
     case CollectionEventActions.searchEventsRequest.type: {
       return {
@@ -38,14 +35,14 @@ export function reducer(
     }
 
     case CollectionEventActions.searchEventsSuccess.type: {
-      const queryString = state.lastSearch.queryString();
+      const searchTerm = JSON.stringify(state.lastSearch);
       const newReply = {};
-      newReply[queryString] = {
-        entityIds:    action.pagedReply.entities.map(collectionEvent => collectionEvent.id),
+      newReply[searchTerm] = {
+        entityIds: action.pagedReply.entities.map(collectionEvent => collectionEvent.id),
         searchParams: action.pagedReply.searchParams,
-        offset:       action.pagedReply.offset,
-        total:        action.pagedReply.total,
-        maxPages:     action.pagedReply.maxPages
+        offset: action.pagedReply.offset,
+        total: action.pagedReply.total,
+        maxPages: action.pagedReply.maxPages
       };
 
       return adapter.upsertMany(action.pagedReply.entities, {
@@ -127,7 +124,8 @@ export function reducer(
           id: action.event.id,
           changes: action.event
         },
-        state);
+        state
+      );
     }
 
     case CollectionEventActions.updateEventFailure.type: {
@@ -149,12 +147,10 @@ export function reducer(
     }
 
     case CollectionEventActions.removeEventSuccess.type: {
-      return adapter.removeOne(
-        action.eventId,
-        {
-          ...state,
-          lastRemovedId: action.eventId
-        });
+      return adapter.removeOne(action.eventId, {
+        ...state,
+        lastRemovedId: action.eventId
+      });
     }
 
     case CollectionEventActions.removeEventFailure.type: {
@@ -166,14 +162,8 @@ export function reducer(
         }
       };
     }
-
   }
   return state;
 }
 
-export const {
-  selectIds,
-  selectEntities,
-  selectAll,
-  selectTotal,
-} = adapter.getSelectors();
+export const { selectIds, selectEntities, selectAll, selectTotal } = adapter.getSelectors();

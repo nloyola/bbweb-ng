@@ -3,7 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { SearchFilterValues, SearchParams } from '@app/domain';
+import { SearchFilterValues } from '@app/domain';
 import { Role } from '@app/domain/access';
 import { NgrxRuntimeChecks, RoleStoreActions, RoleStoreReducer, RootStoreState } from '@app/root-store';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
@@ -29,18 +29,15 @@ describe('RolesViewComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            'role': RoleStoreReducer.reducer,
-            'spinner': SpinnerStoreReducer.reducer
+            role: RoleStoreReducer.reducer,
+            spinner: SpinnerStoreReducer.reducer
           },
-          NgrxRuntimeChecks)
+          NgrxRuntimeChecks
+        )
       ],
-      declarations: [
-        RolesViewComponent,
-        TruncatePipe
-      ],
+      declarations: [RolesViewComponent, TruncatePipe],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -67,16 +64,15 @@ describe('RolesViewComponent', () => {
   });
 
   describe('for name filter', () => {
-
     it('reloads page when name filter is modified', () => {
       const storeListener = jest.spyOn(store, 'dispatch');
-      const filters: SearchFilterValues[] = [ { name: 'test' } ];
+      const filters: SearchFilterValues[] = [{ name: 'test' }];
 
       filters.forEach(value => {
         component.onFiltersUpdated(value);
 
         const action = RoleStoreActions.searchRolesRequest({
-          searchParams: new SearchParams('name:like:test', undefined, 1, 5)
+          searchParams: { filter: 'name:like:test', sort: undefined, page: 1, limit: 5 }
         });
 
         expect(storeListener.mock.calls.length).toBe(1);
@@ -86,16 +82,19 @@ describe('RolesViewComponent', () => {
 
     it('displays that there are no matches for the name filter', () => {
       const pagedReply = factory.pagedReply([]);
-      pagedReply.searchParams.filter = 'name:like:test';
+      pagedReply.searchParams = {
+        ...pagedReply.searchParams,
+        filter: 'name:like:test'
+      };
       store.dispatch(RoleStoreActions.searchRolesSuccess({ pagedReply }));
       fixture.detectChanges();
 
       const de = fixture.debugElement;
       expect(de.nativeElement.querySelectorAll('.list-group-item').length).toBe(0);
-      expect(de.nativeElement.querySelector('.alert').textContent)
-        .toContain('warning There are no roles that match your criteria.');
+      expect(de.nativeElement.querySelector('.alert').textContent).toContain(
+        'warning There are no roles that match your criteria.'
+      );
     });
-
   });
 
   it('reloads page when a sort is selected', () => {
@@ -103,7 +102,7 @@ describe('RolesViewComponent', () => {
     component.sortFieldSelected('name');
 
     const action = RoleStoreActions.searchRolesRequest({
-      searchParams: new SearchParams('', 'name', 1, 5)
+      searchParams: { filter: '', sort: 'name', page: 1, limit: 5 }
     });
 
     expect(storeListener.mock.calls.length).toBe(1);
@@ -111,7 +110,6 @@ describe('RolesViewComponent', () => {
   });
 
   describe('when a new page is selected', () => {
-
     let storeListener: any;
 
     beforeEach(() => {
@@ -122,7 +120,7 @@ describe('RolesViewComponent', () => {
       component.paginationPageChanged(1);
 
       const action = RoleStoreActions.searchRolesRequest({
-        searchParams: new SearchParams('', undefined, 1, 5)
+        searchParams: { filter: '', sort: undefined, page: 1, limit: 5 }
       });
 
       expect(storeListener.mock.calls.length).toBe(1);
@@ -133,7 +131,6 @@ describe('RolesViewComponent', () => {
       component.paginationPageChanged('test' as any);
       expect(storeListener.mock.calls.length).toBe(0);
     });
-
   });
 
   it('route is changed when a role is selected', () => {
@@ -141,12 +138,12 @@ describe('RolesViewComponent', () => {
     const routerListener = jest.spyOn(router, 'navigate').mockResolvedValue(true);
     component.roleSelected(role);
     expect(routerListener.mock.calls.length).toBe(1);
-    expect(routerListener.mock.calls[0][0]).toEqual([ 'view', role.slug, 'summary' ]);
+    expect(routerListener.mock.calls[0][0]).toEqual(['view', role.slug, 'summary']);
   });
 
   it('displays roles', () => {
     const role = new Role().deserialize(factory.role());
-    const pagedReply = factory.pagedReply([ role ]);
+    const pagedReply = factory.pagedReply([role]);
     store.dispatch(RoleStoreActions.searchRolesSuccess({ pagedReply }));
     fixture.detectChanges();
 
@@ -154,5 +151,4 @@ describe('RolesViewComponent', () => {
     expect(de.nativeElement.querySelectorAll('.list-group-item').length).toBe(1);
     expect(de.nativeElement.querySelectorAll('.card-footer').length).toBe(1);
   });
-
 });

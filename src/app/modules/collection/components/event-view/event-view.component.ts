@@ -2,7 +2,15 @@ import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/c
 import { ActivatedRoute, Router } from '@angular/router';
 import { CollectionEvent, Specimen, Participant } from '@app/domain/participants';
 import { CollectionEventType } from '@app/domain/studies';
-import { EventTypeStoreActions, EventTypeStoreSelectors, RootStoreState, EventStoreActions, EventStoreSelectors, SpecimenStoreActions, SpecimenStoreSelectors } from '@app/root-store';
+import {
+  EventTypeStoreActions,
+  EventTypeStoreSelectors,
+  RootStoreState,
+  EventStoreActions,
+  EventStoreSelectors,
+  SpecimenStoreActions,
+  SpecimenStoreSelectors
+} from '@app/root-store';
 import { Dictionary } from '@ngrx/entity';
 import { select, Store, createSelector } from '@ngrx/store';
 import { Observable, Subject, combineLatest, BehaviorSubject } from 'rxjs';
@@ -31,7 +39,6 @@ interface EntityData {
   styleUrls: ['./event-view.component.scss']
 })
 export class EventViewComponent implements OnInit, OnDestroy {
-
   @ViewChild('updateVisitNumberModal', { static: false }) updateVisitNumberModal: TemplateRef<any>;
   @ViewChild('updateTimeCompletedModal', { static: false }) updateTimeCompletedModal: TemplateRef<any>;
   @ViewChild('updateAnnotationModal', { static: false }) updateAnnotationModal: TemplateRef<any>;
@@ -53,116 +60,138 @@ export class EventViewComponent implements OnInit, OnDestroy {
   private updatedMessage$ = new Subject<string>();
   private unsubscribe$ = new Subject<void>();
 
-  constructor(private store$: Store<RootStoreState.State>,
-              private router: Router,
-              private route: ActivatedRoute,
-              private modalService: NgbModal,
-              private toastr: ToastrService) { }
+  constructor(
+    private store$: Store<RootStoreState.State>,
+    private router: Router,
+    private route: ActivatedRoute,
+    private modalService: NgbModal,
+    private toastr: ToastrService
+  ) {}
 
   ngOnInit() {
-    this.store$.dispatch(SpecimenStoreActions.searchSpecimensRequest({
-      event: this.route.parent.snapshot.data.event,
-      searchParams: new SearchParams()
-    }));
+    this.store$.dispatch(
+      SpecimenStoreActions.searchSpecimensRequest({
+        event: this.route.parent.snapshot.data.event,
+        searchParams: {}
+      })
+    );
 
     const entitiesSelector = createSelector(
       EventStoreSelectors.selectAllCollectionEventEntities,
       EventTypeStoreSelectors.selectAllEventTypeEntities,
       SpecimenStoreSelectors.selectAllSpecimens,
-      (events: Dictionary<CollectionEvent>,
-       eventTypes: Dictionary<CollectionEventType>,
-       specimens: Specimen[]): SelectorData => ({
-         events, eventTypes, specimens
-      }));
+      (
+        events: Dictionary<CollectionEvent>,
+        eventTypes: Dictionary<CollectionEventType>,
+        specimens: Specimen[]
+      ): SelectorData => ({
+        events,
+        eventTypes,
+        specimens
+      })
+    );
 
-    this.entities$ = combineLatest([
-      this.route.parent.data,
-      this.store$.pipe(select(entitiesSelector))
-    ]).pipe(
-      map(([ routeData, entities ]) => {
+    this.entities$ = combineLatest([this.route.parent.data, this.store$.pipe(select(entitiesSelector))]).pipe(
+      map(([routeData, entities]) => {
         const event = entities.events[routeData.event.id];
         const eventType = entities.eventTypes[routeData.event.eventTypeId];
         const specimens = entities.specimens
-          ? entities.specimens.filter(spc => spc.eventId === routeData.event.id) : [];
+          ? entities.specimens.filter(spc => spc.eventId === routeData.event.id)
+          : [];
 
         if (eventType === undefined) {
-          this.store$.dispatch(EventTypeStoreActions.getEventTypeByIdRequest({
-            studyId: this.route.parent.parent.parent.parent.snapshot.data.participant.study.id,
-            eventTypeId: routeData.event.eventTypeId
-          }));
+          this.store$.dispatch(
+            EventTypeStoreActions.getEventTypeByIdRequest({
+              studyId: this.route.parent.parent.parent.parent.snapshot.data.participant.study.id,
+              eventTypeId: routeData.event.eventTypeId
+            })
+          );
         }
 
         return { event, eventType, specimens };
       }),
       takeUntil(this.unsubscribe$),
-      shareReplay());
+      shareReplay()
+    );
 
     this.entities$.pipe(takeUntil(this.unsubscribe$)).subscribe(this.entitiesSubject);
     this.event$ = this.entities$.pipe(map(entities => entities.event));
     this.eventType$ = this.entities$.pipe(map(entities => entities.eventType));
     this.specimens$ = this.entities$.pipe(map(entities => entities.specimens));
 
-    this.annotations$ = this.entities$.pipe(map(entities => {
-      if ((entities.event === undefined) || (entities.eventType === undefined)
-          || (entities.eventType.annotationTypes === undefined)) {
-        return [];
-      }
-
-      return entities.eventType.annotationTypes.map(at => {
-        const annotation = AnnotationFactory.annotationFromType(at);
-
-        const eventAnnotation =
-          entities.event.annotations.find(a => a.annotationTypeId === annotation.annotationTypeId);
-        if (eventAnnotation) {
-          annotation.value = eventAnnotation.value;
+    this.annotations$ = this.entities$.pipe(
+      map(entities => {
+        if (
+          entities.event === undefined ||
+          entities.eventType === undefined ||
+          entities.eventType.annotationTypes === undefined
+        ) {
+          return [];
         }
-        return annotation;
-      });
-    }));
 
-    this.entities$.pipe(
-      withLatestFrom(this.updatedMessage$),
-      takeUntil(this.unsubscribe$)
-    ).subscribe(([ entities, message ]) => {
-      if ((entities === undefined) || (message === null)) { return; }
+        return entities.eventType.annotationTypes.map(at => {
+          const annotation = AnnotationFactory.annotationFromType(at);
 
-      if (entities.event !== undefined) {
-        this.toastr.success(message, 'Update Successfull');
-        this.updatedMessage$.next(null);
-        if (entities.event.visitNumber !== this.route.parent.snapshot.params.visitNumber) {
-          // uniqueId was changed and a new slug was assigned
-          //
-          // need to change state since slug is used in URL and by breadcrumbs
+          const eventAnnotation = entities.event.annotations.find(
+            a => a.annotationTypeId === annotation.annotationTypeId
+          );
+          if (eventAnnotation) {
+            annotation.value = eventAnnotation.value;
+          }
+          return annotation;
+        });
+      })
+    );
+
+    this.entities$
+      .pipe(
+        withLatestFrom(this.updatedMessage$),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe(([entities, message]) => {
+        if (entities === undefined || message === null) {
+          return;
+        }
+
+        if (entities.event !== undefined) {
+          this.toastr.success(message, 'Update Successfull');
+          this.updatedMessage$.next(null);
+          if (entities.event.visitNumber !== this.route.parent.snapshot.params.visitNumber) {
+            // uniqueId was changed and a new slug was assigned
+            //
+            // need to change state since slug is used in URL and by breadcrumbs
+            this.router.navigate([
+              '/collection',
+              this.route.parent.parent.parent.parent.snapshot.params.slug,
+              'collection',
+              'view',
+              entities.event.visitNumber
+            ]);
+          }
+        } else {
+          this.toastr.success(message, 'Remove Successfull');
           this.router.navigate([
             '/collection',
             this.route.parent.parent.parent.parent.snapshot.params.slug,
-            'collection',
-            'view',
-            entities.event.visitNumber
+            'collection'
           ]);
         }
-      } else {
-        this.toastr.success(message, 'Remove Successfull');
-        this.router.navigate([
-          '/collection',
-          this.route.parent.parent.parent.parent.snapshot.params.slug,
-          'collection'
-        ]);
-      }
-    });
+      });
 
-    this.store$.pipe(
-      select(EventStoreSelectors.selectCollectionEventError),
-      filter(error => error !== null),
-      withLatestFrom(this.updatedMessage$),
-      takeUntil(this.unsubscribe$)
-    ).subscribe(([error, _msg]) => {
-      let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
-      if (errMessage && errMessage.indexOf('already exists') > -1) {
-        errMessage = 'An event with that visit number exists. Please use a different one.';
-      }
-      this.toastr.error(errMessage, 'Update Error', { disableTimeOut: true });
-    });
+    this.store$
+      .pipe(
+        select(EventStoreSelectors.selectCollectionEventError),
+        filter(error => error !== null),
+        withLatestFrom(this.updatedMessage$),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe(([error, _msg]) => {
+        let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
+        if (errMessage && errMessage.indexOf('already exists') > -1) {
+          errMessage = 'An event with that visit number exists. Please use a different one.';
+        }
+        this.toastr.error(errMessage, 'Update Error', { disableTimeOut: true });
+      });
   }
 
   ngOnDestroy() {
@@ -173,13 +202,16 @@ export class EventViewComponent implements OnInit, OnDestroy {
   updateVisitNumber() {
     const event = this.entitiesSubject.value.event;
     this.visitNumberModalOptions = { required: true };
-    this.modalService.open(this.updateVisitNumberModal, { size: 'lg' }).result
-      .then(value => {
-        this.store$.dispatch(EventStoreActions.updateEventRequest({
-          event,
-          attributeName: 'visitNumber',
-          value
-        }));
+    this.modalService
+      .open(this.updateVisitNumberModal, { size: 'lg' })
+      .result.then(value => {
+        this.store$.dispatch(
+          EventStoreActions.updateEventRequest({
+            event,
+            attributeName: 'visitNumber',
+            value
+          })
+        );
         this.updatedMessage$.next('Visit number was updated');
       })
       .catch(() => {
@@ -190,13 +222,16 @@ export class EventViewComponent implements OnInit, OnDestroy {
   updateTimeCompleted() {
     const event = this.entitiesSubject.value.event;
     this.timeCompletedModalOptions = { required: true };
-    this.modalService.open(this.updateTimeCompletedModal, { size: 'lg' }).result
-      .then(value => {
-        this.store$.dispatch(EventStoreActions.updateEventRequest({
-          event,
-          attributeName: 'timeCompleted',
-          value
-        }));
+    this.modalService
+      .open(this.updateTimeCompletedModal, { size: 'lg' })
+      .result.then(value => {
+        this.store$.dispatch(
+          EventStoreActions.updateEventRequest({
+            event,
+            attributeName: 'timeCompleted',
+            value
+          })
+        );
         this.updatedMessage$.next('Time Completed was updated');
       })
       .catch(() => {
@@ -208,14 +243,17 @@ export class EventViewComponent implements OnInit, OnDestroy {
     const event = this.entitiesSubject.value.event;
     this.annotationToEdit = annotation;
 
-    this.modalService.open(this.updateAnnotationModal, { size: 'lg' }).result
-      .then(value => {
+    this.modalService
+      .open(this.updateAnnotationModal, { size: 'lg' })
+      .result.then(value => {
         const updatedAnnotation = value;
-        this.store$.dispatch(EventStoreActions.updateEventRequest({
-          event,
-          attributeName: 'addOrUpdateAnnotation',
-          value: updatedAnnotation.serverAnnotation()
-        }));
+        this.store$.dispatch(
+          EventStoreActions.updateEventRequest({
+            event,
+            attributeName: 'addOrUpdateAnnotation',
+            value: updatedAnnotation.serverAnnotation()
+          })
+        );
         this.updatedMessage$.next(`${annotation.label} was updated`);
       })
       .catch(() => {
@@ -232,12 +270,12 @@ export class EventViewComponent implements OnInit, OnDestroy {
     }
 
     const event = this.entitiesSubject.value.event;
-    this.modalService.open(this.removeEventModal).result
-      .then(() => {
+    this.modalService
+      .open(this.removeEventModal)
+      .result.then(() => {
         this.store$.dispatch(EventStoreActions.removeEventRequest({ event }));
         this.updatedMessage$.next('Event Removed');
       })
       .catch(() => undefined);
   }
-
 }

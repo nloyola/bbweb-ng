@@ -1,4 +1,4 @@
-import { PagedReplyEntityIds, SearchParams } from '@app/domain';
+import { SearchParams, searchParams2Term, SearchTermToPagedReplyHash } from '@app/domain';
 import { Role } from '@app/domain/access';
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity';
 import * as RoleActions from './role.actions';
@@ -6,7 +6,7 @@ import * as RoleActions from './role.actions';
 export interface State extends EntityState<Role> {
   lastSearch?: SearchParams;
   searchActive?: boolean;
-  searchReplies?: { [ url: string ]: PagedReplyEntityIds };
+  searchReplies?: SearchTermToPagedReplyHash;
   error?: any;
 }
 
@@ -44,9 +44,9 @@ export function reducer(state = initialState, action: RoleActions.RoleActionsUni
 
     case RoleActions.searchRolesSuccess.type: {
       const pagedReply = action.pagedReply;
-      const queryString = state.lastSearch.queryString();
+      const searchTerm = searchParams2Term(state.lastSearch);
       const newReply = {};
-      newReply[queryString] = {
+      newReply[searchTerm] = {
         entityIds: pagedReply.entities.map(role => role.id),
         searchParams: pagedReply.searchParams,
         offset: pagedReply.offset,
@@ -85,9 +85,4 @@ export function reducer(state = initialState, action: RoleActions.RoleActionsUni
   return state;
 }
 
-export const {
-  selectIds,
-  selectEntities,
-  selectAll,
-  selectTotal,
-} = adapter.getSelectors();
+export const { selectIds, selectEntities, selectAll, selectTotal } = adapter.getSelectors();

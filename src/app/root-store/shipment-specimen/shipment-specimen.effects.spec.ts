@@ -1,8 +1,7 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { ShipmentSpecimenService } from '@app/core/services';
-import { SearchParams } from '@app/domain';
-import { ShipmentSpecimen, Shipment } from '@app/domain/shipments';
+import { Shipment, ShipmentSpecimen } from '@app/domain/shipments';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
 import { Factory } from '@test/factory';
@@ -12,7 +11,6 @@ import * as ShipmentSpecimenActions from './shipment-specimen.actions';
 import { ShipmentSpecimenStoreEffects } from './shipment-specimen.effects';
 
 describe('shipmentSpecimen-store effects', () => {
-
   let effects: ShipmentSpecimenStoreEffects;
   let actions: Observable<any>;
   let shipmentSpecimenService: ShipmentSpecimenService;
@@ -20,13 +18,8 @@ describe('shipmentSpecimen-store effects', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        HttpClientTestingModule
-      ],
-      providers: [
-        ShipmentSpecimenStoreEffects,
-        provideMockActions(() => actions)
-      ]
+      imports: [HttpClientTestingModule],
+      providers: [ShipmentSpecimenStoreEffects, provideMockActions(() => actions)]
     });
 
     effects = TestBed.get(ShipmentSpecimenStoreEffects);
@@ -35,12 +28,11 @@ describe('shipmentSpecimen-store effects', () => {
   });
 
   describe('searchShipmentSpecimensRequestEffect', () => {
-
     it('should respond with success', () => {
-      const searchParams = new SearchParams();
+      const searchParams = {};
       const shipment = new Shipment().deserialize(factory.shipment());
       const shipmentSpecimen = new ShipmentSpecimen().deserialize(factory.shipmentSpecimen());
-      const pagedReply = factory.pagedReply([ shipmentSpecimen ]);
+      const pagedReply = factory.pagedReply([shipmentSpecimen]);
       const action = ShipmentSpecimenActions.searchShipmentSpecimensRequest({
         shipment,
         searchParams
@@ -55,7 +47,7 @@ describe('shipmentSpecimen-store effects', () => {
     });
 
     it('should respond with failure', () => {
-      const searchParams = new SearchParams();
+      const searchParams = {};
       const shipment = new Shipment().deserialize(factory.shipment());
       const error = {
         status: 404,
@@ -78,7 +70,6 @@ describe('shipmentSpecimen-store effects', () => {
   });
 
   describe('getShipmentSpecimenRequestEffect', () => {
-
     it('should respond with success', () => {
       const shipmentSpecimen = new ShipmentSpecimen().deserialize(factory.shipmentSpecimen());
       const action = ShipmentSpecimenActions.getShipmentSpecimenRequest({ id: shipmentSpecimen.id });
@@ -111,7 +102,6 @@ describe('shipmentSpecimen-store effects', () => {
   });
 
   describe('removeShipmentSpecimenRequestEffect', () => {
-
     let shipmentSpecimen: ShipmentSpecimen;
     let action: Action;
 
@@ -144,5 +134,4 @@ describe('shipmentSpecimen-store effects', () => {
       expect(effects.removeShipmentSpecimenRequest$).toBeObservable(cold('--b', { b: completion }));
     });
   });
-
 });

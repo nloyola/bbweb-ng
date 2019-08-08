@@ -18,3 +18,5 @@ export * from './spinner';
 export * from './study';
 export * from './user';
 export * from './root-store.module';
+export * from './search-state.model';
+export * from './search-state.model';

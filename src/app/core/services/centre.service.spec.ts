@@ -1,16 +1,13 @@
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { PagedReply, SearchParams } from '@app/domain';
-import { Centre, CentreCounts } from '@app/domain/centres';
+import { Location, PagedReply, SearchParams } from '@app/domain';
+import { Centre, CentreCounts, CentreLocationInfo } from '@app/domain/centres';
 import { PagedQueryBehaviour } from '@test/behaviours/paged-query.behaviour';
 import { Factory } from '@test/factory';
 import * as faker from 'faker';
 import { CentreService } from './centre.service';
-import { Location } from '@app/domain';
-import { Study, IStudy } from '@app/domain/studies';
 
 describe('CentreService', () => {
-
   const BASE_URL = '/api/centres';
 
   let httpMock: HttpTestingController;
@@ -19,9 +16,7 @@ describe('CentreService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        HttpClientTestingModule
-      ],
+      imports: [HttpClientTestingModule],
       providers: [CentreService]
     });
 
@@ -34,7 +29,6 @@ describe('CentreService', () => {
   });
 
   describe('for centre counts', () => {
-
     it('reply is handled correctly', () => {
       const counts = factory.centreCounts();
       service.counts().subscribe((s: CentreCounts) => {
@@ -51,15 +45,18 @@ describe('CentreService', () => {
 
     it('handles an error reply correctly', () => {
       service.counts().subscribe(
-        () => { fail('should have been an error response'); },
-        err => { expect(err.message).toContain('expected a centre object'); }
+        () => {
+          fail('should have been an error response');
+        },
+        err => {
+          expect(err.message).toContain('expected a centre object');
+        }
       );
 
       const req = httpMock.expectOne(`${BASE_URL}/counts`);
       req.flush({ status: 'error', data: undefined });
       httpMock.verify();
     });
-
   });
 
   describe('when requesting a centre', () => {
@@ -86,25 +83,27 @@ describe('CentreService', () => {
 
     it('handles an error reply correctly', () => {
       service.get(centre.slug).subscribe(
-        () => { fail('should have been an error response'); },
-        err => { expect(err.message).toContain('expected a centre object'); }
+        () => {
+          fail('should have been an error response');
+        },
+        err => {
+          expect(err.message).toContain('expected a centre object');
+        }
       );
 
       const req = httpMock.expectOne(`${BASE_URL}/${centre.slug}`);
       req.flush({ status: 'error', data: undefined });
       httpMock.verify();
     });
-
   });
 
   describe('when searching centres', () => {
-
     const context: PagedQueryBehaviour.Context<Centre> = {};
 
     beforeEach(() => {
       context.search = (searchParams: SearchParams) => service.search(searchParams);
       context.url = `${BASE_URL}/search`;
-      context.replyItems = [ factory.centre() ];
+      context.replyItems = [factory.centre()];
       context.subscription = (pr: PagedReply<Centre>) => {
         expect(pr.entities.length).toBe(1);
         expect(pr.entities[0]).toEqual(jasmine.any(Centre));
@@ -112,11 +111,36 @@ describe('CentreService', () => {
     });
 
     PagedQueryBehaviour.sharedBehaviour(context);
+  });
 
+  describe('when searching centre locations', () => {
+    it('reply is handled correctly', done => {
+      const centres = [factory.location(), factory.location()]
+        .map(loc => factory.centre({ locations: [loc] }))
+        .map(c => new Centre().deserialize(c));
+      const centreLocations = centres.map(c => factory.centreLocationInfo(c));
+      const filter = factory.stringNext();
+      const reply = centreLocations;
+      const obs = service.searchLocations(filter);
+      obs.subscribe(reply => {
+        expect(reply.filter).toBe(filter);
+        expect(reply.centreLocations.length).toBe(centres.length);
+        expect(reply.centreLocations[0]).toEqual(jasmine.any(CentreLocationInfo));
+        done();
+      });
+      expect(obs).toBeHttpSuccess(httpMock, 'POST', `${BASE_URL}/locations`, reply, (body: any) => {
+        expect(body).toEqual({ filter, limit: 10 });
+      });
+    });
+
+    it('handles an error reply correctly', () => {
+      const filter = factory.stringNext();
+      const obs = service.searchLocations(filter);
+      expect(obs).toBeHttpError(httpMock, 'POST', `${BASE_URL}/locations`, 'expected centre locations');
+    });
   });
 
   describe('when adding a centre', () => {
-
     it('request contains correct JSON and reply is handled correctly', () => {
       const rawCentre = factory.centre();
       const centre = new Centre().deserialize(rawCentre);
@@ -142,19 +166,21 @@ describe('CentreService', () => {
       const centre = new Centre().deserialize(rawCentre);
 
       service.add(centre).subscribe(
-        () => { fail('should have been an error response'); },
-        err => { expect(err.message).toContain('expected a centre object'); }
+        () => {
+          fail('should have been an error response');
+        },
+        err => {
+          expect(err.message).toContain('expected a centre object');
+        }
       );
 
       const req = httpMock.expectOne(`${BASE_URL}/`);
       req.flush({ status: 'error', data: undefined });
       httpMock.verify();
     });
-
   });
 
   describe('for updating a centre', () => {
-
     let rawCentre: any;
     let centre: Centre;
     const study = factory.study();
@@ -211,7 +237,6 @@ describe('CentreService', () => {
           url: `${BASE_URL}/locations/${centre.id}/${centre.version}/${location.id}`
         }
       ];
-
     });
 
     it('request contains correct JSON and reply is handled correctly', () => {
@@ -256,8 +281,12 @@ describe('CentreService', () => {
     it('handles an error reply correctly', () => {
       testData.forEach((testInfo: any) => {
         service.update(centre, testInfo.attribute, testInfo.value).subscribe(
-          () => { fail('should have been an error response'); },
-          err => { expect(err.message).toContain('expected a centre object'); }
+          () => {
+            fail('should have been an error response');
+          },
+          err => {
+            expect(err.message).toContain('expected a centre object');
+          }
         );
 
         const req = httpMock.expectOne(testInfo.url);
@@ -282,10 +311,10 @@ describe('CentreService', () => {
         }
       ];
       testData.forEach((testInfo: any) => {
-        expect(() => service.update(centre, testInfo.attribute, testInfo.value))
-          .toThrowError(testInfo.expectedErrMsg);
+        expect(() => service.update(centre, testInfo.attribute, testInfo.value)).toThrowError(
+          testInfo.expectedErrMsg
+        );
       });
     });
   });
-
 });

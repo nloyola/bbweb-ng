@@ -5,7 +5,6 @@ import { Factory } from '@test/factory';
 import { User } from '@app/domain/users';
 
 describe('User Reducer', () => {
-
   const factory = new Factory();
 
   describe('unknown action', () => {
@@ -19,7 +18,6 @@ describe('User Reducer', () => {
   });
 
   describe('for user counts', () => {
-
     it('GetUserCountsRequest', () => {
       const action = UserStoreActions.getUserCountsRequest();
       const state = UserStoreReducer.reducer(undefined, action);
@@ -60,14 +58,12 @@ describe('User Reducer', () => {
         }
       });
     });
-
   });
 
   describe('when searching for users', () => {
-
     it('SearchUsersRequest', () => {
       const payload = {
-        searchParams: new SearchParams()
+        searchParams: {}
       };
       const action = UserStoreActions.searchUsersRequest(payload);
       const state = UserStoreReducer.reducer(undefined, action);
@@ -82,7 +78,7 @@ describe('User Reducer', () => {
     it('SearchUsersSuccess', () => {
       const user = new User().deserialize(factory.user());
       const payload = {
-        pagedReply: factory.pagedReply<User>([ user ])
+        pagedReply: factory.pagedReply<User>([user])
       };
       const action = UserStoreActions.searchUsersSuccess(payload);
       const state = UserStoreReducer.reducer(
@@ -90,10 +86,11 @@ describe('User Reducer', () => {
           ...UserStoreReducer.initialState,
           lastSearch: payload.pagedReply.searchParams
         },
-        action);
+        action
+      );
 
-      const searchReply: { [ key: string]: PagedReplyEntityIds } = {};
-      searchReply[payload.pagedReply.searchParams.queryString()] = {
+      const searchReply: { [key: string]: PagedReplyEntityIds } = {};
+      searchReply[JSON.stringify(payload.pagedReply.searchParams)] = {
         searchParams: payload.pagedReply.searchParams,
         offset: payload.pagedReply.offset,
         total: payload.pagedReply.total,
@@ -128,11 +125,9 @@ describe('User Reducer', () => {
         }
       });
     });
-
   });
 
   describe('when updating users', () => {
-
     it('UpdateUserRequest', () => {
       const user = new User().deserialize(factory.user());
       const action = UserStoreActions.updateUserRequest({
@@ -143,7 +138,7 @@ describe('User Reducer', () => {
       const state = UserStoreReducer.reducer(undefined, action);
 
       expect(state).toEqual({
-        ...UserStoreReducer.initialState,
+        ...UserStoreReducer.initialState
       });
     });
 
@@ -178,11 +173,9 @@ describe('User Reducer', () => {
         }
       });
     });
-
   });
 
   describe('when getting a single user', () => {
-
     it('GetUserRequest', () => {
       const user = factory.user();
       const payload = { slug: user.slug };
@@ -190,7 +183,7 @@ describe('User Reducer', () => {
       const state = UserStoreReducer.reducer(undefined, action);
 
       expect(state).toEqual({
-        ...UserStoreReducer.initialState,
+        ...UserStoreReducer.initialState
       });
     });
 
@@ -225,7 +218,5 @@ describe('User Reducer', () => {
         }
       });
     });
-
   });
-
 });

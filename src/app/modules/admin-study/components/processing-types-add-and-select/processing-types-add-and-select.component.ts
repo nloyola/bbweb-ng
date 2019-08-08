@@ -24,7 +24,6 @@ export interface ProcessingTypePageInfo {
   styleUrls: ['./processing-types-add-and-select.component.scss']
 })
 export class ProcessingTypesAddAndSelectComponent implements OnInit, OnDestroy {
-
   @Input() study: Study;
 
   @Output() addSelected = new EventEmitter<any>();
@@ -46,20 +45,22 @@ export class ProcessingTypesAddAndSelectComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.isAddAllowed = this.study.isDisabled();
 
-    this.isLoading$ =
-      this.store$.pipe(select(ProcessingTypeStoreSelectors.selectSearchActive));
+    this.isLoading$ = this.store$.pipe(select(ProcessingTypeStoreSelectors.selectSearchActive));
 
     this.pageInfo$ = this.store$.pipe(
       select(ProcessingTypeStoreSelectors.selectSearchRepliesAndEntities),
-      takeUntil(this.unsubscribe$));
-
-    this.store$.pipe(
-      select(ProcessingTypeStoreSelectors.selectLastRemovedId),
-      filter(id => id !== null),
       takeUntil(this.unsubscribe$)
-    ).subscribe(() => {
-      this.applySearchParams();
-    });
+    );
+
+    this.store$
+      .pipe(
+        select(ProcessingTypeStoreSelectors.selectLastRemovedId),
+        filter(id => id !== null),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe(() => {
+        this.applySearchParams();
+      });
 
     this.applySearchParams();
   }
@@ -89,14 +90,18 @@ export class ProcessingTypesAddAndSelectComponent implements OnInit, OnDestroy {
   }
 
   private applySearchParams() {
-    this.store$.dispatch(new ProcessingTypeStoreActions.SearchProcessingTypesRequest({
-      studySlug: this.study.slug,
-      studyId: this.study.id,
-      searchParams: new SearchParams(this.filterValues,
-                                     this.sortField,
-                                     this.currentPage,
-                                     this.processingTypesLimit)
-    }));
+    const searchParams = {
+      filter: this.filterValues,
+      sort: this.sortField,
+      page: this.currentPage,
+      limit: this.processingTypesLimit
+    };
+    this.store$.dispatch(
+      new ProcessingTypeStoreActions.SearchProcessingTypesRequest({
+        studySlug: this.study.slug,
+        studyId: this.study.id,
+        searchParams
+      })
+    );
   }
-
 }

@@ -90,10 +90,16 @@ export class EventAddSelectComponent implements OnInit, OnDestroy {
   }
 
   private applySearchParams() {
+    const searchParams = {
+      filter: this.filterValues,
+      sort: this.sortField,
+      page: this.currentPage,
+      limit: this.eventsLimit
+    };
     this.store$.dispatch(
       EventStoreActions.searchEventsRequest({
         participant: this.participant,
-        searchParams: new SearchParams(this.filterValues, this.sortField, this.currentPage, this.eventsLimit)
+        searchParams
       })
     );
   }

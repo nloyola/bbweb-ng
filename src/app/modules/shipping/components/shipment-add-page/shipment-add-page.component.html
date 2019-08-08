@@ -1,15 +1,3 @@
-<mat-horizontal-stepper [linear]="'true'">
-  <mat-step>
-    <ng-template matStepLabel>Information</ng-template>
-  </mat-step>
-  <mat-step>
-    <ng-template matStepLabel>Add Items</ng-template>
-  </mat-step>
-  <mat-step>
-    <ng-template matStepLabel>Packed</ng-template>
-  </mat-step>
-</mat-horizontal-stepper>
-
 <div class="row">
   <div class="col-sm-12 mt-4">
     <div class="card">
@@ -60,25 +48,25 @@
 
           <!-- FROM CENTRE -->
           <div class="form-group row">
-            <label for="fromCentre" class="col-md-3 col-form-label" i18n>From Centre</label>
+            <label for="fromLocationInfo" class="col-md-3 col-form-label" i18n>From Centre</label>
             <div class="col-md-9">
               <input
                 type="text"
                 class="form-control"
-                [(ngModel)]="fromCentreTypeahead.selectedEntity"
+                [(ngModel)]="fromLocationInfoTypeahead.selectedEntity"
                 [ngModelOptions]="{ standalone: true }"
-                [ngbTypeahead]="fromCentreTypeahead.getEntities"
+                [ngbTypeahead]="fromLocationInfoTypeahead.getEntities"
                 i18n-placeholder
                 placeholder="The location of the centre this shipment is coming from"
-                [inputFormatter]="fromCentreTypeahead.typeaheadFormatter"
-                [resultFormatter]="fromCentreTypeahead.typeaheadFormatter"
-                (selectItem)="fromCentreTypeahead.onEntitySelected($event)"
+                [inputFormatter]="fromLocationInfoTypeahead.formatter"
+                [resultFormatter]="fromLocationInfoTypeahead.formatter"
+                (selectItem)="fromLocationInfoTypeahead.onEntitySelected($event)"
                 [editable]="false"
                 required
               />
             </div>
-            <div class="col-md-9 offset-3" *ngIf="fromCentre.invalid && fromCentre.touched">
-              <div class="text-danger small" *ngIf="fromCentre.errors.required" i18n>
+            <div class="col-md-9 offset-3" *ngIf="fromLocationInfo.invalid && fromLocationInfo.touched">
+              <div class="text-danger small" *ngIf="fromLocationInfo.errors.required" i18n>
                 A from centre is required
               </div>
             </div>
@@ -86,25 +74,25 @@
 
           <!-- TO CENTRE -->
           <div class="form-group row">
-            <label for="toCentre" class="col-md-3 col-form-label" i18n>To Centre</label>
+            <label for="toLocationInfo" class="col-md-3 col-form-label" i18n>To Centre</label>
             <div class="col-md-9">
               <input
                 type="text"
                 class="form-control"
-                [(ngModel)]="toCentreTypeahead.selectedEntity"
+                [(ngModel)]="toLocationInfoTypeahead.selectedEntity"
                 [ngModelOptions]="{ standalone: true }"
-                [ngbTypeahead]="toCentreTypeahead.getEntities"
+                [ngbTypeahead]="toLocationInfoTypeahead.getEntities"
                 i18n-placeholder
                 placeholder="The location of the centre this shipment is coming to"
-                [inputFormatter]="toCentreTypeahead.typeaheadFormatter"
-                [resultFormatter]="toCentreTypeahead.typeaheadFormatter"
-                (selectItem)="toCentreTypeahead.onEntitySelected($event)"
+                [inputFormatter]="toLocationInfoTypeahead.formatter"
+                [resultFormatter]="toLocationInfoTypeahead.formatter"
+                (selectItem)="toLocationInfoTypeahead.onEntitySelected($event)"
                 [editable]="false"
                 required
               />
             </div>
-            <div class="col-md-9 offset-3" *ngIf="toCentre.invalid && toCentre.touched">
-              <div class="text-danger small" *ngIf="toCentre.errors.required" i18n>
+            <div class="col-md-9 offset-3" *ngIf="toLocationInfo.invalid && toLocationInfo.touched">
+              <div class="text-danger small" *ngIf="toLocationInfo.errors.required" i18n>
                 A to centre is required
               </div>
             </div>

@@ -1,4 +1,4 @@
-import { PagedReply, PagedReplyEntityIds, SearchParams } from '@app/domain';
+import { PagedReplyEntityIds, SearchParams } from '@app/domain';
 import { Study, StudyStateInfo } from '@app/domain/studies';
 import { Factory } from '@test/factory';
 import * as StudyActions from './study.actions';
@@ -11,7 +11,6 @@ interface SearchSharedBehavourContext {
 }
 
 describe('Study Reducer', () => {
-
   let factory: Factory;
 
   beforeEach(() => {
@@ -68,10 +67,9 @@ describe('Study Reducer', () => {
   });
 
   describe('studies search', () => {
-
     it('Search Success', () => {
       const study = new Study().deserialize(factory.study());
-      const pagedReply = factory.pagedReply<Study>([ study ]);
+      const pagedReply = factory.pagedReply<Study>([study]);
       const action = StudyActions.searchStudiesSuccess({ pagedReply });
       const state = reducer(
         {
@@ -81,10 +79,11 @@ describe('Study Reducer', () => {
             lastSearch: pagedReply.searchParams
           }
         },
-        action);
+        action
+      );
 
-      const searchReply: { [ key: string]: PagedReplyEntityIds } = {};
-      searchReply[pagedReply.searchParams.queryString()] = {
+      const searchReply: { [searchTerm: string]: PagedReplyEntityIds } = {};
+      searchReply[JSON.stringify(pagedReply.searchParams)] = {
         searchParams: pagedReply.searchParams,
         offset: pagedReply.offset,
         total: pagedReply.total,
@@ -92,35 +91,31 @@ describe('Study Reducer', () => {
         maxPages: pagedReply.maxPages
       };
 
-      expect(state.searchState.searchReplies).toEqual(searchReply);
+      expect(state.searchState.replies).toEqual(searchReply);
       expect(state.searchState.searchActive).toBe(false);
       expect(state.ids).toContain(study.id);
       expect(state.entities[study.id]).toEqual(study);
     });
 
     describe('common', () => {
-
       const context: SearchSharedBehavourContext = {};
 
       beforeEach(() => {
-        context.createSearchRequestAction =
-          (searchParams: SearchParams) => StudyActions.searchStudiesRequest({ searchParams });
+        context.createSearchRequestAction = (searchParams: SearchParams) =>
+          StudyActions.searchStudiesRequest({ searchParams });
         context.createSearchFailureAction = (error: any) => StudyActions.searchStudiesFailure({ error });
         context.stateKey = 'searchState';
       });
 
       searchSharedBehaviour(context);
-
     });
-
   });
 
   describe('collection studies search', () => {
-
     it('Search Success', () => {
       const study = new Study().deserialize(factory.study());
-      const studiesData = [ new StudyStateInfo().deserialize(factory.entityNameAndStateDto(study)) ];
-      const searchParams = new SearchParams();
+      const studiesData = [new StudyStateInfo().deserialize(factory.entityNameAndStateDto(study))];
+      const searchParams = {};
       const action = StudyActions.searchCollectionStudiesSuccess({ studiesData });
       const state = reducer(
         {
@@ -130,31 +125,30 @@ describe('Study Reducer', () => {
             lastSearch: searchParams
           }
         },
-        action);
+        action
+      );
 
-      const searchReply: { [ key: string]: string[] } = {};
-      searchReply[searchParams.queryString()] = [ study.id ];
+      const searchReply: { [searchTerm: string]: string[] } = {};
+      searchReply[JSON.stringify(searchParams)] = [study.id];
 
-      expect(state.searchCollectionStudiesState.searchReplies).toEqual(searchReply);
+      expect(state.searchCollectionStudiesState.replies).toEqual(searchReply);
       expect(state.searchCollectionStudiesState.searchActive).toBe(false);
       expect(state.ids).toContain(study.id);
       expect(state.entities[study.id]).toBeTruthy();
     });
 
     describe('common', () => {
-
       const context: SearchSharedBehavourContext = {};
 
       beforeEach(() => {
-        context.createSearchRequestAction =
-          (searchParams: SearchParams) => StudyActions.searchCollectionStudiesRequest({ searchParams });
-        context.createSearchFailureAction =
-          (error: any) => StudyActions.searchCollectionStudiesFailure({ error });
+        context.createSearchRequestAction = (searchParams: SearchParams) =>
+          StudyActions.searchCollectionStudiesRequest({ searchParams });
+        context.createSearchFailureAction = (error: any) =>
+          StudyActions.searchCollectionStudiesFailure({ error });
         context.stateKey = 'searchCollectionStudiesState';
       });
 
       searchSharedBehaviour(context);
-
     });
   });
 
@@ -165,7 +159,7 @@ describe('Study Reducer', () => {
     const state = reducer(undefined, action);
 
     expect(state).toEqual({
-      ...initialState,
+      ...initialState
     });
   });
 
@@ -212,7 +206,7 @@ describe('Study Reducer', () => {
     const state = reducer(undefined, action);
 
     expect(state).toEqual({
-      ...initialState,
+      ...initialState
     });
   });
 
@@ -252,11 +246,9 @@ describe('Study Reducer', () => {
   });
 
   function searchSharedBehaviour(context: SearchSharedBehavourContext) {
-
     describe('shared behaviour', () => {
-
       it('Search Request', () => {
-        const searchParams = new SearchParams();
+        const searchParams = {};
         const action = context.createSearchRequestAction(searchParams);
         const state = reducer(undefined, action);
 
@@ -295,8 +287,6 @@ describe('Study Reducer', () => {
           }
         });
       });
-
     });
   }
-
 });

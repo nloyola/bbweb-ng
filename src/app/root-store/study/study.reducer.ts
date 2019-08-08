@@ -1,23 +1,24 @@
-import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
+import {
+  PagedReply,
+  SearchParams,
+  searchParams2Term,
+  SearchTermToEntityIdsHash,
+  SearchTermToPagedReplyHash
+} from '@app/domain';
 import { Study, StudyStateInfo } from '@app/domain/studies';
-import { SearchParams, PagedReplyEntityIds, PagedReply, EntityIds } from '@app/domain';
 import { StudyCounts } from '@app/domain/studies/study-counts.model';
+import { SearchState } from '@app/root-store';
+import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity';
 import * as StudyActions from './study.actions';
 
 export interface EnableAllowdIds {
-  [ slug: string ]: boolean;
-}
-
-export interface SearchState<T> {
-  lastSearch?: SearchParams;
-  searchReplies?: { [ url: string ]: T };
-  searchActive?: boolean;
+  [slug: string]: boolean;
 }
 
 export interface State extends EntityState<Study> {
   lastAddedId: string;
-  searchState: SearchState<PagedReplyEntityIds>;
-  searchCollectionStudiesState: SearchState<EntityIds>;
+  searchState: SearchState<SearchTermToPagedReplyHash, SearchParams>;
+  searchCollectionStudiesState: SearchState<SearchTermToEntityIdsHash, SearchParams>;
   studyCounts?: StudyCounts;
   enableAllowedIds?: EnableAllowdIds;
   error?: any;
@@ -29,23 +30,20 @@ export const initialState: State = adapter.getInitialState({
   lastAddedId: null,
   searchState: {
     lastSearch: null,
-    searchReplies: {},
-    searchActive: false,
+    replies: {},
+    searchActive: false
   },
   searchCollectionStudiesState: {
     lastSearch: null,
-    searchReplies: {},
-    searchActive: false,
+    replies: {},
+    searchActive: false
   },
   studyCounts: {} as any,
   enableAllowedIds: {},
   error: null
 });
 
-export function reducer(
-  state = initialState,
-  action: StudyActions.StudyActionsUnion
-): State {
+export function reducer(state = initialState, action: StudyActions.StudyActionsUnion): State {
   switch (action.type) {
     case StudyActions.getStudyCountsRequest.type:
     case StudyActions.getStudyRequest.type:
@@ -86,7 +84,7 @@ export function reducer(
     case StudyActions.searchStudiesSuccess.type: {
       return adapter.upsertMany(action.pagedReply.entities, {
         ...state,
-        searchState: searchStudiesSuccess(state.searchState, action.pagedReply),
+        searchState: searchStudiesSuccess(state.searchState, action.pagedReply)
       });
     }
 
@@ -114,15 +112,15 @@ export function reducer(
       if (state.searchCollectionStudiesState.lastSearch === undefined) {
         throw new Error('last search is undefined');
       }
-      const queryString = state.searchCollectionStudiesState.lastSearch.queryString();
+      const searchTerm = searchParams2Term(state.searchCollectionStudiesState.lastSearch);
       const newIds = {};
-      newIds[queryString] = action.studiesData.map(dto => dto.id);
+      newIds[searchTerm] = action.studiesData.map(dto => dto.id);
       const newState = {
         ...state,
         searchCollectionStudiesState: {
           ...state.searchCollectionStudiesState,
-          searchReplies: {
-            ...state.searchCollectionStudiesState.searchReplies,
+          replies: {
+            ...state.searchCollectionStudiesState.replies,
             ...newIds
           },
           searchActive: false
@@ -161,7 +159,8 @@ export function reducer(
           id: action.study.id,
           changes: action.study
         },
-        state);
+        state
+      );
     }
 
     case StudyActions.getStudySuccess.type: {
@@ -195,45 +194,45 @@ export function reducer(
         ...state,
         error: {
           error: action.error,
-          actionType: action.type,
+          actionType: action.type
         }
       };
   }
   return state;
 }
 
-function searchRequest<T>(state: SearchState<T>, searchParams: SearchParams): SearchState<T> {
+function searchRequest<T, S>(state: SearchState<T, S>, searchTerm: S): SearchState<T, S> {
   return {
     ...state,
-    lastSearch: searchParams,
-    searchActive: true,
+    lastSearch: searchTerm,
+    searchActive: true
   };
 }
 
 function searchStudiesSuccess(
-  state: SearchState<PagedReplyEntityIds>,
+  state: SearchState<SearchTermToPagedReplyHash, SearchParams>,
   pagedReply: PagedReply<Study>
-): SearchState<PagedReplyEntityIds> {
-  const queryString = state.lastSearch.queryString();
+): SearchState<SearchTermToPagedReplyHash, SearchParams> {
+  const searchTerm = searchParams2Term(state.lastSearch);
   const newReply = {};
-  newReply[queryString] = {
-    entityIds:    pagedReply.entities.map(study => study.id),
+  newReply[searchTerm] = {
+    entityIds: pagedReply.entities.map(study => study.id),
     searchParams: pagedReply.searchParams,
-    offset:       pagedReply.offset,
-    total:        pagedReply.total,
-    maxPages:     pagedReply.maxPages
+    offset: pagedReply.offset,
+    total: pagedReply.total,
+    maxPages: pagedReply.maxPages
   };
   return {
     ...state,
-    searchReplies: {
-      ...state.searchReplies,
+    replies: {
+      ...state.replies,
       ...newReply
     },
     searchActive: false
   };
 }
 
-function searchFailure<T>(state: SearchState<T>): SearchState<T> {
+function searchFailure<T, S>(state: SearchState<T, S>): SearchState<T, S> {
   return {
     ...state,
     lastSearch: null,
@@ -241,9 +240,4 @@ function searchFailure<T>(state: SearchState<T>): SearchState<T> {
   };
 }
 
-export const {
-  selectIds,
-  selectEntities,
-  selectAll,
-  selectTotal,
-} = adapter.getSelectors();
+export const { selectIds, selectEntities, selectAll, selectTotal } = adapter.getSelectors();

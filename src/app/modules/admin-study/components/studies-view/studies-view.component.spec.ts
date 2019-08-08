@@ -15,7 +15,6 @@ import { StudyCountsComponent } from '../study-counts/study-counts.component';
 import { StudiesViewComponent } from './studies-view.component';
 
 describe('StudiesViewComponent', () => {
-
   let component: StudiesViewComponent;
   let fixture: ComponentFixture<StudiesViewComponent>;
   let store: Store<RootStoreState.State>;
@@ -28,18 +27,15 @@ describe('StudiesViewComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            'study': StudyStoreReducer.reducer
+            study: StudyStoreReducer.reducer
           },
-          NgrxRuntimeChecks),
+          NgrxRuntimeChecks
+        ),
         ToastrModule.forRoot()
       ],
-      declarations: [
-        StudiesViewComponent,
-        StudyCountsComponent
-      ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
-    .compileComponents();
+      declarations: [StudiesViewComponent, StudyCountsComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -82,16 +78,13 @@ describe('StudiesViewComponent', () => {
 
   it('reloads page when a filter is modified', () => {
     spyOn(store, 'dispatch').and.callThrough();
-    const filters: SearchFilterValues[] = [
-      { name: 'test' },
-      { stateId: StudyState.Disabled }
-    ];
+    const filters: SearchFilterValues[] = [{ name: 'test' }, { stateId: StudyState.Disabled }];
 
     filters.forEach(value => {
       component.onFiltersUpdated(value);
 
       const action = StudyStoreActions.searchStudiesRequest({
-        searchParams: new SearchParams('name:like:test', undefined, 1, 5)
+        searchParams: { filter: 'name:like:test', page: 1, limit: 5 }
       });
 
       expect(store.dispatch).toHaveBeenCalledWith(action);
@@ -103,20 +96,19 @@ describe('StudiesViewComponent', () => {
     component.sortFieldSelected('name');
 
     const action = StudyStoreActions.searchStudiesRequest({
-      searchParams: new SearchParams('', 'name', 1, 5)
+      searchParams: { filter: '', sort: 'name', page: 1, limit: 5 }
     });
 
     expect(store.dispatch).toHaveBeenCalledWith(action);
   });
 
   describe('when a new page is selected', () => {
-
     it('reloads page when a new page is selected', () => {
       spyOn(store, 'dispatch').and.callThrough();
       component.paginationPageChanged(1);
 
       const action = StudyStoreActions.searchStudiesRequest({
-        searchParams: new SearchParams('', undefined, 1, 5)
+        searchParams: { filter: '', sort: undefined, page: 1, limit: 5 }
       });
 
       expect(store.dispatch).toHaveBeenCalledWith(action);
@@ -126,9 +118,7 @@ describe('StudiesViewComponent', () => {
       spyOn(store, 'dispatch').and.callThrough();
       component.paginationPageChanged('test' as any);
       expect(store.dispatch).not.toHaveBeenCalled();
-
     });
-
   });
 
   it('route is changed when a study is selected', () => {
@@ -136,39 +126,51 @@ describe('StudiesViewComponent', () => {
     const routerListener = jest.spyOn(router, 'navigate').mockResolvedValue(true);
     component.studySelected(study);
     expect(routerListener.mock.calls.length).toBe(1);
-    expect(routerListener.mock.calls[0][0]).toEqual([ study.slug, 'summary' ]);
+    expect(routerListener.mock.calls[0][0]).toEqual([study.slug, 'summary']);
   });
 
   it('displays that there are no studies in the system', () => {
-    const pagedReply = factory.pagedReply([]);
-    pagedReply.searchParams.filter = '';
+    let pagedReply = factory.pagedReply([]);
+    pagedReply = {
+      ...pagedReply,
+      searchParams: {
+        ...pagedReply.searchParams,
+        filter: ''
+      }
+    };
     const action = StudyStoreActions.searchStudiesSuccess({ pagedReply });
     store.dispatch(action);
     fixture.detectChanges();
 
     const de = fixture.debugElement;
     expect(de.nativeElement.querySelectorAll('.list-group-item').length).toBe(0);
-    expect(de.nativeElement.querySelector('.alert').textContent)
-      .toContain('No studies have been added yet.');
+    expect(de.nativeElement.querySelector('.alert').textContent).toContain('No studies have been added yet.');
   });
 
   it('displays that there are no matches for the filters', () => {
-    const pagedReply = factory.pagedReply([]);
-    pagedReply.searchParams.filter = 'name:like:test';
+    let pagedReply = factory.pagedReply([]);
+    pagedReply = {
+      ...pagedReply,
+      searchParams: {
+        ...pagedReply.searchParams,
+        filter: 'name:like:test'
+      }
+    };
     const action = StudyStoreActions.searchStudiesSuccess({ pagedReply });
     store.dispatch(action);
     fixture.detectChanges();
 
     const de = fixture.debugElement;
     expect(de.nativeElement.querySelectorAll('.list-group-item').length).toBe(0);
-    expect(de.nativeElement.querySelector('.alert').textContent)
-      .toContain('There are no studies that match your criteria.');
+    expect(de.nativeElement.querySelector('.alert').textContent).toContain(
+      'There are no studies that match your criteria.'
+    );
   });
 
   it('displays studies', () => {
     const study = new Study().deserialize(factory.study());
     const action = StudyStoreActions.searchStudiesSuccess({
-      pagedReply: factory.pagedReply([ study ])
+      pagedReply: factory.pagedReply([study])
     });
     store.dispatch(action);
     fixture.detectChanges();
@@ -177,5 +179,4 @@ describe('StudiesViewComponent', () => {
     expect(de.nativeElement.querySelectorAll('.list-group-item').length).toBe(1);
     expect(de.nativeElement.querySelectorAll('.card-footer').length).toBe(1);
   });
-
 });

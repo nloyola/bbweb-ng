@@ -1,11 +1,11 @@
+import { PagedReplyEntityIds } from '@app/domain';
+import { Centre, CentreLocationInfo } from '@app/domain/centres';
 import { CentreStoreReducer, CentreStoreSelectors } from '@app/root-store';
+import { createEntityAdapter, EntityAdapter } from '@ngrx/entity';
 import { Factory } from '@test/factory';
-import { SearchParams, PagedReplyEntityIds } from '@app/domain';
-import { Centre } from '@app/domain/centres';
-import { EntityAdapter, createEntityAdapter } from '@ngrx/entity';
+import { CentreLocationsSearchReply } from '@app/core/services';
 
 describe('centre-store selectors', () => {
-
   let factory: Factory;
 
   beforeEach(() => {
@@ -28,7 +28,9 @@ describe('centre-store selectors', () => {
     const state = {
       centre: {
         ...CentreStoreReducer.initialState,
-        searchActive: true
+        searchState: {
+          searchActive: true
+        }
       }
     };
 
@@ -36,15 +38,87 @@ describe('centre-store selectors', () => {
   });
 
   it('selectCentreLastSearch', () => {
-    const searchParams = new SearchParams();
+    const searchParams = {};
     const state = {
       centre: {
         ...CentreStoreReducer.initialState,
-        lastSearch: searchParams
+        searchState: {
+          lastSearch: searchParams
+        }
       }
     };
 
     expect(CentreStoreSelectors.selectCentreLastSearch(state)).toBe(searchParams);
+  });
+
+  it('selectCentreSearchReplies', () => {
+    const centre = new Centre().deserialize(factory.centre());
+    const pagedReply = factory.pagedReply<Centre>([centre]);
+    const searchTerm = JSON.stringify(pagedReply.searchParams);
+    const replies = {};
+    replies[searchTerm] = {
+      searchParams: pagedReply.searchParams,
+      offset: pagedReply.offset,
+      total: pagedReply.total,
+      entityIds: pagedReply.entities.map(e => e.id),
+      maxPages: pagedReply.maxPages
+    };
+    const state = {
+      centre: {
+        ...CentreStoreReducer.initialState,
+        searchState: {
+          replies
+        }
+      }
+    };
+
+    expect(CentreStoreSelectors.selectCentreSearchReplies(state)).toBe(replies);
+  });
+
+  it('selectLocationsSearchActive', () => {
+    const state = {
+      centre: {
+        ...CentreStoreReducer.initialState,
+        locationsSearchState: {
+          searchActive: true
+        }
+      }
+    };
+
+    expect(CentreStoreSelectors.selectLocationsSearchActive(state)).toBeTruthy();
+  });
+
+  it('selectLocationsLastSearch', () => {
+    const searchParams = {};
+    const state = {
+      centre: {
+        ...CentreStoreReducer.initialState,
+        locationsSearchState: {
+          lastSearch: searchParams
+        }
+      }
+    };
+
+    expect(CentreStoreSelectors.selectLocationsLastSearch(state)).toBe(searchParams);
+  });
+
+  it('selectLocationsSearchReplies', () => {
+    const centre = new Centre().deserialize(factory.centre({ locations: [factory.location()] }));
+    const centreLocations = [new CentreLocationInfo().deserialize(factory.centreLocationInfo(centre))];
+    const filter = factory.stringNext();
+
+    const replies = {};
+    replies[filter] = { centreLocations };
+    const state = {
+      centre: {
+        ...CentreStoreReducer.initialState,
+        locationsSearchState: {
+          replies
+        }
+      }
+    };
+
+    expect(CentreStoreSelectors.selectLocationsSearchReplies(state)).toBe(replies);
   });
 
   it('selectCentreLastAdded', () => {
@@ -75,49 +149,28 @@ describe('centre-store selectors', () => {
     expect(CentreStoreSelectors.selectCentreCounts(state)).toBe(centreCounts);
   });
 
-  it('selectCentreSearchReplies', () => {
-    const centre = new Centre().deserialize(factory.centre());
-    const pagedReply = factory.pagedReply<Centre>([ centre ]);
-    const searchReplies: { [ key: string]: PagedReplyEntityIds } = {};
-    searchReplies[pagedReply.searchParams.queryString()] = {
-      searchParams: pagedReply.searchParams,
-      offset: pagedReply.offset,
-      total: pagedReply.total,
-      entityIds: pagedReply.entities.map(e => e.id),
-      maxPages: pagedReply.maxPages,
-    };
-    const state = {
-      centre: {
-        ...CentreStoreReducer.initialState,
-        searchReplies
-      }
-    };
-
-    expect(CentreStoreSelectors.selectCentreSearchReplies(state)).toBe(searchReplies);
-  });
-
   it('selectAllCentres', () => {
     const centre = new Centre().deserialize(factory.centre());
     const adapter: EntityAdapter<Centre> = createEntityAdapter<Centre>({
       selectId: (s: Centre) => s.id
     });
     const state = {
-      centre: adapter.addAll([ centre ], CentreStoreReducer.initialState)
+      centre: adapter.addAll([centre], CentreStoreReducer.initialState)
     };
 
-    expect(CentreStoreSelectors.selectAllCentres(state)).toEqual([ centre ]);
+    expect(CentreStoreSelectors.selectAllCentres(state)).toEqual([centre]);
   });
 
   describe('selectCentreSearchRepliesAndEntities', () => {
-
     it('when search has completed', () => {
       const centre = new Centre().deserialize(factory.centre());
       const adapter: EntityAdapter<Centre> = createEntityAdapter<Centre>({
         selectId: (s: Centre) => s.id
       });
-      const pagedReply = factory.pagedReply<Centre>([ centre ]);
-      const searchReplies: { [ key: string]: PagedReplyEntityIds } = {};
-      searchReplies[pagedReply.searchParams.queryString()] = {
+      const pagedReply = factory.pagedReply<Centre>([centre]);
+      const searchTerm = JSON.stringify(pagedReply.searchParams);
+      const replies = {};
+      replies[searchTerm] = {
         searchParams: pagedReply.searchParams,
         offset: pagedReply.offset,
         total: pagedReply.total,
@@ -125,16 +178,18 @@ describe('centre-store selectors', () => {
         maxPages: pagedReply.maxPages
       };
       const state = {
-        centre: adapter.addAll([ centre ], {
+        centre: adapter.addAll([centre], {
           ...CentreStoreReducer.initialState,
-          searchActive: false,
-          lastSearch: pagedReply.searchParams,
-          searchReplies
+          searchState: {
+            searchActive: false,
+            lastSearch: pagedReply.searchParams,
+            replies
+          }
         })
       };
 
       expect(CentreStoreSelectors.selectCentreSearchRepliesAndEntities(state)).toEqual({
-        entities: [ centre ],
+        entities: [centre],
         hasNoEntitiesToDisplay: false,
         hasNoResultsToDisplay: false,
         hasResultsToDisplay: true,
@@ -148,8 +203,10 @@ describe('centre-store selectors', () => {
       const state = {
         centre: {
           ...CentreStoreReducer.initialState,
-          searchActive: false,
-          lastSearch: null
+          searchState: {
+            searchActive: false,
+            lastSearch: null
+          }
         }
       };
 
@@ -161,19 +218,21 @@ describe('centre-store selectors', () => {
       const adapter: EntityAdapter<Centre> = createEntityAdapter<Centre>({
         selectId: (s: Centre) => s.id
       });
-      const pagedReply = factory.pagedReply<Centre>([ centre ]);
+      const pagedReply = factory.pagedReply<Centre>([centre]);
+      const searchTerm = JSON.stringify(pagedReply.searchParams);
       const state = {
-        centre: adapter.addAll([ centre ], {
+        centre: adapter.addAll([centre], {
           ...CentreStoreReducer.initialState,
-          searchActive: false,
-          lastSearch: pagedReply.searchParams,
-          searchReplies: {}
+          searchState: {
+            searchActive: false,
+            lastSearch: searchTerm,
+            replies: {}
+          }
         })
       };
 
       expect(CentreStoreSelectors.selectCentreSearchRepliesAndEntities(state)).toBeUndefined();
     });
-
   });
 
   it('selectCentreLastAdded', () => {
@@ -182,7 +241,7 @@ describe('centre-store selectors', () => {
       selectId: (s: Centre) => s.id
     });
     const state = {
-      centre: adapter.addAll([ centre ], {
+      centre: adapter.addAll([centre], {
         ...CentreStoreReducer.initialState,
         lastAddedId: centre.id
       })
@@ -190,5 +249,4 @@ describe('centre-store selectors', () => {
 
     expect(CentreStoreSelectors.selectCentreLastAdded(state)).toEqual(centre);
   });
-
 });

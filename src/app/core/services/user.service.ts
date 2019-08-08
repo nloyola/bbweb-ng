@@ -1,17 +1,19 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { PagedReply, SearchParams, JSONObject, JSONArray, JSONValue } from '@app/domain';
+import {
+  PagedReply,
+  SearchParams,
+  JSONObject,
+  JSONArray,
+  JSONValue,
+  searchParamsToHttpParams
+} from '@app/domain';
 import { ApiReply } from '@app/domain/api-reply.model';
 import { Observable } from 'rxjs';
 import { delay, map } from 'rxjs/operators';
 import { User, UserCounts } from '@app/domain/users';
 
-export type UserUpdateAttribute =
-  'name'
-  | 'email'
-  | 'password'
-  | 'avatarUrl'
-  | 'state';
+export type UserUpdateAttribute = 'name' | 'email' | 'password' | 'avatarUrl' | 'state';
 
 export interface PasswordUpdateValues {
   currentPassword: string;
@@ -22,10 +24,9 @@ export interface PasswordUpdateValues {
   providedIn: 'root'
 })
 export class UserService {
-
   readonly BASE_URL = '/api/users';
 
-  private stateActions = [ 'activate', 'lock', 'unlock' ];
+  private stateActions = ['activate', 'lock', 'unlock'];
 
   constructor(private http: HttpClient) {}
 
@@ -34,35 +35,35 @@ export class UserService {
   }
 
   /**
-  * Retrieves the counts of all Users from the server indexed by state.
-  */
+   * Retrieves the counts of all Users from the server indexed by state.
+   */
   counts(): Observable<UserCounts> {
-    return this.http.get<ApiReply>(`${this.BASE_URL}/counts`)
-      .pipe(
-        map((reply: ApiReply) => {
-          if (reply && reply.data) {
-            const jObj = reply.data as JSONObject;
-            return {
-              total: jObj.total as number,
-              registeredCount: jObj.registeredCount as number,
-              activeCount: jObj.activeCount as number,
-              lockedCount: jObj.lockedCount as number
-            };
-          }
-          throw new Error('expected a user object');
-        }));
+    return this.http.get<ApiReply>(`${this.BASE_URL}/counts`).pipe(
+      map((reply: ApiReply) => {
+        if (reply && reply.data) {
+          const jObj = reply.data as JSONObject;
+          return {
+            total: jObj.total as number,
+            registeredCount: jObj.registeredCount as number,
+            activeCount: jObj.activeCount as number,
+            lockedCount: jObj.lockedCount as number
+          };
+        }
+        throw new Error('expected a user object');
+      })
+    );
   }
 
   /**
-  * Retrieves a User from the server.
-  *
-  * @param {string} slug the slug of the user to retrieve.
-  */
+   * Retrieves a User from the server.
+   *
+   * @param {string} slug the slug of the user to retrieve.
+   */
   get(slug: string): Observable<User> {
-    return this.http.get<ApiReply>(`${this.BASE_URL}/${slug}`)
-      .pipe(
-        delay(2000),
-        map(this.replyToUser));
+    return this.http.get<ApiReply>(`${this.BASE_URL}/${slug}`).pipe(
+      delay(2000),
+      map(this.replyToUser)
+    );
   }
 
   /**
@@ -75,25 +76,26 @@ export class UserService {
    * @returns The users within a PagedReply.
    */
   search(searchParams: SearchParams): Observable<PagedReply<User>> {
-    return this.http.get<ApiReply>(`${this.BASE_URL}/search`,
-                                   { params: searchParams.httpParams() })
-      .pipe(
-        // delay(1000),
-        map((reply: ApiReply) => {
-          const jObj = reply.data as JSONObject;
-          if (reply && reply.data && jObj.items) {
-            const entities: User[] = (jObj.items as JSONArray)
-              .map((obj: JSONObject) => new User().deserialize(obj as any));
-            return {
-              searchParams,
-              entities,
-              offset: jObj.offset as number,
-              total: jObj.total as number,
-              maxPages: jObj.maxPages as number
-            };
-          }
-          throw new Error('expected a paged reply');
-        }));
+    let params = searchParamsToHttpParams(searchParams);
+    return this.http.get<ApiReply>(`${this.BASE_URL}/search`, { params }).pipe(
+      // delay(1000),
+      map((reply: ApiReply) => {
+        const jObj = reply.data as JSONObject;
+        if (reply && reply.data && jObj.items) {
+          const entities: User[] = (jObj.items as JSONArray).map((obj: JSONObject) =>
+            new User().deserialize(obj as any)
+          );
+          return {
+            searchParams,
+            entities,
+            offset: jObj.offset as number,
+            total: jObj.total as number,
+            maxPages: jObj.maxPages as number
+          };
+        }
+        throw new Error('expected a paged reply');
+      })
+    );
   }
 
   update(user: User, attributeName: string, newValue: string | PasswordUpdateValues): Observable<User> {

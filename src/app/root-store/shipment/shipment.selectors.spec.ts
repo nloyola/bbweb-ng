@@ -5,7 +5,6 @@ import { Shipment } from '@app/domain/shipments';
 import { EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 
 describe('shipment-store selectors', () => {
-
   const factory = new Factory();
 
   it('selectShipmentLastAdded', () => {
@@ -44,7 +43,7 @@ describe('shipment-store selectors', () => {
   });
 
   it('selectShipmentLastSearch', () => {
-    const searchParams = new SearchParams();
+    const searchParams = {};
     const state = {
       shipment: {
         ...ShipmentStoreReducer.initialState,
@@ -57,14 +56,14 @@ describe('shipment-store selectors', () => {
 
   it('selectShipmentSearchReplies', () => {
     const shipment = new Shipment().deserialize(factory.shipment());
-    const pagedReply = factory.pagedReply<Shipment>([ shipment ]);
-    const searchReplies: { [ key: string]: PagedReplyEntityIds } = {};
-    searchReplies[pagedReply.searchParams.queryString()] = {
+    const pagedReply = factory.pagedReply<Shipment>([shipment]);
+    const searchReplies: { [key: string]: PagedReplyEntityIds } = {};
+    searchReplies[JSON.stringify(pagedReply.searchParams)] = {
       searchParams: pagedReply.searchParams,
       offset: pagedReply.offset,
       total: pagedReply.total,
       entityIds: pagedReply.entities.map(e => e.id),
-      maxPages: pagedReply.maxPages,
+      maxPages: pagedReply.maxPages
     };
     const state = {
       shipment: {
@@ -82,22 +81,21 @@ describe('shipment-store selectors', () => {
       selectId: (s: Shipment) => s.id
     });
     const state = {
-      shipment: adapter.addAll([ shipment ], ShipmentStoreReducer.initialState)
+      shipment: adapter.addAll([shipment], ShipmentStoreReducer.initialState)
     };
 
-    expect(ShipmentStoreSelectors.selectAllShipments(state)).toEqual([ shipment ]);
+    expect(ShipmentStoreSelectors.selectAllShipments(state)).toEqual([shipment]);
   });
 
   describe('selectShipmentSearchRepliesAndEntities', () => {
-
     it('when search has completed', () => {
       const shipment = new Shipment().deserialize(factory.shipment());
       const adapter: EntityAdapter<Shipment> = createEntityAdapter<Shipment>({
         selectId: (s: Shipment) => s.id
       });
-      const pagedReply = factory.pagedReply<Shipment>([ shipment ]);
-      const searchReplies: { [ key: string]: PagedReplyEntityIds } = {};
-      searchReplies[pagedReply.searchParams.queryString()] = {
+      const pagedReply = factory.pagedReply<Shipment>([shipment]);
+      const searchReplies: { [key: string]: PagedReplyEntityIds } = {};
+      searchReplies[JSON.stringify(pagedReply.searchParams)] = {
         searchParams: pagedReply.searchParams,
         offset: pagedReply.offset,
         total: pagedReply.total,
@@ -105,7 +103,7 @@ describe('shipment-store selectors', () => {
         maxPages: pagedReply.maxPages
       };
       const state = {
-        shipment: adapter.addAll([ shipment ], {
+        shipment: adapter.addAll([shipment], {
           ...ShipmentStoreReducer.initialState,
           searchActive: false,
           lastSearch: pagedReply.searchParams,
@@ -114,7 +112,7 @@ describe('shipment-store selectors', () => {
       };
 
       expect(ShipmentStoreSelectors.selectShipmentSearchRepliesAndEntities(state)).toEqual({
-        entities: [ shipment ],
+        entities: [shipment],
         hasNoEntitiesToDisplay: false,
         hasNoResultsToDisplay: false,
         hasResultsToDisplay: true,
@@ -141,9 +139,9 @@ describe('shipment-store selectors', () => {
       const adapter: EntityAdapter<Shipment> = createEntityAdapter<Shipment>({
         selectId: (s: Shipment) => s.id
       });
-      const pagedReply = factory.pagedReply<Shipment>([ shipment ]);
+      const pagedReply = factory.pagedReply<Shipment>([shipment]);
       const state = {
-        shipment: adapter.addAll([ shipment ], {
+        shipment: adapter.addAll([shipment], {
           ...ShipmentStoreReducer.initialState,
           searchActive: false,
           lastSearch: pagedReply.searchParams,
@@ -153,7 +151,6 @@ describe('shipment-store selectors', () => {
 
       expect(ShipmentStoreSelectors.selectShipmentSearchRepliesAndEntities(state)).toBeUndefined();
     });
-
   });
 
   it('selectShipmentLastRemoved', () => {
@@ -162,7 +159,7 @@ describe('shipment-store selectors', () => {
       selectId: (s: Shipment) => s.id
     });
     const state = {
-      shipment: adapter.addAll([ shipment ], {
+      shipment: adapter.addAll([shipment], {
         ...ShipmentStoreReducer.initialState,
         lastRemovedId: shipment.id
       })
@@ -176,10 +173,9 @@ describe('shipment-store selectors', () => {
     const state = {
       shipment: {
         ...ShipmentStoreReducer.initialState,
-        canAddSpecimenInventoryIds: [ specimen.inventoryId as string ]
+        canAddSpecimenInventoryIds: [specimen.inventoryId as string]
       }
     };
-    expect(ShipmentStoreSelectors.selectCanAddInventoryId(state)).toEqual([ specimen.inventoryId ]);
+    expect(ShipmentStoreSelectors.selectCanAddInventoryId(state)).toEqual([specimen.inventoryId]);
   });
-
 });

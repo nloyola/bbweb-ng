@@ -1,13 +1,25 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { JSONArray, JSONObject, Location, PagedReply, SearchParams } from '@app/domain';
+import {
+  JSONArray,
+  JSONObject,
+  Location,
+  PagedReply,
+  SearchParams,
+  searchParamsToHttpParams
+} from '@app/domain';
 import { ApiReply } from '@app/domain/api-reply.model';
-import { Centre, CentreCounts } from '@app/domain/centres';
+import { Centre, CentreCounts, CentreLocationInfo } from '@app/domain/centres';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+export interface CentreLocationsSearchReply {
+  filter: string;
+  centreLocations: CentreLocationInfo[];
+}
+
 export type CentreUpdateAttribute =
-  'name'
+  | 'name'
   | 'description'
   | 'studyAdd'
   | 'studyRemove'
@@ -19,41 +31,38 @@ export type CentreUpdateAttribute =
   providedIn: 'root'
 })
 export class CentreService {
-
   readonly BASE_URL = '/api/centres';
 
-  private stateActions = [ 'disable', 'enable' ];
+  private stateActions = ['disable', 'enable'];
 
-  constructor(private http: HttpClient) {
-  }
+  constructor(private http: HttpClient) {}
 
   /**
-  * Retrieves the counts of all Centres from the server indexed by state.
-  */
+   * Retrieves the counts of all Centres from the server indexed by state.
+   */
   counts(): Observable<CentreCounts> {
-    return this.http.get<ApiReply>(`${this.BASE_URL}/counts`)
-      .pipe(
-        map((reply: ApiReply) => {
-          if (reply && reply.data) {
-            const jObj = reply.data as JSONObject;
-            return {
-              total: jObj.total as number,
-              disabledCount: jObj.disabledCount as number,
-              enabledCount: jObj.enabledCount as number
-            };
-          }
-          throw new Error('expected a centre object');
-        }));
+    return this.http.get<ApiReply>(`${this.BASE_URL}/counts`).pipe(
+      map((reply: ApiReply) => {
+        if (reply && reply.data) {
+          const jObj = reply.data as JSONObject;
+          return {
+            total: jObj.total as number,
+            disabledCount: jObj.disabledCount as number,
+            enabledCount: jObj.enabledCount as number
+          };
+        }
+        throw new Error('expected a centre object');
+      })
+    );
   }
 
   /**
-  * Retrieves a Centre from the server.
-  *
-  * @param {string} slug the slug of the centre to retrieve.
-  */
+   * Retrieves a Centre from the server.
+   *
+   * @param {string} slug the slug of the centre to retrieve.
+   */
   get(slug: string): Observable<Centre> {
-    return this.http.get<ApiReply>(`${this.BASE_URL}/${slug}`)
-      .pipe(map(this.replyToCentre));
+    return this.http.get<ApiReply>(`${this.BASE_URL}/${slug}`).pipe(map(this.replyToCentre));
   }
 
   /**
@@ -66,26 +75,52 @@ export class CentreService {
    * @returns The centres within a PagedReply.
    */
   search(searchParams: SearchParams): Observable<PagedReply<Centre>> {
-    return this.http.get<ApiReply>(`${this.BASE_URL}/search`,
-                                   { params: searchParams.httpParams() })
-      .pipe(
-        // delay(1000),
-        map((reply: ApiReply) => {
-          const jObj = reply.data as JSONObject;
-          if (reply && reply.data && jObj.items) {
-            const entities: Centre[] = (jObj.items as JSONArray)
-              .map(obj => new Centre().deserialize(obj as any));
+    let params = searchParamsToHttpParams(searchParams);
+    return this.http.get<ApiReply>(`${this.BASE_URL}/search`, { params }).pipe(
+      // delay(1000),
+      map((reply: ApiReply) => {
+        const jObj = reply.data as JSONObject;
+        if (reply && reply.data && jObj.items) {
+          const entities: Centre[] = (jObj.items as JSONArray).map(obj =>
+            new Centre().deserialize(obj as any)
+          );
 
-            return {
-              searchParams,
-              entities,
-              offset: jObj.offset as number,
-              total: jObj.total as number,
-              maxPages: jObj.maxPages as number
-            };
-          }
-          throw new Error('expected a paged reply');
-        }));
+          return {
+            entities,
+            searchParams,
+            offset: jObj.offset as number,
+            total: jObj.total as number,
+            maxPages: jObj.maxPages as number
+          };
+        }
+        throw new Error('expected a paged reply');
+      })
+    );
+  }
+
+  /**
+   * Used to search centre location
+   *
+   * @param filter - The tring to filter results by.
+   */
+  searchLocations(filter: string): Observable<CentreLocationsSearchReply> {
+    const json = { filter, limit: 10 };
+    return this.http.post<ApiReply>(`${this.BASE_URL}/locations`, json).pipe(
+      // delay(1000),
+      map((reply: ApiReply) => {
+        if (reply && reply.data) {
+          const centreLocations: CentreLocationInfo[] = (reply.data as JSONArray).map(obj =>
+            new CentreLocationInfo().deserialize(obj as any)
+          );
+
+          return {
+            filter,
+            centreLocations
+          };
+        }
+        throw new Error('expected centre locations');
+      })
+    );
   }
 
   add(centre: Centre): Observable<Centre> {
@@ -93,17 +128,13 @@ export class CentreService {
       name: centre.name,
       description: centre.description ? centre.description : null
     };
-    return this.http.post<ApiReply>(`${this.BASE_URL}/`, json)
-      .pipe(
-        // delay(2000),
-        map(this.replyToCentre));
+    return this.http.post<ApiReply>(`${this.BASE_URL}/`, json).pipe(
+      // delay(2000),
+      map(this.replyToCentre)
+    );
   }
 
-  update(
-    centre: Centre,
-    attributeName: CentreUpdateAttribute,
-    value: string | Location
-  ): Observable<Centre> {
+  update(centre: Centre, attributeName: CentreUpdateAttribute, value: string | Location): Observable<Centre> {
     let url: string;
     let json = { expectedVersion: centre.version };
 

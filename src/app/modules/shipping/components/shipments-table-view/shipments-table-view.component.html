@@ -91,6 +91,7 @@
         <small>{{ shipment.fromLocationInfo.name }}</small>
       </td>
       <td>
+        <!-- small>{{ shipment.getTime() | localTime: shortDate }}</small -->
         <small>{{ shipment.getTime() }}</small>
       </td>
       <td *ngIf="mode !== 'completed'">
@@ -125,7 +126,6 @@
   </table>
 </form>
 
-<!-- <pagination widget goes here> -->
 <div class="card-footer" *ngIf="numPages > 0">
   <ngb-pagination
     size="sm"

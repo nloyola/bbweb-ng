@@ -1,11 +1,10 @@
-import { reducer, initialState } from './processing-type.reducer';
-import { SearchParams, PagedReplyEntityIds } from '@app/domain';
+import { PagedReplyEntityIds } from '@app/domain';
+import { ProcessingType } from '@app/domain/studies';
 import { ProcessingTypeStoreActions, ProcessingTypeStoreReducer } from '@app/root-store';
 import { Factory } from '@test/factory';
-import { ProcessingType, IProcessingType } from '@app/domain/studies';
+import { initialState, reducer } from './processing-type.reducer';
 
 describe('ProcessingType Reducer', () => {
-
   let factory: Factory;
 
   beforeEach(() => {
@@ -25,7 +24,7 @@ describe('ProcessingType Reducer', () => {
     const payload = {
       studyId,
       studySlug: factory.stringNext(),
-      searchParams: new SearchParams()
+      searchParams: {}
     };
     const action = new ProcessingTypeStoreActions.SearchProcessingTypesRequest(payload);
     const state = ProcessingTypeStoreReducer.reducer(undefined, action);
@@ -44,7 +43,7 @@ describe('ProcessingType Reducer', () => {
     const processingType = factory.processingType();
     const payload = {
       studySlug: factory.stringNext(),
-      pagedReply: factory.pagedReply<ProcessingType>([ processingType ])
+      pagedReply: factory.pagedReply<ProcessingType>([processingType])
     };
     const action = new ProcessingTypeStoreActions.SearchProcessingTypesSuccess(payload);
     const state = ProcessingTypeStoreReducer.reducer(
@@ -55,11 +54,12 @@ describe('ProcessingType Reducer', () => {
           params: payload.pagedReply.searchParams
         }
       },
-      action);
+      action
+    );
 
-    const searchReply: { [ key: string]: PagedReplyEntityIds } = {};
+    const searchReply = {};
     searchReply[processingType.studyId] = {} as any;
-    searchReply[processingType.studyId][payload.pagedReply.searchParams.queryString()] = {
+    searchReply[processingType.studyId][JSON.stringify(payload.pagedReply.searchParams)] = {
       searchParams: payload.pagedReply.searchParams,
       offset: payload.pagedReply.offset,
       total: payload.pagedReply.total,
@@ -128,7 +128,6 @@ describe('ProcessingType Reducer', () => {
   });
 
   describe('for adding a processing type', () => {
-
     it('AddProcessingTypeSuccess', () => {
       const processingType = factory.processingType();
       const payload = { processingType };
@@ -163,7 +162,6 @@ describe('ProcessingType Reducer', () => {
   });
 
   describe('for updating a processing type', () => {
-
     let processingType: ProcessingType;
     let testInitialState: any;
 
@@ -171,7 +169,7 @@ describe('ProcessingType Reducer', () => {
       processingType = factory.processingType();
       testInitialState = {
         ...ProcessingTypeStoreReducer.initialState,
-        ids: [ processingType.id ],
+        ids: [processingType.id],
         entities: {}
       };
       testInitialState['entities'][processingType.id] = {};
@@ -182,13 +180,14 @@ describe('ProcessingType Reducer', () => {
       const initialAction = new ProcessingTypeStoreActions.GetProcessingTypeSuccess(payload);
       let state = ProcessingTypeStoreReducer.reducer(initialState, initialAction);
 
-      const  updatedPt = new ProcessingType().deserialize(processingType);
+      const updatedPt = new ProcessingType().deserialize(processingType);
       updatedPt.enabled = !processingType.enabled;
       state = ProcessingTypeStoreReducer.reducer(
         state,
         new ProcessingTypeStoreActions.UpdateProcessingTypeSuccess({
           processingType: updatedPt
-        }));
+        })
+      );
 
       expect(state.ids).toContain(processingType.id);
       expect(state.entities[processingType.id]).toEqual(updatedPt);
@@ -210,11 +209,9 @@ describe('ProcessingType Reducer', () => {
         error: payload.error
       });
     });
-
   });
 
   describe('for removing an processing type', () => {
-
     let processingType: ProcessingType;
     let testInitialState: any;
 
@@ -222,7 +219,7 @@ describe('ProcessingType Reducer', () => {
       processingType = factory.processingType();
       testInitialState = {
         ...ProcessingTypeStoreReducer.initialState,
-        ids: [ processingType.id ],
+        ids: [processingType.id],
         entities: {}
       };
       testInitialState['entities'][processingType.id] = processingType;

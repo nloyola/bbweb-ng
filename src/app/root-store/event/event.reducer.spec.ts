@@ -5,7 +5,6 @@ import * as CollectionEventActions from './event.actions';
 import { initialState, reducer } from './event.reducer';
 
 describe('CollectionEvent Reducer', () => {
-
   const factory = new Factory();
 
   describe('unknown action', () => {
@@ -19,10 +18,9 @@ describe('CollectionEvent Reducer', () => {
   });
 
   describe('when searching for collectionEvents', () => {
-
     it('SearchEventsRequest', () => {
       const participant = new Participant().deserialize(factory.participant());
-      const searchParams = new SearchParams();
+      const searchParams = {};
       const action = CollectionEventActions.searchEventsRequest({ participant, searchParams });
       const state = reducer(undefined, action);
 
@@ -35,22 +33,23 @@ describe('CollectionEvent Reducer', () => {
 
     it('SearchCollectionEventsSuccess', () => {
       const collectionEvent = new CollectionEvent().deserialize(factory.collectionEvent());
-      const pagedReply = factory.pagedReply<CollectionEvent>([ collectionEvent ]);
+      const pagedReply = factory.pagedReply<CollectionEvent>([collectionEvent]);
       const action = CollectionEventActions.searchEventsSuccess({ pagedReply });
       const state = reducer(
         {
           ...initialState,
           lastSearch: pagedReply.searchParams
         },
-        action);
+        action
+      );
 
-      const searchReply: { [ key: string]: PagedReplyEntityIds } = {};
-      searchReply[pagedReply.searchParams.queryString()] = {
+      const searchReply = {};
+      searchReply[JSON.stringify(pagedReply.searchParams)] = {
         searchParams: pagedReply.searchParams,
-        offset:       pagedReply.offset,
-        total:        pagedReply.total,
-        entityIds:    pagedReply.entities.map(e => e.id),
-        maxPages:     pagedReply.maxPages
+        offset: pagedReply.offset,
+        total: pagedReply.total,
+        entityIds: pagedReply.entities.map(e => e.id),
+        maxPages: pagedReply.maxPages
       };
 
       expect(state.searchReplies).toEqual(searchReply);
@@ -62,9 +61,9 @@ describe('CollectionEvent Reducer', () => {
     it('SearchCollectionEventsFailure', () => {
       const error = {
         status: 404,
-          error: {
-            message: 'simulated error'
-          }
+        error: {
+          message: 'simulated error'
+        }
       };
       const action = CollectionEventActions.searchEventsFailure({ error });
       const state = reducer(undefined, action);
@@ -78,11 +77,9 @@ describe('CollectionEvent Reducer', () => {
         }
       });
     });
-
   });
 
   describe('when getting a collectionEvent', () => {
-
     let collectionEvent: CollectionEvent;
 
     beforeEach(() => {
@@ -125,11 +122,9 @@ describe('CollectionEvent Reducer', () => {
         }
       });
     });
-
   });
 
   describe('when adding a collectionEvent', () => {
-
     let collectionEvent: CollectionEvent;
 
     beforeEach(() => {
@@ -173,11 +168,9 @@ describe('CollectionEvent Reducer', () => {
         }
       });
     });
-
   });
 
   describe('for updating a collectionEvent', () => {
-
     let collectionEvent: CollectionEvent;
     let testInitialState: any;
 
@@ -185,7 +178,7 @@ describe('CollectionEvent Reducer', () => {
       collectionEvent = new CollectionEvent().deserialize(factory.collectionEvent());
       testInitialState = {
         ...initialState,
-        ids: [ collectionEvent.id ],
+        ids: [collectionEvent.id],
         entities: {}
       };
       testInitialState['entities'][collectionEvent.id] = {};
@@ -195,13 +188,11 @@ describe('CollectionEvent Reducer', () => {
       const initialAction = CollectionEventActions.getEventSuccess({ event: collectionEvent });
       let state = reducer(initialState, initialAction);
 
-      const  updatedCollectionEvent = new CollectionEvent().deserialize({
-        ...collectionEvent as any,
+      const updatedCollectionEvent = new CollectionEvent().deserialize({
+        ...(collectionEvent as any),
         timePacked: new Date()
       });
-      state = reducer(
-        state,
-        CollectionEventActions.updateEventSuccess({ event: updatedCollectionEvent }));
+      state = reducer(state, CollectionEventActions.updateEventSuccess({ event: updatedCollectionEvent }));
 
       expect(state.ids).toContain(collectionEvent.id);
       expect(state.entities[collectionEvent.id]).toEqual(updatedCollectionEvent);
@@ -223,11 +214,9 @@ describe('CollectionEvent Reducer', () => {
         error: payload.error
       });
     });
-
   });
 
   describe('when removing a collectionEvent', () => {
-
     let collectionEvent: CollectionEvent;
 
     beforeEach(() => {
@@ -244,7 +233,7 @@ describe('CollectionEvent Reducer', () => {
     it('removeEventSuccess', () => {
       const testInitialState = {
         ...initialState,
-        ids: [ collectionEvent.id ],
+        ids: [collectionEvent.id],
         entities: {}
       };
       testInitialState['entities'][collectionEvent.id] = collectionEvent;
@@ -278,7 +267,5 @@ describe('CollectionEvent Reducer', () => {
         }
       });
     });
-
   });
-
 });

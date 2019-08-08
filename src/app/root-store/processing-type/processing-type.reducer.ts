@@ -1,5 +1,5 @@
-import { PagedReplyEntityIds, SearchParams } from '@app/domain';
-import { ProcessingType, ProcessedSpecimenDefinitionName } from '@app/domain/studies';
+import { SearchParams, searchParams2Term, SearchTermToPagedReplyByEntityHash } from '@app/domain';
+import { ProcessedSpecimenDefinitionName, ProcessingType } from '@app/domain/studies';
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity';
 import { ActionTypes, ProcessingTypeActions } from './processing-type.actions';
 
@@ -8,14 +8,10 @@ export interface LastSearch {
   params: SearchParams;
 }
 
-export interface PagedReplyHash {
-  [ id: string ]: { [ url: string ]: PagedReplyEntityIds };
-}
-
 export interface State extends EntityState<ProcessingType> {
   lastSearch?: LastSearch;
   searchActive?: boolean;
-  searchReplies?: PagedReplyHash;
+  searchReplies?: SearchTermToPagedReplyByEntityHash;
   specimenDefinitionNames: ProcessedSpecimenDefinitionName[];
   lastAddedId?: string;
   lastRemovedId?: string;
@@ -32,12 +28,11 @@ export const initialState: State = adapter.getInitialState({
   lastAddedId: null,
   lastRemovedId: null,
   slugsInUse: {},
-  error: null,
+  error: null
 });
 
 export function reducer(state = initialState, action: ProcessingTypeActions): State {
   switch (action.type) {
-
     case ActionTypes.SearchProcessingTypesRequest: {
       return {
         ...state,
@@ -65,9 +60,8 @@ export function reducer(state = initialState, action: ProcessingTypeActions): St
     case ActionTypes.SearchProcessingTypesSuccess: {
       const pagedReply = action.payload.pagedReply;
       const studyId = state.lastSearch.studyId;
-      const queryString = state.lastSearch.params.queryString();
       const newReply = {};
-      newReply[queryString] = {
+      newReply[searchParams2Term(state.lastSearch.params)] = {
         entityIds: pagedReply.entities.map(pt => pt.id),
         searchParams: pagedReply.searchParams,
         offset: pagedReply.offset,
@@ -127,7 +121,8 @@ export function reducer(state = initialState, action: ProcessingTypeActions): St
           id: action.payload.processingType.id,
           changes: action.payload.processingType
         },
-        state);
+        state
+      );
       return result;
     }
 
@@ -185,9 +180,4 @@ export function reducer(state = initialState, action: ProcessingTypeActions): St
   }
 }
 
-export const {
-  selectIds,
-  selectEntities,
-  selectAll,
-  selectTotal,
-} = adapter.getSelectors();
+export const { selectIds, selectEntities, selectAll, selectTotal } = adapter.getSelectors();

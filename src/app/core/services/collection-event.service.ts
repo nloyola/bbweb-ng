@@ -1,13 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { JSONArray, JSONObject, SearchParams, PagedReply } from '@app/domain';
+import { JSONArray, JSONObject, SearchParams, PagedReply, searchParamsToHttpParams } from '@app/domain';
 import { ApiReply } from '@app/domain/api-reply.model';
 import { CollectionEvent, Participant } from '@app/domain/participants';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 export type CollectionEventUpdateAttribute =
-  'visitNumber'
+  | 'visitNumber'
   | 'timeCompleted'
   | 'addOrUpdateAnnotation'
   | 'removeAnnotation';
@@ -16,7 +16,6 @@ export type CollectionEventUpdateAttribute =
   providedIn: 'root'
 })
 export class CollectionEventService {
-
   readonly BASE_URL = '/api/participants/cevents';
 
   constructor(private http: HttpClient) {}
@@ -25,12 +24,12 @@ export class CollectionEventService {
    * Retrieves a CollectionEvent from the server.
    */
   get(slug: string): Observable<CollectionEvent> {
-    return this.http.get<ApiReply>(`${this.BASE_URL}/${slug}`)
-      .pipe(map(this.replyToCollectionEvent));
+    return this.http.get<ApiReply>(`${this.BASE_URL}/${slug}`).pipe(map(this.replyToCollectionEvent));
   }
 
   getByVisitNumber(participant: Participant, visitNumber: number): Observable<CollectionEvent> {
-    return this.http.get<ApiReply>(`${this.BASE_URL}/visitNumber/${participant.id}/${visitNumber}`)
+    return this.http
+      .get<ApiReply>(`${this.BASE_URL}/visitNumber/${participant.id}/${visitNumber}`)
       .pipe(map(this.replyToCollectionEvent));
   }
 
@@ -38,26 +37,27 @@ export class CollectionEventService {
    * Used to search for CollectionEvents.
    */
   search(participant: Participant, searchParams: SearchParams): Observable<PagedReply<CollectionEvent>> {
-    return this.http.get<ApiReply>(`${this.BASE_URL}/list/${participant.id}`,
-                                   { params: searchParams.httpParams() })
-      .pipe(
-        // delay(1000),
-        map((reply: ApiReply) => {
-          const jObj = reply.data as JSONObject;
-          if (reply && reply.data && jObj.items) {
-            const entities: CollectionEvent[] = (jObj.items as JSONArray)
-              .map((obj: any) => new CollectionEvent().deserialize(obj));
+    let params = searchParamsToHttpParams(searchParams);
+    return this.http.get<ApiReply>(`${this.BASE_URL}/list/${participant.id}`, { params }).pipe(
+      // delay(1000),
+      map((reply: ApiReply) => {
+        const jObj = reply.data as JSONObject;
+        if (reply && reply.data && jObj.items) {
+          const entities: CollectionEvent[] = (jObj.items as JSONArray).map((obj: any) =>
+            new CollectionEvent().deserialize(obj)
+          );
 
-            return {
-              searchParams,
-              entities,
-              offset: jObj.offset as number,
-              total: jObj.total as number,
-              maxPages: jObj.maxPages as number
-            };
-          }
-          throw new Error('expected a paged reply');
-        }));
+          return {
+            searchParams,
+            entities,
+            offset: jObj.offset as number,
+            total: jObj.total as number,
+            maxPages: jObj.maxPages as number
+          };
+        }
+        throw new Error('expected a paged reply');
+      })
+    );
   }
 
   add(event: CollectionEvent): Observable<CollectionEvent> {
@@ -70,7 +70,8 @@ export class CollectionEventService {
     };
     return this.http.post<ApiReply>(`${this.BASE_URL}/${event.participantId}`, json).pipe(
       // delay(2000),
-      map(this.replyToCollectionEvent));
+      map(this.replyToCollectionEvent)
+    );
   }
 
   update(
@@ -117,13 +118,14 @@ export class CollectionEventService {
 
   remove(event: CollectionEvent): Observable<string> {
     const url = `${this.BASE_URL}/${event.participantId}/${event.id}/${event.version}`;
-    return this.http.delete<ApiReply>(url)
-      .pipe(map((reply: ApiReply) => {
+    return this.http.delete<ApiReply>(url).pipe(
+      map((reply: ApiReply) => {
         if (reply && reply.data) {
           return event.id;
         }
         throw new Error('expected a valid reply');
-      }));
+      })
+    );
   }
 
   private replyToCollectionEvent(reply: ApiReply): CollectionEvent {

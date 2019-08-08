@@ -1,7 +1,6 @@
 import { CUSTOM_ELEMENTS_SCHEMA, SimpleChange } from '@angular/core';
 import { async, ComponentFixture, fakeAsync, flush, TestBed } from '@angular/core/testing';
 import { SortDirection } from '@angular/material';
-import { SearchParams } from '@app/domain';
 import { ModalInputComponent } from '@app/modules/modals/components/modal-input/modal-input.component';
 import { RootStoreState, SpecimenStoreActions, SpecimenStoreReducer } from '@app/root-store';
 import { NgrxRuntimeChecks } from '@app/root-store/root-store.module';
@@ -23,21 +22,12 @@ describe('EventSpecimensViewComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         NgbModule,
-        StoreModule.forRoot(
-          { 'specimen': SpecimenStoreReducer.reducer },
-          NgrxRuntimeChecks
-        )
+        StoreModule.forRoot({ specimen: SpecimenStoreReducer.reducer }, NgrxRuntimeChecks)
       ],
-      providers: [
-        NgbActiveModal
-      ],
-      declarations: [
-        EventSpecimensViewComponent,
-        ModalInputComponent
-      ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
-    .compileComponents();
+      providers: [NgbActiveModal],
+      declarations: [EventSpecimensViewComponent, ModalInputComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -62,7 +52,7 @@ describe('EventSpecimensViewComponent', () => {
     expect(dispatchListener.mock.calls.length).toBe(1);
     const action = SpecimenStoreActions.searchSpecimensRequest({
       event,
-      searchParams: new SearchParams('', 'inventoryId', 1, 5)
+      searchParams: { sort: 'inventoryId', page: 1, limit: 5 }
     });
     expect(dispatchListener.mock.calls[0][0]).toEqual(action);
   });
@@ -77,7 +67,7 @@ describe('EventSpecimensViewComponent', () => {
     const entities = createEntities();
     fixture.detectChanges();
     dispatchEntities(entities);
-    expect(component.specimens$).toBeObservable(cold('a', { a: [ entities.specimen ]}));
+    expect(component.specimens$).toBeObservable(cold('a', { a: [entities.specimen] }));
   });
 
   it('tableDataLoading is assigned correctly', () => {
@@ -92,7 +82,6 @@ describe('EventSpecimensViewComponent', () => {
   });
 
   describe('specimens are reloaded when', () => {
-
     it('change detection runs', () => {
       const entities = createEntities();
       fixture.detectChanges();
@@ -105,7 +94,7 @@ describe('EventSpecimensViewComponent', () => {
       expect(dispatchListener.mock.calls.length).toBe(1);
       const expectedAction = SpecimenStoreActions.searchSpecimensRequest({
         event: entities.event,
-        searchParams: new SearchParams('', 'inventoryId', 1, 5)
+        searchParams: { sort: 'inventoryId', page: 1, limit: 5 }
       });
       expect(dispatchListener.mock.calls[0][0]).toEqual(expectedAction);
     });
@@ -122,7 +111,7 @@ describe('EventSpecimensViewComponent', () => {
       expect(dispatchListener.mock.calls.length).toBe(2);
       const expectedAction = SpecimenStoreActions.searchSpecimensRequest({
         event: entities.event,
-        searchParams: new SearchParams('', 'inventoryId', 1, 5)
+        searchParams: { sort: 'inventoryId', page: 1, limit: 5 }
       });
       expect(dispatchListener.mock.calls[1][0]).toEqual(expectedAction);
     });
@@ -137,7 +126,7 @@ describe('EventSpecimensViewComponent', () => {
       expect(dispatchListener.mock.calls.length).toBe(1);
       const expectedAction = SpecimenStoreActions.searchSpecimensRequest({
         event: entities.event,
-        searchParams: new SearchParams('', 'inventoryId', 1, 5)
+        searchParams: { sort: 'inventoryId', page: 1, limit: 5 }
       });
       expect(dispatchListener.mock.calls[0][0]).toEqual(expectedAction);
     });
@@ -147,8 +136,8 @@ describe('EventSpecimensViewComponent', () => {
       fixture.detectChanges();
 
       const dispatchListener = jest.spyOn(store, 'dispatch');
-      const sortFields = [ 'inventoryId', 'timeCreated' ];
-      const sortDirections = [ 'asc', 'desc', '' ] as SortDirection[];
+      const sortFields = ['inventoryId', 'timeCreated'];
+      const sortDirections = ['asc', 'desc', ''] as SortDirection[];
 
       sortFields.forEach(active => {
         sortDirections.forEach(direction => {
@@ -156,16 +145,15 @@ describe('EventSpecimensViewComponent', () => {
           component.sortData({ active, direction });
 
           expect(dispatchListener.mock.calls.length).toBe(1);
-          const sort = ((direction === 'desc') ? '-' : '') + ((direction === '') ? '' : active);
+          const sort = (direction === 'desc' ? '-' : '') + (direction === '' ? '' : active);
           const expectedAction = SpecimenStoreActions.searchSpecimensRequest({
             event: entities.event,
-            searchParams: new SearchParams('', sort, 1, 5)
+            searchParams: { sort, page: 1, limit: 5 }
           });
           expect(dispatchListener.mock.calls[0][0]).toEqual(expectedAction);
         });
       });
     });
-
   });
 
   it('viewing a specimen opens a modal', () => {
@@ -174,9 +162,9 @@ describe('EventSpecimensViewComponent', () => {
 
     const modalService = TestBed.get(NgbModal);
     const openListener = jest.spyOn(modalService, 'open').mockReturnValue({
-        componentInstance: {},
-        result: Promise.resolve('OK')
-      });
+      componentInstance: {},
+      result: Promise.resolve('OK')
+    });
 
     component.viewSpecimen(entities.specimen);
     expect(openListener.mock.calls.length).toBe(1);
@@ -184,7 +172,6 @@ describe('EventSpecimensViewComponent', () => {
   });
 
   describe('when removing a specimen', () => {
-
     let entities: EventSpecCommon.EntitiesOptions;
     let openListener: any;
 
@@ -210,10 +197,10 @@ describe('EventSpecimensViewComponent', () => {
       fixture.detectChanges();
 
       expect(dispatchListener.mock.calls.length).toBe(1);
-      expect(dispatchListener.mock.calls[0][0])
-        .toEqual(SpecimenStoreActions.removeSpecimenRequest({ specimen: entities.specimen }));
+      expect(dispatchListener.mock.calls[0][0]).toEqual(
+        SpecimenStoreActions.removeSpecimenRequest({ specimen: entities.specimen })
+      );
     }));
-
   });
 
   function createEntities(options: EventSpecCommon.EntitiesOptions = {}): EventSpecCommon.EntitiesOptions {
@@ -226,8 +213,11 @@ describe('EventSpecimensViewComponent', () => {
   function dispatchEntities(options: EventSpecCommon.EntitiesOptions = {}) {
     EventSpecCommon.dispatchEntities(options, store);
 
-    const pagedReply = factory.pagedReply([ options.specimen ]);
-    pagedReply.searchParams.filter = '';
+    const pagedReply = factory.pagedReply([options.specimen]);
+    pagedReply.searchParams = {
+      ...pagedReply.searchParams,
+      filter: ''
+    };
     store.dispatch(SpecimenStoreActions.searchSpecimensSuccess({ pagedReply }));
   }
 });

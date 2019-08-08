@@ -15,7 +15,6 @@ import { filter, map, takeUntil } from 'rxjs/operators';
   styleUrls: ['./memberships-view.component.scss']
 })
 export class MembershipsViewComponent implements OnInit, OnDestroy {
-
   isCountsLoading$: Observable<boolean>;
   isLoading$: Observable<boolean>;
   hasLoaded$: Observable<boolean>;
@@ -27,33 +26,32 @@ export class MembershipsViewComponent implements OnInit, OnDestroy {
   stateData: EntityStateInfo[];
   sortChoices: LabelledId[];
 
-  private filters: { [ name: string ]: SearchFilter };
+  private filters: { [name: string]: SearchFilter };
   private unsubscribe$: Subject<void> = new Subject<void>();
 
   currentPage = 1;
   membershipToAdd: any;
 
-  constructor(private store$: Store<RootStoreState.State>,
-              private router: Router,
-              private route: ActivatedRoute) {
+  constructor(
+    private store$: Store<RootStoreState.State>,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {
     this.filters = {
       nameFilter: new NameFilter(),
       stateFilter: new StateFilter(this.stateData, 'all', true)
     };
 
-    this.sortChoices = [
-      { id: 'name', label: 'Name' },
-      { id: 'state', label: 'State' }
-    ];
+    this.sortChoices = [{ id: 'name', label: 'Name' }, { id: 'state', label: 'State' }];
   }
 
   ngOnInit() {
-    this.isLoading$ =
-      this.store$.pipe(select(MembershipStoreSelectors.selectMembershipSearchActive));
+    this.isLoading$ = this.store$.pipe(select(MembershipStoreSelectors.selectMembershipSearchActive));
 
     this.membershipPageInfo$ = this.store$.pipe(
       select(MembershipStoreSelectors.selectMembershipSearchRepliesAndEntities),
-      takeUntil(this.unsubscribe$));
+      takeUntil(this.unsubscribe$)
+    );
 
     this.applySearchParams();
   }
@@ -78,13 +76,15 @@ export class MembershipsViewComponent implements OnInit, OnDestroy {
   }
 
   public paginationPageChanged(page: number) {
-    if (isNaN(page)) { return; }
+    if (isNaN(page)) {
+      return;
+    }
     this.applySearchParams();
   }
 
   public membershipSelected(membership: Membership): void {
-    this.router.navigate([ 'view', membership.slug, 'summary' ], { relativeTo: this.route });
- }
+    this.router.navigate(['view', membership.slug, 'summary'], { relativeTo: this.route });
+  }
 
   private getFilters() {
     return Object.values(this.filters)
@@ -93,11 +93,12 @@ export class MembershipsViewComponent implements OnInit, OnDestroy {
   }
 
   private applySearchParams() {
-    this.store$.dispatch(MembershipStoreActions.searchMembershipsRequest({
-      searchParams: new SearchParams(this.getFilters().join(';'),
-                                     this.sortField,
-                                     this.currentPage,
-                                     this.membershipsLimit)
-    }));
+    const searchParams = {
+      filter: this.getFilters().join(';'),
+      sort: this.sortField,
+      page: this.currentPage,
+      limit: this.membershipsLimit
+    };
+    this.store$.dispatch(MembershipStoreActions.searchMembershipsRequest({ searchParams }));
   }
 }

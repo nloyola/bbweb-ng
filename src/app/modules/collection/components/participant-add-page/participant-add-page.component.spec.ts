@@ -4,7 +4,15 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Participant } from '@app/domain/participants';
 import { Study, StudyStateInfo, StudyState } from '@app/domain/studies';
-import { EventTypeStoreReducer, NgrxRuntimeChecks, ParticipantStoreReducer, RootStoreState, StudyStoreReducer, StudyStoreActions, ParticipantStoreActions } from '@app/root-store';
+import {
+  EventTypeStoreReducer,
+  NgrxRuntimeChecks,
+  ParticipantStoreReducer,
+  RootStoreState,
+  StudyStoreReducer,
+  StudyStoreActions,
+  ParticipantStoreActions
+} from '@app/root-store';
 import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
 import { MockActivatedRoute } from '@test/mocks';
@@ -19,7 +27,6 @@ interface EntitiesOptions {
 }
 
 describe('ParticipantAddPageComponent', () => {
-
   let component: ParticipantAddPageComponent;
   let fixture: ComponentFixture<ParticipantAddPageComponent>;
   const mockActivatedRoute = new MockActivatedRoute();
@@ -32,10 +39,11 @@ describe('ParticipantAddPageComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            'study':       StudyStoreReducer.reducer,
-            'participant': ParticipantStoreReducer.reducer
+            study: StudyStoreReducer.reducer,
+            participant: ParticipantStoreReducer.reducer
           },
-          NgrxRuntimeChecks),
+          NgrxRuntimeChecks
+        ),
         ToastrModule.forRoot()
       ],
       providers: [
@@ -44,10 +52,9 @@ describe('ParticipantAddPageComponent', () => {
           useValue: mockActivatedRoute
         }
       ],
-      declarations: [ ParticipantAddPageComponent ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
-    .compileComponents();
+      declarations: [ParticipantAddPageComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -80,7 +87,7 @@ describe('ParticipantAddPageComponent', () => {
     const routerListener = jest.spyOn(router, 'navigate').mockResolvedValue(true);
     const entities = createEntities();
 
-    store.dispatch(StudyStoreActions.searchCollectionStudiesRequest({ searchParams: new SearchParams() }));
+    store.dispatch(StudyStoreActions.searchCollectionStudiesRequest({ searchParams: {} }));
     fixture.detectChanges();
     store.dispatch(StudyStoreActions.searchCollectionStudiesSuccess({ studiesData: [] }));
     store.dispatch(StudyStoreActions.getStudySuccess({ study: entities.study }));
@@ -88,14 +95,14 @@ describe('ParticipantAddPageComponent', () => {
 
     expect(component.collectionStudies$).toBeObservable(cold('a', { a: [] }));
     expect(routerListener.mock.calls.length).toBeGreaterThan(0);
-    expect(routerListener.mock.calls[0][0]).toEqual([ '/server-error' ]);
+    expect(routerListener.mock.calls[0][0]).toEqual(['/server-error']);
   });
 
   it('collectionStudies$ is valid on initialization', () => {
     const entities = createEntities();
     dispatchEntities(entities);
     fixture.detectChanges();
-    expect(component.collectionStudies$).toBeObservable(cold('a', { a: [ entities.study ] }));
+    expect(component.collectionStudies$).toBeObservable(cold('a', { a: [entities.study] }));
   });
 
   it('when a study is selected an action is dispatched', () => {
@@ -106,12 +113,12 @@ describe('ParticipantAddPageComponent', () => {
     const storeListener = jest.spyOn(store, 'dispatch');
     component.studySelected(entities.study.slug);
     expect(storeListener.mock.calls.length).toBe(1);
-    expect(storeListener.mock.calls[0][0])
-      .toEqual(StudyStoreActions.getStudyRequest({ slug: entities.study.slug }));
+    expect(storeListener.mock.calls[0][0]).toEqual(
+      StudyStoreActions.getStudyRequest({ slug: entities.study.slug })
+    );
   });
 
   describe('when submitting', () => {
-
     let router: Router;
     let toastr: ToastrService;
 
@@ -129,7 +136,6 @@ describe('ParticipantAddPageComponent', () => {
       const routerListener = jest.spyOn(router, 'navigate').mockResolvedValue(true);
       const toastrListener = jest.spyOn(toastr, 'success').mockReturnValue(null);
 
-
       component.onSubmit(entities.participant);
 
       const expectedAction = ParticipantStoreActions.addParticipantRequest({ participant });
@@ -145,7 +151,7 @@ describe('ParticipantAddPageComponent', () => {
       expect(toastrListener.mock.calls.length).toBe(1);
       expect(router.navigate).toHaveBeenCalled();
       expect(routerListener.mock.calls.length).toBe(1);
-      expect(routerListener.mock.calls[0][0]).toEqual([ `../../${participant.slug}` ]);
+      expect(routerListener.mock.calls[0][0]).toEqual([`../../${participant.slug}`]);
     }));
 
     it('on submission failure', fakeAsync(() => {
@@ -160,7 +166,7 @@ describe('ParticipantAddPageComponent', () => {
         {
           status: 404,
           error: {
-              message: 'simulated error'
+            message: 'simulated error'
           }
         },
         {
@@ -182,7 +188,6 @@ describe('ParticipantAddPageComponent', () => {
         expect(toastrListener.mock.calls.length).toBe(index + 1);
       });
     }));
-
   });
 
   it('when user presses cancel button state is changed', () => {
@@ -194,19 +199,21 @@ describe('ParticipantAddPageComponent', () => {
     const routerListener = jest.spyOn(router, 'navigate').mockResolvedValue(true);
     component.onCancel();
     expect(routerListener.mock.calls.length).toBe(1);
-    expect(routerListener.mock.calls[0][0]).toEqual([ '..' ]);
+    expect(routerListener.mock.calls[0][0]).toEqual(['..']);
   });
 
   function createEntities(options: EntitiesOptions = {}) {
-    const study = (options.study !== undefined) ? options.study : new Study().deserialize(factory.study());
-    const participant = (options.participant !== undefined)
-      ?  options.participant : new Participant().deserialize(factory.participant());
+    const study = options.study !== undefined ? options.study : new Study().deserialize(factory.study());
+    const participant =
+      options.participant !== undefined
+        ? options.participant
+        : new Participant().deserialize(factory.participant());
     mockActivatedRouteSnapshot(participant);
     return { study, participant };
   }
 
   function mockActivatedRouteSnapshot(participant: Participant): void {
-    mockActivatedRoute.spyOnParams(() => ({ uniqueId: participant.uniqueId}));
+    mockActivatedRoute.spyOnParams(() => ({ uniqueId: participant.uniqueId }));
   }
 
   function dispatchEntities(options: EntitiesOptions = {}) {
@@ -215,13 +222,14 @@ describe('ParticipantAddPageComponent', () => {
       const studiesData = [
         new StudyStateInfo().deserialize(factory.entityNameAndStateDto<Study, StudyState>(study))
       ];
-      store.dispatch(StudyStoreActions.searchCollectionStudiesRequest({ searchParams: new SearchParams() }));
+      store.dispatch(StudyStoreActions.searchCollectionStudiesRequest({ searchParams: {} }));
       fixture.detectChanges();
       store.dispatch(StudyStoreActions.searchCollectionStudiesSuccess({ studiesData }));
       store.dispatch(StudyStoreActions.getStudySuccess({ study }));
     }
 
-    if (participant) { store.dispatch(ParticipantStoreActions.getParticipantSuccess({ participant })); }
-
+    if (participant) {
+      store.dispatch(ParticipantStoreActions.getParticipantSuccess({ participant }));
+    }
   }
 });

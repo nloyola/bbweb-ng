@@ -1,20 +1,17 @@
-import { IDomainEntity, DomainEntity, JSONObject } from '@app/domain';
+import { Deserializable } from '@app/domain';
 
 export interface ICentreLocationInfo {
-
   /** the ID that identifies the centre. */
-  centreId: string;
+  centreId?: string;
 
   /** the ID that identifies the location. */
-  locationId: string;
+  locationId?: string;
 
   /** the centre's name concatenated with the location name. */
-  name: string;
-
+  name?: string;
 }
 
-export class CentreLocationInfo {
-
+export class CentreLocationInfo implements ICentreLocationInfo, Deserializable {
   centreId: string;
   locationId: string;
   name: string;
@@ -24,5 +21,4 @@ export class CentreLocationInfo {
     Object.assign(this, { centreId, locationId, name });
     return this;
   }
-
- }
+}

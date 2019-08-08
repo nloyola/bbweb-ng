@@ -1,18 +1,16 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { RoleService } from '@app/core/services';
-import { SearchParams } from '@app/domain';
+import { Role } from '@app/domain/access';
 import { RoleStoreActions } from '@app/root-store';
-import { Factory } from '@test/factory';
 import { provideMockActions } from '@ngrx/effects/testing';
+import { Action } from '@ngrx/store';
+import { Factory } from '@test/factory';
 import { cold, hot } from 'jasmine-marbles';
 import { Observable, of, throwError } from 'rxjs';
 import { RoleStoreEffects } from './role.effects';
-import { Role } from '@app/domain/access';
-import { Action } from '@ngrx/store';
 
 describe('role-store effects', () => {
-
   let effects: RoleStoreEffects;
   let actions: Observable<any>;
   let roleService: RoleService;
@@ -20,13 +18,8 @@ describe('role-store effects', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        HttpClientTestingModule
-      ],
-      providers: [
-        RoleStoreEffects,
-        provideMockActions(() => actions)
-      ]
+      imports: [HttpClientTestingModule],
+      providers: [RoleStoreEffects, provideMockActions(() => actions)]
     });
 
     effects = TestBed.get(RoleStoreEffects);
@@ -35,11 +28,10 @@ describe('role-store effects', () => {
   });
 
   describe('searchRolesRequestEffect', () => {
-
     it('should respond with success', () => {
-      const searchParams = new SearchParams();
+      const searchParams = {};
       const role = new Role().deserialize(factory.role());
-      const pagedReply = factory.pagedReply([ role ]);
+      const pagedReply = factory.pagedReply([role]);
       const action = RoleStoreActions.searchRolesRequest({ searchParams });
       const completion = RoleStoreActions.searchRolesSuccess({ pagedReply });
       spyOn(roleService, 'search').and.returnValue(of(pagedReply));
@@ -51,7 +43,7 @@ describe('role-store effects', () => {
     });
 
     it('should respond with failure', () => {
-      const searchParams = new SearchParams();
+      const searchParams = {};
       const error = {
         status: 404,
         error: {
@@ -70,7 +62,6 @@ describe('role-store effects', () => {
   });
 
   describe('getRoleRequestEffect', () => {
-
     it('should respond with success', () => {
       const role = new Role().deserialize(factory.role());
       const action = RoleStoreActions.getRoleRequest({ slug: role.slug });
@@ -103,7 +94,6 @@ describe('role-store effects', () => {
   });
 
   describe('updateRequestEffect', () => {
-
     let role: Role;
     let action: Action;
     let roleListener: any;
@@ -140,5 +130,4 @@ describe('role-store effects', () => {
       expect(effects.updateRequest$).toBeObservable(cold('--b', { b: completion }));
     });
   });
-
 });

@@ -3,12 +3,18 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SearchParams } from '@app/domain';
 import { Participant } from '@app/domain/participants';
-import { AuthStoreSelectors, ParticipantStoreActions, ParticipantStoreSelectors, RootStoreState, StudyStoreActions, StudyStoreSelectors } from '@app/root-store';
+import {
+  AuthStoreSelectors,
+  ParticipantStoreActions,
+  ParticipantStoreSelectors,
+  RootStoreState,
+  StudyStoreActions,
+  StudyStoreSelectors
+} from '@app/root-store';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { select, Store } from '@ngrx/store';
 import { BehaviorSubject, Observable, Subject, throwError } from 'rxjs';
 import { filter, map, shareReplay, takeUntil, withLatestFrom } from 'rxjs/operators';
-
 
 @Component({
   selector: 'app-collection-page',
@@ -16,7 +22,6 @@ import { filter, map, shareReplay, takeUntil, withLatestFrom } from 'rxjs/operat
   styleUrls: ['./collection-page.component.scss']
 })
 export class CollectionPageComponent implements OnInit, OnDestroy {
-
   @ViewChild('participantCreateModal', { static: false }) participantCreateModal: TemplateRef<any>;
 
   isLoading$: Observable<boolean>;
@@ -31,15 +36,19 @@ export class CollectionPageComponent implements OnInit, OnDestroy {
 
   private unsubscribe$ = new Subject<void>();
 
-  constructor(private store$: Store<RootStoreState.State>,
-              private formBuilder: FormBuilder,
-              private router: Router,
-              private route: ActivatedRoute,
-              private modalService: NgbModal) {
-  }
+  constructor(
+    private store$: Store<RootStoreState.State>,
+    private formBuilder: FormBuilder,
+    private router: Router,
+    private route: ActivatedRoute,
+    private modalService: NgbModal
+  ) {}
 
   ngOnInit() {
-    const searchParams = new SearchParams(null, null,  1, 5);
+    const searchParams = {
+      page: 1,
+      limit: 5
+    };
     this.store$.dispatch(StudyStoreActions.searchCollectionStudiesRequest({ searchParams }));
     this.isLoading$ = this.store$.pipe(select(StudyStoreSelectors.selectCollectionStudiesSearchActive));
 
@@ -47,17 +56,21 @@ export class CollectionPageComponent implements OnInit, OnDestroy {
       select(StudyStoreSelectors.selectCollectionStudiesSearchRepliesAndEntities),
       filter(studies => studies !== undefined),
       map(studies => studies.length > 0),
-      takeUntil(this.unsubscribe$));
+      takeUntil(this.unsubscribe$)
+    );
 
     this.validUser$ = this.store$.pipe(
       select(AuthStoreSelectors.selectAuthUser),
-      map(user => user.hasSpecimenCollectorRole()));
+      map(user => user.hasSpecimenCollectorRole())
+    );
 
     this.participant$ = this.store$.pipe(
       select(ParticipantStoreSelectors.selectAllParticipants),
       withLatestFrom(this.participantLoading$),
-      map(([ participants, loading]) => {
-        if (!loading) { return undefined; }
+      map(([participants, loading]) => {
+        if (!loading) {
+          return undefined;
+        }
 
         const participant = participants.find(p => p.uniqueId === this.form.value.uniqueId);
         if (participant) {
@@ -67,36 +80,42 @@ export class CollectionPageComponent implements OnInit, OnDestroy {
       }),
       filter(participant => participant !== undefined),
       takeUntil(this.unsubscribe$),
-      shareReplay());
+      shareReplay()
+    );
 
     this.participant$.subscribe(
       participant => {
-        this.router.navigate([ participant.slug ], { relativeTo: this.route });
+        this.router.navigate([participant.slug], { relativeTo: this.route });
       },
       () => {
-        this.router.navigate([ '/server-error' ]);
+        this.router.navigate(['/server-error']);
+      }
+    );
+
+    this.store$
+      .pipe(
+        select(ParticipantStoreSelectors.selectParticipantError),
+        filter(error => !!error),
+        withLatestFrom(this.participantLoading$),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe(([_error, loading]) => {
+        if (!loading) {
+          return;
+        }
+
+        this.modalService
+          .open(this.participantCreateModal)
+          .result.then(() => {
+            this.router.navigate([`participant-add/${this.form.value.uniqueId}`], { relativeTo: this.route });
+          })
+          .catch(() => {
+            this.uniqueId.setValue('');
+            this.participantLoading$.next(false);
+          });
       });
 
-    this.store$.pipe(
-      select(ParticipantStoreSelectors.selectParticipantError),
-      filter(error => !!error),
-      withLatestFrom(this.participantLoading$),
-      takeUntil(this.unsubscribe$)
-    ).subscribe(([ _error, loading]) => {
-      if (!loading) { return ; }
-
-      this.modalService.open(this.participantCreateModal).result
-        .then(() => {
-          this.router.navigate([ `participant-add/${this.form.value.uniqueId}` ],
-                               { relativeTo: this.route });
-        })
-        .catch(() => {
-          this.uniqueId.setValue('');
-          this.participantLoading$.next(false);
-        });
-    });
-
-    this.form = this.formBuilder.group({ uniqueId: ['', Validators.required ] });
+    this.form = this.formBuilder.group({ uniqueId: ['', Validators.required] });
   }
 
   ngOnDestroy() {
@@ -110,8 +129,8 @@ export class CollectionPageComponent implements OnInit, OnDestroy {
 
   onSubmit(): void {
     this.store$.dispatch(
-      ParticipantStoreActions.getParticipantRequest({ uniqueId: this.form.value.uniqueId }));
+      ParticipantStoreActions.getParticipantRequest({ uniqueId: this.form.value.uniqueId })
+    );
     this.participantLoading$.next(true);
   }
-
 }

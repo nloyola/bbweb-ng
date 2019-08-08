@@ -1,18 +1,16 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { MembershipService } from '@app/core/services';
-import { SearchParams } from '@app/domain';
+import { Membership } from '@app/domain/access';
 import { MembershipStoreActions } from '@app/root-store';
-import { Factory } from '@test/factory';
 import { provideMockActions } from '@ngrx/effects/testing';
+import { Action } from '@ngrx/store';
+import { Factory } from '@test/factory';
 import { cold, hot } from 'jasmine-marbles';
 import { Observable, of, throwError } from 'rxjs';
 import { MembershipStoreEffects } from './membership.effects';
-import { Membership } from '@app/domain/access';
-import { Action } from '@ngrx/store';
 
 describe('membership-store effects', () => {
-
   let effects: MembershipStoreEffects;
   let actions: Observable<any>;
   let membershipService: MembershipService;
@@ -20,13 +18,8 @@ describe('membership-store effects', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        HttpClientTestingModule
-      ],
-      providers: [
-        MembershipStoreEffects,
-        provideMockActions(() => actions)
-      ]
+      imports: [HttpClientTestingModule],
+      providers: [MembershipStoreEffects, provideMockActions(() => actions)]
     });
 
     effects = TestBed.get(MembershipStoreEffects);
@@ -35,11 +28,10 @@ describe('membership-store effects', () => {
   });
 
   describe('searchMembershipsRequestEffect', () => {
-
     it('should respond with success', () => {
-      const searchParams = new SearchParams();
+      const searchParams = {};
       const membership = new Membership().deserialize(factory.membership());
-      const pagedReply = factory.pagedReply([ membership ]);
+      const pagedReply = factory.pagedReply([membership]);
       const action = MembershipStoreActions.searchMembershipsRequest({ searchParams });
       const completion = MembershipStoreActions.searchMembershipsSuccess({ pagedReply });
       spyOn(membershipService, 'search').and.returnValue(of(pagedReply));
@@ -51,7 +43,7 @@ describe('membership-store effects', () => {
     });
 
     it('should respond with failure', () => {
-      const searchParams = new SearchParams();
+      const searchParams = {};
       const error = {
         status: 404,
         error: {
@@ -70,7 +62,6 @@ describe('membership-store effects', () => {
   });
 
   describe('addMembershipRequestEffect', () => {
-
     it('should respond with success', () => {
       const membership = new Membership().deserialize(factory.membership());
       const action = MembershipStoreActions.addMembershipRequest({ membership });
@@ -103,7 +94,6 @@ describe('membership-store effects', () => {
   });
 
   describe('getMembershipRequestEffect', () => {
-
     it('should respond with success', () => {
       const membership = new Membership().deserialize(factory.membership());
       const action = MembershipStoreActions.getMembershipRequest({ slug: membership.slug });
@@ -136,7 +126,6 @@ describe('membership-store effects', () => {
   });
 
   describe('updateRequestEffect', () => {
-
     let membership: Membership;
     let action: Action;
     let membershipListener: any;
@@ -175,7 +164,6 @@ describe('membership-store effects', () => {
   });
 
   describe('removeMembershipRequestEffect', () => {
-
     let membership: Membership;
     let action: Action;
 
@@ -209,5 +197,4 @@ describe('membership-store effects', () => {
       expect(effects.removeMembershipRequest$).toBeObservable(cold('--b', { b: completion }));
     });
   });
-
 });

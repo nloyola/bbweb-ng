@@ -15,7 +15,6 @@ import { filter, map, takeUntil, shareReplay } from 'rxjs/operators';
   styleUrls: ['./users-view.component.scss']
 })
 export class UsersViewComponent implements OnInit, OnDestroy {
-
   isCountsLoading$: Observable<boolean>;
   isLoading$: Observable<boolean>;
   hasLoaded$: Observable<boolean>;
@@ -29,15 +28,17 @@ export class UsersViewComponent implements OnInit, OnDestroy {
   stateData: EntityStateInfo[];
   sortChoices: LabelledId[];
 
-  private filters: { [ name: string ]: SearchFilter };
+  private filters: { [name: string]: SearchFilter };
   private unsubscribe$: Subject<void> = new Subject<void>();
 
   currentPage = 1;
   userToAdd: any;
 
-  constructor(private store$: Store<RootStoreState.State>,
-              private router: Router,
-              private route: ActivatedRoute) {
+  constructor(
+    private store$: Store<RootStoreState.State>,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {
     this.stateData = Object.values(UserState).map(state => ({
       id: state.toLowerCase(),
       label: UserStateUIMap.get(state).stateLabel
@@ -48,29 +49,28 @@ export class UsersViewComponent implements OnInit, OnDestroy {
       stateFilter: new StateFilter(this.stateData, 'all', true)
     };
 
-    this.sortChoices = [
-      { id: 'name', label: 'Name' },
-      { id: 'state', label: 'State' }
-    ];
+    this.sortChoices = [{ id: 'name', label: 'Name' }, { id: 'state', label: 'State' }];
   }
 
   ngOnInit() {
-    this.isLoading$ =
-      this.store$.pipe(select(UserStoreSelectors.selectUserSearchActive));
+    this.isLoading$ = this.store$.pipe(select(UserStoreSelectors.selectUserSearchActive));
 
     this.userCountData$ = this.store$.pipe(
       select(UserStoreSelectors.selectUserCounts),
       takeUntil(this.unsubscribe$),
-      map(userCountsToUIMap));
+      map(userCountsToUIMap)
+    );
 
     this.userPageInfo$ = this.store$.pipe(
       select(UserStoreSelectors.selectUserSearchRepliesAndEntities),
       takeUntil(this.unsubscribe$),
-      shareReplay());
+      shareReplay()
+    );
 
     this.users$ = this.userPageInfo$.pipe(
       filter(page => page !== undefined),
-      map(page => page.entities.map(e => new UserUI(e))));
+      map(page => page.entities.map(e => new UserUI(e)))
+    );
 
     this.store$.dispatch(UserStoreActions.getUserCountsRequest());
     this.applySearchParams();
@@ -104,13 +104,15 @@ export class UsersViewComponent implements OnInit, OnDestroy {
   }
 
   public paginationPageChanged(page: number) {
-    if (isNaN(page)) { return; }
+    if (isNaN(page)) {
+      return;
+    }
     this.applySearchParams();
   }
 
   public userSelected(user: UserUI): void {
-    this.router.navigate([ 'view', user.slug, 'summary' ], { relativeTo: this.route });
- }
+    this.router.navigate(['view', user.slug, 'summary'], { relativeTo: this.route });
+  }
 
   private getFilters() {
     return Object.values(this.filters)
@@ -119,11 +121,12 @@ export class UsersViewComponent implements OnInit, OnDestroy {
   }
 
   private applySearchParams() {
-    this.store$.dispatch(UserStoreActions.searchUsersRequest({
-      searchParams: new SearchParams(this.getFilters().join(';'),
-                                     this.sortField,
-                                     this.currentPage,
-                                     this.usersLimit)
-    }));
+    const searchParams = {
+      filter: this.getFilters().join(';'),
+      sort: this.sortField,
+      page: this.currentPage,
+      limit: this.usersLimit
+    };
+    this.store$.dispatch(UserStoreActions.searchUsersRequest({ searchParams }));
   }
 }

@@ -1,4 +1,4 @@
-import { PagedReplyEntityIds, SearchParams } from '@app/domain';
+import { PagedReplyEntityIds, SearchParams, searchParams2Term } from '@app/domain';
 import { User } from '@app/domain/users';
 import { UserCounts } from '@app/domain/users/user-counts.model';
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity';
@@ -7,7 +7,7 @@ import * as UserActions from './user.actions';
 export interface State extends EntityState<User> {
   lastSearch?: SearchParams;
   searchActive?: boolean;
-  searchReplies?: { [ url: string ]: PagedReplyEntityIds };
+  searchReplies?: { [url: string]: PagedReplyEntityIds };
   userCounts?: UserCounts;
   error?: any;
 }
@@ -61,9 +61,9 @@ export function reducer(state = initialState, action: UserActions.UserActionsUni
 
     case UserActions.searchUsersSuccess.type: {
       const pagedReply = action.pagedReply;
-      const queryString = state.lastSearch.queryString();
+      const searchTerm = searchParams2Term(state.lastSearch);
       const newReply = {};
-      newReply[queryString] = {
+      newReply[searchTerm] = {
         entityIds: pagedReply.entities.map(user => user.id),
         searchParams: pagedReply.searchParams,
         offset: pagedReply.offset,
@@ -90,7 +90,7 @@ export function reducer(state = initialState, action: UserActions.UserActionsUni
 
     case UserActions.updateUserSuccess.type: {
       const user: User = new User().deserialize({
-        ...action.user as any,
+        ...(action.user as any),
         avatarUrl: action.user.avatarUrl ? action.user.avatarUrl : undefined
       });
       return adapter.upsertOne(user, state);
@@ -121,9 +121,4 @@ export function reducer(state = initialState, action: UserActions.UserActionsUni
   return state;
 }
 
-export const {
-  selectIds,
-  selectEntities,
-  selectAll,
-  selectTotal,
-} = adapter.getSelectors();
+export const { selectIds, selectEntities, selectAll, selectTotal } = adapter.getSelectors();

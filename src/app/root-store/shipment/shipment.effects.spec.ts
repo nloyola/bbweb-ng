@@ -13,7 +13,6 @@ import * as ShipmentActions from './shipment.actions';
 import { ShipmentStoreEffects } from './shipment.effects';
 
 describe('shipment-store effects', () => {
-
   let effects: ShipmentStoreEffects;
   let actions: Observable<any>;
   let shipmentService: ShipmentService;
@@ -21,13 +20,8 @@ describe('shipment-store effects', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        HttpClientTestingModule
-      ],
-      providers: [
-        ShipmentStoreEffects,
-        provideMockActions(() => actions)
-      ]
+      imports: [HttpClientTestingModule],
+      providers: [ShipmentStoreEffects, provideMockActions(() => actions)]
     });
 
     effects = TestBed.get(ShipmentStoreEffects);
@@ -36,11 +30,10 @@ describe('shipment-store effects', () => {
   });
 
   describe('searchShipmentsRequestEffect', () => {
-
     it('should respond with success', () => {
-      const searchParams = new SearchParams();
+      const searchParams = {};
       const shipment = new Shipment().deserialize(factory.shipment());
-      const pagedReply = factory.pagedReply([ shipment ]);
+      const pagedReply = factory.pagedReply([shipment]);
       const action = ShipmentActions.searchShipmentsRequest({ searchParams });
       const completion = ShipmentActions.searchShipmentsSuccess({ pagedReply });
       spyOn(shipmentService, 'search').and.returnValue(of(pagedReply));
@@ -52,7 +45,7 @@ describe('shipment-store effects', () => {
     });
 
     it('should respond with failure', () => {
-      const searchParams = new SearchParams();
+      const searchParams = {};
       const error = {
         status: 404,
         error: {
@@ -71,7 +64,6 @@ describe('shipment-store effects', () => {
   });
 
   describe('addShipmentRequestEffect', () => {
-
     it('should respond with success', () => {
       const shipment = new Shipment().deserialize(factory.shipment());
       const action = ShipmentActions.addShipmentRequest({ shipment });
@@ -104,7 +96,6 @@ describe('shipment-store effects', () => {
   });
 
   describe('getShipmentRequestEffect', () => {
-
     it('should respond with success', () => {
       const shipment = new Shipment().deserialize(factory.shipment());
       const action = ShipmentActions.getShipmentRequest({ id: shipment.id });
@@ -137,7 +128,6 @@ describe('shipment-store effects', () => {
   });
 
   describe('updateRequestEffect', () => {
-
     let shipment: Shipment;
     let action: Action;
     let shipmentListener: any;
@@ -176,14 +166,13 @@ describe('shipment-store effects', () => {
   });
 
   describe('addSpecimensEffect', () => {
-
     let specimens: Specimen[];
     let shipment: Shipment;
     let action: Action;
     let shipmentListener: any;
 
     beforeEach(() => {
-      specimens = [ new Specimen().deserialize(factory.specimen()) ];
+      specimens = [new Specimen().deserialize(factory.specimen())];
       shipment = new Shipment().deserialize(factory.shipment());
       action = ShipmentActions.addSpecimensRequest({
         shipment,
@@ -216,7 +205,6 @@ describe('shipment-store effects', () => {
   });
 
   describe('canAddSpecimenEffect', () => {
-
     let specimen: Specimen;
     let action: Action;
     let shipmentListener: any;
@@ -251,17 +239,16 @@ describe('shipment-store effects', () => {
   });
 
   describe('tagSpecimensEffect', () => {
-
     let specimens: Specimen[];
     let shipment: Shipment;
     let action: Action;
     const tagData = {};
 
     beforeEach(() => {
-      specimens = [ new Specimen().deserialize(factory.specimen()) ];
+      specimens = [new Specimen().deserialize(factory.specimen())];
       shipment = new Shipment().deserialize(factory.shipment());
 
-      tagData[ShipmentItemState.Present]  = {
+      tagData[ShipmentItemState.Present] = {
         methodName: 'tagSpecimensAsPresent',
         listener: jest.spyOn(shipmentService, 'tagSpecimensAsPresent')
       };
@@ -269,11 +256,11 @@ describe('shipment-store effects', () => {
         methodName: 'tagSpecimensAsReceived',
         listener: jest.spyOn(shipmentService, 'tagSpecimensAsReceived')
       };
-      tagData[ShipmentItemState.Missing]  = {
+      tagData[ShipmentItemState.Missing] = {
         methodName: 'tagSpecimensAsMissing',
         listener: jest.spyOn(shipmentService, 'tagSpecimensAsMissing')
       };
-      tagData[ShipmentItemState.Extra]    = {
+      tagData[ShipmentItemState.Extra] = {
         methodName: 'tagSpecimensAsExtra',
         listener: jest.spyOn(shipmentService, 'tagSpecimensAsExtra')
       };
@@ -322,7 +309,6 @@ describe('shipment-store effects', () => {
   });
 
   describe('removeShipmentRequestEffect', () => {
-
     let shipment: Shipment;
     let action: Action;
 
@@ -353,5 +339,4 @@ describe('shipment-store effects', () => {
       expect(effects.removeShipmentRequest$).toBeObservable(cold('--b', { b: completion }));
     });
   });
-
 });

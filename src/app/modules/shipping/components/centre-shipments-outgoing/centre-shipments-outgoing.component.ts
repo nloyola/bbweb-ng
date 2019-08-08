@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { SearchParams } from '@app/domain';
-import { RootStoreState, ShipmentStoreActions } from '@app/root-store';
+import { RootStoreState } from '@app/root-store';
 import { Store } from '@ngrx/store';
 import { CentreShipmentsBaseComponent } from '../centre-shipments-base/centre-shipments-base.component';
 
@@ -33,7 +32,7 @@ export class CentreShipmentsOutgoingComponent extends CentreShipmentsBaseCompone
       .join(';');
     if (filterValues !== '') {
       filters += ';' + filterValues;
-  }
+    }
 
     return filters;
   }

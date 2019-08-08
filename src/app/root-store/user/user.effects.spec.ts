@@ -12,7 +12,6 @@ import { User } from '@app/domain/users';
 import { Action } from '@ngrx/store';
 
 describe('user-store effects', () => {
-
   let effects: UserStoreEffects;
   let actions: Observable<any>;
   let userService: UserService;
@@ -20,13 +19,8 @@ describe('user-store effects', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        HttpClientTestingModule
-      ],
-      providers: [
-        UserStoreEffects,
-        provideMockActions(() => actions)
-      ]
+      imports: [HttpClientTestingModule],
+      providers: [UserStoreEffects, provideMockActions(() => actions)]
     });
 
     effects = TestBed.get(UserStoreEffects);
@@ -35,7 +29,6 @@ describe('user-store effects', () => {
   });
 
   describe('getUserCountsRequestEffect', () => {
-
     it('should respond with success', () => {
       const userCounts = factory.userCounts();
       const action = UserStoreActions.getUserCountsRequest();
@@ -67,11 +60,10 @@ describe('user-store effects', () => {
   });
 
   describe('searchUsersRequestEffect', () => {
-
     it('should respond with success', () => {
-      const searchParams = new SearchParams();
+      const searchParams = {};
       const user = new User().deserialize(factory.user());
-      const pagedReply = factory.pagedReply([ user ]);
+      const pagedReply = factory.pagedReply([user]);
       const action = UserStoreActions.searchUsersRequest({ searchParams });
       const completion = UserStoreActions.searchUsersSuccess({ pagedReply });
       spyOn(userService, 'search').and.returnValue(of(pagedReply));
@@ -83,7 +75,7 @@ describe('user-store effects', () => {
     });
 
     it('should respond with failure', () => {
-      const searchParams = new SearchParams();
+      const searchParams = {};
       const error = {
         status: 404,
         error: {
@@ -102,7 +94,6 @@ describe('user-store effects', () => {
   });
 
   describe('getUserRequestEffect', () => {
-
     it('should respond with success', () => {
       const user = new User().deserialize(factory.user());
       const action = UserStoreActions.getUserRequest({ slug: user.slug });
@@ -135,7 +126,6 @@ describe('user-store effects', () => {
   });
 
   describe('updateRequestEffect', () => {
-
     let user: User;
     let action: Action;
     let userListener: any;
@@ -172,5 +162,4 @@ describe('user-store effects', () => {
       expect(effects.updateRequest$).toBeObservable(cold('--b', { b: completion }));
     });
   });
-
 });

@@ -1,25 +1,22 @@
-<mat-horizontal-stepper [linear]="'true'">
-  <mat-step>
-    <ng-template matStepLabel>Information</ng-template>
-  </mat-step>
-  <mat-step>
-    <ng-template matStepLabel>Add Items</ng-template>
-  </mat-step>
-  <mat-step>
-    <ng-template matStepLabel>Packed</ng-template>
-  </mat-step>
-</mat-horizontal-stepper>
-
 <div class="pb-2 mt-4 mb-2 border-bottom">
   <h1>
     {{ shipment.courierName }}: {{ shipment.trackingNumber }}
     <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
-      <button mat-stroked-button color="warn">Remove</button>
-      <button mat-stroked-button color="primary">Tag as packed</button>
-      <button mat-stroked-button color="primary">Tag as sent</button>
+      <button class="btn btn-danger btn-sm mr-1">
+        <span i18n>Remove</span>
+        <mat-icon class="ml-1">remove_circle</mat-icon>
+      </button>
+      <button class="btn btn-primary btn-sm mr-1">
+        <span i18n>Tag as packed</span>
+        <mat-icon>arrow_right</mat-icon>
+      </button>
+      <button class="btn btn-primary btn-sm">
+        <span>Tag as sent</span>
+        <mat-icon class="ml-1">fast_forward</mat-icon>
+      </button>
     </span>
   </h1>
-  <small i18n>Add items to ship</small>
+  <h3 i18n>Add items to ship</h3>
 
   <app-shipment-information-card [shipment]="shipment"> </app-shipment-information-card>
 

@@ -1,29 +1,27 @@
-import { PagedReply, PagedReplyEntityIds, SearchParams, EntityIds } from '@app/domain';
-import { CollectionEventType, EventTypeInfo, IStudy, ICollectionEventType } from '@app/domain/studies';
+import { EntityIds, PagedReply, PagedReplyEntityIds } from '@app/domain';
+import { CollectionEventType, IStudy } from '@app/domain/studies';
 import { EventTypeStoreReducer, EventTypeStoreSelectors } from '@app/root-store';
 import { Factory } from '@test/factory';
 
 describe('EventTypeStore selectors', () => {
-
   const factory = new Factory();
 
   describe('selectSearchRepliesAndEntities', () => {
-
     let eventType: CollectionEventType;
     let pagedReply: PagedReply<CollectionEventType>;
-    let searchReplies: { [ key: string]: PagedReplyEntityIds };
+    let replies: { [key: string]: PagedReplyEntityIds };
 
     beforeEach(() => {
       eventType = new CollectionEventType().deserialize(factory.collectionEventType());
-      pagedReply = factory.pagedReply<CollectionEventType>([ eventType ]);
-      searchReplies = {};
-      searchReplies[factory.defaultStudy().id] = {} as any;
-      searchReplies[factory.defaultStudy().id][pagedReply.searchParams.queryString()] = {
+      pagedReply = factory.pagedReply<CollectionEventType>([eventType]);
+      replies = {};
+      replies[factory.defaultStudy().id] = {} as any;
+      replies[factory.defaultStudy().id][JSON.stringify(pagedReply.searchParams)] = {
         searchParams: pagedReply.searchParams,
-        offset:       pagedReply.offset,
-        total:        pagedReply.total,
-        entityIds:    pagedReply.entities.map(e => e.id),
-        maxPages:     pagedReply.maxPages
+        offset: pagedReply.offset,
+        total: pagedReply.total,
+        entityIds: pagedReply.entities.map(e => e.id),
+        maxPages: pagedReply.maxPages
       };
     });
 
@@ -34,12 +32,12 @@ describe('EventTypeStore selectors', () => {
             studyId: factory.defaultStudy().id,
             params: pagedReply.searchParams
           },
-          searchReplies
+          replies
         }
       });
 
       expect(EventTypeStoreSelectors.selectSearchRepliesAndEntities(state)).toEqual({
-        entities: [ eventType ],
+        entities: [eventType],
         hasNoEntitiesToDisplay: false,
         hasNoResultsToDisplay: false,
         hasResultsToDisplay: true,
@@ -54,7 +52,7 @@ describe('EventTypeStore selectors', () => {
         searchState: {
           searchActive: true,
           lastSearch: pagedReply.searchParams,
-          searchReplies
+          replies
         }
       });
 
@@ -65,7 +63,7 @@ describe('EventTypeStore selectors', () => {
       const state = initialStateWithEntity(eventType, {
         searchState: {
           lastSearch: null,
-          searchReplies
+          replies
         }
       });
 
@@ -77,30 +75,28 @@ describe('EventTypeStore selectors', () => {
         searchState: {
           lastSearch: {
             studyId: factory.defaultStudy().id,
-            params: new SearchParams(undefined, 'name')
+            params: { sort: 'name' }
           },
-          searchReplies
+          replies
         }
       });
 
       expect(EventTypeStoreSelectors.selectSearchRepliesAndEntities(state)).toBeUndefined();
     });
-
   });
 
   describe('selectNamesSearchRepliesAndEntities', () => {
-
     let study: IStudy;
     let eventType: CollectionEventType;
-    const searchParams = new SearchParams();
-    let searchReplies: { [ key: string]: EntityIds };
+    const searchParams = {};
+    let replies: { [key: string]: EntityIds };
 
     beforeEach(() => {
       eventType = new CollectionEventType().deserialize(factory.collectionEventType());
       study = factory.defaultStudy();
-      searchReplies = {};
-      searchReplies[study.id] = {} as any;
-      searchReplies[study.id][searchParams.queryString()] = [ eventType.id ];
+      replies = {};
+      replies[study.id] = {} as any;
+      replies[study.id][JSON.stringify(searchParams)] = [eventType.id];
     });
 
     it('returns entities', () => {
@@ -110,11 +106,11 @@ describe('EventTypeStore selectors', () => {
             studyId: study.id,
             params: searchParams
           },
-          searchReplies
+          replies
         }
       });
 
-      expect(EventTypeStoreSelectors.selectLastNamesSearchEntities(state)).toEqual([ eventType ]);
+      expect(EventTypeStoreSelectors.selectLastNamesSearchEntities(state)).toEqual([eventType]);
     });
 
     it('when search is active returns undefined', () => {
@@ -122,7 +118,7 @@ describe('EventTypeStore selectors', () => {
         namesSearchState: {
           searchActive: true,
           lastSearch: searchParams,
-          searchReplies
+          replies
         }
       });
 
@@ -133,7 +129,7 @@ describe('EventTypeStore selectors', () => {
       const state = initialStateWithEntity(eventType, {
         namesSearchState: {
           lastSearch: null,
-          searchReplies
+          replies
         }
       });
 
@@ -145,15 +141,14 @@ describe('EventTypeStore selectors', () => {
         namesSearchState: {
           lastSearch: {
             studyId: factory.defaultStudy().id,
-            params: new SearchParams(undefined, 'name')
+            params: { sort: 'name' }
           },
-          searchReplies
+          replies
         }
       });
 
       expect(EventTypeStoreSelectors.selectSearchRepliesAndEntities(state)).toBeUndefined();
     });
-
   });
 
   it('selectLastAdded', () => {
@@ -167,7 +162,7 @@ describe('EventTypeStore selectors', () => {
     const state = {
       'event-type': {
         ...EventTypeStoreReducer.initialState,
-        ids: [ eventType.id ],
+        ids: [eventType.id],
         entities: {},
         ...additionalState
       }
@@ -176,5 +171,4 @@ describe('EventTypeStore selectors', () => {
     state['event-type'].entities[eventType.id] = eventType;
     return state;
   }
-
 });

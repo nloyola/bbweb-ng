@@ -15,7 +15,6 @@ import { filter, takeUntil } from 'rxjs/operators';
   styleUrls: ['./roles-view.component.scss']
 })
 export class RolesViewComponent implements OnInit, OnDestroy {
-
   isCountsLoading$: Observable<boolean>;
   isLoading$: Observable<boolean>;
   hasLoaded$: Observable<boolean>;
@@ -27,33 +26,32 @@ export class RolesViewComponent implements OnInit, OnDestroy {
   stateData: EntityStateInfo[];
   sortChoices: LabelledId[];
 
-  private filters: { [ name: string ]: SearchFilter };
+  private filters: { [name: string]: SearchFilter };
   private unsubscribe$: Subject<void> = new Subject<void>();
 
   currentPage = 1;
   roleToAdd: any;
 
-  constructor(private store$: Store<RootStoreState.State>,
-              private router: Router,
-              private route: ActivatedRoute) {
+  constructor(
+    private store$: Store<RootStoreState.State>,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {
     this.filters = {
       nameFilter: new NameFilter(),
       stateFilter: new StateFilter(this.stateData, 'all', true)
     };
 
-    this.sortChoices = [
-      { id: 'name', label: 'Name' },
-      { id: 'state', label: 'State' }
-    ];
+    this.sortChoices = [{ id: 'name', label: 'Name' }, { id: 'state', label: 'State' }];
   }
 
   ngOnInit() {
-    this.isLoading$ =
-      this.store$.pipe(select(RoleStoreSelectors.selectRoleSearchActive));
+    this.isLoading$ = this.store$.pipe(select(RoleStoreSelectors.selectRoleSearchActive));
 
     this.rolePageInfo$ = this.store$.pipe(
       select(RoleStoreSelectors.selectRoleSearchRepliesAndEntities),
-      takeUntil(this.unsubscribe$));
+      takeUntil(this.unsubscribe$)
+    );
 
     this.applySearchParams();
   }
@@ -78,13 +76,15 @@ export class RolesViewComponent implements OnInit, OnDestroy {
   }
 
   public paginationPageChanged(page: number) {
-    if (isNaN(page)) { return; }
+    if (isNaN(page)) {
+      return;
+    }
     this.applySearchParams();
   }
 
   public roleSelected(role: Role): void {
-    this.router.navigate([ 'view', role.slug, 'summary' ], { relativeTo: this.route });
- }
+    this.router.navigate(['view', role.slug, 'summary'], { relativeTo: this.route });
+  }
 
   private getFilters() {
     return Object.values(this.filters)
@@ -93,11 +93,12 @@ export class RolesViewComponent implements OnInit, OnDestroy {
   }
 
   private applySearchParams() {
-    this.store$.dispatch(RoleStoreActions.searchRolesRequest({
-      searchParams: new SearchParams(this.getFilters().join(';'),
-                                     this.sortField,
-                                     this.currentPage,
-                                     this.rolesLimit)
-    }));
+    const searchParams = {
+      filter: this.getFilters().join(';'),
+      sort: this.sortField,
+      page: this.currentPage,
+      limit: this.rolesLimit
+    };
+    this.store$.dispatch(RoleStoreActions.searchRolesRequest({ searchParams }));
   }
 }

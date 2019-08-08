@@ -1,13 +1,20 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { PagedReply, SearchParams, JSONObject, JSONArray, JSONValue } from '@app/domain';
+import {
+  PagedReply,
+  SearchParams,
+  JSONObject,
+  JSONArray,
+  JSONValue,
+  searchParamsToHttpParams
+} from '@app/domain';
 import { ApiReply } from '@app/domain/api-reply.model';
 import { Observable } from 'rxjs';
 import { delay, map } from 'rxjs/operators';
 import { Membership } from '@app/domain/access';
 
 export type MembershipUpdateAttribute =
-  'name'
+  | 'name'
   | 'description'
   | 'userAdd'
   | 'userRemove'
@@ -22,21 +29,20 @@ export type MembershipUpdateAttribute =
   providedIn: 'root'
 })
 export class MembershipService {
-
   readonly BASE_URL = '/api/access/memberships';
 
   constructor(private http: HttpClient) {}
 
   /**
-  * Retrieves a Membership from the server.
-  *
-  * @param {string} slug the slug of the membership to retrieve.
-  */
+   * Retrieves a Membership from the server.
+   *
+   * @param {string} slug the slug of the membership to retrieve.
+   */
   get(slug: string): Observable<Membership> {
-    return this.http.get<ApiReply>(`${this.BASE_URL}/${slug}`)
-      .pipe(
-        delay(2000),
-        map(this.replyToMembership));
+    return this.http.get<ApiReply>(`${this.BASE_URL}/${slug}`).pipe(
+      delay(2000),
+      map(this.replyToMembership)
+    );
   }
 
   /**
@@ -49,25 +55,26 @@ export class MembershipService {
    * @returns The memberships within a PagedReply.
    */
   search(searchParams: SearchParams): Observable<PagedReply<Membership>> {
-    return this.http.get<ApiReply>(`${this.BASE_URL}`,
-                                   { params: searchParams.httpParams() })
-      .pipe(
-        // delay(2000),
-        map((reply: ApiReply) => {
-          const jObj = reply.data as JSONObject;
-          if (reply && reply.data && jObj.items) {
-            const entities: Membership[] = (jObj.items as JSONArray)
-              .map((obj: JSONObject) => new Membership().deserialize(obj as any));
-            return {
-              searchParams,
-              entities,
-              offset: jObj.offset as number,
-              total: jObj.total as number,
-              maxPages: jObj.maxPages as number
-            };
-          }
-          throw new Error('expected a paged reply');
-        }));
+    let params = searchParamsToHttpParams(searchParams);
+    return this.http.get<ApiReply>(`${this.BASE_URL}`, { params }).pipe(
+      // delay(2000),
+      map((reply: ApiReply) => {
+        const jObj = reply.data as JSONObject;
+        if (reply && reply.data && jObj.items) {
+          const entities: Membership[] = (jObj.items as JSONArray).map((obj: JSONObject) =>
+            new Membership().deserialize(obj as any)
+          );
+          return {
+            searchParams,
+            entities,
+            offset: jObj.offset as number,
+            total: jObj.total as number,
+            maxPages: jObj.maxPages as number
+          };
+        }
+        throw new Error('expected a paged reply');
+      })
+    );
   }
 
   add(membership: Membership): Observable<Membership> {
@@ -80,10 +87,10 @@ export class MembershipService {
       allCentres: false,
       centreIds: []
     };
-    return this.http.post<ApiReply>(this.BASE_URL, json)
-      .pipe(
-        // delay(2000),
-        map(this.replyToMembership));
+    return this.http.post<ApiReply>(this.BASE_URL, json).pipe(
+      // delay(2000),
+      map(this.replyToMembership)
+    );
   }
 
   update(
@@ -157,20 +164,19 @@ export class MembershipService {
       default:
         throw new Error('invalid attribute name for update: ' + attributeName);
     }
-
   }
 
   removeMembership(membership: Membership): Observable<string> {
     const url = `${this.BASE_URL}/${membership.id}/${membership.version}`;
-    return this.http.delete<ApiReply>(url)
-      .pipe(
-        // delay(5000),
-        map((reply: ApiReply) => {
-          if (reply && reply.data) {
-            return membership.id;
-          }
-          throw new Error('expected a valid reply');
-        }));
+    return this.http.delete<ApiReply>(url).pipe(
+      // delay(5000),
+      map((reply: ApiReply) => {
+        if (reply && reply.data) {
+          return membership.id;
+        }
+        throw new Error('expected a valid reply');
+      })
+    );
   }
 
   private replyToMembership(reply: ApiReply): Membership {

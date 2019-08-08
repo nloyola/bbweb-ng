@@ -3,7 +3,13 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CollectionEvent, Participant } from '@app/domain/participants';
-import { EventStoreReducer, ParticipantStoreActions, ParticipantStoreReducer, RootStoreState, NgrxRuntimeChecks } from '@app/root-store';
+import {
+  EventStoreReducer,
+  ParticipantStoreActions,
+  ParticipantStoreReducer,
+  RootStoreState,
+  NgrxRuntimeChecks
+} from '@app/root-store';
 import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
 import { MockActivatedRoute } from '@test/mocks';
@@ -26,10 +32,11 @@ describe('ParticipantEventsComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            'participant': ParticipantStoreReducer.reducer,
-            'event': EventStoreReducer.reducer
+            participant: ParticipantStoreReducer.reducer,
+            event: EventStoreReducer.reducer
           },
-          NgrxRuntimeChecks),
+          NgrxRuntimeChecks
+        ),
         ToastrModule.forRoot()
       ],
       providers: [
@@ -38,13 +45,9 @@ describe('ParticipantEventsComponent', () => {
           useValue: mockActivatedRoute
         }
       ],
-      declarations: [
-        EventAddSelectComponent,
-        ParticipantEventsComponent
-      ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
-      .compileComponents();
+      declarations: [ParticipantEventsComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -77,7 +80,7 @@ describe('ParticipantEventsComponent', () => {
     component.addEventSelected();
     fixture.detectChanges();
     expect(routerListener.mock.calls.length).toBe(1);
-    expect(routerListener.mock.calls[0][0]).toEqual([ '../add' ]);
+    expect(routerListener.mock.calls[0][0]).toEqual(['../add']);
   });
 
   it('change state when an event is selected', () => {
@@ -89,7 +92,7 @@ describe('ParticipantEventsComponent', () => {
     component.eventSelected(event);
     fixture.detectChanges();
     expect(routerListener.mock.calls.length).toBe(1);
-    expect(routerListener.mock.calls[0][0]).toEqual([ event.visitNumber ]);
+    expect(routerListener.mock.calls[0][0]).toEqual([event.visitNumber]);
   });
 
   function mockActivatedRouteSnapshot(p: Participant): void {

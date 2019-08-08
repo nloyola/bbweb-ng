@@ -1,12 +1,11 @@
-import { Factory } from '@test/factory';
-import { SearchParams, PagedReplyEntityIds } from '@app/domain';
+import { PagedReplyEntityIds } from '@app/domain';
 import { Specimen } from '@app/domain/participants';
-import { EntityAdapter, createEntityAdapter } from '@ngrx/entity';
-import { reducer, initialState } from './specimen.reducer';
+import { createEntityAdapter, EntityAdapter } from '@ngrx/entity';
+import { Factory } from '@test/factory';
+import { initialState } from './specimen.reducer';
 import * as selectors from './specimen.selectors';
 
 describe('specimen-store selectors', () => {
-
   const factory = new Factory();
 
   it('selectSpecimenLastAdded', () => {
@@ -19,8 +18,7 @@ describe('specimen-store selectors', () => {
     };
 
     expect(selectors.selectSpecimenLastAddedId(state)).toBe(specimen.id);
-  })
-;
+  });
   it('selectSpecimenLastRemoved', () => {
     const specimen = factory.specimen();
     const state = {
@@ -45,7 +43,7 @@ describe('specimen-store selectors', () => {
   });
 
   it('selectSpecimenLastSearch', () => {
-    const searchParams = new SearchParams();
+    const searchParams = {};
     const state = {
       specimen: {
         ...initialState,
@@ -58,14 +56,14 @@ describe('specimen-store selectors', () => {
 
   it('selectSpecimenSearchReplies', () => {
     const specimen = new Specimen().deserialize(factory.specimen());
-    const pagedReply = factory.pagedReply<Specimen>([ specimen ]);
-    const searchReplies: { [ key: string]: PagedReplyEntityIds } = {};
-    searchReplies[pagedReply.searchParams.queryString()] = {
+    const pagedReply = factory.pagedReply<Specimen>([specimen]);
+    const searchReplies: { [key: string]: PagedReplyEntityIds } = {};
+    searchReplies[JSON.stringify(pagedReply.searchParams)] = {
       searchParams: pagedReply.searchParams,
       offset: pagedReply.offset,
       total: pagedReply.total,
       entityIds: pagedReply.entities.map(e => e.id),
-      maxPages: pagedReply.maxPages,
+      maxPages: pagedReply.maxPages
     };
     const state = {
       specimen: {
@@ -83,22 +81,21 @@ describe('specimen-store selectors', () => {
       selectId: (s: Specimen) => s.id
     });
     const state = {
-      specimen: adapter.addAll([ specimen ], initialState)
+      specimen: adapter.addAll([specimen], initialState)
     };
 
-    expect(selectors.selectAllSpecimens(state)).toEqual([ specimen ]);
+    expect(selectors.selectAllSpecimens(state)).toEqual([specimen]);
   });
 
   describe('selectSpecimenSearchRepliesAndEntities', () => {
-
     it('when search has completed', () => {
       const specimen = new Specimen().deserialize(factory.specimen());
       const adapter: EntityAdapter<Specimen> = createEntityAdapter<Specimen>({
         selectId: (s: Specimen) => s.id
       });
-      const pagedReply = factory.pagedReply<Specimen>([ specimen ]);
-      const searchReplies: { [ key: string]: PagedReplyEntityIds } = {};
-      searchReplies[pagedReply.searchParams.queryString()] = {
+      const pagedReply = factory.pagedReply<Specimen>([specimen]);
+      const searchReplies: { [key: string]: PagedReplyEntityIds } = {};
+      searchReplies[JSON.stringify(pagedReply.searchParams)] = {
         searchParams: pagedReply.searchParams,
         offset: pagedReply.offset,
         total: pagedReply.total,
@@ -106,7 +103,7 @@ describe('specimen-store selectors', () => {
         maxPages: pagedReply.maxPages
       };
       const state = {
-        specimen: adapter.addAll([ specimen ], {
+        specimen: adapter.addAll([specimen], {
           ...initialState,
           searchActive: false,
           lastSearch: pagedReply.searchParams,
@@ -115,7 +112,7 @@ describe('specimen-store selectors', () => {
       };
 
       expect(selectors.selectSpecimenSearchRepliesAndEntities(state)).toEqual({
-        entities: [ specimen ],
+        entities: [specimen],
         hasNoEntitiesToDisplay: false,
         hasNoResultsToDisplay: false,
         hasResultsToDisplay: true,
@@ -142,9 +139,9 @@ describe('specimen-store selectors', () => {
       const adapter: EntityAdapter<Specimen> = createEntityAdapter<Specimen>({
         selectId: (s: Specimen) => s.id
       });
-      const pagedReply = factory.pagedReply<Specimen>([ specimen ]);
+      const pagedReply = factory.pagedReply<Specimen>([specimen]);
       const state = {
-        specimen: adapter.addAll([ specimen ], {
+        specimen: adapter.addAll([specimen], {
           ...initialState,
           searchActive: false,
           lastSearch: pagedReply.searchParams,
@@ -154,7 +151,5 @@ describe('specimen-store selectors', () => {
 
       expect(selectors.selectSpecimenSearchRepliesAndEntities(state)).toBeUndefined();
     });
-
   });
-
 });

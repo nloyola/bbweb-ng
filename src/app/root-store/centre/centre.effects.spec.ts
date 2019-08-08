@@ -1,6 +1,6 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { CentreService } from '@app/core/services';
+import { CentreService, CentreLocationsSearchReply } from '@app/core/services';
 import { SearchParams } from '@app/domain';
 import { CentreStoreActions } from '@app/root-store';
 import { Factory } from '@test/factory';
@@ -8,11 +8,10 @@ import { provideMockActions } from '@ngrx/effects/testing';
 import { cold, hot } from 'jasmine-marbles';
 import { Observable, of, throwError } from 'rxjs';
 import { CentreStoreEffects } from './centre.effects';
-import { Centre } from '@app/domain/centres';
+import { Centre, CentreLocationInfo } from '@app/domain/centres';
 import { Action } from '@ngrx/store';
 
 describe('centre-store effects', () => {
-
   let effects: CentreStoreEffects;
   let actions: Observable<any>;
   let centreService: CentreService;
@@ -20,13 +19,8 @@ describe('centre-store effects', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        HttpClientTestingModule
-      ],
-      providers: [
-        CentreStoreEffects,
-        provideMockActions(() => actions)
-      ]
+      imports: [HttpClientTestingModule],
+      providers: [CentreStoreEffects, provideMockActions(() => actions)]
     });
 
     effects = TestBed.get(CentreStoreEffects);
@@ -35,10 +29,9 @@ describe('centre-store effects', () => {
   });
 
   describe('getCentreCountsRequestEffect', () => {
-
     it('should respond with success', () => {
       const centreCounts = factory.centreCounts();
-      const action = CentreStoreActions.getCentreCountsRequest({ searchParams: new SearchParams() });
+      const action = CentreStoreActions.getCentreCountsRequest({ searchParams: {} });
       const completion = CentreStoreActions.getCentreCountsSuccess({ centreCounts });
       spyOn(centreService, 'counts').and.returnValue(of(centreCounts));
 
@@ -55,7 +48,7 @@ describe('centre-store effects', () => {
           message: 'simulated error'
         }
       };
-      const action = CentreStoreActions.getCentreCountsRequest({ searchParams: new SearchParams() });
+      const action = CentreStoreActions.getCentreCountsRequest({ searchParams: {} });
       const completion = CentreStoreActions.getCentreCountsFailure({ error });
       spyOn(centreService, 'counts').and.returnValue(throwError(error));
 
@@ -67,11 +60,10 @@ describe('centre-store effects', () => {
   });
 
   describe('searchCentresRequestEffect', () => {
-
     it('should respond with success', () => {
-      const searchParams = new SearchParams();
+      const searchParams = {};
       const centre = new Centre().deserialize(factory.centre());
-      const pagedReply = factory.pagedReply([ centre ]);
+      const pagedReply = factory.pagedReply([centre]);
       const action = CentreStoreActions.searchCentresRequest({ searchParams });
       const completion = CentreStoreActions.searchCentresSuccess({ pagedReply });
       spyOn(centreService, 'search').and.returnValue(of(pagedReply));
@@ -83,7 +75,7 @@ describe('centre-store effects', () => {
     });
 
     it('should respond with failure', () => {
-      const searchParams = new SearchParams();
+      const searchParams = {};
       const error = {
         status: 404,
         error: {
@@ -101,8 +93,40 @@ describe('centre-store effects', () => {
     });
   });
 
-  describe('addCentreRequestEffect', () => {
+  describe('searchLocationsRequestEffect', () => {
+    it('should respond with success', () => {
+      const centre = new Centre().deserialize(factory.centre({ locations: [factory.location()] }));
+      const centreLocations = [new CentreLocationInfo().deserialize(factory.centreLocationInfo(centre))];
+      const filter = factory.stringNext();
+      const searchReply: CentreLocationsSearchReply = { filter, centreLocations };
+      spyOn(centreService, 'searchLocations').and.returnValue(of(searchReply));
 
+      actions = hot('--a-', { a: CentreStoreActions.searchLocationsRequest({ filter }) });
+      const expected = cold('--b', { b: CentreStoreActions.searchLocationsSuccess({ searchReply }) });
+
+      expect(effects.searchLocationsRequest$).toBeObservable(expected);
+    });
+
+    it('should respond with failure', () => {
+      const filter = factory.stringNext();
+      const error = {
+        status: 404,
+        error: {
+          message: 'simulated error'
+        }
+      };
+      const action = CentreStoreActions.searchLocationsRequest({ filter });
+      const completion = CentreStoreActions.searchLocationsFailure({ error });
+      spyOn(centreService, 'searchLocations').and.returnValue(throwError(error));
+
+      actions = hot('--a-', { a: action });
+      const expected = cold('--b', { b: completion });
+
+      expect(effects.searchLocationsRequest$).toBeObservable(expected);
+    });
+  });
+
+  describe('addCentreRequestEffect', () => {
     it('should respond with success', () => {
       const centre = new Centre().deserialize(factory.centre());
       const action = CentreStoreActions.addCentreRequest({ centre });
@@ -135,7 +159,6 @@ describe('centre-store effects', () => {
   });
 
   describe('getCentreRequestEffect', () => {
-
     it('should respond with success', () => {
       const centre = new Centre().deserialize(factory.centre());
       const action = CentreStoreActions.getCentreRequest({ slug: centre.slug });
@@ -168,7 +191,6 @@ describe('centre-store effects', () => {
   });
 
   describe('updateRequestEffect', () => {
-
     let centre: Centre;
     let action: Action;
     let centreListener: any;
@@ -205,5 +227,4 @@ describe('centre-store effects', () => {
       expect(effects.updateRequest$).toBeObservable(cold('--b', { b: completion }));
     });
   });
-
 });

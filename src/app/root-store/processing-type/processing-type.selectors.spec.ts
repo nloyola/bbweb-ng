@@ -4,7 +4,6 @@ import { ProcessingTypeStoreReducer, ProcessingTypeStoreSelectors } from '@app/r
 import { Factory } from '@test/factory';
 
 describe('ProcessingTypeStore selectors', () => {
-
   let factory: Factory;
 
   beforeEach(() => {
@@ -12,22 +11,21 @@ describe('ProcessingTypeStore selectors', () => {
   });
 
   describe('selectSearchRepliesAndEntities', () => {
-
     let processingType: ProcessingType;
     let pagedReply: PagedReply<ProcessingType>;
-    let searchReplies: { [ key: string]: PagedReplyEntityIds };
+    let searchReplies: { [key: string]: PagedReplyEntityIds };
 
     beforeEach(() => {
       processingType = factory.processingType();
-      pagedReply = factory.pagedReply<ProcessingType>([ processingType ]);
+      pagedReply = factory.pagedReply<ProcessingType>([processingType]);
       searchReplies = {};
       searchReplies[processingType.studyId] = {} as any;
-      searchReplies[processingType.studyId][pagedReply.searchParams.queryString()] = {
+      searchReplies[processingType.studyId][JSON.stringify(pagedReply.searchParams)] = {
         searchParams: pagedReply.searchParams,
-        offset:       pagedReply.offset,
-        total:        pagedReply.total,
-        entityIds:    pagedReply.entities.map((e: any) => e.id),
-        maxPages:     pagedReply.maxPages
+        offset: pagedReply.offset,
+        total: pagedReply.total,
+        entityIds: pagedReply.entities.map((e: any) => e.id),
+        maxPages: pagedReply.maxPages
       };
     });
 
@@ -41,7 +39,7 @@ describe('ProcessingTypeStore selectors', () => {
       });
 
       expect(ProcessingTypeStoreSelectors.selectSearchRepliesAndEntities(state)).toEqual({
-        entities: [ processingType ],
+        entities: [processingType],
         hasNoEntitiesToDisplay: false,
         hasNoResultsToDisplay: false,
         hasResultsToDisplay: true,
@@ -74,14 +72,13 @@ describe('ProcessingTypeStore selectors', () => {
       const state = initialStateWithEntity(processingType, {
         lastSearch: {
           studyId: processingType.studyId,
-          params: new SearchParams(undefined, 'name')
+          params: { sort: 'name' }
         },
         searchReplies
       });
 
       expect(ProcessingTypeStoreSelectors.selectSearchRepliesAndEntities(state)).toBeUndefined();
     });
-
   });
 
   it('selectLastAdded', () => {
@@ -95,7 +92,7 @@ describe('ProcessingTypeStore selectors', () => {
     const state = {
       'processing-type': {
         ...ProcessingTypeStoreReducer.initialState,
-        ids: [ processingType.id ],
+        ids: [processingType.id],
         entities: {},
         ...additionalState
       }
@@ -104,5 +101,4 @@ describe('ProcessingTypeStore selectors', () => {
     state['processing-type'].entities[processingType.id] = processingType;
     return state;
   }
-
 });

@@ -1,15 +1,20 @@
 import { EventTypeUpdateAttribute } from '@app/core/services';
 import { PagedReply, SearchParams } from '@app/domain';
-import { CollectedSpecimenDefinitionName, CollectionEventType, CollectedSpecimenDefinition, EventTypeInfo } from '@app/domain/studies';
+import {
+  CollectedSpecimenDefinitionName,
+  CollectionEventType,
+  CollectedSpecimenDefinition,
+  EventTypeInfo
+} from '@app/domain/studies';
 import { createAction, props, union } from '@ngrx/store';
 import { AnnotationType } from '@app/domain/annotations';
 
 export const searchEventTypesRequest = createAction(
   '[EventType] Search Event Types Request',
   props<{
-    studySlug: string,
+    studySlug: string;
     studyId: string;
-    searchParams: SearchParams
+    searchParams: SearchParams;
   }>()
 );
 
@@ -26,14 +31,14 @@ export const searchEventTypesFailure = createAction(
 export const searchEventTypeNamesRequest = createAction(
   '[EventType] Search Event Type Names Request',
   props<{
-    studyId: string,
-    searchParams: SearchParams
+    studyId: string;
+    searchParams: SearchParams;
   }>()
 );
 
 export const searchEventTypeNamesSuccess = createAction(
   '[EventType] Search Event Type Names Success',
-  props<{ eventTypeInfo: EventTypeInfo[] }>()
+  props<{ eventTypeData: EventTypeInfo[] }>()
 );
 
 export const searchEventTypeNamesFailure = createAction(
@@ -43,12 +48,12 @@ export const searchEventTypeNamesFailure = createAction(
 
 export const getEventTypeRequest = createAction(
   '[EventType] Get Event Type Request',
-  props<{ studySlug: string, eventTypeSlug: string }>()
+  props<{ studySlug: string; eventTypeSlug: string }>()
 );
 
 export const getEventTypeByIdRequest = createAction(
   '[EventType] Get Event Type By ID Request',
-  props<{ studyId: string, eventTypeId: string }>()
+  props<{ studyId: string; eventTypeId: string }>()
 );
 
 export const getEventTypeSuccess = createAction(
@@ -79,9 +84,9 @@ export const addEventTypeFailure = createAction(
 export const updateEventTypeRequest = createAction(
   '[EventType] Update Event Type Request',
   props<{
-    eventType: CollectionEventType,
-    attributeName: EventTypeUpdateAttribute,
-    value: string | boolean | AnnotationType | CollectedSpecimenDefinition
+    eventType: CollectionEventType;
+    attributeName: EventTypeUpdateAttribute;
+    value: string | boolean | AnnotationType | CollectedSpecimenDefinition;
   }>()
 );
 
@@ -118,8 +123,8 @@ export const getSpecimenDefinitionNamesRequest = createAction(
 export const getSpecimenDefinitionNamesSuccess = createAction(
   '[EventType] Get Specimen Definition Names Success',
   props<{
-    studySlug: string,
-    specimenDefinitionNames: CollectedSpecimenDefinitionName[]
+    studySlug: string;
+    specimenDefinitionNames: CollectedSpecimenDefinitionName[];
   }>()
 );
 
@@ -128,9 +133,7 @@ export const getSpecimenDefinitionNamesFailure = createAction(
   props<{ error: any }>()
 );
 
-export const clearLastAdded = createAction(
-  '[EventType] Clear Last Added'
-);
+export const clearLastAdded = createAction('[EventType] Clear Last Added');
 
 const all = union({
   searchEventTypesRequest,

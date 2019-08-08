@@ -14,7 +14,6 @@ import { NameFilter } from '@app/domain/search-filters';
   styleUrls: ['./event-types-add-and-select.component.scss']
 })
 export class EventTypesAddAndSelectComponent implements OnInit, OnDestroy {
-
   @Input() study: Study;
   @Output() addSelected = new EventEmitter<any>();
   @Output() selected = new EventEmitter<CollectionEventType>();
@@ -34,22 +33,24 @@ export class EventTypesAddAndSelectComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.isAddAllowed = this.study.isDisabled();
-    this.isLoading$ =
-      this.store$.pipe(select(EventTypeStoreSelectors.selectSearchActive));
+    this.isLoading$ = this.store$.pipe(select(EventTypeStoreSelectors.selectSearchActive));
 
     this.pageInfo$ = this.store$.pipe(
       select(EventTypeStoreSelectors.selectSearchRepliesAndEntities),
-      takeUntil(this.unsubscribe$));
-
-    this.store$.pipe(
-      select(EventTypeStoreSelectors.selectLastRemovedId),
-      filter(id => id !== null),
       takeUntil(this.unsubscribe$)
-    ).subscribe(() => {
-      this.applySearchParams();
-    });
+    );
 
-   this.applySearchParams();
+    this.store$
+      .pipe(
+        select(EventTypeStoreSelectors.selectLastRemovedId),
+        filter(id => id !== null),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe(() => {
+        this.applySearchParams();
+      });
+
+    this.applySearchParams();
   }
 
   public ngOnDestroy() {
@@ -81,14 +82,18 @@ export class EventTypesAddAndSelectComponent implements OnInit, OnDestroy {
   }
 
   private applySearchParams() {
-    this.store$.dispatch(EventTypeStoreActions.searchEventTypesRequest({
-      studySlug: this.study.slug,
-      studyId: this.study.id,
-      searchParams: new SearchParams(this.filterValues,
-                                     this.sortField,
-                                     this.currentPage,
-                                     this.eventTypesLimit)
-    }));
+    const searchParams = {
+      filter: this.filterValues,
+      sort: this.sortField,
+      page: this.currentPage,
+      limit: this.eventTypesLimit
+    };
+    this.store$.dispatch(
+      EventTypeStoreActions.searchEventTypesRequest({
+        studySlug: this.study.slug,
+        studyId: this.study.id,
+        searchParams
+      })
+    );
   }
-
 }

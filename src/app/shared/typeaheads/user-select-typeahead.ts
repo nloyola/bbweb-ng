@@ -12,7 +12,7 @@ export class UserSelectTypeahead extends EntitySelectTypeahead<User> {
   }
 
   protected termMapper(term: string): Observable<User[]> {
-    const searchParams = new SearchParams(`name:like:${term}`);
+    const searchParams = { filter: `name:like:${term}` };
     this.store$.dispatch(UserStoreActions.searchUsersRequest({ searchParams }));
 
     return this.store$.pipe(
@@ -22,7 +22,7 @@ export class UserSelectTypeahead extends EntitySelectTypeahead<User> {
     );
   }
 
-  typeaheadFormatter(user: User): string {
+  formatter(user: User): string {
     return user.name;
   }
 }

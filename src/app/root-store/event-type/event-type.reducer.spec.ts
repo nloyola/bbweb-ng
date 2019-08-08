@@ -1,11 +1,10 @@
-import { reducer, initialState } from './event-type.reducer';
-import { SearchParams, PagedReplyEntityIds, EntityIds } from '@app/domain';
-import { Factory } from '@test/factory';
+import { EntityIds, PagedReplyEntityIds } from '@app/domain';
 import { CollectionEventType, EventTypeInfo } from '@app/domain/studies';
+import { Factory } from '@test/factory';
 import * as EventTypeStoreActions from './event-type.actions';
+import { initialState, reducer } from './event-type.reducer';
 
 describe('EventType Reducer', () => {
-
   const factory = new Factory();
 
   describe('unknown action', () => {
@@ -17,13 +16,12 @@ describe('EventType Reducer', () => {
   });
 
   describe('searching for collection events', () => {
-
     it('SearchEventTypesRequest', () => {
       const studyId = factory.stringNext();
       const payload = {
         studyId,
         studySlug: factory.stringNext(),
-        searchParams: new SearchParams()
+        searchParams: {}
       };
       const action = EventTypeStoreActions.searchEventTypesRequest(payload);
       const state = reducer(undefined, action);
@@ -45,7 +43,7 @@ describe('EventType Reducer', () => {
       const eventType = new CollectionEventType().deserialize(factory.collectionEventType());
       const payload = {
         studySlug: factory.stringNext(),
-        pagedReply: factory.pagedReply<CollectionEventType>([ eventType ])
+        pagedReply: factory.pagedReply<CollectionEventType>([eventType])
       };
       const action = EventTypeStoreActions.searchEventTypesSuccess(payload);
       const state = reducer(
@@ -59,11 +57,12 @@ describe('EventType Reducer', () => {
             }
           }
         },
-        action);
+        action
+      );
 
-      const searchReply: { [ key: string]: PagedReplyEntityIds } = {};
-      searchReply[eventType.studyId] = {} as  any;
-      searchReply[eventType.studyId][payload.pagedReply.searchParams.queryString()] = {
+      const searchReply: { [key: string]: PagedReplyEntityIds } = {};
+      searchReply[eventType.studyId] = {} as any;
+      searchReply[eventType.studyId][JSON.stringify(payload.pagedReply.searchParams)] = {
         searchParams: payload.pagedReply.searchParams,
         offset: payload.pagedReply.offset,
         total: payload.pagedReply.total,
@@ -71,7 +70,7 @@ describe('EventType Reducer', () => {
         maxPages: payload.pagedReply.maxPages
       };
 
-      expect(state.searchState.searchReplies).toEqual(searchReply);
+      expect(state.searchState.replies).toEqual(searchReply);
       expect(state.searchState.searchActive).toBe(false);
       expect(state.ids).toContain(eventType.id);
       expect(state.entities[eventType.id]).toEqual(eventType);
@@ -91,14 +90,12 @@ describe('EventType Reducer', () => {
       expect(state.error.actionType).toEqual(action.type);
       expect(state.error.error).toEqual(error);
     });
-
   });
 
   describe('searching for collection event names', () => {
-
     it('SearchEventTypeNamesRequest', () => {
       const studyId = factory.stringNext();
-      const searchParams = new SearchParams();
+      const searchParams = {};
       const action = EventTypeStoreActions.searchEventTypeNamesRequest({
         studyId,
         searchParams
@@ -120,9 +117,9 @@ describe('EventType Reducer', () => {
 
     it('SearchEventTypeNamesSuccess', () => {
       const eventType = new CollectionEventType().deserialize(factory.collectionEventType());
-      const searchParams = new SearchParams();
+      const searchParams = {};
       const action = EventTypeStoreActions.searchEventTypeNamesSuccess({
-        eventTypeInfo: [ new EventTypeInfo().deserialize(factory.entityToInfo(eventType)) ]
+        eventTypeData: [new EventTypeInfo().deserialize(factory.entityToInfo(eventType))]
       });
       const state = reducer(
         {
@@ -135,13 +132,14 @@ describe('EventType Reducer', () => {
             }
           }
         },
-        action);
+        action
+      );
 
-      const searchReply: { [ key: string]: EntityIds } = {};
-      searchReply[eventType.studyId] = {} as any;
-      searchReply[eventType.studyId][searchParams.queryString()] = action.eventTypeInfo.map(e => e.id);
+      const searchReply = {};
+      searchReply[eventType.studyId] = {};
+      searchReply[eventType.studyId][JSON.stringify(searchParams)] = action.eventTypeData.map(e => e.id);
 
-      expect(state.namesSearchState.searchReplies).toEqual(searchReply);
+      expect(state.namesSearchState.replies).toEqual(searchReply);
       expect(state.namesSearchState.searchActive).toBe(false);
       expect(state.ids).toContain(eventType.id);
       expect(state.entities[eventType.id]).toEqual(factory.entityToInfo(eventType));
@@ -161,7 +159,6 @@ describe('EventType Reducer', () => {
       expect(state.error.actionType).toEqual(action.type);
       expect(state.error.error).toEqual(error);
     });
-
   });
 
   it('GetEventTypeSuccess', () => {
@@ -229,7 +226,6 @@ describe('EventType Reducer', () => {
   });
 
   describe('for updating an event type', () => {
-
     let eventType: CollectionEventType;
     let testInitialState: any;
 
@@ -237,7 +233,7 @@ describe('EventType Reducer', () => {
       eventType = new CollectionEventType().deserialize(factory.collectionEventType());
       testInitialState = {
         ...initialState,
-        ids: [ eventType.id ],
+        ids: [eventType.id],
         entities: {}
       };
       testInitialState['entities'][eventType.id] = {};
@@ -268,11 +264,9 @@ describe('EventType Reducer', () => {
         error: payload.error
       });
     });
-
   });
 
   describe('for removing an event type', () => {
-
     let eventType: CollectionEventType;
     let testInitialState: any;
 
@@ -280,7 +274,7 @@ describe('EventType Reducer', () => {
       eventType = new CollectionEventType().deserialize(factory.collectionEventType());
       testInitialState = {
         ...initialState,
-        ids: [ eventType.id ],
+        ids: [eventType.id],
         entities: {}
       };
       testInitialState['entities'][eventType.id] = eventType;

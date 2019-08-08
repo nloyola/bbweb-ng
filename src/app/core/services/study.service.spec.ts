@@ -1,16 +1,15 @@
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { PagedReply, SearchParams } from '@app/domain';
-import { Study, StudyCounts, IStudy, StudyState, IStudyStateInfo } from '@app/domain/studies';
+import { AnnotationType } from '@app/domain/annotations';
+import { IStudy, IStudyStateInfo, Study, StudyCounts, StudyState } from '@app/domain/studies';
 import { PagedQueryBehaviour } from '@test/behaviours/paged-query.behaviour';
+import { SearchableApiBehaviour } from '@test/behaviours/searchable-api.behaviour';
 import { Factory } from '@test/factory';
 import * as faker from 'faker';
 import { StudyService } from './study.service';
-import { AnnotationType } from '@app/domain/annotations';
-import { SearchableApiBehaviour } from '@test/behaviours/searchable-api.behaviour';
 
 describe('StudyService', () => {
-
   const BASE_URL = '/api/studies';
 
   let httpMock: HttpTestingController;
@@ -19,9 +18,7 @@ describe('StudyService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        HttpClientTestingModule
-      ],
+      imports: [HttpClientTestingModule],
       providers: [StudyService]
     });
 
@@ -35,7 +32,6 @@ describe('StudyService', () => {
   });
 
   describe('for study counts', () => {
-
     it('reply is handled correctly', () => {
       const counts = factory.studyCounts();
       service.counts().subscribe((s: StudyCounts) => {
@@ -53,15 +49,18 @@ describe('StudyService', () => {
 
     it('handles an error reply correctly', () => {
       service.counts().subscribe(
-        () => { fail('should have been an error response'); },
-        err => { expect(err.message).toContain('expected a study object'); }
+        () => {
+          fail('should have been an error response');
+        },
+        err => {
+          expect(err.message).toContain('expected a study object');
+        }
       );
 
       const req = httpMock.expectOne(`${BASE_URL}/counts`);
       req.flush({ status: 'error', data: undefined });
       httpMock.verify();
     });
-
   });
 
   describe('when requesting a study', () => {
@@ -88,23 +87,25 @@ describe('StudyService', () => {
 
     it('handles an error reply correctly', () => {
       service.get(study.slug).subscribe(
-        () => { fail('should have been an error response'); },
-        err => { expect(err.message).toContain('expected a study object'); }
+        () => {
+          fail('should have been an error response');
+        },
+        err => {
+          expect(err.message).toContain('expected a study object');
+        }
       );
 
       const req = httpMock.expectOne(`${BASE_URL}/${study.slug}`);
       req.flush({ status: 'error', data: undefined });
       httpMock.verify();
     });
-
   });
 
   describe('when searching for studies', () => {
-
     const context: PagedQueryBehaviour.Context<Study> = {};
 
     beforeEach(() => {
-      context.replyItems = [ factory.study() ];
+      context.replyItems = [factory.study()];
       context.subscription = (pr: PagedReply<Study>) => {
         expect(pr.entities.length).toBe(1);
         expect(pr.entities[0]).toEqual(jasmine.any(Study));
@@ -114,18 +115,16 @@ describe('StudyService', () => {
     });
 
     PagedQueryBehaviour.sharedBehaviour(context);
-
   });
 
-  describe('when searching for collection studies', function () {
-
+  describe('when searching for collection studies', function() {
     const context: SearchableApiBehaviour.Context<IStudy, StudyState, IStudyStateInfo> = {};
 
     beforeEach(() => {
       const study = factory.study();
       const dto = factory.entityNameAndStateDto(study);
       context.search = (searchParams: SearchParams) => service.searchCollectionStudies(searchParams);
-      context.replyItems = [ dto ];
+      context.replyItems = [dto];
       context.subscription = (entities: IStudyStateInfo[]) => {
         expect(entities.length).toBe(context.replyItems.length);
         expect(entities[0]).toEqual(jasmine.objectContaining(dto));
@@ -134,11 +133,9 @@ describe('StudyService', () => {
     });
 
     SearchableApiBehaviour.sharedBehaviour(context);
-
   });
 
   describe('when adding a study', () => {
-
     it('request contains correct JSON and reply is handled correctly', () => {
       const rawStudy = factory.study();
       const study = new Study().deserialize(rawStudy);
@@ -164,19 +161,21 @@ describe('StudyService', () => {
       const study = new Study().deserialize(rawStudy);
 
       service.add(study).subscribe(
-        () => { fail('should have been an error response'); },
-        err => { expect(err.message).toContain('expected a study object'); }
+        () => {
+          fail('should have been an error response');
+        },
+        err => {
+          expect(err.message).toContain('expected a study object');
+        }
       );
 
       const req = httpMock.expectOne(`${BASE_URL}/`);
       req.flush({ status: 'error', data: undefined });
       httpMock.verify();
     });
-
   });
 
   describe('for updating a study', () => {
-
     let rawStudy: any;
     let study: Study;
     let testData: any;
@@ -221,7 +220,6 @@ describe('StudyService', () => {
           url: `${BASE_URL}/unretire/${study.id}`
         }
       ];
-
     });
 
     it('request contains correct JSON and reply is handled correctly', () => {
@@ -250,8 +248,12 @@ describe('StudyService', () => {
     it('handles an error reply correctly', () => {
       testData.forEach((testInfo: any) => {
         service.update(study, testInfo.attribute, testInfo.value).subscribe(
-          () => { fail('should have been an error response'); },
-          err => { expect(err.message).toContain('expected a study object'); }
+          () => {
+            fail('should have been an error response');
+          },
+          err => {
+            expect(err.message).toContain('expected a study object');
+          }
         );
 
         const req = httpMock.expectOne(testInfo.url);
@@ -276,22 +278,22 @@ describe('StudyService', () => {
         }
       ];
       testData.forEach((testInfo: any) => {
-        expect(() => service.update(study, testInfo.attribute, testInfo.value))
-          .toThrowError(testInfo.expectedErrMsg);
+        expect(() => service.update(study, testInfo.attribute, testInfo.value)).toThrowError(
+          testInfo.expectedErrMsg
+        );
       });
     });
   });
 
   describe('for adding or updating an annotation type', () => {
-
     it('request contains correct JSON and reply is handled correctly', () => {
-      const annotationTypeIds = [ null, factory.stringNext() ];
+      const annotationTypeIds = [null, factory.stringNext()];
       annotationTypeIds.forEach(annotationTypeId => {
         const rawAnnotationType = {
           ...factory.annotationType(),
           id: annotationTypeId
         };
-        const rawStudy = factory.study({ annotationTypes: [ rawAnnotationType ]});
+        const rawStudy = factory.study({ annotationTypes: [rawAnnotationType] });
         const study = new Study().deserialize(rawStudy);
 
         service.addOrUpdateAnnotationType(study, study.annotationTypes[0]).subscribe(s => {
@@ -316,18 +318,22 @@ describe('StudyService', () => {
     });
 
     it('handles an error reply correctly', () => {
-      const annotationTypeIds = [ null, factory.stringNext() ];
+      const annotationTypeIds = [null, factory.stringNext()];
       annotationTypeIds.forEach(annotationTypeId => {
         const rawAnnotationType = {
           ...factory.annotationType(),
           id: annotationTypeId
         };
-        const rawStudy = factory.study({ annotationTypes: [ rawAnnotationType ]});
+        const rawStudy = factory.study({ annotationTypes: [rawAnnotationType] });
         const study = new Study().deserialize(rawStudy);
 
         service.addOrUpdateAnnotationType(study, study.annotationTypes[0]).subscribe(
-          () => { fail('should have been an error response'); },
-          err => { expect(err.message).toContain('expected a study object'); }
+          () => {
+            fail('should have been an error response');
+          },
+          err => {
+            expect(err.message).toContain('expected a study object');
+          }
         );
 
         let url = `${BASE_URL}/pannottype/${study.id}`;
@@ -339,14 +345,12 @@ describe('StudyService', () => {
         httpMock.verify();
       });
     });
-
   });
 
   describe('for removing an annotation type', () => {
-
     it('request contains correct JSON and reply is handled correctly', () => {
       const rawAnnotationType = factory.annotationType();
-      const rawStudy = factory.study({ annotationTypes: [ rawAnnotationType ]});
+      const rawStudy = factory.study({ annotationTypes: [rawAnnotationType] });
       const study = new Study().deserialize(rawStudy);
 
       service.removeAnnotationType(study, study.annotationTypes[0].id).subscribe(s => {
@@ -364,12 +368,16 @@ describe('StudyService', () => {
 
     it('handles an error reply correctly', () => {
       const rawAnnotationType = factory.annotationType();
-      const rawStudy = factory.study({ annotationTypes: [ rawAnnotationType ]});
+      const rawStudy = factory.study({ annotationTypes: [rawAnnotationType] });
       const study = new Study().deserialize(rawStudy);
 
       service.removeAnnotationType(study, study.annotationTypes[0].id).subscribe(
-        () => { fail('should have been an error response'); },
-        err => { expect(err.message).toContain('expected a study object'); }
+        () => {
+          fail('should have been an error response');
+        },
+        err => {
+          expect(err.message).toContain('expected a study object');
+        }
       );
 
       const url = `${BASE_URL}/pannottype/${study.id}/${study.version}/${rawAnnotationType.id}`;
@@ -377,11 +385,9 @@ describe('StudyService', () => {
       req.flush({ status: 'error', data: undefined });
       httpMock.verify();
     });
-
   });
 
   describe('when checking if a study can be enabled', () => {
-
     it('request contains correct JSON and reply is handled correctly', () => {
       const rawStudy = factory.study();
       const study = new Study().deserialize(rawStudy);
@@ -409,15 +415,17 @@ describe('StudyService', () => {
       const study = new Study().deserialize(rawStudy);
 
       service.enableAllowed(study.id).subscribe(
-        () => { fail('should have been an error response'); },
-        err => { expect(err.message).toContain('expected a study object'); }
+        () => {
+          fail('should have been an error response');
+        },
+        err => {
+          expect(err.message).toContain('expected a study object');
+        }
       );
 
       const req = httpMock.expectOne(`${BASE_URL}/enableAllowed/${study.id}`);
       req.flush({ status: 'error', data: undefined });
       httpMock.verify();
     });
-
   });
-
 });
