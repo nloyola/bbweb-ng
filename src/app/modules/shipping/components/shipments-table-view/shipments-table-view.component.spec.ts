@@ -1,5 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { ReactiveFormsModule } from '@angular/forms';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ShipmentsTableViewComponent } from './shipments-table-view.component';
 
 describe('ShipmentsTableViewComponent', () => {
@@ -8,9 +9,9 @@ describe('ShipmentsTableViewComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ShipmentsTableViewComponent ]
-    })
-    .compileComponents();
+      imports: [ReactiveFormsModule, NgbModule],
+      declarations: [ShipmentsTableViewComponent]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

@@ -30,7 +30,7 @@ describe('ShippingPageComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [
+      imports:[
         RouterTestingModule,
         StoreModule.forRoot(
           {
