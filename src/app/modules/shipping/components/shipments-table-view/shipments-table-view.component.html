@@ -103,11 +103,11 @@
           </button>
 
           <div class="dropdown-menu" ngbDropdownMenu role="menu" aria-labelledby="shipmentMenu">
-            <a class="dropdown-item" (click)="viewShipment(shipment)">
+            <a class="dropdown-item" (click)="shipmentView(shipment)">
               <mat-icon class="success-icon mr-1">search</mat-icon>
               <span i18n>View shipment</span>
             </a>
-            <a class="dropdown-item" (click)="removeShipment(shipment)">
+            <a class="dropdown-item" (click)="shipmentRemove(shipment)">
               <mat-icon class="danger-icon mr-1">remove_circle</mat-icon>
               <span i18n>Remove shipment</span>
             </a>

@@ -1,0 +1,97 @@
+<span class="float-right d-inline-block">
+  <!-- CREATED -->
+  <div *ngIf="shipment.isCreated()">
+    <button class="btn btn-danger btn-sm mr-1">
+      <span i18n>Remove</span>
+      <mat-icon class="ml-1">remove_circle</mat-icon>
+    </button>
+    <button class="btn btn-primary btn-sm mr-1">
+      <span i18n>Tag as packed</span>
+      <mat-icon class="ml-1">arrow_right</mat-icon>
+    </button>
+    <button class="btn btn-primary btn-sm mr-1">
+      <span i18n>Tag as sent</span>
+      <mat-icon class="ml-1">fast_forward</mat-icon>
+    </button>
+  </div>
+
+  <!-- PACKED -->
+  <div *ngIf="shipment.isPacked()">
+    <button class="btn btn-warning btn-sm mr-1">
+      <mat-icon class="mr-1">arrow_left</mat-icon>
+      <span i18n>Back to created</span>
+    </button>
+    <button class="btn btn-primary btn-sm mr-1">
+      <span i18n>Tag as sent</span>
+      <mat-icon class="ml-1">arrow_right</mat-icon>
+    </button>
+  </div>
+
+  <!-- SENT -->
+  <div *ngIf="shipment.isSent()">
+    <button class="btn btn-warning btn-sm mr-1">
+      <mat-icon class="mr-1">arrow_left</mat-icon>
+      <span i18n>Back to packed</span>
+    </button>
+    <button class="btn btn-primary btn-sm mr-1">
+      <span i18n>Tag as received</span>
+      <mat-icon class="ml-1">arrow_right</mat-icon>
+    </button>
+    <button class="btn btn-primary btn-sm mr-1">
+      <span i18n>Tag as unpacked</span>
+      <mat-icon class="ml-1">fast_forward</mat-icon>
+    </button>
+    <button class="btn btn-primary btn-sm mr-1">
+      <span i18n>Tag as lost</span>
+      <mat-icon class="ml-1">fast_forward</mat-icon>
+    </button>
+  </div>
+
+  <!-- RECEIVED -->
+  <div *ngIf="shipment.isReceived()">
+    <button class="btn btn-warning btn-sm mr-1">
+      <mat-icon class="mr-1">arrow_left</mat-icon>
+      <span i18n>Back to sent</span>
+    </button>
+    <button class="btn btn-primary btn-sm mr-1">
+      <span i18n>Tag as unpacked</span>
+      <mat-icon class="ml-1">arrow_right</mat-icon>
+    </button>
+  </div>
+
+  <!-- UNPACKED -->
+  <div *ngIf="shipment.isUnpacked()">
+    <button class="btn btn-warning btn-sm mr-1">
+      <mat-icon class="mr-1">arrow_left</mat-icon>
+      <span i18n>Back to received</span>
+    </button>
+    <button class="btn btn-primary btn-sm mr-1">
+      <span i18n>Tag as completed</span>
+      <mat-icon class="ml-1">arrow_right</mat-icon>
+    </button>
+  </div>
+
+  <!-- COMPLETED -->
+  <div *ngIf="shipment.isCompleted()">
+    <button class="btn btn-warning btn-sm mr-1">
+      <mat-icon class="mr-1">arrow_left</mat-icon>
+      <span i18n>Back to unpacked</span>
+    </button>
+    <button class="btn btn-primary btn-sm mr-1">
+      <span i18n>Tag as lost</span>
+      <mat-icon class="ml-1">arrow_right</mat-icon>
+    </button>
+  </div>
+
+  <!-- LOST -->
+  <div *ngIf="shipment.isLost()">
+    <button class="btn btn-warning btn-sm mr-1">
+      <mat-icon class="mr-1">fast_rewind</mat-icon>
+      <span i18n>Back to sent</span>
+    </button>
+    <button class="btn btn-warning btn-sm mr-1">
+      <mat-icon class="mr-1">fast_rewind</mat-icon>
+      <span i18n>Back to received</span>
+    </button>
+  </div>
+</span>

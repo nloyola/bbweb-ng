@@ -15,12 +15,19 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class ShipmentInformationCardComponent implements OnInit, OnDestroy {
   @Input() shipment: Shipment;
+  @Input() displayState: boolean;
 
   @ViewChild('updateCourierModal', { static: false }) updateCourierModal: TemplateRef<any>;
+  @ViewChild('updateTrackingNumberModal', { static: false }) updateTrackingNumberModal: TemplateRef<any>;
+  @ViewChild('updateFromLocationModal', { static: false }) updateFromLocationModal: TemplateRef<any>;
+  @ViewChild('updateToLocationModal', { static: false }) updateToLocationModal: TemplateRef<any>;
 
   shipment$: Observable<Shipment>;
   isCardCollapsed: boolean;
   updateCourierModalOptions: ModalInputTextOptions;
+  updateTrackingNumberModalOptions: ModalInputTextOptions;
+  updateFromLocationInfoModalOptions: ModalInputTextOptions;
+  updateToLocationInfoModalOptions: ModalInputTextOptions;
 
   private updatedMessage$ = new Subject<string>();
   private unsubscribe$ = new Subject<void>();
@@ -84,15 +91,54 @@ export class ShipmentInformationCardComponent implements OnInit, OnDestroy {
   }
 
   updateTrackingNumber() {
-    console.log('updateTrackingNumber');
+    this.updateTrackingNumberModalOptions = { required: true };
+    this.modalService
+      .open(this.updateTrackingNumberModal)
+      .result.then(value => {
+        this.store$.dispatch(
+          ShipmentStoreActions.updateShipmentRequest({
+            shipment: this.shipment,
+            attributeName: 'trackingNumber',
+            value
+          })
+        );
+        this.updatedMessage$.next('Tracking Number was updated');
+      })
+      .catch(() => undefined);
   }
 
   updateFromLocation() {
-    console.log('updateFromLocation');
+    this.updateFromLocationInfoModalOptions = { required: true };
+    this.modalService
+      .open(this.updateFromLocationModal)
+      .result.then(value => {
+        this.store$.dispatch(
+          ShipmentStoreActions.updateShipmentRequest({
+            shipment: this.shipment,
+            attributeName: 'fromLocation',
+            value
+          })
+        );
+        this.updatedMessage$.next('From Location was updated');
+      })
+      .catch(() => undefined);
   }
 
   updateToLocation() {
-    console.log('updateToLocation');
+    this.updateToLocationInfoModalOptions = { required: true };
+    this.modalService
+      .open(this.updateToLocationModal)
+      .result.then(value => {
+        this.store$.dispatch(
+          ShipmentStoreActions.updateShipmentRequest({
+            shipment: this.shipment,
+            attributeName: 'toLocation',
+            value
+          })
+        );
+        this.updatedMessage$.next('To Location was updated');
+      })
+      .catch(() => undefined);
   }
 
   removeShipment() {

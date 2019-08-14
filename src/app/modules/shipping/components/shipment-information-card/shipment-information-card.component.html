@@ -90,6 +90,18 @@
               </div>
             </div>
           </li>
+
+          <li class="list-group-item" *ngIf="displayState">
+            <div class="row">
+              <div class="col-md-2">
+                <strong i18n>State:</strong>
+              </div>
+              <div class="col-md-10">
+                {{ shipment.state }}
+              </div>
+            </div>
+          </li>
+
           <li class="list-group-item m-0 p-0">
             <app-entity-status
               [timeAdded]="shipment.timeAdded"
@@ -114,4 +126,41 @@
     (onConfirm)="confirm($event)"
   >
   </app-modal-input-text>
+</ng-template>
+
+<ng-template #updateTrackingNumberModal let-modal>
+  <app-modal-input-text
+    [modal]="modal"
+    [title]="'Update Tracking Number'"
+    [label]="'New tracking number'"
+    [value]="shipment.trackingNumber"
+    [options]="updateTrackingNumberModalOptions"
+    (onConfirm)="confirm($event)"
+  >
+  </app-modal-input-text>
+</ng-template>
+
+<ng-template #updateFromLocationModal let-modal>
+  <app-modal-input-centre-location
+    [modal]="modal"
+    [title]="'Update From Location'"
+    [label]="'Select new location'"
+    [value]="shipment.fromLocationInfo"
+    [options]="updateLocationInfoModalOptions"
+    [locationIdToFilterOut]="shipment.toLocationInfo.locationId"
+    (onConfirm)="confirm($event)"
+  >
+  </app-modal-input-centre-location>
+</ng-template>
+
+<ng-template #updateToLocationModal let-modal>
+  <app-modal-input-centre-location
+    [modal]="modal"
+    [title]="'Update To Location'"
+    [label]="'New to location'"
+    [value]="shipment.toLocationInfo"
+    [options]="updateLocationInfoModalOptions"
+    (onConfirm)="confirm($event)"
+  >
+  </app-modal-input-centre-location>
 </ng-template>

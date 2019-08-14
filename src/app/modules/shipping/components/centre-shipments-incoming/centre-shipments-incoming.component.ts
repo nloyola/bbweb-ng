@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { SearchParams } from '@app/domain';
 import { RootStoreState, ShipmentStoreActions } from '@app/root-store';
 import { Store } from '@ngrx/store';
 import { CentreShipmentsBaseComponent } from '../centre-shipments-base/centre-shipments-base.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-centre-shipments-incoming',
@@ -11,8 +13,14 @@ import { CentreShipmentsBaseComponent } from '../centre-shipments-base/centre-sh
   styleUrls: ['./centre-shipments-incoming.component.scss']
 })
 export class CentreShipmentsIncomingComponent extends CentreShipmentsBaseComponent {
-  constructor(store$: Store<RootStoreState.State>, route: ActivatedRoute) {
-    super(store$, route);
+  constructor(
+    store$: Store<RootStoreState.State>,
+    router: Router,
+    route: ActivatedRoute,
+    modalService: NgbModal,
+    toastr: ToastrService
+  ) {
+    super(store$, router, route, modalService, toastr);
     this.stateFilterInit();
   }
 

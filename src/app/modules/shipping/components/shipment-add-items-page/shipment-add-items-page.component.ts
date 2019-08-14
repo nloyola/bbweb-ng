@@ -1,11 +1,11 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Shipment } from '@app/domain/shipments';
-import { ActivatedRoute } from '@angular/router';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
-import { select, Store } from '@ngrx/store';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { Shipment } from '@app/domain/shipments';
 import { RootStoreState, ShipmentStoreSelectors } from '@app/root-store';
-import { map, takeUntil } from 'rxjs/operators';
-import { Observable, Subject } from 'rxjs';
+import { select, Store } from '@ngrx/store';
+import { Subject } from 'rxjs';
+import { map, takeUntil, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-shipment-add-items-page',

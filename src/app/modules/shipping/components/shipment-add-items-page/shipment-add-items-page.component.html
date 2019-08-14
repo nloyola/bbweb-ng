@@ -1,20 +1,7 @@
-<div class="pb-2 mt-4 mb-2 border-bottom">
+<div class="pb-2 mt-4 mb-2">
   <h1>
     {{ shipment.courierName }}: {{ shipment.trackingNumber }}
-    <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
-      <button class="btn btn-danger btn-sm mr-1">
-        <span i18n>Remove</span>
-        <mat-icon class="ml-1">remove_circle</mat-icon>
-      </button>
-      <button class="btn btn-primary btn-sm mr-1">
-        <span i18n>Tag as packed</span>
-        <mat-icon>arrow_right</mat-icon>
-      </button>
-      <button class="btn btn-primary btn-sm">
-        <span>Tag as sent</span>
-        <mat-icon class="ml-1">fast_forward</mat-icon>
-      </button>
-    </span>
+    <app-shipment-page-buttons [shipment]="shipment"></app-shipment-page-buttons>
   </h1>
   <h3 i18n>Add items to ship</h3>
 

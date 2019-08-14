@@ -65,6 +65,7 @@ export class ShipmentAddPageComponent implements OnInit, OnDestroy {
       .subscribe((shipment: Shipment) => {
         this.toastr.success(`Shipment was added successfully: ${shipment.trackingNumber}`, 'Add Successfull');
         this.router.navigate(['/shipping/add-items', shipment.id]);
+        this.store$.dispatch(ShipmentStoreActions.clearLastAdded());
       });
 
     this.store$

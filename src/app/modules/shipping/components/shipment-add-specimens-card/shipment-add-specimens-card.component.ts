@@ -16,4 +16,8 @@ export class ShipmentAddSpecimensCardComponent implements OnInit {
       inventoryIds: ['', [Validators.required]]
     });
   }
+
+  onSubmit() {
+    // FIXME: needs implementation
+  }
 }

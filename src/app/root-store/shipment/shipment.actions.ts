@@ -29,32 +29,23 @@ export const addShipmentSuccess = createAction(
   props<{ shipment: Shipment }>()
 );
 
-export const addShipmentFailure = createAction(
-  '[Shipment] Add Shipment Failure',
-  props<{ error: any }>()
-);
+export const addShipmentFailure = createAction('[Shipment] Add Shipment Failure', props<{ error: any }>());
 
-export const getShipmentRequest = createAction(
-  '[Shipment] Get Shipment Request',
-  props<{ id: string }>()
-);
+export const getShipmentRequest = createAction('[Shipment] Get Shipment Request', props<{ id: string }>());
 
 export const getShipmentSuccess = createAction(
   '[Shipment] Get Shipment Success',
   props<{ shipment: Shipment }>()
 );
 
-export const getShipmentFailure = createAction(
-  '[Shipment] Get Shipment Failure',
-  props<{ error: any }>()
-);
+export const getShipmentFailure = createAction('[Shipment] Get Shipment Failure', props<{ error: any }>());
 
 export const updateShipmentRequest = createAction(
   '[Shipment] Update Shipment Request',
   props<{
-    shipment: Shipment,
-    attributeName: ShipmentUpdateAttribute,
-    value: string | Date
+    shipment: Shipment;
+    attributeName: ShipmentUpdateAttribute;
+    value: string | Date;
   }>()
 );
 
@@ -71,9 +62,9 @@ export const updateShipmentFailure = createAction(
 export const addSpecimensRequest = createAction(
   '[Shipment] Add Specimens Request',
   props<{
-    shipment:             Shipment,
-    specimenInventoryIds: string[],
-    shipmentContainerId?: string
+    shipment: Shipment;
+    specimenInventoryIds: string[];
+    shipmentContainerId?: string;
   }>()
 );
 
@@ -82,10 +73,7 @@ export const addSpecimensSuccess = createAction(
   props<{ shipment: Shipment }>()
 );
 
-export const addSpecimensFailure = createAction(
-  '[Shipment] Add Specimens Failure',
-  props<{ error: any }>()
-);
+export const addSpecimensFailure = createAction('[Shipment] Add Specimens Failure', props<{ error: any }>());
 
 export const canAddSpecimenRequest = createAction(
   '[Shipment] Can Add Specimen Request',
@@ -105,9 +93,9 @@ export const canAddSpecimenFailure = createAction(
 export const tagSpecimensRequest = createAction(
   '[Shipment] Tag Sepcimens Request',
   props<{
-    shipment:             Shipment,
-    specimenInventoryIds: string[],
-    specimenTag:          ShipmentItemState
+    shipment: Shipment;
+    specimenInventoryIds: string[];
+    specimenTag: ShipmentItemState;
   }>()
 );
 
@@ -116,10 +104,7 @@ export const tagSpecimensSuccess = createAction(
   props<{ shipment: Shipment }>()
 );
 
-export const tagSpecimensFailure = createAction(
-  '[Shipment] Tag Sepcimens Failure',
-  props<{ error: any }>()
-);
+export const tagSpecimensFailure = createAction('[Shipment] Tag Sepcimens Failure', props<{ error: any }>());
 
 export const removeShipmentRequest = createAction(
   '[Shipment] Remove Shipment Request',
@@ -135,6 +120,8 @@ export const removeShipmentFailure = createAction(
   '[Shipment] Remove Shipment Failure',
   props<{ error: any }>()
 );
+
+export const clearLastAdded = createAction('[EventType] Clear Last Added');
 
 const all = union({
   searchShipmentsRequest,
@@ -160,6 +147,7 @@ const all = union({
   tagSpecimensFailure,
   removeShipmentRequest,
   removeShipmentSuccess,
-  removeShipmentFailure
+  removeShipmentFailure,
+  clearLastAdded
 });
 export type ShipmentActionsUnion = typeof all;

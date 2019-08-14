@@ -68,10 +68,31 @@ export class Shipment extends ConcurrencySafeEntity {
   }
 
   /**
+   * A predicate to test if the shipment's state is RECEIVED.
+   */
+  isReceived() {
+    return this.state === ShipmentState.Received;
+  }
+
+  /**
    * A predicate to test if the shipment's state is UNPACKED.
    */
   isUnpacked() {
     return this.state === ShipmentState.Unpacked;
+  }
+
+  /**
+   * A predicate to test if the shipment's state is COMPLETED.
+   */
+  isCompleted() {
+    return this.state === ShipmentState.Completed;
+  }
+
+  /**
+   * A predicate to test if the shipment's state is LOST.
+   */
+  isLost() {
+    return this.state === ShipmentState.Lost;
   }
 
   /**

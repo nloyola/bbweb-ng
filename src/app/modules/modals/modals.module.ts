@@ -19,6 +19,9 @@ import { ModalYesNoComponent } from './components/modal-yes-no/modal-yes-no.comp
 import { ModalInputNumberComponent } from './components/modal-input-number/modal-input-number.component';
 import { ModalInputDateTimeComponent } from './components/modal-input-date/modal-input-date-time.component';
 import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
+import { ShipmentNotInCreatedModalComponent } from './components/shipment-not-in-created-modal/shipment-not-in-created-modal.component';
+import { ShipmentHasSpecimensComponent } from './components/shipment-has-specimens/shipment-has-specimens.component';
+import { ShipmentRemoveModalComponent } from './components/shipment-remove-modal/shipment-remove-modal.component';
 
 @NgModule({
   imports: [
@@ -45,7 +48,10 @@ import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
     StudyRemoveModalComponent,
     UserRemoveModalComponent,
     CentreRemoveModalComponent,
-    ModalYesNoComponent
+    ModalYesNoComponent,
+    ShipmentNotInCreatedModalComponent,
+    ShipmentHasSpecimensComponent,
+    ShipmentRemoveModalComponent
   ],
   exports: [
     ModalInputComponent,
@@ -63,4 +69,4 @@ import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
     ModalYesNoComponent
   ]
 })
-export class ModalInputModule { }
+export class ModalInputModule {}

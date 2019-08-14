@@ -20,6 +20,11 @@ import { ShipmentAddItemsPageComponent } from './components/shipment-add-items-p
 import { ShipmentAddSpecimensCardComponent } from './components/shipment-add-specimens-card/shipment-add-specimens-card.component';
 import { ModalInputModule } from '../modals/modals.module';
 import { ShipmentSpecimensTableComponent } from './components/shipment-specimens-table/shipment-specimens-table.component';
+import { ShipmentPageButtonsComponent } from './components/shipment-page-buttons/shipment-page-buttons.component';
+import { ModalInputCentreLocationComponent } from './components/modal-input-centre-location/modal-input-centre-location.component';
+import { ShipmentNotInCreatedModalComponent } from '../modals/components/shipment-not-in-created-modal/shipment-not-in-created-modal.component';
+import { ShipmentHasSpecimensComponent } from '../modals/components/shipment-has-specimens/shipment-has-specimens.component';
+import { ShipmentRemoveModalComponent } from '../modals/components/shipment-remove-modal/shipment-remove-modal.component';
 
 @NgModule({
   imports: [
@@ -47,7 +52,16 @@ import { ShipmentSpecimensTableComponent } from './components/shipment-specimens
     ShipmentInformationCardComponent,
     ShipmentAddItemsPageComponent,
     ShipmentAddSpecimensCardComponent,
-    ShipmentSpecimensTableComponent
+    ShipmentSpecimensTableComponent,
+    ShipmentPageButtonsComponent,
+    ModalInputCentreLocationComponent,
+    ModalInputCentreLocationComponent,
+    ShipmentPageButtonsComponent
+  ],
+  entryComponents: [
+    ShipmentNotInCreatedModalComponent,
+    ShipmentHasSpecimensComponent,
+    ShipmentRemoveModalComponent
   ]
 })
-export class ShippingModule { }
+export class ShippingModule {}

@@ -1,0 +1,26 @@
+<app-modal-input [modalInputValid]="modalInputValid" (confirm)="confirm($event)" (dismiss)="dismiss($event)">
+  <span class="title">
+    <span class="ml-1">{{ title }}</span>
+  </span>
+  <form class="body form-horizontal" [formGroup]="form" autocomplete="on" novalidate>
+    <div class="form-group row">
+      <label for="fromLocationInfo" class="col-md-3 col-form-label" i18n>{{ label }}</label>
+      <div class="col-md-9">
+        <input
+          type="text"
+          class="form-control"
+          [(ngModel)]="locationInfoTypeahead.selectedEntity"
+          [ngModelOptions]="{ standalone: true }"
+          [ngbTypeahead]="locationInfoTypeahead.getEntities"
+          i18n-placeholder
+          placeholder="location"
+          [inputFormatter]="locationInfoTypeahead.formatter"
+          [resultFormatter]="locationInfoTypeahead.formatter"
+          (selectItem)="locationInfoTypeahead.onEntitySelected($event)"
+          [editable]="false"
+          required
+        />
+      </div>
+    </div>
+  </form>
+</app-modal-input>

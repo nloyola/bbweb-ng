@@ -27,7 +27,10 @@ export class ShipmentResolver implements Resolve<Shipment> {
         filter(s => s.length > 0),
         map((shipments: Shipment[]) => {
           const shipment = shipments.find(s => s.id === id);
-          return shipment ? shipment : throwError('shipment not found');
+          if (shipment) {
+            return shipment instanceof Shipment ? shipment : new Shipment().deserialize(shipment);
+          }
+          return throwError('shipment not found');
         })
       )
     ).pipe(take(1));

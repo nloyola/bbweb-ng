@@ -15,54 +15,55 @@ import { filter, takeUntil } from 'rxjs/operators';
   styleUrls: ['./membership-add.component.scss']
 })
 export class MembershipAddComponent implements OnInit, OnDestroy {
-
-  @ViewChild('nameInput', { static: true}) nameInput: ElementRef;
+  @ViewChild('nameInput', { static: true }) nameInput: ElementRef;
 
   form: FormGroup;
   isSaving$: Observable<boolean>;
 
   private unsubscribe$: Subject<void> = new Subject<void>();
 
-  constructor(private store$: Store<RootStoreState.State>,
-              private formBuilder: FormBuilder,
-              private router: Router,
-              private route: ActivatedRoute,
-              private toastr: ToastrService) { }
+  constructor(
+    private store$: Store<RootStoreState.State>,
+    private formBuilder: FormBuilder,
+    private router: Router,
+    private route: ActivatedRoute,
+    private toastr: ToastrService
+  ) {}
 
   ngOnInit() {
-    this.form = this.formBuilder.group(
-      {
-        name: [ '', [ Validators.required ] ],
-        description: ['']
-      });
+    this.form = this.formBuilder.group({
+      name: ['', [Validators.required]],
+      description: ['']
+    });
 
     this.nameInput.nativeElement.focus();
 
     this.isSaving$ = this.store$.pipe(select(SpinnerStoreSelectors.selectSpinnerIsActive));
 
-    this.store$.pipe(
-      select(MembershipStoreSelectors.selectMembershipLastAdded),
-      filter(s => !!s),
-      takeUntil(this.unsubscribe$)
-    ).subscribe((s: Membership) => {
-      this.toastr.success(
-        `Membership was added successfully: ${s.name}`,
-        'Add Successfull');
-      this.router.navigate([ '../', s.slug ], { relativeTo: this.route });
-    });
+    this.store$
+      .pipe(
+        select(MembershipStoreSelectors.selectMembershipLastAdded),
+        filter(s => !!s),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe((s: Membership) => {
+        this.toastr.success(`Membership was added successfully: ${s.name}`, 'Add Successfull');
+        this.router.navigate(['../', s.slug], { relativeTo: this.route });
+      });
 
-    this.store$.pipe(
-      select(MembershipStoreSelectors.selectMembershipError),
-      filter(s => !!s),
-      takeUntil(this.unsubscribe$)
-    ).subscribe((error: any) => {
-      let errMessage = error.error.error
-        ? error.error.error.message : error.error.statusText;
-      if (errMessage.match(/EntityCriteriaError: name already used/)) {
-        errMessage = `The name is already in use: ${this.form.value.name}`;
-      }
-      this.toastr.error(errMessage, 'Add Error', { disableTimeOut: true });
-    });
+    this.store$
+      .pipe(
+        select(MembershipStoreSelectors.selectMembershipError),
+        filter(s => !!s),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe((error: any) => {
+        let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
+        if (errMessage.match(/EntityCriteriaError: name already used/)) {
+          errMessage = `The name is already in use: ${this.form.value.name}`;
+        }
+        this.toastr.error(errMessage, 'Add Error', { disableTimeOut: true });
+      });
   }
 
   public ngOnDestroy() {
@@ -84,7 +85,6 @@ export class MembershipAddComponent implements OnInit, OnDestroy {
   }
 
   onCancel() {
-    this.router.navigate([ '../' ], { relativeTo: this.route });
+    this.router.navigate(['../'], { relativeTo: this.route });
   }
-
 }

@@ -10,10 +10,10 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Sort } from '@angular/material';
+import { Router } from '@angular/router';
 import { Shipment, ShipmentState } from '@app/domain/shipments';
 import { Subject, timer } from 'rxjs';
 import { debounce, distinct, takeUntil } from 'rxjs/operators';
-import { Router, ActivatedRoute } from '@angular/router';
 
 export type ShipmentsTableViewComponentMode = 'incoming' | 'outgoing' | 'completed';
 
@@ -33,15 +33,18 @@ export class ShipmentsTableViewComponent implements OnInit, OnChanges, OnDestroy
   @Output() filterByTrackingNumber = new EventEmitter<string>();
   @Output() filterByState = new EventEmitter<string>();
   @Output() pageChanged = new EventEmitter<number>();
+  @Output() viewShipment = new EventEmitter<Shipment>();
+  @Output() removeShipment = new EventEmitter<Shipment>();
 
   filterForm: FormGroup;
   shipmentStates: ShipmentState[];
   currentPage: number;
   filterByLabel = 'Filter by state';
   sourceLabel: string;
-  private unsubscribe$ = new Subject<void>();
 
-  constructor(private router: Router, private route: ActivatedRoute, private formBuilder: FormBuilder) {
+  private unsubscribe$: Subject<void> = new Subject<void>();
+
+  constructor(private router: Router, private formBuilder: FormBuilder) {
     this.currentPage = 1;
     this.shipmentStates = Object.values(ShipmentState).filter(state => state !== ShipmentState.Completed);
   }
@@ -52,9 +55,7 @@ export class ShipmentsTableViewComponent implements OnInit, OnChanges, OnDestroy
     } else {
       this.sourceLabel = 'From';
     }
-    if (this.shipments) {
-      this.shipments.map(s => (s instanceof Shipment ? s : new Shipment().deserialize(s)));
-    } else {
+    if (!this.shipments) {
       this.shipments = [];
     }
 
@@ -88,9 +89,7 @@ export class ShipmentsTableViewComponent implements OnInit, OnChanges, OnDestroy
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.shipments && changes.shipments.currentValue) {
-      this.shipments = changes.shipments.currentValue.map((s: any) =>
-        s instanceof Shipment ? s : new Shipment().deserialize(s)
-      );
+      this.shipments = changes.shipments.currentValue;
     }
 
     if (changes.numPages) {
@@ -155,15 +154,11 @@ export class ShipmentsTableViewComponent implements OnInit, OnChanges, OnDestroy
     this.filterByState.emit(state);
   }
 
-  viewShipment(shipment: Shipment) {
-    if (shipment.state === ShipmentState.Created) {
-      this.router.navigate(['/shipping/add-items', shipment.id]);
-    } else {
-      this.router.navigate(['/shipping/view', shipment.id]);
-    }
+  shipmentView(shipment: Shipment) {
+    this.viewShipment.emit(shipment);
   }
 
-  removeShipment(shipment: Shipment) {
-    console.error('removeShipment');
+  shipmentRemove(shipment: Shipment) {
+    this.removeShipment.emit(shipment);
   }
 }

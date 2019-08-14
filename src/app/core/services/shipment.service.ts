@@ -6,6 +6,7 @@ import { Specimen } from '@app/domain/participants';
 import { Shipment, ShipmentItemState } from '@app/domain/shipments';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { CentreLocationInfo } from '@app/domain/centres';
 
 export type ShipmentUpdateAttribute =
   | 'courierName'
@@ -74,7 +75,7 @@ export class ShipmentService {
   update(
     shipment: Shipment,
     attributeName: ShipmentUpdateAttribute,
-    value: string | Date
+    value: string | Date | CentreLocationInfo
   ): Observable<Shipment> {
     let url: string;
     let json = { expectedVersion: shipment.version };
@@ -90,15 +91,19 @@ export class ShipmentService {
         url = `${this.BASE_URL}/trackingnumber/${shipment.id}`;
         break;
 
-      case 'fromLocation':
-        json = { ...json, locationId: value } as any;
+      case 'fromLocation': {
+        const locationInfo = value as CentreLocationInfo;
+        json = { ...json, locationId: locationInfo.locationId } as any;
         url = `${this.BASE_URL}/fromlocation/${shipment.id}`;
         break;
+      }
 
-      case 'toLocation':
-        json = { ...json, locationId: value } as any;
+      case 'toLocation': {
+        const locationInfo = value as CentreLocationInfo;
+        json = { ...json, locationId: locationInfo.locationId } as any;
         url = `${this.BASE_URL}/tolocation/${shipment.id}`;
         break;
+      }
 
       case 'state':
         const validValues = [

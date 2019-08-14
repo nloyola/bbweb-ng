@@ -8,16 +8,11 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['./user-remove-modal.component.scss']
 })
 export class UserRemoveModalComponent {
-
   @Input() user: IUserInfo;
 
   constructor(private modal: NgbActiveModal) {}
 
   confirm(): void {
     this.modal.close(this.user);
-  }
-
-  dismiss(): void {
-    this.modal.dismiss();
   }
 }

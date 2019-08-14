@@ -21,7 +21,7 @@ import { CourierNameFilter } from '@app/domain/search-filters/courier-name-filte
   templateUrl: './shipping-centres-select.component.html',
   styleUrls: ['./shipping-centres-select.component.scss']
 })
-export class ShippingCentresSelectComponent implements OnInit {
+export class ShippingCentresSelectComponent implements OnInit, OnDestroy {
   @Output() selected = new EventEmitter<Centre>();
 
   isLoading$: Observable<boolean>;
