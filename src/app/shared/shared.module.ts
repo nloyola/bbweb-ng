@@ -75,6 +75,7 @@ import { LocalTimePipe } from './pipes';
     EntityFiltersComponent,
     TimeagoPipe,
     TruncatePipe,
+    LocalTimePipe,
     EntityStatusComponent,
     EntitySummaryComponent,
     TruncateToggleComponent,

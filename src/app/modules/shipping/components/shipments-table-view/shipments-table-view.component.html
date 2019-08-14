@@ -91,8 +91,7 @@
         <small>{{ shipment.fromLocationInfo.name }}</small>
       </td>
       <td>
-        <!-- small>{{ shipment.getTime() | localTime: shortDate }}</small -->
-        <small>{{ shipment.getTime() }}</small>
+        <small>{{ shipment.getTime() | localTime }}</small>
       </td>
       <td *ngIf="mode !== 'completed'">
         <small>{{ shipment.state }}</small>

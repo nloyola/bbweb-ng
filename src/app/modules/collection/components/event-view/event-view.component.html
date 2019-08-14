@@ -1,27 +1,26 @@
 <ng-container *ngIf="event$ | async as event">
   <ng-container *ngIf="eventType$ | async as eventType">
     <ng-container *ngIf="annotations$ | async as annotations">
-
       <div class="card mt-2">
-        <div class="card-header bg-primary text-light"
-             *ngIf="(isLoading$ | async) !== false; else showLoading">
+        <div
+          class="card-header bg-primary text-light"
+          *ngIf="(isLoading$ | async) !== false; else showLoading"
+        >
           <mat-icon inline="false">event</mat-icon>
           <span class="ml-1" i18n>Visit Number</span>
           {{ event.visitNumber }}
           <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
-
-            <button class="btn btn-sm btn-light mr-1"
-                    type="button"
-                    id="eventSummaryMenu"
-                    ngbDropdownToggle>
+            <button class="btn btn-sm btn-light mr-1" type="button" id="eventSummaryMenu" ngbDropdownToggle>
               <mat-icon inline="true">more_vert</mat-icon>
             </button>
 
-            <button class="btn btn-sm btn-light"
-                    type="button"
-                    (click)="isCardCollapsed = !isCardCollapsed"
-                    [attr.aria-expanded]="!isCollapsed"
-                    aria-controls="eventCollapse">
+            <button
+              class="btn btn-sm btn-light"
+              type="button"
+              (click)="isCardCollapsed = !isCardCollapsed"
+              [attr.aria-expanded]="!isCollapsed"
+              aria-controls="eventCollapse"
+            >
               <mat-icon *ngIf="!isCardCollapsed" inline="true">keyboard_arrow_down</mat-icon>
               <mat-icon *ngIf="isCardCollapsed" inline="true">keyboard_arrow_right</mat-icon>
             </button>
@@ -35,9 +34,11 @@
                 <mat-icon class="success-icon mr-1">edit</mat-icon>
                 <ng-container i18n>Update Time Completed</ng-container>
               </a>
-              <a class="dropdown-item"
-                 *ngFor="let annotation of annotations"
-                 (click)="updateAnnotation(annotation)">
+              <a
+                class="dropdown-item"
+                *ngFor="let annotation of annotations"
+                (click)="updateAnnotation(annotation)"
+              >
                 <mat-icon class="success-icon mr-1">edit</mat-icon>
                 <ng-container i18n>Update {{ annotation.label }}</ng-container>
               </a>
@@ -77,7 +78,7 @@
                   <strong i18n>Time Completed</strong>
                 </div>
                 <div class="col-md-9">
-                  {{ event.timeCompleted.toLocaleDateString() }} {{ event.timeCompleted.toLocaleTimeString() }}
+                  {{ event.timeCompleted | localTime }}
                 </div>
               </div>
             </li>
@@ -92,44 +93,50 @@
               </div>
             </li>
             <li class="list-group-item m-0 p-0">
-              <app-entity-status [timeAdded]="event.timeAdded"
-                                 [timeModified]="event.timeModified"
-                                 [useBadges]="false">
+              <app-entity-status
+                [timeAdded]="event.timeAdded"
+                [timeModified]="event.timeModified"
+                [useBadges]="false"
+              >
               </app-entity-status>
             </li>
           </ul>
         </div>
       </div>
 
-      <app-event-specimens-view [event]="event"
-                                [participant]="participant">
-      </app-event-specimens-view>
+      <app-event-specimens-view [event]="event" [participant]="participant"> </app-event-specimens-view>
 
       <ng-template #updateVisitNumberModal let-modal>
-        <app-modal-input-number [title]="'Update Visit Number'"
-                                [label]="'New Visit Number'"
-                                [value]="event.visitNumber"
-                                [options]="visitNumberModalOptions"
-                                (onConfirm)="confirm($event)"
-                                [modal]="modal">
+        <app-modal-input-number
+          [title]="'Update Visit Number'"
+          [label]="'New Visit Number'"
+          [value]="event.visitNumber"
+          [options]="visitNumberModalOptions"
+          (onConfirm)="confirm($event)"
+          [modal]="modal"
+        >
         </app-modal-input-number>
       </ng-template>
 
       <ng-template #updateTimeCompletedModal let-modal>
-        <app-modal-input-date-time [title]="'Update Time Completed'"
-                                   [label]="'New Time Completed'"
-                                   [value]="event.timeCompleted"
-                                   [options]="timeCompletedModalOptions"
-                                   (onConfirm)="confirm($event)"
-                                   [modal]="modal">
+        <app-modal-input-date-time
+          [title]="'Update Time Completed'"
+          [label]="'New Time Completed'"
+          [value]="event.timeCompleted"
+          [options]="timeCompletedModalOptions"
+          (onConfirm)="confirm($event)"
+          [modal]="modal"
+        >
         </app-modal-input-date-time>
       </ng-template>
 
       <ng-template #updateAnnotationModal let-modal>
-        <app-modal-input-annotation [annotation]="annotationToEdit"
-                                    [options]="annotationModalOptions"
-                                    (onConfirm)="confirm($event)"
-                                    [modal]="modal">
+        <app-modal-input-annotation
+          [annotation]="annotationToEdit"
+          [options]="annotationModalOptions"
+          (onConfirm)="confirm($event)"
+          [modal]="modal"
+        >
         </app-modal-input-annotation>
       </ng-template>
     </ng-container>
@@ -151,7 +158,7 @@
         </div>
         <div class="col-md-11">
           This event cannot be removed since it has collected specimens.
-          <br>If you still want to remove it, remove the collected specimens first.
+          <br />If you still want to remove it, remove the collected specimens first.
         </div>
       </div>
     </div>
@@ -162,15 +169,13 @@
 </ng-template>
 
 <ng-template #removeEventModal let-modal>
-  <app-modal-input (confirm)="modal.close()"
-                   (dismiss)="modal.dismiss()">
+  <app-modal-input (confirm)="modal.close()" (dismiss)="modal.dismiss()">
     <span class="title">Remove Event</span>
     <div class="body">
       Are you sure you want to remove this event?
     </div>
   </app-modal-input>
 </ng-template>
-
 
 <ng-template #showLoading>
   <div class="card-header">

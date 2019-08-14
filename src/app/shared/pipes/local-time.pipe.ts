@@ -8,7 +8,7 @@ export class LocalTimePipe implements PipeTransform {
       return '';
     }
     if (!format) {
-      format = 'shortDate';
+      format = 'yyyy-MM-dd, HH:mm';
     }
 
     return formatDate(input, format, 'en_CA');
