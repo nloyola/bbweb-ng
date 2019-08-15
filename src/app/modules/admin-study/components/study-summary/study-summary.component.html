@@ -1,18 +1,12 @@
 <ng-container *ngIf="study$ | async as study">
-
   <div class="card mt-2">
-    <div class="card-header bg-primary text-light"
-         *ngIf="(isLoading$ | async) === false; else showLoading">
+    <div class="card-header bg-primary text-light" *ngIf="(isLoading$ | async) === false; else showLoading">
       <mat-icon [ngClass]="study.stateIconClass()">
         {{ study.stateIcon() }}
       </mat-icon>
       {{ study.name }}
       <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
-
-        <button class="btn btn-sm btn-light"
-                type="button"
-                id="studySummaryMenu"
-                ngbDropdownToggle>
+        <button class="btn btn-sm btn-light" type="button" id="studySummaryMenu" ngbDropdownToggle>
           <mat-icon inline="true">more_vert</mat-icon>
         </button>
 
@@ -31,7 +25,11 @@
             </mat-icon>
             <ng-container i18n>Disable this study</ng-container>
           </a>
-          <a class="dropdown-item" *ngIf="study.isDisabled() && isEnableAllowed" (click)="enable()">
+          <a
+            class="dropdown-item"
+            *ngIf="study.isDisabled() && (isEnableAllowed$ | async) === true"
+            (click)="enable()"
+          >
             <mat-icon class="mr-1" [ngClass]="getStateIconClass('enabled')">
               {{ getStateIcon('enabled') }}
             </mat-icon>
@@ -70,14 +68,16 @@
             <strong i18n>Description:</strong>
           </div>
           <div class="col-md-10">
-            <app-truncate-toggle [text]="study.description"
-                                 [toggleLength]="descriptionToggleLength"
-                                 [textEmptyWarning]="'Description not entered yet.'">
+            <app-truncate-toggle
+              [text]="study.description"
+              [toggleLength]="descriptionToggleLength"
+              [textEmptyWarning]="'Description not entered yet.'"
+            >
             </app-truncate-toggle>
           </div>
         </div>
       </li>
-      <li class="list-group-item" *ngIf="!isEnableAllowed">
+      <li class="list-group-item" *ngIf="(isEnableAllowed$ | async) !== true">
         <div class="alert alert-warning">
           <mat-icon class="warning-icon">warning</mat-icon>
           <ng-container i18n>
@@ -86,35 +86,39 @@
         </div>
       </li>
       <li class="list-group-item m-0 p-0">
-        <app-entity-status [state]="study.stateLabel()"
-                           [timeAdded]="study.timeAdded"
-                           [timeModified]="study.timeModified"
-                           [useBadges]="false">
+        <app-entity-status
+          [state]="study.stateLabel()"
+          [timeAdded]="study.timeAdded"
+          [timeModified]="study.timeModified"
+          [useBadges]="false"
+        >
         </app-entity-status>
       </li>
-
     </ul>
 
     <ng-template #updateNameModal let-modal>
-      <app-modal-input-text [title]="'Update Name'"
-                            [label]="'New study name'"
-                            [value]="study.name"
-                            [options]="updateNameModalOptions"
-                            (onConfirm)="confirm($event)"
-                            [modal]="modal">
+      <app-modal-input-text
+        [title]="'Update Name'"
+        [label]="'New study name'"
+        [value]="study.name"
+        [options]="updateNameModalOptions"
+        (onConfirm)="confirm($event)"
+        [modal]="modal"
+      >
       </app-modal-input-text>
     </ng-template>
 
     <ng-template #updateDescriptionModal let-modal>
-      <app-modal-input-textarea [title]="'Update Description'"
-                                [label]="'New study description'"
-                                [value]="study.description"
-                                [options]="updateDescriptionModalOptions"
-                                (onConfirm)="confirm($event)"
-                                [modal]="modal">
+      <app-modal-input-textarea
+        [title]="'Update Description'"
+        [label]="'New study description'"
+        [value]="study.description"
+        [options]="updateDescriptionModalOptions"
+        (onConfirm)="confirm($event)"
+        [modal]="modal"
+      >
       </app-modal-input-textarea>
     </ng-template>
-
   </div>
 </ng-container>
 
