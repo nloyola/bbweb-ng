@@ -1,14 +1,16 @@
-<app-paged-entity-selector [pageInfo]="(pageInfo$ | async)"
-                           [isLoading]="(isLoading$ | async)"
-                           [entitiesLimit]="eventsLimit"
-                           [(page)]="currentPage"
-                           [heading]="heading"
-                           [footer]="footer"
-                           [noEntitiesToDisplay]="noEntitiesToDisplay"
-                           [noResultsToDisplay]="noResultsToDisplay"
-                           [loadingContent]="showLoading"
-                           (filterUpdated)="onFiltersUpdated($event)"
-                           (pageChange)="paginationPageChange($event)">
+<app-paged-entity-selector
+  [pageInfo]="pageInfo$ | async"
+  [isLoading]="isLoading$ | async"
+  [entitiesLimit]="eventsLimit"
+  [(page)]="currentPage"
+  [heading]="heading"
+  [footer]="footer"
+  [noEntitiesToDisplay]="noEntitiesToDisplay"
+  [noResultsToDisplay]="noResultsToDisplay"
+  [loadingContent]="showLoading"
+  (filterUpdated)="onFiltersUpdated($event)"
+  (pageChange)="paginationPageChange($event)"
+>
   <ng-template let-entity>
     <li class="list-group-item" *ngIf="entity">
       <a href="#" (click)="!!eventSelected(entity)">
@@ -20,13 +22,8 @@
 
 <ng-template #heading>
   <small i18n>Events</small>
-  <span class="float-right d-inline-block"
-        ngbDropdown
-        placement="bottom-right">
-    <button class="btn btn-sm btn-outline-secondary"
-            type="button"
-            id="eventTypeMenu"
-            ngbDropdownToggle>
+  <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
+    <button class="btn btn-sm btn-outline-secondary" type="button" id="eventTypeMenu" ngbDropdownToggle>
       <mat-icon inline="true">more_vert</mat-icon>
     </button>
 
@@ -45,7 +42,7 @@
       <label class="small" for="nameFilter" i18n>
         Visit# filter:
       </label>
-      <input type="text" class="form-control form-control-sm" formControlName="name" />
+      <input type="text" class="form-control form-control-sm" formControlName="visitNumber" />
     </div>
   </form>
 </ng-template>

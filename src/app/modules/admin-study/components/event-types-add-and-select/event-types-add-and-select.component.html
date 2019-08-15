@@ -1,16 +1,19 @@
-<app-paged-entity-selector [pageInfo]="(pageInfo$ | async)"
-                           [isLoading]="(isLoading$ | async)"
-                           [entitiesLimit]="eventTypesLimit"
-                           [(page)]="currentPage"
-                           [heading]="heading"
-                           [noEntitiesToDisplay]="noEntitiesToDisplay"
-                           [noResultsToDisplay]="noResultsToDisplay"
-                           [loadingContent]="showLoading"
-                           (pageChange)="paginationPageChange($event)">
+<app-paged-entity-selector
+  [pageInfo]="pageInfo$ | async"
+  [isLoading]="isLoading$ | async"
+  [entitiesLimit]="eventTypesLimit"
+  [(page)]="currentPage"
+  [heading]="heading"
+  [footer]="footer"
+  [noEntitiesToDisplay]="noEntitiesToDisplay"
+  [noResultsToDisplay]="noResultsToDisplay"
+  [loadingContent]="showLoading"
+  (pageChange)="paginationPageChange($event)"
+>
   <ng-template let-entity>
     <li class="list-group-item" *ngIf="entity">
       <a href="#" (click)="!!eventTypeSelected(entity)">
-        <small>{{ entity.name | truncate:18 }}</small>
+        <small>{{ entity.name | truncate: 18 }}</small>
       </a>
       <span class="float-right badge badge-secondary">{{ getRecurringLabel(entity) }}</span>
     </li>
@@ -19,14 +22,8 @@
 
 <ng-template #heading>
   <small i18n>Events</small>
-  <span class="float-right d-inline-block"
-        *ngIf="isAddAllowed"
-        ngbDropdown
-        placement="bottom-right">
-    <button class="btn btn-sm btn-outline-secondary"
-            type="button"
-            id="eventTypeMenu"
-            ngbDropdownToggle>
+  <span class="float-right d-inline-block" *ngIf="isAddAllowed" ngbDropdown placement="bottom-right">
+    <button class="btn btn-sm btn-outline-secondary" type="button" id="eventTypeMenu" ngbDropdownToggle>
       <mat-icon inline="true">more_vert</mat-icon>
     </button>
 
@@ -37,6 +34,17 @@
       </a>
     </div>
   </span>
+</ng-template>
+
+<ng-template #footer>
+  <form [formGroup]="filterForm" novalidate>
+    <div class="form-group">
+      <label class="small" for="nameFilter" i18n>
+        Name filter:
+      </label>
+      <input type="text" class="form-control form-control-sm" formControlName="name" />
+    </div>
+  </form>
 </ng-template>
 
 <ng-template #noEntitiesToDisplay>

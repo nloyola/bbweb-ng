@@ -1,12 +1,12 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { PagedReplyInfo, SearchParams } from '@app/domain';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { PagedReplyInfo } from '@app/domain';
 import { CollectionEvent, Participant } from '@app/domain/participants';
 import { VisitNumberFilter } from '@app/domain/search-filters';
 import { EventStoreActions, EventStoreSelectors, RootStoreState } from '@app/root-store';
 import { select, Store } from '@ngrx/store';
 import { Observable, Subject, timer } from 'rxjs';
-import { filter, takeUntil, debounce, distinct } from 'rxjs/operators';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { debounce, distinct, filter, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-event-add-select',
@@ -49,10 +49,10 @@ export class EventAddSelectComponent implements OnInit, OnDestroy {
         this.applySearchParams();
       });
 
-    this.filterForm = this.formBuilder.group({ name: [''] });
+    this.filterForm = this.formBuilder.group({ visitNumber: [''] });
 
     // debounce the input to the name filter and then apply it to the search
-    this.name.valueChanges
+    this.visitNumber.valueChanges
       .pipe(
         debounce(() => timer(500)),
         distinct(() => this.filterForm.value),
@@ -73,8 +73,8 @@ export class EventAddSelectComponent implements OnInit, OnDestroy {
     this.unsubscribe$.complete();
   }
 
-  get name() {
-    return this.filterForm.get('name');
+  get visitNumber() {
+    return this.filterForm.get('visitNumber');
   }
 
   public eventSelected(event: CollectionEvent) {

@@ -1,12 +1,13 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { PagedReplyInfo, SearchParams } from '@app/domain';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { PagedReplyInfo } from '@app/domain';
+import { NameFilter } from '@app/domain/search-filters';
 import { CollectionEventType, Study } from '@app/domain/studies';
 import { RootStoreState } from '@app/root-store';
 import { EventTypeStoreActions, EventTypeStoreSelectors } from '@app/root-store/event-type';
 import { select, Store } from '@ngrx/store';
-import { Observable, Subject } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
-import { NameFilter } from '@app/domain/search-filters';
+import { Observable, Subject, timer } from 'rxjs';
+import { debounce, distinct, filter, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-event-types-add-and-select',
@@ -25,11 +26,12 @@ export class EventTypesAddAndSelectComponent implements OnInit, OnDestroy {
   currentPage = 1;
   eventTypesLimit = 5;
   sortField = 'name';
+  filterForm: FormGroup;
 
   private filterValues = '';
   private unsubscribe$: Subject<void> = new Subject<void>();
 
-  constructor(private store$: Store<RootStoreState.State>) {}
+  constructor(private store$: Store<RootStoreState.State>, private formBuilder: FormBuilder) {}
 
   ngOnInit() {
     this.isAddAllowed = this.study.isDisabled();
@@ -50,6 +52,22 @@ export class EventTypesAddAndSelectComponent implements OnInit, OnDestroy {
         this.applySearchParams();
       });
 
+    this.filterForm = this.formBuilder.group({ name: [''] });
+
+    // debounce the input to the name filter and then apply it to the search
+    this.name.valueChanges
+      .pipe(
+        debounce(() => timer(500)),
+        distinct(() => this.filterForm.value),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe(value => {
+        const f = new NameFilter();
+        f.setValue(value);
+        this.filterValues = f.getValue();
+        this.applySearchParams();
+      });
+
     this.applySearchParams();
   }
 
@@ -58,11 +76,8 @@ export class EventTypesAddAndSelectComponent implements OnInit, OnDestroy {
     this.unsubscribe$.complete();
   }
 
-  public onFiltersUpdated(filterValue: string) {
-    const f = new NameFilter();
-    f.setValue(filterValue);
-    this.filterValues = f.getValue();
-    this.applySearchParams();
+  get name() {
+    return this.filterForm.get('name');
   }
 
   public getRecurringLabel(eventType: CollectionEventType) {
