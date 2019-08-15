@@ -1,5 +1,11 @@
 import { applyMixins, ConcurrencySafeEntity, EntityInfo, HasSlug, IConcurrencySafeEntity } from '@app/domain';
-import { Annotation, AnnotationType, HasAnnotations, IAnnotation, AnnotationFactory } from '@app/domain/annotations';
+import {
+  Annotation,
+  AnnotationType,
+  HasAnnotations,
+  IAnnotation,
+  AnnotationFactory
+} from '@app/domain/annotations';
 import { IStudyInfo, Study } from '@app/domain/studies';
 
 /**
@@ -7,7 +13,6 @@ import { IStudyInfo, Study } from '@app/domain/studies';
  * non human. A Participant belongs to a single {@link app.domain.studies.Study | Study}.
  */
 export interface IParticipant extends IConcurrencySafeEntity, HasSlug {
-
   /**
    * A Participant has a unique identifier that is used to identify the participant in the system. This
    * identifier is not the same as the <code>id</code> value object used by the domain model.
@@ -26,7 +31,6 @@ export interface IParticipant extends IConcurrencySafeEntity, HasSlug {
 }
 
 export class Participant extends ConcurrencySafeEntity implements IParticipant, HasAnnotations {
-
   slug: string;
   uniqueId: string;
   study: EntityInfo<Study>;
@@ -34,8 +38,6 @@ export class Participant extends ConcurrencySafeEntity implements IParticipant, 
 
   annotations: Annotation[];
   setAnnotationTypes: (at: AnnotationType[]) => void;
-
-  private _study: Study;
 
   setStudy(s: Study) {
     this.study.id = s.id;
@@ -46,18 +48,16 @@ export class Participant extends ConcurrencySafeEntity implements IParticipant, 
   }
 
   deserialize(input: IParticipant): this {
-    const { slug,  uniqueId } = input;
-    Object.assign(this, { slug,  uniqueId });
+    const { slug, uniqueId } = input;
+    Object.assign(this, { slug, uniqueId });
     super.deserialize(input);
     this.study = new EntityInfo().deserialize(input.study);
 
     if (input.annotations) {
-      this.annotations = input.annotations
-        .map(a => AnnotationFactory.annotationFactory(a));
+      this.annotations = input.annotations.map(a => AnnotationFactory.annotationFactory(a));
     }
     return this;
   }
-
 }
 
-applyMixins(Participant, [ HasAnnotations ]);
+applyMixins(Participant, [HasAnnotations]);

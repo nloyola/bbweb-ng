@@ -8,14 +8,13 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['./specimen-view-modal.component.scss']
 })
 export class SpecimenViewModalComponent {
-
   @Input() specimen: Specimen;
   @Input() event: CollectionEvent;
   @Input() participant: Participant;
 
   cancelButtonShow = false;
 
-  constructor(private modal: NgbActiveModal) { }
+  constructor(private modal: NgbActiveModal) {}
 
   confirm(): void {
     this.modal.close();

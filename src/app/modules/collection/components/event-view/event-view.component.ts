@@ -45,6 +45,7 @@ export class EventViewComponent implements OnInit, OnDestroy {
   @ViewChild('removeEventModal', { static: false }) removeEventModal: TemplateRef<any>;
   @ViewChild('hasSpecimensModal', { static: false }) hasSpecimensModal: TemplateRef<any>;
 
+  participant: Participant;
   entities$: Observable<EntityData>;
   event$: Observable<CollectionEvent>;
   eventTypes$: Observable<Dictionary<CollectionEventType>>;
@@ -69,6 +70,7 @@ export class EventViewComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    this.participant = this.route.parent.parent.parent.parent.snapshot.data.participant;
     this.store$.dispatch(
       SpecimenStoreActions.searchSpecimensRequest({
         event: this.route.parent.snapshot.data.event,
@@ -102,7 +104,7 @@ export class EventViewComponent implements OnInit, OnDestroy {
         if (eventType === undefined) {
           this.store$.dispatch(
             EventTypeStoreActions.getEventTypeByIdRequest({
-              studyId: this.route.parent.parent.parent.parent.snapshot.data.participant.study.id,
+              studyId: this.participant.study.id,
               eventTypeId: routeData.event.eventTypeId
             })
           );
