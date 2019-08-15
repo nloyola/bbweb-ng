@@ -5,13 +5,15 @@ import { CustomValidators } from '@app/shared/validators';
 import { Observable } from 'rxjs';
 import { SpecimenDefinitionAddComponent } from '../specimen-definition-add/specimen-definition-add.component';
 
+/**
+ * Can be used to add or edit a collected specimen definition.
+ */
 @Component({
   selector: 'app-collected-specimen-definition-add-ui',
   templateUrl: './collected-specimen-definition-add.component.html',
   styleUrls: ['./collected-specimen-definition-add.component.scss']
 })
 export class CollectedSpecimenDefinitionAddComponent implements OnInit, OnChanges {
-
   /* tslint:disable-next-line:no-input-rename */
   @Input('isSaving') isSaving$: Observable<boolean>;
   /* tslint:enable-next-line:no-input-rename */
@@ -31,16 +33,19 @@ export class CollectedSpecimenDefinitionAddComponent implements OnInit, OnChange
     this.assignTitle();
     this.form = this.formBuilder.group({
       subform: SpecimenDefinitionAddComponent.buildSubForm(this.specimenDefinition),
-      amount: [ this.specimenDefinition.amount,
-                [ Validators.required, CustomValidators.floatNumber({ greaterThan: 0 }) ]],
-      maxCount: [ this.specimenDefinition.maxCount,
-                  [ Validators.required, Validators.min(1), Validators.pattern(/^[0-9]*$/) ]]
+      amount: [
+        this.specimenDefinition.amount,
+        [Validators.required, CustomValidators.floatNumber({ greaterThan: 0 })]
+      ],
+      maxCount: [
+        this.specimenDefinition.maxCount,
+        [Validators.required, Validators.min(1), Validators.pattern(/^[0-9]*$/)]
+      ]
     });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.specimenDefinition &&
-        (changes.specimenDefinition.currentValue.id !== null)) {
+    if (changes.specimenDefinition && changes.specimenDefinition.currentValue.id !== null) {
       this.specimenDefinition = changes.specimenDefinition.currentValue;
       this.assignTitle();
     }
@@ -55,7 +60,10 @@ export class CollectedSpecimenDefinitionAddComponent implements OnInit, OnChange
   }
 
   get description() {
-    return this.form.get('subform').get('sub-form').get('description');
+    return this.form
+      .get('subform')
+      .get('sub-form')
+      .get('description');
   }
 
   get anatomicalSource() {
@@ -95,26 +103,26 @@ export class CollectedSpecimenDefinitionAddComponent implements OnInit, OnChange
   }
 
   private assignTitle() {
-    this.title = this.specimenDefinition.isNew()
-      ? 'Add Collected Specimen' : 'Update Collected Specimen';
+    this.title = this.specimenDefinition.isNew() ? 'Add Collected Specimen' : 'Update Collected Specimen';
   }
 
   private formToSpecimenDefinition(): CollectedSpecimenDefinition {
-    const description = (this.form.value.description && (this.form.value.description.trim().length > 0))
-      ? this.form.value.description : undefined;
+    const description =
+      this.form.value.description && this.form.value.description.trim().length > 0
+        ? this.form.value.description
+        : undefined;
     const specimenDefinition = new CollectedSpecimenDefinition().deserialize({
-      id:                      this.specimenDefinition ? this.specimenDefinition.id : undefined,
-      name:                    this.subform.value.name,
+      id: this.specimenDefinition ? this.specimenDefinition.id : undefined,
+      name: this.subform.value.name,
       description,
-      units:                   this.subform.value.units,
-      anatomicalSourceType:    this.subform.value.anatomicalSource,
-      preservationType:        this.subform.value.preservation,
+      units: this.subform.value.units,
+      anatomicalSourceType: this.subform.value.anatomicalSource,
+      preservationType: this.subform.value.preservation,
       preservationTemperature: this.subform.value.temperature,
-      specimenType:            this.subform.value.specimenType,
-      amount:                  this.form.value.amount,
-      maxCount:                this.form.value.maxCount
+      specimenType: this.subform.value.specimenType,
+      amount: this.form.value.amount,
+      maxCount: this.form.value.maxCount
     } as any);
     return specimenDefinition;
   }
-
 }

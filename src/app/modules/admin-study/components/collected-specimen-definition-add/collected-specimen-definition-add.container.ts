@@ -1,7 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CollectedSpecimenDefinition, CollectionEventType, Study } from '@app/domain/studies';
-import { EventTypeStoreActions, EventTypeStoreSelectors, RootStoreState, StudyStoreSelectors } from '@app/root-store';
+import {
+  EventTypeStoreActions,
+  EventTypeStoreSelectors,
+  RootStoreState,
+  StudyStoreSelectors
+} from '@app/root-store';
 import { select, Store, createSelector } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 import { Subject, BehaviorSubject, Observable } from 'rxjs';
@@ -19,24 +24,23 @@ interface StoreData {
   templateUrl: './collected-specimen-definition-add.container.html'
 })
 export class CollectedSpecimenDefinitionAddContainerComponent implements OnInit, OnDestroy {
-
   isLoading$: Observable<boolean>;
   data$: Observable<StoreData>;
   eventType: CollectionEventType;
   specimenDefinition$: Observable<CollectedSpecimenDefinition>;
   isSaving$ = new BehaviorSubject<boolean>(false);
 
-  private parentStateRelativePath = '..';
   private specimenDefinition: CollectedSpecimenDefinition;
   private specimenDefinitionToSave: CollectedSpecimenDefinition;
   private updatedMessage$ = new Subject<string>();
   private unsubscribe$: Subject<void> = new Subject<void>();
 
-  constructor(private route: ActivatedRoute,
-              private router: Router,
-              private store$: Store<RootStoreState.State>,
-              private toastr: ToastrService) {
-  }
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private store$: Store<RootStoreState.State>,
+    private toastr: ToastrService
+  ) {}
 
   ngOnInit() {
     this.isLoading$ = this.store$.pipe(select(SpinnerStoreSelectors.selectSpinnerIsActive));
@@ -44,7 +48,8 @@ export class CollectedSpecimenDefinitionAddContainerComponent implements OnInit,
     const entitiesSelector = createSelector(
       StudyStoreSelectors.selectAllStudies,
       EventTypeStoreSelectors.selectAllEventTypes,
-      (studies: Study[], eventTypes: CollectionEventType[]) => ({ studies, eventTypes }));
+      (studies: Study[], eventTypes: CollectionEventType[]) => ({ studies, eventTypes })
+    );
 
     this.data$ = this.store$.pipe(
       select(entitiesSelector),
@@ -53,20 +58,24 @@ export class CollectedSpecimenDefinitionAddContainerComponent implements OnInit,
         let eventType: CollectionEventType;
         let specimenDefinition: CollectedSpecimenDefinition;
 
-        const studyEntity = data.studies
-          .find(s => s.slug === this.route.parent.parent.parent.parent.snapshot.params.slug);
+        const studyEntity = data.studies.find(
+          s => s.slug === this.route.parent.parent.parent.parent.snapshot.params.slug
+        );
 
         if (studyEntity) {
-          study = (studyEntity instanceof Study) ? studyEntity :  new Study().deserialize(studyEntity);
+          study = studyEntity instanceof Study ? studyEntity : new Study().deserialize(studyEntity);
         }
 
         const etEntity = data.eventTypes.find(et => et.slug === this.route.snapshot.params.eventTypeSlug);
         if (etEntity) {
-          eventType = (etEntity instanceof CollectionEventType)
-            ? etEntity : new CollectionEventType().deserialize(etEntity);
+          eventType =
+            etEntity instanceof CollectionEventType
+              ? etEntity
+              : new CollectionEventType().deserialize(etEntity);
           specimenDefinition = this.route.snapshot.params.specimenDefinitionId
             ? eventType.specimenDefinitions.find(
-              at => at.id === this.route.snapshot.params.specimenDefinitionId)
+                at => at.id === this.route.snapshot.params.specimenDefinitionId
+              )
             : new CollectedSpecimenDefinition();
         }
 
@@ -80,24 +89,28 @@ export class CollectedSpecimenDefinitionAddContainerComponent implements OnInit,
         this.eventType = data.eventType;
         this.specimenDefinition = data.specimenDefinition;
       }),
-      shareReplay());
+      shareReplay()
+    );
 
     this.specimenDefinition$ = this.data$.pipe(map(data => data.specimenDefinition));
 
-    this.data$.pipe(
-      withLatestFrom(this.updatedMessage$),
-      takeUntil(this.unsubscribe$)
-    ).subscribe(([ _data, msg ]) => {
-      this.isSaving$.next(false);
-      this.toastr.success(msg, 'Update Successfull');
-      this.router.navigate([ this.parentStateRelativePath ], { relativeTo: this.route });
-    });
+    this.data$
+      .pipe(
+        withLatestFrom(this.updatedMessage$),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe(([_data, msg]) => {
+        this.isSaving$.next(false);
+        this.toastr.success(msg, 'Update Successfull');
+        this.navigateToParent();
+      });
 
     this.store$
       .pipe(
         select(EventTypeStoreSelectors.selectError),
         filter(s => !!s),
-        takeUntil(this.unsubscribe$))
+        takeUntil(this.unsubscribe$)
+      )
       .subscribe((error: any) => {
         this.isSaving$.next(false);
         let errMessage = error.error ? error.error.message : error.statusText;
@@ -107,10 +120,12 @@ export class CollectedSpecimenDefinitionAddContainerComponent implements OnInit,
         this.toastr.error(errMessage, 'Add Error', { disableTimeOut: true });
       });
 
-    this.store$.dispatch(EventTypeStoreActions.getEventTypeRequest({
-      studySlug: this.route.parent.parent.parent.parent.snapshot.params.slug,
-      eventTypeSlug: this.route.snapshot.params.eventTypeSlug
-    }));
+    this.store$.dispatch(
+      EventTypeStoreActions.getEventTypeRequest({
+        studySlug: this.route.parent.parent.parent.parent.snapshot.params.slug,
+        eventTypeSlug: this.route.snapshot.params.eventTypeSlug
+      })
+    );
   }
 
   ngOnDestroy() {
@@ -122,17 +137,28 @@ export class CollectedSpecimenDefinitionAddContainerComponent implements OnInit,
     this.isSaving$.next(true);
     this.specimenDefinitionToSave = specimenDefinition;
 
-    this.store$.dispatch(EventTypeStoreActions.updateEventTypeRequest({
-      eventType: this.eventType,
-      attributeName: 'addOrUpdateSpecimenDefinition',
-      value: this.specimenDefinitionToSave
-    }));
+    this.store$.dispatch(
+      EventTypeStoreActions.updateEventTypeRequest({
+        eventType: this.eventType,
+        attributeName: 'addOrUpdateSpecimenDefinition',
+        value: this.specimenDefinitionToSave
+      })
+    );
 
     this.updatedMessage$.next(this.specimenDefinition.isNew() ? 'Specimen Added' : 'Specimen Updated');
   }
 
   onCancel(): void {
-    this.router.navigate([ this.parentStateRelativePath ], { relativeTo: this.route });
+    this.navigateToParent();
   }
 
+  private navigateToParent(): void {
+    let pathToParent: string;
+    if (this.router.url.includes('spc-def-add')) {
+      pathToParent = '../';
+    } else {
+      pathToParent = '../../';
+    }
+    this.router.navigate([pathToParent], { relativeTo: this.route });
+  }
 }

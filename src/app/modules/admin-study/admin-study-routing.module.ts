@@ -65,7 +65,7 @@ export const routes: Routes = [
             children: [
               {
                 path: '',
-                component: StudyParticipantsComponent,
+                component: StudyParticipantsComponent
               },
               {
                 path: 'add',
@@ -112,7 +112,7 @@ export const routes: Routes = [
                     children: [
                       {
                         path: '',
-                        component: EventTypeViewContainerComponent,
+                        component: EventTypeViewContainerComponent
                       },
                       {
                         path: 'annotationAdd',
@@ -129,14 +129,14 @@ export const routes: Routes = [
                         }
                       },
                       {
-                        path: 'spcDefAdd',
+                        path: 'spc-def-add',
                         component: CollectedSpecimenDefinitionAddContainerComponent,
                         data: {
                           breadcrumbs: 'Add Specimen'
                         }
                       },
                       {
-                        path: 'spcDef/:specimenDefinitionId',
+                        path: 'spc-def/:specimenDefinitionId',
                         component: CollectedSpecimenDefinitionAddContainerComponent,
                         data: {
                           breadcrumbs: 'Update Specimen'
@@ -177,7 +177,7 @@ export const routes: Routes = [
                     children: [
                       {
                         path: '',
-                        component: ProcessingTypeViewContainerComponent,
+                        component: ProcessingTypeViewContainerComponent
                       },
                       {
                         path: 'annotationAdd',
@@ -192,7 +192,7 @@ export const routes: Routes = [
                         data: {
                           breadcrumbs: 'Update Annotation'
                         }
-                      },
+                      }
                     ]
                   }
                 ]
@@ -209,4 +209,4 @@ export const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class AdminStudyRoutingModule { }
+export class AdminStudyRoutingModule {}

@@ -4,7 +4,12 @@ import { AnnotationType } from '@app/domain/annotations';
 import { CollectionEventType, Study } from '@app/domain/studies';
 import { CollectedSpecimenDefinition } from '@app/domain/studies/collected-specimen-definition.model';
 import { ModalInputTextareaOptions, ModalInputTextOptions } from '@app/modules/modals/models';
-import { EventTypeStoreActions, EventTypeStoreSelectors, RootStoreState, StudyStoreSelectors } from '@app/root-store';
+import {
+  EventTypeStoreActions,
+  EventTypeStoreSelectors,
+  RootStoreState,
+  StudyStoreSelectors
+} from '@app/root-store';
 import { AnnotationTypeRemoveComponent } from '@app/shared/components/annotation-type-remove/annotation-type-remove.component';
 import { AnnotationTypeViewComponent } from '@app/shared/components/annotation-type-view/annotation-type-view.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -28,7 +33,6 @@ interface StoreData {
   templateUrl: './event-type-view.container.html'
 })
 export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
-
   @ViewChild('updateNameModal', { static: false }) updateNameModal: TemplateRef<any>;
   @ViewChild('updateDescriptionModal', { static: false }) updateDescriptionModal: TemplateRef<any>;
   @ViewChild('updateRecurringModal', { static: false }) updateRecurringModal: TemplateRef<any>;
@@ -45,17 +49,17 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
   private updatedMessage$ = new Subject<string>();
   private unsubscribe$: Subject<void> = new Subject<void>();
 
-  constructor(private store$: Store<RootStoreState.State>,
-              private router: Router,
-              private route: ActivatedRoute,
-              private modalService: NgbModal,
-              private toastr: ToastrService) {}
+  constructor(
+    private store$: Store<RootStoreState.State>,
+    private router: Router,
+    private route: ActivatedRoute,
+    private modalService: NgbModal,
+    private toastr: ToastrService
+  ) {}
 
   ngOnInit() {
     this.eventTypeId = this.route.snapshot.data.eventType.id;
-    this.route.data.pipe(
-      takeUntil(this.unsubscribe$)
-    ).subscribe(data => {
+    this.route.data.pipe(takeUntil(this.unsubscribe$)).subscribe(data => {
       if (this.eventTypeId !== data.eventType.id) {
         // user selected a different event type
         this.eventTypeId = data.eventType.id;
@@ -70,73 +74,81 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
         let study: Study;
         const studyEntity = studies[this.route.snapshot.data.eventType.studyId];
         if (studyEntity) {
-          study = (studyEntity instanceof Study) ? studyEntity :  new Study().deserialize(studyEntity);
+          study = studyEntity instanceof Study ? studyEntity : new Study().deserialize(studyEntity);
         }
         return {
           study,
           eventTypes,
           eventType: undefined
         };
-      });
+      }
+    );
 
-    this.data$ = combineLatest([ this.route.data, this.store$.pipe(select(entitiesSelector)) ]).pipe(
+    this.data$ = combineLatest([this.route.data, this.store$.pipe(select(entitiesSelector))]).pipe(
       map(([routeData, entities]) => {
         const eventType = entities.eventTypes[routeData.eventType.id];
 
         return {
           ...entities,
-          eventType,
+          eventType
         };
       }),
       takeUntil(this.unsubscribe$),
-      shareReplay());
+      shareReplay()
+    );
 
     this.data$.pipe(takeUntil(this.unsubscribe$)).subscribe(this.dataSubject);
     this.eventType$ = this.data$.pipe(map(entities => entities.eventType));
     this.allowChanges$ = this.data$.pipe(map(entities => entities.study.isDisabled()));
-    this.isLoading$ = this.data$.pipe(map(data => (data === undefined) || (data.eventType === undefined)));
+    this.isLoading$ = this.data$.pipe(map(data => data === undefined || data.eventType === undefined));
 
-    this.data$.pipe(
-      withLatestFrom(this.updatedMessage$),
-      takeUntil(this.unsubscribe$)
-    ).subscribe(([ data, msg ]) => {
-      if (msg === null) { return; }
-
-      if (data.eventType !== undefined) {
-        this.toastr.success(msg, 'Update Successfull');
-
-        if (data.eventType.slug !== this.route.snapshot.params.eventTypeSlug) {
-          // name was changed and new slug was assigned
-          //
-          // need to change state since slug is used in URL and by breadcrumbs
-          this.router.navigate([
-            '/admin/studies',
-            data.study.slug,
-            'collection',
-            'view',
-            data.eventType.slug
-          ]);
+    this.data$
+      .pipe(
+        withLatestFrom(this.updatedMessage$),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe(([data, msg]) => {
+        if (msg === null) {
+          return;
         }
-      } else {
-        this.toastr.success(msg, 'Remove Successfull');
-        this.router.navigate([ '/admin/studies', data.study.slug, 'collection', 'view' ]);
-      }
 
-      this.updatedMessage$.next(null);
-    });
+        if (data.eventType !== undefined) {
+          this.toastr.success(msg, 'Update Successfull');
 
-    this.store$.pipe(
-      select(EventTypeStoreSelectors.selectError),
-      filter(error => !!error),
-      withLatestFrom(this.updatedMessage$),
-      takeUntil(this.unsubscribe$)
-    ).subscribe(([error, _msg]) => {
-      let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
-      if (errMessage.indexOf('already exists') > -1) {
-        errMessage = 'A participant with that unique ID already exists. Please use a different one.';
-      }
-      this.toastr.error(errMessage, 'Update Error', { disableTimeOut: true });
-    });
+          if (data.eventType.slug !== this.route.snapshot.params.eventTypeSlug) {
+            // name was changed and new slug was assigned
+            //
+            // need to change state since slug is used in URL and by breadcrumbs
+            this.router.navigate([
+              '/admin/studies',
+              data.study.slug,
+              'collection',
+              'view',
+              data.eventType.slug
+            ]);
+          }
+        } else {
+          this.toastr.success(msg, 'Remove Successfull');
+          this.router.navigate(['/admin/studies', data.study.slug, 'collection', 'view']);
+        }
+
+        this.updatedMessage$.next(null);
+      });
+
+    this.store$
+      .pipe(
+        select(EventTypeStoreSelectors.selectError),
+        filter(error => !!error),
+        withLatestFrom(this.updatedMessage$),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe(([error, _msg]) => {
+        let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
+        if (errMessage.indexOf('already exists') > -1) {
+          errMessage = 'A participant with that unique ID already exists. Please use a different one.';
+        }
+        this.toastr.error(errMessage, 'Update Error', { disableTimeOut: true });
+      });
   }
 
   ngOnDestroy() {
@@ -150,13 +162,16 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
         required: true,
         minLength: 2
       };
-      this.modalService.open(this.updateNameModal, { size: 'lg' }).result
-        .then((value) => {
-          this.store$.dispatch(EventTypeStoreActions.updateEventTypeRequest({
-            eventType,
-            attributeName: 'name',
-            value
-          }));
+      this.modalService
+        .open(this.updateNameModal, { size: 'lg' })
+        .result.then(value => {
+          this.store$.dispatch(
+            EventTypeStoreActions.updateEventTypeRequest({
+              eventType,
+              attributeName: 'name',
+              value
+            })
+          );
           this.updatedMessage$.next('Event name was updated');
         })
         .catch(() => undefined);
@@ -169,13 +184,16 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
         rows: 20,
         cols: 10
       };
-      this.modalService.open(this.updateDescriptionModal, { size: 'lg' }).result
-        .then((value: string) => {
-          this.store$.dispatch(EventTypeStoreActions.updateEventTypeRequest({
-            eventType,
-            attributeName: 'description',
-            value
-          }));
+      this.modalService
+        .open(this.updateDescriptionModal, { size: 'lg' })
+        .result.then((value: string) => {
+          this.store$.dispatch(
+            EventTypeStoreActions.updateEventTypeRequest({
+              eventType,
+              attributeName: 'description',
+              value
+            })
+          );
           this.updatedMessage$.next('Event description was updated');
         })
         .catch(() => undefined);
@@ -184,13 +202,16 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
 
   updateRecurring() {
     this.whenStudyDisabled((study, eventType) => {
-      this.modalService.open(this.updateRecurringModal, { size: 'lg' }).result
-        .then(value => {
-          this.store$.dispatch(EventTypeStoreActions.updateEventTypeRequest({
-            eventType,
-            attributeName: 'recurring',
-            value
-          }));
+      this.modalService
+        .open(this.updateRecurringModal, { size: 'lg' })
+        .result.then(value => {
+          this.store$.dispatch(
+            EventTypeStoreActions.updateEventTypeRequest({
+              eventType,
+              attributeName: 'recurring',
+              value
+            })
+          );
           this.updatedMessage$.next('Recurring was updated');
         })
         .catch(() => undefined);
@@ -199,7 +220,7 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
 
   addAnnotationType() {
     this.whenStudyDisabled(() => {
-      this.router.navigate([ 'annotationAdd' ], { relativeTo: this.route });
+      this.router.navigate(['annotationAdd'], { relativeTo: this.route });
     });
   }
 
@@ -208,14 +229,12 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.annotationType = annotationType;
 
     // nothing is done with this modal's result
-    modalRef.result
-      .then(() => undefined)
-      .catch(() => undefined);
+    modalRef.result.then(() => undefined).catch(() => undefined);
   }
 
   editAnnotationType(annotationType: AnnotationType): void {
     this.whenStudyDisabled(() => {
-      this.router.navigate([ 'annotation', annotationType.id ], { relativeTo: this.route });
+      this.router.navigate(['annotation', annotationType.id], { relativeTo: this.route });
     });
   }
 
@@ -225,11 +244,13 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
       modalRef.componentInstance.annotationType = annotationType;
       modalRef.result
         .then(() => {
-          this.store$.dispatch(EventTypeStoreActions.updateEventTypeRequest({
-            eventType,
-            attributeName: 'removeAnnotationType',
-            value: annotationType.id
-          }));
+          this.store$.dispatch(
+            EventTypeStoreActions.updateEventTypeRequest({
+              eventType,
+              attributeName: 'removeAnnotationType',
+              value: annotationType.id
+            })
+          );
 
           this.updatedMessage$.next('Annotation removed');
         })
@@ -239,7 +260,7 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
 
   addSpecimenDefinition() {
     this.whenStudyDisabled(() => {
-      this.router.navigate([ 'spcDefAdd' ], { relativeTo: this.route });
+      this.router.navigate(['spc-def-add'], { relativeTo: this.route });
     });
   }
 
@@ -248,14 +269,12 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.specimenDefinition = specimenDefinition;
 
     // nothing is done with this modal's result
-    modalRef.result
-      .then(() => undefined)
-      .catch(() => undefined);
+    modalRef.result.then(() => undefined).catch(() => undefined);
   }
 
   editSpecimenDefinition(specimenDefinition: CollectedSpecimenDefinition): void {
     this.whenStudyDisabled(() => {
-      this.router.navigate([ 'spcDef', specimenDefinition.id ], { relativeTo: this.route });
+      this.router.navigate(['spc-def', specimenDefinition.id], { relativeTo: this.route });
     });
   }
 
@@ -265,11 +284,13 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
       modalRef.componentInstance.specimenDefinition = specimenDefinition;
       modalRef.result
         .then(() => {
-          this.store$.dispatch(EventTypeStoreActions.updateEventTypeRequest({
-            eventType,
-            attributeName: 'removeSpecimenDefinition',
-            value: specimenDefinition.id
-          }));
+          this.store$.dispatch(
+            EventTypeStoreActions.updateEventTypeRequest({
+              eventType,
+              attributeName: 'removeSpecimenDefinition',
+              value: specimenDefinition.id
+            })
+          );
 
           this.updatedMessage$.next('Specimen removed');
         })
@@ -294,14 +315,14 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
   addEventTypeSelected() {
     this.whenStudyDisabled((study, _eventType) => {
       // relative route does not work here, why?
-      this.router.navigate([ `/admin/studies/${study.slug}/collection/add` ]);
+      this.router.navigate([`/admin/studies/${study.slug}/collection/add`]);
     });
   }
 
   eventTypeSelected(eventType: CollectionEventType) {
     this.whenStudyDisabled((study, _eventType) => {
       // relative route does not work here, why?
-      this.router.navigate([ `/admin/studies/${study.slug}/collection/${eventType.slug}` ]);
+      this.router.navigate([`/admin/studies/${study.slug}/collection/${eventType.slug}`]);
     });
   }
 
@@ -313,5 +334,4 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
 
     fn(study, this.dataSubject.value.eventType);
   }
-
 }

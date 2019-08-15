@@ -5,7 +5,13 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CollectionEventType, Study, StudyState } from '@app/domain/studies';
-import { EventTypeStoreActions, EventTypeStoreReducer, RootStoreState, StudyStoreActions, StudyStoreReducer } from '@app/root-store';
+import {
+  EventTypeStoreActions,
+  EventTypeStoreReducer,
+  RootStoreState,
+  StudyStoreActions,
+  StudyStoreReducer
+} from '@app/root-store';
 import { NgrxRuntimeChecks } from '@app/root-store/root-store.module';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { YesNoPipe } from '@app/shared/pipes/yes-no-pipe';
@@ -42,9 +48,9 @@ describe('EventTypeViewContainer', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            'spinner': SpinnerStoreReducer.reducer,
-            'study': StudyStoreReducer.reducer,
-            'event-type': EventTypeStoreReducer.reducer,
+            spinner: SpinnerStoreReducer.reducer,
+            study: StudyStoreReducer.reducer,
+            'event-type': EventTypeStoreReducer.reducer
           },
           NgrxRuntimeChecks
         ),
@@ -56,19 +62,13 @@ describe('EventTypeViewContainer', () => {
           useValue: mockActivatedRoute
         }
       ],
-      declarations: [
-        EventTypeViewContainerComponent,
-        EventTypeRemoveComponent,
-        YesNoPipe
-      ],
+      declarations: [EventTypeViewContainerComponent, EventTypeRemoveComponent, YesNoPipe],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     });
 
     TestBed.overrideModule(BrowserDynamicTestingModule, {
       set: {
-        entryComponents: [
-          EventTypeRemoveComponent
-        ]
+        entryComponents: [EventTypeRemoveComponent]
       }
     });
   }));
@@ -94,7 +94,7 @@ describe('EventTypeViewContainer', () => {
 
     const newName = factory.stringNext();
     const etWithNewName = new CollectionEventType().deserialize({
-      ...eventType as any,
+      ...(eventType as any),
       ...factory.nameAndSlug()
     });
 
@@ -105,19 +105,25 @@ describe('EventTypeViewContainer', () => {
     flush();
     fixture.detectChanges();
 
-    store.dispatch(EventTypeStoreActions.updateEventTypeSuccess({
-      eventType: etWithNewName
-    }));
+    store.dispatch(
+      EventTypeStoreActions.updateEventTypeSuccess({
+        eventType: etWithNewName
+      })
+    );
     flush();
     fixture.detectChanges();
 
     expect(routerListener.mock.calls.length).toBe(1);
     expect(routerListener.mock.calls[0][0]).toEqual([
-      '/admin/studies', study.slug, 'collection', 'view', etWithNewName.slug]);
+      '/admin/studies',
+      study.slug,
+      'collection',
+      'view',
+      etWithNewName.slug
+    ]);
   }));
 
   describe('when updating attributes', () => {
-
     let eventType: CollectionEventType;
     const context: EntityUpdateComponentBehaviour.Context<EventTypeViewContainerComponent> = {} as any;
 
@@ -130,22 +136,23 @@ describe('EventTypeViewContainer', () => {
         store.dispatch(EventTypeStoreActions.getEventTypeSuccess({ eventType }));
       };
       context.componentValidateInitialization = () => undefined;
-      context.dispatchSuccessAction =
-        () => { store.dispatch(EventTypeStoreActions.updateEventTypeSuccess({ eventType })); };
-      context.createExpectedFailureAction =
-        (error) => EventTypeStoreActions.updateEventTypeFailure({ error });
+      context.dispatchSuccessAction = () => {
+        store.dispatch(EventTypeStoreActions.updateEventTypeSuccess({ eventType }));
+      };
+      context.createExpectedFailureAction = error => EventTypeStoreActions.updateEventTypeFailure({ error });
       context.duplicateAttibuteValueError = 'already exists';
     });
 
     describe('when updating name', () => {
-
       beforeEach(() => {
         const newName = factory.stringNext();
         context.modalReturnValue = { result: Promise.resolve(newName) };
-        context.updateEntity = () => { component.updateName(); };
+        context.updateEntity = () => {
+          component.updateName();
+        };
 
         const eventTypeWithUpdatedSlug = new CollectionEventType().deserialize({
-          ...eventType as any,
+          ...(eventType as any),
           slug: factory.slugify(newName),
           name: newName
         });
@@ -156,22 +163,24 @@ describe('EventTypeViewContainer', () => {
           value: newName
         });
         context.dispatchSuccessAction = () => {
-          store.dispatch(EventTypeStoreActions.updateEventTypeSuccess({
-            eventType: eventTypeWithUpdatedSlug
-          }));
+          store.dispatch(
+            EventTypeStoreActions.updateEventTypeSuccess({
+              eventType: eventTypeWithUpdatedSlug
+            })
+          );
         };
       });
 
       EntityUpdateComponentBehaviour.sharedBehaviour(context);
-
     });
 
     describe('when updating description', () => {
-
       beforeEach(() => {
         const newValue = faker.lorem.paragraphs();
         context.modalReturnValue = { result: Promise.resolve(newValue) };
-        context.updateEntity = () => { component.updateDescription(); };
+        context.updateEntity = () => {
+          component.updateDescription();
+        };
 
         context.expectedSuccessAction = EventTypeStoreActions.updateEventTypeRequest({
           eventType,
@@ -181,15 +190,15 @@ describe('EventTypeViewContainer', () => {
       });
 
       EntityUpdateComponentBehaviour.sharedBehaviour(context);
-
     });
 
     describe('when updating recurring', () => {
-
       beforeEach(() => {
         const newValue = true;
         context.modalReturnValue = { result: Promise.resolve(newValue) };
-        context.updateEntity = () => { component.updateRecurring(); };
+        context.updateEntity = () => {
+          component.updateRecurring();
+        };
 
         context.expectedSuccessAction = EventTypeStoreActions.updateEventTypeRequest({
           eventType,
@@ -199,13 +208,10 @@ describe('EventTypeViewContainer', () => {
       });
 
       EntityUpdateComponentBehaviour.sharedBehaviour(context);
-
     });
-
   });
 
   describe('common behaviour', () => {
-
     const componentUpdateFuncs = [
       (c, et) => c.updateName(),
       (c, et) => c.updateDescription(),
@@ -237,7 +243,7 @@ describe('EventTypeViewContainer', () => {
 
     it('functions should throw an error when study is not disabled', () => {
       const updatedStudy = new Study().deserialize({
-        ...study as any,
+        ...(study as any),
         state: StudyState.Enabled
       });
       const eventType = createEventType();
@@ -283,11 +289,9 @@ describe('EventTypeViewContainer', () => {
       fixture.detectChanges();
       expect(toastrListener.mock.calls.length).toBe(componentUpdateFuncs.length);
     }));
-
   });
 
   describe('for annotation types', () => {
-
     it('changes state when adding an annotation type', () => {
       const ngZone = TestBed.get(NgZone);
       ngZone.run(() => router.initialNavigation());
@@ -300,7 +304,7 @@ describe('EventTypeViewContainer', () => {
 
       ngZone.run(() => component.addAnnotationType());
       expect(router.navigate).toHaveBeenCalled();
-      expect((router.navigate as any).calls.mostRecent().args[0]).toEqual([ 'annotationAdd' ]);
+      expect((router.navigate as any).calls.mostRecent().args[0]).toEqual(['annotationAdd']);
     });
 
     it('when an annotation type is edited, a state change is made', () => {
@@ -317,12 +321,10 @@ describe('EventTypeViewContainer', () => {
 
       ngZone.run(() => component.editAnnotationType(eventType.annotationTypes[0]));
       expect(router.navigate).toHaveBeenCalled();
-      expect((router.navigate as any).calls.mostRecent().args[0])
-        .toEqual([ 'annotation', annotationType.id ]);
+      expect((router.navigate as any).calls.mostRecent().args[0]).toEqual(['annotation', annotationType.id]);
     });
 
     describe('when removing an annotation type', () => {
-
       it('dispatches an event to update the event type', async(() => {
         const eventType = createEventType();
 
@@ -348,13 +350,10 @@ describe('EventTypeViewContainer', () => {
           expect(store.dispatch).toHaveBeenCalledWith(action);
         });
       }));
-
     });
-
   });
 
   describe('for specimen definitions', () => {
-
     it('changes state when adding an specimen definition', () => {
       const ngZone = TestBed.get(NgZone);
       ngZone.run(() => router.initialNavigation());
@@ -368,7 +367,7 @@ describe('EventTypeViewContainer', () => {
 
       ngZone.run(() => component.addSpecimenDefinition());
       expect(router.navigate).toHaveBeenCalled();
-      expect((router.navigate as any).calls.mostRecent().args[0]).toEqual([ 'spcDefAdd' ]);
+      expect((router.navigate as any).calls.mostRecent().args[0]).toEqual(['spc-def-add']);
     });
 
     it('when an specimen definition is edited, a state change is made', () => {
@@ -385,12 +384,10 @@ describe('EventTypeViewContainer', () => {
 
       ngZone.run(() => component.editSpecimenDefinition(eventType.specimenDefinitions[0]));
       expect(router.navigate).toHaveBeenCalled();
-      expect((router.navigate as any).calls.mostRecent().args[0])
-        .toEqual([ 'spcDef', specimenDefinition.id ]);
+      expect((router.navigate as any).calls.mostRecent().args[0]).toEqual(['spcDef', specimenDefinition.id]);
     });
 
     describe('when removing an specimen definition', () => {
-
       it('dispatches an event to update the event type', async(() => {
         const eventType = createEventType();
         const newRecurring = !eventType.recurring;
@@ -417,13 +414,10 @@ describe('EventTypeViewContainer', () => {
           expect(store.dispatch).toHaveBeenCalledWith(action);
         });
       }));
-
     });
-
   });
 
   describe('when removing an event type', () => {
-
     it('dispatches an event', async(() => {
       const eventType = createEventType();
       const modalService = TestBed.get(NgbModal);
@@ -469,8 +463,7 @@ describe('EventTypeViewContainer', () => {
       fixture.detectChanges();
 
       expect(routerListener).toHaveBeenCalled();
-      expect(routerListener.mock.calls[0][0]).toEqual([
-        '/admin/studies', study.slug, 'collection', 'view' ]);
+      expect(routerListener.mock.calls[0][0]).toEqual(['/admin/studies', study.slug, 'collection', 'view']);
     }));
   });
 
@@ -479,8 +472,8 @@ describe('EventTypeViewContainer', () => {
     const specimenDefinition = factory.collectedSpecimenDefinition();
     const eventType = new CollectionEventType().deserialize({
       ...factory.collectionEventType({
-        annotationTypes: [ annotationType ],
-        specimenDefinitions: [ specimenDefinition ]
+        annotationTypes: [annotationType],
+        specimenDefinitions: [specimenDefinition]
       })
     });
     return eventType;
@@ -522,5 +515,4 @@ describe('EventTypeViewContainer', () => {
       }
     }));
   }
-
 });
