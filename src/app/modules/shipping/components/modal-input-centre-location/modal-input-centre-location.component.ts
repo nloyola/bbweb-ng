@@ -1,20 +1,11 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild, Input } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { CentreLocationInfo } from '@app/domain/centres';
-import { Shipment, ShipmentState } from '@app/domain/shipments';
-import { RootStoreState, ShipmentStoreSelectors, ShipmentStoreActions } from '@app/root-store';
-import { SpinnerStoreSelectors } from '@app/root-store/spinner';
-import {
-  CentreLocationResultsMapper,
-  CentreLocationSelectTypeahead
-} from '@app/shared/typeaheads/centre-loction-select-typeahead';
-import { select, Store } from '@ngrx/store';
-import { ToastrService } from 'ngx-toastr';
-import { Observable, Subject } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
-import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { ModalInputBaseComponent } from '@app/modules/modals/components/modal-input-base.component';
+import { RootStoreState } from '@app/root-store';
+import { CentreLocationSelectTypeahead } from '@app/shared/typeaheads/centre-loction-select-typeahead';
+import { Store } from '@ngrx/store';
+import { takeUntil } from 'rxjs/operators';
 @Component({
   selector: 'app-modal-input-centre-location',
   templateUrl: './modal-input-centre-location.component.html',

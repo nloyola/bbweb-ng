@@ -32,6 +32,9 @@ export interface IShipment extends IConcurrencySafeEntity {
 
   /** The date and time when all the specimens and containers were unpacked from the shipment. */
   timeCompleted?: Date;
+
+  /** the number of specimens in the shipment. */
+  specimenCount: number;
 }
 
 export class Shipment extends ConcurrencySafeEntity {
@@ -45,6 +48,7 @@ export class Shipment extends ConcurrencySafeEntity {
   timeReceived?: Date;
   timeUpacked?: Date;
   timeCompleted?: Date;
+  specimenCount: number;
 
   /**
    * A predicate to test if the shipment's state is CREATED.
@@ -103,8 +107,8 @@ export class Shipment extends ConcurrencySafeEntity {
   }
 
   deserialize(input: IShipment): this {
-    const { state, courierName, trackingNumber } = input;
-    Object.assign(this, { state, courierName, trackingNumber });
+    const { state, courierName, trackingNumber, specimenCount } = input;
+    Object.assign(this, { state, courierName, trackingNumber, specimenCount });
     super.deserialize(input);
 
     if (input.timePacked) {

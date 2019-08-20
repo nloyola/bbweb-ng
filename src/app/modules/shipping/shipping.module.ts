@@ -23,8 +23,15 @@ import { ShipmentSpecimensTableComponent } from './components/shipment-specimens
 import { ShipmentPageButtonsComponent } from './components/shipment-page-buttons/shipment-page-buttons.component';
 import { ModalInputCentreLocationComponent } from './components/modal-input-centre-location/modal-input-centre-location.component';
 import { ShipmentNotInCreatedModalComponent } from '../modals/components/shipment-not-in-created-modal/shipment-not-in-created-modal.component';
-import { ShipmentHasSpecimensComponent } from '../modals/components/shipment-has-specimens/shipment-has-specimens.component';
 import { ShipmentRemoveModalComponent } from '../modals/components/shipment-remove-modal/shipment-remove-modal.component';
+import { ModalInputDateTimeComponent } from '@app/modules/modals/components/modal-input-date/modal-input-date-time.component';
+import { ModalInputDoubleDateComponent } from '../modals/components/modal-input-double-date/modal-input-double-date.component';
+import { ModalShipmentBackToCreatedComponent } from '../modals/components/modal-shipment-back-to-created/modal-shipment-back-to-created.component';
+import { ModalShipmentBackToPackedComponent } from '../modals/components/modal-shipment-back-to-packed/modal-shipment-back-to-packed.component';
+import { ModalShipmentTagAsLostComponent } from '../modals/components/modal-shipment-tag-as-lost/modal-shipment-tag-as-lost.component';
+import { ModalShipmentHasSpecimensComponent } from '../modals/components/modal-shipment-has-specimens/modal-shipment-has-specimens.component';
+import { ModalShipmentHasNoSpecimensComponent } from '../modals/components/modal-shipment-has-no-specimens/modal-shipment-has-no-specimens.component';
+import { ModalSpecimensExistInAnotherShipmentComponent } from '../modals/components/modal-specimens-exist-in-another-shipment/modal-specimens-exist-in-another-shipment.component';
 
 @NgModule({
   imports: [
@@ -60,8 +67,15 @@ import { ShipmentRemoveModalComponent } from '../modals/components/shipment-remo
   ],
   entryComponents: [
     ShipmentNotInCreatedModalComponent,
-    ShipmentHasSpecimensComponent,
-    ShipmentRemoveModalComponent
+    ModalShipmentHasSpecimensComponent,
+    ShipmentRemoveModalComponent,
+    ModalInputDateTimeComponent,
+    ModalInputDoubleDateComponent,
+    ModalShipmentBackToCreatedComponent,
+    ModalShipmentBackToPackedComponent,
+    ModalShipmentTagAsLostComponent,
+    ModalShipmentHasNoSpecimensComponent,
+    ModalSpecimensExistInAnotherShipmentComponent
   ]
 })
 export class ShippingModule {}

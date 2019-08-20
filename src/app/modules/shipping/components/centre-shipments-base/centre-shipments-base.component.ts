@@ -20,8 +20,8 @@ import { filter, map, shareReplay, takeUntil, withLatestFrom } from 'rxjs/operat
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { ShipmentNotInCreatedModalComponent } from '@app/modules/modals/components/shipment-not-in-created-modal/shipment-not-in-created-modal.component';
-import { ShipmentHasSpecimensComponent } from '@app/modules/modals/components/shipment-has-specimens/shipment-has-specimens.component';
 import { ShipmentRemoveModalComponent } from '@app/modules/modals/components/shipment-remove-modal/shipment-remove-modal.component';
+import { ModalShipmentHasSpecimensComponent } from '@app/modules/modals/components/modal-shipment-has-specimens/modal-shipment-has-specimens.component';
 
 export abstract class CentreShipmentsBaseComponent implements OnInit, OnDestroy {
   @ViewChild('removeShipmentModal', { static: false }) removeShipmentModal: TemplateRef<any>;
@@ -92,7 +92,7 @@ export abstract class CentreShipmentsBaseComponent implements OnInit, OnDestroy 
       )
       .subscribe(([pagedReply, shipment]) => {
         if (pagedReply.entities.length > 0) {
-          this.modalService.open(ShipmentHasSpecimensComponent);
+          this.modalService.open(ModalShipmentHasSpecimensComponent);
           return;
         }
 

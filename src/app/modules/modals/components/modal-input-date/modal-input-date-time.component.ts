@@ -9,7 +9,6 @@ import { ModalInputBaseComponent } from '../modal-input-base.component';
   styleUrls: ['./modal-input-date-time.component.scss']
 })
 export class ModalInputDateTimeComponent extends ModalInputBaseComponent<Date> implements OnInit {
-
   faCalendar = faCalendar;
 
   constructor(formBuilder: FormBuilder) {

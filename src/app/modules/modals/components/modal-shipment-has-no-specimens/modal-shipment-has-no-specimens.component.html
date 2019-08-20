@@ -1,0 +1,16 @@
+<app-modal-input [cancelButtonShow]="false" (confirm)="confirm($event)">
+  <span class="title" i18n>Cannot Tag As Packed</span>
+  <div class="body" i18n>
+    <div class="alert alert-warning" role="alert">
+      <div class="row vertical-align">
+        <div class="col-md-1 text-center">
+          <mat-icon>warning</mat-icon>
+        </div>
+        <div class="col-md-11" i18n>
+          This shipment cannot be tagged as packed since it has no specimens.
+          <br />If you still wish to proceed, add specimens first.
+        </div>
+      </div>
+    </div>
+  </div>
+</app-modal-input>

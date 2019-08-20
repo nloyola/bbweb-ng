@@ -17,6 +17,7 @@
           matSortActive="inventoryId"
           matSortDirection="asc"
           class="table table-striped table-condensed"
+          *ngIf="specimens$ | async as specimens"
         >
           <tr>
             <th mat-sort-header="inventoryId">
@@ -36,21 +37,21 @@
             </th>
           </tr>
 
-          <tr *ngFor="let specimen of specimens">
+          <tr *ngFor="let ss of specimens">
             <td>
-              <small>{{ specimen.inventoryId }}</small>
+              <small>{{ ss.specimen.inventoryId }}</small>
             </td>
             <td>
-              <small>{{ specimen.amount }} </small>
+              <small>{{ ss.specimen.amount }} </small>
             </td>
             <td>
-              <small>{{ specimen.eventTypeName }}</small>
+              <small>{{ ss.specimen.eventTypeName }}</small>
             </td>
             <td>
-              <small>{{ specimen.timeCreated }}</small>
+              <small>{{ ss.specimen.timeCreated | localTime }}</small>
             </td>
             <td>
-              <small>{{ specimen.action }}</small>
+              <small>{{ ss.specimen.action }}</small>
             </td>
 
             <td>

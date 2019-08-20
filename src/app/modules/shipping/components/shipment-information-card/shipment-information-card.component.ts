@@ -1,11 +1,20 @@
-import { Component, OnInit, Input, TemplateRef, ViewChild, OnDestroy } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  OnInit,
+  Input,
+  TemplateRef,
+  ViewChild,
+  OnDestroy,
+  Output
+} from '@angular/core';
 import { Shipment } from '@app/domain/shipments';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalInputTextOptions } from '@app/modules/modals/models';
 import { Store, select } from '@ngrx/store';
 import { RootStoreState, ShipmentStoreActions, ShipmentStoreSelectors } from '@app/root-store';
 import { Subject, Observable } from 'rxjs';
-import { map, shareReplay, tap, withLatestFrom, takeUntil } from 'rxjs/operators';
+import { map, shareReplay, tap, withLatestFrom, takeUntil, filter } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -16,6 +25,8 @@ import { ToastrService } from 'ngx-toastr';
 export class ShipmentInformationCardComponent implements OnInit, OnDestroy {
   @Input() shipment: Shipment;
   @Input() displayState: boolean;
+
+  @Output() onRemove = new EventEmitter<Shipment>();
 
   @ViewChild('updateCourierModal', { static: false }) updateCourierModal: TemplateRef<any>;
   @ViewChild('updateTrackingNumberModal', { static: false }) updateTrackingNumberModal: TemplateRef<any>;
@@ -50,21 +61,23 @@ export class ShipmentInformationCardComponent implements OnInit, OnDestroy {
         }
         return undefined;
       }),
+      filter(shipment => shipment !== undefined),
       takeUntil(this.unsubscribe$),
       shareReplay()
     );
+
+    this.shipment$.pipe(takeUntil(this.unsubscribe$)).subscribe(shipment => {
+      this.shipment = shipment;
+    });
 
     this.shipment$
       .pipe(
         withLatestFrom(this.updatedMessage$),
         takeUntil(this.unsubscribe$)
       )
-      .subscribe(([shipment, msg]) => {
-        if (msg !== null && shipment !== undefined) {
-          this.shipment = shipment;
-          this.toastr.success(msg, 'Update Successfull');
-          this.updatedMessage$.next(null);
-        }
+      .subscribe(([_shipment, msg]) => {
+        this.toastr.success(msg, 'Update Successfull');
+        this.updatedMessage$.next(null);
       });
   }
 
@@ -142,6 +155,6 @@ export class ShipmentInformationCardComponent implements OnInit, OnDestroy {
   }
 
   removeShipment() {
-    console.log('removeShipment');
+    this.onRemove.emit(this.shipment);
   }
 }

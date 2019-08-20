@@ -23,14 +23,14 @@ export enum ShipmentStateTransision {
   Unpacked = 'unpacked',
   Completed = 'completed',
   Lost = 'lost',
-  SkipToSent = 'skipToSent',
-  SkipToUnpacked = 'skipToUnpacked'
+  SkipToSent = 'skip-to-sent',
+  SkipToUnpacked = 'skip-to-unpacked'
 }
 
 export interface ShipmentStateChange {
   transition: ShipmentStateTransision;
-  datetime: Date;
-  skipDatetime: Date; // used only when transitioning to 'skipToSent' or 'skipToUnpacked'
+  datetime?: Date;
+  skipDatetime?: Date; // used only when transitioning to 'skipToSent' or 'skipToUnpacked'
 }
 
 @Injectable({
@@ -125,7 +125,7 @@ export class ShipmentService {
 
       case 'state':
         const stateChange = value as ShipmentStateChange;
-        url = `${this.BASE_URL}/${stateChange.transition}/${shipment.id}`;
+        url = `${this.BASE_URL}/state/${stateChange.transition}/${shipment.id}`;
         switch (stateChange.transition) {
           case ShipmentStateTransision.SkipToSent:
             json = { ...json, timePacked: stateChange.datetime, timeSent: stateChange.skipDatetime };

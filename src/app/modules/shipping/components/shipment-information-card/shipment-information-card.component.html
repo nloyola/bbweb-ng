@@ -4,7 +4,13 @@
       <div class="card-header bg-primary text-light" *ngIf="(isLoading$ | async) !== false; else showLoading">
         Shipment information
         <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
-          <button class="btn btn-sm btn-light mr-1" type="button" id="shipmentSummaryMenu" ngbDropdownToggle>
+          <button
+            class="btn btn-sm btn-light mr-1"
+            type="button"
+            id="shipmentSummaryMenu"
+            ngbDropdownToggle
+            *ngIf="shipment.isCreated()"
+          >
             <mat-icon inline="true">more_vert</mat-icon>
           </button>
 
@@ -102,6 +108,61 @@
             </div>
           </li>
 
+          <li class="list-group-item" *ngIf="shipment.timePacked">
+            <div class="row" *ngIf="shipment.timePacked !== undefined">
+              <div class="col-md-2">
+                <strong i18n>Time packed:</strong>
+              </div>
+              <div class="col-md-10">
+                {{ shipment.timePacked | localTime }}
+              </div>
+            </div>
+          </li>
+
+          <li class="list-group-item" *ngIf="shipment.timeSent">
+            <div class="row" *ngIf="shipment.timeSent !== undefined">
+              <div class="col-md-2">
+                <strong i18n>Time sent:</strong>
+              </div>
+              <div class="col-md-10">
+                {{ shipment.timeSent | localTime }}
+              </div>
+            </div>
+          </li>
+
+          <li class="list-group-item" *ngIf="shipment.timeReceived">
+            <div class="row" *ngIf="shipment.timeReceived !== undefined">
+              <div class="col-md-2">
+                <strong i18n>Time received:</strong>
+              </div>
+              <div class="col-md-10">
+                {{ shipment.timeReceived | localTime }}
+              </div>
+            </div>
+          </li>
+
+          <li class="list-group-item" *ngIf="shipment.timeUnpacked">
+            <div class="row" *ngIf="shipment.timeUnpacked !== undefined">
+              <div class="col-md-2">
+                <strong i18n>Time unpacked:</strong>
+              </div>
+              <div class="col-md-10">
+                {{ shipment.timeUnpacked | localTime }}
+              </div>
+            </div>
+          </li>
+
+          <li class="list-group-item" *ngIf="shipment.timeCompleted">
+            <div class="row" *ngIf="shipment.timeCompleted !== undefined">
+              <div class="col-md-2">
+                <strong i18n>Time completed:</strong>
+              </div>
+              <div class="col-md-10">
+                {{ shipment.timeCompleted | localTime }}
+              </div>
+            </div>
+          </li>
+
           <li class="list-group-item m-0 p-0">
             <app-entity-status
               [timeAdded]="shipment.timeAdded"
@@ -160,6 +221,7 @@
     [label]="'New to location'"
     [value]="shipment.toLocationInfo"
     [options]="updateLocationInfoModalOptions"
+    [locationIdToFilterOut]="shipment.fromLocationInfo.locationId"
     (onConfirm)="confirm($event)"
   >
   </app-modal-input-centre-location>

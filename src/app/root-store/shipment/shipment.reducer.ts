@@ -123,7 +123,14 @@ export function reducer(state = initialState, action: ShipmentActions.ShipmentAc
       return adapter.updateOne(
         {
           id: action.shipment.id,
-          changes: action.shipment
+          changes: {
+            timePacked: undefined,
+            timeSent: undefined,
+            timeReceived: undefined,
+            timeUnpacked: undefined,
+            timeCompleted: undefined,
+            ...action.shipment
+          }
         },
         state
       );

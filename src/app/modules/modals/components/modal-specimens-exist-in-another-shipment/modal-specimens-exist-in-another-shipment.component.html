@@ -1,0 +1,20 @@
+<app-modal-input [cancelButtonShow]="false" (confirm)="confirm($event)">
+  <span class="title" i18n>Specimens exist in other shipment(s)</span>
+  <div class="body" i18n>
+    <div class="alert alert-warning" role="alert">
+      <div class="row vertical-align">
+        <div class="col-md-1 text-center">
+          <mat-icon>warning</mat-icon>
+        </div>
+        <div class="col-md-11" i18n>
+          The following specimens cannnot be added since they already exist in other shipments:
+          <ul>
+            <li *ngFor="let specimenId of specimenIds">
+              {{ specimenId }}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-modal-input>

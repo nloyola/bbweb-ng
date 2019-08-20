@@ -21,22 +21,21 @@ import {
 } from '@app/root-store';
 import { select, Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
-import { filter, map, shareReplay } from 'rxjs/operators';
+import { filter, map, shareReplay, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-shipment-specimens-table',
   templateUrl: './shipment-specimens-table.component.html',
   styleUrls: ['./shipment-specimens-table.component.scss']
 })
-export class ShipmentSpecimensTableComponent implements OnInit, OnChanges, OnDestroy {
-  @Input() specimens: Specimen[];
+export class ShipmentSpecimensTableComponent implements OnInit, OnDestroy {
+  @Input() shipment: Shipment;
   @Input() numPages: number;
   @Input() totalSpecimens: number;
 
   @Output() sortBy = new EventEmitter<string>();
   @Output() pageChanged = new EventEmitter<number>();
 
-  shipment: Shipment;
   filterForm: FormGroup;
   pageInfo$: Observable<PagedReplyInfo<ShipmentSpecimen>>;
 
@@ -48,26 +47,14 @@ export class ShipmentSpecimensTableComponent implements OnInit, OnChanges, OnDes
 
   private unsubscribe$: Subject<void> = new Subject<void>();
 
-  constructor(
-    private store$: Store<RootStoreState.State>,
-    private router: Router,
-    private route: ActivatedRoute,
-    private formBuilder: FormBuilder
-  ) {}
+  constructor(private store$: Store<RootStoreState.State>, private formBuilder: FormBuilder) {}
 
   ngOnInit() {
-    this.shipment = this.route.parent.snapshot.data.shipment;
-
     this.filterForm = this.formBuilder.group({ name: [''] });
-
-    if (this.specimens) {
-      this.specimens.map(s => (s instanceof Specimen ? s : new Specimen().deserialize(s)));
-    } else {
-      this.specimens = [];
-    }
 
     this.pageInfo$ = this.store$.pipe(
       select(ShipmentSpecimenStoreSelectors.selectShipmentSpecimenSearchRepliesAndEntities),
+      tap(x => console.log(x)),
       filter(x => x !== undefined),
       shareReplay()
     );
@@ -75,22 +62,7 @@ export class ShipmentSpecimensTableComponent implements OnInit, OnChanges, OnDes
     this.specimens$ = this.pageInfo$.pipe(map(info => info.entities));
     this.maxPages$ = this.pageInfo$.pipe(map(info => info.maxPages));
     this.totalSpecimens$ = this.pageInfo$.pipe(map(info => info.total));
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes.specimens && changes.specimens.currentValue) {
-      this.specimens = changes.specimens.currentValue.map((s: any) =>
-        s instanceof Specimen ? s : new Specimen().deserialize(s)
-      );
-    }
-
-    if (changes.numPages) {
-      this.numPages = changes.numPages.currentValue;
-    }
-
-    if (changes.totalSpecimens) {
-      this.totalSpecimens = changes.totalSpecimens.currentValue;
-    }
+    this.updateSpecimens();
   }
 
   public ngOnDestroy() {

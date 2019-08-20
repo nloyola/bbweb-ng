@@ -10,9 +10,10 @@ import { Specimen } from '@app/domain/participants';
 
 @Injectable()
 export class ParticipantStoreEffects {
-
-  constructor(private actions$: Actions<ParticipantActions.ParticipantActionsUnion>,
-              private participantService: ParticipantService) { }
+  constructor(
+    private actions$: Actions<ParticipantActions.ParticipantActionsUnion>,
+    private participantService: ParticipantService
+  ) {}
 
   @Effect()
   getRequest$ = this.actions$.pipe(
@@ -30,27 +31,30 @@ export class ParticipantStoreEffects {
 
       return result.pipe(
         map(participant => ParticipantActions.getParticipantSuccess({ participant })),
-        catchError(error => observableOf(ParticipantActions.getParticipantFailure({ error }))));
-    }));
+        catchError(error => observableOf(ParticipantActions.getParticipantFailure({ error })))
+      );
+    })
+  );
 
   @Effect()
   addRequest$ = this.actions$.pipe(
     ofType(ParticipantActions.addParticipantRequest.type),
-    switchMap(
-      action =>
-        this.participantService.add(action.participant).pipe(
-          map(participant => ParticipantActions.addParticipantSuccess({ participant })),
-          catchError(error => observableOf(ParticipantActions.addParticipantFailure({ error }))))
-    ));
+    switchMap(action =>
+      this.participantService.add(action.participant).pipe(
+        map(participant => ParticipantActions.addParticipantSuccess({ participant })),
+        catchError(error => observableOf(ParticipantActions.addParticipantFailure({ error })))
+      )
+    )
+  );
 
   @Effect()
   updateRequest$ = this.actions$.pipe(
     ofType(ParticipantActions.updateParticipantRequest.type),
-    switchMap(
-      action =>
-        this.participantService.update(action.participant, action.attributeName, action.value).pipe(
-          map(participant => ParticipantActions.updateParticipantSuccess({ participant })),
-          catchError(error => observableOf(ParticipantActions.updateParticipantFailure({ error }))))
-    ));
-
+    switchMap(action =>
+      this.participantService.update(action.participant, action.attributeName, action.value).pipe(
+        map(participant => ParticipantActions.updateParticipantSuccess({ participant })),
+        catchError(error => observableOf(ParticipantActions.updateParticipantFailure({ error })))
+      )
+    )
+  );
 }
