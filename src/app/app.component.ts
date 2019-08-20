@@ -1,12 +1,18 @@
 import { Component } from '@angular/core';
-import { Router, RouterEvent, NavigationStart, NavigationEnd, NavigationCancel, NavigationError } from '@angular/router';
+import {
+  Router,
+  RouterEvent,
+  NavigationStart,
+  NavigationEnd,
+  NavigationCancel,
+  NavigationError
+} from '@angular/router';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html'
 })
 export class AppComponent {
-
   // Sets initial value to true to show loading spinner on first load
   loading = true;
 
@@ -27,9 +33,8 @@ export class AppComponent {
 
     // Set loading state to false in both of the below events to hide the spinner in case a
     // request fails
-    if ((event instanceof NavigationCancel) || (event instanceof NavigationError)) {
+    if (event instanceof NavigationCancel || event instanceof NavigationError) {
       this.loading = false;
     }
   }
-
 }

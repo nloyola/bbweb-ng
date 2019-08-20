@@ -7,8 +7,8 @@ import { Subject, Observable } from 'rxjs';
 import { filter, takeUntil, map, shareReplay } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ModalSpecimensExistInAnotherShipmentComponent } from '../../../modals/components/modal-specimens-exist-in-another-shipment/modal-specimens-exist-in-another-shipment.component';
 import { ModalInputOptions } from '@app/modules/modals/models';
+import { ModalSpecimensExistInAnotherShipmentComponent } from '../modal-specimens-exist-in-another-shipment/modal-specimens-exist-in-another-shipment.component';
 
 @Component({
   selector: 'app-shipment-add-specimens-card',

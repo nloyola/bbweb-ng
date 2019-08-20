@@ -1,0 +1,21 @@
+<app-modal-input [cancelButtonShow]="false" (confirm)="confirm($event)">
+  <span class="title" *ngIf="transitionIsPacked()" i18n>Cannot Tag As Packed</span>
+  <span class="title" *ngIf="transitionIsSkipToSent()" i18n>Cannot Tag As Sent</span>
+  <div class="body" i18n>
+    <div class="alert alert-warning" role="alert">
+      <div class="row vertical-align">
+        <div class="col-md-1 text-center">
+          <mat-icon>warning</mat-icon>
+        </div>
+        <div class="col-md-11" *ngIf="transitionIsPacked()" i18n>
+          This shipment cannot be tagged as <b>Packed</b> since it has no specimens.
+          <p>If you still wish to tag it as Packed, add specimens first.</p>
+        </div>
+        <div class="col-md-11" *ngIf="transitionIsSkipToSent()" i18n>
+          This shipment cannot be tagged as <b>Sent</b> since it has no specimens.
+          <p>If you still wish to tag it as Sent, add specimens first.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-modal-input>

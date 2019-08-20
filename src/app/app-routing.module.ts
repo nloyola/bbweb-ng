@@ -35,19 +35,15 @@ const routes: Routes = [
     path: '**',
     redirectTo: '/404'
   }
-
 ];
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(
-      routes,
-      {
-        // enableTracing: true,
-        enableTracing: false,
-      }
-    )
+    RouterModule.forRoot(routes, {
+      // enableTracing: true
+      enableTracing: false
+    })
   ],
   exports: [RouterModule]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

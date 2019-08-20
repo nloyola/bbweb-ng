@@ -1,13 +1,12 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
-import { Centre } from '@app/domain/centres';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { IdToTab } from '@app/domain';
-import { Store, select } from '@ngrx/store';
-import { RootStoreState, CentreStoreSelectors } from '@app/root-store';
-import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
-import { filter, map, takeUntil } from 'rxjs/operators';
-import { Study } from '@app/domain/studies';
+import { Centre } from '@app/domain/centres';
+import { CentreStoreSelectors, RootStoreState } from '@app/root-store';
 import { NgbTabChangeEvent } from '@ng-bootstrap/ng-bootstrap';
+import { select, Store } from '@ngrx/store';
+import { Observable, Subject } from 'rxjs';
+import { filter, map, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-centre-shipments-page',
@@ -19,7 +18,11 @@ export class CentreShipmentsPageComponent implements OnInit, OnDestroy {
   tabIds: string[];
   activeTabId: string;
 
-  private tabData: IdToTab;
+  private tabData: IdToTab = {
+    incoming: { heading: 'Incoming' },
+    outgoing: { heading: 'Outgoing' },
+    completed: { heading: 'Completed' }
+  };
   private unsubscribe$: Subject<void> = new Subject<void>();
 
   constructor(
@@ -27,17 +30,6 @@ export class CentreShipmentsPageComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute
   ) {
-    this.tabData = {
-      incoming: {
-        heading: 'Incoming'
-      },
-      outgoing: {
-        heading: 'Outgoing'
-      },
-      completed: {
-        heading: 'Completed'
-      }
-    };
     this.tabIds = Object.keys(this.tabData);
   }
 

@@ -54,7 +54,6 @@ export class ShipmentSpecimensTableComponent implements OnInit, OnDestroy {
 
     this.pageInfo$ = this.store$.pipe(
       select(ShipmentSpecimenStoreSelectors.selectShipmentSpecimenSearchRepliesAndEntities),
-      tap(x => console.log(x)),
       filter(x => x !== undefined),
       shareReplay()
     );

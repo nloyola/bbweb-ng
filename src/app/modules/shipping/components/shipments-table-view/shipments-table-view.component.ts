@@ -10,12 +10,10 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Sort } from '@angular/material';
-import { Router } from '@angular/router';
 import { Shipment, ShipmentState } from '@app/domain/shipments';
 import { Subject, timer } from 'rxjs';
 import { debounce, distinct, takeUntil } from 'rxjs/operators';
-
-export type ShipmentsTableViewComponentMode = 'incoming' | 'outgoing' | 'completed';
+import { CentreShipmentsViewMode } from '../centre-shipments-details/centre-shipments-details.component';
 
 @Component({
   selector: 'app-shipments-table-view',
@@ -23,7 +21,7 @@ export type ShipmentsTableViewComponentMode = 'incoming' | 'outgoing' | 'complet
   styleUrls: ['./shipments-table-view.component.scss']
 })
 export class ShipmentsTableViewComponent implements OnInit, OnChanges, OnDestroy {
-  @Input() mode: ShipmentsTableViewComponentMode = 'incoming';
+  @Input() mode = CentreShipmentsViewMode.Incoming;
   @Input() shipments: Shipment[];
   @Input() numPages: number;
   @Input() totalShipments: number;
@@ -44,7 +42,7 @@ export class ShipmentsTableViewComponent implements OnInit, OnChanges, OnDestroy
 
   private unsubscribe$: Subject<void> = new Subject<void>();
 
-  constructor(private router: Router, private formBuilder: FormBuilder) {
+  constructor(private formBuilder: FormBuilder) {
     this.currentPage = 1;
     this.shipmentStates = Object.values(ShipmentState).filter(state => state !== ShipmentState.Completed);
   }

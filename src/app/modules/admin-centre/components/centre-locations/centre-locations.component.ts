@@ -4,13 +4,12 @@ import { Location } from '@app/domain';
 import { Centre } from '@app/domain/centres';
 import { CentreUI } from '@app/domain/centres/centre-ui.model';
 import { CentreStoreActions, CentreStoreSelectors, RootStoreState } from '@app/root-store';
-import { SpinnerStoreSelectors } from '@app/root-store/spinner';
 import { LocationRemoveComponent } from '@app/shared/components/location-remove/location-remove.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subject, BehaviorSubject } from 'rxjs';
-import { filter, map, shareReplay, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { filter, map, shareReplay, takeUntil, withLatestFrom } from 'rxjs/operators';
 
 @Component({
   selector: 'app-centre-locations',
@@ -18,7 +17,6 @@ import { filter, map, shareReplay, takeUntil, tap, withLatestFrom } from 'rxjs/o
   styleUrls: ['./centre-locations.component.scss']
 })
 export class CentreLocationsComponent implements OnInit, OnDestroy {
-
   isLoading$: Observable<boolean>;
   centre$: Observable<CentreUI>;
 
@@ -26,11 +24,13 @@ export class CentreLocationsComponent implements OnInit, OnDestroy {
   private updatedMessage$ = new Subject<string>();
   private unsubscribe$ = new Subject<void>();
 
-  constructor(private store$: Store<RootStoreState.State>,
-              private route: ActivatedRoute,
-              private router: Router,
-              private modalService: NgbModal,
-              private toastr: ToastrService) { }
+  constructor(
+    private store$: Store<RootStoreState.State>,
+    private route: ActivatedRoute,
+    private router: Router,
+    private modalService: NgbModal,
+    private toastr: ToastrService
+  ) {}
 
   ngOnInit() {
     this.centre$ = this.store$.pipe(
@@ -39,33 +39,38 @@ export class CentreLocationsComponent implements OnInit, OnDestroy {
       map((centres: Centre[]) => {
         const centreEntity = centres.find(s => s.slug === this.route.parent.parent.snapshot.params.slug);
         if (centreEntity) {
-          const centre = (centreEntity instanceof Centre)
-            ? centreEntity :  new Centre().deserialize(centreEntity);
+          const centre =
+            centreEntity instanceof Centre ? centreEntity : new Centre().deserialize(centreEntity);
           return new CentreUI(centre);
         }
         return undefined;
       }),
-      shareReplay());
+      shareReplay()
+    );
 
     this.centre$.pipe(takeUntil(this.unsubscribe$)).subscribe(this.centreSubject);
     this.isLoading$ = this.centre$.pipe(map(centre => centre === undefined));
 
-    this.centre$.pipe(
-      withLatestFrom(this.updatedMessage$),
-      takeUntil(this.unsubscribe$)
-    ).subscribe(([ centre, msg ]) => {
-      this.toastr.success(msg, 'Update Successfull');
-    });
+    this.centre$
+      .pipe(
+        withLatestFrom(this.updatedMessage$),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe(([centre, msg]) => {
+        this.toastr.success(msg, 'Update Successfull');
+      });
 
-    this.store$.pipe(
-      select(CentreStoreSelectors.selectCentreError),
-      filter(error => !!error),
-      withLatestFrom(this.updatedMessage$),
-      takeUntil(this.unsubscribe$)
-    ).subscribe(([ error, _msg ]) => {
-      const errMessage = error.error.error ? error.error.error.message : error.error.statusText;
-      this.toastr.error(errMessage, 'Update Error', { disableTimeOut: true });
-    });
+    this.store$
+      .pipe(
+        select(CentreStoreSelectors.selectCentreError),
+        filter(error => !!error),
+        withLatestFrom(this.updatedMessage$),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe(([error, _msg]) => {
+        const errMessage = error.error.error ? error.error.error.message : error.error.statusText;
+        this.toastr.error(errMessage, 'Update Error', { disableTimeOut: true });
+      });
   }
 
   ngOnDestroy() {
@@ -75,13 +80,13 @@ export class CentreLocationsComponent implements OnInit, OnDestroy {
 
   addLocation(): void {
     this.whenCentreDisabled(() => {
-      this.router.navigate([ 'add'  ], { relativeTo: this.route });
+      this.router.navigate(['add'], { relativeTo: this.route });
     });
   }
 
   edit(location: Location): void {
     this.whenCentreDisabled(() => {
-      this.router.navigate([ location.id  ], { relativeTo: this.route });
+      this.router.navigate([location.id], { relativeTo: this.route });
     });
   }
 
@@ -91,11 +96,13 @@ export class CentreLocationsComponent implements OnInit, OnDestroy {
       modalRef.componentInstance.location = location;
       modalRef.result
         .then(() => {
-          this.store$.dispatch(CentreStoreActions.updateCentreRequest({
-            centre,
-            attributeName: 'locationRemove',
-            value: location
-          }));
+          this.store$.dispatch(
+            CentreStoreActions.updateCentreRequest({
+              centre,
+              attributeName: 'locationRemove',
+              value: location
+            })
+          );
 
           this.updatedMessage$.next('Location removed');
         })
@@ -111,5 +118,4 @@ export class CentreLocationsComponent implements OnInit, OnDestroy {
 
     fn(centre);
   }
-
 }

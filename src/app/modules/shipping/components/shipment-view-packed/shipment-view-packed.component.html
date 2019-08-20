@@ -1,0 +1,25 @@
+<div class="pb-2 mt-4 mb-2">
+  <h1>
+    {{ shipment.courierName }}: {{ shipment.trackingNumber }}
+    <app-shipment-page-buttons
+      [shipment]="shipment"
+      (backEvent)="backToCreated()"
+      (forwardEvent)="tagAsSent()"
+    ></app-shipment-page-buttons>
+  </h1>
+
+  <app-shipment-information-card [shipment]="shipment" [displayState]="true"> </app-shipment-information-card>
+  <app-shipment-specimens-table [shipment]="shipment"></app-shipment-specimens-table>
+</div>
+
+<ng-template #sentTimeModal let-modal>
+  <app-modal-input-date-time
+    [title]="'Time the shipment was sent'"
+    [label]="'Time sent'"
+    [value]=""
+    [options]="modalInputOptions"
+    (onConfirm)="confirm($event)"
+    [modal]="modal"
+  >
+  </app-modal-input-date-time>
+</ng-template>

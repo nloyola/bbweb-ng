@@ -1,0 +1,16 @@
+<app-modal-input [cancelButtonShow]="false" (confirm)="confirm($event)">
+  <span class="title" i18n>Cannot Remove Shipment</span>
+  <div class="body" i18n>
+    <div class="alert alert-warning" role="alert">
+      <div class="row vertical-align">
+        <div class="col-md-1 text-center">
+          <mat-icon>warning</mat-icon>
+        </div>
+        <div class="col-md-11" i18n>
+          This shipment cannot be removed since it contains specimens.
+          <br />If you still want to remove it, remove the specimens first.
+        </div>
+      </div>
+    </div>
+  </div>
+</app-modal-input>

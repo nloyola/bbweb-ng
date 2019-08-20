@@ -1,16 +1,31 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
-import { ShippingPageComponent } from './components/shipping-page/shipping-page.component';
+import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from '@app/core/guards';
-import { CentreShipmentsPageComponent } from './components/centre-shipments-page/centre-shipments-page.component';
 import { CentreResolver } from '../admin-study/services/centre-resolver.service';
-import { CentreShipmentsIncomingComponent } from './components/centre-shipments-incoming/centre-shipments-incoming.component';
-import { CentreShipmentsOutgoingComponent } from './components/centre-shipments-outgoing/centre-shipments-outgoing.component';
-import { CentreShipmentsCompletedComponent } from './components/centre-shipments-completed/centre-shipments-completed.component';
-import { ShipmentAddPageComponent } from './components/shipment-add-page/shipment-add-page.component';
 import { ShipmentResolver } from '../admin-study/services/shipment-resolver.service';
-import { ShipmentAddItemsPageComponent } from './components/shipment-add-items-page/shipment-add-items-page.component';
-import { ShipmentViewPageComponent } from './components/shipment-view-page/shipment-view-page.component';
+import { CentreShipmentsDetailsComponent } from './components/centre-shipments-details/centre-shipments-details.component';
+import { CentreShipmentsPageComponent } from './components/centre-shipments-page/centre-shipments-page.component';
+import { ShipmentAddPageComponent } from './components/shipment-add-page/shipment-add-page.component';
+import { ShippingPageComponent } from './components/shipping-page/shipping-page.component';
+import { ShipmentViewComponent } from './components/shipment-view/shipment-view.component';
+
+const ShippingCentreChildStates = [
+  { path: '', redirectTo: 'all', pathMatch: 'full' },
+  {
+    path: 'all',
+    component: CentreShipmentsDetailsComponent
+  },
+  {
+    path: 'view/:id',
+    component: ShipmentViewComponent,
+    resolve: {
+      shipment: ShipmentResolver
+    },
+    data: {
+      breadcrumbs: '{{shipment.courierName}}: {{shipment.trackingNumber}}'
+    }
+  }
+];
 
 const routes: Routes = [
   {
@@ -29,26 +44,6 @@ const routes: Routes = [
         }
       },
       {
-        path: 'add-items/:id',
-        component: ShipmentAddItemsPageComponent,
-        resolve: {
-          shipment: ShipmentResolver
-        },
-        data: {
-          breadcrumbs: 'Add Items to Shipment'
-        }
-      },
-      {
-        path: 'view/:id',
-        component: ShipmentViewPageComponent,
-        resolve: {
-          shipment: ShipmentResolver
-        },
-        data: {
-          breadcrumbs: '{{shipment.courierName}}: {{shipment.trackingNumber}}'
-        }
-      },
-      {
         path: ':slug',
         component: CentreShipmentsPageComponent,
         resolve: {
@@ -61,21 +56,21 @@ const routes: Routes = [
           { path: '', redirectTo: 'incoming', pathMatch: 'full' },
           {
             path: 'incoming',
-            component: CentreShipmentsIncomingComponent,
+            children: ShippingCentreChildStates,
             data: {
               breadcrumbs: 'Incoming'
             }
           },
           {
             path: 'outgoing',
-            component: CentreShipmentsOutgoingComponent,
+            children: ShippingCentreChildStates,
             data: {
               breadcrumbs: 'Outgoing'
             }
           },
           {
             path: 'completed',
-            component: CentreShipmentsCompletedComponent,
+            children: ShippingCentreChildStates,
             data: {
               breadcrumbs: 'Completed'
             }
@@ -93,4 +88,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class ShippingRoutingModule { }
+export class ShippingRoutingModule {}
