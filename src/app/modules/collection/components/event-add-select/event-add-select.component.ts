@@ -29,7 +29,7 @@ export class EventAddSelectComponent implements OnInit, OnDestroy {
   private filterValues = '';
   private unsubscribe$: Subject<void> = new Subject<void>();
 
-  constructor(private store$: Store<RootStoreState.State>, private formBuilder: FormBuilder) {}
+  constructor(private store$: Store<RootStoreState.State>) {}
 
   ngOnInit() {
     this.isLoading$ = this.store$.pipe(select(EventStoreSelectors.selectCollectionEventSearchActive));
@@ -49,28 +49,19 @@ export class EventAddSelectComponent implements OnInit, OnDestroy {
         this.applySearchParams();
       });
 
-    this.filterForm = this.formBuilder.group({ visitNumber: [''] });
-
-    // debounce the input to the name filter and then apply it to the search
-    this.visitNumber.valueChanges
-      .pipe(
-        debounce(() => timer(500)),
-        distinct(() => this.filterForm.value),
-        takeUntil(this.unsubscribe$)
-      )
-      .subscribe(value => {
-        const f = new VisitNumberFilter();
-        f.setValue(value);
-        this.filterValues = f.getValue();
-        this.applySearchParams();
-      });
-
     this.applySearchParams();
   }
 
   ngOnDestroy() {
     this.unsubscribe$.next();
     this.unsubscribe$.complete();
+  }
+
+  public visitNumberFilterChanged(value: string) {
+    const f = new VisitNumberFilter();
+    f.setValue(value);
+    this.filterValues = f.getValue();
+    this.applySearchParams();
   }
 
   get visitNumber() {
