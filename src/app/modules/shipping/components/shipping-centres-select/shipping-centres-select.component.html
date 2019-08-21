@@ -25,14 +25,9 @@
 </ng-template>
 
 <ng-template #footer>
-  <form [formGroup]="filterForm" novalidate>
-    <div class="form-group">
-      <label class="small" for="nameFilter" i18n>
-        Name filter:
-      </label>
-      <input type="text" class="form-control form-control-sm" formControlName="name" />
-    </div>
-  </form>
+  <app-filter-value-input (valueChanged)="nameFilterChanged($event)">
+    <span class="title" i18n>Name filter:</span>
+  </app-filter-value-input>
 </ng-template>
 
 <ng-template #noEntitiesToDisplay>

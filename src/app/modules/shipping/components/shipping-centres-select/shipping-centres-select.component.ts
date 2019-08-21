@@ -31,12 +31,11 @@ export class ShippingCentresSelectComponent implements OnInit, OnDestroy {
   currentPage = 1;
   centresLimit = 5;
   sortField = 'name';
-  filterForm: FormGroup;
 
   private filterValues = 'state::enabled';
   private unsubscribe$: Subject<void> = new Subject<void>();
 
-  constructor(private store$: Store<RootStoreState.State>, private formBuilder: FormBuilder) {}
+  constructor(private store$: Store<RootStoreState.State>) {}
 
   ngOnInit() {
     this.isLoading$ = this.store$.pipe(select(CentreStoreSelectors.selectCentreSearchActive));
@@ -46,27 +45,6 @@ export class ShippingCentresSelectComponent implements OnInit, OnDestroy {
       takeUntil(this.unsubscribe$)
     );
 
-    this.filterForm = this.formBuilder.group({ name: [''] });
-
-    // debounce the input to the name filter and then apply it to the search
-    this.name.valueChanges
-      .pipe(
-        debounce(() => timer(500)),
-        distinct(() => this.filterForm.value),
-        takeUntil(this.unsubscribe$)
-      )
-      .subscribe(value => {
-        const f = new NameFilter();
-        f.setValue(value);
-        const filterValue = f.getValue();
-        if (filterValue !== '') {
-          this.filterValues = f.getValue() + ';state::enabled';
-        } else {
-          this.filterValues = 'state::enabled';
-        }
-        this.applySearchParams();
-      });
-
     this.applySearchParams();
   }
 
@@ -75,8 +53,16 @@ export class ShippingCentresSelectComponent implements OnInit, OnDestroy {
     this.unsubscribe$.complete();
   }
 
-  get name() {
-    return this.filterForm.get('name');
+  public nameFilterChanged(value: string) {
+    const f = new NameFilter();
+    f.setValue(value);
+    const filterValue = f.getValue();
+    if (filterValue !== '') {
+      this.filterValues = f.getValue() + ';state::enabled';
+    } else {
+      this.filterValues = 'state::enabled';
+    }
+    this.applySearchParams();
   }
 
   public centreSelected(centre: Centre) {
