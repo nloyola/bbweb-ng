@@ -1,0 +1,8 @@
+<form [formGroup]="filterForm" novalidate>
+  <div class="form-group">
+    <label class="small">
+      <ng-content select=".title"></ng-content>
+    </label>
+    <input type="text" class="form-control form-control-sm" formControlName="value" />
+  </div>
+</form>

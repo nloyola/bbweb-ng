@@ -1,17 +1,20 @@
-<app-paged-entity-selector [pageInfo]="(pageInfo$ | async)"
-                           [isLoading]="(isLoading$ | async)"
-                           [entitiesLimit]="processingTypesLimit"
-                           [(page)]="currentPage"
-                           [heading]="heading"
-                           [noEntitiesToDisplay]="noEntitiesToDisplay"
-                           [noResultsToDisplay]="noResultsToDisplay"
-                           [loadingContent]="showLoading"
-                           (filterUpdated)="onFiltersUpdated($event)"
-                           (pageChange)="paginationPageChange($event)">
+<app-paged-entity-selector
+  [pageInfo]="pageInfo$ | async"
+  [isLoading]="isLoading$ | async"
+  [entitiesLimit]="processingTypesLimit"
+  [(page)]="currentPage"
+  [heading]="heading"
+  [footer]="footer"
+  [noEntitiesToDisplay]="noEntitiesToDisplay"
+  [noResultsToDisplay]="noResultsToDisplay"
+  [loadingContent]="showLoading"
+  (filterUpdated)="onFiltersUpdated($event)"
+  (pageChange)="paginationPageChange($event)"
+>
   <ng-template let-entity>
     <li class="list-group-item">
       <a href="#" (click)="!!processingTypeSelected(entity)">
-        <small>{{ entity.name | truncate:18 }}</small>
+        <small>{{ entity.name | truncate: 18 }}</small>
       </a>
     </li>
   </ng-template>
@@ -19,14 +22,8 @@
 
 <ng-template #heading>
   <small i18n>Processing Steps</small>
-  <span class="float-right d-inline-block"
-        *ngIf="study.isDisabled()"
-        ngbDropdown
-        placement="bottom-right">
-    <button class="btn btn-sm btn-outline-secondary"
-            type="button"
-            id="processingTypeMenu"
-            ngbDropdownToggle>
+  <span class="float-right d-inline-block" *ngIf="study.isDisabled()" ngbDropdown placement="bottom-right">
+    <button class="btn btn-sm btn-outline-secondary" type="button" id="processingTypeMenu" ngbDropdownToggle>
       <mat-icon inline="true">more_vert</mat-icon>
     </button>
 
@@ -37,6 +34,12 @@
       </a>
     </div>
   </span>
+</ng-template>
+
+<ng-template #footer>
+  <app-filter-value-input (valueChanged)="nameFilterChanged($event)">
+    <span class="title" i18n>Name filter:</span>
+  </app-filter-value-input>
 </ng-template>
 
 <ng-template #noEntitiesToDisplay>

@@ -1,12 +1,12 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { PagedReplyInfo, SearchParams } from '@app/domain';
+import { PagedReplyInfo } from '@app/domain';
+import { NameFilter } from '@app/domain/search-filters';
 import { ProcessingType, Study } from '@app/domain/studies';
 import { RootStoreState } from '@app/root-store';
 import { ProcessingTypeStoreActions, ProcessingTypeStoreSelectors } from '@app/root-store/processing-type';
 import { select, Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
-import { filter, map, takeUntil, tap } from 'rxjs/operators';
-import { NameFilter } from '@app/domain/search-filters';
+import { filter, takeUntil } from 'rxjs/operators';
 
 export interface ProcessingTypePageInfo {
   hasNoEntitiesToDisplay: boolean;
@@ -68,6 +68,13 @@ export class ProcessingTypesAddAndSelectComponent implements OnInit, OnDestroy {
   public ngOnDestroy() {
     this.unsubscribe$.next();
     this.unsubscribe$.complete();
+  }
+
+  public nameFilterChanged(value: string) {
+    const f = new NameFilter();
+    f.setValue(value);
+    this.filterValues = f.getValue();
+    this.applySearchParams();
   }
 
   public onFiltersUpdated(filterValue: string) {

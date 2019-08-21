@@ -40,6 +40,7 @@ export abstract class CentreShipmentsBaseComponent implements OnInit, OnDestroy 
   trackingNumberFilter = new TrackingNumberFilter();
   stateFilter: StateFilter;
 
+  private shipmentToRemove$ = new Subject<Shipment>();
   private updatedMessage$ = new Subject<string>();
   private unsubscribe$: Subject<void> = new Subject<void>();
 
@@ -86,11 +87,10 @@ export abstract class CentreShipmentsBaseComponent implements OnInit, OnDestroy 
       .pipe(
         select(ShipmentSpecimenStoreSelectors.selectShipmentSpecimenSearchRepliesAndEntities),
         filter(specimens => specimens !== undefined),
+        withLatestFrom(this.shipmentToRemove$),
         takeUntil(this.unsubscribe$)
       )
-      .subscribe(pagedReply => {
-        console.log();
-
+      .subscribe(([pagedReply, shipment]) => {
         if (pagedReply.entities.length > 0) {
           this.modalService.open(ShipmentHasSpecimensComponent);
           return;
@@ -164,6 +164,7 @@ export abstract class CentreShipmentsBaseComponent implements OnInit, OnDestroy 
       return;
     }
 
+    this.shipmentToRemove$.next(shipment);
     this.store$.dispatch(
       ShipmentSpecimenStoreActions.searchShipmentSpecimensRequest({
         shipment,

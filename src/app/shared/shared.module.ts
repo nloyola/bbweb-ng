@@ -29,6 +29,7 @@ import { UnauthorizedPageComponent } from './components/unauthorized-page/unauth
 import { ServerErrorPageComponent } from './components/server-error-page/server-error-page.component';
 import { PagedEntitySelectorComponent } from './components/paged-entity-selector/paged-entity-selector.component';
 import { LocalTimePipe } from './pipes';
+import { FilterValueInputComponent } from './components/filter-value-input/filter-value-input.component';
 
 @NgModule({
   imports: [
@@ -64,7 +65,8 @@ import { LocalTimePipe } from './pipes';
     EntitySelectorComponent,
     UnauthorizedPageComponent,
     ServerErrorPageComponent,
-    PagedEntitySelectorComponent
+    PagedEntitySelectorComponent,
+    FilterValueInputComponent
   ],
   exports: [
     BreadcrumbsComponent,
@@ -87,7 +89,8 @@ import { LocalTimePipe } from './pipes';
     AnnotationTypeRemoveComponent,
     EntitySelectorComponent,
     PagedEntitySelectorComponent,
-    LocationAddComponent
+    LocationAddComponent,
+    FilterValueInputComponent
   ]
 })
 export class SharedModule {}
