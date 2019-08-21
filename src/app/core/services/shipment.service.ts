@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { JSONArray, JSONObject, PagedReply, SearchParams, searchParamsToHttpParams } from '@app/domain';
 import { ApiReply } from '@app/domain/api-reply.model';
 import { Specimen } from '@app/domain/participants';
-import { Shipment, ShipmentItemState } from '@app/domain/shipments';
+import { Shipment, ShipmentItemState, ShipmentState } from '@app/domain/shipments';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CentreLocationInfo } from '@app/domain/centres';
@@ -14,6 +14,24 @@ export type ShipmentUpdateAttribute =
   | 'fromLocation'
   | 'toLocation'
   | 'state';
+
+export enum ShipmentStateTransision {
+  Created = 'created',
+  Packed = 'packed',
+  Sent = 'sent',
+  Received = 'received',
+  Unpacked = 'unpacked',
+  Completed = 'completed',
+  Lost = 'lost',
+  SkipToSent = 'skipToSent',
+  SkipToUnpacked = 'skipToUnpacked'
+}
+
+export interface ShipmentStateChange {
+  transition: ShipmentStateTransision;
+  datetime: Date;
+  skipDatetime: Date; // used only when transitioning to 'skipToSent' or 'skipToUnpacked'
+}
 
 @Injectable({
   providedIn: 'root'
@@ -75,59 +93,51 @@ export class ShipmentService {
   update(
     shipment: Shipment,
     attributeName: ShipmentUpdateAttribute,
-    value: string | Date | CentreLocationInfo
+    value: string | CentreLocationInfo | ShipmentStateChange
   ): Observable<Shipment> {
     let url: string;
-    let json = { expectedVersion: shipment.version };
+    let json: any = { expectedVersion: shipment.version };
 
     switch (attributeName) {
       case 'courierName':
-        json = { ...json, courierName: value } as any;
+        json = { ...json, courierName: value };
         url = `${this.BASE_URL}/courier/${shipment.id}`;
         break;
 
       case 'trackingNumber':
-        json = { ...json, trackingNumber: value } as any;
+        json = { ...json, trackingNumber: value };
         url = `${this.BASE_URL}/trackingnumber/${shipment.id}`;
         break;
 
       case 'fromLocation': {
         const locationInfo = value as CentreLocationInfo;
-        json = { ...json, locationId: locationInfo.locationId } as any;
+        json = { ...json, locationId: locationInfo.locationId };
         url = `${this.BASE_URL}/fromlocation/${shipment.id}`;
         break;
       }
 
       case 'toLocation': {
         const locationInfo = value as CentreLocationInfo;
-        json = { ...json, locationId: locationInfo.locationId } as any;
+        json = { ...json, locationId: locationInfo.locationId };
         url = `${this.BASE_URL}/tolocation/${shipment.id}`;
         break;
       }
 
       case 'state':
-        const validValues = [
-          'created',
-          'packed',
-          'sent',
-          'received',
-          'unpacked',
-          'completed',
-          'lost',
-          'skipToSent',
-          'skipToUnpacked'
-        ];
+        const stateChange = value as ShipmentStateChange;
+        url = `${this.BASE_URL}/${stateChange.transition}/${shipment.id}`;
+        switch (stateChange.transition) {
+          case ShipmentStateTransision.SkipToSent:
+            json = { ...json, timePacked: stateChange.datetime, timeSent: stateChange.skipDatetime };
+            break;
 
-        if (!validValues.includes(value as string)) {
-          throw new Error(`invalid value for state: ${value}`);
-        }
+          case ShipmentStateTransision.SkipToUnpacked:
+            json = { ...json, timeReceived: stateChange.datetime, timeUnpacked: stateChange.skipDatetime };
+            break;
 
-        if (value === 'skipToSent') {
-          value = 'skip-to-sent';
-        } else if (value === 'skipToUnpacked') {
-          value = 'skip-to-unpacked';
+          default:
+            json = { ...json, datetime: stateChange.datetime };
         }
-        url = `${this.BASE_URL}/${value}/${shipment.id}`;
         break;
 
       default:

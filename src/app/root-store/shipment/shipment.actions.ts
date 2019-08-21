@@ -1,8 +1,9 @@
 import { props, createAction, union } from '@ngrx/store';
 import { SearchParams, PagedReply } from '@app/domain';
 import { Shipment, ShipmentItemState } from '@app/domain/shipments';
-import { ShipmentUpdateAttribute } from '@app/core/services';
+import { ShipmentUpdateAttribute, ShipmentStateChange } from '@app/core/services';
 import { Specimen } from '@app/domain/participants';
+import { CentreLocationInfo } from '@app/domain/centres';
 
 export const searchShipmentsRequest = createAction(
   '[Shipment] Search Shipments Request',
@@ -45,7 +46,7 @@ export const updateShipmentRequest = createAction(
   props<{
     shipment: Shipment;
     attributeName: ShipmentUpdateAttribute;
-    value: string | Date;
+    value: string | CentreLocationInfo | ShipmentStateChange;
   }>()
 );
 
