@@ -7,9 +7,8 @@ import { ParticipantSummaryComponent } from './components/participant-summary/pa
 import { ParticipantViewPageComponent } from './components/participant-view-page/participant-view-page.component';
 import { EventAddFormComponent } from './components/event-add-form/event-add-form.component';
 import { ParticipantEventsComponent } from './components/participant-events/participant-events.component';
-import { ParticipantResolver } from './services/participant-resolver.service';
-import { CollectionEventResolver } from './services/collection-event-resolver.service';
 import { EventViewComponent } from './components/event-view/event-view.component';
+import { ParticipantResolver, CollectionEventResolver } from '@app/core/resolvers';
 
 const routes: Routes = [
   {
@@ -74,7 +73,7 @@ const routes: Routes = [
                     children: [
                       {
                         path: '',
-                        component: EventViewComponent,
+                        component: EventViewComponent
                       }
                     ]
                   }
@@ -89,9 +88,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [
-    RouterModule.forChild(routes)
-  ],
+  imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class CollectionRoutingModule { }
+export class CollectionRoutingModule {}

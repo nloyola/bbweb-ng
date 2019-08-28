@@ -6,7 +6,6 @@ import { StudyParticipantsComponent } from '@app/modules/admin-study/components/
 import { StudyProcessingComponent } from '@app/modules/admin-study/components/study-processing/study-processing.component';
 import { StudySummaryComponent } from '@app/modules/admin-study/components/study-summary/study-summary.component';
 import { StudyViewComponent } from '@app/modules/admin-study/components/study-view/study-view.component';
-import { StudyResolver } from '@app/modules/admin-study/services/study-resolver.service';
 import { CollectedSpecimenDefinitionAddContainerComponent } from './components/collected-specimen-definition-add/collected-specimen-definition-add.container';
 import { CollectionAnnotationTypeAddContainerComponent } from './components/collection-annotation-type-add/collection-annotation-type-add.container';
 import { EventTypeAddComponent } from './components/event-type-add/event-type-add.component';
@@ -17,8 +16,7 @@ import { ProcessingTypeAddComponent } from './components/processing-type-add/pro
 import { ProcessingTypeViewContainerComponent } from './components/processing-type-view/processing-type-view.container';
 import { StudiesAdminComponent } from './components/studies-admin/studies-admin.component';
 import { StudyAddComponent } from './components/study-add/study-add.component';
-import { EventTypeResolver } from './services/event-type-resolver.service';
-import { ProcessingTypeResolver } from './services/processing-type-resolver.service';
+import { StudyResolver, EventTypeResolver, ProcessingTypeResolver } from '@app/core/resolvers';
 
 export const routes: Routes = [
   {

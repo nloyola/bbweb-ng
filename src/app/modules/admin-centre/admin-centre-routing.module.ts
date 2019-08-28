@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from '@app/core/guards';
-import { CentreResolver } from '../admin-study/services/centre-resolver.service';
 import { CentreAddComponent } from './components/centre-add/centre-add.component';
 import { CentreLocationAddComponent } from './components/centre-location-add/centre-location-add.component';
 import { CentreLocationsComponent } from './components/centre-locations/centre-locations.component';
@@ -9,11 +8,12 @@ import { CentreStudiesComponent } from './components/centre-studies/centre-studi
 import { CentreSummaryComponent } from './components/centre-summary/centre-summary.component';
 import { CentreViewComponent } from './components/centre-view/centre-view.component';
 import { CentresAdminComponent } from './components/centres-admin/centres-admin.component';
+import { CentreResolver } from '@app/core/resolvers';
 
 export const routes: Routes = [
   {
     path: 'centres',
-    canActivate: [ AuthGuard ],
+    canActivate: [AuthGuard],
     data: {
       breadcrumbs: 'Centres'
     },
@@ -62,7 +62,7 @@ export const routes: Routes = [
             children: [
               {
                 path: '',
-                component: CentreLocationsComponent,
+                component: CentreLocationsComponent
               },
               {
                 path: 'add',
@@ -90,4 +90,4 @@ export const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class AdminCentreRoutingModule { }
+export class AdminCentreRoutingModule {}

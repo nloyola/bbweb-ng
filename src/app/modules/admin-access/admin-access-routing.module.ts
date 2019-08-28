@@ -1,8 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from '@app/core/guards';
-import { RoleResolver } from '../admin-study/services/role-resolver.service';
-import { UserResolver } from '../admin-study/services/user-resolver.service';
 import { AccessAdminComponent } from './components/access-admin/access-admin.component';
 import { RoleViewComponent } from './components/role-view/role-view.component';
 import { RolesAdminComponent } from './components/roles-admin/roles-admin.component';
@@ -10,13 +8,13 @@ import { UserProfileComponent } from './components/user-profile/user-profile.com
 import { UsersAdminComponent } from './components/users-admin/users-admin.component';
 import { MembershipsAdminComponent } from './components/memberships-admin/memberships-admin.component';
 import { MembershipViewComponent } from './components/membership-view/membership-view.component';
-import { MembershipResolver } from '../admin-study/services/membership-resolver.service';
 import { MembershipAddComponent } from './components/membership-add/membership-add.component';
+import { UserResolver, RoleResolver, MembershipResolver } from '@app/core/resolvers';
 
 export const routes: Routes = [
   {
     path: 'access',
-    canActivate: [ AuthGuard ],
+    canActivate: [AuthGuard],
     data: {
       breadcrumbs: 'Users'
     },
@@ -106,4 +104,4 @@ export const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class AdminAccessRoutingModule { }
+export class AdminAccessRoutingModule {}
