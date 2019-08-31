@@ -16,7 +16,6 @@ import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { StudyParticipantsComponent } from './study-participants.component';
 
 describe('StudyParticipantsComponent', () => {
-
   let component: StudyParticipantsComponent;
   let fixture: ComponentFixture<StudyParticipantsComponent>;
   let ngZone: NgZone;
@@ -29,7 +28,7 @@ describe('StudyParticipantsComponent', () => {
 
   beforeEach(async(() => {
     factory = new Factory();
-    study = new Study().deserialize(factory.study({ annotationTypes: [ factory.annotationType() ]} ));
+    study = new Study().deserialize(factory.study({ annotationTypes: [factory.annotationType()] }));
 
     TestBed.configureTestingModule({
       imports: [
@@ -37,10 +36,11 @@ describe('StudyParticipantsComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            'spinner': SpinnerStoreReducer.reducer,
-            'study': StudyStoreReducer.reducer
+            spinner: SpinnerStoreReducer.reducer,
+            study: StudyStoreReducer.reducer
           },
-          NgrxRuntimeChecks),
+          NgrxRuntimeChecks
+        ),
         ToastrModule.forRoot()
       ],
       providers: [
@@ -76,10 +76,7 @@ describe('StudyParticipantsComponent', () => {
     // https://github.com/angular/angular/issues/12079
     TestBed.overrideModule(BrowserDynamicTestingModule, {
       set: {
-        entryComponents: [
-          AnnotationTypeViewComponent,
-          AnnotationTypeRemoveComponent
-        ]
+        entryComponents: [AnnotationTypeViewComponent, AnnotationTypeRemoveComponent]
       }
     });
   }));
@@ -107,11 +104,11 @@ describe('StudyParticipantsComponent', () => {
 
     const testData = [
       {
-        componentFunc: (component) => component.add(),
+        componentFunc: component => component.add(),
         relativePath: 'add'
       },
       {
-        componentFunc: (component) => component.edit(annotationType),
+        componentFunc: component => component.edit(annotationType),
         relativePath: `../${annotationType.id}`
       }
     ];
@@ -122,7 +119,7 @@ describe('StudyParticipantsComponent', () => {
     testData.forEach((testInfo, index) => {
       ngZone.run(() => testInfo.componentFunc(component));
       fixture.detectChanges();
-      expect(spy.mock.calls[index][0]).toEqual([ testInfo.relativePath ]);
+      expect(spy.mock.calls[index][0]).toEqual([testInfo.relativePath]);
     });
   });
 
@@ -138,17 +135,16 @@ describe('StudyParticipantsComponent', () => {
     store.dispatch(StudyStoreActions.getStudySuccess({ study }));
     fixture.detectChanges();
 
-    testData.forEach((testInfo) => {
+    testData.forEach(testInfo => {
       testInfo.componentFunc();
       fixture.detectChanges();
       expect(spy).toHaveBeenCalled();
     });
-
   });
 
   it('should throw an error when study is not disabled', () => {
     study = new Study().deserialize({
-      ...study as any,
+      ...(study as any),
       state: StudyState.Enabled
     });
     jest.spyOn(modalService, 'open');
@@ -170,10 +166,9 @@ describe('StudyParticipantsComponent', () => {
   });
 
   describe('when removing an annotation', () => {
-
     it('on valid removal', fakeAsync(() => {
       const studyNoAnnotations = new Study().deserialize({
-        ...study as any,
+        ...(study as any),
         annotationTypes: []
       });
       const annotationType = study.annotationTypes[0];
@@ -244,5 +239,4 @@ describe('StudyParticipantsComponent', () => {
       });
     }));
   });
-
 });

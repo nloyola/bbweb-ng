@@ -4,7 +4,7 @@ import { TimeagoPipe } from '@app/shared/pipes';
 import { EntityStatusComponent } from './entity-status.component';
 
 class NgZoneMock {
-  runOutsideAngular (fn: Function) {
+  runOutsideAngular(fn: Function) {
     return fn();
   }
   run(fn: Function) {
@@ -18,13 +18,9 @@ describe('EntityStatusComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [
-        EntityStatusComponent,
-        TimeagoPipe
-      ],
+      declarations: [EntityStatusComponent, TimeagoPipe],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
-    })
-      .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -58,7 +54,6 @@ describe('EntityStatusComponent', () => {
   });
 
   describe('for displaying of dates', () => {
-
     let pipe: TimeagoPipe;
 
     beforeEach(() => {
@@ -66,7 +61,6 @@ describe('EntityStatusComponent', () => {
     });
 
     describe('for timeAdded', () => {
-
       it('displayed content', () => {
         const now = new Date();
         const date40YearsAgo = new Date();
@@ -75,8 +69,8 @@ describe('EntityStatusComponent', () => {
         date40YearsAgo.setFullYear(date40YearsAgo.getFullYear() - 40);
         date39YearsAgo.setFullYear(date39YearsAgo.getFullYear() - 39);
 
-        [ date40YearsAgo, date39YearsAgo ].forEach(date => {
-          [ true, false ].forEach(useBadges => {
+        [date40YearsAgo, date39YearsAgo].forEach(date => {
+          [true, false].forEach(useBadges => {
             let testElement: any;
 
             component.state = undefined;
@@ -106,8 +100,8 @@ describe('EntityStatusComponent', () => {
 
     // this test fails under Jest, complains of a promise timeout
     xit('when timeModified is given, it is displayed', () => {
-      [ new Date('01 Jan 2000'), null ].forEach(timeModified => {
-        [ true, false ].forEach(useBadges => {
+      [new Date('01 Jan 2000'), null].forEach(timeModified => {
+        [true, false].forEach(useBadges => {
           component.state = undefined;
           component.timeAdded = undefined;
           component.timeModified = timeModified;
@@ -131,10 +125,8 @@ describe('EntityStatusComponent', () => {
           } else {
             expect(textContent).toContain('Never');
           }
-
         });
       });
     });
   });
-
 });

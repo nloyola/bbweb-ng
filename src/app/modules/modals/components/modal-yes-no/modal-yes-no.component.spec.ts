@@ -8,9 +8,8 @@ describe('ModalYesNoComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ModalYesNoComponent ]
-    })
-    .compileComponents();
+      declarations: [ModalYesNoComponent]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

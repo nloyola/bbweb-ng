@@ -5,7 +5,6 @@ import { SearchFilter } from './search-filter.model';
  * A StateFilter aids in using the search API provided by the Biobank REST API.
  */
 export class StateFilter extends SearchFilter {
-
   private allStates: EntityStateInfo = {
     id: 'all',
     label: 'All'
@@ -18,9 +17,11 @@ export class StateFilter extends SearchFilter {
    *
    * @param allAllowed - Set this to TRUE to allow selection of all choices.
    */
-  constructor(public choices: EntityStateInfo[],
-              public defaultSelection: string,
-              public allAllowed: boolean) {
+  constructor(
+    public choices: EntityStateInfo[],
+    public defaultSelection: string,
+    public allAllowed: boolean
+  ) {
     super(StateFilter.name);
     if (this.allAllowed) {
       this.choices = [this.allStates].concat(this.choices);
@@ -52,5 +53,4 @@ export class StateFilter extends SearchFilter {
   clearValue() {
     this.value = 'all';
   }
-
 }

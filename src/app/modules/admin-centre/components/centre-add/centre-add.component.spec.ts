@@ -14,7 +14,6 @@ import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { CentreAddComponent } from './centre-add.component';
 
 describe('CentreAddComponent', () => {
-
   let component: CentreAddComponent;
   let fixture: ComponentFixture<CentreAddComponent>;
   let store: Store<RootStoreState.State>;
@@ -32,16 +31,16 @@ describe('CentreAddComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            'centre': CentreStoreReducer.reducer,
-            'spinner': SpinnerStoreReducer.reducer
+            centre: CentreStoreReducer.reducer,
+            spinner: SpinnerStoreReducer.reducer
           },
-          NgrxRuntimeChecks),
+          NgrxRuntimeChecks
+        ),
         ToastrModule.forRoot()
       ],
       declarations: [CentreAddComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
-    })
-      .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -65,7 +64,6 @@ describe('CentreAddComponent', () => {
   });
 
   describe('name input validity', () => {
-
     it('is required', () => {
       const errors = component.name.errors || {};
       expect(errors['required']).toBeTruthy();
@@ -76,11 +74,9 @@ describe('CentreAddComponent', () => {
       const errors = component.name.errors || {};
       expect(errors).toEqual({});
     });
-
   });
 
   describe('when submitting', () => {
-
     it('on valid submission', fakeAsync(() => {
       const centre = new Centre().deserialize(factory.centre());
       spyOn(toastr, 'success').and.returnValue(null);
@@ -139,14 +135,13 @@ describe('CentreAddComponent', () => {
         component.description.setValue(centre.description);
         component.onSubmit();
 
-        const action = CentreStoreActions.addCentreFailure({ error } as any );
+        const action = CentreStoreActions.addCentreFailure({ error } as any);
         store.dispatch(action);
         flush();
         fixture.detectChanges();
         expect(toastr.error).toHaveBeenCalled();
       });
     }));
-
   });
 
   it('on cancel', () => {
@@ -155,5 +150,4 @@ describe('CentreAddComponent', () => {
     expect(router.navigate).toHaveBeenCalled();
     expect((router.navigate as any).calls.mostRecent().args[0]).toEqual(['../']);
   });
-
 });

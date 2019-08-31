@@ -1,28 +1,24 @@
-<app-entity-filters class="mb-2"
-                    [useNameFilter]="true"
-                    [stateData]="stateData"
-                    (filters)="onFiltersUpdated($event)">
+<app-entity-filters
+  class="mb-2"
+  [useNameFilter]="true"
+  [stateData]="stateData"
+  (filters)="onFiltersUpdated($event)"
+>
 </app-entity-filters>
 
 <div class="row">
   <div class="col-sm-12 mt-2">
     <div class="card">
       <div class="card-header bg-default">
-        <app-centre-counts [countData]="centreCountData$ | async">
-        </app-centre-counts>
+        <app-centre-counts [countData]="centreCountData$ | async"> </app-centre-counts>
 
         <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
-          <button class="btn btn-sm btn-outline-primary"
-                  type="button"
-                  id="tableMenu"
-                  ngbDropdownToggle>
+          <button class="btn btn-sm btn-outline-primary" type="button" id="tableMenu" ngbDropdownToggle>
             <mat-icon inline="true">more_vert</mat-icon>
           </button>
 
           <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="tableMenu">
-
-            <a routerLink="/admin/centres/add"
-               class="dropdown-item">
+            <a routerLink="/admin/centres/add" class="dropdown-item">
               <mat-icon class="success-icon mr-1">add_circle</mat-icon>
               <span i18n>Add Centre</span>
             </a>
@@ -30,9 +26,11 @@
             <div class="dropdown-divider"></div>
 
             <h5 class="dropdown-header" i18n>Sort by</h5>
-            <a class="dropdown-item"
-               *ngFor="let sortChoice of sortChoices"
-               (click)="sortFieldSelected(sortChoice.id)">
+            <a
+              class="dropdown-item"
+              *ngFor="let sortChoice of sortChoices"
+              (click)="sortFieldSelected(sortChoice.id)"
+            >
               {{ sortChoice.label }}
             </a>
           </div>
@@ -49,8 +47,7 @@
         </div>
       </div>
 
-      <ng-container *ngIf="(centrePageInfo$ | async); let centrePageInfo">
-
+      <ng-container *ngIf="centrePageInfo$ | async; let centrePageInfo">
         <div class="card-body" *ngIf="centrePageInfo.hasNoEntitiesToDisplay">
           <div class="card-text">
             <div class="alert alert-warning" role="alert">
@@ -75,29 +72,31 @@
 
         <ul class="list-group list-group-flush">
           <li class="list-group-item" *ngFor="let centre of centres$ | async">
-            <app-entity-summary [entity]="centre"
-                                [icon]="centre.stateIcon()"
-                                [iconClass]="centre.stateIconClass()"
-                                (selected)="centreSelected($event)">
+            <app-entity-summary
+              [entity]="centre"
+              [icon]="centre.stateIcon()"
+              [iconClass]="centre.stateIconClass()"
+              (selected)="centreSelected($event)"
+            >
             </app-entity-summary>
           </li>
         </ul>
 
         <div class="card-footer" *ngIf="centrePageInfo.hasResultsToDisplay">
-          <ngb-pagination size="sm"
-                          [collectionSize]="centrePageInfo.total"
-                          [(page)]="currentPage"
-                          [maxSize]="centresLimit"
-                          [pageSize]="centresLimit"
-                          [rotate]="false"
-                          [boundaryLinks]="true"
-                          aria-label="Default pagination"
-                          (pageChange)="paginationPageChanged($event)">
+          <ngb-pagination
+            size="sm"
+            [collectionSize]="centrePageInfo.total"
+            [(page)]="currentPage"
+            [maxSize]="centresLimit"
+            [pageSize]="centresLimit"
+            [rotate]="false"
+            [boundaryLinks]="true"
+            aria-label="Default pagination"
+            (pageChange)="paginationPageChanged($event)"
+          >
           </ngb-pagination>
         </div>
-
       </ng-container>
-
     </div>
   </div>
 </div>

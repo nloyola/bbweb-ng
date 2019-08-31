@@ -7,8 +7,8 @@ import { Specimen } from '@app/domain/participants';
 export const searchShipmentSpecimensRequest = createAction(
   '[ShipmentSpecimen] Search Shipment Specimens Request',
   props<{
-    shipment: Shipment,
-    searchParams: SearchParams
+    shipment: Shipment;
+    searchParams: SearchParams;
   }>()
 );
 
@@ -51,7 +51,6 @@ export const removeShipmentSpecimenFailure = createAction(
   '[ShipmentSpecimen] Remove Shipment Specimen Failure',
   props<{ error: any }>()
 );
-
 
 const all = union({
   searchShipmentSpecimensRequest,

@@ -12,18 +12,10 @@ describe('RoleUserRemoveComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [
-        NgbModule
-      ],
-      providers: [
-        NgbActiveModal
-      ],
-      declarations: [
-        UserRemoveModalComponent,
-        ModalInputComponent
-      ]
-    })
-    .compileComponents();
+      imports: [NgbModule],
+      providers: [NgbActiveModal],
+      declarations: [UserRemoveModalComponent, ModalInputComponent]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

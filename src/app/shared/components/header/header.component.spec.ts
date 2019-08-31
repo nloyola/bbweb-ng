@@ -14,7 +14,6 @@ import { Factory } from '@test/factory';
 import { HeaderComponent } from './header.component';
 
 describe('HeaderComponent', () => {
-
   let component: HeaderComponent;
   let fixture: ComponentFixture<HeaderComponent>;
   let ngZone: NgZone;
@@ -27,10 +26,7 @@ describe('HeaderComponent', () => {
       imports: [
         NgbModule,
         RouterTestingModule,
-        StoreModule.forRoot(
-          { 'auth': AuthStoreReducer.reducer },
-          NgrxRuntimeChecks
-        )
+        StoreModule.forRoot({ auth: AuthStoreReducer.reducer }, NgrxRuntimeChecks)
       ],
       declarations: [HeaderComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
@@ -56,11 +52,11 @@ describe('HeaderComponent', () => {
   });
 
   it('a dropdown menu item is created with the user`s name', () => {
-    const user = new User().deserialize(factory.user({
-      roles: [
-        factory.role({ id: RoleIds.SpecimenCollector })
-      ]
-    }));
+    const user = new User().deserialize(
+      factory.user({
+        roles: [factory.role({ id: RoleIds.SpecimenCollector })]
+      })
+    );
     const action = AuthStoreActions.loginSuccessAction({ user });
     store.dispatch(action);
 
@@ -85,7 +81,6 @@ describe('HeaderComponent', () => {
     fixture.detectChanges();
     expect(component.isCollapsed).toBeFalsy();
   });
-
 
   it('clicking navbar collapse button hides the navbar when shown', () => {
     const buttons = fixture.debugElement.queryAll(By.css('.navbar-toggler-right'));

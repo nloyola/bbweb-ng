@@ -15,15 +15,16 @@ import { filter, takeUntil } from 'rxjs/operators';
   styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent implements OnInit, OnDestroy {
-
   isRegistering$: Observable<any>;
   private unsubscribe$: Subject<void> = new Subject<void>();
   registerForm: FormGroup;
 
-  constructor(private store$: Store<RootStoreState.State>,
-              private formBuilder: FormBuilder,
-              private router: Router,
-              private toastr: ToastrService) {}
+  constructor(
+    private store$: Store<RootStoreState.State>,
+    private formBuilder: FormBuilder,
+    private router: Router,
+    private toastr: ToastrService
+  ) {}
 
   ngOnInit() {
     this.registerForm = this.formBuilder.group(
@@ -31,23 +32,25 @@ export class RegisterComponent implements OnInit, OnDestroy {
         name: ['', [Validators.required]],
         email: ['', [Validators.required, Validators.email]],
         password: ['', [Validators.required]],
-        confirmPassword: ['', [Validators.required]],
+        confirmPassword: ['', [Validators.required]]
       },
-      { validator: PasswordValidation.matchingPasswords() });
+      { validator: PasswordValidation.matchingPasswords() }
+    );
 
-    this.isRegistering$ =
-      this.store$.pipe(select(SpinnerStoreSelectors.selectSpinnerIsActive));
+    this.isRegistering$ = this.store$.pipe(select(SpinnerStoreSelectors.selectSpinnerIsActive));
 
     this.store$
       .pipe(
         select(AuthStoreSelectors.selectAuthRegisteredUser),
         filter(user => user !== null),
-        takeUntil(this.unsubscribe$))
+        takeUntil(this.unsubscribe$)
+      )
       .subscribe(() => {
         this.toastr.success(
           'Your account was created and is now pending administrator approval.',
           'Registration Successful',
-          { disableTimeOut: true });
+          { disableTimeOut: true }
+        );
         this.navigateToReturnUrl();
       });
 
@@ -55,13 +58,14 @@ export class RegisterComponent implements OnInit, OnDestroy {
       .pipe(
         select(AuthStoreSelectors.selectAuthError),
         filter(err => err !== null),
-        takeUntil(this.unsubscribe$))
+        takeUntil(this.unsubscribe$)
+      )
       .subscribe((err: any) => {
         this.store$.dispatch(AuthStoreActions.registerClearFailureAction());
 
         let message: string;
         if (err.status) {
-          if ((err.status === 403) && (err.error.message === 'email already registered')) {
+          if (err.status === 403 && err.error.message === 'email already registered') {
             message = 'That email address is already registered.';
           } else if (err.error) {
             message = err.error.message;
@@ -95,11 +99,13 @@ export class RegisterComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
-    this.store$.dispatch(AuthStoreActions.registerRequestAction({
-      name: this.registerForm.value.name,
-      email: this.registerForm.value.email,
-      password: this.registerForm.value.password
-    }));
+    this.store$.dispatch(
+      AuthStoreActions.registerRequestAction({
+        name: this.registerForm.value.name,
+        email: this.registerForm.value.email,
+        password: this.registerForm.value.password
+      })
+    );
   }
 
   onCancel() {

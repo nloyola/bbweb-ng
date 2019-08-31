@@ -12,16 +12,9 @@ describe('ModalInputPasswordComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [
-        FormsModule,
-        ReactiveFormsModule
-      ],
-      declarations: [
-        ModalInputComponent,
-        ModalInputPasswordComponent
-      ]
-    })
-    .compileComponents();
+      imports: [FormsModule, ReactiveFormsModule],
+      declarations: [ModalInputComponent, ModalInputPasswordComponent]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -35,23 +28,29 @@ describe('ModalInputPasswordComponent', () => {
   });
 
   describe('shared behaviour', () => {
-
     const context: ModalInputComponentBehaviour.Context<ModalInputPasswordComponent, any> = {};
 
     beforeEach(() => {
-      context.fixture             = fixture;
-      context.assignOptions       = (options) => { component.options = options; };
-      context.assignMockModal     = (mockModal) => { component.modal = mockModal; };
-      context.assignInputValue    = (value) => { component.input.setValue(value.currentPassword); };
-      context.getValidValue       = () => ({ currentPassword: faker.lorem.words(3), newPassword: '' });
-      context.inputElement        = () => fixture.debugElement.query(By.css('input'));
-      context.markInputAsTouched  = () => { component.input.markAllAsTouched(); };
-      context.requiredText        = 'Your current password is required';
-      context.confirm             = () => component.confirm();
-      context.dismiss             = () => component.dismiss();
+      context.fixture = fixture;
+      context.assignOptions = options => {
+        component.options = options;
+      };
+      context.assignMockModal = mockModal => {
+        component.modal = mockModal;
+      };
+      context.assignInputValue = value => {
+        component.input.setValue(value.currentPassword);
+      };
+      context.getValidValue = () => ({ currentPassword: faker.lorem.words(3), newPassword: '' });
+      context.inputElement = () => fixture.debugElement.query(By.css('input'));
+      context.markInputAsTouched = () => {
+        component.input.markAllAsTouched();
+      };
+      context.requiredText = 'Your current password is required';
+      context.confirm = () => component.confirm();
+      context.dismiss = () => component.dismiss();
     });
 
     ModalInputComponentBehaviour.sharedBehaviour(context);
-
   });
 });

@@ -6,8 +6,4 @@ import * as SpinnerStoreActions from './spinner.actions';
 //
 // https://itnext.io/angular-tutorial-create-loading-indicator-using-ngrx-687f8a66be0d
 
-export {
-  SpinnerStoreActions,
-  SpinnerStoreReducer,
-  SpinnerStoreSelectors
-};
+export { SpinnerStoreActions, SpinnerStoreReducer, SpinnerStoreSelectors };

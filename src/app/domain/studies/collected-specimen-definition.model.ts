@@ -1,7 +1,6 @@
 import { ISpecimenDefinition, SpecimenDefinition } from './specimen-definition.model';
 
 export interface ICollectedSpecimenDefinition extends ISpecimenDefinition {
-
   /**
    * The amount per specimen, measured in units, to be collected.
    * @see #units
@@ -13,7 +12,6 @@ export interface ICollectedSpecimenDefinition extends ISpecimenDefinition {
    * @see #units
    */
   maxCount: number;
-
 }
 
 /**
@@ -24,7 +22,6 @@ export interface ICollectedSpecimenDefinition extends ISpecimenDefinition {
  * defined for specimen types collected from {@link Participants}.
  */
 export class CollectedSpecimenDefinition extends SpecimenDefinition implements ICollectedSpecimenDefinition {
-
   amount: number;
   maxCount: number;
 

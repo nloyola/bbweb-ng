@@ -1,10 +1,11 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
-@Pipe({name: 'nlToBr'})
+@Pipe({ name: 'nlToBr' })
 export class NlToBrPipe implements PipeTransform {
-
   transform(input: string) {
-    if (!input) { return input; }
+    if (!input) {
+      return input;
+    }
     const lines = input.split('\n');
 
     const span = document.createElement('span');
@@ -15,5 +16,4 @@ export class NlToBrPipe implements PipeTransform {
     }
     return lines.join('<br />');
   }
-
 }

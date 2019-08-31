@@ -1,10 +1,7 @@
-<app-entity-filters class="mb-2"
-                    [useNameFilter]="true"
-                    (filters)="onFiltersUpdated($event)">
+<app-entity-filters class="mb-2" [useNameFilter]="true" (filters)="onFiltersUpdated($event)">
 </app-entity-filters>
 
-<ng-container *ngIf="(membershipPageInfo$ | async); let membershipPageInfo">
-
+<ng-container *ngIf="membershipPageInfo$ | async; let membershipPageInfo">
   <div class="row">
     <div class="col-sm-12 mt-2">
       <div class="card">
@@ -12,19 +9,13 @@
           <mat-icon class="warning-icon">settings</mat-icon>
           {{ membershipPageInfo.total }} <span i18n>Memberships</span>
 
-
           <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
-            <button class="btn btn-sm btn-outline-primary"
-                    type="button"
-                    id="tableMenu"
-                    ngbDropdownToggle>
+            <button class="btn btn-sm btn-outline-primary" type="button" id="tableMenu" ngbDropdownToggle>
               <mat-icon inline="true">more_vert</mat-icon>
             </button>
 
             <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="tableMenu">
-
-              <a routerLink="/admin/access/memberships/add"
-                 class="dropdown-item">
+              <a routerLink="/admin/access/memberships/add" class="dropdown-item">
                 <mat-icon class="success-icon mr-1">add_circle</mat-icon>
                 <span i18n>Add Membership</span>
               </a>
@@ -68,7 +59,7 @@
           <li class="list-group-item" *ngFor="let membership of membershipPageInfo.entities">
             <div class="row">
               <div class="col-md-12">
-                <a [routerLink]="[ '/admin/access/memberships', membership.slug ]">
+                <a [routerLink]="['/admin/access/memberships', membership.slug]">
                   <mat-icon class="warning-icon">settings</mat-icon>
                   <strong>{{ membership.name }}</strong>
                 </a>
@@ -77,15 +68,17 @@
             <div class="row" *ngIf="membership.description">
               <div class="col-md-12">
                 <small class="text-info">
-                  {{ membership.description | truncate:100 }}
+                  {{ membership.description | truncate: 100 }}
                 </small>
               </div>
             </div>
             <div class="row">
               <div class="col-md-12">
-                <app-entity-status [timeAdded]="membership.timeAdded"
-                                   [timeModified]="membership.timeModified"
-                                   [useBadges]="false">
+                <app-entity-status
+                  [timeAdded]="membership.timeAdded"
+                  [timeModified]="membership.timeModified"
+                  [useBadges]="false"
+                >
                 </app-entity-status>
               </div>
             </div>
@@ -93,19 +86,20 @@
         </ul>
 
         <div class="card-footer" *ngIf="membershipPageInfo.hasResultsToDisplay">
-          <ngb-pagination size="sm"
-                          [collectionSize]="membershipPageInfo.total"
-                          [(page)]="currentPage"
-                          [maxSize]="membershipsLimit"
-                          [pageSize]="membershipsLimit"
-                          [rotate]="false"
-                          [boundaryLinks]="true"
-                          aria-label="Default pagination"
-                          (pageChange)="paginationPageChanged($event)">
+          <ngb-pagination
+            size="sm"
+            [collectionSize]="membershipPageInfo.total"
+            [(page)]="currentPage"
+            [maxSize]="membershipsLimit"
+            [pageSize]="membershipsLimit"
+            [rotate]="false"
+            [boundaryLinks]="true"
+            aria-label="Default pagination"
+            (pageChange)="paginationPageChanged($event)"
+          >
           </ngb-pagination>
         </div>
       </div>
     </div>
   </div>
-
 </ng-container>

@@ -4,7 +4,6 @@ import { Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 
 export namespace EntityWithSubEntityBehaviour {
-
   export interface BaseContext {
     dispatchParentEntity: () => void;
     dispatchUpdatedParentEntity: () => void;
@@ -23,9 +22,7 @@ export namespace EntityWithSubEntityBehaviour {
   }
 
   export function addSharedBehaviour(context: AddContext) {
-
     describe('(shared behaviour)', () => {
-
       let store: Store<{}>;
       let modalService: NgbModal;
       let toastr: ToastrService;
@@ -86,15 +83,11 @@ export namespace EntityWithSubEntityBehaviour {
           expect(toastr.error).toHaveBeenCalled();
         });
       }));
-
     });
-
   }
 
   export function removeSharedBehaviour(context: RemoveContext) {
-
     describe('(shared behaviour)', () => {
-
       let store: Store<{}>;
       let modalService: NgbModal;
       let toastr: ToastrService;
@@ -158,8 +151,6 @@ export namespace EntityWithSubEntityBehaviour {
           expect(toastr.error).toHaveBeenCalled();
         });
       }));
-
     });
-
   }
 }

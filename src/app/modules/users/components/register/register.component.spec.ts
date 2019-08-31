@@ -14,7 +14,6 @@ import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { RegisterComponent } from './register.component';
 
 describe('RegisterComponent', () => {
-
   let component: RegisterComponent;
   let fixture: ComponentFixture<RegisterComponent>;
   let store: Store<RootStoreState.State>;
@@ -31,17 +30,17 @@ describe('RegisterComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            'auth': AuthStoreReducer.reducer,
-            'spinner': SpinnerStoreReducer.reducer,
-            'study': StudyStoreReducer.reducer
+            auth: AuthStoreReducer.reducer,
+            spinner: SpinnerStoreReducer.reducer,
+            study: StudyStoreReducer.reducer
           },
-          NgrxRuntimeChecks),
+          NgrxRuntimeChecks
+        ),
         ToastrModule.forRoot()
       ],
       declarations: [RegisterComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
-    })
-      .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -65,7 +64,6 @@ describe('RegisterComponent', () => {
   });
 
   describe('name input validity', () => {
-
     it('is required', () => {
       const errors = component.name.errors || {};
       expect(errors['required']).toBeTruthy();
@@ -76,11 +74,9 @@ describe('RegisterComponent', () => {
       const errors = component.name.errors || {};
       expect(errors).toEqual({});
     });
-
   });
 
   describe('email input validity', () => {
-
     it('is required', () => {
       const errors = component.email.errors || {};
       expect(errors['required']).toBeTruthy();
@@ -97,11 +93,9 @@ describe('RegisterComponent', () => {
       const errors = component.email.errors || {};
       expect(errors).toEqual({});
     });
-
   });
 
   describe('password input validity', () => {
-
     it('is required', () => {
       const errors = component.password.errors || {};
       expect(errors['required']).toBeTruthy();
@@ -112,11 +106,9 @@ describe('RegisterComponent', () => {
       const errors = component.password.errors || {};
       expect(errors).toEqual({});
     });
-
   });
 
   describe('confirmPassword input validity', () => {
-
     it('is required', () => {
       const errors = component.registerForm.errors || {};
       expect(errors['passwordsNonMatching']).toBeTruthy();
@@ -137,19 +129,17 @@ describe('RegisterComponent', () => {
       const errors = component.registerForm.errors || {};
       expect(errors).toEqual({});
     });
-
   });
 
   describe('when submitting', () => {
-
     let user: User;
 
     beforeEach(() => {
-      user = new User().deserialize(factory.user({
-        roles: [
-          { id: RoleIds.SpecimenCollector },
-        ]
-      }));
+      user = new User().deserialize(
+        factory.user({
+          roles: [{ id: RoleIds.SpecimenCollector }]
+        })
+      );
     });
 
     it('on valid registration', () => {
@@ -223,7 +213,6 @@ describe('RegisterComponent', () => {
       component.onSubmit();
       expect(store.dispatch).toHaveBeenCalledWith(action);
     });
-
   });
 
   it('onCancel navigates to the home page', () => {

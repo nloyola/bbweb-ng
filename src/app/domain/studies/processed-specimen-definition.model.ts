@@ -9,6 +9,4 @@ export type IProcessedSpecimenDefinition = ISpecimenDefinition;
  * entire group or collection of {@link Specimens}. A *Processed Specimen Definition* is defined
  * for specimen types processed from collected specimens.
  */
-export class ProcessedSpecimenDefinition
-extends SpecimenDefinition
-implements IProcessedSpecimenDefinition { }
+export class ProcessedSpecimenDefinition extends SpecimenDefinition implements IProcessedSpecimenDefinition {}

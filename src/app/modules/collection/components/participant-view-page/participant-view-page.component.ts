@@ -14,7 +14,6 @@ import { filter, map, shareReplay, takeUntil } from 'rxjs/operators';
   styleUrls: ['./participant-view-page.component.scss']
 })
 export class ParticipantViewPageComponent implements OnInit, OnDestroy {
-
   participant$: Observable<Participant>;
   tabIds: string[];
   activeTabId: string;
@@ -23,9 +22,11 @@ export class ParticipantViewPageComponent implements OnInit, OnDestroy {
   private participantSlug: string;
   private unsubscribe$ = new Subject<void>();
 
-  constructor(private store$: Store<RootStoreState.State>,
-              private router: Router,
-              private route: ActivatedRoute) {
+  constructor(
+    private store$: Store<RootStoreState.State>,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {
     this.tabData = {
       summary: {
         heading: 'Summary'
@@ -43,16 +44,19 @@ export class ParticipantViewPageComponent implements OnInit, OnDestroy {
       select(ParticipantStoreSelectors.selectAllParticipants),
       map(participants => participants.find(p => p.slug === this.route.snapshot.params.slug)),
       takeUntil(this.unsubscribe$),
-      shareReplay());
+      shareReplay()
+    );
 
     this.activeTabId = this.getActiveTabId(this.router.url);
 
-    this.router.events.pipe(
-      filter(x => x instanceof NavigationEnd),
-      takeUntil(this.unsubscribe$)
-    ).subscribe((event: NavigationEnd) => {
-      this.activeTabId = this.getActiveTabId(event.urlAfterRedirects);
-    });
+    this.router.events
+      .pipe(
+        filter(x => x instanceof NavigationEnd),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe((event: NavigationEnd) => {
+        this.activeTabId = this.getActiveTabId(event.urlAfterRedirects);
+      });
   }
 
   ngOnDestroy() {
@@ -61,11 +65,10 @@ export class ParticipantViewPageComponent implements OnInit, OnDestroy {
   }
 
   public tabSelection(event: NgbTabChangeEvent) {
-    this.router.navigate([ '/collection', this.participantSlug, event.nextId ]);
+    this.router.navigate(['/collection', this.participantSlug, event.nextId]);
   }
 
   private getActiveTabId(routeUrl: string): string {
     return Object.keys(this.tabData).find(key => routeUrl.includes(key));
   }
-
 }

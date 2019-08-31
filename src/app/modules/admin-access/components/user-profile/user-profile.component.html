@@ -9,11 +9,7 @@
       </mat-icon>
       {{ user?.name }}
       <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
-
-        <button class="btn btn-sm btn-light"
-                type="button"
-                id="userSummaryMenu"
-                ngbDropdownToggle>
+        <button class="btn btn-sm btn-light" type="button" id="userSummaryMenu" ngbDropdownToggle>
           <mat-icon inline="true">more_vert</mat-icon>
         </button>
 
@@ -78,10 +74,10 @@
         <div class="row">
           <div class="col-md-3"><strong i18n>Avatar URL</strong></div>
           <div class="col-md-7">
-            <a target="_blank" [href]="user?.entity.avatarUrl"  *ngIf="user?.entity.avatarUrl">
+            <a target="_blank" [href]="user?.entity.avatarUrl" *ngIf="user?.entity.avatarUrl">
               {{ user?.entity.avatarUrl }}
             </a>
-            <span *ngIf="! user?.entity.avatarUrl" i18n>None</span>
+            <span *ngIf="!user?.entity.avatarUrl" i18n>None</span>
           </div>
         </div>
       </li>
@@ -91,8 +87,7 @@
         <div class="row">
           <div class="col-md-3"><strong i18n>Roles</strong></div>
           <div class="col-md-7" *ngIf="user?.entity.roles.length > 0">
-            <span *ngFor="let role of user?.entity.roles"
-                  class="badge badge-secondary mr-1 mt-1">
+            <span *ngFor="let role of user?.entity.roles" class="badge badge-secondary mr-1 mt-1">
               {{ role.name }}
             </span>
           </div>
@@ -118,10 +113,12 @@
       </li>
     </ul>
 
-    <app-entity-status [state]="user?.stateLabel()"
-                       [timeAdded]="user?.timeAdded"
-                       [timeModified]="user?.timeModified"
-                       [useBadges]="false">
+    <app-entity-status
+      [state]="user?.stateLabel()"
+      [timeAdded]="user?.timeAdded"
+      [timeModified]="user?.timeModified"
+      [useBadges]="false"
+    >
     </app-entity-status>
   </div>
 </ng-container>
@@ -135,36 +132,44 @@
 </ng-template>
 
 <ng-template #updateNameModal let-modal>
-  <app-modal-input-text [title]="'Update Name'"
-                        [label]="'New user name'"
-                        [value]="(user$ | async)?.name"
-                        [options]="updateNameModalOptions"
-                        [modal]="modal">
+  <app-modal-input-text
+    [title]="'Update Name'"
+    [label]="'New user name'"
+    [value]="(user$ | async)?.name"
+    [options]="updateNameModalOptions"
+    [modal]="modal"
+  >
   </app-modal-input-text>
 </ng-template>
 
 <ng-template #updateEmailModal let-modal>
-  <app-modal-input-email [title]="'Update Email'"
-                         [label]="'New user email'"
-                         [value]="(user$ | async)?.email"
-                         [options]="updateEmailModalOptions"
-                         [modal]="modal">
+  <app-modal-input-email
+    [title]="'Update Email'"
+    [label]="'New user email'"
+    [value]="(user$ | async)?.email"
+    [options]="updateEmailModalOptions"
+    [modal]="modal"
+  >
   </app-modal-input-email>
 </ng-template>
 
 <ng-template #updatePasswordModal let-modal>
-  <app-modal-input-password [title]="'Update Password'"
-                            [user]="user"
-                            (onConfirm)="confirm($event)"
-                            [modal]="modal">
+  <app-modal-input-password
+    [title]="'Update Password'"
+    [user]="user"
+    (onConfirm)="confirm($event)"
+    [modal]="modal"
+  >
   </app-modal-input-password>
 </ng-template>
 
 <ng-template #updateAvatarUrlModal let-modal>
-  <app-modal-input-url [title]="'Update Avatar URL'"
-                       [label]="'New avatar URL'"
-                       [value]="(user$ | async)?.entity.avatarUrl"
-                       [options]="{}"
-                       [modal]="modal">
+  <app-modal-input-url
+    [title]="'Update Avatar URL'"
+    [label]="'New avatar URL'"
+    [value]="(user$ | async)?.entity.avatarUrl"
+    [options]="{}"
+    [modal]="modal"
+  >
   </app-modal-input-url>
 </ng-template>

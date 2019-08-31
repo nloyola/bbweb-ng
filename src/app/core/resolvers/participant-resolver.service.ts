@@ -10,8 +10,7 @@ import { Participant } from '@app/domain/participants';
   providedIn: 'root'
 })
 export class ParticipantResolver implements Resolve<Participant> {
-  constructor(private store$: Store<RootStoreState.State>,
-              private router: Router) {}
+  constructor(private store$: Store<RootStoreState.State>, private router: Router) {}
 
   resolve(route: ActivatedRouteSnapshot, _state: RouterStateSnapshot): Observable<Participant> {
     const slug = route.paramMap.get('slug');
@@ -22,14 +21,16 @@ export class ParticipantResolver implements Resolve<Participant> {
       this.store$.pipe(
         select(ParticipantStoreSelectors.selectParticipantError),
         filter(s => !!s),
-        tap(() => this.router.navigateByUrl('/404'))),
+        tap(() => this.router.navigateByUrl('/404'))
+      ),
       this.store$.pipe(
         select(ParticipantStoreSelectors.selectAllParticipants),
         filter(s => s.length > 0),
         map((participants: Participant[]) => {
           const participant = participants.find(s => s.slug === slug);
           return participant ? participant : throwError('participant not found');
-        })))
-      .pipe(take(1));
+        })
+      )
+    ).pipe(take(1));
   }
 }

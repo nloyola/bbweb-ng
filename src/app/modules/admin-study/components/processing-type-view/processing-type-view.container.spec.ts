@@ -4,7 +4,15 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ProcessingType, Study, StudyState } from '@app/domain/studies';
-import { EventTypeStoreActions, EventTypeStoreReducer, ProcessingTypeStoreActions, ProcessingTypeStoreReducer, RootStoreState, StudyStoreActions, StudyStoreReducer } from '@app/root-store';
+import {
+  EventTypeStoreActions,
+  EventTypeStoreReducer,
+  ProcessingTypeStoreActions,
+  ProcessingTypeStoreReducer,
+  RootStoreState,
+  StudyStoreActions,
+  StudyStoreReducer
+} from '@app/root-store';
 import { NgrxRuntimeChecks } from '@app/root-store/root-store.module';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { YesNoPipe } from '@app/shared/pipes/yes-no-pipe';
@@ -34,12 +42,13 @@ describe('ProcessingTypeViewContainerComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            'study': StudyStoreReducer.reducer,
+            study: StudyStoreReducer.reducer,
             'processing-type': ProcessingTypeStoreReducer.reducer,
             'event-type': EventTypeStoreReducer.reducer,
-            'spinner': SpinnerStoreReducer.reducer
+            spinner: SpinnerStoreReducer.reducer
           },
-          NgrxRuntimeChecks),
+          NgrxRuntimeChecks
+        ),
         ToastrModule.forRoot()
       ],
       providers: [
@@ -48,13 +57,9 @@ describe('ProcessingTypeViewContainerComponent', () => {
           useValue: mockActivatedRoute
         }
       ],
-      declarations: [
-        ProcessingTypeViewContainerComponent,
-        YesNoPipe
-      ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
-    .compileComponents();
+      declarations: [ProcessingTypeViewContainerComponent, YesNoPipe],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -82,7 +87,7 @@ describe('ProcessingTypeViewContainerComponent', () => {
 
     const newName = factory.stringNext();
     const ptWithNewName = new ProcessingType().deserialize({
-      ...processingType as any,
+      ...(processingType as any),
       ...factory.nameAndSlug()
     });
 
@@ -92,19 +97,25 @@ describe('ProcessingTypeViewContainerComponent', () => {
     flush();
     fixture.detectChanges();
 
-    store.dispatch(new ProcessingTypeStoreActions.UpdateProcessingTypeSuccess({
-      processingType: ptWithNewName
-    }));
+    store.dispatch(
+      new ProcessingTypeStoreActions.UpdateProcessingTypeSuccess({
+        processingType: ptWithNewName
+      })
+    );
     flush();
     fixture.detectChanges();
 
     expect(routerListener.mock.calls.length).toBe(1);
     expect(routerListener.mock.calls[0][0]).toEqual([
-      '/admin/studies', study.slug, 'processing', 'view', ptWithNewName.slug]);
+      '/admin/studies',
+      study.slug,
+      'processing',
+      'view',
+      ptWithNewName.slug
+    ]);
   }));
 
   describe('when updating attributes', () => {
-
     let study: Study;
     let processingType: ProcessingType;
     const context: EntityUpdateComponentBehaviour.Context<ProcessingTypeViewContainerComponent> = {} as any;
@@ -120,24 +131,28 @@ describe('ProcessingTypeViewContainerComponent', () => {
         store.dispatch(new ProcessingTypeStoreActions.GetProcessingTypeSuccess({ processingType }));
       };
       context.componentValidateInitialization = () => undefined;
-      context.dispatchSuccessAction =
-        () => { store.dispatch(new ProcessingTypeStoreActions.UpdateProcessingTypeSuccess({
-          processingType
-        })); };
-      context.createExpectedFailureAction =
-        (error) => new ProcessingTypeStoreActions.UpdateProcessingTypeFailure({ error });
+      context.dispatchSuccessAction = () => {
+        store.dispatch(
+          new ProcessingTypeStoreActions.UpdateProcessingTypeSuccess({
+            processingType
+          })
+        );
+      };
+      context.createExpectedFailureAction = error =>
+        new ProcessingTypeStoreActions.UpdateProcessingTypeFailure({ error });
       context.duplicateAttibuteValueError = 'already exists';
     });
 
     describe('when updating name', () => {
-
       beforeEach(() => {
         const newName = factory.stringNext();
         context.modalReturnValue = { result: Promise.resolve(newName) };
-        context.updateEntity = () => { component.updateName(); };
+        context.updateEntity = () => {
+          component.updateName();
+        };
 
         const processingTypeWithUpdatedSlug = new ProcessingType().deserialize({
-          ...processingType as any,
+          ...(processingType as any),
           slug: factory.slugify(newName),
           name: newName
         });
@@ -148,22 +163,24 @@ describe('ProcessingTypeViewContainerComponent', () => {
           value: newName
         });
         context.dispatchSuccessAction = () => {
-          store.dispatch(new ProcessingTypeStoreActions.UpdateProcessingTypeSuccess({
-            processingType: processingTypeWithUpdatedSlug
-          }));
+          store.dispatch(
+            new ProcessingTypeStoreActions.UpdateProcessingTypeSuccess({
+              processingType: processingTypeWithUpdatedSlug
+            })
+          );
         };
       });
 
       EntityUpdateComponentBehaviour.sharedBehaviour(context);
-
     });
 
     describe('when updating description', () => {
-
       beforeEach(() => {
         const newValue = faker.lorem.paragraphs();
         context.modalReturnValue = { result: Promise.resolve(newValue) };
-        context.updateEntity = () => { component.updateDescription(); };
+        context.updateEntity = () => {
+          component.updateDescription();
+        };
 
         context.expectedSuccessAction = new ProcessingTypeStoreActions.UpdateProcessingTypeRequest({
           processingType,
@@ -173,15 +190,15 @@ describe('ProcessingTypeViewContainerComponent', () => {
       });
 
       EntityUpdateComponentBehaviour.sharedBehaviour(context);
-
     });
 
     describe('when updating enabled', () => {
-
       beforeEach(() => {
         const newValue = true;
         context.modalReturnValue = { result: Promise.resolve(newValue) };
-        context.updateEntity = () => { component.updateEnabled(); };
+        context.updateEntity = () => {
+          component.updateEnabled();
+        };
 
         context.expectedSuccessAction = new ProcessingTypeStoreActions.UpdateProcessingTypeRequest({
           processingType,
@@ -191,15 +208,11 @@ describe('ProcessingTypeViewContainerComponent', () => {
       });
 
       EntityUpdateComponentBehaviour.sharedBehaviour(context);
-
     });
-
   });
 
   describe('for input entity', () => {
-
     describe('when already in the store', () => {
-
       it('when input is from collected, event type is retrieved from store', () => {
         const { eventType, processingType } = entityFixture.createProcessingTypeFromCollected();
         const study = new Study().deserialize(factory.defaultStudy());
@@ -216,19 +229,19 @@ describe('ProcessingTypeViewContainerComponent', () => {
         const study = new Study().deserialize(factory.defaultStudy());
 
         createMockActivatedRouteSpies(study, processingType);
-        store.dispatch(new ProcessingTypeStoreActions.GetProcessingTypeSuccess({
-          processingType: input
-        }));
+        store.dispatch(
+          new ProcessingTypeStoreActions.GetProcessingTypeSuccess({
+            processingType: input
+          })
+        );
         store.dispatch(new ProcessingTypeStoreActions.GetProcessingTypeSuccess({ processingType }));
 
         fixture.detectChanges();
         expect(component.inputEntity).toBe(input);
       });
-
     });
 
     describe('when not in the store', () => {
-
       it('when input is from collected, event type is retrieved from store', () => {
         const { study, processingType } = entityFixture.createEntities();
         createMockActivatedRouteSpies(study, processingType);
@@ -241,7 +254,8 @@ describe('ProcessingTypeViewContainerComponent', () => {
           EventTypeStoreActions.getEventTypeByIdRequest({
             studyId: processingType.studyId,
             eventTypeId: processingType.input.entityId
-          }));
+          })
+        );
       });
 
       it('when input is from processed, processing type is retrieved from store', () => {
@@ -258,15 +272,13 @@ describe('ProcessingTypeViewContainerComponent', () => {
           new ProcessingTypeStoreActions.GetProcessingTypeByIdRequest({
             studyId: processingType.studyId,
             processingTypeId: processingType.input.entityId
-          }));
+          })
+        );
       });
-
     });
-
   });
 
   describe('common behaviour', () => {
-
     const componentUpdateFuncs = [
       (component, processingType) => component.updateName(),
       (component, processingType) => component.updateDescription(),
@@ -300,7 +312,7 @@ describe('ProcessingTypeViewContainerComponent', () => {
       const entities = createEntities();
       const annotationType = entities.processingType.annotationTypes[0];
       const updatedStudy = new Study().deserialize({
-        ...entities.study as any,
+        ...(entities.study as any),
         state: StudyState.Enabled
       });
       store.dispatch(StudyStoreActions.updateStudySuccess({ study: updatedStudy }));
@@ -334,9 +346,11 @@ describe('ProcessingTypeViewContainerComponent', () => {
 
         updateFunc(component, entities.processingType);
         fixture.whenStable().then(() => {
-          store.dispatch(new ProcessingTypeStoreActions.UpdateProcessingTypeSuccess({
-            processingType: entities.processingType
-          }));
+          store.dispatch(
+            new ProcessingTypeStoreActions.UpdateProcessingTypeSuccess({
+              processingType: entities.processingType
+            })
+          );
         });
       });
 
@@ -344,11 +358,9 @@ describe('ProcessingTypeViewContainerComponent', () => {
         expect(toastr.success.calls.count()).toBe(componentUpdateFuncs.length);
       });
     }));
-
   });
 
   describe('when updating name, description, enabled, input and output', () => {
-
     it('dispatches an action to update the processing type', fakeAsync(() => {
       const modalService = TestBed.get(NgbModal);
       const modalSpy = spyOn(modalService, 'open');
@@ -388,7 +400,7 @@ describe('ProcessingTypeViewContainerComponent', () => {
 
       fixture.detectChanges();
 
-      testData.forEach((testInfo) => {
+      testData.forEach(testInfo => {
         const modalResult = testInfo.withConfirm
           ? Promise.resolve(testInfo.newValue)
           : Promise.resolve(testInfo.newValue);
@@ -411,11 +423,9 @@ describe('ProcessingTypeViewContainerComponent', () => {
         expect(storeListener.mock.calls[0][0]).toEqual(action);
       });
     }));
-
   });
 
   describe('for annotation types', () => {
-
     it('changes state when adding an annotation type', () => {
       const ngZone = TestBed.get(NgZone);
       const router = TestBed.get(Router);
@@ -428,7 +438,7 @@ describe('ProcessingTypeViewContainerComponent', () => {
 
       ngZone.run(() => component.addAnnotationType());
       expect(router.navigate).toHaveBeenCalled();
-      expect((router.navigate as any).calls.mostRecent().args[0]).toEqual([ 'annotationAdd' ]);
+      expect((router.navigate as any).calls.mostRecent().args[0]).toEqual(['annotationAdd']);
     });
 
     it('when an annotation type is edited, a state change is made', () => {
@@ -444,12 +454,10 @@ describe('ProcessingTypeViewContainerComponent', () => {
 
       ngZone.run(() => component.editAnnotationType(annotationType));
       expect(router.navigate).toHaveBeenCalled();
-      expect((router.navigate as any).calls.mostRecent().args[0])
-        .toEqual([ 'annotation', annotationType.id ]);
+      expect((router.navigate as any).calls.mostRecent().args[0]).toEqual(['annotation', annotationType.id]);
     });
 
     describe('when removing an annotation type', () => {
-
       it('dispatches an event to update the processing type', fakeAsync(() => {
         const modalService = TestBed.get(NgbModal);
 
@@ -476,13 +484,10 @@ describe('ProcessingTypeViewContainerComponent', () => {
         expect(storeListener.mock.calls.length).toBe(1);
         expect(storeListener.mock.calls[0][0]).toEqual(action);
       }));
-
     });
-
   });
 
   describe('when removing an processing type', () => {
-
     it('dispatches an event to update the processing type', async(() => {
       const entities = createEntities();
       const modalService = TestBed.get(NgbModal);
@@ -528,20 +533,21 @@ describe('ProcessingTypeViewContainerComponent', () => {
       fixture.detectChanges();
 
       expect(routerListener).toHaveBeenCalled();
-      expect(routerListener.mock.calls[0][0])
-        .toEqual([ '/admin/studies', entities.study.slug, 'processing' ]);
+      expect(routerListener.mock.calls[0][0]).toEqual(['/admin/studies', entities.study.slug, 'processing']);
     }));
 
     it('opens a modal if the processing type is in use', () => {
       const entities = createEntities();
       const inUseProcessingType = new ProcessingType().deserialize({
-        ...entities.processingType as any,
+        ...(entities.processingType as any),
         inUse: true
       });
 
-      store.dispatch(new ProcessingTypeStoreActions.UpdateProcessingTypeSuccess({
-        processingType: inUseProcessingType
-      }));
+      store.dispatch(
+        new ProcessingTypeStoreActions.UpdateProcessingTypeSuccess({
+          processingType: inUseProcessingType
+        })
+      );
       fixture.detectChanges();
 
       const modalService = TestBed.get(NgbModal);
@@ -558,7 +564,6 @@ describe('ProcessingTypeViewContainerComponent', () => {
   });
 
   describe('when user wants to add a processing type', () => {
-
     it('changes state if study is disabled', fakeAsync(() => {
       const ngZone = TestBed.get(NgZone);
       const routerListener = jest.spyOn(router, 'navigate').mockResolvedValue(true);
@@ -569,10 +574,10 @@ describe('ProcessingTypeViewContainerComponent', () => {
 
       ngZone.run(() => component.addProcessingTypeSelected());
       expect(routerListener.mock.calls.length).toBe(1);
-      expect(routerListener.mock.calls[0][0])
-        .toEqual([ `/admin/studies/${entities.study.slug}/processing/add` ]);
+      expect(routerListener.mock.calls[0][0]).toEqual([
+        `/admin/studies/${entities.study.slug}/processing/add`
+      ]);
     }));
-
   });
 
   it('changes state when user selects a processing type', async(() => {
@@ -585,8 +590,9 @@ describe('ProcessingTypeViewContainerComponent', () => {
     fixture.whenStable().then(() => {
       ngZone.run(() => component.processingTypeSelected(entities.processingType));
       expect(routerListener.mock.calls.length).toBe(1);
-      expect(routerListener.mock.calls[0][0])
-        .toEqual([ `/admin/studies/${entities.study.slug}/processing/${entities.processingType.slug}` ]);
+      expect(routerListener.mock.calls[0][0]).toEqual([
+        `/admin/studies/${entities.study.slug}/processing/${entities.processingType.slug}`
+      ]);
     });
   }));
 

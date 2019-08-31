@@ -10,8 +10,7 @@ import { filter, map, take, tap } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class StudyResolver implements Resolve<Study> {
-  constructor(private store$: Store<RootStoreState.State>,
-              private router: Router) {}
+  constructor(private store$: Store<RootStoreState.State>, private router: Router) {}
 
   resolve(route: ActivatedRouteSnapshot, _state: RouterStateSnapshot): Observable<Study> {
     const slug = route.paramMap.get('slug');
@@ -22,14 +21,16 @@ export class StudyResolver implements Resolve<Study> {
       this.store$.pipe(
         select(StudyStoreSelectors.selectStudyError),
         filter(s => !!s),
-        tap(() => this.router.navigateByUrl('/404'))),
+        tap(() => this.router.navigateByUrl('/404'))
+      ),
       this.store$.pipe(
         select(StudyStoreSelectors.selectAllStudies),
         filter(s => s.length > 0),
         map((studies: Study[]) => {
           const study = studies.find(s => s.slug === slug);
           return study ? study : throwError('study not found');
-        })))
-      .pipe(take(1));
+        })
+      )
+    ).pipe(take(1));
   }
 }

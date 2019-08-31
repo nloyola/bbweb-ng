@@ -12,16 +12,9 @@ describe('ModalInputEmailComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [
-        FormsModule,
-        ReactiveFormsModule
-      ],
-      declarations: [
-        ModalInputComponent,
-        ModalInputEmailComponent
-      ]
-    })
-    .compileComponents();
+      imports: [FormsModule, ReactiveFormsModule],
+      declarations: [ModalInputComponent, ModalInputEmailComponent]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -35,23 +28,29 @@ describe('ModalInputEmailComponent', () => {
   });
 
   describe('shared behaviour', () => {
-
     const context: ModalInputComponentBehaviour.Context<ModalInputEmailComponent, string> = {};
 
     beforeEach(() => {
-      context.fixture             = fixture;
-      context.assignOptions       = (options) => { component.options = options; };
-      context.assignMockModal     = (mockModal) => { component.modal = mockModal; };
-      context.assignInputValue    = (value) => { component.input.setValue(value); };
-      context.getValidValue       = () => faker.internet.email();
-      context.inputElement        = () => fixture.debugElement.query(By.css('input'));
-      context.markInputAsTouched  = () => { component.input.markAllAsTouched(); };
-      context.requiredText        = 'An email address is required';
-      context.confirm             = () => component.confirm();
-      context.dismiss             = () => component.dismiss();
+      context.fixture = fixture;
+      context.assignOptions = options => {
+        component.options = options;
+      };
+      context.assignMockModal = mockModal => {
+        component.modal = mockModal;
+      };
+      context.assignInputValue = value => {
+        component.input.setValue(value);
+      };
+      context.getValidValue = () => faker.internet.email();
+      context.inputElement = () => fixture.debugElement.query(By.css('input'));
+      context.markInputAsTouched = () => {
+        component.input.markAllAsTouched();
+      };
+      context.requiredText = 'An email address is required';
+      context.confirm = () => component.confirm();
+      context.dismiss = () => component.dismiss();
     });
 
     ModalInputComponentBehaviour.sharedBehaviour(context);
-
   });
 });

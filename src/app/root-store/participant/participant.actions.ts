@@ -36,8 +36,8 @@ export const addParticipantFailure = createAction(
 export const getParticipantRequest = createAction(
   '[Participant] Get Participant Request',
   props<{
-    slug?: string,
-    uniqueId?: string
+    slug?: string;
+    uniqueId?: string;
   }>()
 );
 
@@ -54,9 +54,9 @@ export const getParticipantFailure = createAction(
 export const updateParticipantRequest = createAction(
   '[Participant] Update Participant Request',
   props<{
-    participant: Participant,
-    attributeName: ParticipantUpdateAttribute,
-    value: string | Date
+    participant: Participant;
+    attributeName: ParticipantUpdateAttribute;
+    value: string | Date;
   }>()
 );
 

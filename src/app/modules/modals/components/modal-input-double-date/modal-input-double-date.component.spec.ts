@@ -8,9 +8,8 @@ describe('ModalInputDoubleDateComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ModalInputDoubleDateComponent ]
-    })
-    .compileComponents();
+      declarations: [ModalInputDoubleDateComponent]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

@@ -15,16 +15,10 @@ describe('EventTypeViewComponent', () => {
     factory = new Factory();
 
     TestBed.configureTestingModule({
-      imports: [
-        NgbModule
-      ],
-      declarations: [
-        EventTypeViewComponent,
-        YesNoPipe
-      ],
+      imports: [NgbModule],
+      declarations: [EventTypeViewComponent, YesNoPipe],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
-    })
-      .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -142,20 +136,13 @@ describe('EventTypeViewComponent', () => {
       testInfo.componentFunc();
       expect(testInfo.emitter.emit).toHaveBeenCalledWith(testInfo.arg);
     });
-
   });
 
   function createTestEventType(): CollectionEventType {
     return new CollectionEventType().deserialize({
       ...factory.collectionEventType({
-        annotationTypes: [
-          factory.annotationType(),
-          factory.annotationType()
-        ],
-        specimenDefinitions: [
-          factory.collectedSpecimenDefinition(),
-          factory.collectedSpecimenDefinition()
-        ]
+        annotationTypes: [factory.annotationType(), factory.annotationType()],
+        specimenDefinitions: [factory.collectedSpecimenDefinition(), factory.collectedSpecimenDefinition()]
       })
     });
   }

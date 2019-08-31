@@ -18,22 +18,22 @@ export function userCountsToUIMap(counts: UserCounts): UserCountsUIMap {
     [
       UserState.Registered,
       {
-      count: counts.registeredCount,
-      ...UserStateUIMap.get(UserState.Registered)
+        count: counts.registeredCount,
+        ...UserStateUIMap.get(UserState.Registered)
       }
     ],
     [
       UserState.Active,
       {
-      count: counts.activeCount,
-      ...UserStateUIMap.get(UserState.Active)
+        count: counts.activeCount,
+        ...UserStateUIMap.get(UserState.Active)
       }
     ],
     [
       UserState.Locked,
       {
-      count: counts.lockedCount,
-      ...UserStateUIMap.get(UserState.Locked)
+        count: counts.lockedCount,
+        ...UserStateUIMap.get(UserState.Locked)
       }
     ]
   ]);

@@ -15,16 +15,10 @@ describe('ProcessingTypeViewComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [
-        NgbModule
-      ],
-      declarations: [
-        ProcessingTypeViewComponent,
-        YesNoPipe
-      ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
-    .compileComponents();
+      imports: [NgbModule],
+      declarations: [ProcessingTypeViewComponent, YesNoPipe],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -44,7 +38,7 @@ describe('ProcessingTypeViewComponent', () => {
     expect(component.processingType).toBeDefined();
 
     const inUseProcessingType = new ProcessingType().deserialize({
-      ...entities.processingType as any,
+      ...(entities.processingType as any),
       inUse: true
     });
 
@@ -56,7 +50,6 @@ describe('ProcessingTypeViewComponent', () => {
   });
 
   describe('for event emitters', () => {
-
     const compUpdateFuncNames = [
       'updateName',
       'updateDescription',
@@ -77,12 +70,12 @@ describe('ProcessingTypeViewComponent', () => {
       compUpdateFuncNames.forEach(compUpdateFuncName => {
         let eventProduced = false;
         const emitterName = `${compUpdateFuncName}Selected`;
-        component[emitterName].subscribe(() => { eventProduced = true; });
+        component[emitterName].subscribe(() => {
+          eventProduced = true;
+        });
         component[compUpdateFuncName]();
         expect(eventProduced).toBe(true);
       });
     });
-
   });
-
 });

@@ -14,14 +14,14 @@ describe('AccessAdminComponent', () => {
       imports: [
         StoreModule.forRoot(
           {
-            'auth': AuthStoreReducer.reducer
+            auth: AuthStoreReducer.reducer
           },
-          NgrxRuntimeChecks)
+          NgrxRuntimeChecks
+        )
       ],
-      declarations: [ AccessAdminComponent ],
+      declarations: [AccessAdminComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {

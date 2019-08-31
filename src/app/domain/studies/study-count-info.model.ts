@@ -18,21 +18,21 @@ export function studyCountsToUIMap(counts: StudyCounts): StudyCountsUIMap {
     [
       StudyState.Disabled,
       {
-      count: counts.disabledCount,
-      ...StudyStateUIMap.get(StudyState.Disabled)
+        count: counts.disabledCount,
+        ...StudyStateUIMap.get(StudyState.Disabled)
       }
     ],
     [
       StudyState.Enabled,
       {
-      count: counts.enabledCount,
-      ...StudyStateUIMap.get(StudyState.Enabled)
+        count: counts.enabledCount,
+        ...StudyStateUIMap.get(StudyState.Enabled)
       }
     ],
     [
       StudyState.Retired,
       {
-      count: counts.retiredCount,
+        count: counts.retiredCount,
         ...StudyStateUIMap.get(StudyState.Retired)
       }
     ]

@@ -7,14 +7,12 @@ import { AnnotationType } from '@app/domain/annotations';
   styleUrls: ['./annotation-type-summary.component.scss']
 })
 export class AnnotationTypeSummaryComponent implements OnInit {
-
   @Input() annotationType: AnnotationType;
   requiredLabel: string;
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit() {
-     this.requiredLabel = this.annotationType.required ? 'Yes' : 'No';
+    this.requiredLabel = this.annotationType.required ? 'Yes' : 'No';
   }
-
 }

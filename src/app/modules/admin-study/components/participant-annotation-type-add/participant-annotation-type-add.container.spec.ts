@@ -16,7 +16,6 @@ import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { ParticipantAnnotationTypeAddContainerComponent } from './participant-annotation-type-add.container';
 
 describe('ParticipantAnnotationTypeAddContainer', () => {
-
   let component: ParticipantAnnotationTypeAddContainerComponent;
   let fixture: ComponentFixture<ParticipantAnnotationTypeAddContainerComponent>;
   let ngZone: NgZone;
@@ -27,7 +26,6 @@ describe('ParticipantAnnotationTypeAddContainer', () => {
   const factory = new Factory();
 
   beforeEach(async(() => {
-
     TestBed.configureTestingModule({
       imports: [
         BrowserAnimationsModule,
@@ -36,10 +34,11 @@ describe('ParticipantAnnotationTypeAddContainer', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            'spinner': SpinnerStoreReducer.reducer,
-            'study': StudyStoreReducer.reducer
+            spinner: SpinnerStoreReducer.reducer,
+            study: StudyStoreReducer.reducer
           },
-          NgrxRuntimeChecks),
+          NgrxRuntimeChecks
+        ),
         ToastrModule.forRoot()
       ],
       providers: [
@@ -48,13 +47,9 @@ describe('ParticipantAnnotationTypeAddContainer', () => {
           useValue: mockActivatedRoute
         }
       ],
-      declarations: [
-        AnnotationTypeAddComponent,
-        ParticipantAnnotationTypeAddContainerComponent
-      ],
+      declarations: [AnnotationTypeAddComponent, ParticipantAnnotationTypeAddContainerComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -91,9 +86,7 @@ describe('ParticipantAnnotationTypeAddContainer', () => {
     const study = createStudy();
     const spy = jest.spyOn(router, 'navigate');
 
-    const testData = [
-      { path: 'add', returnPath: '..' }
-    ];
+    const testData = [{ path: 'add', returnPath: '..' }];
 
     testData.forEach((testInfo, index) => {
       mockActivatedRouteSnapshot(testInfo.path, study);
@@ -103,12 +96,11 @@ describe('ParticipantAnnotationTypeAddContainer', () => {
 
       ngZone.run(() => component.onCancel());
       expect(spy).toHaveBeenCalled();
-      expect(spy.mock.calls[index][0]).toEqual([ testInfo.returnPath ]);
+      expect(spy.mock.calls[index][0]).toEqual([testInfo.returnPath]);
     });
   });
 
   describe('when submitting', () => {
-
     it('on valid submission', async(() => {
       const study = createStudy();
       store.dispatch(StudyStoreActions.getStudySuccess({ study }));
@@ -143,7 +135,7 @@ describe('ParticipantAnnotationTypeAddContainer', () => {
       const study = createStudy();
       const testData = [
         { path: 'add', savedMessage: 'Annotation Added' },
-        { path: study.annotationTypes[0].id, savedMessage: 'Annotation Updated' },
+        { path: study.annotationTypes[0].id, savedMessage: 'Annotation Updated' }
       ];
       const errors = [
         {
@@ -153,7 +145,7 @@ describe('ParticipantAnnotationTypeAddContainer', () => {
         {
           status: 404,
           error: {
-              message: 'simulated error'
+            message: 'simulated error'
           }
         },
         {
@@ -188,7 +180,6 @@ describe('ParticipantAnnotationTypeAddContainer', () => {
         });
       });
     }));
-
   });
 
   function createStudy(): Study {
@@ -196,11 +187,11 @@ describe('ParticipantAnnotationTypeAddContainer', () => {
       ...factory.annotationType(),
       id: factory.stringNext()
     };
-    return new Study().deserialize(factory.study({ annotationTypes: [ annotationType ] }));
+    return new Study().deserialize(factory.study({ annotationTypes: [annotationType] }));
   }
 
   function mockActivatedRouteSnapshot(path: string, study: Study): void {
-    const annotationTypeId = (path === 'add') ? undefined : study.annotationTypes[0].id;
+    const annotationTypeId = path === 'add' ? undefined : study.annotationTypes[0].id;
     mockActivatedRoute.spyOnParent(() => ({
       parent: {
         snapshot: {
@@ -219,10 +210,7 @@ describe('ParticipantAnnotationTypeAddContainer', () => {
         slug: study.slug,
         annotationTypeId
       },
-      url: [
-        { path: '' },
-        { path }
-      ]
+      url: [{ path: '' }, { path }]
     }));
   }
 });

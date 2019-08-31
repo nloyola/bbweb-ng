@@ -10,19 +10,18 @@ import { Factory } from '@test/factory';
 import { AuthGuard } from './auth.guard';
 
 describe('AuthGuard', () => {
-
   @Component({ template: '<router-outlet></router-outlet>' })
-  class TestRootComponent { }
+  class TestRootComponent {}
 
   /* tslint:disable-next-line:max-classes-per-file */
   @Component({ template: 'Test component' })
-  class TestComponent { }
+  class TestComponent {}
 
   const routes: Routes = [
     {
       path: 'admin',
       component: TestRootComponent,
-      canActivate: [AuthGuard],
+      canActivate: [AuthGuard]
     },
     {
       path: 'login',
@@ -37,10 +36,7 @@ describe('AuthGuard', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        HttpClientTestingModule,
-        RouterTestingModule.withRoutes(routes)
-      ],
+      imports: [HttpClientTestingModule, RouterTestingModule.withRoutes(routes)],
       declarations: [TestRootComponent, TestComponent],
       providers: [AuthGuard]
     });
@@ -58,24 +54,29 @@ describe('AuthGuard', () => {
   it('can navigate to router when user is logged in', () => {
     fakeLogin();
 
-    ngZone.run(() => router.navigate(['/admin'])
-               .then(() => {
-                 expect(location.path()).toBe('/admin');
-               })
-               .catch(() => {
-                 fail('should not be invoked');
-               }));
+    ngZone.run(() =>
+      router
+        .navigate(['/admin'])
+        .then(() => {
+          expect(location.path()).toBe('/admin');
+        })
+        .catch(() => {
+          fail('should not be invoked');
+        })
+    );
   });
 
   it('can NOT navigate to admin page when user is NOT logged in', () => {
     ngZone.run(() =>
-               router.navigate(['/admin'])
-               .then(() => {
-                 expect(location.path()).toContain('returnUrl');
-               })
-               .catch(() => {
-                 fail('should not be invoked');
-               }));
+      router
+        .navigate(['/admin'])
+        .then(() => {
+          expect(location.path()).toContain('returnUrl');
+        })
+        .catch(() => {
+          fail('should not be invoked');
+        })
+    );
   });
 
   function fakeLogin() {
@@ -87,5 +88,4 @@ describe('AuthGuard', () => {
     localStorage.setItem('authToken', JSON.stringify(tokenData));
     return new User().deserialize(tokenData.user);
   }
-
 });

@@ -12,14 +12,10 @@ describe('ParticipantAddFormComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [
-        FormsModule,
-        ReactiveFormsModule
-      ],
-      declarations: [ ParticipantAddFormComponent ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
-    .compileComponents();
+      imports: [FormsModule, ReactiveFormsModule],
+      declarations: [ParticipantAddFormComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -38,7 +34,6 @@ describe('ParticipantAddFormComponent', () => {
   });
 
   describe('study input validity', () => {
-
     it('is required', () => {
       fixture.detectChanges();
       const errors = component.study.errors || {};
@@ -51,11 +46,9 @@ describe('ParticipantAddFormComponent', () => {
       const errors = component.study.errors || {};
       expect(errors).toEqual({});
     });
-
   });
 
   describe('uniqueId input validity', () => {
-
     it('is required', () => {
       fixture.detectChanges();
       const errors = component.uniqueId.errors || {};
@@ -68,15 +61,13 @@ describe('ParticipantAddFormComponent', () => {
       const errors = component.uniqueId.errors || {};
       expect(errors).toEqual({});
     });
-
   });
 
   describe('annotation group is initialized', () => {
-
     let study: Study;
 
     beforeEach(() => {
-      study = new Study().deserialize(factory.study({ annotationTypes: [ factory.annotationType() ] }));
+      study = new Study().deserialize(factory.study({ annotationTypes: [factory.annotationType()] }));
     });
 
     it('empty on initialization', () => {
@@ -85,32 +76,33 @@ describe('ParticipantAddFormComponent', () => {
     });
 
     it('recreated when study is selected', () => {
-      component.studies = [ study ];
+      component.studies = [study];
       fixture.detectChanges();
 
       component.form.get('study').setValue(study.id);
-      component.ngOnChanges({ studies: new SimpleChange(null, [ study ], false) });
+      component.ngOnChanges({ studies: new SimpleChange(null, [study], false) });
       fixture.detectChanges();
-      expect((component.annotationsGroup.get('annotations') as FormArray).length)
-        .toBe(study.annotationTypes.length);
+      expect((component.annotationsGroup.get('annotations') as FormArray).length).toBe(
+        study.annotationTypes.length
+      );
     });
-
   });
 
   describe('when a study is selected', () => {
-
     let study: Study;
 
     beforeEach(() => {
-      study = new Study().deserialize(factory.study({ annotationTypes: [ factory.annotationType() ] }));
+      study = new Study().deserialize(factory.study({ annotationTypes: [factory.annotationType()] }));
     });
 
     it('an event is emitted', () => {
-      component.studies = [ study ];
+      component.studies = [study];
       fixture.detectChanges();
 
       let eventProduced = false;
-      component.studySelected.subscribe(() => { eventProduced = true; });
+      component.studySelected.subscribe(() => {
+        eventProduced = true;
+      });
 
       component.form.get('study').setValue(study.id);
       component.onStudySelected();
@@ -119,11 +111,11 @@ describe('ParticipantAddFormComponent', () => {
     });
 
     it('annotations are emptied', () => {
-      component.studies = [ study ];
+      component.studies = [study];
       fixture.detectChanges();
 
       component.form.get('study').setValue(study.id);
-      component.ngOnChanges({ studies: new SimpleChange(null, [ study ], false) });
+      component.ngOnChanges({ studies: new SimpleChange(null, [study], false) });
       fixture.detectChanges();
       expect(component.annotations.length).toBe(1);
 
@@ -131,14 +123,15 @@ describe('ParticipantAddFormComponent', () => {
       fixture.detectChanges();
       expect(component.annotations.length).toBe(0);
     });
-
   });
 
   it('pressing submit button emits an event', () => {
     fixture.detectChanges();
 
     let eventProduced = false;
-    component.submitted.subscribe(() => { eventProduced = true; });
+    component.submitted.subscribe(() => {
+      eventProduced = true;
+    });
 
     component.onSubmit();
     fixture.detectChanges();
@@ -149,11 +142,12 @@ describe('ParticipantAddFormComponent', () => {
     fixture.detectChanges();
 
     let eventProduced = false;
-    component.cancelled.subscribe(() => { eventProduced = true; });
+    component.cancelled.subscribe(() => {
+      eventProduced = true;
+    });
 
     component.onCancel();
     fixture.detectChanges();
     expect(eventProduced).toBe(true);
   });
-
 });

@@ -7,7 +7,6 @@ import { SpecimenDefinition } from '@app/domain/studies';
   styleUrls: ['./specimen-definition-actions.component.scss']
 })
 export class SpecimenDefinitionActionsComponent {
-
   @Input() specimenDefinition: SpecimenDefinition;
   @Input() modifyAllowed: boolean;
 
@@ -15,7 +14,7 @@ export class SpecimenDefinitionActionsComponent {
   @Output() editSelected = new EventEmitter<SpecimenDefinition>();
   @Output() removeSelected = new EventEmitter<SpecimenDefinition>();
 
-  constructor() { }
+  constructor() {}
 
   view() {
     this.viewSelected.emit(this.specimenDefinition);
@@ -28,5 +27,4 @@ export class SpecimenDefinitionActionsComponent {
   remove() {
     this.removeSelected.emit(this.specimenDefinition);
   }
-
 }

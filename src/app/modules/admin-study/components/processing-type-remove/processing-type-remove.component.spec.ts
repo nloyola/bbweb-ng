@@ -12,13 +12,10 @@ describe('ProcessingTypeRemoveComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      providers: [
-        NgbActiveModal
-      ],
-      declarations: [ ProcessingTypeRemoveComponent ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
-    .compileComponents();
+      providers: [NgbActiveModal],
+      declarations: [ProcessingTypeRemoveComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

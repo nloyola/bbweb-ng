@@ -12,7 +12,6 @@ import { catchError, map } from 'rxjs/operators';
   styleUrls: ['./forgot-password.component.scss']
 })
 export class ForgotPasswordComponent implements OnInit {
-
   @ViewChild('successModal', { static: true }) successModal: ElementRef;
   @ViewChild('failureModal', { static: true }) failureModal: ElementRef;
   forgotForm: FormGroup;
@@ -21,13 +20,13 @@ export class ForgotPasswordComponent implements OnInit {
     private formBuilder: FormBuilder,
     private userService: UserService,
     private router: Router,
-    private modalService: NgbModal) { }
+    private modalService: NgbModal
+  ) {}
 
   ngOnInit() {
-    this.forgotForm = this.formBuilder.group(
-      {
-        email: ['', [Validators.required, Validators.email]],
-      });
+    this.forgotForm = this.formBuilder.group({
+      email: ['', [Validators.required, Validators.email]]
+    });
   }
 
   get email() {
@@ -35,15 +34,16 @@ export class ForgotPasswordComponent implements OnInit {
   }
 
   onSubmit() {
-    this.userService.passwordReset(this.forgotForm.value.email)
+    this.userService
+      .passwordReset(this.forgotForm.value.email)
       .pipe(
         map(() => this.successModal),
-        catchError(() => observableOf(this.failureModal)))
+        catchError(() => observableOf(this.failureModal))
+      )
       .subscribe(modal => {
-        this.modalService.open(modal, { ariaLabelledBy: 'modal-basic-title' })
-          .result
-          .then(() => this.router.navigate(['/']));
+        this.modalService
+          .open(modal, { ariaLabelledBy: 'modal-basic-title' })
+          .result.then(() => this.router.navigate(['/']));
       });
   }
-
 }

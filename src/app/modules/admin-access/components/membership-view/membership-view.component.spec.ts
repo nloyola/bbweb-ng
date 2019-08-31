@@ -39,10 +39,11 @@ describe('MembershipViewComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            'membership': MembershipStoreReducer.reducer,
-            'spinner': SpinnerStoreReducer.reducer
+            membership: MembershipStoreReducer.reducer,
+            spinner: SpinnerStoreReducer.reducer
           },
-          NgrxRuntimeChecks),
+          NgrxRuntimeChecks
+        ),
         ToastrModule.forRoot()
       ],
       providers: [
@@ -60,10 +61,9 @@ describe('MembershipViewComponent', () => {
           }
         }
       ],
-      declarations: [ MembershipViewComponent ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
-      .compileComponents();
+      declarations: [MembershipViewComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -83,7 +83,7 @@ describe('MembershipViewComponent', () => {
 
     const newNameAndSlug = factory.nameAndSlug();
     const membershipWithNewName = new Membership().deserialize({
-      ...membership as any,
+      ...(membership as any),
       ...newNameAndSlug
     });
 
@@ -100,11 +100,10 @@ describe('MembershipViewComponent', () => {
     fixture.detectChanges();
 
     expect(routerListener.mock.calls.length).toBe(1);
-    expect(routerListener.mock.calls[0][0]).toEqual([ '..', membershipWithNewName.slug ]);
+    expect(routerListener.mock.calls[0][0]).toEqual(['..', membershipWithNewName.slug]);
   }));
 
   describe('when updating attributes', () => {
-
     const context: EntityUpdateComponentBehaviour.Context<MembershipViewComponent> = {} as any;
 
     beforeEach(() => {
@@ -116,20 +115,21 @@ describe('MembershipViewComponent', () => {
       context.dispatchSuccessAction = () => {
         store.dispatch(MembershipStoreActions.updateMembershipSuccess({ membership }));
       };
-      context.createExpectedFailureAction =
-        (error) => MembershipStoreActions.updateMembershipFailure({ error });
+      context.createExpectedFailureAction = error =>
+        MembershipStoreActions.updateMembershipFailure({ error });
       context.duplicateAttibuteValueError = 'name already used';
     });
 
     describe('when updating name', () => {
-
       beforeEach(() => {
         const newName = factory.stringNext();
         context.modalReturnValue = { result: Promise.resolve(newName) };
-        context.updateEntity = () => { component.updateName(); };
+        context.updateEntity = () => {
+          component.updateName();
+        };
 
         const membershipWithUpdatedSlug = new Membership().deserialize({
-          ...membership as any,
+          ...(membership as any),
           slug: factory.slugify(newName),
           name: newName
         });
@@ -140,22 +140,24 @@ describe('MembershipViewComponent', () => {
           value: newName
         });
         context.dispatchSuccessAction = () => {
-          store.dispatch(MembershipStoreActions.updateMembershipSuccess({
-            membership: membershipWithUpdatedSlug
-          }));
+          store.dispatch(
+            MembershipStoreActions.updateMembershipSuccess({
+              membership: membershipWithUpdatedSlug
+            })
+          );
         };
       });
 
       EntityUpdateComponentBehaviour.sharedBehaviour(context);
-
     });
 
     describe('when updating description', () => {
-
       beforeEach(() => {
         const newValue = faker.lorem.paragraphs();
         context.modalReturnValue = { result: Promise.resolve(newValue) };
-        context.updateEntity = () => { component.updateDescription(); };
+        context.updateEntity = () => {
+          component.updateDescription();
+        };
 
         context.expectedSuccessAction = MembershipStoreActions.updateMembershipRequest({
           membership,
@@ -165,13 +167,10 @@ describe('MembershipViewComponent', () => {
       });
 
       EntityUpdateComponentBehaviour.sharedBehaviour(context);
-
     });
-
   });
 
   describe('when adding and removing a user, study and centre', () => {
-
     let baseContext: EntityWithSubEntityBehaviour.BaseContext = {} as any;
 
     beforeEach(() => {
@@ -196,11 +195,9 @@ describe('MembershipViewComponent', () => {
     });
 
     describe('for a user', () => {
-
       const user = new User().deserialize(factory.user());
 
       describe('when adding', () => {
-
         const context: EntityWithSubEntityBehaviour.AddContext = {} as any;
 
         beforeEach(() => {
@@ -211,12 +208,13 @@ describe('MembershipViewComponent', () => {
             },
             checkAddUpdateRequest: (storeListener: any) => {
               expect(storeListener.mock.calls.length).toBe(1);
-              expect(storeListener.mock.calls[0][0])
-                .toEqual(MembershipStoreActions.updateMembershipRequest({
+              expect(storeListener.mock.calls[0][0]).toEqual(
+                MembershipStoreActions.updateMembershipRequest({
                   membership,
                   attributeName: 'userAdd',
                   value: user.id
-                }));
+                })
+              );
             }
           });
         });
@@ -225,7 +223,6 @@ describe('MembershipViewComponent', () => {
       });
 
       describe('when removing', () => {
-
         const context: EntityWithSubEntityBehaviour.RemoveContext = {} as any;
 
         beforeEach(() => {
@@ -236,27 +233,25 @@ describe('MembershipViewComponent', () => {
             },
             checkRemoveUpdateRequest: (storeListener: any) => {
               expect(storeListener.mock.calls.length).toBe(1);
-              expect(storeListener.mock.calls[0][0])
-                .toEqual(MembershipStoreActions.updateMembershipRequest({
+              expect(storeListener.mock.calls[0][0]).toEqual(
+                MembershipStoreActions.updateMembershipRequest({
                   membership,
                   attributeName: 'userRemove',
                   value: user.id
-                }));
+                })
+              );
             }
           });
         });
 
         EntityWithSubEntityBehaviour.removeSharedBehaviour(context);
       });
-
     });
 
     describe('for a study', () => {
-
       const study = new Study().deserialize(factory.study());
 
       describe('when adding', () => {
-
         const context: EntityWithSubEntityBehaviour.AddContext = {} as any;
 
         beforeEach(() => {
@@ -267,22 +262,21 @@ describe('MembershipViewComponent', () => {
             },
             checkAddUpdateRequest: (storeListener: any) => {
               expect(storeListener.mock.calls.length).toBe(1);
-              expect(storeListener.mock.calls[0][0])
-                .toEqual(MembershipStoreActions.updateMembershipRequest({
+              expect(storeListener.mock.calls[0][0]).toEqual(
+                MembershipStoreActions.updateMembershipRequest({
                   membership,
                   attributeName: 'studyAdd',
                   value: study.id
-                }));
+                })
+              );
             }
           });
 
           EntityWithSubEntityBehaviour.addSharedBehaviour(context);
         });
-
       });
 
       describe('when removing', () => {
-
         const context: EntityWithSubEntityBehaviour.RemoveContext = {} as any;
 
         beforeEach(() => {
@@ -295,12 +289,11 @@ describe('MembershipViewComponent', () => {
         });
 
         describe('and membership has a study', () => {
-
           const subContext: EntityWithSubEntityBehaviour.RemoveContext = {} as any;
 
           beforeEach(() => {
             membership = new Membership().deserialize({
-              ...membership as any,
+              ...(membership as any),
               studyData: {
                 ...membership.studyData,
                 entityData: [
@@ -316,27 +309,26 @@ describe('MembershipViewComponent', () => {
             Object.assign(subContext, context, {
               checkRemoveUpdateRequest: (storeListener: any) => {
                 expect(storeListener.mock.calls.length).toBe(1);
-                expect(storeListener.mock.calls[0][0])
-                  .toEqual(MembershipStoreActions.updateMembershipRequest({
+                expect(storeListener.mock.calls[0][0]).toEqual(
+                  MembershipStoreActions.updateMembershipRequest({
                     membership,
                     attributeName: 'studyRemove',
                     value: study.id
-                  }));
+                  })
+                );
               }
             });
           });
 
           EntityWithSubEntityBehaviour.removeSharedBehaviour(subContext);
-
         });
 
         describe('and membership has NO studies', () => {
-
           const subContext: EntityWithSubEntityBehaviour.RemoveContext = {} as any;
 
           beforeEach(() => {
             membership = new Membership().deserialize({
-              ...membership as any,
+              ...(membership as any),
               studyData: {
                 ...membership.studyData,
                 entityData: []
@@ -345,29 +337,25 @@ describe('MembershipViewComponent', () => {
             Object.assign(subContext, context, {
               checkRemoveUpdateRequest: (storeListener: any) => {
                 expect(storeListener.mock.calls.length).toBe(1);
-                expect(storeListener.mock.calls[0][0])
-                  .toEqual(MembershipStoreActions.updateMembershipRequest({
+                expect(storeListener.mock.calls[0][0]).toEqual(
+                  MembershipStoreActions.updateMembershipRequest({
                     membership,
                     attributeName: 'allStudies'
-                  }));
+                  })
+                );
               }
             });
           });
 
           EntityWithSubEntityBehaviour.removeSharedBehaviour(subContext);
-
         });
-
       });
-
     });
 
     describe('for a centre', () => {
-
       const centre = new Centre().deserialize(factory.centre());
 
       describe('when adding', () => {
-
         const context: EntityWithSubEntityBehaviour.AddContext = {} as any;
 
         beforeEach(() => {
@@ -378,22 +366,21 @@ describe('MembershipViewComponent', () => {
             },
             checkAddUpdateRequest: (storeListener: any) => {
               expect(storeListener.mock.calls.length).toBe(1);
-              expect(storeListener.mock.calls[0][0])
-                .toEqual(MembershipStoreActions.updateMembershipRequest({
+              expect(storeListener.mock.calls[0][0]).toEqual(
+                MembershipStoreActions.updateMembershipRequest({
                   membership,
                   attributeName: 'centreAdd',
                   value: centre.id
-                }));
+                })
+              );
             }
           });
 
           EntityWithSubEntityBehaviour.addSharedBehaviour(context);
         });
-
       });
 
       describe('when removing', () => {
-
         const context: EntityWithSubEntityBehaviour.RemoveContext = {} as any;
 
         beforeEach(() => {
@@ -406,12 +393,11 @@ describe('MembershipViewComponent', () => {
         });
 
         describe('and membership has a centre', () => {
-
           const subContext: EntityWithSubEntityBehaviour.RemoveContext = {} as any;
 
           beforeEach(() => {
             membership = new Membership().deserialize({
-              ...membership as any,
+              ...(membership as any),
               centreData: {
                 ...membership.centreData,
                 entityData: [
@@ -427,27 +413,26 @@ describe('MembershipViewComponent', () => {
             Object.assign(subContext, context, {
               checkRemoveUpdateRequest: (storeListener: any) => {
                 expect(storeListener.mock.calls.length).toBe(1);
-                expect(storeListener.mock.calls[0][0])
-                  .toEqual(MembershipStoreActions.updateMembershipRequest({
+                expect(storeListener.mock.calls[0][0]).toEqual(
+                  MembershipStoreActions.updateMembershipRequest({
                     membership,
                     attributeName: 'centreRemove',
                     value: centre.id
-                  }));
+                  })
+                );
               }
             });
           });
 
           EntityWithSubEntityBehaviour.removeSharedBehaviour(subContext);
-
         });
 
         describe('and membership has NO studies', () => {
-
           const subContext: EntityWithSubEntityBehaviour.RemoveContext = {} as any;
 
           beforeEach(() => {
             membership = new Membership().deserialize({
-              ...membership as any,
+              ...(membership as any),
               centreData: {
                 ...membership.centreData,
                 entityData: []
@@ -456,27 +441,23 @@ describe('MembershipViewComponent', () => {
             Object.assign(subContext, context, {
               checkRemoveUpdateRequest: (storeListener: any) => {
                 expect(storeListener.mock.calls.length).toBe(1);
-                expect(storeListener.mock.calls[0][0])
-                  .toEqual(MembershipStoreActions.updateMembershipRequest({
+                expect(storeListener.mock.calls[0][0]).toEqual(
+                  MembershipStoreActions.updateMembershipRequest({
                     membership,
                     attributeName: 'allCentres'
-                  }));
+                  })
+                );
               }
             });
           });
 
           EntityWithSubEntityBehaviour.removeSharedBehaviour(subContext);
-
         });
-
       });
-
     });
-
   });
 
   describe('when removing an membership', () => {
-
     let modalService: NgbModal;
 
     beforeEach(() => {
@@ -512,8 +493,7 @@ describe('MembershipViewComponent', () => {
       fixture.detectChanges();
 
       expect(routerListener.mock.calls.length).toBe(1);
-      expect(routerListener.mock.calls[0][0]).toEqual([ '..' ]);
+      expect(routerListener.mock.calls[0][0]).toEqual(['..']);
     }));
   });
-
 });

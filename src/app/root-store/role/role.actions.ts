@@ -15,25 +15,13 @@ export const searchRolesSuccess = createAction(
   props<{ pagedReply: PagedReply<Role> }>()
 );
 
-export const searchRolesFailure = createAction(
-  '[Role] Search Roles Failure',
-  props<{ error: any }>()
-);
+export const searchRolesFailure = createAction('[Role] Search Roles Failure', props<{ error: any }>());
 
-export const getRoleRequest = createAction(
-  '[Role] Get Role Request',
-  props<{ slug: string }>()
-);
+export const getRoleRequest = createAction('[Role] Get Role Request', props<{ slug: string }>());
 
-export const getRoleSuccess = createAction(
-  '[Role] Get Role Success',
-  props<{ role: Role }>()
-);
+export const getRoleSuccess = createAction('[Role] Get Role Success', props<{ role: Role }>());
 
-export const getRoleFailure = createAction(
-  '[Role] Get Role Failure',
-  props<{ error: any }>()
-);
+export const getRoleFailure = createAction('[Role] Get Role Failure', props<{ error: any }>());
 
 export const updateRoleRequest = createAction(
   '[Role] Update Role Request',
@@ -41,18 +29,12 @@ export const updateRoleRequest = createAction(
     role: Role;
     attributeName: RoleUpdateAttribute;
     value: string;
-   }>()
+  }>()
 );
 
-export const updateRoleSuccess = createAction(
-  '[Role] Update Role Success',
-  props<{ role: Role }>()
-);
+export const updateRoleSuccess = createAction('[Role] Update Role Success', props<{ role: Role }>());
 
-export const updateRoleFailure = createAction(
-  '[Role] Update Role Failure',
-  props<{ error: any }>()
-);
+export const updateRoleFailure = createAction('[Role] Update Role Failure', props<{ error: any }>());
 
 const all = union({
   searchRolesRequest,

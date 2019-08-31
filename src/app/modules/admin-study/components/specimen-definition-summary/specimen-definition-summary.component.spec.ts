@@ -13,12 +13,8 @@ describe('SpecimenDefinitionSummaryComponent', () => {
     factory = new Factory();
 
     TestBed.configureTestingModule({
-      declarations: [
-        SpecimenDefinitionSummaryComponent,
-        TruncatePipe
-      ]
-    })
-    .compileComponents();
+      declarations: [SpecimenDefinitionSummaryComponent, TruncatePipe]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -27,8 +23,9 @@ describe('SpecimenDefinitionSummaryComponent', () => {
   });
 
   it('should create', () => {
-    component.specimenDefinition =
-      new CollectedSpecimenDefinition().deserialize(factory.collectedSpecimenDefinition());
+    component.specimenDefinition = new CollectedSpecimenDefinition().deserialize(
+      factory.collectedSpecimenDefinition()
+    );
     fixture.detectChanges();
     expect(component).toBeTruthy();
   });

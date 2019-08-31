@@ -10,7 +10,6 @@ import { Observable, of, throwError } from 'rxjs';
 import { AuthStoreEffects } from './auth-store.effects';
 
 describe('auth-store effects', () => {
-
   let effects: AuthStoreEffects;
   let actions: Observable<any>;
   let authService: AuthService;
@@ -18,13 +17,8 @@ describe('auth-store effects', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        HttpClientTestingModule
-      ],
-      providers: [
-        AuthStoreEffects,
-        provideMockActions(() => actions)
-      ]
+      imports: [HttpClientTestingModule],
+      providers: [AuthStoreEffects, provideMockActions(() => actions)]
     });
 
     effects = TestBed.get(AuthStoreEffects);
@@ -71,11 +65,9 @@ describe('auth-store effects', () => {
 
       expect(effects.loginRequest$).toBeObservable(expected);
     });
-
   });
 
   describe('logoutRequestEffect', () => {
-
     it('should respond with logout success', () => {
       const action = AuthStoreActions.logoutRequestAction();
       const completion = AuthStoreActions.logoutSuccessAction();
@@ -87,11 +79,9 @@ describe('auth-store effects', () => {
       expect(effects.logoutRequest$).toBeObservable(expected);
       expect(authService.logout).toHaveBeenCalled();
     });
-
   });
 
   describe('registerRequestEffect', () => {
-
     let user: User;
     let regInfo: any;
 
@@ -131,7 +121,5 @@ describe('auth-store effects', () => {
 
       expect(effects.registerRequest$).toBeObservable(expected);
     });
-
   });
-
 });

@@ -1,14 +1,15 @@
 <div class="card mt-2" *ngIf="study$ | async as study">
-  <div class="card-header bg-primary text-light"
-       *ngIf="(isLoading$ | async) === false; else showLoading">
+  <div class="card-header bg-primary text-light" *ngIf="(isLoading$ | async) === false; else showLoading">
     <mat-icon [ngClass]="study.stateIconClass()">{{ study.stateIcon() }}</mat-icon>
     {{ study.name }} <small i18n>Participant Annotations</small>
     <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
-      <button class="btn btn-sm btn-light"
-              type="button"
-              id="studyMenu"
-              *ngIf="study.isDisabled()"
-              ngbDropdownToggle>
+      <button
+        class="btn btn-sm btn-light"
+        type="button"
+        id="studyMenu"
+        *ngIf="study.isDisabled()"
+        ngbDropdownToggle
+      >
         <mat-icon inline="true">more_vert</mat-icon>
       </button>
 
@@ -19,10 +20,8 @@
         </a>
       </div>
     </span>
-
   </div>
   <ul class="list-group list-group-flush">
-
     <li class="list-group-item" *ngIf="study.annotationTypes.length <= 0">
       <div class="alert alert-warning">
         <mat-icon color="primary">warning</mat-icon>
@@ -39,15 +38,16 @@
     <li class="list-group-item" *ngFor="let annotationType of sortedAnnotationTypes">
       <div class="row">
         <div class="col-md-10">
-          <app-annotation-type-summary [annotationType]="annotationType">
-          </app-annotation-type-summary>
+          <app-annotation-type-summary [annotationType]="annotationType"> </app-annotation-type-summary>
         </div>
         <div class="col-md-2">
-          <app-annotation-type-actions [annotationType]="annotationType"
-                                       [modifyAllowed]="study.isDisabled()"
-                                       (viewSelected)="view($event)"
-                                       (editSelected)="edit($event)"
-                                       (removeSelected)="remove($event)">
+          <app-annotation-type-actions
+            [annotationType]="annotationType"
+            [modifyAllowed]="study.isDisabled()"
+            (viewSelected)="view($event)"
+            (editSelected)="edit($event)"
+            (removeSelected)="remove($event)"
+          >
           </app-annotation-type-actions>
         </div>
       </div>

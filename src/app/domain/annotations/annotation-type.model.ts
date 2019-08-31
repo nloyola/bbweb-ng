@@ -3,7 +3,6 @@ import { MaxValueCount } from './max-value-count.enum';
 import { ValueTypes } from './value-type.enum';
 
 export interface IAnnotationType extends IDomainEntity, HasName, HasDescription {
-
   /**
    * The type of information stored by the annotation.
    */
@@ -24,11 +23,9 @@ export interface IAnnotationType extends IDomainEntity, HasName, HasDescription 
    * When `valueType` is {@link domain.AnnotationValueType.SELECT}, these are the values allowed to be
    */
   options: string[];
-
 }
 
 export class AnnotationType extends DomainEntity implements IAnnotationType {
-
   name: string;
   description: string | null;
   valueType: ValueTypes;
@@ -39,8 +36,12 @@ export class AnnotationType extends DomainEntity implements IAnnotationType {
   static sortAnnotationTypes(annotationTypes: AnnotationType[]): AnnotationType[] {
     const sortedAnnotationTypes = annotationTypes.slice(0);
     sortedAnnotationTypes.sort((a: AnnotationType, b: AnnotationType): number => {
-      if (a.name < b.name) { return -1; }
-      if (a.name > b.name) { return 1; }
+      if (a.name < b.name) {
+        return -1;
+      }
+      if (a.name > b.name) {
+        return 1;
+      }
       return 0;
     });
     return sortedAnnotationTypes;
@@ -60,7 +61,7 @@ export class AnnotationType extends DomainEntity implements IAnnotationType {
     if (this.valueType === ValueTypes.Select) {
       if (this.maxValueCount === undefined) {
         return ValueTypes.Select;
-      } else  if (this.maxValueCount === 1) {
+      } else if (this.maxValueCount === 1) {
         return 'Single Select';
       }
       return 'Multiple Select';
@@ -74,11 +75,10 @@ export class AnnotationType extends DomainEntity implements IAnnotationType {
   }
 
   isSingleSelect() {
-    return (this.valueType === ValueTypes.Select) && (this.maxValueCount === 1);
+    return this.valueType === ValueTypes.Select && this.maxValueCount === 1;
   }
 
   isMultipleSelect() {
-    return (this.valueType === ValueTypes.Select) && (this.maxValueCount !== 1);
+    return this.valueType === ValueTypes.Select && this.maxValueCount !== 1;
   }
-
 }

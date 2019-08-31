@@ -2,21 +2,25 @@
 <div class="form-group row" *ngIf="haveProcessingTypes" [formGroup]="subform">
   <label for="definitionType" class="col-md-3 col-form-label" i18n>Source</label>
   <div class="col-md-4">
-    <input name="definitionType"
-           type="radio"
-           formControlName="definitionType"
-           value="collected"
-           [checked]="processingType.input.definitionType === 'collected'"
-           (change)="definitionTypeUpdated()">
+    <input
+      name="definitionType"
+      type="radio"
+      formControlName="definitionType"
+      value="collected"
+      [checked]="processingType.input.definitionType === 'collected'"
+      (change)="definitionTypeUpdated()"
+    />
     <span class="ml-1" i18n>Collected specimen</span>
   </div>
   <div class="col-md-4">
-    <input name="definitionType"
-           type="radio"
-           formControlName="definitionType"
-           value="processed"
-           [checked]="processingType.input.definitionType === 'processed'"
-           (change)="definitionTypeUpdated()">
+    <input
+      name="definitionType"
+      type="radio"
+      formControlName="definitionType"
+      value="processed"
+      [checked]="processingType.input.definitionType === 'processed'"
+      (change)="definitionTypeUpdated()"
+    />
     <span class="ml-1" i18n>Processed specimen</span>
   </div>
 </div>
@@ -25,18 +29,19 @@
 <div class="form-group row" [formGroup]="subform" *ngIf="definitionTypeIsCollected()">
   <label for="entityId" class="col-md-3 col-form-label" i18n>Event</label>
   <div class="col-md-9">
-    <select class="form-control"
-            name="eventType"
-            formControlName="entityId"
-            (change)="eventTypeSelected($event)">
+    <select
+      class="form-control"
+      name="eventType"
+      formControlName="entityId"
+      (change)="eventTypeSelected($event)"
+    >
       <option value="">-- choose event --</option>
       <option *ngFor="let eventType of collectedDefinitionNames" [value]="eventType.id">
         {{ eventType.name }}
       </option>
     </select>
   </div>
-  <div class="col-md-9 offset-3"
-       *ngIf="entityId.invalid && entityId.touched">
+  <div class="col-md-9 offset-3" *ngIf="entityId.invalid && entityId.touched">
     <div class="text-danger small" *ngIf="entityId.errors.required" i18n>
       Please select an event
     </div>
@@ -47,20 +52,20 @@
 <div class="form-group row" [formGroup]="subform" *ngIf="definitionTypeIsCollected()">
   <label for="definition" class="col-md-3 col-form-label" i18n>Specimen</label>
   <div class="col-md-9">
-    <select class="form-control"
-            name="definitionId"
-            formControlName="definitionId"
-            (change)="specimenDefinitionSelected($event)"
-            required>
+    <select
+      class="form-control"
+      name="definitionId"
+      formControlName="definitionId"
+      (change)="specimenDefinitionSelected($event)"
+      required
+    >
       <option value="">-- choose specimen --</option>
-      <option *ngFor="let specimenDefinition of specimenDefinitions"
-              [value]="specimenDefinition.id">
+      <option *ngFor="let specimenDefinition of specimenDefinitions" [value]="specimenDefinition.id">
         {{ specimenDefinition.name }}
       </option>
     </select>
   </div>
-  <div class="col-md-9 offset-3"
-       *ngIf="definitionId.invalid && definitionId.touched">
+  <div class="col-md-9 offset-3" *ngIf="definitionId.invalid && definitionId.touched">
     <div class="text-danger small" *ngIf="definitionId.errors.required" i18n>
       Please select a processing step
     </div>
@@ -71,20 +76,23 @@
 <div class="form-group row" [formGroup]="subform" *ngIf="!definitionTypeIsCollected()">
   <label for="eventType" class="col-md-3 col-form-label" i18n>Specimen</label>
   <div class="col-md-9">
-    <select class="form-control"
-            name="processingType"
-            formControlName="inputProcessingType"
-            (change)="processedDefinitionSelected($event)"
-            required>
+    <select
+      class="form-control"
+      name="processingType"
+      formControlName="inputProcessingType"
+      (change)="processedDefinitionSelected($event)"
+      required
+    >
       <option value="">-- choose specimen --</option>
-      <option *ngFor="let combinedName of combinedDefinitionNames"
-              [value]="combinedName.specimenDefinitionName.id">
+      <option
+        *ngFor="let combinedName of combinedDefinitionNames"
+        [value]="combinedName.specimenDefinitionName.id"
+      >
         {{ combinedName.combinedName }}
       </option>
     </select>
   </div>
-  <div class="col-md-9 offset-3"
-       *ngIf="inputProcessingType.invalid && inputProcessingType.touched">
+  <div class="col-md-9 offset-3" *ngIf="inputProcessingType.invalid && inputProcessingType.touched">
     <div class="text-danger small" *ngIf="inputProcessingType.errors.required" i18n>
       Please select a specimen from the event
     </div>
@@ -95,20 +103,24 @@
 <div class="form-group row" [formGroup]="subform">
   <label for="expectedChange" class="col-md-3 col-form-label" i18n>Expected Change</label>
   <div class="input-group col-md-9">
-    <input name="expectedChange"
-           class="form-control"
-           type="number"
-           formControlName="expectedChange"
-           i18n-placeholder
-           placeholder="the amount removed from this specimen">
+    <input
+      name="expectedChange"
+      class="form-control"
+      type="number"
+      formControlName="expectedChange"
+      i18n-placeholder
+      placeholder="the amount removed from this specimen"
+    />
   </div>
-  <div class="col-md-9 offset-3"
-       *ngIf="expectedChange.invalid && expectedChange.touched">
+  <div class="col-md-9 offset-3" *ngIf="expectedChange.invalid && expectedChange.touched">
     <div class="text-danger small" *ngIf="expectedChange.errors.required" i18n>
       Expected change is required
     </div>
-    <div class="text-danger small"
-         *ngIf="expectedChange.errors.required || expectedChange.errors.number" i18n>
+    <div
+      class="text-danger small"
+      *ngIf="expectedChange.errors.required || expectedChange.errors.number"
+      i18n
+    >
       Should be a positive floating point number
     </div>
   </div>
@@ -118,16 +130,17 @@
 <div class="form-group row" [formGroup]="subform">
   <label for="units" class="col-md-3 col-form-label" i18n>Specimen Count</label>
   <div class="col-md-9">
-    <input name="count"
-           class="form-control"
-           type="number"
-           formControlName="count"
-           i18n-placeholder
-           placeholder="the number of specimens that are required">
+    <input
+      name="count"
+      class="form-control"
+      type="number"
+      formControlName="count"
+      i18n-placeholder
+      placeholder="the number of specimens that are required"
+    />
   </div>
 
-  <div class="col-md-9 offset-3"
-       *ngIf="count.invalid && count.touched">
+  <div class="col-md-9 offset-3" *ngIf="count.invalid && count.touched">
     <div class="text-danger small" *ngIf="count.errors.required" i18n>
       Specimen count is required
     </div>

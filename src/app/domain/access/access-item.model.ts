@@ -1,7 +1,16 @@
-import { ConcurrencySafeEntity, EntityInfo, HasDescription, HasName, HasSlug, IConcurrencySafeEntity, IEntityInfo, JSONArray, JSONObject } from '@app/domain';
+import {
+  ConcurrencySafeEntity,
+  EntityInfo,
+  HasDescription,
+  HasName,
+  HasSlug,
+  IConcurrencySafeEntity,
+  IEntityInfo,
+  JSONArray,
+  JSONObject
+} from '@app/domain';
 
 export interface IAccessItem extends IConcurrencySafeEntity, HasSlug, HasName, HasDescription {
-
   /**
    * This AccessItem's parents.
    */
@@ -16,7 +25,6 @@ export interface IAccessItem extends IConcurrencySafeEntity, HasSlug, HasName, H
 export type IAccessItemInfo = IEntityInfo<IAccessItem>;
 
 export abstract class AccessItem extends ConcurrencySafeEntity implements IAccessItem {
-
   slug: string;
   name: string;
   description: string | null;
@@ -40,5 +48,4 @@ export abstract class AccessItem extends ConcurrencySafeEntity implements IAcces
     }
     return this;
   }
-
 }

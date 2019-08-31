@@ -12,7 +12,6 @@ import { ModalInputBaseComponent } from '../modal-input-base.component';
   styleUrls: ['./modal-input-text.component.scss']
 })
 export class ModalInputTextComponent extends ModalInputBaseComponent<string> implements OnInit, OnDestroy {
-
   @Input() options: ModalInputTextOptions;
 
   constructor(formBuilder: FormBuilder) {
@@ -30,5 +29,4 @@ export class ModalInputTextComponent extends ModalInputBaseComponent<string> imp
 
     super.ngOnInit();
   }
-
 }

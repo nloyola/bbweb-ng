@@ -42,12 +42,7 @@ import { StudyRemoveModalComponent } from '@app/modules/modals/components/study-
     CentreLocationAddComponent,
     CentreAddComponent
   ],
-  exports: [
-    CentresAdminComponent
-  ],
-  entryComponents: [
-    LocationRemoveComponent,
-    StudyRemoveModalComponent
-  ]
+  exports: [CentresAdminComponent],
+  entryComponents: [LocationRemoveComponent, StudyRemoveModalComponent]
 })
-export class AdminCentreModule { }
+export class AdminCentreModule {}

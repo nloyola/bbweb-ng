@@ -6,7 +6,20 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { AnnotationFactory } from '@app/domain/annotations';
 import { CollectionEvent, Participant, Specimen } from '@app/domain/participants';
 import { CollectionEventType, Study } from '@app/domain/studies';
-import { EventStoreActions, EventStoreReducer, EventTypeStoreActions, EventTypeStoreReducer, NgrxRuntimeChecks, ParticipantStoreActions, ParticipantStoreReducer, RootStoreState, SpecimenStoreActions, SpecimenStoreReducer, StudyStoreActions, StudyStoreReducer } from '@app/root-store';
+import {
+  EventStoreActions,
+  EventStoreReducer,
+  EventTypeStoreActions,
+  EventTypeStoreReducer,
+  NgrxRuntimeChecks,
+  ParticipantStoreActions,
+  ParticipantStoreReducer,
+  RootStoreState,
+  SpecimenStoreActions,
+  SpecimenStoreReducer,
+  StudyStoreActions,
+  StudyStoreReducer
+} from '@app/root-store';
 import { NgbActiveModal, NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
 import { EntityUpdateComponentBehaviour } from '@test/behaviours/entity-update-component.behaviour';
@@ -34,13 +47,14 @@ describe('EventViewComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            'study':       StudyStoreReducer.reducer,
-            'event-type':  EventTypeStoreReducer.reducer,
-            'participant': ParticipantStoreReducer.reducer,
-            'event':       EventStoreReducer.reducer,
-            'specimen':    SpecimenStoreReducer.reducer
+            study: StudyStoreReducer.reducer,
+            'event-type': EventTypeStoreReducer.reducer,
+            participant: ParticipantStoreReducer.reducer,
+            event: EventStoreReducer.reducer,
+            specimen: SpecimenStoreReducer.reducer
           },
-          NgrxRuntimeChecks),
+          NgrxRuntimeChecks
+        ),
         ToastrModule.forRoot()
       ],
       providers: [
@@ -50,10 +64,9 @@ describe('EventViewComponent', () => {
           useValue: mockActivatedRoute
         }
       ],
-      declarations: [ EventViewComponent ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
-      .compileComponents();
+      declarations: [EventViewComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -71,7 +84,7 @@ describe('EventViewComponent', () => {
   it('entities are loaded from the store', () => {
     const entities = createEntities();
     const { eventType, event, specimen } = entities;
-    const specimens = [ specimen ];
+    const specimens = [specimen];
     dispatchEntities(entities);
     fixture.detectChanges();
     expect(component.entities$).toBeObservable(cold('d', { d: { event, eventType, specimens } }));
@@ -104,12 +117,15 @@ describe('EventViewComponent', () => {
 
     expect(routerListener.mock.calls.length).toBe(1);
     expect(routerListener.mock.calls[0][0]).toEqual([
-      '/collection', participant.slug, 'collection', 'view', newVisitNumber
+      '/collection',
+      participant.slug,
+      'collection',
+      'view',
+      newVisitNumber
     ]);
   }));
 
   describe('when updating attributes', () => {
-
     const context: EntityUpdateComponentBehaviour.Context<EventViewComponent> = {} as any;
     let event;
 
@@ -117,24 +133,27 @@ describe('EventViewComponent', () => {
       const entities = createEntities();
       event = entities.event;
       context.fixture = fixture;
-      context.componentInitialize = () => { dispatchEntities(entities); };
+      context.componentInitialize = () => {
+        dispatchEntities(entities);
+      };
       context.componentValidateInitialization = () => undefined;
-      context.dispatchSuccessAction =
-        () => { store.dispatch(EventStoreActions.updateEventSuccess({ event })); };
-      context.createExpectedFailureAction =
-        (error) => EventStoreActions.updateEventFailure({ error });
+      context.dispatchSuccessAction = () => {
+        store.dispatch(EventStoreActions.updateEventSuccess({ event }));
+      };
+      context.createExpectedFailureAction = error => EventStoreActions.updateEventFailure({ error });
       context.duplicateAttibuteValueError = 'visit number already exists';
     });
 
     describe('when updating visit number', () => {
-
       beforeEach(() => {
         const newVisitNumber = 999;
         context.modalReturnValue = { result: Promise.resolve(newVisitNumber) };
-        context.updateEntity = () => { component.updateVisitNumber(); };
+        context.updateEntity = () => {
+          component.updateVisitNumber();
+        };
 
         const updatedEvent = new CollectionEvent().deserialize({
-          ...event as any,
+          ...(event as any),
           visitNumber: newVisitNumber
         });
 
@@ -149,18 +168,18 @@ describe('EventViewComponent', () => {
       });
 
       EntityUpdateComponentBehaviour.sharedBehaviour(context);
-
     });
 
     describe('when updating time completed', () => {
-
       beforeEach(() => {
         const newTimeCompleted = faker.date.recent(10);
         context.modalReturnValue = { result: Promise.resolve(newTimeCompleted) };
-        context.updateEntity = () => { component.updateTimeCompleted(); };
+        context.updateEntity = () => {
+          component.updateTimeCompleted();
+        };
 
         const updatedEvent = new CollectionEvent().deserialize({
-          ...event as any,
+          ...(event as any),
           timeCompleted: newTimeCompleted
         });
 
@@ -175,34 +194,37 @@ describe('EventViewComponent', () => {
       });
 
       EntityUpdateComponentBehaviour.sharedBehaviour(context);
-
     });
-
   });
 
   describe('when updating an annotation', () => {
-
     const context: EntityUpdateComponentBehaviour.Context<EventViewComponent> = {} as any;
 
     beforeEach(() => {
       const eventType = new CollectionEventType().deserialize(
-        factory.collectionEventType({ annotationTypes: [ factory.annotationType() ] }));
+        factory.collectionEventType({ annotationTypes: [factory.annotationType()] })
+      );
       const entities = createEntities({ eventType });
       const { event } = entities;
       const annotation = AnnotationFactory.annotationFromType(eventType.annotationTypes[0]);
       context.fixture = fixture;
-      context.componentInitialize = () => { dispatchEntities(entities); };
+      context.componentInitialize = () => {
+        dispatchEntities(entities);
+      };
       context.componentValidateInitialization = () => undefined;
-      context.dispatchSuccessAction =
-        () => { store.dispatch(EventStoreActions.updateEventSuccess({ event })); };
-      context.createExpectedFailureAction = (error) => EventStoreActions.updateEventFailure({ error });
+      context.dispatchSuccessAction = () => {
+        store.dispatch(EventStoreActions.updateEventSuccess({ event }));
+      };
+      context.createExpectedFailureAction = error => EventStoreActions.updateEventFailure({ error });
       context.duplicateAttibuteValueError = undefined;
 
       context.modalReturnValue = { result: Promise.resolve(annotation) };
-      context.updateEntity = () => { component.updateAnnotation(annotation); };
+      context.updateEntity = () => {
+        component.updateAnnotation(annotation);
+      };
 
       const updatedEvent = new CollectionEvent().deserialize(event);
-      updatedEvent.annotations = [ annotation ];
+      updatedEvent.annotations = [annotation];
 
       context.expectedSuccessAction = EventStoreActions.updateEventRequest({
         event,
@@ -215,11 +237,9 @@ describe('EventViewComponent', () => {
     });
 
     EntityUpdateComponentBehaviour.sharedBehaviour(context);
-
   });
 
   describe('when removing an event', () => {
-
     let modalService: NgbModal;
 
     beforeEach(() => {
@@ -268,8 +288,7 @@ describe('EventViewComponent', () => {
       fixture.detectChanges();
 
       expect(routerListener.mock.calls.length).toBe(1);
-      expect(routerListener.mock.calls[0][0]).toEqual([
-        '/collection', participant.slug, 'collection' ]);
+      expect(routerListener.mock.calls[0][0]).toEqual(['/collection', participant.slug, 'collection']);
     }));
 
     it('user is informed event cannot be removed when it has specimens', fakeAsync(() => {

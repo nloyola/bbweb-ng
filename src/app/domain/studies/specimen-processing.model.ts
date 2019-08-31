@@ -1,5 +1,4 @@
 export interface ISpecimenProcessing {
-
   /**
    * The expected amount to be removed / added.
    */
@@ -14,5 +13,4 @@ export interface ISpecimenProcessing {
    * The container type the input / output specimens are stored in.
    */
   containerTypeId: string | null;
-
 }

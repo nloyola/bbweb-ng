@@ -8,21 +8,20 @@ import { ProcessingType, ProcessingTypeInputEntity, SpecimenDefinition } from '@
   styleUrls: ['./processing-type-view.component.scss']
 })
 export class ProcessingTypeViewComponent implements OnInit, OnChanges {
-
   @Input() processingType: ProcessingType;
   @Input() inputEntity: ProcessingTypeInputEntity;
   @Input() allowChanges: boolean;
 
-  @Output() updateNameSelected               = new EventEmitter<any>();
-  @Output() updateDescriptionSelected        = new EventEmitter<any>();
-  @Output() updateEnabledSelected            = new EventEmitter<any>();
-  @Output() addAnnotationTypeSelected        = new EventEmitter<any>();
-  @Output() viewAnnotationTypeSelected       = new EventEmitter<AnnotationType>();
-  @Output() editAnnotationTypeSelected       = new EventEmitter<AnnotationType>();
-  @Output() removeAnnotationTypeSelected     = new EventEmitter<AnnotationType>();
-  @Output() inputSpecimenUpdateSelected      = new EventEmitter<any>();
-  @Output() outputSpecimenUpdateSelected     = new EventEmitter<any>();
-  @Output() removeProcessingTypeSelected     = new EventEmitter<any>();
+  @Output() updateNameSelected = new EventEmitter<any>();
+  @Output() updateDescriptionSelected = new EventEmitter<any>();
+  @Output() updateEnabledSelected = new EventEmitter<any>();
+  @Output() addAnnotationTypeSelected = new EventEmitter<any>();
+  @Output() viewAnnotationTypeSelected = new EventEmitter<AnnotationType>();
+  @Output() editAnnotationTypeSelected = new EventEmitter<AnnotationType>();
+  @Output() removeAnnotationTypeSelected = new EventEmitter<AnnotationType>();
+  @Output() inputSpecimenUpdateSelected = new EventEmitter<any>();
+  @Output() outputSpecimenUpdateSelected = new EventEmitter<any>();
+  @Output() removeProcessingTypeSelected = new EventEmitter<any>();
 
   isPanelCollapsed = false;
   sortedAnnotationTypes: AnnotationType[];
@@ -87,7 +86,7 @@ export class ProcessingTypeViewComponent implements OnInit, OnChanges {
 
   private setSortedAnnotationTypes(): void {
     this.sortedAnnotationTypes = this.processingType
-      ? AnnotationType.sortAnnotationTypes(this.processingType.annotationTypes) : [];
+      ? AnnotationType.sortAnnotationTypes(this.processingType.annotationTypes)
+      : [];
   }
-
 }

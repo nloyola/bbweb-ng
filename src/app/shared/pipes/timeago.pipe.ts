@@ -1,4 +1,4 @@
-import {Pipe, PipeTransform, NgZone, ChangeDetectorRef, OnDestroy} from '@angular/core';
+import { Pipe, PipeTransform, NgZone, ChangeDetectorRef, OnDestroy } from '@angular/core';
 
 /*
  * Source code borrowed from here:
@@ -21,8 +21,7 @@ export class TimeagoPipe implements PipeTransform, OnDestroy {
     const d = new Date(value);
     const now = new Date();
     const seconds = Math.round(Math.abs((now.getTime() - d.getTime()) / 1000));
-    const timeToUpdate = (Number.isNaN(seconds))
-      ? 1000 : this.getSecondsUntilUpdate(seconds) * 1000;
+    const timeToUpdate = Number.isNaN(seconds) ? 1000 : this.getSecondsUntilUpdate(seconds) * 1000;
 
     this.timer = this.ngZone.runOutsideAngular(() => {
       if (typeof window !== 'undefined') {
@@ -65,7 +64,8 @@ export class TimeagoPipe implements PipeTransform, OnDestroy {
       return months + ' months ago';
     } else if (days <= 545) {
       return 'a year ago';
-    } else if (years < 40) { // (days > 545)
+    } else if (years < 40) {
+      // (days > 545)
       return years + ' years ago';
     } else {
       return labelLongerThan40Years ? labelLongerThan40Years : years + ' years ago';
@@ -88,13 +88,17 @@ export class TimeagoPipe implements PipeTransform, OnDestroy {
     const hr = min * 60;
     const day = hr * 24;
 
-    if (seconds < min) { // less than 1 min, update every 2 secs
+    if (seconds < min) {
+      // less than 1 min, update every 2 secs
       return 2;
-    } else if (seconds < hr) { // less than an hour, update every 30 secs
+    } else if (seconds < hr) {
+      // less than an hour, update every 30 secs
       return 30;
-    } else if (seconds < day) { // less then a day, update every 5 mins
+    } else if (seconds < day) {
+      // less then a day, update every 5 mins
       return 300;
-    } else { // update every hour
+    } else {
+      // update every hour
       return 3600;
     }
   }

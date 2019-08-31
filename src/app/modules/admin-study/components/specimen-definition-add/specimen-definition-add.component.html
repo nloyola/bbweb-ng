@@ -2,13 +2,15 @@
 <div class="form-group row" [formGroup]="subform">
   <label for="name" class="col-md-3 col-form-label" i18n>Name</label>
   <div class="col-md-9">
-    <input class="form-control"
-           type="text"
-           #nameInput
-           formControlName="name"
-           i18n-placeholder
-           placeholder="A short name for the specimen"
-           required>
+    <input
+      class="form-control"
+      type="text"
+      #nameInput
+      formControlName="name"
+      i18n-placeholder
+      placeholder="A short name for the specimen"
+      required
+    />
   </div>
   <div class="offset-3 col-md-9" *ngIf="name.invalid && (name.dirty || name.touched)">
     <div class="text-danger small" *ngIf="name.errors.required" i18n>
@@ -24,10 +26,12 @@
 <div class="form-group row" [formGroup]="subform">
   <label for="name" class="col-md-3 col-form-label" i18n>Description</label>
   <div class="col-md-9">
-    <textarea class="form-control"
-              formControlName="description"
-              i18n-placeholder
-              placeholder="A description of the specimen (optional)">
+    <textarea
+      class="form-control"
+      formControlName="description"
+      i18n-placeholder
+      placeholder="A description of the specimen (optional)"
+    >
     </textarea>
   </div>
 </div>
@@ -36,9 +40,7 @@
 <div class="form-group row" [formGroup]="subform">
   <label for="valueType" class="col-md-3 col-form-label" i18n>Anatomical Source</label>
   <div class="col-md-9">
-    <select class="form-control"
-            id="anatomicalSource"
-            formControlName="anatomicalSource">
+    <select class="form-control" id="anatomicalSource" formControlName="anatomicalSource">
       <option value="" i18n>-- make a selection --</option>
       <option *ngFor="let anatomicalSource of anatomicalSources" [value]="anatomicalSource">
         {{ anatomicalSourceLabels[anatomicalSource] }}
@@ -57,9 +59,7 @@
 <div class="form-group row" [formGroup]="subform">
   <label for="valueType" class="col-md-3 col-form-label" i18n>Preservation</label>
   <div class="col-md-9">
-    <select class="form-control"
-            id="preservation"
-            formControlName="preservation">
+    <select class="form-control" id="preservation" formControlName="preservation">
       <option value="" i18n>-- make a selection --</option>
       <option *ngFor="let preservation of preservationTypes" [value]="preservation">
         {{ preservationTypeLabels[preservation] }}
@@ -78,9 +78,7 @@
 <div class="form-group row" [formGroup]="subform">
   <label for="valueType" class="col-md-3 col-form-label" i18n>Temperature</label>
   <div class="col-md-9">
-    <select class="form-control"
-            id="temperature"
-            formControlName="temperature">
+    <select class="form-control" id="temperature" formControlName="temperature">
       <option value="" i18n>-- make a selection --</option>
       <option *ngFor="let temperature of preservationTemperatures" [value]="temperature">
         {{ preservationTemperatureLabels[temperature] }}
@@ -99,9 +97,7 @@
 <div class="form-group row" [formGroup]="subform">
   <label for="valueType" class="col-md-3 col-form-label" i18n>SpecimenType</label>
   <div class="col-md-9">
-    <select class="form-control"
-            id="specimenType"
-            formControlName="specimenType">
+    <select class="form-control" id="specimenType" formControlName="specimenType">
       <option value="" i18n>-- make a selection --</option>
       <option *ngFor="let specimenType of specimenTypes" [value]="specimenType">
         {{ specimenTypeLabels[specimenType] }}
@@ -120,11 +116,13 @@
 <div class="form-group row" [formGroup]="subform">
   <label for="name" class="col-md-3 col-form-label" i18n>Units</label>
   <div class="col-md-9">
-    <input class="form-control"
-           type="text"
-           formControlName="units"
-           i18n-placeholder
-           placeholder="the units the specimens are measured in (eg. mL, cm, etc.)">
+    <input
+      class="form-control"
+      type="text"
+      formControlName="units"
+      i18n-placeholder
+      placeholder="the units the specimens are measured in (eg. mL, cm, etc.)"
+    />
   </div>
   <div class="offset-3 col-md-9" *ngIf="units.invalid && units.touched">
     <div class="text-danger small" *ngIf="units.errors.required" i18n>

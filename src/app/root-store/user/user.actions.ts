@@ -6,9 +6,7 @@ import { User } from '@app/domain/users';
 import { UserUpdateAttribute, PasswordUpdateValues } from '@app/core/services';
 import { props, createAction, union } from '@ngrx/store';
 
-export const getUserCountsRequest = createAction(
-  '[User] Get User Count Request'
-);
+export const getUserCountsRequest = createAction('[User] Get User Count Request');
 
 export const getUserCountsSuccess = createAction(
   '[Centre] Get Centre Count Request',
@@ -30,25 +28,13 @@ export const searchUsersSuccess = createAction(
   props<{ pagedReply: PagedReply<User> }>()
 );
 
-export const searchUsersFailure = createAction(
-  '[User] Search Users Failure',
-  props<{ error: any }>()
-);
+export const searchUsersFailure = createAction('[User] Search Users Failure', props<{ error: any }>());
 
-export const getUserRequest = createAction(
-  '[User] Get User Request',
-  props<{ slug: string }>()
-);
+export const getUserRequest = createAction('[User] Get User Request', props<{ slug: string }>());
 
-export const getUserSuccess = createAction(
-  '[User] Get User Success',
-  props<{ user: User }>()
-);
+export const getUserSuccess = createAction('[User] Get User Success', props<{ user: User }>());
 
-export const getUserFailure = createAction(
-  '[User] Get User Failure',
-  props<{ error: any }>()
-);
+export const getUserFailure = createAction('[User] Get User Failure', props<{ error: any }>());
 
 export const updateUserRequest = createAction(
   '[User] Update User Request',
@@ -59,16 +45,9 @@ export const updateUserRequest = createAction(
   }>()
 );
 
-export const updateUserSuccess = createAction(
-  '[User] Update User Success',
-  props<{ user: User }>()
-);
+export const updateUserSuccess = createAction('[User] Update User Success', props<{ user: User }>());
 
-export const updateUserFailure = createAction(
-  '[User] Update User Failure',
-  props<{ error: any }>()
-);
-
+export const updateUserFailure = createAction('[User] Update User Failure', props<{ error: any }>());
 
 const all = union({
   getUserCountsRequest,

@@ -5,7 +5,13 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CollectionEventType, Study } from '@app/domain/studies';
-import { EventTypeStoreActions, EventTypeStoreReducer, RootStoreState, StudyStoreActions, StudyStoreReducer } from '@app/root-store';
+import {
+  EventTypeStoreActions,
+  EventTypeStoreReducer,
+  RootStoreState,
+  StudyStoreActions,
+  StudyStoreReducer
+} from '@app/root-store';
 import { NgrxRuntimeChecks } from '@app/root-store/root-store.module';
 import { AnnotationTypeAddComponent } from '@app/shared/components/annotation-type-add/annotation-type-add.component';
 import { Store, StoreModule } from '@ngrx/store';
@@ -16,7 +22,6 @@ import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { CollectionAnnotationTypeAddContainerComponent } from './collection-annotation-type-add.container';
 
 describe('CollectionAnnotationTypeAddContainerComponent', () => {
-
   let component: CollectionAnnotationTypeAddContainerComponent;
   let fixture: ComponentFixture<CollectionAnnotationTypeAddContainerComponent>;
   let ngZone: NgZone;
@@ -39,10 +44,11 @@ describe('CollectionAnnotationTypeAddContainerComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            'study': StudyStoreReducer.reducer,
+            study: StudyStoreReducer.reducer,
             'event-type': EventTypeStoreReducer.reducer
           },
-          NgrxRuntimeChecks),
+          NgrxRuntimeChecks
+        ),
         ToastrModule.forRoot()
       ],
       providers: [
@@ -51,13 +57,9 @@ describe('CollectionAnnotationTypeAddContainerComponent', () => {
           useValue: mockActivatedRoute
         }
       ],
-      declarations: [
-        AnnotationTypeAddComponent,
-        CollectionAnnotationTypeAddContainerComponent
-      ],
+      declarations: [AnnotationTypeAddComponent, CollectionAnnotationTypeAddContainerComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
-    })
-    .compileComponents();
+    }).compileComponents();
 
     mockActivatedRoute.spyOnParent(() => ({
       parent: {
@@ -96,10 +98,12 @@ describe('CollectionAnnotationTypeAddContainerComponent', () => {
 
     jest.spyOn(store, 'dispatch');
     fixture.detectChanges();
-    expect(store.dispatch).toHaveBeenCalledWith(EventTypeStoreActions.getEventTypeRequest({
-      studySlug: study.slug,
-      eventTypeSlug: eventType.slug
-    }));
+    expect(store.dispatch).toHaveBeenCalledWith(
+      EventTypeStoreActions.getEventTypeRequest({
+        studySlug: study.slug,
+        eventTypeSlug: eventType.slug
+      })
+    );
   });
 
   it('assigns the event type when it is added to the store', () => {
@@ -112,10 +116,7 @@ describe('CollectionAnnotationTypeAddContainerComponent', () => {
     const eventType = initializeComponent();
     const routerListener = jest.spyOn(router, 'navigate');
 
-    const testData = [
-      { path: 'annotationAdd', returnPath: '..' },
-      { path: 'annotation', returnPath: '..' }
-    ];
+    const testData = [{ path: 'annotationAdd', returnPath: '..' }, { path: 'annotation', returnPath: '..' }];
 
     testData.forEach((testInfo, index) => {
       routerListener.mockReset();
@@ -126,12 +127,11 @@ describe('CollectionAnnotationTypeAddContainerComponent', () => {
 
       ngZone.run(() => component.onCancel());
       expect(routerListener).toHaveBeenCalled();
-      expect(routerListener.mock.calls[0][0]).toEqual([ testInfo.returnPath ]);
+      expect(routerListener.mock.calls[0][0]).toEqual([testInfo.returnPath]);
     });
   });
 
   describe('when submitting', () => {
-
     it('on valid submission', async(() => {
       const eventType = initializeComponent();
       const expectedAction = EventTypeStoreActions.updateEventTypeRequest({
@@ -177,7 +177,7 @@ describe('CollectionAnnotationTypeAddContainerComponent', () => {
         {
           status: 404,
           error: {
-              message: 'simulated error'
+            message: 'simulated error'
           }
         },
         {
@@ -214,13 +214,14 @@ describe('CollectionAnnotationTypeAddContainerComponent', () => {
         });
       });
     }));
-
   });
 
   function createEventType(): CollectionEventType {
-    return new CollectionEventType().deserialize(factory.collectionEventType({
-      annotationTypes: [ factory.annotationType() ]
-    }));
+    return new CollectionEventType().deserialize(
+      factory.collectionEventType({
+        annotationTypes: [factory.annotationType()]
+      })
+    );
   }
 
   function initializeComponent(): CollectionEventType {
@@ -232,7 +233,7 @@ describe('CollectionAnnotationTypeAddContainerComponent', () => {
   }
 
   function mockActivatedRouteSnapshot(path: string, eventType: CollectionEventType): void {
-    const annotationTypeId = (path === 'annotationAdd') ? undefined : eventType.annotationTypes[0].id;
+    const annotationTypeId = path === 'annotationAdd' ? undefined : eventType.annotationTypes[0].id;
     mockActivatedRoute.spyOnParent(() => ({
       parent: {
         parent: {

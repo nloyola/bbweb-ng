@@ -7,10 +7,9 @@ import { CentreCountsUIMap } from '@app/domain/centres';
   styleUrls: ['./centre-counts.component.scss']
 })
 export class CentreCountsComponent {
-
   @Input() countData: CentreCountsUIMap;
 
-  constructor() { }
+  constructor() {}
 
   getCounts() {
     return Array.from(this.countData.values());

@@ -13,13 +13,9 @@ describe('ProcessingOutputSpecimenSummaryComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [
-        ProcessingOutputSpecimenSummaryComponent,
-        TruncatePipe
-      ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
-    .compileComponents();
+      declarations: [ProcessingOutputSpecimenSummaryComponent, TruncatePipe],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

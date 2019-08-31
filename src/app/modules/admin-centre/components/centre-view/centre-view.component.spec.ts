@@ -30,10 +30,11 @@ describe('CentreViewComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            'centre': CentreStoreReducer.reducer,
-            'spinner': SpinnerStoreReducer.reducer
+            centre: CentreStoreReducer.reducer,
+            spinner: SpinnerStoreReducer.reducer
           },
-          NgrxRuntimeChecks)
+          NgrxRuntimeChecks
+        )
       ],
       providers: [
         {
@@ -44,16 +45,19 @@ describe('CentreViewComponent', () => {
           provide: Router,
           useValue: {
             url: 'admin/centres',
-            events: of(new NavigationEnd(0,
-                                         `/admin/centres/${centre.slug}/studies`,
-                                         `/admin/centres/${centre.slug}/studies`)),
+            events: of(
+              new NavigationEnd(
+                0,
+                `/admin/centres/${centre.slug}/studies`,
+                `/admin/centres/${centre.slug}/studies`
+              )
+            ),
             navigate: jasmine.createSpy('navigate')
           }
         }
       ],
-      declarations: [ CentreViewComponent ]
-    })
-    .compileComponents();
+      declarations: [CentreViewComponent]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -74,7 +78,7 @@ describe('CentreViewComponent', () => {
     expect(component.centre$).toBeObservable(cold('b', { b: centre }));
   });
 
-  it('active tab is initialized from router\'s event', () => {
+  it("active tab is initialized from router's event", () => {
     fixture.detectChanges();
     expect(component.activeTabId).toBe('studies');
   });
@@ -90,7 +94,7 @@ describe('CentreViewComponent', () => {
     fixture.detectChanges();
 
     expect(routerListener.mock.calls.length).toBe(1);
-    expect(routerListener.mock.calls[0][0]).toEqual([ '/admin/centres', centre.slug, 'locations' ]);
+    expect(routerListener.mock.calls[0][0]).toEqual(['/admin/centres', centre.slug, 'locations']);
   });
 
   function createMockActivatedRouteSpies(c: Centre): void {

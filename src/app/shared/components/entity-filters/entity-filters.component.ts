@@ -10,7 +10,6 @@ import { debounce, distinct, takeUntil } from 'rxjs/operators';
   styleUrls: ['./entity-filters.component.scss']
 })
 export class EntityFiltersComponent implements OnInit, OnDestroy {
-
   @Input() useNameFilter = false;
   @Input() useEmailFilter = false;
   @Input() stateData: EntityStateInfo[] = [];
@@ -31,18 +30,16 @@ export class EntityFiltersComponent implements OnInit, OnDestroy {
   constructor(private formBuilder: FormBuilder) {}
 
   ngOnInit() {
-    this.form = this.formBuilder.group(
-      {
-        name: [''],
-        email: [''],
-        state: ['']
-      });
+    this.form = this.formBuilder.group({
+      name: [''],
+      email: [''],
+      state: ['']
+    });
 
-    this.hasStateFilter = this.stateData && (this.stateData.length > 0);
+    this.hasStateFilter = this.stateData && this.stateData.length > 0;
 
-    const filtersEnabledCount = (this.useNameFilter ? 1 : 0) +
-      (this.useEmailFilter ? 1 : 0) +
-      (this.hasStateFilter ? 1 : 0);
+    const filtersEnabledCount =
+      (this.useNameFilter ? 1 : 0) + (this.useEmailFilter ? 1 : 0) + (this.hasStateFilter ? 1 : 0);
 
     if (filtersEnabledCount === 0) {
       throw new Error('no filters are enabled');
@@ -52,17 +49,16 @@ export class EntityFiltersComponent implements OnInit, OnDestroy {
 
     if (this.hasStateFilter) {
       // preppend array with a selection for all states
-      this.stateData = [ this.allStates ].concat(this.stateData);
+      this.stateData = [this.allStates].concat(this.stateData);
       this.form.controls.state.setValue(this.stateData[0].id);
     }
 
-    merge(this.name.valueChanges,
-          this.email.valueChanges,
-          this.state.valueChanges)
+    merge(this.name.valueChanges, this.email.valueChanges, this.state.valueChanges)
       .pipe(
         debounce(() => timer(500)),
         distinct(() => this.form.value),
-        takeUntil(this.unsubscribe$))
+        takeUntil(this.unsubscribe$)
+      )
       .subscribe(() => {
         const filters: SearchFilterValues = {};
         if (this.useNameFilter) {
@@ -100,5 +96,4 @@ export class EntityFiltersComponent implements OnInit, OnDestroy {
     this.email.setValue('');
     this.state.setValue(this.stateData[0].id);
   }
-
 }

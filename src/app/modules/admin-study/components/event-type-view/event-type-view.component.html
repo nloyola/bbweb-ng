@@ -2,20 +2,23 @@
   <div class="card-header bg-primary text-light">
     <ng-container i18>Event:</ng-container> {{ eventType.name }}
     <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
-
-      <button class="btn btn-sm btn-light mr-1"
-              type="button"
-              id="eventTypeMenu"
-              ngbDropdownToggle
-              *ngIf="allowChanges">
+      <button
+        class="btn btn-sm btn-light mr-1"
+        type="button"
+        id="eventTypeMenu"
+        ngbDropdownToggle
+        *ngIf="allowChanges"
+      >
         <mat-icon inline="true">more_vert</mat-icon>
       </button>
 
-      <button class="btn btn-sm btn-light"
-              type="button"
-              (click)="isPanelCollapsed = !isPanelCollapsed"
-              [attr.aria-expanded]="!isCollapsed"
-              aria-controls="eventTypeCollapse">
+      <button
+        class="btn btn-sm btn-light"
+        type="button"
+        (click)="isPanelCollapsed = !isPanelCollapsed"
+        [attr.aria-expanded]="!isCollapsed"
+        aria-controls="eventTypeCollapse"
+      >
         <mat-icon *ngIf="!isPanelCollapsed" inline="true">keyboard_arrow_down</mat-icon>
         <mat-icon *ngIf="isPanelCollapsed" inline="true">keyboard_arrow_right</mat-icon>
       </button>
@@ -63,9 +66,7 @@
             <strong i18n>Description</strong>
           </div>
           <div class="col-md-9">
-            <app-truncate-toggle [text]="eventType.description"
-                                 [toggleLength]="60">
-            </app-truncate-toggle>
+            <app-truncate-toggle [text]="eventType.description" [toggleLength]="60"> </app-truncate-toggle>
           </div>
         </div>
       </li>
@@ -83,23 +84,26 @@
             <strong translate>Annotation</strong>
           </div>
           <div class="col-md-7">
-            <app-annotation-type-summary [annotationType]="annotationType">
-            </app-annotation-type-summary>
+            <app-annotation-type-summary [annotationType]="annotationType"> </app-annotation-type-summary>
           </div>
           <div class="col-md-2">
-            <app-annotation-type-actions [annotationType]="annotationType"
-                                         [modifyAllowed]="allowChanges"
-                                         (viewSelected)="viewAnnotationType($event)"
-                                         (editSelected)="editAnnotationType($event)"
-                                         (removeSelected)="removeAnnotationType($event)">
+            <app-annotation-type-actions
+              [annotationType]="annotationType"
+              [modifyAllowed]="allowChanges"
+              (viewSelected)="viewAnnotationType($event)"
+              (editSelected)="editAnnotationType($event)"
+              (removeSelected)="removeAnnotationType($event)"
+            >
             </app-annotation-type-actions>
           </div>
         </div>
       </li>
       <li class="list-group-item m-0 p-0">
-        <app-entity-status [timeAdded]="eventType.timeAdded"
-                           [timeModified]="eventType.timeModified"
-                           [useBadges]="false">
+        <app-entity-status
+          [timeAdded]="eventType.timeAdded"
+          [timeModified]="eventType.timeModified"
+          [useBadges]="false"
+        >
         </app-entity-status>
       </li>
     </ul>
@@ -110,12 +114,13 @@
   <div class="card-header bg-primary text-light">
     <ng-container i18>Collected Specimens</ng-container>
     <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
-
-      <button class="btn btn-sm btn-light mr-1"
-              type="button"
-              id="specimensMenu"
-              ngbDropdownToggle
-              *ngIf="allowChanges">
+      <button
+        class="btn btn-sm btn-light mr-1"
+        type="button"
+        id="specimensMenu"
+        ngbDropdownToggle
+        *ngIf="allowChanges"
+      >
         <mat-icon inline="true">more_vert</mat-icon>
       </button>
 
@@ -127,28 +132,27 @@
       </div>
     </span>
   </div>
-  <ul class="list-group list-group-flush"
-      *ngIf="sortedSpecimenDefinitions.length > 0">
-    <li class="list-group-item"
-        *ngFor="let specimenDefinition of sortedSpecimenDefinitions">
+  <ul class="list-group list-group-flush" *ngIf="sortedSpecimenDefinitions.length > 0">
+    <li class="list-group-item" *ngFor="let specimenDefinition of sortedSpecimenDefinitions">
       <div class="row">
         <div class="col-md-10">
           <app-specimen-definition-summary [specimenDefinition]="specimenDefinition">
           </app-specimen-definition-summary>
         </div>
         <div class="col-md-2">
-          <app-specimen-definition-actions [specimenDefinition]="specimenDefinition"
-                                           [modifyAllowed]="allowChanges"
-                                           (viewSelected)="viewSpecimenDefinition($event)"
-                                           (editSelected)="editSpecimenDefinition($event)"
-                                           (removeSelected)="removeSpecimenDefinition($event)">
+          <app-specimen-definition-actions
+            [specimenDefinition]="specimenDefinition"
+            [modifyAllowed]="allowChanges"
+            (viewSelected)="viewSpecimenDefinition($event)"
+            (editSelected)="editSpecimenDefinition($event)"
+            (removeSelected)="removeSpecimenDefinition($event)"
+          >
           </app-specimen-definition-actions>
         </div>
       </div>
     </li>
   </ul>
-  <ul class="list-group list-group-flush"
-      *ngIf="sortedSpecimenDefinitions.length <= 0">
+  <ul class="list-group list-group-flush" *ngIf="sortedSpecimenDefinitions.length <= 0">
     <li class="list-group-item">
       <div class="alert alert-warning" role="alert">
         <mat-icon>warning</mat-icon>

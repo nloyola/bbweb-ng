@@ -15,7 +15,6 @@ import { filter, takeUntil } from 'rxjs/operators';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit, OnDestroy {
-
   @ViewChild('modal', { static: true }) private modal: ElementRef;
 
   private unsubscribe$: Subject<void> = new Subject<void>();
@@ -24,11 +23,13 @@ export class LoginComponent implements OnInit, OnDestroy {
   loginForm: FormGroup;
   faSpinner = faSpinner;
 
-  constructor(private store$: Store<RootStoreState.State>,
-              private route: ActivatedRoute,
-              private router: Router,
-              private modalService: NgbModal,
-              private formBuilder: FormBuilder) { }
+  constructor(
+    private store$: Store<RootStoreState.State>,
+    private route: ActivatedRoute,
+    private router: Router,
+    private modalService: NgbModal,
+    private formBuilder: FormBuilder
+  ) {}
 
   public ngOnInit() {
     this.loginForm = this.formBuilder.group({
@@ -45,7 +46,8 @@ export class LoginComponent implements OnInit, OnDestroy {
       .pipe(
         select(AuthStoreSelectors.selectAuthUser),
         filter(user => user !== null),
-        takeUntil(this.unsubscribe$))
+        takeUntil(this.unsubscribe$)
+      )
       .subscribe(() => {
         this.navigateToReturnUrl();
       });
@@ -54,12 +56,13 @@ export class LoginComponent implements OnInit, OnDestroy {
       .pipe(
         select(AuthStoreSelectors.selectAuthError),
         filter(err => err !== null),
-        takeUntil(this.unsubscribe$))
+        takeUntil(this.unsubscribe$)
+      )
       .subscribe(() => {
         this.store$.dispatch(AuthStoreActions.loginClearFailureAction());
         this.modalService
-          .open(this.modal, { ariaLabelledBy: 'modal-basic-title' }).result
-          .then(() => this.navigateToReturnUrl())
+          .open(this.modal, { ariaLabelledBy: 'modal-basic-title' })
+          .result.then(() => this.navigateToReturnUrl())
           .catch(() => this.navigateToReturnUrl());
       });
   }
@@ -78,14 +81,15 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
-    this.store$.dispatch(AuthStoreActions.loginRequestAction({
-      email: this.loginForm.value.email,
-      password: this.loginForm.value.password
-    }));
+    this.store$.dispatch(
+      AuthStoreActions.loginRequestAction({
+        email: this.loginForm.value.email,
+        password: this.loginForm.value.password
+      })
+    );
   }
 
   private navigateToReturnUrl() {
     this.router.navigate([this.returnUrl]);
   }
-
 }

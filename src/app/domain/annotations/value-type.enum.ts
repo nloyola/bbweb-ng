@@ -1,5 +1,4 @@
 export enum ValueTypes {
-
   /**
    * The annotation contains a text value.
    */
@@ -19,5 +18,4 @@ export enum ValueTypes {
    * The annotation contains a predefined set of value(s) to select from.
    */
   Select = 'select'
-
 }

@@ -9,15 +9,10 @@ describe('AnnotationTypeRemoveComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [
-        NgbModule
-      ],
-      providers: [
-        NgbActiveModal
-      ],
-      declarations: [ AnnotationTypeRemoveComponent ]
-    })
-    .compileComponents();
+      imports: [NgbModule],
+      providers: [NgbActiveModal],
+      declarations: [AnnotationTypeRemoveComponent]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

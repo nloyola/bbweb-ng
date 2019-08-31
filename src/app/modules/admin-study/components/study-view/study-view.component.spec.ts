@@ -14,7 +14,6 @@ import { of } from 'rxjs';
 import { StudyViewComponent } from './study-view.component';
 
 describe('StudyViewComponent', () => {
-
   let component: StudyViewComponent;
   let fixture: ComponentFixture<StudyViewComponent>;
   let store: Store<RootStoreState.State>;
@@ -31,10 +30,11 @@ describe('StudyViewComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            'study': StudyStoreReducer.reducer,
-            'spinner': SpinnerStoreReducer.reducer
+            study: StudyStoreReducer.reducer,
+            spinner: SpinnerStoreReducer.reducer
           },
-          NgrxRuntimeChecks)
+          NgrxRuntimeChecks
+        )
       ],
       providers: [
         {
@@ -45,16 +45,19 @@ describe('StudyViewComponent', () => {
           provide: Router,
           useValue: {
             url: 'admin/studies',
-            events: of(new NavigationEnd(0,
-                                         `/admin/studies/${study.slug}/collection`,
-                                         `/admin/studies/${study.slug}/collection`)),
+            events: of(
+              new NavigationEnd(
+                0,
+                `/admin/studies/${study.slug}/collection`,
+                `/admin/studies/${study.slug}/collection`
+              )
+            ),
             navigate: jasmine.createSpy('navigate')
           }
         }
       ],
-      declarations: [ StudyViewComponent ]
-    })
-      .compileComponents();
+      declarations: [StudyViewComponent]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -75,7 +78,7 @@ describe('StudyViewComponent', () => {
     expect(component.study$).toBeObservable(cold('b', { b: study }));
   });
 
-  it('active tab is initialized from router\'s event', () => {
+  it("active tab is initialized from router's event", () => {
     fixture.detectChanges();
     expect(component.activeTabId).toBe('collection');
   });
@@ -91,7 +94,7 @@ describe('StudyViewComponent', () => {
     fixture.detectChanges();
 
     expect(routerListener.mock.calls.length).toBe(1);
-    expect(routerListener.mock.calls[0][0]).toEqual([ '/admin/studies', study.slug, 'collection' ]);
+    expect(routerListener.mock.calls[0][0]).toEqual(['/admin/studies', study.slug, 'collection']);
   });
 
   function createMockActivatedRouteSpies(s: Study): void {

@@ -10,18 +10,10 @@ describe('EventTypeRemoveComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [
-        NgbModule
-      ],
-      providers: [
-        NgbActiveModal
-      ],
-      declarations: [
-        ModalInputComponent,
-        EventTypeRemoveComponent
-      ]
-    })
-    .compileComponents();
+      imports: [NgbModule],
+      providers: [NgbActiveModal],
+      declarations: [ModalInputComponent, EventTypeRemoveComponent]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

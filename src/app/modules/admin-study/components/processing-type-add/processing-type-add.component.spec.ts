@@ -6,7 +6,15 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ProcessingType, Study } from '@app/domain/studies';
-import { EventTypeStoreActions, EventTypeStoreReducer, ProcessingTypeStoreActions, ProcessingTypeStoreReducer, RootStoreState, StudyStoreActions, StudyStoreReducer } from '@app/root-store';
+import {
+  EventTypeStoreActions,
+  EventTypeStoreReducer,
+  ProcessingTypeStoreActions,
+  ProcessingTypeStoreReducer,
+  RootStoreState,
+  StudyStoreActions,
+  StudyStoreReducer
+} from '@app/root-store';
 import { NgrxRuntimeChecks } from '@app/root-store/root-store.module';
 import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
@@ -32,25 +40,23 @@ describe('ProcessingTypeAddComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            'study': StudyStoreReducer.reducer,
+            study: StudyStoreReducer.reducer,
             'processing-type': ProcessingTypeStoreReducer.reducer,
             'event-type': EventTypeStoreReducer.reducer
           },
-          NgrxRuntimeChecks),
+          NgrxRuntimeChecks
+        ),
         ToastrModule.forRoot()
       ],
-      declarations: [
-        ProcessingTypeAddComponent
-      ],
+      declarations: [ProcessingTypeAddComponent],
       providers: [
         {
           provide: ActivatedRoute,
           useValue: mockActivatedRoute
         }
       ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
-      .compileComponents();
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -66,7 +72,6 @@ describe('ProcessingTypeAddComponent', () => {
   });
 
   describe('on initialization', () => {
-
     it('retrieves the processed specimen definitions', () => {
       const study = createEntityFixtures();
       const storeListener = jest.spyOn(store, 'dispatch');
@@ -74,7 +79,8 @@ describe('ProcessingTypeAddComponent', () => {
 
       expect(storeListener.mock.calls.length).toBeGreaterThan(0);
       expect(storeListener.mock.calls[0][0]).toEqual(
-        new ProcessingTypeStoreActions.GetSpecimenDefinitionNamesRequest({ studyId: study.id }));
+        new ProcessingTypeStoreActions.GetSpecimenDefinitionNamesRequest({ studyId: study.id })
+      );
     });
 
     it('retrieves the collected specimen definitions', () => {
@@ -84,13 +90,12 @@ describe('ProcessingTypeAddComponent', () => {
 
       expect(storeListener.mock.calls.length).toBeGreaterThan(1);
       expect(storeListener.mock.calls[1][0]).toEqual(
-        EventTypeStoreActions.getSpecimenDefinitionNamesRequest({ studySlug: study.slug }));
+        EventTypeStoreActions.getSpecimenDefinitionNamesRequest({ studySlug: study.slug })
+      );
     });
-
   });
 
   describe('when user submits the processing type', () => {
-
     it('the correct action is dispatched', () => {
       createEntityFixtures();
       fixture.detectChanges();
@@ -102,7 +107,8 @@ describe('ProcessingTypeAddComponent', () => {
       const processingTypeToSave = component.formToProcessingType();
       expect(storeListener.mock.calls.length).toBe(1);
       expect(storeListener.mock.calls[0][0]).toEqual(
-        new ProcessingTypeStoreActions.AddProcessingTypeRequest({ processingType: processingTypeToSave }));
+        new ProcessingTypeStoreActions.AddProcessingTypeRequest({ processingType: processingTypeToSave })
+      );
     });
 
     it('returns to the correct URL after the processing type is added', () => {
@@ -119,7 +125,12 @@ describe('ProcessingTypeAddComponent', () => {
 
       expect(routerListener.mock.calls.length).toBe(1);
       expect(routerListener.mock.calls[0][0]).toEqual([
-        '/admin/studies',  study.slug, 'processing', 'view', processingType.slug ]);
+        '/admin/studies',
+        study.slug,
+        'processing',
+        'view',
+        processingType.slug
+      ]);
     });
 
     it('on submission failure', () => {
@@ -153,7 +164,6 @@ describe('ProcessingTypeAddComponent', () => {
         expect(toastr.error).toHaveBeenCalled();
       });
     });
-
   });
 
   it('returns to the correct URL when the user cancels', () => {
@@ -171,16 +181,17 @@ describe('ProcessingTypeAddComponent', () => {
   });
 
   describe('when adding a processing type with a collected specimen as input', () => {
-
     it('input entity name and specimen definition name are correct', () => {
       const { eventType, processingType } = entityFixture.createProcessingTypeFromCollected();
       const study = createEntityFixtures();
       component.processingType = processingType;
-      const specimenDefinitionNames = entityFixture.collectedDefinitionNames([ eventType ]);
-      store.dispatch(EventTypeStoreActions.getSpecimenDefinitionNamesSuccess({
-        studySlug: study.slug,
-        specimenDefinitionNames
-      }));
+      const specimenDefinitionNames = entityFixture.collectedDefinitionNames([eventType]);
+      store.dispatch(
+        EventTypeStoreActions.getSpecimenDefinitionNamesSuccess({
+          studySlug: study.slug,
+          specimenDefinitionNames
+        })
+      );
       fixture.detectChanges();
 
       const processingTypeToSave = component.formToProcessingType();
@@ -188,18 +199,17 @@ describe('ProcessingTypeAddComponent', () => {
       expect(processingTypeToSave.input.entityId).toBe(eventType.id);
       expect(processingTypeToSave.input.specimenDefinitionId).toBe(eventType.specimenDefinitions[0].id);
     });
-
   });
 
   describe('when adding a processing type with a processed specimen as input', () => {
-
     it('input entity name and specimen definition name are correct', () => {
       const { input, processingType } = entityFixture.createProcessingTypeFromProcessed();
       createEntityFixtures();
       component.processingType = processingType;
-      const specimenDefinitionNames = entityFixture.processedDefinitionNames([ input, processingType ]);
+      const specimenDefinitionNames = entityFixture.processedDefinitionNames([input, processingType]);
       store.dispatch(
-        new ProcessingTypeStoreActions.GetSpecimenDefinitionNamesSuccess({ specimenDefinitionNames }));
+        new ProcessingTypeStoreActions.GetSpecimenDefinitionNamesSuccess({ specimenDefinitionNames })
+      );
       fixture.detectChanges();
 
       const processingTypeToSave = component.formToProcessingType();
@@ -215,22 +225,21 @@ describe('ProcessingTypeAddComponent', () => {
       fixture.detectChanges();
       expect(() => component.formToProcessingType()).toThrowError(/could not find specimen definition id/);
     });
-
   });
 
   describe('initializes variables to display summary', () => {
-
     describe('input entity name and specimen definition name are correct', () => {
-
       it('when adding a processing type with a collected specimen as input', () => {
         const { eventType, processingType } = entityFixture.createProcessingTypeFromCollected();
         const study = createEntityFixtures();
         component.processingType = processingType;
-        const specimenDefinitionNames = entityFixture.collectedDefinitionNames([ eventType ]);
-        store.dispatch(EventTypeStoreActions.getSpecimenDefinitionNamesSuccess({
-          studySlug: study.slug,
-          specimenDefinitionNames
-        }));
+        const specimenDefinitionNames = entityFixture.collectedDefinitionNames([eventType]);
+        store.dispatch(
+          EventTypeStoreActions.getSpecimenDefinitionNamesSuccess({
+            studySlug: study.slug,
+            specimenDefinitionNames
+          })
+        );
         fixture.detectChanges();
 
         const event: StepperSelectionEvent = {
@@ -249,9 +258,10 @@ describe('ProcessingTypeAddComponent', () => {
         const { input, processingType } = entityFixture.createProcessingTypeFromProcessed();
         createEntityFixtures();
         component.processingType = processingType;
-        const specimenDefinitionNames = entityFixture.processedDefinitionNames([ input, processingType ]);
+        const specimenDefinitionNames = entityFixture.processedDefinitionNames([input, processingType]);
         store.dispatch(
-          new ProcessingTypeStoreActions.GetSpecimenDefinitionNamesSuccess({ specimenDefinitionNames }));
+          new ProcessingTypeStoreActions.GetSpecimenDefinitionNamesSuccess({ specimenDefinitionNames })
+        );
         fixture.detectChanges();
 
         const event: StepperSelectionEvent = {
@@ -265,9 +275,7 @@ describe('ProcessingTypeAddComponent', () => {
         expect(component.inputEntityName).toBe(input.name);
         expect(component.inputDefinitionName).toBe(input.output.specimenDefinition.name);
       });
-
     });
-
   });
 
   function createMockActivatedRouteSpies(study: Study): void {

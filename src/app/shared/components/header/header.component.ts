@@ -4,11 +4,7 @@ import { Store, select } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { User } from '@app/domain/users';
 
-import {
-  RootStoreState,
-  AuthStoreActions,
-  AuthStoreSelectors
-} from '@app/root-store';
+import { RootStoreState, AuthStoreActions, AuthStoreSelectors } from '@app/root-store';
 
 @Component({
   selector: 'app-header',
@@ -16,12 +12,10 @@ import {
   styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent implements OnInit {
-
   user$: Observable<User>;
   isCollapsed = true;
 
-  constructor(private store$: Store<RootStoreState.State>,
-              private router: Router) {}
+  constructor(private store$: Store<RootStoreState.State>, private router: Router) {}
 
   ngOnInit() {
     this.user$ = this.store$.pipe(select(AuthStoreSelectors.selectAuthUser));
@@ -31,5 +25,4 @@ export class HeaderComponent implements OnInit {
     this.store$.dispatch(AuthStoreActions.logoutRequestAction());
     this.router.navigate(['/']);
   }
-
 }

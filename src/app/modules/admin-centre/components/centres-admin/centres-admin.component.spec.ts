@@ -14,14 +14,14 @@ describe('CentresAdminComponent', () => {
       imports: [
         StoreModule.forRoot(
           {
-            'centre': CentreStoreReducer.reducer
+            centre: CentreStoreReducer.reducer
           },
-          NgrxRuntimeChecks)
+          NgrxRuntimeChecks
+        )
       ],
-      declarations: [ CentresAdminComponent ],
+      declarations: [CentresAdminComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {

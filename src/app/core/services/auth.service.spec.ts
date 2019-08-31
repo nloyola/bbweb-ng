@@ -11,9 +11,7 @@ describe('AuthService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        HttpClientTestingModule
-      ],
+      imports: [HttpClientTestingModule],
       providers: [AuthService]
     });
     httpMock = TestBed.get(HttpTestingController);
@@ -32,7 +30,6 @@ describe('AuthService', () => {
   });
 
   describe('for a login request', () => {
-
     const password = 'fake password';
     let rawUser: any;
 
@@ -68,14 +65,17 @@ describe('AuthService', () => {
       };
 
       service.login(rawUser.email, password).subscribe(
-        u => { fail('should have been an error response'); },
-        err => { expect(err.message).toContain('expected an auth token object'); }
+        u => {
+          fail('should have been an error response');
+        },
+        err => {
+          expect(err.message).toContain('expected an auth token object');
+        }
       );
 
       const req = httpMock.expectOne(`${service.BASE_URL}/login`);
       req.flush(reply);
     });
-
   });
 
   it('logs out a user', () => {
@@ -103,7 +103,6 @@ describe('AuthService', () => {
   });
 
   describe('isLogged in works', () => {
-
     it('on initialization', () => {
       expect(service.isLoggedIn()).toBeFalsy();
     });
@@ -115,7 +114,6 @@ describe('AuthService', () => {
   });
 
   describe('getUser works', () => {
-
     it('returns null if user has not logged in', () => {
       expect(service.getUser()).toEqual(null);
     });
@@ -141,5 +139,4 @@ describe('AuthService', () => {
     localStorage.setItem('authToken', JSON.stringify(tokenData));
     return new User().deserialize(tokenData.user);
   }
-
 });

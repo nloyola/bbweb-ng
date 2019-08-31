@@ -18,7 +18,6 @@ import { Dictionary } from '@ngrx/entity';
   styleUrls: ['./centre-summary.component.scss']
 })
 export class CentreSummaryComponent implements OnInit, OnDestroy {
-
   @ViewChild('updateNameModal', { static: false }) updateNameModal: TemplateRef<any>;
   @ViewChild('updateDescriptionModal', { static: false }) updateDescriptionModal: TemplateRef<any>;
 
@@ -37,11 +36,13 @@ export class CentreSummaryComponent implements OnInit, OnDestroy {
   private updatedMessage$ = new Subject<string>();
   private unsubscribe$ = new Subject<void>();
 
-  constructor(private store$: Store<RootStoreState.State>,
-              private modalService: NgbModal,
-              private router: Router,
-              private route: ActivatedRoute,
-              private toastr: ToastrService) {}
+  constructor(
+    private store$: Store<RootStoreState.State>,
+    private modalService: NgbModal,
+    private router: Router,
+    private route: ActivatedRoute,
+    private toastr: ToastrService
+  ) {}
 
   ngOnInit() {
     this.centre$ = this.store$.pipe(
@@ -49,49 +50,57 @@ export class CentreSummaryComponent implements OnInit, OnDestroy {
       map(centres => {
         const centreEntity = centres[this.route.parent.snapshot.data.centre.id];
         if (centreEntity) {
-          return (centreEntity instanceof Centre) ? centreEntity :  new Centre().deserialize(centreEntity);
+          return centreEntity instanceof Centre ? centreEntity : new Centre().deserialize(centreEntity);
         }
         return undefined;
       }),
-      map(centre => centre ? new CentreUI(centre) : undefined),
-      shareReplay());
+      map(centre => (centre ? new CentreUI(centre) : undefined)),
+      shareReplay()
+    );
 
     this.centre$.pipe(takeUntil(this.unsubscribe$)).subscribe(this.centreSubject);
     this.isEnableAllowed$ = this.centre$.pipe(
-      map(centre => centre ? (centre.entity.studyNames.length > 0) : false));
+      map(centre => (centre ? centre.entity.studyNames.length > 0 : false))
+    );
     this.isLoading$ = this.centre$.pipe(map(centre => centre === undefined));
 
-    this.centre$.pipe(
-      withLatestFrom(this.updatedMessage$),
-      takeUntil(this.unsubscribe$)
-    ).subscribe(([ centre, msg ]) => {
-      if (msg === null) { return; }
-
-      if (centre !== undefined) {
-        this.toastr.success(msg, 'Update Successfull');
-        this.updatedMessage$.next(null);
-
-        if (centre.slug !== this.route.parent.snapshot.params.slug) {
-          // name was changed and new slug was assigned
-          //
-          // need to change state since slug is used in URL and by breadcrumbs
-          this.router.navigate([ '../..', centre.slug, 'summary' ], { relativeTo: this.route });
+    this.centre$
+      .pipe(
+        withLatestFrom(this.updatedMessage$),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe(([centre, msg]) => {
+        if (msg === null) {
+          return;
         }
-      }
-    });
 
-    this.store$.pipe(
-      select(CentreStoreSelectors.selectCentreError),
-      filter(error => !!error),
-      withLatestFrom(this.updatedMessage$),
-      takeUntil(this.unsubscribe$)
-    ).subscribe(([ error, _msg ]) => {
-      let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
-      if (errMessage.indexOf('name already exists') > -1) {
-        errMessage = 'A centre with that name already exists. Please use another name.';
-      }
-      this.toastr.error(errMessage, 'Update Error', { disableTimeOut: true });
-    });
+        if (centre !== undefined) {
+          this.toastr.success(msg, 'Update Successfull');
+          this.updatedMessage$.next(null);
+
+          if (centre.slug !== this.route.parent.snapshot.params.slug) {
+            // name was changed and new slug was assigned
+            //
+            // need to change state since slug is used in URL and by breadcrumbs
+            this.router.navigate(['../..', centre.slug, 'summary'], { relativeTo: this.route });
+          }
+        }
+      });
+
+    this.store$
+      .pipe(
+        select(CentreStoreSelectors.selectCentreError),
+        filter(error => !!error),
+        withLatestFrom(this.updatedMessage$),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe(([error, _msg]) => {
+        let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
+        if (errMessage.indexOf('name already exists') > -1) {
+          errMessage = 'A centre with that name already exists. Please use another name.';
+        }
+        this.toastr.error(errMessage, 'Update Error', { disableTimeOut: true });
+      });
   }
 
   ngOnDestroy() {
@@ -105,13 +114,16 @@ export class CentreSummaryComponent implements OnInit, OnDestroy {
         required: true,
         minLength: 2
       };
-      this.modalService.open(this.updateNameModal).result
-        .then(value => {
-          this.store$.dispatch(CentreStoreActions.updateCentreRequest({
-            centre,
-            attributeName: 'name',
-            value
-          }));
+      this.modalService
+        .open(this.updateNameModal)
+        .result.then(value => {
+          this.store$.dispatch(
+            CentreStoreActions.updateCentreRequest({
+              centre,
+              attributeName: 'name',
+              value
+            })
+          );
           this.updatedMessage$.next('Centre name was updated');
         })
         .catch(() => undefined);
@@ -124,13 +136,16 @@ export class CentreSummaryComponent implements OnInit, OnDestroy {
         rows: 20,
         cols: 10
       };
-      this.modalService.open(this.updateDescriptionModal, { size: 'lg' }).result
-        .then(value => {
-          this.store$.dispatch(CentreStoreActions.updateCentreRequest({
-            centre,
-            attributeName: 'description',
-            value: value ? value : undefined
-          }));
+      this.modalService
+        .open(this.updateDescriptionModal, { size: 'lg' })
+        .result.then(value => {
+          this.store$.dispatch(
+            CentreStoreActions.updateCentreRequest({
+              centre,
+              attributeName: 'description',
+              value: value ? value : undefined
+            })
+          );
           this.updatedMessage$.next('Centre description was updated');
         })
         .catch(() => undefined);
@@ -147,11 +162,13 @@ export class CentreSummaryComponent implements OnInit, OnDestroy {
 
   private changeState(action: string) {
     const centre = this.centreSubject.value.entity;
-    this.store$.dispatch(CentreStoreActions.updateCentreRequest({
-      centre,
-      attributeName: 'state',
-      value: action
-    }));
+    this.store$.dispatch(
+      CentreStoreActions.updateCentreRequest({
+        centre,
+        attributeName: 'state',
+        value: action
+      })
+    );
     this.updatedMessage$.next('Centre state was updated');
   }
 
@@ -163,5 +180,4 @@ export class CentreSummaryComponent implements OnInit, OnDestroy {
 
     fn(centre);
   }
-
 }

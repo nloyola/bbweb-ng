@@ -25,7 +25,7 @@ describe('CentreLocationsComponent', () => {
   let centre: Centre;
 
   beforeEach(async(() => {
-    centre = new Centre().deserialize(factory.centre({ locations: [ factory.location() ]}));
+    centre = new Centre().deserialize(factory.centre({ locations: [factory.location()] }));
 
     TestBed.configureTestingModule({
       imports: [
@@ -34,10 +34,11 @@ describe('CentreLocationsComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            'spinner': SpinnerStoreReducer.reducer,
-            'centre': CentreStoreReducer.reducer
+            spinner: SpinnerStoreReducer.reducer,
+            centre: CentreStoreReducer.reducer
           },
-          NgrxRuntimeChecks),
+          NgrxRuntimeChecks
+        ),
         ToastrModule.forRoot()
       ],
       providers: [
@@ -61,19 +62,14 @@ describe('CentreLocationsComponent', () => {
           }
         }
       ],
-      declarations: [
-        CentreLocationsComponent,
-        LocationRemoveComponent
-      ],
+      declarations: [CentreLocationsComponent, LocationRemoveComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     });
 
     // https://github.com/angular/angular/issues/12079
     TestBed.overrideModule(BrowserDynamicTestingModule, {
       set: {
-        entryComponents: [
-          LocationRemoveComponent
-        ]
+        entryComponents: [LocationRemoveComponent]
       }
     });
   }));
@@ -101,11 +97,11 @@ describe('CentreLocationsComponent', () => {
 
     const testData = [
       {
-        componentFunc: (c) => c.addLocation(),
+        componentFunc: c => c.addLocation(),
         relativePath: 'add'
       },
       {
-        componentFunc: (c) => c.edit(location),
+        componentFunc: c => c.edit(location),
         relativePath: `${location.id}`
       }
     ];
@@ -116,7 +112,7 @@ describe('CentreLocationsComponent', () => {
     testData.forEach((testInfo, index) => {
       ngZone.run(() => testInfo.componentFunc(component));
       fixture.detectChanges();
-      expect(spy.mock.calls[index][0]).toEqual([ testInfo.relativePath ]);
+      expect(spy.mock.calls[index][0]).toEqual([testInfo.relativePath]);
     });
   });
 
@@ -126,7 +122,7 @@ describe('CentreLocationsComponent', () => {
 
     const testData = [
       {
-        componentFunc: (component) => component.remove(location),
+        componentFunc: component => component.remove(location)
       }
     ];
 
@@ -138,21 +134,20 @@ describe('CentreLocationsComponent', () => {
       fixture.detectChanges();
       expect(spy).toHaveBeenCalled();
     });
-
   });
 
   it('should throw an error when centre is not disabled', () => {
     centre = new Centre().deserialize({
-      ...centre as any,
+      ...(centre as any),
       state: CentreState.Enabled
     });
     jest.spyOn(modalService, 'open');
     const location = centre.locations[0];
 
     const testData = [
-      { componentFunc: (c) => c.addLocation() },
-      { componentFunc: (c) => c.edit(location) },
-      { componentFunc: (c) => c.remove(location) }
+      { componentFunc: c => c.addLocation() },
+      { componentFunc: c => c.edit(location) },
+      { componentFunc: c => c.remove(location) }
     ];
 
     fixture.detectChanges();
@@ -165,10 +160,9 @@ describe('CentreLocationsComponent', () => {
   });
 
   describe('when removing a location', () => {
-
     it('on valid removal', fakeAsync(() => {
       const centreNoLocations = new Centre().deserialize({
-        ...centre as any,
+        ...(centre as any),
         locations: []
       });
       const location = centre.locations[0];

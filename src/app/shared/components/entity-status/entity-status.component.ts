@@ -6,17 +6,16 @@ import { Component, OnInit, Input } from '@angular/core';
   styleUrls: ['./entity-status.component.scss']
 })
 export class EntityStatusComponent implements OnInit {
-
   @Input() state: string;
   @Input() timeAdded: Date;
   @Input() timeModified: Date;
   @Input() useBadges: boolean;
   @Input() bsClass: string;
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit() {
-    if ((this.useBadges === undefined) || this.useBadges) {
+    if (this.useBadges === undefined || this.useBadges) {
       this.useBadges = true;
 
       if (this.bsClass === undefined) {
@@ -26,5 +25,4 @@ export class EntityStatusComponent implements OnInit {
       this.bsClass = 'text-info';
     }
   }
-
 }

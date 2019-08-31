@@ -9,22 +9,21 @@ import { CollectedSpecimenDefinition } from '@app/domain/studies/collected-speci
   styleUrls: ['./event-type-view.component.scss']
 })
 export class EventTypeViewComponent implements OnInit, OnChanges {
-
   @Input() eventType: CollectionEventType;
   @Input() allowChanges: boolean;
 
-  @Output() updateNameSelected               = new EventEmitter<any>();
-  @Output() updateDescriptionSelected        = new EventEmitter<any>();
-  @Output() updateRecurringSelected          = new EventEmitter<any>();
-  @Output() addAnnotationTypeSelected        = new EventEmitter<any>();
-  @Output() viewAnnotationTypeSelected       = new EventEmitter<AnnotationType>();
-  @Output() editAnnotationTypeSelected       = new EventEmitter<AnnotationType>();
-  @Output() removeAnnotationTypeSelected     = new EventEmitter<AnnotationType>();
-  @Output() addSpecimenDefinitionSelected    = new EventEmitter<CollectedSpecimenDefinition>();
-  @Output() viewSpecimenDefinitionSelected   = new EventEmitter<CollectedSpecimenDefinition>();
-  @Output() editSpecimenDefinitionSelected   = new EventEmitter<CollectedSpecimenDefinition>();
+  @Output() updateNameSelected = new EventEmitter<any>();
+  @Output() updateDescriptionSelected = new EventEmitter<any>();
+  @Output() updateRecurringSelected = new EventEmitter<any>();
+  @Output() addAnnotationTypeSelected = new EventEmitter<any>();
+  @Output() viewAnnotationTypeSelected = new EventEmitter<AnnotationType>();
+  @Output() editAnnotationTypeSelected = new EventEmitter<AnnotationType>();
+  @Output() removeAnnotationTypeSelected = new EventEmitter<AnnotationType>();
+  @Output() addSpecimenDefinitionSelected = new EventEmitter<CollectedSpecimenDefinition>();
+  @Output() viewSpecimenDefinitionSelected = new EventEmitter<CollectedSpecimenDefinition>();
+  @Output() editSpecimenDefinitionSelected = new EventEmitter<CollectedSpecimenDefinition>();
   @Output() removeSpecimenDefinitionSelected = new EventEmitter<any>();
-  @Output() removeEventTypeSelected          = new EventEmitter<any>();
+  @Output() removeEventTypeSelected = new EventEmitter<any>();
 
   isPanelCollapsed = false;
   sortedAnnotationTypes: AnnotationType[];
@@ -100,12 +99,13 @@ export class EventTypeViewComponent implements OnInit, OnChanges {
 
   private setSortedAnnotationTypes(): void {
     this.sortedAnnotationTypes = this.eventType
-      ? AnnotationType.sortAnnotationTypes(this.eventType.annotationTypes) : [];
+      ? AnnotationType.sortAnnotationTypes(this.eventType.annotationTypes)
+      : [];
   }
 
   private setSoredSpecimenDefinitions(): void {
     this.sortedSpecimenDefinitions = this.eventType
-      ? SpecimenDefinition.sortSpecimenDefinitions(this.eventType.specimenDefinitions) : [];
+      ? SpecimenDefinition.sortSpecimenDefinitions(this.eventType.specimenDefinitions)
+      : [];
   }
-
 }

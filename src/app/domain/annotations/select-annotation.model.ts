@@ -1,14 +1,13 @@
 import { Annotation, IAnnotation } from './annotation.model';
 
 export class SelectAnnotation extends Annotation {
-
   value: string[] = [];
 
   serverAnnotation() {
     return {
       annotationTypeId: this.annotationTypeId,
-      valueType:        this.valueType,
-      selectedValues:   this.value
+      valueType: this.valueType,
+      selectedValues: this.value
     };
   }
 

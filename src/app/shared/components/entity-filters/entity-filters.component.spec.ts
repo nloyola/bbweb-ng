@@ -9,21 +9,16 @@ import * as faker from 'faker';
 import { EntityFiltersComponent } from './entity-filters.component';
 
 describe('EntityFiltersComponent', () => {
-
   let component: EntityFiltersComponent;
   let fixture: ComponentFixture<EntityFiltersComponent>;
   const factory = new Factory();
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [
-        FormsModule,
-        ReactiveFormsModule
-      ],
-      declarations: [ EntityFiltersComponent, EntityFiltersComponent ],
+      imports: [FormsModule, ReactiveFormsModule],
+      declarations: [EntityFiltersComponent, EntityFiltersComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
-    })
-      .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -36,7 +31,6 @@ describe('EntityFiltersComponent', () => {
   });
 
   describe('default settings', () => {
-
     it('should not display name filter', () => {
       component.useEmailFilter = true;
       fixture.detectChanges();
@@ -57,7 +51,6 @@ describe('EntityFiltersComponent', () => {
       const select = fixture.debugElement.query(By.css('#state'));
       expect(select).toBeNull();
     });
-
   });
 
   it('name filter should be displayed', () => {
@@ -75,9 +68,7 @@ describe('EntityFiltersComponent', () => {
   });
 
   it('state filter should be displayed', () => {
-    const stateData: EntityStateInfo[] = [
-      { id: 'test', label: 'test'}
-    ];
+    const stateData: EntityStateInfo[] = [{ id: 'test', label: 'test' }];
     component.stateData = stateData;
     fixture.detectChanges();
     const select = fixture.debugElement.query(By.css('#state'));
@@ -87,7 +78,7 @@ describe('EntityFiltersComponent', () => {
   it('should send a `filters` event when name input changes', fakeAsync(() => {
     const newValue = factory.stringNext();
     let filters: SearchFilterValues;
-    component.filters.subscribe((f: SearchFilter) => filters = f);
+    component.filters.subscribe((f: SearchFilter) => (filters = f));
 
     component.useNameFilter = true;
     fixture.detectChanges();
@@ -103,7 +94,7 @@ describe('EntityFiltersComponent', () => {
   it('should send a `filters` event when email input changes', fakeAsync(() => {
     const newEmail = faker.internet.email();
     let filters: SearchFilterValues;
-    component.filters.subscribe((f: SearchFilter) => filters = f);
+    component.filters.subscribe((f: SearchFilter) => (filters = f));
 
     component.useEmailFilter = true;
     fixture.detectChanges();
@@ -118,11 +109,9 @@ describe('EntityFiltersComponent', () => {
 
   it('should send a `filters` event when state selection changes', fakeAsync(() => {
     let filters: SearchFilterValues;
-    component.filters.subscribe((f: SearchFilter) => filters = f);
+    component.filters.subscribe((f: SearchFilter) => (filters = f));
 
-    const stateData: EntityStateInfo[] = [
-      { id: 'test', label: 'test'}
-    ];
+    const stateData: EntityStateInfo[] = [{ id: 'test', label: 'test' }];
     component.stateData = stateData;
     fixture.detectChanges();
 
@@ -136,11 +125,9 @@ describe('EntityFiltersComponent', () => {
 
   it('should send a `filters` event when the filters are cleared', fakeAsync(() => {
     let filters: SearchFilterValues;
-    component.filters.subscribe((f: SearchFilter) => filters = f);
+    component.filters.subscribe((f: SearchFilter) => (filters = f));
 
-    const stateData: EntityStateInfo[] = [
-      { id: 'test', label: 'test'}
-    ];
+    const stateData: EntityStateInfo[] = [{ id: 'test', label: 'test' }];
 
     component.useNameFilter = true;
     component.useEmailFilter = true;
@@ -173,5 +160,4 @@ describe('EntityFiltersComponent', () => {
     expect(filters.email).toBe('');
     expect(filters.stateId).toBe('all');
   }));
-
 });

@@ -4,7 +4,14 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CollectionEventType, Study } from '@app/domain/studies';
-import { EventTypeStoreActions, EventTypeStoreReducer, RootStoreState, StudyStoreActions, StudyStoreReducer, NgrxRuntimeChecks } from '@app/root-store';
+import {
+  EventTypeStoreActions,
+  EventTypeStoreReducer,
+  RootStoreState,
+  StudyStoreActions,
+  StudyStoreReducer,
+  NgrxRuntimeChecks
+} from '@app/root-store';
 import { YesNoPipe } from '@app/shared/pipes/yes-no-pipe';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
@@ -15,7 +22,6 @@ import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { CollectedSpecimenDefinitionAddContainerComponent } from './collected-specimen-definition-add.container';
 
 describe('CollectedSpecimenDefinitionAddContainer', () => {
-
   let component: CollectedSpecimenDefinitionAddContainerComponent;
   let fixture: ComponentFixture<CollectedSpecimenDefinitionAddContainerComponent>;
   let ngZone: NgZone;
@@ -37,10 +43,11 @@ describe('CollectedSpecimenDefinitionAddContainer', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            'study': StudyStoreReducer.reducer,
-            'event-type': EventTypeStoreReducer.reducer,
+            study: StudyStoreReducer.reducer,
+            'event-type': EventTypeStoreReducer.reducer
           },
-          NgrxRuntimeChecks),
+          NgrxRuntimeChecks
+        ),
         ToastrModule.forRoot()
       ],
       providers: [
@@ -49,13 +56,9 @@ describe('CollectedSpecimenDefinitionAddContainer', () => {
           useValue: mockActivatedRoute
         }
       ],
-      declarations: [
-        CollectedSpecimenDefinitionAddContainerComponent,
-        YesNoPipe
-      ],
+      declarations: [CollectedSpecimenDefinitionAddContainerComponent, YesNoPipe],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
-    })
-      .compileComponents();
+    }).compileComponents();
 
     mockActivatedRoute.spyOnParent(() => ({
       parent: {
@@ -98,9 +101,10 @@ describe('CollectedSpecimenDefinitionAddContainer', () => {
     expect(storeListener.mock.calls.length).toBe(1);
     expect(storeListener.mock.calls[0][0]).toEqual(
       EventTypeStoreActions.getEventTypeRequest({
-      studySlug: study.slug,
-      eventTypeSlug: eventType.slug
-    }));
+        studySlug: study.slug,
+        eventTypeSlug: eventType.slug
+      })
+    );
   });
 
   it('assigns the event type after it is added to the store', () => {
@@ -113,10 +117,7 @@ describe('CollectedSpecimenDefinitionAddContainer', () => {
     const eventType = initializeComponent();
     const spy = jest.spyOn(router, 'navigate');
 
-    const testData = [
-      { path: 'spcDefAdd', returnPath: '..' },
-      { path: 'spcDef', returnPath: '..' }
-    ];
+    const testData = [{ path: 'spcDefAdd', returnPath: '..' }, { path: 'spcDef', returnPath: '..' }];
 
     testData.forEach((testInfo, index) => {
       mockActivatedRouteSnapshot(testInfo.path, eventType);
@@ -126,12 +127,11 @@ describe('CollectedSpecimenDefinitionAddContainer', () => {
 
       ngZone.run(() => component.onCancel());
       expect(spy).toHaveBeenCalled();
-      expect(spy.mock.calls[index][0]).toEqual([ testInfo.returnPath ]);
+      expect(spy.mock.calls[index][0]).toEqual([testInfo.returnPath]);
     });
   });
 
   describe('when submitting', () => {
-
     it('on valid submission', async(() => {
       const eventType = initializeComponent();
       const expectedAction = EventTypeStoreActions.updateEventTypeRequest({
@@ -166,7 +166,7 @@ describe('CollectedSpecimenDefinitionAddContainer', () => {
     it('on submission failure', fakeAsync(() => {
       const testData = [
         { path: 'spcDefAdd', savedMessage: 'Specimen Added' },
-        { path: 'spcDef', savedMessage: 'Specimen Updated' },
+        { path: 'spcDef', savedMessage: 'Specimen Updated' }
       ];
       const errors = [
         {
@@ -176,7 +176,7 @@ describe('CollectedSpecimenDefinitionAddContainer', () => {
         {
           status: 404,
           error: {
-              message: 'simulated error'
+            message: 'simulated error'
           }
         },
         {
@@ -211,17 +211,18 @@ describe('CollectedSpecimenDefinitionAddContainer', () => {
         });
       });
     }));
-
   });
 
   function createEventType(): CollectionEventType {
-    return new CollectionEventType().deserialize(factory.collectionEventType({
-      specimenDefinitions: [ factory.collectedSpecimenDefinition() ]
-    }));
+    return new CollectionEventType().deserialize(
+      factory.collectionEventType({
+        specimenDefinitions: [factory.collectedSpecimenDefinition()]
+      })
+    );
   }
 
   function mockActivatedRouteSnapshot(path: string, eventType: CollectionEventType): void {
-    const specimenDefinitionId = (path === 'spcDefAdd') ? undefined : eventType.specimenDefinitions[0].id;
+    const specimenDefinitionId = path === 'spcDefAdd' ? undefined : eventType.specimenDefinitions[0].id;
     mockActivatedRoute.spyOnParent(() => ({
       parent: {
         parent: {
@@ -241,9 +242,7 @@ describe('CollectedSpecimenDefinitionAddContainer', () => {
         eventTypeSlug: eventType.slug,
         specimenDefinitionId
       },
-      url: [
-        { path }
-      ]
+      url: [{ path }]
     }));
   }
 
@@ -254,5 +253,4 @@ describe('CollectedSpecimenDefinitionAddContainer', () => {
     store.dispatch(EventTypeStoreActions.getEventTypeSuccess({ eventType }));
     return eventType;
   }
-
 });

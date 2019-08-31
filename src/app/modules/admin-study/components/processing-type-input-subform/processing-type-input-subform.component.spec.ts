@@ -2,35 +2,41 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
-import { CollectedSpecimenDefinitionName, CollectionEventType, ProcessedSpecimenDefinitionName, ProcessingType } from '@app/domain/studies';
+import {
+  CollectedSpecimenDefinitionName,
+  CollectionEventType,
+  ProcessedSpecimenDefinitionName,
+  ProcessingType
+} from '@app/domain/studies';
 import { Factory } from '@test/factory';
 import { ProcessingTypeFixture } from '@test/fixtures';
 import { ProcessingTypeInputSubformComponent } from './processing-type-input-subform.component';
 
 describe('ProcessingTypeInputSubformComponent', () => {
-
   @Component({
-    template  : `<form [formGroup]="form">
-                   <app-processing-type-input-subform [processingType]="processingType"
-                                                      [processedDefinitionNames]="processedDefinitionNames"
-                                                      [collectedDefinitionNames]="collectedDefinitionNames"
-                                                      [subform]="inputSubForm">
-                   </app-processing-type-input-subform>
-                 </form>`
+    template: `
+      <form [formGroup]="form">
+        <app-processing-type-input-subform
+          [processingType]="processingType"
+          [processedDefinitionNames]="processedDefinitionNames"
+          [collectedDefinitionNames]="collectedDefinitionNames"
+          [subform]="inputSubForm"
+        >
+        </app-processing-type-input-subform>
+      </form>
+    `
   })
   class TestComponent implements OnInit {
-
     form: FormGroup;
     processingType: ProcessingType;
     processedDefinitionNames: ProcessedSpecimenDefinitionName[] = [];
     collectedDefinitionNames: CollectedSpecimenDefinitionName[] = [];
 
-    constructor(private formBuilder: FormBuilder) {
-    }
+    constructor(private formBuilder: FormBuilder) {}
 
     ngOnInit() {
       this.form = this.formBuilder.group({
-        inputSubForm: ProcessingTypeInputSubformComponent.buildSubForm(this.processingType),
+        inputSubForm: ProcessingTypeInputSubformComponent.buildSubForm(this.processingType)
       });
     }
 
@@ -44,25 +50,14 @@ describe('ProcessingTypeInputSubformComponent', () => {
   const factory = new Factory();
   const entitiesFixture = new ProcessingTypeFixture(factory);
 
-  const dynamicInputs = [
-    'definitionId',
-    'expectedChange',
-    'count'
-  ];
+  const dynamicInputs = ['definitionId', 'expectedChange', 'count'];
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [
-        FormsModule,
-        ReactiveFormsModule
-      ],
-      declarations: [
-        TestComponent,
-        ProcessingTypeInputSubformComponent
-      ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
-      .compileComponents();
+      imports: [FormsModule, ReactiveFormsModule],
+      declarations: [TestComponent, ProcessingTypeInputSubformComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -77,32 +72,30 @@ describe('ProcessingTypeInputSubformComponent', () => {
   });
 
   describe('initilization with an existing processing type', () => {
-
     it('should create with processing type from collected specimen', () => {
       const processingTypes = [
         entitiesFixture.createProcessingTypeFromCollected().processingType,
         entitiesFixture.createProcessingTypeFromProcessed().processingType
       ];
 
-      processingTypes.forEach((processingType) => {
+      processingTypes.forEach(processingType => {
         fixture = TestBed.createComponent(TestComponent);
         component = fixture.componentInstance;
         component.processingType = processingType;
         fixture.detectChanges();
 
-        expect(component.inputSubForm.get('entityId').enabled)
-          .toBe(processingType.input.definitionType === 'collected');
+        expect(component.inputSubForm.get('entityId').enabled).toBe(
+          processingType.input.definitionType === 'collected'
+        );
 
-        expect(component.inputSubForm.get('inputProcessingType').enabled)
-          .toBe(processingType.input.definitionType === 'processed');
+        expect(component.inputSubForm.get('inputProcessingType').enabled).toBe(
+          processingType.input.definitionType === 'processed'
+        );
       });
-
     });
-
   });
 
   describe('initialization with a NEW processing type', () => {
-
     it('should create with processing type from collected specimen', () => {
       component.processingType = new ProcessingType();
       fixture.detectChanges();
@@ -112,7 +105,6 @@ describe('ProcessingTypeInputSubformComponent', () => {
         expect(component.inputSubForm.get(input).enabled).toBe(false);
       });
     });
-
   });
 
   it('when definition type is changed, the correct inputs are enable and disable', () => {
@@ -120,12 +112,12 @@ describe('ProcessingTypeInputSubformComponent', () => {
     const eventType = new CollectionEventType().deserialize(factory.defaultCollectionEventType());
 
     component.processingType = processingType;
-    component.processedDefinitionNames = entitiesFixture.processedDefinitionNames([ input, processingType ]);
-    component.collectedDefinitionNames = entitiesFixture.collectedDefinitionNames([ eventType ]);
+    component.processedDefinitionNames = entitiesFixture.processedDefinitionNames([input, processingType]);
+    component.collectedDefinitionNames = entitiesFixture.collectedDefinitionNames([eventType]);
     fixture.detectChanges();
 
-    const definitionTypes = [ 'collected', 'processed' ];
-    definitionTypes.forEach((definitionType) => {
+    const definitionTypes = ['collected', 'processed'];
+    definitionTypes.forEach(definitionType => {
       const inputElem = fixture.debugElement.query(By.css(`input[value="${definitionType}"]`)).nativeElement;
       inputElem.click();
 
@@ -144,7 +136,6 @@ describe('ProcessingTypeInputSubformComponent', () => {
   });
 
   describe('when selecting an input', () => {
-
     function commonSetup() {
       const eventTypes = [
         new CollectionEventType().deserialize(factory.collectionEventType()),
@@ -154,10 +145,8 @@ describe('ProcessingTypeInputSubformComponent', () => {
       eventTypes.push(eventType);
 
       component.processingType = input;
-      component.processedDefinitionNames =
-        entitiesFixture.processedDefinitionNames([ input, processingType ]);
-      component.collectedDefinitionNames =
-        entitiesFixture.collectedDefinitionNames(eventTypes);
+      component.processedDefinitionNames = entitiesFixture.processedDefinitionNames([input, processingType]);
+      component.collectedDefinitionNames = entitiesFixture.collectedDefinitionNames(eventTypes);
       fixture.detectChanges();
 
       return {
@@ -168,7 +157,6 @@ describe('ProcessingTypeInputSubformComponent', () => {
     }
 
     describe('when selecting an event type', () => {
-
       it('when an event type is selected, the correct inputs are enabled and disabled', () => {
         const { eventTypes, input, processingType } = commonSetup();
 
@@ -222,11 +210,9 @@ describe('ProcessingTypeInputSubformComponent', () => {
         expect(component.inputSubForm.get('expectedChange').enabled).toBe(false);
         expect(component.inputSubForm.get('count').enabled).toBe(false);
       });
-
     });
 
     describe('when selecting a processing type', () => {
-
       it('when an processing type is selected, the correct inputs are enabled and disabled', () => {
         const { eventTypes, input, processingType } = commonSetup();
 
@@ -265,8 +251,6 @@ describe('ProcessingTypeInputSubformComponent', () => {
         expect(component.inputSubForm.get('expectedChange').enabled).toBe(false);
         expect(component.inputSubForm.get('count').enabled).toBe(false);
       });
-
     });
-
   });
 });

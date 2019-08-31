@@ -80,11 +80,9 @@ export interface ISpecimen extends IConcurrencySafeEntity, HasSlug {
    * The name of the event type this specimen belongs to.
    */
   eventTypeName: string;
-
 }
 
 export class Specimen extends ConcurrencySafeEntity implements ISpecimen {
-
   slug: string;
   inventoryId: string;
   eventId: string;
@@ -122,7 +120,7 @@ export class Specimen extends ConcurrencySafeEntity implements ISpecimen {
   }
 
   set specimenDefinition(specimenDefinition: SpecimenDefinition) {
-    if (this.specimenDefinitionId && (this.specimenDefinitionId !== specimenDefinition.id)) {
+    if (this.specimenDefinitionId && this.specimenDefinitionId !== specimenDefinition.id) {
       throw new Error('specimen definitions do not match');
     }
     this._specimenDefinition = specimenDefinition;
@@ -138,21 +136,19 @@ export class Specimen extends ConcurrencySafeEntity implements ISpecimen {
       specimenDefinitionUnits,
       amount,
       state,
-      eventTypeName,
+      eventTypeName
     } = input;
-    Object.assign(
-      this,
-      {
-        slug,
-        inventoryId,
-        eventId,
-        specimenDefinitionId,
-        specimenDefinitionName,
-        specimenDefinitionUnits,
-        amount,
-        state,
-        eventTypeName,
-      });
+    Object.assign(this, {
+      slug,
+      inventoryId,
+      eventId,
+      specimenDefinitionId,
+      specimenDefinitionName,
+      specimenDefinitionUnits,
+      amount,
+      state,
+      eventTypeName
+    });
     super.deserialize(input);
 
     if (input.timeCreated) {

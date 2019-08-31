@@ -8,10 +8,9 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['./centre-remove-modal.component.scss']
 })
 export class CentreRemoveModalComponent {
-
   @Input() centre: ICentreInfoAndState;
 
-  constructor(private activeModal: NgbActiveModal) { }
+  constructor(private activeModal: NgbActiveModal) {}
 
   confirm(): void {
     this.activeModal.close(this.centre);

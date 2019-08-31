@@ -14,7 +14,6 @@ interface TestEntities {
 }
 
 describe('CollectionEventService', () => {
-
   const BASE_URL = '/api/participants/cevents';
 
   let httpMock: HttpTestingController;
@@ -23,9 +22,7 @@ describe('CollectionEventService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        HttpClientTestingModule
-      ],
+      imports: [HttpClientTestingModule],
       providers: [CollectionEventService]
     });
 
@@ -39,7 +36,6 @@ describe('CollectionEventService', () => {
   });
 
   describe('when requesting a collection event', () => {
-
     it('reply is handled correctly', () => {
       const { rawEvent, event } = createEntities();
       const obs = service.get(event.id).subscribe(s => {
@@ -51,23 +47,23 @@ describe('CollectionEventService', () => {
     it('handles an error reply correctly', () => {
       const { event } = createEntities();
       const obs = service.get(event.id);
-      expect(obs).toBeHttpError(httpMock,
-                                'GET',
-                                `${BASE_URL}/${event.id}`,
-                                'expected a collectionEvent object');
+      expect(obs).toBeHttpError(
+        httpMock,
+        'GET',
+        `${BASE_URL}/${event.id}`,
+        'expected a collectionEvent object'
+      );
     });
-
   });
 
   describe('when searching collection events', () => {
-
     const context: PagedQueryBehaviour.Context<CollectionEvent> = {};
 
     beforeEach(() => {
       const { participant, rawEvent } = createEntities();
       context.search = (searchParams: SearchParams) => service.search(participant, searchParams);
       context.url = `${BASE_URL}/list/${participant.id}`;
-      context.replyItems = [ rawEvent  ];
+      context.replyItems = [rawEvent];
       context.subscription = (pr: PagedReply<CollectionEvent>) => {
         expect(pr.entities.length).toBe(context.replyItems.length);
         expect(pr.entities[0]).toEqual(jasmine.any(CollectionEvent));
@@ -75,11 +71,9 @@ describe('CollectionEventService', () => {
     });
 
     PagedQueryBehaviour.sharedBehaviour(context);
-
   });
 
   describe('when adding a collection event', () => {
-
     it('request contains correct JSON and reply is handled correctly', () => {
       const { rawEvent, event } = createEntities();
       const obs = service.add(event);
@@ -96,27 +90,27 @@ describe('CollectionEventService', () => {
         (body: any) => {
           expect(body).toEqual({
             collectionEventTypeId: event.eventTypeId,
-            visitNumber:           event.visitNumber,
-            timeCompleted:         event.timeCompleted,
-            annotations:           event.annotations
+            visitNumber: event.visitNumber,
+            timeCompleted: event.timeCompleted,
+            annotations: event.annotations
           });
-        });
+        }
+      );
     });
 
     it('handles an error reply correctly', () => {
       const rawCollectionEvent = factory.collectionEvent();
       const collectionEvent = new CollectionEvent().deserialize(rawCollectionEvent);
-      expect(service.add(collectionEvent))
-        .toBeHttpError(httpMock,
-                       'POST',
-                       `${BASE_URL}/${collectionEvent.participantId}`,
-                       'expected a collectionEvent object');
+      expect(service.add(collectionEvent)).toBeHttpError(
+        httpMock,
+        'POST',
+        `${BASE_URL}/${collectionEvent.participantId}`,
+        'expected a collectionEvent object'
+      );
     });
-
   });
 
   describe('for updating a collection event', () => {
-
     let testData: any;
 
     beforeEach(() => {
@@ -172,7 +166,7 @@ describe('CollectionEventService', () => {
           expectedJson[testInfo.attribute] = testInfo.value;
         }
 
-        if (testInfo.method && (testInfo.method === 'DELETE')) {
+        if (testInfo.method && testInfo.method === 'DELETE') {
           expect(obs).toBeHttpSuccess(httpMock, 'DELETE', testInfo.url, true, (body: any) => {
             expect(body).toBeNull();
           });
@@ -187,7 +181,7 @@ describe('CollectionEventService', () => {
     it('handles an error reply correctly', () => {
       testData.forEach((testInfo: any) => {
         const obs = service.update(testInfo.event, testInfo.attribute, testInfo.value);
-        if (testInfo.method && (testInfo.method === 'DELETE')) {
+        if (testInfo.method && testInfo.method === 'DELETE') {
           expect(obs).toBeHttpError(httpMock, 'DELETE', testInfo.url, 'expected a collectionEvent object');
         } else {
           expect(obs).toBeHttpError(httpMock, 'POST', testInfo.url, 'expected a collectionEvent object');
@@ -214,14 +208,14 @@ describe('CollectionEventService', () => {
         }
       ];
       testData.forEach((testInfo: any) => {
-        expect(() => service.update(testInfo.event, testInfo.attribute, testInfo.value))
-          .toThrowError(testInfo.expectedErrMsg);
+        expect(() => service.update(testInfo.event, testInfo.attribute, testInfo.value)).toThrowError(
+          testInfo.expectedErrMsg
+        );
       });
     });
   });
 
   describe('for removing a collectionEvent', () => {
-
     it('request contains correct JSON and reply is handled correctly', () => {
       const rawCollectionEvent = factory.collectionEvent();
       const collectionEvent = new CollectionEvent().deserialize(rawCollectionEvent);
@@ -242,10 +236,13 @@ describe('CollectionEventService', () => {
 
       /* tslint:disable-next-line:max-line-length */
       const url = `${BASE_URL}/${collectionEvent.participantId}/${collectionEvent.id}/${collectionEvent.version}`;
-      expect(service.remove(collectionEvent))
-        .toBeHttpError(httpMock, 'DELETE', url, 'expected a collectionEvent object');
+      expect(service.remove(collectionEvent)).toBeHttpError(
+        httpMock,
+        'DELETE',
+        url,
+        'expected a collectionEvent object'
+      );
     });
-
   });
 
   function createEntities(): TestEntities {
@@ -257,12 +254,11 @@ describe('CollectionEventService', () => {
 
   function createPagedReply(rawEvent: any[]): any {
     return {
-      items: [ rawEvent ],
+      items: [rawEvent],
       page: 1,
       limit: 10,
       offset: 0,
       total: 1
     };
   }
-
 });

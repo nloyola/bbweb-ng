@@ -32,10 +32,11 @@ describe('CentreLocationAddComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            'spinner': SpinnerStoreReducer.reducer,
-            'centre': CentreStoreReducer.reducer
+            spinner: SpinnerStoreReducer.reducer,
+            centre: CentreStoreReducer.reducer
           },
-          NgrxRuntimeChecks),
+          NgrxRuntimeChecks
+        ),
         ToastrModule.forRoot()
       ],
       providers: [
@@ -44,10 +45,9 @@ describe('CentreLocationAddComponent', () => {
           useValue: mockActivatedRoute
         }
       ],
-      declarations: [ CentreLocationAddComponent ],
+      declarations: [CentreLocationAddComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
-    })
-      .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -77,7 +77,6 @@ describe('CentreLocationAddComponent', () => {
   });
 
   describe('when submitting', () => {
-
     it('on valid submission', async(() => {
       const centre = createCentre();
       const expectedAction = CentreStoreActions.updateCentreRequest({
@@ -110,7 +109,7 @@ describe('CentreLocationAddComponent', () => {
       const centre = createCentre();
       const testData = [
         { path: 'add', savedMessage: 'Location Added' },
-        { path: centre.locations[0].id, savedMessage: 'Location Updated' },
+        { path: centre.locations[0].id, savedMessage: 'Location Updated' }
       ];
       const errors = [
         {
@@ -120,7 +119,7 @@ describe('CentreLocationAddComponent', () => {
         {
           status: 404,
           error: {
-              message: 'simulated error'
+            message: 'simulated error'
           }
         },
         {
@@ -161,11 +160,11 @@ describe('CentreLocationAddComponent', () => {
       ...factory.location(),
       id: factory.stringNext()
     };
-    return new Centre().deserialize(factory.centre({ locations: [ location ] }));
+    return new Centre().deserialize(factory.centre({ locations: [location] }));
   }
 
   function mockActivatedRouteSnapshot(path: string, centre: Centre): void {
-    const locationId = (path === 'add') ? undefined : centre.locations[0].id;
+    const locationId = path === 'add' ? undefined : centre.locations[0].id;
     mockActivatedRoute.spyOnParent(() => ({
       parent: {
         snapshot: {
@@ -184,10 +183,7 @@ describe('CentreLocationAddComponent', () => {
         slug: centre.slug,
         locationId
       },
-      url: [
-        { path: '' },
-        { path }
-      ]
+      url: [{ path: '' }, { path }]
     }));
   }
 });

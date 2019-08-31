@@ -6,7 +6,14 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Study, StudyState, StudyStateInfo } from '@app/domain/studies';
 import { User } from '@app/domain/users';
-import { ParticipantStoreReducer, RootStoreState, StudyStoreActions, StudyStoreReducer, NgrxRuntimeChecks, ParticipantStoreActions } from '@app/root-store';
+import {
+  ParticipantStoreReducer,
+  RootStoreState,
+  StudyStoreActions,
+  StudyStoreReducer,
+  NgrxRuntimeChecks,
+  ParticipantStoreActions
+} from '@app/root-store';
 import { AuthStoreActions, AuthStoreReducer } from '@app/root-store/auth-store';
 import { TruncatePipe } from '@app/shared/pipes';
 import { Store, StoreModule } from '@ngrx/store';
@@ -28,7 +35,6 @@ interface EntitiesOptions {
 }
 
 describe('CollectionPageComponent', () => {
-
   let component: CollectionPageComponent;
   let fixture: ComponentFixture<CollectionPageComponent>;
   let store: Store<RootStoreState.State>;
@@ -42,20 +48,16 @@ describe('CollectionPageComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            'study': StudyStoreReducer.reducer,
-            'participant': ParticipantStoreReducer.reducer,
-            'auth': AuthStoreReducer.reducer
+            study: StudyStoreReducer.reducer,
+            participant: ParticipantStoreReducer.reducer,
+            auth: AuthStoreReducer.reducer
           },
           NgrxRuntimeChecks
         )
       ],
-      declarations: [
-        CollectionPageComponent,
-        TruncatePipe
-      ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
-    .compileComponents();
+      declarations: [CollectionPageComponent, TruncatePipe],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -70,7 +72,6 @@ describe('CollectionPageComponent', () => {
   });
 
   describe('when loading', () => {
-
     it('should show loading', () => {
       const user = new User().deserialize(factory.user());
       createEntities({ user });
@@ -89,13 +90,12 @@ describe('CollectionPageComponent', () => {
       const alerts = fixture.debugElement.queryAll(By.css('.alert'));
       const textContent = alerts.map(a => a.nativeElement.textContent).join();
       expect(textContent).toContain(
-        'You are not allowed to collect specimens. Please contact your website administrator.');
+        'You are not allowed to collect specimens. Please contact your website administrator.'
+      );
     });
-
   });
 
   describe('when submitting', () => {
-
     it('on submit the corresponding action is dispatched', () => {
       const entities = createEntities();
       const { participant } = entities;
@@ -116,7 +116,8 @@ describe('CollectionPageComponent', () => {
       const entities = createEntities();
       const { participant } = entities;
 
-      const modalListener = jest.spyOn(TestBed.get(NgbModal), 'open')
+      const modalListener = jest
+        .spyOn(TestBed.get(NgbModal), 'open')
         .mockReturnValue({ result: Promise.resolve('OK') });
       jest.spyOn(TestBed.get(Router), 'navigate').mockResolvedValue(true);
 
@@ -136,7 +137,7 @@ describe('CollectionPageComponent', () => {
         }
       ];
 
-      errors.forEach((error) => {
+      errors.forEach(error => {
         modalListener.mockClear();
         component.onSubmit();
         fixture.detectChanges();
@@ -161,7 +162,7 @@ describe('CollectionPageComponent', () => {
       fixture.detectChanges();
 
       expect(routerListener.mock.calls.length).toBe(1);
-      expect(routerListener.mock.calls[0][0]).toEqual([ participant.slug ]);
+      expect(routerListener.mock.calls[0][0]).toEqual([participant.slug]);
     });
 
     it('if server finds the wrong participant, client should throw an error', () => {
@@ -179,7 +180,6 @@ describe('CollectionPageComponent', () => {
       store.dispatch(ParticipantStoreActions.getParticipantSuccess({ participant: wrongParticipant }));
       expect(component.participant$).toBeObservable(cold('#', null, new Error('participant not found')));
     });
-
   });
 
   it('when cancel button is pressed on modal, corresponding values are reinitialized', fakeAsync(() => {
@@ -187,7 +187,8 @@ describe('CollectionPageComponent', () => {
     const { study, studiesData } = entities;
     dispatchEntities(entities);
 
-    const modalListener = jest.spyOn(TestBed.get(NgbModal), 'open')
+    const modalListener = jest
+      .spyOn(TestBed.get(NgbModal), 'open')
       .mockReturnValue({ result: Promise.reject('Cancel') });
 
     jest.spyOn(TestBed.get(Router), 'navigate').mockResolvedValue(true);
@@ -222,26 +223,33 @@ describe('CollectionPageComponent', () => {
   });
 
   function createEntities(options: EntitiesOptions = {}) {
-    const study = (options.study !== undefined) ? options.study : new Study().deserialize(factory.study());
-    const studiesData = (options.studiesData !== undefined) ? options.studiesData : [
-      new StudyStateInfo().deserialize(factory.entityNameAndStateDto<Study, StudyState>(study))
-    ];
-    const participant = (options.participant !== undefined)
-      ?  options.participant : new Participant().deserialize(factory.participant());
-    const user = (options.user !== undefined) ? options.user : new User().deserialize(factory.user({
-      roles: [
-        factory.role({ id: RoleIds.SpecimenCollector })
-      ]
-    }));
-    return { study, studiesData, participant, user  };
+    const study = options.study !== undefined ? options.study : new Study().deserialize(factory.study());
+    const studiesData =
+      options.studiesData !== undefined
+        ? options.studiesData
+        : [new StudyStateInfo().deserialize(factory.entityNameAndStateDto<Study, StudyState>(study))];
+    const participant =
+      options.participant !== undefined
+        ? options.participant
+        : new Participant().deserialize(factory.participant());
+    const user =
+      options.user !== undefined
+        ? options.user
+        : new User().deserialize(
+            factory.user({
+              roles: [factory.role({ id: RoleIds.SpecimenCollector })]
+            })
+          );
+    return { study, studiesData, participant, user };
   }
 
   function dispatchEntities(options: EntitiesOptions = {}) {
-    const { study, studiesData, user} = options;
+    const { study, studiesData, user } = options;
     if (study) {
       store.dispatch(StudyStoreActions.searchCollectionStudiesSuccess({ studiesData }));
     }
-    if (user) { store.dispatch(AuthStoreActions.loginSuccessAction({ user })); }
+    if (user) {
+      store.dispatch(AuthStoreActions.loginSuccessAction({ user }));
+    }
   }
-
 });

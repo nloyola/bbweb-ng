@@ -14,20 +14,11 @@ describe('SpecimenViewModalComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [
-        NgbModule
-      ],
-      providers: [
-        NgbActiveModal
-      ],
-      declarations: [
-        SpecimenViewModalComponent,
-        ModalInputComponent,
-        YesNoPipe
-      ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
-    .compileComponents();
+      imports: [NgbModule],
+      providers: [NgbActiveModal],
+      declarations: [SpecimenViewModalComponent, ModalInputComponent, YesNoPipe],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

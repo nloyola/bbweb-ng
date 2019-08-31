@@ -1,4 +1,11 @@
-import { ConcurrencySafeEntity, HasSlug, IConcurrencySafeEntity, JSONArray, JSONObject, applyMixins } from '@app/domain';
+import {
+  ConcurrencySafeEntity,
+  HasSlug,
+  IConcurrencySafeEntity,
+  JSONArray,
+  JSONObject,
+  applyMixins
+} from '@app/domain';
 import { Annotation, IAnnotation, HasAnnotations, AnnotationType, AnnotationFactory } from '../annotations';
 import { CollectionEventType } from '../studies';
 
@@ -7,7 +14,6 @@ import { CollectionEventType } from '../studies';
  * non human. A CollectionEvent belongs to a single {@link app.domain.studies.Study | Study}.
  */
 export interface ICollectionEvent extends IConcurrencySafeEntity, HasSlug {
-
   /**
    * The ID of the {@link app.domain.particiapnts.Participant | Participant} this CollectionEvent belongs to.
    */
@@ -49,7 +55,6 @@ export interface ICollectionEvent extends IConcurrencySafeEntity, HasSlug {
 }
 
 export class CollectionEvent extends ConcurrencySafeEntity implements ICollectionEvent, HasAnnotations {
-
   slug: string;
   participantId: string;
   participantSlug: string;
@@ -61,7 +66,7 @@ export class CollectionEvent extends ConcurrencySafeEntity implements ICollectio
   setAnnotationTypes: (at: AnnotationType[]) => void;
 
   set eventType(eventType: CollectionEventType) {
-    if (this.eventTypeId && (this.eventTypeId !== eventType.id)) {
+    if (this.eventTypeId && this.eventTypeId !== eventType.id) {
       throw new Error('collection event types do not match');
     }
     this.eventTypeId = eventType.id;
@@ -87,13 +92,11 @@ export class CollectionEvent extends ConcurrencySafeEntity implements ICollectio
     }
 
     if (input.annotations) {
-      this.annotations = input.annotations
-        .map(a => AnnotationFactory.annotationFactory(a));
+      this.annotations = input.annotations.map(a => AnnotationFactory.annotationFactory(a));
     }
 
     return this;
   }
-
 }
 
-applyMixins(CollectionEvent, [ HasAnnotations ]);
+applyMixins(CollectionEvent, [HasAnnotations]);

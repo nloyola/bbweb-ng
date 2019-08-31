@@ -3,9 +3,10 @@
 </div>
 
 <div *ngIf="permissions$ | async as permissions">
-  <div class="d-flex flex-row flex-wrap justify-content-center"
-       *ngIf="permissions.hasUserAdminRole; else notPermitted">
-
+  <div
+    class="d-flex flex-row flex-wrap justify-content-center"
+    *ngIf="permissions.hasUserAdminRole; else notPermitted"
+  >
     <!-- MANAGE USERS -->
     <div class="card bbweb">
       <h5 class="card-header bg-primary text-light">
@@ -44,7 +45,6 @@
         <a routerLink="memberships" class="btn btn-primary" i18n>Select</a>
       </div>
     </div>
-
   </div>
 </div>
 

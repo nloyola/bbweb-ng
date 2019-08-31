@@ -11,7 +11,6 @@ import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ForgotPasswordComponent } from './forgot-password.component';
 
 describe('ForgotPasswordComponent', () => {
-
   let component: ForgotPasswordComponent;
   let fixture: ComponentFixture<ForgotPasswordComponent>;
   let httpMock: HttpTestingController;
@@ -23,17 +22,10 @@ describe('ForgotPasswordComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [
-        FormsModule,
-        HttpClientTestingModule,
-        NgbModule,
-        ReactiveFormsModule,
-        RouterTestingModule
-      ],
+      imports: [FormsModule, HttpClientTestingModule, NgbModule, ReactiveFormsModule, RouterTestingModule],
       declarations: [ForgotPasswordComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
-    })
-      .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -61,7 +53,6 @@ describe('ForgotPasswordComponent', () => {
   });
 
   describe('email input validity', () => {
-
     it('is required', () => {
       const errors = component.email.errors || {};
       expect(errors['required']).toBeTruthy();
@@ -78,15 +69,12 @@ describe('ForgotPasswordComponent', () => {
       const errors = component.email.errors || {};
       expect(errors).toEqual({});
     });
-
   });
 
   describe('when submitted', () => {
-
     it('form submission sends a request to the server', async(() => {
       const user = new User().deserialize(factory.user());
-      spyOn(modalService, 'open').and
-        .returnValue({ result: Promise.resolve('OK') });
+      spyOn(modalService, 'open').and.returnValue({ result: Promise.resolve('OK') });
 
       component.email.setValue(user.email);
       component.onSubmit();
@@ -102,8 +90,7 @@ describe('ForgotPasswordComponent', () => {
     }));
 
     it('a error reply from the server causes a modal to be shown', async(() => {
-      spyOn(modalService, 'open').and
-        .returnValue({ result: Promise.resolve('OK') });
+      spyOn(modalService, 'open').and.returnValue({ result: Promise.resolve('OK') });
 
       component.email.setValue('test@test.com');
       component.onSubmit();
@@ -117,6 +104,5 @@ describe('ForgotPasswordComponent', () => {
         expect(router.navigate).toHaveBeenCalledWith(['/']);
       });
     }));
-
   });
 });

@@ -4,7 +4,12 @@ import { TestBed } from '@angular/core/testing';
 import { ActivatedRouteSnapshot, convertToParamMap } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ProcessingType, Study } from '@app/domain/studies';
-import { NgrxRuntimeChecks, ProcessingTypeStoreActions, ProcessingTypeStoreReducer, RootStoreState } from '@app/root-store';
+import {
+  NgrxRuntimeChecks,
+  ProcessingTypeStoreActions,
+  ProcessingTypeStoreReducer,
+  RootStoreState
+} from '@app/root-store';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
@@ -12,7 +17,6 @@ import { cold } from 'jasmine-marbles';
 import { ProcessingTypeResolver } from './processing-type-resolver.service';
 
 describe('ProcessingTypeResolver', () => {
-
   let ngZone: NgZone;
   let resolver: ProcessingTypeResolver;
   let store: Store<RootStoreState.State>;
@@ -28,7 +32,8 @@ describe('ProcessingTypeResolver', () => {
           {
             'processing-type': ProcessingTypeStoreReducer.reducer
           },
-          NgrxRuntimeChecks)
+          NgrxRuntimeChecks
+        )
       ]
     });
 
@@ -85,17 +90,18 @@ describe('ProcessingTypeResolver', () => {
   function createRoute(study: Study, processingType: ProcessingType) {
     const route = new ActivatedRouteSnapshot();
 
-    Object.defineProperty(route,
-                          'paramMap',
-                          { get: () => convertToParamMap({ processingTypeSlug: processingType.slug })});
-    Object.defineProperty(route, 'parent', { get: () => ({
-      parent: {
+    Object.defineProperty(route, 'paramMap', {
+      get: () => convertToParamMap({ processingTypeSlug: processingType.slug })
+    });
+    Object.defineProperty(route, 'parent', {
+      get: () => ({
         parent: {
-          paramMap: convertToParamMap({ slug: study.slug })
+          parent: {
+            paramMap: convertToParamMap({ slug: study.slug })
+          }
         }
-      }
-    })});
+      })
+    });
     return route;
   }
-
 });

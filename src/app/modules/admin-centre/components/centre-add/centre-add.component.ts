@@ -15,7 +15,6 @@ import { filter, takeUntil } from 'rxjs/operators';
   styleUrls: ['./centre-add.component.scss']
 })
 export class CentreAddComponent implements OnInit, OnDestroy {
-
   @ViewChild('nameInput', { static: true }) nameInput: ElementRef;
 
   form: FormGroup;
@@ -23,39 +22,41 @@ export class CentreAddComponent implements OnInit, OnDestroy {
 
   private unsubscribe$: Subject<void> = new Subject<void>();
 
-  constructor(private store$: Store<RootStoreState.State>,
-              private formBuilder: FormBuilder,
-              private router: Router,
-              private route: ActivatedRoute,
-              private toastr: ToastrService) { }
+  constructor(
+    private store$: Store<RootStoreState.State>,
+    private formBuilder: FormBuilder,
+    private router: Router,
+    private route: ActivatedRoute,
+    private toastr: ToastrService
+  ) {}
 
   ngOnInit() {
-    this.form = this.formBuilder.group(
-      {
-        name: [ '', [ Validators.required ] ],
-        description: ['']
-      });
+    this.form = this.formBuilder.group({
+      name: ['', [Validators.required]],
+      description: ['']
+    });
 
     this.nameInput.nativeElement.focus();
 
     this.isSaving$ = this.store$.pipe(select(SpinnerStoreSelectors.selectSpinnerIsActive));
 
-    this.store$.pipe(
-      select(CentreStoreSelectors.selectCentreLastAdded),
-      filter(s => !!s),
-      takeUntil(this.unsubscribe$)
-    ).subscribe((centre: Centre) => {
-      this.toastr.success(
-        `Centre was added successfully: ${centre.name}`,
-        'Add Successfull');
-      this.router.navigate([ '..', centre.slug ], { relativeTo: this.route });
-    });
+    this.store$
+      .pipe(
+        select(CentreStoreSelectors.selectCentreLastAdded),
+        filter(s => !!s),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe((centre: Centre) => {
+        this.toastr.success(`Centre was added successfully: ${centre.name}`, 'Add Successfull');
+        this.router.navigate(['..', centre.slug], { relativeTo: this.route });
+      });
 
     this.store$
       .pipe(
         select(CentreStoreSelectors.selectCentreError),
         filter(s => !!s),
-        takeUntil(this.unsubscribe$))
+        takeUntil(this.unsubscribe$)
+      )
       .subscribe((error: any) => {
         let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
         if (errMessage.match(/EntityCriteriaError: centre with name already exists/)) {
@@ -84,7 +85,6 @@ export class CentreAddComponent implements OnInit, OnDestroy {
   }
 
   onCancel() {
-    this.router.navigate([ '../' ], { relativeTo: this.route });
+    this.router.navigate(['../'], { relativeTo: this.route });
   }
-
 }

@@ -1,10 +1,12 @@
 <div class="pb-2 mt-4 mb-2 border-bottom">
   <h1 i18n>Add Participant</h1>
 </div>
-<app-participant-add-form [studies]="collectionStudies$ | async"
-                          [uniqueId]="uniqueId$ | async"
-                          [isSaving]="isSaving$"
-                          (studySelected)="studySelected($event)"
-                          (submitted)="onSubmit($event)"
-                          (cancelled)="onCancel($event)">
+<app-participant-add-form
+  [studies]="collectionStudies$ | async"
+  [uniqueId]="uniqueId$ | async"
+  [isSaving]="isSaving$"
+  (studySelected)="studySelected($event)"
+  (submitted)="onSubmit($event)"
+  (cancelled)="onCancel($event)"
+>
 </app-participant-add-form>

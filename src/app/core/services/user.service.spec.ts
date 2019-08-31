@@ -8,7 +8,6 @@ import { SearchParams, PagedReply } from '@app/domain';
 import { PagedQueryBehaviour } from '@test/behaviours/paged-query.behaviour';
 
 describe('UserService', () => {
-
   const BASE_URL = '/api/users';
 
   let httpMock: HttpTestingController;
@@ -17,9 +16,7 @@ describe('UserService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        HttpClientTestingModule
-      ],
+      imports: [HttpClientTestingModule],
       providers: [UserService]
     });
     httpMock = TestBed.get(HttpTestingController);
@@ -48,7 +45,6 @@ describe('UserService', () => {
   });
 
   describe('for user counts', () => {
-
     it('reply is handled correctly', () => {
       const counts = factory.userCounts();
       service.counts().subscribe((s: UserCounts) => {
@@ -66,16 +62,20 @@ describe('UserService', () => {
 
     it('handles an error reply correctly', () => {
       service.counts().subscribe(
-        () => { fail('should have been an error response'); },
-        err => { expect(err.message).toContain('expected a user object'); }
+        () => {
+          fail('should have been an error response');
+        },
+        err => {
+          expect(err.message).toContain('expected a user object');
+        }
       );
 
       const req = httpMock.expectOne(`${BASE_URL}/counts`);
       req.flush({ status: 'error', data: undefined });
       httpMock.verify();
     });
-
-  });  describe('when requesting a user', () => {
+  });
+  describe('when requesting a user', () => {
     let rawUser: any;
     let user: User;
 
@@ -97,25 +97,27 @@ describe('UserService', () => {
 
     it('handles an error reply correctly', () => {
       service.get(user.slug).subscribe(
-        () => { fail('should have been an error response'); },
-        err => { expect(err.message).toContain('expected a user object'); }
+        () => {
+          fail('should have been an error response');
+        },
+        err => {
+          expect(err.message).toContain('expected a user object');
+        }
       );
 
       const req = httpMock.expectOne(`${BASE_URL}/${user.slug}`);
       req.flush({ status: 'error', data: undefined });
       httpMock.verify();
     });
-
   });
 
   describe('when searching users', () => {
-
     const context: PagedQueryBehaviour.Context<User> = {};
 
     beforeEach(() => {
       context.search = (searchParams: SearchParams) => service.search(searchParams);
       context.url = `${BASE_URL}/search`;
-      context.replyItems = [ factory.user() ];
+      context.replyItems = [factory.user()];
       context.subscription = (pr: PagedReply<User>) => {
         expect(pr.entities.length).toBe(1);
         expect(pr.entities[0]).toEqual(jasmine.any(User));
@@ -123,11 +125,9 @@ describe('UserService', () => {
     });
 
     PagedQueryBehaviour.sharedBehaviour(context);
-
   });
 
   describe('for updating a user', () => {
-
     let rawUser: any;
     let user: User;
     let testData: any;
@@ -175,7 +175,6 @@ describe('UserService', () => {
           url: `${BASE_URL}/update/${user.id}`
         }
       ];
-
     });
 
     it('request contains correct JSON and reply is handled correctly', () => {
@@ -202,8 +201,12 @@ describe('UserService', () => {
     it('handles an error reply correctly', () => {
       testData.forEach((testInfo: any) => {
         service.update(user, testInfo.attribute, testInfo.value).subscribe(
-          () => { fail('should have been an error response'); },
-          err => { expect(err.message).toContain('expected a user object'); }
+          () => {
+            fail('should have been an error response');
+          },
+          err => {
+            expect(err.message).toContain('expected a user object');
+          }
         );
 
         const req = httpMock.expectOne(testInfo.url);
@@ -228,11 +231,10 @@ describe('UserService', () => {
         }
       ];
       testData.forEach((testInfo: any) => {
-        expect(() => service.update(user, testInfo.attribute, testInfo.value))
-          .toThrowError(testInfo.expectedErrMsg);
+        expect(() => service.update(user, testInfo.attribute, testInfo.value)).toThrowError(
+          testInfo.expectedErrMsg
+        );
       });
     });
   });
-
-
 });

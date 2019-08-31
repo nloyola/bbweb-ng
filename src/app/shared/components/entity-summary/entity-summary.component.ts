@@ -7,20 +7,17 @@ import { ConcurrencySafeEntity, DomainEntityUI } from '@app/domain';
   styleUrls: ['./entity-summary.component.scss']
 })
 export class EntitySummaryComponent<T extends ConcurrencySafeEntity> implements OnInit {
-
   @Input() entity: DomainEntityUI<T>;
   @Input() icon: string;
   @Input() iconClass: string;
 
   @Output() selected = new EventEmitter<DomainEntityUI<T>>();
 
-  constructor() { }
+  constructor() {}
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   linkSelected() {
     this.selected.emit(this.entity);
   }
-
 }

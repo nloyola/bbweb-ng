@@ -100,9 +100,7 @@ import { StudyViewComponent } from './components/study-view/study-view.component
     ProcessingOutputSpecimenModalComponent,
     ProcessingTypeCardComponent
   ],
-  exports: [
-    StudiesAdminComponent
-  ],
+  exports: [StudiesAdminComponent],
   entryComponents: [
     AnnotationTypeRemoveComponent,
     AnnotationTypeViewComponent,
@@ -116,5 +114,4 @@ import { StudyViewComponent } from './components/study-view/study-view.component
     ProcessingOutputSpecimenModalComponent
   ]
 })
-export class AdminStudyModule {
-}
+export class AdminStudyModule {}

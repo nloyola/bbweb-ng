@@ -8,9 +8,8 @@ describe('ShipmentSpecimensTableComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ShipmentSpecimensTableComponent ]
-    })
-    .compileComponents();
+      declarations: [ShipmentSpecimensTableComponent]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

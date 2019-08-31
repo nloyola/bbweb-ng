@@ -2,9 +2,11 @@
   <ng-container *ngIf="studyData.hasSpecimenDefinitions; else noCollectedSpecimens">
     <div class="row mt-2">
       <div class="col-md-3">
-        <app-processing-types-add-and-select [study]="studyData.study"
-                                             (addSelected)="addProcessingTypeSelected($event)"
-                                             (selected)="processingTypeSelected($event)">
+        <app-processing-types-add-and-select
+          [study]="studyData.study"
+          (addSelected)="addProcessingTypeSelected($event)"
+          (selected)="processingTypeSelected($event)"
+        >
         </app-processing-types-add-and-select>
       </div>
       <div class="col-md-9">
@@ -20,8 +22,8 @@
       <div class="alert alert-warning" role="alert">
         <mat-icon class="warning-icon" inline="true">warning</mat-icon>
         <span i18n>
-          Error: no collected specimens have been defined for this study.
-          Processing steps cannot be added until specimens are added to events.
+          Error: no collected specimens have been defined for this study. Processing steps cannot be added
+          until specimens are added to events.
         </span>
       </div>
     </div>

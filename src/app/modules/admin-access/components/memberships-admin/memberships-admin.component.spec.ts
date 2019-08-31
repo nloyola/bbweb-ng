@@ -14,14 +14,14 @@ describe('MembershipsAdminComponent', () => {
       imports: [
         StoreModule.forRoot(
           {
-            'membership': MembershipStoreReducer.reducer
+            membership: MembershipStoreReducer.reducer
           },
-          NgrxRuntimeChecks)
+          NgrxRuntimeChecks
+        )
       ],
-      declarations: [ MembershipsAdminComponent ],
+      declarations: [MembershipsAdminComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {

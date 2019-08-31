@@ -1,10 +1,8 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
-@Pipe({name: 'yesNo'})
+@Pipe({ name: 'yesNo' })
 export class YesNoPipe implements PipeTransform {
-
   transform(input: boolean) {
     return input ? 'Yes' : 'No';
   }
-
 }

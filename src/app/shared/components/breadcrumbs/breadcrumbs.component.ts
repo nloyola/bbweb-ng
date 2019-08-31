@@ -14,18 +14,15 @@ import { BreadcrumbService } from '@app/core/services/breadcrumb.service';
   styleUrls: ['./breadcrumbs.component.scss']
 })
 export class BreadcrumbsComponent implements OnInit, OnDestroy {
-
   crumbs: Crumb[];
   private unsubscribe$: Subject<void> = new Subject<void>();
 
-  constructor(private service: BreadcrumbService) { }
+  constructor(private service: BreadcrumbService) {}
 
   ngOnInit() {
-    this.service.crumbs$
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe(x => {
-        this.crumbs = x;
-      });
+    this.service.crumbs$.pipe(takeUntil(this.unsubscribe$)).subscribe(x => {
+      this.crumbs = x;
+    });
   }
 
   ngOnDestroy() {

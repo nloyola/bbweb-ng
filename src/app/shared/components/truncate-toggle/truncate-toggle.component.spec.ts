@@ -10,13 +10,9 @@ describe('TruncateToggleComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [
-        TruncateToggleComponent,
-        NlToBrPipe
-      ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
-    .compileComponents();
+      declarations: [TruncateToggleComponent, NlToBrPipe],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -53,19 +49,20 @@ describe('TruncateToggleComponent', () => {
     component.toggleLength = testText.length / 2;
     fixture.detectChanges();
 
-    [ true, false ].forEach(toggle => {
+    [true, false].forEach(toggle => {
       component.toggleText();
       fixture.detectChanges();
 
       if (toggle) {
         // subtract another 3 characters for the ellipsis used by the truncate pipe
-        expect(component.displayText.includes(
-          testText.substring(0, component.toggleLength - truncatePipeEllipsisLength)))
-          .toBe(true);
+        expect(
+          component.displayText.includes(
+            testText.substring(0, component.toggleLength - truncatePipeEllipsisLength)
+          )
+        ).toBe(true);
       } else {
         expect(component.displayText).toBe(testText);
       }
     });
-
   });
 });

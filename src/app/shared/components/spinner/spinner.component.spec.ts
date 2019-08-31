@@ -5,9 +5,8 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { SpinnerComponent } from './spinner.component';
 
 describe('SpinnerComponent', () => {
-
   @Component({
-    template  : '<app-spinner name="test-component" [show]="show"></app-spinner>'
+    template: '<app-spinner name="test-component" [show]="show"></app-spinner>'
   })
   class TestComponent {
     show = true;
@@ -18,10 +17,9 @@ describe('SpinnerComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TestComponent, SpinnerComponent ],
+      declarations: [TestComponent, SpinnerComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
-    })
-      .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {

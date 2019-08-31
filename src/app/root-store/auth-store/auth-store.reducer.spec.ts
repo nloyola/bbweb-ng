@@ -3,7 +3,6 @@ import { User } from '@app/domain/users';
 import { Factory } from '@test/factory';
 
 describe('auth-store-model reducer', () => {
-
   let factory: Factory;
 
   beforeEach(() => {
@@ -182,5 +181,4 @@ describe('auth-store-model reducer', () => {
       registeredUser: payload.user
     });
   });
-
 });

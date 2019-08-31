@@ -9,8 +9,8 @@ import { createAction, props, union } from '@ngrx/store';
 export const searchSpecimensRequest = createAction(
   '[Specimen] Search Specimens Request',
   props<{
-    event: CollectionEvent,
-    searchParams: SearchParams
+    event: CollectionEvent;
+    searchParams: SearchParams;
   }>()
 );
 
@@ -27,8 +27,8 @@ export const searchSpecimensFailure = createAction(
 export const addSpecimensRequest = createAction(
   '[Specimen] Add Specimen Request',
   props<{
-    event: CollectionEvent,
-    specimens: Specimen[]
+    event: CollectionEvent;
+    specimens: Specimen[];
   }>()
 );
 
@@ -37,25 +37,16 @@ export const addSpecimensSuccess = createAction(
   props<{ event: CollectionEvent }>()
 );
 
-export const addSpecimensFailure = createAction(
-  '[Specimen] Add Specimen Failure',
-  props<{ error: any }>()
-);
+export const addSpecimensFailure = createAction('[Specimen] Add Specimen Failure', props<{ error: any }>());
 
-export const getSpecimenRequest = createAction(
-  '[Specimen] Get Specimen Request',
-  props<{ id: string }>()
-);
+export const getSpecimenRequest = createAction('[Specimen] Get Specimen Request', props<{ id: string }>());
 
 export const getSpecimenSuccess = createAction(
   '[Specimen] Get Specimen Success',
   props<{ specimen: Specimen }>()
 );
 
-export const getSpecimenFailure = createAction(
-  '[Specimen] Get Specimen Failure',
-  props<{ error: any }>()
-);
+export const getSpecimenFailure = createAction('[Specimen] Get Specimen Failure', props<{ error: any }>());
 
 export const removeSpecimenRequest = createAction(
   '[Specimen] Remove Specimen Request',

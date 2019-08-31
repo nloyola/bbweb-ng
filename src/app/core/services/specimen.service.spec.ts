@@ -8,7 +8,6 @@ import '@test/matchers/server-api.matchers';
 import { SpecimenService } from './specimen.service';
 
 describe('SpecimenService', () => {
-
   const BASE_URL = '/api/participants/cevents/spcs';
 
   let httpMock: HttpTestingController;
@@ -17,9 +16,7 @@ describe('SpecimenService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        HttpClientTestingModule
-      ],
+      imports: [HttpClientTestingModule],
       providers: [SpecimenService]
     });
 
@@ -33,7 +30,6 @@ describe('SpecimenService', () => {
   });
 
   describe('when requesting a specimen', () => {
-
     it('reply is handled correctly', () => {
       const { rawSpecimen, specimen, event } = createEntities();
       const obs = service.get(specimen.id).subscribe(s => {
@@ -45,23 +41,18 @@ describe('SpecimenService', () => {
     it('handles an error reply correctly', () => {
       const { rawSpecimen, specimen, event } = createEntities();
       const obs = service.get(specimen.id);
-      expect(obs).toBeHttpError(httpMock,
-                                'GET',
-                                `${BASE_URL}/${specimen.id}`,
-                                'expected a specimen object');
+      expect(obs).toBeHttpError(httpMock, 'GET', `${BASE_URL}/${specimen.id}`, 'expected a specimen object');
     });
-
   });
 
   describe('when searching specimens', () => {
-
     const context: PagedQueryBehaviour.Context<Specimen> = {};
 
     beforeEach(() => {
       const { rawSpecimen, specimen, event } = createEntities();
       context.search = (searchParams: SearchParams) => service.search(event, searchParams);
       context.url = `${BASE_URL}/${event.slug}`;
-      context.replyItems = [ rawSpecimen ];
+      context.replyItems = [rawSpecimen];
       context.subscription = (pr: PagedReply<Specimen>) => {
         expect(pr.entities.length).toBe(1);
         expect(pr.entities[0]).toEqual(jasmine.any(Specimen));
@@ -69,14 +60,12 @@ describe('SpecimenService', () => {
     });
 
     PagedQueryBehaviour.sharedBehaviour(context);
-
   });
 
   describe('when adding a collection specimen', () => {
-
     it('request contains correct JSON and reply is handled correctly', () => {
       const { rawSpecimen, specimen, event } = createEntities();
-      const specimens = [ specimen ] ;
+      const specimens = [specimen];
       const obs = service.add(event, specimens);
       obs.subscribe(s => {
         expect(s).toEqual(jasmine.any(Specimen));
@@ -87,10 +76,10 @@ describe('SpecimenService', () => {
         expect(body).toEqual({
           collectionEventId: event.id,
           specimenData: specimens.map(spc => ({
-            inventoryId:          spc.inventoryId,
+            inventoryId: spc.inventoryId,
             specimenDefinitionId: spc.specimenDefinitionId,
-            timeCreated:          spc.timeCreated,
-            amount:               spc.amount
+            timeCreated: spc.timeCreated,
+            amount: spc.amount
           }))
         });
       });
@@ -98,14 +87,16 @@ describe('SpecimenService', () => {
 
     it('handles an error reply correctly', () => {
       const { rawSpecimen, specimen, event } = createEntities();
-      expect(service.add(event, [ specimen ]))
-        .toBeHttpError(httpMock, 'POST', `${BASE_URL}/`, 'expected a specimen object');
+      expect(service.add(event, [specimen])).toBeHttpError(
+        httpMock,
+        'POST',
+        `${BASE_URL}/`,
+        'expected a specimen object'
+      );
     });
-
   });
 
   describe('for removing a specimen', () => {
-
     it('request contains correct JSON and reply is handled correctly', () => {
       const rawSpecimen = factory.specimen();
       const specimen = new Specimen().deserialize(rawSpecimen);
@@ -123,10 +114,8 @@ describe('SpecimenService', () => {
       const rawSpecimen = factory.specimen();
       const specimen = new Specimen().deserialize(rawSpecimen);
       const url = `${BASE_URL}/${specimen.eventId}/${specimen.id}/${specimen.version}`;
-      expect(service.remove(specimen))
-        .toBeHttpError(httpMock, 'DELETE', url, 'expected a specimen object');
+      expect(service.remove(specimen)).toBeHttpError(httpMock, 'DELETE', url, 'expected a specimen object');
     });
-
   });
 
   function createEntities() {
@@ -135,5 +124,4 @@ describe('SpecimenService', () => {
     const event = new CollectionEvent().deserialize(factory.collectionEvent());
     return { rawSpecimen, specimen, event };
   }
-
 });

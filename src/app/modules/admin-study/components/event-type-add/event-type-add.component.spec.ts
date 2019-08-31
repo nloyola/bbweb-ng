@@ -4,7 +4,12 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CollectionEventType, Study } from '@app/domain/studies';
-import { EventTypeStoreActions, EventTypeStoreReducer, RootStoreState, NgrxRuntimeChecks } from '@app/root-store';
+import {
+  EventTypeStoreActions,
+  EventTypeStoreReducer,
+  RootStoreState,
+  NgrxRuntimeChecks
+} from '@app/root-store';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
@@ -12,7 +17,6 @@ import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { EventTypeAddComponent } from './event-type-add.component';
 
 describe('EventTypeAddComponent', () => {
-
   let store: Store<RootStoreState.State>;
   let component: EventTypeAddComponent;
   let fixture: ComponentFixture<EventTypeAddComponent>;
@@ -33,9 +37,10 @@ describe('EventTypeAddComponent', () => {
         StoreModule.forRoot(
           {
             'event-type': EventTypeStoreReducer.reducer,
-            'spinner': SpinnerStoreReducer.reducer
+            spinner: SpinnerStoreReducer.reducer
           },
-          NgrxRuntimeChecks),
+          NgrxRuntimeChecks
+        ),
         ToastrModule.forRoot()
       ],
       providers: [
@@ -55,10 +60,9 @@ describe('EventTypeAddComponent', () => {
           }
         }
       ],
-      declarations: [ EventTypeAddComponent ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
-    .compileComponents();
+      declarations: [EventTypeAddComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -77,7 +81,6 @@ describe('EventTypeAddComponent', () => {
   });
 
   describe('when submitting', () => {
-
     it('on valid submission', async(() => {
       const toastr = TestBed.get(ToastrService);
       const eventType = createEventType();
@@ -101,7 +104,8 @@ describe('EventTypeAddComponent', () => {
       fixture.detectChanges();
 
       expect(storeListener.mock.calls[0][0]).toEqual(
-        EventTypeStoreActions.addEventTypeRequest({ eventType: eventTypeToAdd }));
+        EventTypeStoreActions.addEventTypeRequest({ eventType: eventTypeToAdd })
+      );
 
       ngZone.run(() => store.dispatch(EventTypeStoreActions.addEventTypeSuccess({ eventType })));
       fixture.whenStable().then(() => {
@@ -109,7 +113,7 @@ describe('EventTypeAddComponent', () => {
         expect(storeListener.mock.calls.length).toBe(3);
         expect(toastrListener.mock.calls.length).toBe(1);
         expect(routerListener.mock.calls.length).toBe(1);
-        expect(routerListener.mock.calls[0][0]).toEqual(['../view', eventType.slug ]);
+        expect(routerListener.mock.calls[0][0]).toEqual(['../view', eventType.slug]);
       });
     }));
 
@@ -150,7 +154,6 @@ describe('EventTypeAddComponent', () => {
         expect(toastr.error).toHaveBeenCalled();
       });
     }));
-
   });
 
   it('returns to the correct state when Cancel button is pressed', () => {
@@ -160,7 +163,7 @@ describe('EventTypeAddComponent', () => {
     ngZone.run(() => component.onCancel());
     expect(spy).toHaveBeenCalled();
     expect(spy.mock.calls.length).toBe(1);
-    expect(spy.mock.calls[0][0]).toEqual([ '..' ]);
+    expect(spy.mock.calls[0][0]).toEqual(['..']);
   });
 
   function createEventType(): CollectionEventType {

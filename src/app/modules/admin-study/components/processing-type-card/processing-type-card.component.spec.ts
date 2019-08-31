@@ -11,15 +11,9 @@ describe('ProcessingTypeCardComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [
-        TruncateToggleComponent,
-        ProcessingTypeCardComponent,
-        NlToBrPipe,
-        YesNoPipe
-      ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
-    .compileComponents();
+      declarations: [TruncateToggleComponent, ProcessingTypeCardComponent, NlToBrPipe, YesNoPipe],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

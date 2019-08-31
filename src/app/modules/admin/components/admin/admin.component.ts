@@ -19,10 +19,9 @@ interface Permissions {
   styleUrls: ['./admin.component.scss']
 })
 export class AdminComponent implements OnInit {
-
   permissions$: Observable<Permissions>;
 
-  constructor(private store$: Store<RootStoreState.State>) { }
+  constructor(private store$: Store<RootStoreState.State>) {}
 
   public ngOnInit() {
     this.permissions$ = this.store$.pipe(
@@ -45,7 +44,7 @@ export class AdminComponent implements OnInit {
           hasUserAdminRole: user.hasUserAdminRole(),
           hasAdminRole: user.hasAdminRole()
         };
-      }));
+      })
+    );
   }
-
 }

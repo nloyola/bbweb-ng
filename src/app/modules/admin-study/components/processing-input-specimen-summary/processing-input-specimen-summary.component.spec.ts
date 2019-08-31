@@ -15,13 +15,9 @@ describe('ProcessingInputSpecimenSummaryComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [
-        ProcessingInputSpecimenSummaryComponent,
-        TruncatePipe
-      ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
-      .compileComponents();
+      declarations: [ProcessingInputSpecimenSummaryComponent, TruncatePipe],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -39,7 +35,6 @@ describe('ProcessingInputSpecimenSummaryComponent', () => {
   });
 
   describe('detects changes to input entity', () => {
-
     it('when input entity is an event type', () => {
       const eventType = new CollectionEventType().deserialize(factory.collectionEventType());
       const processingType = new ProcessingType().deserialize(factory.processingType());
@@ -47,9 +42,11 @@ describe('ProcessingInputSpecimenSummaryComponent', () => {
       component.inputEntity = eventType;
       fixture.detectChanges();
 
-      const otherEventType = new CollectionEventType().deserialize(factory.collectionEventType({
-        specimenDefinitions: [ factory.collectedSpecimenDefinition() ]
-      }));
+      const otherEventType = new CollectionEventType().deserialize(
+        factory.collectionEventType({
+          specimenDefinitions: [factory.collectedSpecimenDefinition()]
+        })
+      );
       component.ngOnChanges({
         inputEntity: new SimpleChange(null, otherEventType, false)
       });
@@ -67,6 +64,5 @@ describe('ProcessingInputSpecimenSummaryComponent', () => {
       });
       expect(component.inputEntity).toEqual(otherProcessingType);
     });
-
   });
 });

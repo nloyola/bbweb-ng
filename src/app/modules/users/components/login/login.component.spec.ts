@@ -15,7 +15,6 @@ import { Factory } from '@test/factory';
 import { LoginComponent } from './login.component';
 
 describe('LoginComponent', () => {
-
   let store: Store<RootStoreState.State>;
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
@@ -33,16 +32,15 @@ describe('LoginComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            'auth': AuthStoreReducer.reducer,
-            'spinner': SpinnerStoreReducer.reducer
+            auth: AuthStoreReducer.reducer,
+            spinner: SpinnerStoreReducer.reducer
           },
           NgrxRuntimeChecks
         )
       ],
       declarations: [LoginComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
-    })
-      .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -67,7 +65,6 @@ describe('LoginComponent', () => {
   });
 
   describe('email input validity', () => {
-
     it('is required', () => {
       const errors = component.email.errors || {};
       expect(errors['required']).toBeTruthy();
@@ -84,11 +81,9 @@ describe('LoginComponent', () => {
       const errors = component.email.errors || {};
       expect(errors).toEqual({});
     });
-
   });
 
   describe('password input validity', () => {
-
     it('is required', () => {
       const errors = component.password.errors || {};
       expect(errors['required']).toBeTruthy();
@@ -99,19 +94,17 @@ describe('LoginComponent', () => {
       const errors = component.password.errors || {};
       expect(errors).toEqual({});
     });
-
   });
 
   describe('when submitting', () => {
-
     let user: User;
 
     beforeEach(() => {
-      user = new User().deserialize(factory.user({
-        roles: [
-          factory.role({ id: RoleIds.SpecimenCollector })
-        ]
-      }));
+      user = new User().deserialize(
+        factory.user({
+          roles: [factory.role({ id: RoleIds.SpecimenCollector })]
+        })
+      );
     });
 
     it('on valid login', async(() => {
@@ -146,8 +139,7 @@ describe('LoginComponent', () => {
 
       spyOn(store, 'dispatch').and.callThrough();
       spyOn(router, 'navigate').and.callThrough();
-      spyOn(modalService, 'open').and
-        .returnValue({ result: Promise.resolve('OK') });
+      spyOn(modalService, 'open').and.returnValue({ result: Promise.resolve('OK') });
 
       const loginClearFailureAction = AuthStoreActions.loginClearFailureAction();
 
@@ -183,6 +175,5 @@ describe('LoginComponent', () => {
       expect(modalService.open).toHaveBeenCalled();
       expect(router.navigate).toHaveBeenCalledWith(['/']);
     }));
-
   });
 });

@@ -10,7 +10,7 @@
             <strong translate>Study</strong>
           </div>
           <div class="col-md-7">
-            {{participant.study.name}}
+            {{ participant.study.name }}
           </div>
         </div>
       </li>
@@ -20,7 +20,7 @@
             <strong translate>Participant ID</strong>
           </div>
           <div class="col-md-9">
-            {{participant.uniqueId}}
+            {{ participant.uniqueId }}
           </div>
         </div>
       </li>
@@ -30,7 +30,7 @@
             <strong translate>Visit #</strong>
           </div>
           <div class="col-md-7">
-            {{event.visitNumber}}
+            {{ event.visitNumber }}
           </div>
         </div>
       </li>
@@ -40,7 +40,7 @@
             <strong translate>Event type</strong>
           </div>
           <div class="col-md-7">
-            {{specimen.eventTypeName}}
+            {{ specimen.eventTypeName }}
           </div>
         </div>
       </li>
@@ -50,7 +50,7 @@
             <strong translate>Specimen Type</strong>
           </div>
           <div class="col-md-7">
-            {{specimen.specimenDefinitionName}}
+            {{ specimen.specimenDefinitionName }}
           </div>
         </div>
       </li>
@@ -71,8 +71,8 @@
             <strong translate>Amount</strong>
           </div>
           <div class="col-md-7">
-            {{specimen.amount}} {{specimen.specimenDefinitionUnits}}
-            <small>(default amount: {{specimen.isDefaultAmount | yesNo}})</small>
+            {{ specimen.amount }} {{ specimen.specimenDefinitionUnits }}
+            <small>(default amount: {{ specimen.isDefaultAmount | yesNo }})</small>
           </div>
         </div>
       </li>
@@ -82,7 +82,7 @@
             <strong translate>State</strong>
           </div>
           <div class="col-md-7">
-            {{specimen.state}}
+            {{ specimen.state }}
           </div>
         </div>
       </li>
@@ -92,7 +92,7 @@
             <strong translate>Origin location</strong>
           </div>
           <div class="col-md-7">
-            {{specimen.originLocationInfo.name}}
+            {{ specimen.originLocationInfo.name }}
           </div>
         </div>
       </li>
@@ -102,13 +102,12 @@
             <strong translate>Current location</strong>
           </div>
           <div class="col-md-7">
-            {{specimen.locationInfo.name}}
+            {{ specimen.locationInfo.name }}
           </div>
         </div>
       </li>
     </ul>
-    <app-entity-status [timeAdded]="specimen.timeAdded"
-                       [timeModified]="specimen.timeModified">
+    <app-entity-status [timeAdded]="specimen.timeAdded" [timeModified]="specimen.timeModified">
     </app-entity-status>
   </div>
 </app-modal-input>

@@ -7,10 +7,9 @@ import { UserCountsUIMap } from '@app/domain/users';
   styleUrls: ['./user-counts.component.scss']
 })
 export class UserCountsComponent {
-
   @Input() countData: UserCountsUIMap;
 
-  constructor() { }
+  constructor() {}
 
   getCounts() {
     return Array.from(this.countData.values());

@@ -8,9 +8,8 @@ describe('ModalShipmentBackToPackedComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ModalShipmentBackToPackedComponent ]
-    })
-    .compileComponents();
+      declarations: [ModalShipmentBackToPackedComponent]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

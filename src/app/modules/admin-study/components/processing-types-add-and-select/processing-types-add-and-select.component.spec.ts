@@ -1,6 +1,11 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { ProcessingTypeStoreReducer, StudyStoreReducer, NgrxRuntimeChecks, RootStoreState } from '@app/root-store';
+import {
+  ProcessingTypeStoreReducer,
+  StudyStoreReducer,
+  NgrxRuntimeChecks,
+  RootStoreState
+} from '@app/root-store';
 import { TruncatePipe } from '@app/shared/pipes';
 import { StoreModule, Store } from '@ngrx/store';
 import { ProcessingTypesAddAndSelectComponent } from './processing-types-add-and-select.component';
@@ -21,10 +26,11 @@ describe('ProcessingTypesAddAndSelectComponent', () => {
       imports: [
         StoreModule.forRoot(
           {
-            'study': StudyStoreReducer.reducer,
+            study: StudyStoreReducer.reducer,
             'processing-type': ProcessingTypeStoreReducer.reducer
           },
-          NgrxRuntimeChecks)
+          NgrxRuntimeChecks
+        )
       ],
       providers: [
         {
@@ -32,13 +38,9 @@ describe('ProcessingTypesAddAndSelectComponent', () => {
           useValue: mockActivatedRoute
         }
       ],
-      declarations: [
-        ProcessingTypesAddAndSelectComponent,
-        TruncatePipe
-      ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
-      .compileComponents();
+      declarations: [ProcessingTypesAddAndSelectComponent, TruncatePipe],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -70,7 +72,6 @@ describe('ProcessingTypesAddAndSelectComponent', () => {
   });
 
   describe('common functionality', () => {
-
     it('makes a request from the server', () => {
       const study = new Study().deserialize(factory.study());
       const testData = [
@@ -113,7 +114,6 @@ describe('ProcessingTypesAddAndSelectComponent', () => {
         expect(testInfo.emitter.emit).toHaveBeenCalled();
       });
     });
-
   });
 
   function mockActivatedRouteSnapshot(study: Study): void {

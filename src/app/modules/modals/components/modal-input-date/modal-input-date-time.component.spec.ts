@@ -14,19 +14,10 @@ describe('ModalInputDateTimeComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [
-        FormsModule,
-        ReactiveFormsModule,
-        OwlDateTimeModule,
-        OwlNativeDateTimeModule
-      ],
-      declarations: [
-        ModalInputComponent,
-        ModalInputDateTimeComponent
-      ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
-    .compileComponents();
+      imports: [FormsModule, ReactiveFormsModule, OwlDateTimeModule, OwlNativeDateTimeModule],
+      declarations: [ModalInputComponent, ModalInputDateTimeComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -40,23 +31,29 @@ describe('ModalInputDateTimeComponent', () => {
   });
 
   describe('shared behaviour', () => {
-
     const context: ModalInputComponentBehaviour.Context<ModalInputDateTimeComponent, Date> = {};
 
     beforeEach(() => {
-      context.fixture             = fixture;
-      context.assignOptions       = (options) => { component.options = options; };
-      context.assignMockModal     = (mockModal) => { component.modal = mockModal; };
-      context.assignInputValue    = (value) => { component.input.setValue(value); };
-      context.getValidValue       = () => faker.date.recent(10);
-      context.inputElement        = () => fixture.debugElement.query(By.css('input'));
-      context.markInputAsTouched  = () => { component.input.markAllAsTouched(); };
-      context.requiredText        = 'Please enter a date and time';
-      context.confirm             = () => component.confirm();
-      context.dismiss             = () => component.dismiss();
+      context.fixture = fixture;
+      context.assignOptions = options => {
+        component.options = options;
+      };
+      context.assignMockModal = mockModal => {
+        component.modal = mockModal;
+      };
+      context.assignInputValue = value => {
+        component.input.setValue(value);
+      };
+      context.getValidValue = () => faker.date.recent(10);
+      context.inputElement = () => fixture.debugElement.query(By.css('input'));
+      context.markInputAsTouched = () => {
+        component.input.markAllAsTouched();
+      };
+      context.requiredText = 'Please enter a date and time';
+      context.confirm = () => component.confirm();
+      context.dismiss = () => component.dismiss();
     });
 
     ModalInputComponentBehaviour.sharedBehaviour(context);
-
   });
 });

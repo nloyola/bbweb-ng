@@ -14,7 +14,6 @@ import { Tab } from '@app/domain';
   styleUrls: ['./centre-view.component.scss']
 })
 export class CentreViewComponent implements OnInit, OnDestroy {
-
   centre$: Observable<Centre>;
   tabIds: string[];
   activeTabId: string;
@@ -22,9 +21,11 @@ export class CentreViewComponent implements OnInit, OnDestroy {
   private tabData: { [id: string]: Tab };
   private unsubscribe$: Subject<void> = new Subject<void>();
 
-  constructor(private store$: Store<RootStoreState.State>,
-              private router: Router,
-              private route: ActivatedRoute) {
+  constructor(
+    private store$: Store<RootStoreState.State>,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {
     this.tabData = {
       summary: {
         heading: 'Summary'
@@ -34,7 +35,7 @@ export class CentreViewComponent implements OnInit, OnDestroy {
       },
       locations: {
         heading: 'Locations'
-      },
+      }
     };
     this.tabIds = Object.keys(this.tabData);
   }
@@ -45,14 +46,16 @@ export class CentreViewComponent implements OnInit, OnDestroy {
       filter(s => s.length > 0),
       map((centres: Centre[]) => centres.find(s => s.slug === this.route.snapshot.params.slug)),
       filter(centre => centre !== undefined),
-      takeUntil(this.unsubscribe$));
+      takeUntil(this.unsubscribe$)
+    );
 
     this.activeTabId = this.getActiveTabId(this.router.url);
 
     this.router.events
       .pipe(
         filter(x => x instanceof NavigationEnd),
-        takeUntil(this.unsubscribe$))
+        takeUntil(this.unsubscribe$)
+      )
       .subscribe((event: NavigationEnd) => {
         this.activeTabId = this.getActiveTabId(event.urlAfterRedirects);
       });
@@ -64,11 +67,10 @@ export class CentreViewComponent implements OnInit, OnDestroy {
   }
 
   public tabSelection(event: NgbTabChangeEvent) {
-    this.router.navigate([ '/admin/centres', this.route.snapshot.params.slug, event.nextId ]);
+    this.router.navigate(['/admin/centres', this.route.snapshot.params.slug, event.nextId]);
   }
 
   private getActiveTabId(routeUrl: string): string {
     return Object.keys(this.tabData).find(key => routeUrl.includes(key));
   }
-
 }

@@ -2,16 +2,17 @@
 <div class="form-group row" [formGroup]="subform">
   <label for="name" class="col-md-3 col-form-label" i18n>Name</label>
   <div class="col-md-9">
-    <input name="name"
-           class="form-control"
-           type="text"
-           formControlName="name"
-           i18n-placeholder
-           placeholder="A short name for this processing step"
-           required>
+    <input
+      name="name"
+      class="form-control"
+      type="text"
+      formControlName="name"
+      i18n-placeholder
+      placeholder="A short name for this processing step"
+      required
+    />
   </div>
-  <div class="col-md-9 offset-3"
-       *ngIf="name.invalid && name.touched">
+  <div class="col-md-9 offset-3" *ngIf="name.invalid && name.touched">
     <div class="text-danger small" *ngIf="name.errors.required" i18n>
       A name is required
     </div>
@@ -22,11 +23,13 @@
 <div class="form-group row" [formGroup]="subform">
   <label for="description" class="col-md-3 col-form-label" i18n>Description</label>
   <div class="col-md-9">
-    <textarea name="description"
-              class="form-control"
-              formControlName="description"
-              i18n-placeholder
-              placeholder="A description for this processing step (optional)">
+    <textarea
+      name="description"
+      class="form-control"
+      formControlName="description"
+      i18n-placeholder
+      placeholder="A description for this processing step (optional)"
+    >
     </textarea>
   </div>
 </div>
@@ -35,6 +38,6 @@
 <div class="form-group row" [formGroup]="subform">
   <label for="required" class="col-md-3 col-form-label" i18n>Enabled</label>
   <div class="col-md-9">
-    <input formControlName="enabled" type="checkbox"/>
+    <input formControlName="enabled" type="checkbox" />
   </div>
 </div>

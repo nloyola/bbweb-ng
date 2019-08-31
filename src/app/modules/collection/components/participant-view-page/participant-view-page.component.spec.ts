@@ -1,7 +1,14 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { NgrxRuntimeChecks, ParticipantStoreReducer, StudyStoreReducer, RootStoreState, StudyStoreActions, ParticipantStoreActions } from '@app/root-store';
+import {
+  NgrxRuntimeChecks,
+  ParticipantStoreReducer,
+  StudyStoreReducer,
+  RootStoreState,
+  StudyStoreActions,
+  ParticipantStoreActions
+} from '@app/root-store';
 import { StoreModule, Store } from '@ngrx/store';
 import { ParticipantViewPageComponent } from './participant-view-page.component';
 import { Participant } from '@app/domain/participants';
@@ -33,11 +40,11 @@ describe('ParticipantViewPageComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            'study':       StudyStoreReducer.reducer,
-            'participant': ParticipantStoreReducer.reducer
+            study: StudyStoreReducer.reducer,
+            participant: ParticipantStoreReducer.reducer
           },
           NgrxRuntimeChecks
-        ),
+        )
       ],
       providers: [
         {
@@ -48,17 +55,16 @@ describe('ParticipantViewPageComponent', () => {
           provide: Router,
           useValue: {
             url: `/collection/${participant.slug}`,
-            events: of(new NavigationEnd(0,
-                                         `/collection/${participant.slug}`,
-                                         `/collection/${participant.slug}`)),
+            events: of(
+              new NavigationEnd(0, `/collection/${participant.slug}`, `/collection/${participant.slug}`)
+            ),
             navigate: jasmine.createSpy('navigate')
           }
         }
       ],
-      declarations: [ ParticipantViewPageComponent ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
-    .compileComponents();
+      declarations: [ParticipantViewPageComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -79,7 +85,7 @@ describe('ParticipantViewPageComponent', () => {
     expect(component.participant$).toBeObservable(cold('d', { d: entities.participant }));
   });
 
-  it('active tab is initialized from router\'s event', () => {
+  it("active tab is initialized from router's event", () => {
     const entities = createEntities();
     dispatchEntities(entities);
     fixture.detectChanges();
@@ -96,13 +102,15 @@ describe('ParticipantViewPageComponent', () => {
     fixture.detectChanges();
 
     expect(navigateListener.mock.calls.length).toBe(1);
-    expect(navigateListener.mock.calls[0][0]).toEqual([ '/collection', participant.slug, 'collection' ]);
+    expect(navigateListener.mock.calls[0][0]).toEqual(['/collection', participant.slug, 'collection']);
   });
 
   function createEntities(options: EntitiesOptions = {}) {
-    const study = (options.study !== undefined) ? options.study : new Study().deserialize(factory.study());
-    const participant = (options.participant !== undefined)
-      ?  options.participant : new Participant().deserialize(factory.participant());
+    const study = options.study !== undefined ? options.study : new Study().deserialize(factory.study());
+    const participant =
+      options.participant !== undefined
+        ? options.participant
+        : new Participant().deserialize(factory.participant());
     mockActivatedRouteSnapshot(participant);
     return { study, participant };
   }
@@ -120,8 +128,12 @@ describe('ParticipantViewPageComponent', () => {
 
   function dispatchEntities(options: EntitiesOptions = {}) {
     const { study, participant } = options;
-    if (study) { store.dispatch(StudyStoreActions.getStudySuccess({ study })); }
+    if (study) {
+      store.dispatch(StudyStoreActions.getStudySuccess({ study }));
+    }
 
-    if (participant) { store.dispatch(ParticipantStoreActions.getParticipantSuccess({ participant })); }
+    if (participant) {
+      store.dispatch(ParticipantStoreActions.getParticipantSuccess({ participant }));
+    }
   }
 });

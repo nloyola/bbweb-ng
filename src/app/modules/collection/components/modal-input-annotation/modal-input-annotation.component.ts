@@ -13,7 +13,6 @@ import { debounceTime, takeUntil, map, tap, shareReplay } from 'rxjs/operators';
   styleUrls: ['./modal-input-annotation.component.scss']
 })
 export class ModalInputAnnotationComponent implements OnInit, OnDestroy {
-
   @Input() modal: NgbActiveModal;
   @Input() annotation: Annotation;
   @Input() options: ModalInputOptions;
@@ -24,19 +23,20 @@ export class ModalInputAnnotationComponent implements OnInit, OnDestroy {
   protected validators: ValidatorFn[] = [];
   protected unsubscribe$: Subject<void> = new Subject<void>();
 
-  constructor(protected formBuilder: FormBuilder) { }
+  constructor(protected formBuilder: FormBuilder) {}
 
   ngOnInit() {
     this.form = this.formBuilder.group({
       annotationsGroup: this.formBuilder.group({
-        annotations: AnnotationsAddSubformComponent.buildSubForm([ this.annotation ], this.unsubscribe$)
+        annotations: AnnotationsAddSubformComponent.buildSubForm([this.annotation], this.unsubscribe$)
       })
     });
 
     this.modalInputValid$ = this.form.valueChanges.pipe(
       debounceTime(300),
       map(() => this.form.valid),
-      shareReplay());
+      shareReplay()
+    );
   }
 
   ngOnDestroy() {
@@ -59,5 +59,4 @@ export class ModalInputAnnotationComponent implements OnInit, OnDestroy {
   dismiss(): void {
     this.modal.dismiss();
   }
-
 }

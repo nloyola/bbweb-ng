@@ -12,16 +12,11 @@ describe('CentreRemoveComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [
-        NgbModule
-      ],
-      providers: [
-        NgbActiveModal
-      ],
-      declarations: [ CentreRemoveModalComponent ],
+      imports: [NgbModule],
+      providers: [NgbActiveModal],
+      declarations: [CentreRemoveModalComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {

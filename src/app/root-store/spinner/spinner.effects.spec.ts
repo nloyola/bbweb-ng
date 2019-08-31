@@ -11,10 +11,7 @@ describe('SpinnerEffects', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [
-        SpinnerEffects,
-        provideMockActions(() => actions$)
-      ]
+      providers: [SpinnerEffects, provideMockActions(() => actions$)]
     });
 
     effects = TestBed.get(SpinnerEffects);
@@ -25,7 +22,6 @@ describe('SpinnerEffects', () => {
   });
 
   describe('showLoader$ effect creates a ShowSpinner Action', () => {
-
     it('creates a ShowSpinner action when showLoader is TRUE', () => {
       const action = {
         type: 'test-action',
@@ -46,11 +42,9 @@ describe('SpinnerEffects', () => {
       const expected = cold('---');
       expect(effects.showLoader$).toBeObservable(expected);
     });
-
   });
 
   describe('hideLoader$ effect creates a HideSpinner Action', () => {
-
     it('creates a HideSpinner action when triggerAction is defined', () => {
       const triggerAction = {
         type: 'test-trigger-action',
@@ -75,6 +69,5 @@ describe('SpinnerEffects', () => {
       const expected = cold('---');
       expect(effects.hideLoader$).toBeObservable(expected);
     });
-
   });
 });

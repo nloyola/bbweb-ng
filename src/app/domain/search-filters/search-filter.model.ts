@@ -1,8 +1,7 @@
- /**
+/**
  * A SearchFilter aids in using the search API provided by the Biobank REST API.
  */
 export class SearchFilter {
-
   /**
    * The value to use for this filter.
    */

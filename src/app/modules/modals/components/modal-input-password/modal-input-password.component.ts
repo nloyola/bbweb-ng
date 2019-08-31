@@ -9,9 +9,7 @@ import { User } from '@app/domain/users';
   templateUrl: './modal-input-password.component.html',
   styleUrls: ['./modal-input-password.component.scss']
 })
-export class ModalInputPasswordComponent extends ModalInputTextComponent
-implements OnInit, OnDestroy {
-
+export class ModalInputPasswordComponent extends ModalInputTextComponent implements OnInit, OnDestroy {
   @Input() user: User;
 
   constructor(formBuilder: FormBuilder) {
@@ -25,12 +23,11 @@ implements OnInit, OnDestroy {
       minLength: 8
     };
     super.ngOnInit();
-    this.form.addControl(
-      'password',
-      new FormControl('', [ Validators.required, Validators.minLength(8) ]));
+    this.form.addControl('password', new FormControl('', [Validators.required, Validators.minLength(8)]));
     this.form.addControl(
       'confirmPassword',
-      new FormControl('', [ Validators.required, Validators.minLength(8) ]));
+      new FormControl('', [Validators.required, Validators.minLength(8)])
+    );
     this.form.setValidators(PasswordValidation.matchingPasswords());
   }
 
@@ -48,5 +45,4 @@ implements OnInit, OnDestroy {
       newPassword: this.form.value.password
     });
   }
-
 }

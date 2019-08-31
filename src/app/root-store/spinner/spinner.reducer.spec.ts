@@ -9,7 +9,6 @@ describe('Spinner Reducer', () => {
   });
 
   describe('ShowSpinner action', () => {
-
     it('when source action is not in progress, state is updated', () => {
       const sourceAction = {
         type: 'test-action',
@@ -21,9 +20,7 @@ describe('Spinner Reducer', () => {
       expect(state).toEqual({
         ...SpinnerStoreReducer.initialState,
         active: 1,
-        actionsInProgress: [
-          action.payload.type
-        ]
+        actionsInProgress: [action.payload.type]
       });
     });
 
@@ -36,18 +33,14 @@ describe('Spinner Reducer', () => {
       const expectedState = {
         ...SpinnerStoreReducer.initialState,
         active: 1,
-        actionsInProgress: [
-          action.payload.type
-        ]
+        actionsInProgress: [action.payload.type]
       };
       const state = SpinnerStoreReducer.reducer(expectedState, action);
       expect(state).toEqual(expectedState);
     });
-
   });
 
   describe('HideSpinner action', () => {
-
     it('when source action is in progress, state is updated', () => {
       const triggerAction = {
         type: 'test-trigger-action',
@@ -62,11 +55,10 @@ describe('Spinner Reducer', () => {
         {
           ...SpinnerStoreReducer.initialState,
           active: 1,
-          actionsInProgress: [
-            triggerAction.type
-          ]
+          actionsInProgress: [triggerAction.type]
         },
-        action);
+        action
+      );
 
       expect(state).toEqual({
         ...SpinnerStoreReducer.initialState,
@@ -88,14 +80,10 @@ describe('Spinner Reducer', () => {
       const expectedState = {
         ...SpinnerStoreReducer.initialState,
         active: 1,
-        actionsInProgress: [
-          triggerAction.type
-        ]
+        actionsInProgress: [triggerAction.type]
       };
       const state = SpinnerStoreReducer.reducer(expectedState, action);
       expect(state).toEqual(expectedState);
     });
-
   });
-
 });

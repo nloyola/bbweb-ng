@@ -36,7 +36,6 @@ interface ProcessingTypeRemoveAnnotationTypeRequestPayload {
 // TODO: Update to use createAction introduced in NGRX 7.4
 
 export enum ActionTypes {
-
   SearchProcessingTypesRequest = '[ProcessingType] Search Processing Types Request',
   SearchProcessingTypesSuccess = '[ProcessingType] Search Processing Types Success',
   SearchProcessingTypesFailure = '[ProcessingType] Search Processing Types Failure',
@@ -51,10 +50,8 @@ export enum ActionTypes {
   AddProcessingTypeFailure = '[ProcessingType] Add Processing Type Failure',
 
   UpdateProcessingTypeRequest = '[ProcessingType] Update Processing Type Request',
-  UpdateProcessingTypeAddOrUpdateAnnotationTypeRequest =
-    '[ProcessingType] Update ProcessingType Add or Update Annotation Type Request',
-  UpdateProcessingTypeRemoveAnnotationTypeRequest =
-    '[ProcessingType] Update Processing Type Remove Annotation Type Request',
+  UpdateProcessingTypeAddOrUpdateAnnotationTypeRequest = '[ProcessingType] Update ProcessingType Add or Update Annotation Type Request',
+  UpdateProcessingTypeRemoveAnnotationTypeRequest = '[ProcessingType] Update Processing Type Remove Annotation Type Request',
   UpdateProcessingTypeSuccess = '[ProcessingType] Update Processing Type Success',
   UpdateProcessingTypeFailure = '[ProcessingType] Update Processing Type Failure',
 
@@ -66,149 +63,149 @@ export enum ActionTypes {
   GetSpecimenDefinitionNamesSuccess = '[ProcessingType] Get Specimen Definition Names Success',
   GetSpecimenDefinitionNamesFailure = '[ProcessingType] Get Specimen Definition Names Failure',
 
-  ClearLastAdded = '[ProcessingType] Clear Last Added',
+  ClearLastAdded = '[ProcessingType] Clear Last Added'
 }
 
 export class SearchProcessingTypesRequest implements Action {
   readonly type = ActionTypes.SearchProcessingTypesRequest;
 
-  constructor(public payload: SearchProcessingTypesRequestPayload) { }
+  constructor(public payload: SearchProcessingTypesRequestPayload) {}
 }
 
 /* tslint:disable:max-classes-per-file */
 export class SearchProcessingTypesSuccess implements Action {
   readonly type = ActionTypes.SearchProcessingTypesSuccess;
 
-  constructor(public payload: { pagedReply: PagedReply<ProcessingType> }) { }
+  constructor(public payload: { pagedReply: PagedReply<ProcessingType> }) {}
 }
 
 export class SearchProcessingTypesFailure implements Action {
   readonly type = ActionTypes.SearchProcessingTypesFailure;
 
-  constructor(public payload: { error: any }) { }
+  constructor(public payload: { error: any }) {}
 }
 
 @ShowSpinner()
 export class GetProcessingTypeRequest implements Action {
   readonly type = ActionTypes.GetProcessingTypeRequest;
 
-  constructor(public payload: { studySlug: string, processingTypeSlug: string }) { }
+  constructor(public payload: { studySlug: string; processingTypeSlug: string }) {}
 }
 
 export class GetProcessingTypeByIdRequest implements Action {
   readonly type = ActionTypes.GetProcessingTypeByIdRequest;
 
-  constructor(public payload: { studyId: string, processingTypeId: string }) { }
+  constructor(public payload: { studyId: string; processingTypeId: string }) {}
 }
 
 @HideSpinner(ActionTypes.GetProcessingTypeRequest)
 export class GetProcessingTypeSuccess implements Action {
   readonly type = ActionTypes.GetProcessingTypeSuccess;
 
-  constructor(public payload: { processingType: ProcessingType }) { }
+  constructor(public payload: { processingType: ProcessingType }) {}
 }
 
 @HideSpinner(ActionTypes.GetProcessingTypeRequest)
 export class GetProcessingTypeFailure implements Action {
   readonly type = ActionTypes.GetProcessingTypeFailure;
 
-  constructor(public payload: { error: any }) { }
+  constructor(public payload: { error: any }) {}
 }
 
 @ShowSpinner()
 export class AddProcessingTypeRequest implements Action {
   readonly type = ActionTypes.AddProcessingTypeRequest;
 
-  constructor(public payload: { processingType: ProcessingType }) { }
+  constructor(public payload: { processingType: ProcessingType }) {}
 }
 
 @HideSpinner(ActionTypes.AddProcessingTypeRequest)
 export class AddProcessingTypeSuccess implements Action {
   readonly type = ActionTypes.AddProcessingTypeSuccess;
 
-  constructor(public payload: { processingType: ProcessingType }) { }
+  constructor(public payload: { processingType: ProcessingType }) {}
 }
 
 @HideSpinner(ActionTypes.AddProcessingTypeRequest)
 export class AddProcessingTypeFailure implements Action {
   readonly type = ActionTypes.AddProcessingTypeFailure;
 
-  constructor(public payload: { error: any }) { }
+  constructor(public payload: { error: any }) {}
 }
 
 @ShowSpinner()
 export class UpdateProcessingTypeRequest implements Action {
   readonly type = ActionTypes.UpdateProcessingTypeRequest;
 
-  constructor(public payload: ProcessingTypeUpdateRequestPayload) { }
+  constructor(public payload: ProcessingTypeUpdateRequestPayload) {}
 }
 
 export class UpdateProcessingTypeAddOrUpdateAnnotationTypeRequest implements Action {
   readonly type = ActionTypes.UpdateProcessingTypeAddOrUpdateAnnotationTypeRequest;
 
-  constructor(public payload: ProcessingTypeAddOrUpdateAnnotationTypeRequestPayload) { }
+  constructor(public payload: ProcessingTypeAddOrUpdateAnnotationTypeRequestPayload) {}
 }
 
 export class UpdateProcessingTypeRemoveAnnotationTypeRequest implements Action {
   readonly type = ActionTypes.UpdateProcessingTypeRemoveAnnotationTypeRequest;
 
-  constructor(public payload: ProcessingTypeRemoveAnnotationTypeRequestPayload) { }
+  constructor(public payload: ProcessingTypeRemoveAnnotationTypeRequestPayload) {}
 }
 
 @HideSpinner(ActionTypes.UpdateProcessingTypeRequest)
 export class UpdateProcessingTypeSuccess implements Action {
   readonly type = ActionTypes.UpdateProcessingTypeSuccess;
 
-  constructor(public payload: { processingType: ProcessingType }) { }
+  constructor(public payload: { processingType: ProcessingType }) {}
 }
 
 @HideSpinner(ActionTypes.UpdateProcessingTypeRequest)
 export class UpdateProcessingTypeFailure implements Action {
   readonly type = ActionTypes.UpdateProcessingTypeFailure;
 
-  constructor(public payload: { error: any }) { }
+  constructor(public payload: { error: any }) {}
 }
 
 @ShowSpinner()
 export class RemoveProcessingTypeRequest implements Action {
   readonly type = ActionTypes.RemoveProcessingTypeRequest;
 
-  constructor(public payload: { processingType: ProcessingType }) { }
+  constructor(public payload: { processingType: ProcessingType }) {}
 }
 
 @HideSpinner(ActionTypes.RemoveProcessingTypeRequest)
 export class RemoveProcessingTypeSuccess implements Action {
   readonly type = ActionTypes.RemoveProcessingTypeSuccess;
 
-  constructor(public payload: { processingTypeId: string }) { }
+  constructor(public payload: { processingTypeId: string }) {}
 }
 
 @HideSpinner(ActionTypes.RemoveProcessingTypeRequest)
 export class RemoveProcessingTypeFailure implements Action {
   readonly type = ActionTypes.RemoveProcessingTypeFailure;
 
-  constructor(public payload: { error: any }) { }
+  constructor(public payload: { error: any }) {}
 }
 
 @ShowSpinner()
 export class GetSpecimenDefinitionNamesRequest implements Action {
   readonly type = ActionTypes.GetSpecimenDefinitionNamesRequest;
 
-  constructor(public payload: { studyId: string }) { }
+  constructor(public payload: { studyId: string }) {}
 }
 
 @HideSpinner(ActionTypes.GetSpecimenDefinitionNamesRequest)
 export class GetSpecimenDefinitionNamesSuccess implements Action {
   readonly type = ActionTypes.GetSpecimenDefinitionNamesSuccess;
 
-  constructor(public payload: { specimenDefinitionNames: ProcessedSpecimenDefinitionName[] }) { }
+  constructor(public payload: { specimenDefinitionNames: ProcessedSpecimenDefinitionName[] }) {}
 }
 
 @HideSpinner(ActionTypes.GetSpecimenDefinitionNamesRequest)
 export class GetSpecimenDefinitionNamesFailure implements Action {
   readonly type = ActionTypes.GetSpecimenDefinitionNamesFailure;
 
-  constructor(public payload: { error: any }) { }
+  constructor(public payload: { error: any }) {}
 }
 
 export class ClearLastAdded implements Action {
@@ -216,7 +213,7 @@ export class ClearLastAdded implements Action {
 }
 
 export type ProcessingTypeActions =
-  SearchProcessingTypesRequest
+  | SearchProcessingTypesRequest
   | SearchProcessingTypesSuccess
   | SearchProcessingTypesFailure
   | GetProcessingTypeRequest

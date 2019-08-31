@@ -14,7 +14,6 @@ import { ToastrService } from 'ngx-toastr';
   styleUrls: ['./centre-location-add.component.scss']
 })
 export class CentreLocationAddComponent implements OnInit, OnDestroy {
-
   centre$: Observable<Centre>;
   centre: Centre;
   location: Location;
@@ -23,10 +22,12 @@ export class CentreLocationAddComponent implements OnInit, OnDestroy {
   private updatedMessage$ = new Subject<string>();
   private unsubscribe$: Subject<void> = new Subject<void>();
 
-  constructor(private store$: Store<RootStoreState.State>,
-              private route: ActivatedRoute,
-              private router: Router,
-              private toastr: ToastrService) { }
+  constructor(
+    private store$: Store<RootStoreState.State>,
+    private route: ActivatedRoute,
+    private router: Router,
+    private toastr: ToastrService
+  ) {}
 
   ngOnInit() {
     this.centre$ = this.store$.pipe(
@@ -34,7 +35,7 @@ export class CentreLocationAddComponent implements OnInit, OnDestroy {
       filter(s => s.length > 0),
       map((centres: Centre[]) => centres.find(s => s.slug === this.route.parent.parent.snapshot.params.slug)),
       filter(centre => centre !== undefined),
-      map(centre => (centre instanceof Centre) ? centre :  new Centre().deserialize(centre)),
+      map(centre => (centre instanceof Centre ? centre : new Centre().deserialize(centre))),
       tap(centre => {
         this.centre = centre;
 
@@ -44,28 +45,33 @@ export class CentreLocationAddComponent implements OnInit, OnDestroy {
           this.location = new Location();
         }
       }),
-      shareReplay());
+      shareReplay()
+    );
 
-    this.centre$.pipe(
-      withLatestFrom(this.updatedMessage$),
-      takeUntil(this.unsubscribe$),
-    ).subscribe(([ _centre, msg ])  => {
-      this.toastr.success(msg, 'Update Successfull');
-      this.router.navigate([ '..' ], { relativeTo: this.route });
-    });
+    this.centre$
+      .pipe(
+        withLatestFrom(this.updatedMessage$),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe(([_centre, msg]) => {
+        this.toastr.success(msg, 'Update Successfull');
+        this.router.navigate(['..'], { relativeTo: this.route });
+      });
 
-    this.store$.pipe(
-      select(CentreStoreSelectors.selectCentreError),
-      filter(e => !!e),
-      withLatestFrom(this.updatedMessage$),
-      takeUntil(this.unsubscribe$)
-    ).subscribe(([error, _msg]) => {
-      let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
-      if (errMessage && errMessage.match(/EntityCriteriaError.*name already used/)) {
-        errMessage = `The name is already in use: ${this.locationToSave.name}`;
-      }
-      this.toastr.error(errMessage, 'Add Error', { disableTimeOut: true });
-    });
+    this.store$
+      .pipe(
+        select(CentreStoreSelectors.selectCentreError),
+        filter(e => !!e),
+        withLatestFrom(this.updatedMessage$),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe(([error, _msg]) => {
+        let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
+        if (errMessage && errMessage.match(/EntityCriteriaError.*name already used/)) {
+          errMessage = `The name is already in use: ${this.locationToSave.name}`;
+        }
+        this.toastr.error(errMessage, 'Add Error', { disableTimeOut: true });
+      });
   }
 
   ngOnDestroy() {
@@ -80,13 +86,13 @@ export class CentreLocationAddComponent implements OnInit, OnDestroy {
         centre: this.centre,
         attributeName: 'locationAdd',
         value: this.locationToSave
-      }));
+      })
+    );
 
     this.updatedMessage$.next(this.location.isNew() ? 'Location Added' : 'Location Updated');
   }
 
   onCancel(): void {
-    this.router.navigate([ '..' ], { relativeTo: this.route });
+    this.router.navigate(['..'], { relativeTo: this.route });
   }
-
 }

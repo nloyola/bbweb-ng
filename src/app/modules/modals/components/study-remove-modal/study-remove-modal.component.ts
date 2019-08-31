@@ -8,10 +8,9 @@ import { StudyStateInfo } from '@app/domain/studies';
   styleUrls: ['./study-remove-modal.component.scss']
 })
 export class StudyRemoveModalComponent {
-
   @Input() study: StudyStateInfo;
 
-  constructor(private activeModal: NgbActiveModal) { }
+  constructor(private activeModal: NgbActiveModal) {}
 
   confirm(): void {
     this.activeModal.close(this.study);

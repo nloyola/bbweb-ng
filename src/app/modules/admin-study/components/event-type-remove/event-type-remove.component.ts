@@ -8,7 +8,6 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['./event-type-remove.component.scss']
 })
 export class EventTypeRemoveComponent {
-
   @Input() eventType: CollectionEventType;
 
   constructor(public activeModal: NgbActiveModal) {}
@@ -16,5 +15,4 @@ export class EventTypeRemoveComponent {
   confirm(activeModal: NgbActiveModal): void {
     activeModal.close(this.eventType);
   }
-
 }

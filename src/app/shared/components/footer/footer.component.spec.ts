@@ -10,10 +10,7 @@ describe('FooterComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        NgbModule,
-        RouterTestingModule
-      ],
+      imports: [NgbModule, RouterTestingModule],
       declarations: [FooterComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     });

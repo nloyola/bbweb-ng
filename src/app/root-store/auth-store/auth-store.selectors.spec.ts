@@ -2,7 +2,6 @@ import { AuthStoreReducer, AuthStoreSelectors } from '@app/root-store/auth-store
 import { Factory } from '@test/factory';
 
 describe('auth-store selectors', () => {
-
   let factory: Factory;
 
   beforeEach(() => {
@@ -62,5 +61,4 @@ describe('auth-store selectors', () => {
 
     expect(AuthStoreSelectors.selectAuthRegisteredUser(state)).toBeTruthy();
   });
-
 });

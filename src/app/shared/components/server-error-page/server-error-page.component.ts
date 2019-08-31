@@ -7,14 +7,11 @@ import { Location } from '@angular/common';
   styleUrls: ['./server-error-page.component.scss']
 })
 export class ServerErrorPageComponent implements OnInit {
+  constructor(private location: Location) {}
 
-  constructor(private location: Location) { }
-
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   goBack(): void {
     this.location.back();
   }
-
 }

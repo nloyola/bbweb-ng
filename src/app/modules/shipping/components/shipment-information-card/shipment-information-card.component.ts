@@ -76,8 +76,8 @@ export class ShipmentInformationCardComponent implements OnInit, OnDestroy {
         takeUntil(this.unsubscribe$)
       )
       .subscribe(([_shipment, msg]) => {
-          this.toastr.success(msg, 'Update Successfull');
-          this.updatedMessage$.next(null);
+        this.toastr.success(msg, 'Update Successfull');
+        this.updatedMessage$.next(null);
       });
   }
 

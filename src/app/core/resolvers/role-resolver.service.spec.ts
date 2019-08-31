@@ -12,7 +12,6 @@ import { cold } from 'jasmine-marbles';
 import { RoleResolver } from './role-resolver.service';
 
 describe('RoleResolver', () => {
-
   let ngZone: NgZone;
   let resolver: RoleResolver;
   let store: Store<RootStoreState.State>;
@@ -26,9 +25,10 @@ describe('RoleResolver', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            'role': RoleStoreReducer.reducer
+            role: RoleStoreReducer.reducer
           },
-          NgrxRuntimeChecks)
+          NgrxRuntimeChecks
+        )
       ]
     });
 
@@ -73,5 +73,4 @@ describe('RoleResolver', () => {
       expect(resolver.resolve(route, null)).toBeObservable(expected);
     });
   });
-
 });

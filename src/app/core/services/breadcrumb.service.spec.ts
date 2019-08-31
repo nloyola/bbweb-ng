@@ -6,13 +6,12 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { BreadcrumbService } from './breadcrumb.service';
 
 describe('BreadcrumbService', () => {
-
   @Component({ template: '<router-outlet></router-outlet>' })
-  class TestRootComponent { }
+  class TestRootComponent {}
 
   /* tslint:disable-next-line:max-classes-per-file */
   @Component({ template: 'Test component' })
-  class TestComponent { }
+  class TestComponent {}
 
   const routes: Routes = [
     {
@@ -54,9 +53,7 @@ describe('BreadcrumbService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        RouterTestingModule.withRoutes(routes)
-      ],
+      imports: [RouterTestingModule.withRoutes(routes)],
       declarations: [TestRootComponent, TestComponent],
       providers: [BreadcrumbService]
     });
@@ -74,16 +71,14 @@ describe('BreadcrumbService', () => {
 
   it('navigating to /admin/studies/add has the correct breadcrumbs', () => {
     ngZone.run(() => {
-      router.navigate(['/admin/studies/add'])
-        .then(() => {
-          service.crumbs$.subscribe(result => {
-            expect(result.length).toBe(4); // need to add link for Home page
-            expect(result).toContain({ label: 'Admin', path: '/admin' });
-            expect(result).toContain({ label: 'Studies', path: '/admin/studies' });
-            expect(result).toContain({ label: 'Add', path: '/admin/studies/add' });
-          });
+      router.navigate(['/admin/studies/add']).then(() => {
+        service.crumbs$.subscribe(result => {
+          expect(result.length).toBe(4); // need to add link for Home page
+          expect(result).toContain({ label: 'Admin', path: '/admin' });
+          expect(result).toContain({ label: 'Studies', path: '/admin/studies' });
+          expect(result).toContain({ label: 'Add', path: '/admin/studies/add' });
+        });
       });
     });
   });
-
 });

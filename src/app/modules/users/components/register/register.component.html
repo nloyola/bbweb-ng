@@ -3,23 +3,20 @@
     <div class="card">
       <div class="card-header bg-primary text-light" i18n>Register as a User</div>
       <div class="card-body">
-        <form class="form-horizontal"
-              [formGroup]="registerForm"
-              (ngSubmit)="onSubmit()"
-              novalidate>
-
+        <form class="form-horizontal" [formGroup]="registerForm" (ngSubmit)="onSubmit()" novalidate>
           <!-- NAME -->
           <div class="form-group row">
             <label for="name" class="col-md-4 col-form-label" i18n>Name</label>
             <div class="col-md-8">
-              <input class="form-control"
-                     type="text"
-                     formControlName="name"
-                     i18n-placeholder
-                     placeholder="your name">
+              <input
+                class="form-control"
+                type="text"
+                formControlName="name"
+                i18n-placeholder
+                placeholder="your name"
+              />
             </div>
-            <div class="col-md-8 offset-4"
-                 *ngIf="name.invalid && name.touched">
+            <div class="col-md-8 offset-4" *ngIf="name.invalid && name.touched">
               <div class="text-danger small" *ngIf="name.errors.required" i18n>
                 Your name is required
               </div>
@@ -30,14 +27,15 @@
           <div class="form-group row">
             <label for="email" class="col-md-4 col-form-label" i18n>Email address</label>
             <div class="col-md-8">
-              <input class="form-control"
-                     type="email"
-                     formControlName="email"
-                     i18n-placeholder
-                     placeholder="the email addres you will use to log in">
+              <input
+                class="form-control"
+                type="email"
+                formControlName="email"
+                i18n-placeholder
+                placeholder="the email addres you will use to log in"
+              />
             </div>
-            <div class="col-md-8 offset-4"
-                 *ngIf="email.invalid && email.touched">
+            <div class="col-md-8 offset-4" *ngIf="email.invalid && email.touched">
               <div class="text-danger small" *ngIf="email.errors.required" i18n>
                 An email address is required
               </div>
@@ -51,12 +49,9 @@
           <div class="form-group row">
             <label for="password" class="col-md-4 col-form-label" i18n>Password</label>
             <div class="col-md-8">
-              <input class="form-control"
-                     type="password"
-                     formControlName="password">
+              <input class="form-control" type="password" formControlName="password" />
             </div>
-            <div class="col-md-8 offset-4 form-text text-muted"
-                 *ngIf="password.invalid && password.touched">
+            <div class="col-md-8 offset-4 form-text text-muted" *ngIf="password.invalid && password.touched">
               <div class="text-danger small" *ngIf="password.errors.required">
                 A password is required
               </div>
@@ -67,12 +62,12 @@
           <div class="form-group row">
             <label for="password" class="col-md-4 col-form-label" i18n>Confirm Password</label>
             <div class="col-md-8">
-              <input class="form-control"
-                     type="password"
-                     formControlName="confirmPassword">
+              <input class="form-control" type="password" formControlName="confirmPassword" />
             </div>
-            <div class="col-md-8 offset-4"
-                 *ngIf="registerForm.errors?.passwordsNonMatching && password.touched">
+            <div
+              class="col-md-8 offset-4"
+              *ngIf="registerForm.errors?.passwordsNonMatching && password.touched"
+            >
               <div class="text-danger small" i18n>
                 Passwords do not match
               </div>
@@ -82,14 +77,11 @@
           <!-- BUTTONS  -->
           <div class="form-group row">
             <div class="col-md-10 offset-4">
-              <button class="btn btn-primary mr-2"
-                      type="submit"
-                      [disabled]="registerForm.invalid"
-                      i18n>
+              <button class="btn btn-primary mr-2" type="submit" [disabled]="registerForm.invalid" i18n>
                 <ng-container *ngIf="(isRegistering$ | async) === false" i18n>
                   Submit
                 </ng-container>
-                <app-spinner name="login" [show]="(isRegistering$ | async)" i18n>
+                <app-spinner name="login" [show]="isRegistering$ | async" i18n>
                   Registering
                 </app-spinner>
               </button>

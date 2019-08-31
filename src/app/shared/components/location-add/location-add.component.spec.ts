@@ -6,21 +6,16 @@ import { LocationAddComponent } from './location-add.component';
 import { Location } from '@app/domain';
 
 describe('LocationAddComponent', () => {
-
   let component: LocationAddComponent;
   let fixture: ComponentFixture<LocationAddComponent>;
   const factory = new Factory();
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [
-        FormsModule,
-        ReactiveFormsModule
-      ],
-      declarations: [ LocationAddComponent ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
-    .compileComponents();
+      imports: [FormsModule, ReactiveFormsModule],
+      declarations: [LocationAddComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -76,6 +71,5 @@ describe('LocationAddComponent', () => {
       testInfo.componentFunc();
       expect(testInfo.emitter.emit).toHaveBeenCalled();
     });
-
   });
 });

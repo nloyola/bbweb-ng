@@ -7,13 +7,11 @@ import { StudyCountsUIMap } from '@app/domain/studies';
   styleUrls: ['./study-counts.component.scss']
 })
 export class StudyCountsComponent {
-
   @Input() countData: StudyCountsUIMap;
 
-  constructor() { }
+  constructor() {}
 
   getCounts() {
     return Array.from(this.countData.values());
   }
-
 }

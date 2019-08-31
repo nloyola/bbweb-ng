@@ -15,7 +15,6 @@ import { filter, takeUntil } from 'rxjs/operators';
   styleUrls: ['./event-type-add.component.scss']
 })
 export class EventTypeAddComponent implements OnInit, OnDestroy {
-
   @Input() eventType: CollectionEventType;
 
   study: Study;
@@ -24,11 +23,13 @@ export class EventTypeAddComponent implements OnInit, OnDestroy {
   private eventTypeToSave: CollectionEventType;
   private unsubscribe$: Subject<void> = new Subject<void>();
 
-  constructor(private store$: Store<RootStoreState.State>,
-              private formBuilder: FormBuilder,
-              private router: Router,
-              private route: ActivatedRoute,
-              private toastr: ToastrService) { }
+  constructor(
+    private store$: Store<RootStoreState.State>,
+    private formBuilder: FormBuilder,
+    private router: Router,
+    private route: ActivatedRoute,
+    private toastr: ToastrService
+  ) {}
 
   ngOnInit() {
     this.study = this.route.parent.parent.snapshot.data.study;
@@ -37,9 +38,9 @@ export class EventTypeAddComponent implements OnInit, OnDestroy {
     }
 
     this.form = this.formBuilder.group({
-      name: [ this.eventType.name, [ Validators.required ]],
-      description: [ this.eventType.description ],
-      recurring: [ this.eventType.recurring ]
+      name: [this.eventType.name, [Validators.required]],
+      description: [this.eventType.description],
+      recurring: [this.eventType.recurring]
     });
 
     // inform the user when an event type was added
@@ -47,26 +48,27 @@ export class EventTypeAddComponent implements OnInit, OnDestroy {
       .pipe(
         select(EventTypeStoreSelectors.selectLastAdded),
         filter(et => !!et),
-        takeUntil(this.unsubscribe$))
+        takeUntil(this.unsubscribe$)
+      )
       .subscribe((eventType: CollectionEventType) => {
-        this.toastr.success(
-          `EventType was added successfully: ${eventType.name}`,
-          'Add Successfull');
+        this.toastr.success(`EventType was added successfully: ${eventType.name}`, 'Add Successfull');
         this.store$.dispatch(EventTypeStoreActions.clearLastAdded());
-        this.router.navigate([ '../view', eventType.slug ], { relativeTo: this.route });
+        this.router.navigate(['../view', eventType.slug], { relativeTo: this.route });
       });
 
-    this.store$.pipe(
-      select(EventTypeStoreSelectors.selectError),
-      filter(et => !!et),
-      takeUntil(this.unsubscribe$)
-    ).subscribe((error: any) => {
-      let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
-      if (errMessage && errMessage.match(/EntityCriteriaError.*name already exists/)) {
-        errMessage = `The name is already in use: ${this.eventTypeToSave.name}`;
-      }
-      this.toastr.error(errMessage, 'Add Error', { disableTimeOut: true });
-    });
+    this.store$
+      .pipe(
+        select(EventTypeStoreSelectors.selectError),
+        filter(et => !!et),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe((error: any) => {
+        let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
+        if (errMessage && errMessage.match(/EntityCriteriaError.*name already exists/)) {
+          errMessage = `The name is already in use: ${this.eventTypeToSave.name}`;
+        }
+        this.toastr.error(errMessage, 'Add Error', { disableTimeOut: true });
+      });
   }
 
   ngOnDestroy() {
@@ -90,13 +92,14 @@ export class EventTypeAddComponent implements OnInit, OnDestroy {
     this.eventTypeToSave = new CollectionEventType().deserialize(this.form.value);
     this.eventTypeToSave.studyId = this.study.id;
     this.eventTypeToSave.recurring = !!this.eventTypeToSave.recurring;
-    this.store$.dispatch(EventTypeStoreActions.addEventTypeRequest({
-      eventType: this.eventTypeToSave
-    }));
+    this.store$.dispatch(
+      EventTypeStoreActions.addEventTypeRequest({
+        eventType: this.eventTypeToSave
+      })
+    );
   }
 
   onCancel() {
-    this.router.navigate([ '..' ], { relativeTo: this.route });
+    this.router.navigate(['..'], { relativeTo: this.route });
   }
-
 }

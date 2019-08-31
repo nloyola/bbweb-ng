@@ -7,9 +7,7 @@ import { OutputSpecimenProcessing } from '@app/domain/studies';
   styleUrls: ['./processing-output-specimen-summary.component.scss']
 })
 export class ProcessingOutputSpecimenSummaryComponent {
-
   @Input() output: OutputSpecimenProcessing;
 
-  constructor() { }
-
+  constructor() {}
 }

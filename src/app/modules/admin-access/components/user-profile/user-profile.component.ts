@@ -17,7 +17,6 @@ import { Dictionary } from '@ngrx/entity';
   styleUrls: ['./user-profile.component.scss']
 })
 export class UserProfileComponent implements OnInit, OnDestroy {
-
   @ViewChild('updateNameModal', { static: false }) updateNameModal: TemplateRef<any>;
   @ViewChild('updateEmailModal', { static: false }) updateEmailModal: TemplateRef<any>;
   @ViewChild('updateAvatarUrlModal', { static: false }) updateAvatarUrlModal: TemplateRef<any>;
@@ -39,60 +38,67 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   private updatedMessage$ = new Subject<string>();
   private unsubscribe$ = new Subject<void>();
 
-  constructor(private store$: Store<RootStoreState.State>,
-              private router: Router,
-              private route: ActivatedRoute,
-              private modalService: NgbModal,
-              private toastr: ToastrService) {
-
+  constructor(
+    private store$: Store<RootStoreState.State>,
+    private router: Router,
+    private route: ActivatedRoute,
+    private modalService: NgbModal,
+    private toastr: ToastrService
+  ) {
     this.user$ = this.store$.pipe(
       select(UserStoreSelectors.selectAllUserEntities),
       map((users: Dictionary<User>) => {
         const userEntity = users[this.route.snapshot.data.user.id];
         if (userEntity) {
-          return (userEntity instanceof User) ? userEntity : new User().deserialize(userEntity);
+          return userEntity instanceof User ? userEntity : new User().deserialize(userEntity);
         }
         return undefined;
       }),
-      map(user => user ? new UserUI(user) : undefined),
-      shareReplay());
+      map(user => (user ? new UserUI(user) : undefined)),
+      shareReplay()
+    );
 
     this.user$.pipe(takeUntil(this.unsubscribe$)).subscribe(this.userSubject);
     this.isLoading$ = this.user$.pipe(map(user => user === undefined));
 
-    this.user$.pipe(
-      withLatestFrom(this.updatedMessage$),
-      takeUntil(this.unsubscribe$)
-    ).subscribe(([ user, msg ]) => {
-      if ((msg === null) || (user === undefined)) { return; }
+    this.user$
+      .pipe(
+        withLatestFrom(this.updatedMessage$),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe(([user, msg]) => {
+        if (msg === null || user === undefined) {
+          return;
+        }
 
-      this.toastr.success(msg, 'Update Successfull');
-      this.updatedMessage$.next(null);
+        this.toastr.success(msg, 'Update Successfull');
+        this.updatedMessage$.next(null);
 
-      if (user.slug !== this.route.snapshot.params.slug) {
-        // name was changed and new slug was assigned
-        //
-        // need to change state since slug is used in URL and by breadcrumbs
-        this.router.navigate([ '..', user.slug ], { relativeTo: this.route });
-      }
-    });
+        if (user.slug !== this.route.snapshot.params.slug) {
+          // name was changed and new slug was assigned
+          //
+          // need to change state since slug is used in URL and by breadcrumbs
+          this.router.navigate(['..', user.slug], { relativeTo: this.route });
+        }
+      });
 
-    this.store$.pipe(
-      select(UserStoreSelectors.selectUserError),
-      filter(error => !!error),
-      withLatestFrom(this.updatedMessage$),
-      takeUntil(this.unsubscribe$)
-    ).subscribe(([ error, _msg ]) => {
-      let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
-      if (errMessage.match(/EmailNotAvailable: user with email already exists/)) {
-        errMessage = `That email address is in use by another user.`;
-      }
-      this.toastr.error(errMessage, 'Update Error', { disableTimeOut: true });
-    });
+    this.store$
+      .pipe(
+        select(UserStoreSelectors.selectUserError),
+        filter(error => !!error),
+        withLatestFrom(this.updatedMessage$),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe(([error, _msg]) => {
+        let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
+        if (errMessage.match(/EmailNotAvailable: user with email already exists/)) {
+          errMessage = `That email address is in use by another user.`;
+        }
+        this.toastr.error(errMessage, 'Update Error', { disableTimeOut: true });
+      });
   }
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   ngOnDestroy() {
     this.unsubscribe$.next();
@@ -101,13 +107,16 @@ export class UserProfileComponent implements OnInit, OnDestroy {
 
   updateName(): void {
     const user = this.userSubject.value.entity;
-    this.modalService.open(this.updateNameModal, { size: 'lg' }).result
-      .then(value => {
-        this.store$.dispatch(UserStoreActions.updateUserRequest({
-          user,
-          attributeName: 'name',
-          value
-        }));
+    this.modalService
+      .open(this.updateNameModal, { size: 'lg' })
+      .result.then(value => {
+        this.store$.dispatch(
+          UserStoreActions.updateUserRequest({
+            user,
+            attributeName: 'name',
+            value
+          })
+        );
         this.updatedMessage$.next('User name was updated');
       })
       .catch(() => undefined);
@@ -115,13 +124,16 @@ export class UserProfileComponent implements OnInit, OnDestroy {
 
   updateEmail(): void {
     const user = this.userSubject.value.entity;
-    this.modalService.open(this.updateEmailModal, { size: 'lg' }).result
-      .then(value => {
-        this.store$.dispatch(UserStoreActions.updateUserRequest({
-          user,
-          attributeName: 'email',
-          value
-        }));
+    this.modalService
+      .open(this.updateEmailModal, { size: 'lg' })
+      .result.then(value => {
+        this.store$.dispatch(
+          UserStoreActions.updateUserRequest({
+            user,
+            attributeName: 'email',
+            value
+          })
+        );
         this.updatedMessage$.next('User  email was updated');
       })
       .catch(() => undefined);
@@ -129,13 +141,16 @@ export class UserProfileComponent implements OnInit, OnDestroy {
 
   updatePassword(): void {
     const user = this.userSubject.value.entity;
-    this.modalService.open(this.updatePasswordModal, { size: 'lg' }).result
-      .then(value => {
-        this.store$.dispatch(UserStoreActions.updateUserRequest({
-          user,
-          attributeName: 'password',
-          value
-        }));
+    this.modalService
+      .open(this.updatePasswordModal, { size: 'lg' })
+      .result.then(value => {
+        this.store$.dispatch(
+          UserStoreActions.updateUserRequest({
+            user,
+            attributeName: 'password',
+            value
+          })
+        );
         this.updatedMessage$.next('User password was updated');
       })
       .catch(() => undefined);
@@ -143,13 +158,16 @@ export class UserProfileComponent implements OnInit, OnDestroy {
 
   updateAvatarUrl(): void {
     const user = this.userSubject.value.entity;
-    this.modalService.open(this.updateAvatarUrlModal, { size: 'lg' }).result
-      .then(value => {
-        this.store$.dispatch(UserStoreActions.updateUserRequest({
-          user,
-          attributeName: 'avatarUrl',
-          value
-        }));
+    this.modalService
+      .open(this.updateAvatarUrlModal, { size: 'lg' })
+      .result.then(value => {
+        this.store$.dispatch(
+          UserStoreActions.updateUserRequest({
+            user,
+            attributeName: 'avatarUrl',
+            value
+          })
+        );
         this.updatedMessage$.next('User avatar URL was updated');
       })
       .catch(() => undefined);
@@ -169,12 +187,13 @@ export class UserProfileComponent implements OnInit, OnDestroy {
 
   private changeState(action: 'activate' | 'lock' | 'unlock') {
     const user = this.userSubject.value.entity;
-    this.store$.dispatch(UserStoreActions.updateUserRequest({
-      user,
-      attributeName: 'state',
-      value: action
-    }));
+    this.store$.dispatch(
+      UserStoreActions.updateUserRequest({
+        user,
+        attributeName: 'state',
+        value: action
+      })
+    );
     this.updatedMessage$.next('User state was updated');
   }
-
 }

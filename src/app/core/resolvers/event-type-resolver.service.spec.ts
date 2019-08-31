@@ -4,7 +4,12 @@ import { TestBed } from '@angular/core/testing';
 import { ActivatedRouteSnapshot, convertToParamMap } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CollectionEventType, Study } from '@app/domain/studies';
-import { EventTypeStoreActions, EventTypeStoreReducer, RootStoreState, NgrxRuntimeChecks } from '@app/root-store';
+import {
+  EventTypeStoreActions,
+  EventTypeStoreReducer,
+  RootStoreState,
+  NgrxRuntimeChecks
+} from '@app/root-store';
 import { Factory } from '@test/factory';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
@@ -12,7 +17,6 @@ import { cold } from 'jasmine-marbles';
 import { EventTypeResolver } from './event-type-resolver.service';
 
 describe('EventTypeResolver', () => {
-
   let ngZone: NgZone;
   let resolver: EventTypeResolver;
   let store: Store<RootStoreState.State>;
@@ -28,7 +32,8 @@ describe('EventTypeResolver', () => {
           {
             'event-type': EventTypeStoreReducer.reducer
           },
-          NgrxRuntimeChecks)
+          NgrxRuntimeChecks
+        )
       ]
     });
 
@@ -81,17 +86,18 @@ describe('EventTypeResolver', () => {
   function createRoute(study: Study, eventType: CollectionEventType) {
     const route = new ActivatedRouteSnapshot();
 
-    Object.defineProperty(route,
-                          'paramMap',
-                          { get: () => convertToParamMap({ eventTypeSlug: eventType.slug })});
-    Object.defineProperty(route, 'parent', { get: () => ({
-      parent: {
+    Object.defineProperty(route, 'paramMap', {
+      get: () => convertToParamMap({ eventTypeSlug: eventType.slug })
+    });
+    Object.defineProperty(route, 'parent', {
+      get: () => ({
         parent: {
-          paramMap: convertToParamMap({ slug: study.slug })
+          parent: {
+            paramMap: convertToParamMap({ slug: study.slug })
+          }
         }
-      }
-    })});
+      })
+    });
     return route;
   }
-
 });

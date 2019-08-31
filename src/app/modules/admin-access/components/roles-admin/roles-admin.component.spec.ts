@@ -14,14 +14,14 @@ describe('RolesAdminComponent', () => {
       imports: [
         StoreModule.forRoot(
           {
-            'role': RoleStoreReducer.reducer
+            role: RoleStoreReducer.reducer
           },
-          NgrxRuntimeChecks)
+          NgrxRuntimeChecks
+        )
       ],
-      declarations: [ RolesAdminComponent ],
+      declarations: [RolesAdminComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {

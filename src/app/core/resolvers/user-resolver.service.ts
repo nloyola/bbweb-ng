@@ -10,8 +10,7 @@ import { filter, map, take, tap } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class UserResolver implements Resolve<User> {
-  constructor(private store$: Store<RootStoreState.State>,
-              private router: Router) {}
+  constructor(private store$: Store<RootStoreState.State>, private router: Router) {}
 
   resolve(route: ActivatedRouteSnapshot, _state: RouterStateSnapshot): Observable<User> {
     const slug = route.paramMap.get('slug');
@@ -23,14 +22,16 @@ export class UserResolver implements Resolve<User> {
         filter(e => !!e),
         tap(() => {
           this.router.navigateByUrl('/404');
-        })),
+        })
+      ),
       this.store$.pipe(
         select(UserStoreSelectors.selectAllUsers),
         filter(s => s.length > 0),
         map((users: User[]) => {
           const user = users.find(s => s.slug === slug);
           return user ? user : throwError('user not found');
-        }))
+        })
+      )
     ).pipe(take(1));
   }
 }

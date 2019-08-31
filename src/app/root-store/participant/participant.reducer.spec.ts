@@ -4,7 +4,6 @@ import * as ParticipantActions from './participant.actions';
 import { initialState, reducer } from './participant.reducer';
 
 describe('Participant Reducer', () => {
-
   const factory = new Factory();
 
   describe('unknown action', () => {
@@ -18,7 +17,6 @@ describe('Participant Reducer', () => {
   });
 
   describe('when getting a participant', () => {
-
     let participant: Participant;
 
     beforeEach(() => {
@@ -60,11 +58,9 @@ describe('Participant Reducer', () => {
         }
       });
     });
-
   });
 
   describe('when adding a participant', () => {
-
     let participant: Participant;
 
     beforeEach(() => {
@@ -107,11 +103,9 @@ describe('Participant Reducer', () => {
         }
       });
     });
-
   });
 
   describe('for updating a participant', () => {
-
     let participant: Participant;
     let testInitialState: any;
 
@@ -119,7 +113,7 @@ describe('Participant Reducer', () => {
       participant = new Participant().deserialize(factory.participant());
       testInitialState = {
         ...initialState,
-        ids: [ participant.id ],
+        ids: [participant.id],
         entities: {}
       };
       testInitialState['entities'][participant.id] = {};
@@ -129,13 +123,14 @@ describe('Participant Reducer', () => {
       const initialAction = ParticipantActions.getParticipantSuccess({ participant });
       let state = reducer(initialState, initialAction);
 
-      const  updatedParticipant = new Participant().deserialize({
-        ...participant as any,
+      const updatedParticipant = new Participant().deserialize({
+        ...(participant as any),
         timePacked: new Date()
       });
       state = reducer(
         state,
-        ParticipantActions.updateParticipantSuccess({ participant: updatedParticipant }));
+        ParticipantActions.updateParticipantSuccess({ participant: updatedParticipant })
+      );
 
       expect(state.ids).toContain(participant.id);
       expect(state.entities[participant.id]).toEqual(updatedParticipant);
@@ -157,7 +152,5 @@ describe('Participant Reducer', () => {
         error: payload.error
       });
     });
-
   });
-
 });

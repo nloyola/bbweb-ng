@@ -1,9 +1,9 @@
-import {NgZone} from '@angular/core';
+import { NgZone } from '@angular/core';
 
 import { TimeagoPipe } from './timeago.pipe';
 
 class NgZoneMock {
-  runOutsideAngular (fn: Function) {
+  runOutsideAngular(fn: Function) {
     return fn();
   }
   run(fn: Function) {
@@ -87,5 +87,4 @@ describe('Timeago Pipe', () => {
   it('for a non date value', () => {
     expect(pipe.transform('xxxx')).toBe('');
   });
-
 });

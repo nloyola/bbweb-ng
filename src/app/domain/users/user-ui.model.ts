@@ -4,7 +4,6 @@ import { UserState } from '@app/domain/users/user-state.enum';
 import { User } from '@app/domain/users/user.model';
 
 export class UserUI implements DomainEntityUI<User> {
-
   readonly entity: User;
 
   public static getStateIcon(state: UserState): string {
@@ -66,5 +65,4 @@ export class UserUI implements DomainEntityUI<User> {
   isLocked(): boolean {
     return this.entity.isLocked();
   }
-
 }

@@ -12,16 +12,9 @@ describe('ModalInputBooleanComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [
-        FormsModule,
-        ReactiveFormsModule
-      ],
-      declarations: [
-        ModalInputComponent,
-        ModalInputBooleanComponent
-      ]
-    })
-      .compileComponents();
+      imports: [FormsModule, ReactiveFormsModule],
+      declarations: [ModalInputComponent, ModalInputBooleanComponent]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -36,23 +29,29 @@ describe('ModalInputBooleanComponent', () => {
   });
 
   describe('shared behaviour', () => {
-
     const context: ModalInputComponentBehaviour.Context<ModalInputBooleanComponent, boolean> = {};
 
     beforeEach(() => {
-      context.fixture             = fixture;
-      context.assignOptions       = (options) => { component.options = options; };
-      context.assignMockModal     = (mockModal) => { component.modal = mockModal; };
-      context.assignInputValue    = (value) => { component.input.setValue(value); };
-      context.getValidValue       = () => false;
-      context.inputElement        = () => fixture.debugElement.query(By.css('input'));
-      context.markInputAsTouched  = () => { component.input.markAllAsTouched(); };
-      context.requiredText        = 'A value is required';
-      context.confirm             = () => component.confirm();
-      context.dismiss             = () => component.dismiss();
+      context.fixture = fixture;
+      context.assignOptions = options => {
+        component.options = options;
+      };
+      context.assignMockModal = mockModal => {
+        component.modal = mockModal;
+      };
+      context.assignInputValue = value => {
+        component.input.setValue(value);
+      };
+      context.getValidValue = () => false;
+      context.inputElement = () => fixture.debugElement.query(By.css('input'));
+      context.markInputAsTouched = () => {
+        component.input.markAllAsTouched();
+      };
+      context.requiredText = 'A value is required';
+      context.confirm = () => component.confirm();
+      context.dismiss = () => component.dismiss();
     });
 
     ModalInputComponentBehaviour.sharedBehaviour(context);
-
   });
 });

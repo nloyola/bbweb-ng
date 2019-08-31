@@ -17,7 +17,6 @@ import * as faker from 'faker';
 import { NgrxRuntimeChecks } from '@app/root-store/root-store.module';
 
 describe('StudySummaryComponent', () => {
-
   let component: StudySummaryComponent;
   let fixture: ComponentFixture<StudySummaryComponent>;
   let ngZone: NgZone;
@@ -40,10 +39,11 @@ describe('StudySummaryComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            'study': StudyStoreReducer.reducer,
-            'spinner': SpinnerStoreReducer.reducer
+            study: StudyStoreReducer.reducer,
+            spinner: SpinnerStoreReducer.reducer
           },
-          NgrxRuntimeChecks),
+          NgrxRuntimeChecks
+        ),
         ToastrModule.forRoot()
       ],
       providers: [
@@ -64,10 +64,9 @@ describe('StudySummaryComponent', () => {
           }
         }
       ],
-      declarations: [ StudySummaryComponent ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
-    .compileComponents();
+      declarations: [StudySummaryComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -93,7 +92,7 @@ describe('StudySummaryComponent', () => {
 
     const newNameAndSlug = factory.nameAndSlug();
     const studyWithNewName = new Study().deserialize({
-      ...study as any,
+      ...(study as any),
       ...newNameAndSlug
     });
 
@@ -108,40 +107,41 @@ describe('StudySummaryComponent', () => {
     fixture.detectChanges();
 
     expect(routerListener.mock.calls.length).toBe(1);
-    expect(routerListener.mock.calls[0][0]).toEqual([ '../..', studyWithNewName.slug, 'summary' ]);
+    expect(routerListener.mock.calls[0][0]).toEqual(['../..', studyWithNewName.slug, 'summary']);
   }));
 
   describe('when updating attributes', () => {
-
     const context: EntityUpdateComponentBehaviour.Context<StudySummaryComponent> = {} as any;
 
     beforeEach(() => {
       context.fixture = fixture;
-      context.componentInitialize =
-        () => {
-          store.dispatch(StudyStoreActions.getStudySuccess({ study }));
-          store.dispatch(StudyStoreActions.getEnableAllowedSuccess({
+      context.componentInitialize = () => {
+        store.dispatch(StudyStoreActions.getStudySuccess({ study }));
+        store.dispatch(
+          StudyStoreActions.getEnableAllowedSuccess({
             studyId: study.id,
             allowed: true
-          }));
-        };
+          })
+        );
+      };
       context.componentValidateInitialization = () => undefined;
-      context.dispatchSuccessAction =
-        () => { store.dispatch(StudyStoreActions.updateStudySuccess({ study })); };
-      context.createExpectedFailureAction =
-        (error) => StudyStoreActions.updateStudyFailure({ error });
+      context.dispatchSuccessAction = () => {
+        store.dispatch(StudyStoreActions.updateStudySuccess({ study }));
+      };
+      context.createExpectedFailureAction = error => StudyStoreActions.updateStudyFailure({ error });
       context.duplicateAttibuteValueError = 'name already used';
     });
 
     describe('when updating name', () => {
-
       beforeEach(() => {
         const newName = factory.stringNext();
         context.modalReturnValue = { result: Promise.resolve(newName) };
-        context.updateEntity = () => { component.updateName(); };
+        context.updateEntity = () => {
+          component.updateName();
+        };
 
         const studyWithUpdatedSlug = new Study().deserialize({
-          ...study as any,
+          ...(study as any),
           slug: factory.slugify(newName),
           name: newName
         });
@@ -157,15 +157,15 @@ describe('StudySummaryComponent', () => {
       });
 
       EntityUpdateComponentBehaviour.sharedBehaviour(context);
-
     });
 
     describe('when updating description', () => {
-
       beforeEach(() => {
         const newValue = faker.lorem.paragraphs();
         context.modalReturnValue = { result: Promise.resolve(newValue) };
-        context.updateEntity = () => { component.updateDescription(); };
+        context.updateEntity = () => {
+          component.updateDescription();
+        };
 
         context.expectedSuccessAction = StudyStoreActions.updateStudyRequest({
           study,
@@ -175,14 +175,14 @@ describe('StudySummaryComponent', () => {
       });
 
       EntityUpdateComponentBehaviour.sharedBehaviour(context);
-
     });
 
     describe('when DISABLING a study', () => {
-
       beforeEach(() => {
         const newValue = 'disable';
-        context.updateEntity = () => { component.disable(); };
+        context.updateEntity = () => {
+          component.disable();
+        };
         context.expectedSuccessAction = StudyStoreActions.updateStudyRequest({
           study,
           attributeName: 'state',
@@ -191,14 +191,14 @@ describe('StudySummaryComponent', () => {
       });
 
       EntityUpdateComponentBehaviour.sharedBehaviour(context);
-
     });
 
     describe('when ENABLING a study', () => {
-
       beforeEach(() => {
         const newValue = 'enable';
-        context.updateEntity = () => { component.enable(); };
+        context.updateEntity = () => {
+          component.enable();
+        };
         context.expectedSuccessAction = StudyStoreActions.updateStudyRequest({
           study,
           attributeName: 'state',
@@ -207,14 +207,14 @@ describe('StudySummaryComponent', () => {
       });
 
       EntityUpdateComponentBehaviour.sharedBehaviour(context);
-
     });
 
     describe('when RETIRING a study', () => {
-
       beforeEach(() => {
         const newValue = 'retire';
-        context.updateEntity = () => { component.retire(); };
+        context.updateEntity = () => {
+          component.retire();
+        };
         context.expectedSuccessAction = StudyStoreActions.updateStudyRequest({
           study,
           attributeName: 'state',
@@ -223,14 +223,14 @@ describe('StudySummaryComponent', () => {
       });
 
       EntityUpdateComponentBehaviour.sharedBehaviour(context);
-
     });
 
     describe('when UNRETIRING a study', () => {
-
       beforeEach(() => {
         const newValue = 'unretire';
-        context.updateEntity = () => { component.unretire(); };
+        context.updateEntity = () => {
+          component.unretire();
+        };
         context.expectedSuccessAction = StudyStoreActions.updateStudyRequest({
           study,
           attributeName: 'state',
@@ -239,22 +239,19 @@ describe('StudySummaryComponent', () => {
       });
 
       EntityUpdateComponentBehaviour.sharedBehaviour(context);
-
     });
-
   });
 
   describe('common behaviour', () => {
-
     it('functions should open a modal', fakeAsync(() => {
       const testData = [
         {
-          componentFunc: (c) => c.updateName(),
+          componentFunc: c => c.updateName(),
           attribute: 'name',
           value: 'test'
         },
         {
-          componentFunc: (c) => c.updateDescription(),
+          componentFunc: c => c.updateDescription(),
           attribute: 'description',
           value: 'test'
         }
@@ -278,11 +275,13 @@ describe('StudySummaryComponent', () => {
         tick(1000);
 
         expect(storeListener.mock.calls.length).toBe(index + 1);
-        expect(storeListener.mock.calls[index][0]).toEqual(StudyStoreActions.updateStudyRequest({
-          study,
-          attributeName: testInfo.attribute,
-          value: testInfo.value
-        }));
+        expect(storeListener.mock.calls[index][0]).toEqual(
+          StudyStoreActions.updateStudyRequest({
+            study,
+            attributeName: testInfo.attribute,
+            value: testInfo.value
+          })
+        );
       });
       expect(modalListener.mock.calls.length).toBe(testData.length);
     }));
@@ -305,10 +304,12 @@ describe('StudySummaryComponent', () => {
         () => component.updateDescription(),
         () => component.disable(),
         () => {
-          store.dispatch(StudyStoreActions.getEnableAllowedSuccess({
-            studyId: study.id,
-            allowed: true
-          }));
+          store.dispatch(
+            StudyStoreActions.getEnableAllowedSuccess({
+              studyId: study.id,
+              allowed: true
+            })
+          );
           fixture.detectChanges();
           component.enable();
         },
@@ -332,17 +333,19 @@ describe('StudySummaryComponent', () => {
     it('functions that change the study state', fakeAsync(() => {
       ngZone.run(() => {
         store.dispatch(StudyStoreActions.getStudySuccess({ study }));
-        store.dispatch(StudyStoreActions.getEnableAllowedSuccess({
-          studyId: study.id,
-          allowed: true
-        }));
+        store.dispatch(
+          StudyStoreActions.getEnableAllowedSuccess({
+            studyId: study.id,
+            allowed: true
+          })
+        );
       });
       fixture.detectChanges();
 
       const testData = [
-        { componentFunc: () => component.disable(),  value: 'disable' },
-        { componentFunc: () => component.enable(),   value: 'enable' },
-        { componentFunc: () => component.retire(),   value: 'retire' },
+        { componentFunc: () => component.disable(), value: 'disable' },
+        { componentFunc: () => component.enable(), value: 'enable' },
+        { componentFunc: () => component.retire(), value: 'retire' },
         { componentFunc: () => component.unretire(), value: 'unretire' }
       ];
 
@@ -353,13 +356,14 @@ describe('StudySummaryComponent', () => {
         flush();
 
         expect(storeListener.mock.calls.length).toBe(1 + index);
-        expect(storeListener.mock.calls[index][0]).toEqual(StudyStoreActions.updateStudyRequest({
-          study,
-          attributeName: 'state',
-          value: testInfo.value
-        }));
+        expect(storeListener.mock.calls[index][0]).toEqual(
+          StudyStoreActions.updateStudyRequest({
+            study,
+            attributeName: 'state',
+            value: testInfo.value
+          })
+        );
       });
     }));
   });
-
 });

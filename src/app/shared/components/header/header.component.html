@@ -1,26 +1,32 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" routerLink="/" >Biobank</a>
+  <a class="navbar-brand" routerLink="/">Biobank</a>
 
-  <button class="navbar-toggler navbar-toggler-right"
-          type="button"
-          (click)="isCollapsed = !isCollapsed"
-          aria-expanded="false"
-          aria-controls="navbarContent"
-          aria-label="Toggle navigation">
+  <button
+    class="navbar-toggler navbar-toggler-right"
+    type="button"
+    (click)="isCollapsed = !isCollapsed"
+    aria-expanded="false"
+    aria-controls="navbarContent"
+    aria-label="Toggle navigation"
+  >
     <span class="navbar-toggler-icon"></span>
   </button>
 
-  <div class="navbar-collapse collapse"
-       [ngbCollapse]="isCollapsed"
-       [attr.aria-expanded]="!isCollapsed"
-       aria-controls="collapseExample">
+  <div
+    class="navbar-collapse collapse"
+    [ngbCollapse]="isCollapsed"
+    [attr.aria-expanded]="!isCollapsed"
+    aria-controls="collapseExample"
+  >
     <ul class="navbar-nav ml-auto">
-      <li class="nav-item dropdown" *ngIf="(user$ | async)" ngbDropdown>
-        <a class="nav-link dropdown-toggle"
-           id="language-dropdown"
-           role="button"
-           data-togggle="dropdown"
-           ngbDropdownToggle>
+      <li class="nav-item dropdown" *ngIf="user$ | async" ngbDropdown>
+        <a
+          class="nav-link dropdown-toggle"
+          id="language-dropdown"
+          role="button"
+          data-togggle="dropdown"
+          ngbDropdownToggle
+        >
           <mat-icon inline="true">language</mat-icon>
           <span i18n>
             Language
@@ -33,16 +39,17 @@
         </div>
       </li>
       <li class="nav-item dropdown" *ngIf="user$ | async; let user" ngbDropdown>
-        <a class="nav-link dropdown-toggle"
-           id="user-dropdown"
-           role="button"
-           data-togggle="dropdown"
-           ngbDropdownToggle>
+        <a
+          class="nav-link dropdown-toggle"
+          id="user-dropdown"
+          role="button"
+          data-togggle="dropdown"
+          ngbDropdownToggle
+        >
           <mat-icon inline="true">account_box</mat-icon> {{ user.name }}<b class="caret"></b>
         </a>
         <div class="dropdown-menu" aria-labelledby="user-dropdown" ngbDropdownMenu>
-          <a class="dropdown-item"
-             [routerLink]="[ '/admin/access/users', user.slug ]">
+          <a class="dropdown-item" [routerLink]="['/admin/access/users', user.slug]">
             <mat-icon>settings</mat-icon>
             <span i18n>Profile</span>
           </a>
@@ -60,5 +67,6 @@
         </a>
       </li>
     </ul>
-  </div><!--/.nav-collapse -->
+  </div>
+  <!--/.nav-collapse -->
 </nav>

@@ -9,21 +9,19 @@ import { Factory } from '@test/factory';
 import { ProcessingTypeInformationSubformComponent } from './processing-type-information-subform.component';
 
 describe('ProcessingTypeInformationSubformComponent', () => {
-
   @Component({
-    template  : `<form [formGroup]="form">
-                   <app-processing-type-information-subform [processingType]="processingType"
-                                                            [subform]="infoSubForm">
-                   </app-processing-type-information-subform>
-                 </form>`
+    template: `
+      <form [formGroup]="form">
+        <app-processing-type-information-subform [processingType]="processingType" [subform]="infoSubForm">
+        </app-processing-type-information-subform>
+      </form>
+    `
   })
   class TestComponent implements OnInit {
-
     form: FormGroup;
     processingType: ProcessingType;
 
-    constructor(private formBuilder: FormBuilder) {
-    }
+    constructor(private formBuilder: FormBuilder) {}
 
     ngOnInit() {
       this.form = this.formBuilder.group({
@@ -44,18 +42,11 @@ describe('ProcessingTypeInformationSubformComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         ReactiveFormsModule,
-        StoreModule.forRoot(
-          { 'processing-type': ProcessingTypeStoreReducer.reducer },
-          NgrxRuntimeChecks
-        )
+        StoreModule.forRoot({ 'processing-type': ProcessingTypeStoreReducer.reducer }, NgrxRuntimeChecks)
       ],
-      declarations: [
-        TestComponent,
-        ProcessingTypeInformationSubformComponent
-      ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
-    .compileComponents();
+      declarations: [TestComponent, ProcessingTypeInformationSubformComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

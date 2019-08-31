@@ -4,16 +4,14 @@ import { StudyCountInfo, StudyState } from '@app/domain/studies';
 import { StudyCountsComponent } from './study-counts.component';
 
 describe('StudyCountsComponent', () => {
-
   let component: StudyCountsComponent;
   let fixture: ComponentFixture<StudyCountsComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ StudyCountsComponent ],
+      declarations: [StudyCountsComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {

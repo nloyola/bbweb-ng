@@ -8,9 +8,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['./annotation-type-view.component.scss']
 })
 export class AnnotationTypeViewComponent {
-
   @Input() annotationType: AnnotationType;
 
-  constructor(public activeModal: NgbActiveModal) { }
-
+  constructor(public activeModal: NgbActiveModal) {}
 }

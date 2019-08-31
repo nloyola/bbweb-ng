@@ -10,7 +10,6 @@ import { CustomValidators } from '@app/shared/validators';
   styleUrls: ['./processing-type-output-subform.component.scss']
 })
 export class ProcessingTypeOutputSubformComponent {
-
   @Input() processingType: ProcessingType;
   @Input() subform: FormGroup;
 
@@ -30,7 +29,7 @@ export class ProcessingTypeOutputSubformComponent {
     });
   }
 
-  constructor() { }
+  constructor() {}
 
   get spcDefSubForm(): AbstractControl {
     return this.subform.get('spcDefSubForm');
@@ -47,5 +46,4 @@ export class ProcessingTypeOutputSubformComponent {
   get count(): AbstractControl {
     return this.subform.get('count');
   }
-
 }

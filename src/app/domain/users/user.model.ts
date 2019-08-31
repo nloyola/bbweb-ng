@@ -1,9 +1,17 @@
-import { ConcurrencySafeEntity, HasName, HasSlug, IConcurrencySafeEntity, IEntityInfo, JSONArray, JSONObject, EntityInfo } from '@app/domain';
+import {
+  ConcurrencySafeEntity,
+  HasName,
+  HasSlug,
+  IConcurrencySafeEntity,
+  IEntityInfo,
+  JSONArray,
+  JSONObject,
+  EntityInfo
+} from '@app/domain';
 import { RoleIds, UserMembership, UserRole } from '@app/domain/access';
 import { UserState } from '@app/domain/users/user-state.enum';
 
 export interface IUser extends IConcurrencySafeEntity, HasSlug, HasName {
-
   /**
    * The user's email address.
    */
@@ -25,14 +33,12 @@ export interface IUser extends IConcurrencySafeEntity, HasSlug, HasName {
   state: UserState;
 
   membership: UserMembership | null;
-
 }
 
 /**
  * Information for a user of the system.
  */
 export class User extends ConcurrencySafeEntity implements IUser {
-
   slug: string;
   name: string;
   email: string;
@@ -42,19 +48,19 @@ export class User extends ConcurrencySafeEntity implements IUser {
   membership: UserMembership | null;
 
   isRegistered() {
-    return (this.state === UserState.Registered);
+    return this.state === UserState.Registered;
   }
 
   isActive() {
-    return (this.state === UserState.Active);
+    return this.state === UserState.Active;
   }
 
   isLocked() {
-    return (this.state === UserState.Locked);
+    return this.state === UserState.Locked;
   }
 
   hasRoles() {
-    return (this.roles.length > 0);
+    return this.roles.length > 0;
   }
 
   hasRole(roleId: string) {
@@ -62,9 +68,7 @@ export class User extends ConcurrencySafeEntity implements IUser {
     if (hasRole) {
       return true;
     }
-    return this.roles
-      .filter(role => role.childData.find(childInfo => childInfo.id === roleId))
-      .length > 0;
+    return this.roles.filter(role => role.childData.find(childInfo => childInfo.id === roleId)).length > 0;
   }
 
   hasAnyRoleOf(...roleIds: string[]) {
@@ -84,9 +88,11 @@ export class User extends ConcurrencySafeEntity implements IUser {
   }
 
   hasAdminRole() {
-    return this.hasAnyRoleOf(RoleIds.StudyAdministrator,
+    return this.hasAnyRoleOf(
+      RoleIds.StudyAdministrator,
       RoleIds.CentreAdministrator,
-      RoleIds.UserAdministrator);
+      RoleIds.UserAdministrator
+    );
   }
 
   hasSpecimenCollectorRole() {
@@ -118,10 +124,9 @@ export class User extends ConcurrencySafeEntity implements IUser {
     }
     return this;
   }
-
 }
 
 export type IUserInfo = IEntityInfo<IUser>;
 
 /* tslint:disable-next-line:max-classes-per-file */
-export class UserInfo extends EntityInfo<User> { }
+export class UserInfo extends EntityInfo<User> {}

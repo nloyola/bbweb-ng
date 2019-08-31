@@ -8,7 +8,6 @@ import * as faker from 'faker';
 import { MembershipService } from './membership.service';
 
 describe('MembershipService', () => {
-
   const BASE_URL = '/api/access/memberships';
 
   let httpMock: HttpTestingController;
@@ -17,9 +16,7 @@ describe('MembershipService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        HttpClientTestingModule
-      ],
+      imports: [HttpClientTestingModule],
       providers: [MembershipService]
     });
 
@@ -54,25 +51,27 @@ describe('MembershipService', () => {
 
     it('handles an error reply correctly', () => {
       service.get(membership.slug).subscribe(
-        () => { fail('should have been an error response'); },
-        err => { expect(err.message).toContain('expected a membership object'); }
+        () => {
+          fail('should have been an error response');
+        },
+        err => {
+          expect(err.message).toContain('expected a membership object');
+        }
       );
 
       const req = httpMock.expectOne(`${BASE_URL}/${membership.slug}`);
       req.flush({ status: 'error', data: undefined });
       httpMock.verify();
     });
-
   });
 
   describe('when searching memberships', () => {
-
     const context: PagedQueryBehaviour.Context<Membership> = {};
 
     beforeEach(() => {
       context.search = (searchParams: SearchParams) => service.search(searchParams);
       context.url = BASE_URL;
-      context.replyItems = [ factory.membership() ];
+      context.replyItems = [factory.membership()];
       context.subscription = (pr: PagedReply<Membership>) => {
         expect(pr.entities.length).toBe(1);
         expect(pr.entities[0]).toEqual(jasmine.any(Membership));
@@ -80,11 +79,9 @@ describe('MembershipService', () => {
     });
 
     PagedQueryBehaviour.sharedBehaviour(context);
-
   });
 
   describe('when adding a membership', () => {
-
     it('request contains correct JSON and reply is handled correctly', () => {
       const rawMembership = factory.membership();
       const membership = new Membership().deserialize(rawMembership);
@@ -115,19 +112,21 @@ describe('MembershipService', () => {
       const membership = new Membership().deserialize(rawMembership);
 
       service.add(membership).subscribe(
-        () => { fail('should have been an error response'); },
-        err => { expect(err.message).toContain('expected a membership object'); }
+        () => {
+          fail('should have been an error response');
+        },
+        err => {
+          expect(err.message).toContain('expected a membership object');
+        }
       );
 
       const req = httpMock.expectOne(BASE_URL);
       req.flush({ status: 'error', data: undefined });
       httpMock.verify();
     });
-
   });
 
   describe('for updating a membership', () => {
-
     let rawMembership: any;
     let membership: Membership;
     let testData: any;
@@ -196,7 +195,6 @@ describe('MembershipService', () => {
           url: `${BASE_URL}/centre/${membership.id}/${membership.version}/${centre.id}`
         }
       ];
-
     });
 
     it('request contains correct JSON and reply is handled correctly', () => {
@@ -248,8 +246,12 @@ describe('MembershipService', () => {
     it('handles an error reply correctly', () => {
       testData.forEach((testInfo: any) => {
         service.update(membership, testInfo.attribute, testInfo.value).subscribe(
-          () => { fail('should have been an error response'); },
-          err => { expect(err.message).toContain('expected a membership object'); }
+          () => {
+            fail('should have been an error response');
+          },
+          err => {
+            expect(err.message).toContain('expected a membership object');
+          }
         );
 
         const req = httpMock.expectOne(testInfo.url);
@@ -268,14 +270,14 @@ describe('MembershipService', () => {
         }
       ];
       testData.forEach((testInfo: any) => {
-        expect(() => service.update(membership, testInfo.attribute, testInfo.value))
-          .toThrowError(testInfo.expectedErrMsg);
+        expect(() => service.update(membership, testInfo.attribute, testInfo.value)).toThrowError(
+          testInfo.expectedErrMsg
+        );
       });
     });
   });
 
   describe('for removing a membership', () => {
-
     it('request contains correct JSON and reply is handled correctly', () => {
       const rawMembership = factory.membership();
       const membership = new Membership().deserialize(rawMembership);
@@ -297,8 +299,12 @@ describe('MembershipService', () => {
       const membership = new Membership().deserialize(rawMembership);
 
       service.removeMembership(membership).subscribe(
-        () => { fail('should have been an error response'); },
-        err => { expect(err.message).toContain('expected a membership object'); }
+        () => {
+          fail('should have been an error response');
+        },
+        err => {
+          expect(err.message).toContain('expected a membership object');
+        }
       );
 
       const url = `${BASE_URL}/${membership.id}/${membership.version}`;
@@ -306,7 +312,5 @@ describe('MembershipService', () => {
       req.flush({ status: 'error', data: undefined });
       httpMock.verify();
     });
-
   });
-
 });

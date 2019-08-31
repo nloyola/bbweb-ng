@@ -10,8 +10,7 @@ import { filter, map, take, tap } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class MembershipResolver implements Resolve<Membership> {
-  constructor(private store$: Store<RootStoreState.State>,
-              private router: Router) {}
+  constructor(private store$: Store<RootStoreState.State>, private router: Router) {}
 
   resolve(route: ActivatedRouteSnapshot, _state: RouterStateSnapshot): Observable<Membership> {
     const slug = route.paramMap.get('slug');
@@ -21,14 +20,16 @@ export class MembershipResolver implements Resolve<Membership> {
       this.store$.pipe(
         select(MembershipStoreSelectors.selectMembershipError),
         filter(s => !!s),
-        tap(() => this.router.navigateByUrl('/404'))),
+        tap(() => this.router.navigateByUrl('/404'))
+      ),
       this.store$.pipe(
         select(MembershipStoreSelectors.selectAllMemberships),
         filter(s => s.length > 0),
         map((memberships: Membership[]) => {
-          const membership =  memberships.find(s => s.slug === slug);
+          const membership = memberships.find(s => s.slug === slug);
           return membership ? membership : throwError('membership not found');
-        })))
-      .pipe(take(1));
+        })
+      )
+    ).pipe(take(1));
   }
 }

@@ -10,15 +10,10 @@ describe('LocationRemoveComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [
-        NgbModule
-      ],
-      providers: [
-        NgbActiveModal
-      ],
-      declarations: [ LocationRemoveComponent ]
-    })
-    .compileComponents();
+      imports: [NgbModule],
+      providers: [NgbActiveModal],
+      declarations: [LocationRemoveComponent]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

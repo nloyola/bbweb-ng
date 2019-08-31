@@ -8,9 +8,8 @@ describe('ShipmentNotInCreatedModalComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ShipmentNotInCreatedModalComponent ]
-    })
-    .compileComponents();
+      declarations: [ShipmentNotInCreatedModalComponent]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

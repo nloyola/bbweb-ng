@@ -5,7 +5,6 @@ import { StudyState } from '@app/domain/studies/study-state.enum';
 import { Study } from '@app/domain/studies/study.model';
 
 export class StudyUI implements DomainEntityUI<Study> {
-
   readonly entity: Study;
 
   static getStateIcon(state: StudyState): string {
@@ -71,5 +70,4 @@ export class StudyUI implements DomainEntityUI<Study> {
   isRetired(): boolean {
     return this.entity.isRetired();
   }
-
 }

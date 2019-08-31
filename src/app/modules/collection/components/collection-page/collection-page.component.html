@@ -11,30 +11,36 @@
             Enter the participant ID the collected specimens are for:
           </div>
           <div class="card-body">
-            <form class="form-horizontal"
-                  [formGroup]="form"
-                  (ngSubmit)="onSubmit()"
-                  autocomplete="on"
-                  novalidate>
+            <form
+              class="form-horizontal"
+              [formGroup]="form"
+              (ngSubmit)="onSubmit()"
+              autocomplete="on"
+              novalidate
+            >
               <div class="form-group row">
                 <div class="col-md-9">
-                  <input class="form-control mb-2 mr-sm-2 mb-sm-0"
-                         type="text"
-                         id="uniqueId"
-                         formControlName="uniqueId"
-                         i18n-placeholder
-                         placeholder="Participant ID"
-                         ngbAutoFocus>
+                  <input
+                    class="form-control mb-2 mr-sm-2 mb-sm-0"
+                    type="text"
+                    id="uniqueId"
+                    formControlName="uniqueId"
+                    i18n-placeholder
+                    placeholder="Participant ID"
+                    ngbAutoFocus
+                  />
                 </div>
                 <div class="col-md-3">
-                  <button class="btn btn-primary mr-2"
-                          type="submit"
-                          [disabled]="form.invalid || ((participantLoading$ | async) === true)"
-                          i18n>
+                  <button
+                    class="btn btn-primary mr-2"
+                    type="submit"
+                    [disabled]="form.invalid || (participantLoading$ | async) === true"
+                    i18n
+                  >
                     <ng-container *ngIf="(participantLoading$ | async) !== true">
                       Submit
                     </ng-container>
-                    <app-spinner name="uniqueIdGet" [show]="(participantLoading$ | async)">
+                    <app-spinner name="uniqueIdGet" [show]="participantLoading$ | async">
                       Loading
                     </app-spinner>
                   </button>
@@ -81,7 +87,7 @@
     <span class="title">Participant Does Not Exist</span>
     <div class="body">
       A participant with ID <b>{{ uniqueId.value }}</b> does not exist.
-      <p>Do you want to add this participant?
+      <p>Do you want to add this participant?</p>
     </div>
   </app-modal-yes-no>
 </ng-template>

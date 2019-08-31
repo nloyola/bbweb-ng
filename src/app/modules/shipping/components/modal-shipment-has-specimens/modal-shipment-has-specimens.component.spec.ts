@@ -8,9 +8,8 @@ describe('ModalShipmentHasSpecimensComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ModalShipmentHasSpecimensComponent ]
-    })
-    .compileComponents();
+      declarations: [ModalShipmentHasSpecimensComponent]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

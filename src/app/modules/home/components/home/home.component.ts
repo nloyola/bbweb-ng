@@ -9,7 +9,6 @@ import { Observable } from 'rxjs';
   templateUrl: './home.component.html'
 })
 export class HomeComponent implements OnInit {
-
   user$: Observable<User>;
 
   constructor(private store$: Store<RootStoreState.State>) {}
@@ -17,5 +16,4 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
     this.user$ = this.store$.pipe(select(AuthStoreSelectors.selectAuthUser));
   }
-
 }

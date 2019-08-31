@@ -8,22 +8,30 @@ export const getError = (state: fromParticipant.State): any => state.error;
 
 export const selectParticipantState = createFeatureSelector<fromParticipant.State>('participant');
 
-export const selectParticipantLastAddedId: MemoizedSelector<object, string> =
-  createSelector(selectParticipantState, getLastAddedId);
+export const selectParticipantLastAddedId: MemoizedSelector<object, string> = createSelector(
+  selectParticipantState,
+  getLastAddedId
+);
 
-export const selectParticipantError: MemoizedSelector<object, any> =
-  createSelector(selectParticipantState, getError);
+export const selectParticipantError: MemoizedSelector<object, any> = createSelector(
+  selectParticipantState,
+  getError
+);
 
-export const selectAllParticipants: MemoizedSelector<object, Participant[]> =
-  createSelector(selectParticipantState, fromParticipant.selectAll);
+export const selectAllParticipants: MemoizedSelector<object, Participant[]> = createSelector(
+  selectParticipantState,
+  fromParticipant.selectAll
+);
 
-export const selectAllParticipantEntities =
-  createSelector(selectParticipantState, fromParticipant.selectEntities);
+export const selectAllParticipantEntities = createSelector(
+  selectParticipantState,
+  fromParticipant.selectEntities
+);
 
-export const selectParticipantLastAdded =
-  createSelector(
-    selectParticipantLastAddedId,
-    selectAllParticipantEntities,
-    (id: string, entities: { [id: string]: Participant }): Participant => {
-      return entities[id];
-    });
+export const selectParticipantLastAdded = createSelector(
+  selectParticipantLastAddedId,
+  selectAllParticipantEntities,
+  (id: string, entities: { [id: string]: Participant }): Participant => {
+    return entities[id];
+  }
+);

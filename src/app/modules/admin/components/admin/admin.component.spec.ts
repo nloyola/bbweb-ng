@@ -18,9 +18,10 @@ describe('AdminComponent', () => {
       imports: [
         StoreModule.forRoot(
           {
-            'auth': AuthStoreReducer.reducer
+            auth: AuthStoreReducer.reducer
           },
-          NgrxRuntimeChecks)
+          NgrxRuntimeChecks
+        )
       ],
       declarations: [AdminComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
@@ -45,7 +46,7 @@ describe('AdminComponent', () => {
     ];
 
     roles.forEach(role => {
-      const user = new User().deserialize({ roles: [ role ] } as any);
+      const user = new User().deserialize({ roles: [role] } as any);
       const action = AuthStoreActions.loginSuccessAction({ user });
       store.dispatch(action);
 

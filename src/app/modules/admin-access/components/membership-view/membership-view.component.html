@@ -8,16 +8,11 @@
       {{ membership?.name }} <small class="mr-3" i18n>Membership</small>
 
       <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
-
-        <button class="btn btn-sm btn-light"
-                type="button"
-                id="membershipActionsMenu"
-                ngbDropdownToggle>
+        <button class="btn btn-sm btn-light" type="button" id="membershipActionsMenu" ngbDropdownToggle>
           <mat-icon inline="true">more_vert</mat-icon>
         </button>
 
         <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="membershipActionsMenu">
-
           <a class="dropdown-item" *ngIf="changesAllowed" (click)="updateName()">
             <mat-icon class="success-icon mr-1">edit</mat-icon>
             <ng-container i18n>Update name</ng-container>
@@ -56,9 +51,11 @@
             <strong i18n>Description</strong>
           </div>
           <div class="col-md-10">
-            <app-truncate-toggle [text]="membership?.description"
-                                 [toggleLength]="80"
-                                 [textEmptyWarning]="'Description not entered yet.'">
+            <app-truncate-toggle
+              [text]="membership?.description"
+              [toggleLength]="80"
+              [textEmptyWarning]="'Description not entered yet.'"
+            >
             </app-truncate-toggle>
           </div>
         </div>
@@ -71,10 +68,12 @@
             <strong i18n>Users</strong>
           </div>
           <div class="col-md-10" *ngIf="membership.userData.length > 0">
-            <span *ngFor="let userInfo of membership?.userData"
-                  class="badge badge-secondary mr-1 mt-1 deletable-item"
-                  (click)="userSelected(userInfo)"
-                  ngbTooltip="Remove user">
+            <span
+              *ngFor="let userInfo of membership?.userData"
+              class="badge badge-secondary mr-1 mt-1 deletable-item"
+              (click)="userSelected(userInfo)"
+              ngbTooltip="Remove user"
+            >
               {{ userInfo.name }}
               <mat-icon class="warning-icon" inline="true">remove_circle_outline</mat-icon>
             </span>
@@ -96,17 +95,19 @@
               </strong>
             </label>
             <div class="col-md-10">
-              <input type="text"
-                     class="form-control"
-                     [(ngModel)]="userAddTypeahead.selectedEntity"
-                     [ngModelOptions]="{standalone: true}"
-                     [ngbTypeahead]="userAddTypeahead.getEntities"
-                     i18-placeholder
-                     placeholder="enter a user's name or partial name"
-                     [inputFormatter]="userAddTypeahead.typeaheadFormatter"
-                     [resultFormatter]="userAddTypeahead.typeaheadFormatter"
-                     (selectItem)="userAddTypeahead.onEntitySelected($event)"
-                     [editable]="false">
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="userAddTypeahead.selectedEntity"
+                [ngModelOptions]="{ standalone: true }"
+                [ngbTypeahead]="userAddTypeahead.getEntities"
+                i18-placeholder
+                placeholder="enter a user's name or partial name"
+                [inputFormatter]="userAddTypeahead.typeaheadFormatter"
+                [resultFormatter]="userAddTypeahead.typeaheadFormatter"
+                (selectItem)="userAddTypeahead.onEntitySelected($event)"
+                [editable]="false"
+              />
             </div>
           </div>
         </form>
@@ -122,10 +123,12 @@
             <span i18n>All Studies</span>
           </div>
           <div class="col-md-10" *ngIf="membership?.studyData.isContentTypeSome()">
-            <span *ngFor="let studyInfo of membership?.studyData.entityData"
-                  class="badge badge-secondary mr-1 mt-1 deletable-item"
-                  (click)="studySelected(studyInfo)"
-                  ngbTooltip="Remove study">
+            <span
+              *ngFor="let studyInfo of membership?.studyData.entityData"
+              class="badge badge-secondary mr-1 mt-1 deletable-item"
+              (click)="studySelected(studyInfo)"
+              ngbTooltip="Remove study"
+            >
               {{ studyInfo.name }}
               <mat-icon class="warning-icon" inline="true">remove_circle_outline</mat-icon>
             </span>
@@ -147,17 +150,19 @@
               </strong>
             </label>
             <div class="col-md-10">
-              <input type="text"
-                     class="form-control"
-                     [(ngModel)]="studyAddTypeahead.selectedEntity"
-                     [ngModelOptions]="{standalone: true}"
-                     [ngbTypeahead]="studyAddTypeahead.getEntities"
-                     i18-placeholder
-                     placeholder="enter a study's name or partial name"
-                     [inputFormatter]="studyAddTypeahead.typeaheadFormatter"
-                     [resultFormatter]="studyAddTypeahead.typeaheadFormatter"
-                     (selectItem)="studyAddTypeahead.onEntitySelected($event)"
-                     [editable]="false">
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="studyAddTypeahead.selectedEntity"
+                [ngModelOptions]="{ standalone: true }"
+                [ngbTypeahead]="studyAddTypeahead.getEntities"
+                i18-placeholder
+                placeholder="enter a study's name or partial name"
+                [inputFormatter]="studyAddTypeahead.typeaheadFormatter"
+                [resultFormatter]="studyAddTypeahead.typeaheadFormatter"
+                (selectItem)="studyAddTypeahead.onEntitySelected($event)"
+                [editable]="false"
+              />
             </div>
           </div>
         </form>
@@ -173,10 +178,12 @@
             <span i18n>All Centres</span>
           </div>
           <div class="col-md-10" *ngIf="membership?.centreData.isContentTypeSome()">
-            <span *ngFor="let centreInfo of membership?.centreData.entityData"
-                  class="badge badge-secondary mr-1 mt-1 deletable-item"
-                  (click)="centreSelected(centreInfo)"
-                  ngbTooltip="Remove centre">
+            <span
+              *ngFor="let centreInfo of membership?.centreData.entityData"
+              class="badge badge-secondary mr-1 mt-1 deletable-item"
+              (click)="centreSelected(centreInfo)"
+              ngbTooltip="Remove centre"
+            >
               {{ centreInfo.name }}
               <mat-icon class="warning-icon" inline="true">remove_circle_outline</mat-icon>
             </span>
@@ -198,17 +205,19 @@
               </strong>
             </label>
             <div class="col-md-10">
-              <input type="text"
-                     class="form-control"
-                     [(ngModel)]="centreAddTypeahead.selectedEntity"
-                     [ngModelOptions]="{standalone: true}"
-                     [ngbTypeahead]="centreAddTypeahead.getEntities"
-                     i18-placeholder
-                     placeholder="enter a centre's name or partial name"
-                     [inputFormatter]="centreAddTypeahead.typeaheadFormatter"
-                     [resultFormatter]="centreAddTypeahead.typeaheadFormatter"
-                     (selectItem)="centreAddTypeahead.onEntitySelected($event)"
-                     [editable]="false">
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="centreAddTypeahead.selectedEntity"
+                [ngModelOptions]="{ standalone: true }"
+                [ngbTypeahead]="centreAddTypeahead.getEntities"
+                i18-placeholder
+                placeholder="enter a centre's name or partial name"
+                [inputFormatter]="centreAddTypeahead.typeaheadFormatter"
+                [resultFormatter]="centreAddTypeahead.typeaheadFormatter"
+                (selectItem)="centreAddTypeahead.onEntitySelected($event)"
+                [editable]="false"
+              />
             </div>
           </div>
         </form>
@@ -226,20 +235,24 @@
 </ng-template>
 
 <ng-template #updateNameModal let-modal>
-  <app-modal-input-text [title]="'Update Name'"
-                        [label]="'New membership name'"
-                        [value]="(membership$ | async)?.name"
-                        [options]="updateNameModalOptions"
-                        [modal]="modal">
+  <app-modal-input-text
+    [title]="'Update Name'"
+    [label]="'New membership name'"
+    [value]="(membership$ | async)?.name"
+    [options]="updateNameModalOptions"
+    [modal]="modal"
+  >
   </app-modal-input-text>
 </ng-template>
 
 <ng-template #updateDescriptionModal let-modal>
-  <app-modal-input-textarea [title]="'Update Description'"
-                            [label]="'New membership description'"
-                            [value]="(membership$ | async)?.description"
-                            [options]="updateDescriptionModalOptions"
-                            [modal]="modal">
+  <app-modal-input-textarea
+    [title]="'Update Description'"
+    [label]="'New membership description'"
+    [value]="(membership$ | async)?.description"
+    [options]="updateDescriptionModalOptions"
+    [modal]="modal"
+  >
   </app-modal-input-textarea>
 </ng-template>
 
@@ -248,7 +261,7 @@
     <span class="title">Membership Studies</span>
     <div class="body">
       There are no more studies in this membership.
-      <p>Make this membership applicable to all studies?
+      <p>Make this membership applicable to all studies?</p>
     </div>
   </app-modal-yes-no>
 </ng-template>
@@ -258,14 +271,13 @@
     <span class="title">Membership Centres</span>
     <div class="body">
       There are no more centres in this membership.
-      <p>Make this membership applicable to all centres?
+      <p>Make this membership applicable to all centres?</p>
     </div>
   </app-modal-yes-no>
 </ng-template>
 
 <ng-template #removeMembershipModal let-modal>
-  <app-modal-input (confirm)="modal.close()"
-                   (dismiss)="modal.dismiss()">
+  <app-modal-input (confirm)="modal.close()" (dismiss)="modal.dismiss()">
     <span class="title">Remove Membership</span>
     <div class="body">
       Are you sure you want to remove this membership?

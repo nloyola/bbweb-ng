@@ -2,7 +2,6 @@ import { AnnotationType } from './annotation-type.model';
 import { Annotation } from './annotation.model';
 
 export class HasAnnotations {
-
   annotations: Annotation[] = [];
 
   /**

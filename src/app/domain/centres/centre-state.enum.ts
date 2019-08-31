@@ -6,6 +6,6 @@ export enum CentreState {
 
   /**
    * When a centre is in this state, collection and processing of specimens can be recorded.
-    */
+   */
   Enabled = 'enabled'
 }

@@ -15,53 +15,55 @@ import { filter, takeUntil } from 'rxjs/operators';
   styleUrls: ['./study-add.component.scss']
 })
 export class StudyAddComponent implements OnInit, OnDestroy {
-
-  @ViewChild('nameInput', { static: true}) nameInput: ElementRef;
+  @ViewChild('nameInput', { static: true }) nameInput: ElementRef;
 
   form: FormGroup;
   isSaving$: Observable<boolean>;
 
   private unsubscribe$: Subject<void> = new Subject<void>();
 
-  constructor(private store$: Store<RootStoreState.State>,
-              private formBuilder: FormBuilder,
-              private router: Router,
-              private route: ActivatedRoute,
-              private toastr: ToastrService) { }
+  constructor(
+    private store$: Store<RootStoreState.State>,
+    private formBuilder: FormBuilder,
+    private router: Router,
+    private route: ActivatedRoute,
+    private toastr: ToastrService
+  ) {}
 
   ngOnInit() {
-    this.form = this.formBuilder.group(
-      {
-        name: [ '', [ Validators.required ] ],
-        description: ['']
-      });
+    this.form = this.formBuilder.group({
+      name: ['', [Validators.required]],
+      description: ['']
+    });
 
     this.nameInput.nativeElement.focus();
 
     this.isSaving$ = this.store$.pipe(select(SpinnerStoreSelectors.selectSpinnerIsActive));
 
-    this.store$.pipe(
-      select(StudyStoreSelectors.selectStudyLastAdded),
-      filter(s => !!s),
-      takeUntil(this.unsubscribe$)
-    ).subscribe((s: Study) => {
-      this.toastr.success(
-        `Study was added successfully: ${s.name}`,
-        'Add Successfull');
-      this.router.navigate([ '../', s.slug ], { relativeTo: this.route });
-    });
+    this.store$
+      .pipe(
+        select(StudyStoreSelectors.selectStudyLastAdded),
+        filter(s => !!s),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe((s: Study) => {
+        this.toastr.success(`Study was added successfully: ${s.name}`, 'Add Successfull');
+        this.router.navigate(['../', s.slug], { relativeTo: this.route });
+      });
 
-    this.store$.pipe(
-      select(StudyStoreSelectors.selectStudyError),
-      filter(s => !!s),
-      takeUntil(this.unsubscribe$)
-    ).subscribe((error: any) => {
-      let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
-      if (errMessage.match(/EntityCriteriaError: name already used/)) {
-        errMessage = `A study with the name ${this.name.value} already exits. Please use a different one.`;
-      }
-      this.toastr.error(errMessage, 'Add Error', { disableTimeOut: true });
-    });
+    this.store$
+      .pipe(
+        select(StudyStoreSelectors.selectStudyError),
+        filter(s => !!s),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe((error: any) => {
+        let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
+        if (errMessage.match(/EntityCriteriaError: name already used/)) {
+          errMessage = `A study with the name ${this.name.value} already exits. Please use a different one.`;
+        }
+        this.toastr.error(errMessage, 'Add Error', { disableTimeOut: true });
+      });
   }
 
   public ngOnDestroy() {
@@ -83,7 +85,6 @@ export class StudyAddComponent implements OnInit, OnDestroy {
   }
 
   onCancel() {
-    this.router.navigate([ '../' ], { relativeTo: this.route });
+    this.router.navigate(['../'], { relativeTo: this.route });
   }
-
 }

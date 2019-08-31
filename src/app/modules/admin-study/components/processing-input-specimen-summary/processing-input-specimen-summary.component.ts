@@ -1,5 +1,11 @@
 import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
-import { InputSpecimenProcessing, ProcessingTypeInputEntity, SpecimenDefinition, CollectionEventType, ProcessingType } from '@app/domain/studies';
+import {
+  InputSpecimenProcessing,
+  ProcessingTypeInputEntity,
+  SpecimenDefinition,
+  CollectionEventType,
+  ProcessingType
+} from '@app/domain/studies';
 
 @Component({
   selector: 'app-processing-input-specimen-summary',
@@ -26,14 +32,16 @@ export class ProcessingInputSpecimenSummaryComponent implements OnInit, OnChange
   }
 
   private assignSpecimenDefinition() {
-    if (!this.inputEntity) { return; }
+    if (!this.inputEntity) {
+      return;
+    }
 
     if (this.input.definitionType === 'collected') {
-      this.specimenDefinition = (this.inputEntity as CollectionEventType).specimenDefinitions
-        .find(sd => sd.id === this.input.specimenDefinitionId);
+      this.specimenDefinition = (this.inputEntity as CollectionEventType).specimenDefinitions.find(
+        sd => sd.id === this.input.specimenDefinitionId
+      );
     } else {
       this.specimenDefinition = (this.inputEntity as ProcessingType).output.specimenDefinition;
     }
   }
-
 }

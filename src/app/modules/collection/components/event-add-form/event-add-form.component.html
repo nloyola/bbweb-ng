@@ -1,28 +1,24 @@
 <ng-container *ngIf="eventTypes$ | async; let eventTypes">
-
   <div class="card mt-2">
     <div class="card-header bg-primary text-light">
       <mat-icon inline="false">event</mat-icon>
       <span class="ml-1" i18n>Add Event</span>
     </div>
     <div class="card-body">
-      <form class="form-horizontal"
-            [formGroup]="form"
-            autocomplete="on"
-            (ngSubmit)="onSubmit()"
-            novalidate>
-
+      <form class="form-horizontal" [formGroup]="form" autocomplete="on" (ngSubmit)="onSubmit()" novalidate>
         <!-- EVENT TYPES  -->
         <div class="form-group row">
           <label for="study" class="col-md-3 col-form-label" i18n>Event Type</label>
           <div class="col-md-9">
-            <select #eventTypeSelect
-                    class="form-control"
-                    id="study"
-                    formControlName="eventType"
-                    (change)="onEventTypeSelected()">
+            <select
+              #eventTypeSelect
+              class="form-control"
+              id="study"
+              formControlName="eventType"
+              (change)="onEventTypeSelected()"
+            >
               <option value="" i18n>-- make a selection --</option>
-              <option *ngFor="let eventType of eventTypes;trackBy: eventTypeTrackBy" [value]="eventType.id">
+              <option *ngFor="let eventType of eventTypes; trackBy: eventTypeTrackBy" [value]="eventType.id">
                 {{ eventType.name }}
               </option>
             </select>
@@ -39,12 +35,9 @@
         <div class="form-group row">
           <label for="visitNumber" class="col-md-3 col-form-label" i18n>Visit Number</label>
           <div class="col-md-9">
-            <input class="form-control"
-                   [formControl]="visitNumber"
-                   type="number">
+            <input class="form-control" [formControl]="visitNumber" type="number" />
           </div>
-          <div class="offset-3 col-md-9"
-               *ngIf="visitNumber.invalid && visitNumber.touched">
+          <div class="offset-3 col-md-9" *ngIf="visitNumber.invalid && visitNumber.touched">
             <div class="text-danger small" *ngIf="visitNumber.errors.required" i18n>
               A number is required
             </div>
@@ -55,12 +48,14 @@
         <div class="form-group row">
           <label for="timeCompleted" class="col-md-3 col-form-label" i18n>Time Completed</label>
           <div class="input-group col-md-9">
-            <input class="form-control"
-                   type="text"
-                   [formControl]="timeCompleted"
-                   [owlDateTime]="dt"
-                   i18n-placeholder
-                   placeholder="Date Time">
+            <input
+              class="form-control"
+              type="text"
+              [formControl]="timeCompleted"
+              [owlDateTime]="dt"
+              i18n-placeholder
+              placeholder="Date Time"
+            />
             <owl-date-time #dt></owl-date-time>
             <div class="input-group-append">
               <button class="btn btn-outline-secondary" type="button" [owlDateTimeTrigger]="dt">
@@ -68,8 +63,7 @@
               </button>
             </div>
           </div>
-          <div class="offset-3 col-md-9"
-               *ngIf="timeCompleted.invalid && timeCompleted.touched">
+          <div class="offset-3 col-md-9" *ngIf="timeCompleted.invalid && timeCompleted.touched">
             <div class="text-danger small" *ngIf="timeCompleted.errors.required" i18n>
               Please enter a date and time
             </div>
@@ -80,20 +74,21 @@
         </div>
 
         <!-- ANNOTATIONS  -->
-        <app-annotations-add-subform [annotationsGroup]="annotationsGroup">
-        </app-annotations-add-subform>
+        <app-annotations-add-subform [annotationsGroup]="annotationsGroup"> </app-annotations-add-subform>
 
         <!-- BUTTONS  -->
         <div class="form-group row">
           <div class="col-md-9 offset-3">
-            <button class="btn btn-primary mr-2"
-                    type="submit"
-                    [disabled]="form.invalid || (isSaving$ | async) === true"
-                    i18n>
+            <button
+              class="btn btn-primary mr-2"
+              type="submit"
+              [disabled]="form.invalid || (isSaving$ | async) === true"
+              i18n
+            >
               <ng-container *ngIf="(isSaving$ | async) === false">
                 Submit
               </ng-container>
-              <app-spinner name="annotationTypeSaving" [show]="(isSaving$ | async)">
+              <app-spinner name="annotationTypeSaving" [show]="isSaving$ | async">
                 Saving
               </app-spinner>
             </button>
@@ -102,9 +97,7 @@
             </button>
           </div>
         </div>
-
       </form>
     </div>
   </div>
-
 </ng-container>

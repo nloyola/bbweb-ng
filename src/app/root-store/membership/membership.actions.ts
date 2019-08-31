@@ -56,7 +56,7 @@ export const updateMembershipRequest = createAction(
     membership: Membership;
     attributeName: MembershipUpdateAttribute;
     value?: string;
-   }>()
+  }>()
 );
 
 export const updateMembershipSuccess = createAction(

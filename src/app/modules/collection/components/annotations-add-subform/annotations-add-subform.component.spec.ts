@@ -12,15 +12,14 @@ import * as faker from 'faker';
 import { ValueTransformer } from '@angular/compiler/src/util';
 
 describe('AnnotationsAddSubformComponent', () => {
-
   @Component({
-    template: `<form [formGroup]="form">
-                 <app-annotations-add-subform [annotationsGroup]="annotationsGroup">
-                 </app-annotations-add-subform>
-               </form>`
+    template: `
+      <form [formGroup]="form">
+        <app-annotations-add-subform [annotationsGroup]="annotationsGroup"> </app-annotations-add-subform>
+      </form>
+    `
   })
   class TestComponent implements OnInit, OnDestroy {
-
     form: FormGroup;
     annotationsGroup: FormGroup;
     annotations: Annotation[];
@@ -30,8 +29,7 @@ describe('AnnotationsAddSubformComponent', () => {
 
     ngOnInit() {
       this.annotationsGroup = this.formBuilder.group({
-        annotations: AnnotationsAddSubformComponent.buildSubForm(
-          this.annotations, this.unsubscribe$)
+        annotations: AnnotationsAddSubformComponent.buildSubForm(this.annotations, this.unsubscribe$)
       });
       this.form = this.formBuilder.group({ annotationsGroup: this.annotationsGroup });
     }
@@ -48,19 +46,10 @@ describe('AnnotationsAddSubformComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [
-        FormsModule,
-        ReactiveFormsModule,
-        OwlDateTimeModule,
-        OwlNativeDateTimeModule
-      ],
-      declarations: [
-        TestComponent,
-        AnnotationsAddSubformComponent
-      ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
-    .compileComponents();
+      imports: [FormsModule, ReactiveFormsModule, OwlDateTimeModule, OwlNativeDateTimeModule],
+      declarations: [TestComponent, AnnotationsAddSubformComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -70,17 +59,19 @@ describe('AnnotationsAddSubformComponent', () => {
 
   it('should create', () => {
     const { annotation } = createAnnotation();
-    component.annotations = [ annotation ];
+    component.annotations = [annotation];
     fixture.detectChanges();
     expect(component).toBeTruthy();
   });
 
   it('works for each annotation type', () => {
     const annotations = Object.values(ValueTypes).map(valueType => {
-      const annotationType = new AnnotationType().deserialize(factory.annotationType({
-        valueType,
-        required: true
-      }));
+      const annotationType = new AnnotationType().deserialize(
+        factory.annotationType({
+          valueType,
+          required: true
+        })
+      );
       return AnnotationFactory.annotationFromType(annotationType);
     });
 
@@ -93,29 +84,28 @@ describe('AnnotationsAddSubformComponent', () => {
   });
 
   describe('valueToAnnotations', () => {
-
     it('works for non select annotations', () => {
-      const valueTypes = [ ValueTypes.Text, ValueTypes.Number, ValueTypes.DateTime ];
+      const valueTypes = [ValueTypes.Text, ValueTypes.Number, ValueTypes.DateTime];
       valueTypes.forEach(valueType => {
         const annotationType = new AnnotationType().deserialize(factory.annotationType({ valueType }));
         const { annotation } = createAnnotation({ annotationType });
 
-        component.annotations = [ annotation ];
+        component.annotations = [annotation];
         fixture.detectChanges();
 
-        const updatedAnnotations =
-          AnnotationsAddSubformComponent.valueToAnnotations(component.annotationsGroup);
+        const updatedAnnotations = AnnotationsAddSubformComponent.valueToAnnotations(
+          component.annotationsGroup
+        );
         expect(updatedAnnotations.length).toBe(1);
       });
     });
 
     describe('for select annotations', () => {
-
       it('is valid for single select', () => {
         const annotationType = new AnnotationType().deserialize(factory.singleSelectAnnotationType());
         const { annotation } = createAnnotation({ annotationType });
 
-        component.annotations = [ annotation ];
+        component.annotations = [annotation];
         fixture.detectChanges();
 
         const selectOptionsElements = fixture.debugElement.queryAll(By.css('option'));
@@ -125,7 +115,8 @@ describe('AnnotationsAddSubformComponent', () => {
         fixture.detectChanges();
 
         const updatedAnnotations = AnnotationsAddSubformComponent.valueToAnnotations(
-          component.annotationsGroup);
+          component.annotationsGroup
+        );
         expect(updatedAnnotations.length).toBe(1);
         expect(updatedAnnotations[0].serverAnnotation().selectedValues.length).toBe(1);
         expect(updatedAnnotations[0].serverAnnotation().selectedValues).toContain(annotationType.options[0]);
@@ -135,7 +126,7 @@ describe('AnnotationsAddSubformComponent', () => {
         const annotationType = new AnnotationType().deserialize(factory.multipleSelectAnnotationType());
         const { annotation } = createAnnotation({ annotationType });
 
-        component.annotations = [ annotation ];
+        component.annotations = [annotation];
         fixture.detectChanges();
 
         const annotationOptionsElements = fixture.debugElement.queryAll(By.css('[type="checkbox"]'));
@@ -143,15 +134,14 @@ describe('AnnotationsAddSubformComponent', () => {
         annotationOptionsElements[0].nativeElement.click();
         fixture.detectChanges();
 
-        const updatedAnnotations =
-          AnnotationsAddSubformComponent.valueToAnnotations(component.annotationsGroup);
+        const updatedAnnotations = AnnotationsAddSubformComponent.valueToAnnotations(
+          component.annotationsGroup
+        );
         expect(updatedAnnotations.length).toBe(1);
         expect(updatedAnnotations[0].serverAnnotation().selectedValues.length).toBe(1);
         expect(updatedAnnotations[0].serverAnnotation().selectedValues).toContain(annotationType.options[0]);
       });
-
     });
-
   });
 
   it('controlName returns lowercase name with spaces removed', () => {
@@ -160,12 +150,12 @@ describe('AnnotationsAddSubformComponent', () => {
       name: faker.lorem.words(5)
     });
     const { annotation } = createAnnotation({ annotationType });
-    expect(AnnotationsAddSubformComponent.controlName(annotation))
-      .toEqual(annotationType.name.toLocaleLowerCase().replace(/\s/g, ''));
+    expect(AnnotationsAddSubformComponent.controlName(annotation)).toEqual(
+      annotationType.name.toLocaleLowerCase().replace(/\s/g, '')
+    );
   });
 
   function createAnnotation(options: AnnotationSpecCommon.AnnotationOptions = {}) {
-      return AnnotationSpecCommon.createAnnotation(options, factory);
+    return AnnotationSpecCommon.createAnnotation(options, factory);
   }
-
 });

@@ -11,28 +11,30 @@ import { ProcessingTypeStoreSelectors, ProcessingTypeStoreActions } from '@app/r
   providedIn: 'root'
 })
 export class ProcessingTypeResolver implements Resolve<ProcessingType> {
-  constructor(private store$: Store<RootStoreState.State>,
-              private router: Router) {}
+  constructor(private store$: Store<RootStoreState.State>, private router: Router) {}
 
   resolve(route: ActivatedRouteSnapshot, _state: RouterStateSnapshot): Observable<ProcessingType> {
     const studySlug = route.parent.parent.parent.paramMap.get('slug');
     const processingTypeSlug = route.paramMap.get('processingTypeSlug');
 
     this.store$.dispatch(
-      new ProcessingTypeStoreActions.GetProcessingTypeRequest({ studySlug, processingTypeSlug }));
+      new ProcessingTypeStoreActions.GetProcessingTypeRequest({ studySlug, processingTypeSlug })
+    );
 
     return race<any>(
       this.store$.pipe(
         select(ProcessingTypeStoreSelectors.selectError),
         filter(s => !!s),
-        tap(() => this.router.navigateByUrl('/404'))),
+        tap(() => this.router.navigateByUrl('/404'))
+      ),
       this.store$.pipe(
         select(ProcessingTypeStoreSelectors.selectAllProcessingTypes),
         filter(ets => ets.length > 0),
         map((ets: ProcessingType[]) => {
           const processingType = ets.find(et => et.slug === processingTypeSlug);
           return processingType ? processingType : throwError('processing type not found');
-        })))
-      .pipe(take(1));
+        })
+      )
+    ).pipe(take(1));
   }
 }

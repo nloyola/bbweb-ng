@@ -6,16 +6,12 @@ import { Participant } from '@app/domain/participants';
 import { Observable } from 'rxjs';
 import { map, delay } from 'rxjs/operators';
 
-export type ParticipantUpdateAttribute =
-  'uniqueId'
-  | 'addOrUpdateAnnotation'
-  | 'removeAnnotation';
+export type ParticipantUpdateAttribute = 'uniqueId' | 'addOrUpdateAnnotation' | 'removeAnnotation';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ParticipantService {
-
   readonly BASE_URL = '/api/participants';
 
   constructor(private http: HttpClient) {}
@@ -26,13 +22,15 @@ export class ParticipantService {
   get(slug: string): Observable<Participant> {
     return this.http.get<ApiReply>(`${this.BASE_URL}/${slug}`).pipe(
       // delay(2000),
-      map(this.replyToParticipant));
+      map(this.replyToParticipant)
+    );
   }
 
   getByUniqueId(uniqueId: string): Observable<Participant> {
     return this.http.get<ApiReply>(`${this.BASE_URL}/uniqueId/${uniqueId}`).pipe(
       // delay(2000),
-      map(this.replyToParticipant));
+      map(this.replyToParticipant)
+    );
   }
 
   add(participant: Participant): Observable<Participant> {
@@ -43,7 +41,8 @@ export class ParticipantService {
     };
     return this.http.post<ApiReply>(`${this.BASE_URL}/${participant.study.id}`, json).pipe(
       // delay(2000),
-      map(this.replyToParticipant));
+      map(this.replyToParticipant)
+    );
   }
 
   update(

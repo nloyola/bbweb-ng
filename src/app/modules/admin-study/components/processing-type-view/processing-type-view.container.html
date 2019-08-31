@@ -1,19 +1,20 @@
 <ng-container *ngIf="processingType$ | async as processingType">
-
-  <app-processing-type-view-ui *ngIf="(isLoading$ | async) === false; else showLoading"
-                               [processingType]="processingType"
-                               [allowChanges]="(allowChanges$ | async)"
-                               [inputEntity]="inputEntity"
-                               (updateNameSelected)="updateName($event)"
-                               (updateDescriptionSelected)="updateDescription($event)"
-                               (updateEnabledSelected)="updateEnabled($event)"
-                               (addAnnotationTypeSelected)="addAnnotationType($event)"
-                               (viewAnnotationTypeSelected)="viewAnnotationType($event)"
-                               (editAnnotationTypeSelected)="editAnnotationType($event)"
-                               (removeAnnotationTypeSelected)="removeAnnotationType($event)"
-                               (inputSpecimenUpdateSelected)="updateInputSpecimen($event)"
-                               (outputSpecimenUpdateSelected)="updateOutputSpecimen($event)"
-                               (removeProcessingTypeSelected)="removeProcessingType($event)">
+  <app-processing-type-view-ui
+    *ngIf="(isLoading$ | async) === false; else showLoading"
+    [processingType]="processingType"
+    [allowChanges]="(allowChanges$ | async)"
+    [inputEntity]="inputEntity"
+    (updateNameSelected)="updateName($event)"
+    (updateDescriptionSelected)="updateDescription($event)"
+    (updateEnabledSelected)="updateEnabled($event)"
+    (addAnnotationTypeSelected)="addAnnotationType($event)"
+    (viewAnnotationTypeSelected)="viewAnnotationType($event)"
+    (editAnnotationTypeSelected)="editAnnotationType($event)"
+    (removeAnnotationTypeSelected)="removeAnnotationType($event)"
+    (inputSpecimenUpdateSelected)="updateInputSpecimen($event)"
+    (outputSpecimenUpdateSelected)="updateOutputSpecimen($event)"
+    (removeProcessingTypeSelected)="removeProcessingType($event)"
+  >
   </app-processing-type-view-ui>
 
   <ng-template #showLoading>
@@ -25,32 +26,38 @@
   </ng-template>
 
   <ng-template #updateNameModal let-modal>
-    <app-modal-input-text [title]="'Update Name'"
-                          [label]="'New event name'"
-                          [value]="processingType?.name"
-                          [options]="updateNameModalOptions"
-                          (onConfirm)="confirm($event)"
-                          [modal]="modal">
+    <app-modal-input-text
+      [title]="'Update Name'"
+      [label]="'New event name'"
+      [value]="processingType?.name"
+      [options]="updateNameModalOptions"
+      (onConfirm)="confirm($event)"
+      [modal]="modal"
+    >
     </app-modal-input-text>
   </ng-template>
 
   <ng-template #updateDescriptionModal let-modal>
-    <app-modal-input-textarea [title]="'Update Description'"
-                              [label]="'New event description'"
-                              [value]="processingType?.description"
-                              [options]="updateDescriptionModalOptions"
-                              (onConfirm)="confirm($event)"
-                              [modal]="modal">
+    <app-modal-input-textarea
+      [title]="'Update Description'"
+      [label]="'New event description'"
+      [value]="processingType?.description"
+      [options]="updateDescriptionModalOptions"
+      (onConfirm)="confirm($event)"
+      [modal]="modal"
+    >
     </app-modal-input-textarea>
   </ng-template>
 
   <ng-template #updateEnabledModal let-modal>
-    <app-modal-input-boolean [title]="'Update Enabled'"
-                             [label]="'New value'"
-                             [value]="processingType?.enabled"
-                             [options]="{ required: true }"
-                             (onConfirm)="confirm($event)"
-                             [modal]="modal">
+    <app-modal-input-boolean
+      [title]="'Update Enabled'"
+      [label]="'New value'"
+      [value]="processingType?.enabled"
+      [options]="{ required: true }"
+      (onConfirm)="confirm($event)"
+      [modal]="modal"
+    >
     </app-modal-input-boolean>
   </ng-template>
 
@@ -69,8 +76,8 @@
           </div>
           <div class="col-md-11">
             This processing step cannot be removed since it is an input for another processing step.
-            <br>If you still want to remove it, remove this specimen as the input from the other
-            processing step.
+            <br />If you still want to remove it, remove this specimen as the input from the other processing
+            step.
           </div>
         </div>
       </div>
@@ -79,5 +86,4 @@
       <button type="button" class="btn btn-primary" (click)="modal.close()" i18n>OK</button>
     </div>
   </ng-template>
-
 </ng-container>

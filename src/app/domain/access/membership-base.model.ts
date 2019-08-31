@@ -1,10 +1,17 @@
-import { ConcurrencySafeEntity, EntitySet, HasName, HasSlug, IConcurrencySafeEntity, IEntityInfo, JSONObject } from '@app/domain';
+import {
+  ConcurrencySafeEntity,
+  EntitySet,
+  HasName,
+  HasSlug,
+  IConcurrencySafeEntity,
+  IEntityInfo,
+  JSONObject
+} from '@app/domain';
 import { ICentreInfoSet } from '@app/domain/centres';
 import { IStudyInfoSet } from '@app/domain/studies';
 import { HasDescription } from '../has-description.model';
 
 export interface IMembershipBase extends IConcurrencySafeEntity, HasSlug, HasName, HasDescription {
-
   /**
    * This studies this membership is for.
    */
@@ -19,7 +26,6 @@ export interface IMembershipBase extends IConcurrencySafeEntity, HasSlug, HasNam
 export type IMembershipInfo = IEntityInfo<IMembershipBase>;
 
 export abstract class MembershipBase extends ConcurrencySafeEntity implements HasSlug, HasName {
-
   slug: string;
   name: string;
   description: string | null;
@@ -43,5 +49,4 @@ export abstract class MembershipBase extends ConcurrencySafeEntity implements Ha
     }
     return this;
   }
-
 }

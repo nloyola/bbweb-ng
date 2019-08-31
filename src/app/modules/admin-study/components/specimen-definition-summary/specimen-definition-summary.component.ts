@@ -7,12 +7,9 @@ import { SpecimenDefinition } from '@app/domain/studies/specimen-definition.mode
   styleUrls: ['./specimen-definition-summary.component.scss']
 })
 export class SpecimenDefinitionSummaryComponent implements OnInit {
-
   @Input() specimenDefinition: SpecimenDefinition;
 
-  constructor() { }
+  constructor() {}
 
-  ngOnInit() {
-  }
-
+  ngOnInit() {}
 }

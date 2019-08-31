@@ -17,11 +17,10 @@ export const initialState: State = {
 
 export function reducer(state = initialState, action: any): State {
   switch (action.type) {
-
     case SpinnerActionTypes.ShowSpinner: {
-      const isActionAlreadyInProgress = state.actionsInProgress
-        .filter((currentAction: any) => currentAction === action.payload.type)
-        .length;
+      const isActionAlreadyInProgress = state.actionsInProgress.filter(
+        (currentAction: any) => currentAction === action.payload.type
+      ).length;
 
       // If the action in already in progress and is registered
       // we don't modify the state
@@ -29,10 +28,7 @@ export function reducer(state = initialState, action: any): State {
         return state;
       }
       // Adding the action type in our actionsInProgress array
-      const newActionsInProgress = [
-        ...state.actionsInProgress,
-        action.payload.type
-      ];
+      const newActionsInProgress = [...state.actionsInProgress, action.payload.type];
       return {
         ...state,
         active: newActionsInProgress.length,
@@ -40,12 +36,12 @@ export function reducer(state = initialState, action: any): State {
       };
     }
 
-
     case SpinnerActionTypes.HideSpinner: {
       // We remove trigger action from actionsInProgress array
       const newActionsInProgress = action.payload.triggerAction
         ? state.actionsInProgress.filter(
-          (currentAction: Action) => currentAction !== action.payload.triggerAction)
+            (currentAction: Action) => currentAction !== action.payload.triggerAction
+          )
         : state.actionsInProgress;
 
       return {

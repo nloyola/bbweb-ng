@@ -7,8 +7,11 @@ import { ProcessingTypeInputEntity } from './processing-type-input-entity.model'
 import { JSONArray } from '../json-object.model';
 
 export interface IProcessingType
-extends ConcurrencySafeEntity, ProcessingTypeInputEntity, HasSlug, HasName, HasDescription {
-
+  extends ConcurrencySafeEntity,
+    ProcessingTypeInputEntity,
+    HasSlug,
+    HasName,
+    HasDescription {
   /**
    * When TRUE input specimens can be processed for this study.
    */
@@ -38,11 +41,9 @@ extends ConcurrencySafeEntity, ProcessingTypeInputEntity, HasSlug, HasName, HasD
    * TRUE when the specimen in this processing type is the input in a different processing type.
    */
   inUse: boolean;
-
 }
 
 export class ProcessingType extends ConcurrencySafeEntity implements IProcessingType {
-
   slug: string;
   name: string;
   description: string | null;
@@ -74,8 +75,8 @@ export class ProcessingType extends ConcurrencySafeEntity implements IProcessing
     }
 
     const specimenProcessing = (obj as any).specimenProcessing;
-    const input = (specimenProcessing && specimenProcessing.input) ? specimenProcessing.iput : obj.input;
-    const output = (specimenProcessing && specimenProcessing.output) ? specimenProcessing.iput : obj.output;
+    const input = specimenProcessing && specimenProcessing.input ? specimenProcessing.iput : obj.input;
+    const output = specimenProcessing && specimenProcessing.output ? specimenProcessing.iput : obj.output;
 
     if (input) {
       this.input = new InputSpecimenProcessing().deserialize(input);
@@ -87,5 +88,4 @@ export class ProcessingType extends ConcurrencySafeEntity implements IProcessing
 
     return this;
   }
-
 }

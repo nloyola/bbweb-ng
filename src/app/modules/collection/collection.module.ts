@@ -54,8 +54,6 @@ import { MatSortModule, MatTableModule } from '@angular/material';
     EventSpecimensViewComponent,
     SpecimenViewModalComponent
   ],
-  entryComponents: [
-    SpecimenViewModalComponent
-  ]
+  entryComponents: [SpecimenViewModalComponent]
 })
-export class CollectionModule { }
+export class CollectionModule {}

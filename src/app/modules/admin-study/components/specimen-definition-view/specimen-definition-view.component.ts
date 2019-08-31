@@ -8,9 +8,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['./specimen-definition-view.component.scss']
 })
 export class SpecimenDefinitionViewComponent {
-
   @Input() specimenDefinition: SpecimenDefinition;
 
-  constructor(public activeModal: NgbActiveModal) { }
-
+  constructor(public activeModal: NgbActiveModal) {}
 }

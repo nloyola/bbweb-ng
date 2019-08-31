@@ -5,10 +5,9 @@ import { SpinnerComponent } from '@app/shared/components/spinner/spinner.compone
   providedIn: 'root'
 })
 export class SpinnerService {
-
   private spinnerCache = new Map<string, SpinnerComponent>();
 
-  constructor() { }
+  constructor() {}
 
   register(spinner: SpinnerComponent): void {
     this.spinnerCache.set(spinner.name, spinner);

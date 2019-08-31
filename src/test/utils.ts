@@ -6,7 +6,6 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 
 export namespace TestUtils {
-
   export function capitalizeFirstLetter(str: string): string {
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
@@ -34,5 +33,4 @@ export namespace TestUtils {
   export function storeDispatchListener() {
     return jest.spyOn(TestBed.get(Store), 'dispatch');
   }
-
 }

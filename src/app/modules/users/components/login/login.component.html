@@ -3,22 +3,20 @@
     <div class="card">
       <div class="card-header bg-primary text-light" i18n>Login</div>
       <div class="card-body">
-        <form class="form-horizontal"
-              [formGroup]="loginForm"
-              autocomplete="on"
-              (ngSubmit)="onSubmit()"
-              novalidate>
-
+        <form
+          class="form-horizontal"
+          [formGroup]="loginForm"
+          autocomplete="on"
+          (ngSubmit)="onSubmit()"
+          novalidate
+        >
           <!-- EMAIL -->
           <div class="form-group row">
             <label for="email" class="col-md-3 col-form-label" i18n>Email address</label>
             <div class="col-md-8">
-              <input class="form-control"
-                     type="email"
-                     formControlName="email">
+              <input class="form-control" type="email" formControlName="email" />
             </div>
-            <div class="col-md-8 offset-3"
-                 *ngIf="email.invalid && email.touched">
+            <div class="col-md-8 offset-3" *ngIf="email.invalid && email.touched">
               <div class="text-danger small" *ngIf="email.errors.required" i18n>
                 Email address is required
               </div>
@@ -32,13 +30,9 @@
           <div class="form-group row">
             <label for="password" class="col-md-3 col-form-label" i18n>Password</label>
             <div class="col-md-8">
-              <input class="form-control"
-                     type="password"
-                     formControlName="password"
-                     autocomplete="off">
+              <input class="form-control" type="password" formControlName="password" autocomplete="off" />
             </div>
-            <div class="col-md-8 offset-3 form-text text-muted"
-                 *ngIf="password.invalid && password.touched">
+            <div class="col-md-8 offset-3 form-text text-muted" *ngIf="password.invalid && password.touched">
               <div class="text-danger small" *ngIf="password.errors.required">
                 A password is required
               </div>
@@ -48,14 +42,16 @@
           <!-- BUTTONS  -->
           <div class="form-group row">
             <div class="col-md-9 offset-3">
-              <button class="btn btn-primary"
-                      type="submit"
-                      [disabled]="loginForm.invalid || (isLoggingIn$ | async)"
-                      i18n>
+              <button
+                class="btn btn-primary"
+                type="submit"
+                [disabled]="loginForm.invalid || (isLoggingIn$ | async)"
+                i18n
+              >
                 <ng-container *ngIf="(isLoggingIn$ | async) === false" i18n>
                   Log In
                 </ng-container>
-                <app-spinner name="login" [show]="(isLoggingIn$ | async)" i18n>
+                <app-spinner name="login" [show]="isLoggingIn$ | async" i18n>
                   Logging in
                 </app-spinner>
               </button>
@@ -92,8 +88,8 @@
       </ng-container>
     </div>
     <p i18n>
-      Ensure the email address and password you entered are correct. Otherwise, please contact
-      your web site administrator for more information.
+      Ensure the email address and password you entered are correct. Otherwise, please contact your web site
+      administrator for more information.
     </p>
   </div>
   <div class="modal-footer">

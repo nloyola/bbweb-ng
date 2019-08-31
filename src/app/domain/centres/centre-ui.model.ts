@@ -4,7 +4,6 @@ import { CentreState } from '@app/domain/centres/centre-state.enum';
 import { Centre } from '@app/domain/centres/centre.model';
 
 export class CentreUI implements DomainEntityUI<Centre> {
-
   readonly entity: Centre;
 
   public static getStateIcon(state: CentreState): string {
@@ -62,5 +61,4 @@ export class CentreUI implements DomainEntityUI<Centre> {
   isEnabled(): boolean {
     return this.entity.isEnabled();
   }
-
 }

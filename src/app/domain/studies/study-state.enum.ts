@@ -7,11 +7,11 @@ export enum StudyState {
 
   /**
    * When a study is in this state, collection and processing of specimens can be recorded.
-    */
+   */
   Enabled = 'enabled',
 
   /**
    *  In this state, the study cannot be modified and collection and processing of specimens is not allowed.
-    */
+   */
   Retired = 'retired'
 }

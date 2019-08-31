@@ -8,9 +8,8 @@ describe('ModalInputCentreLocationComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ModalInputCentreLocationComponent ]
-    })
-    .compileComponents();
+      declarations: [ModalInputCentreLocationComponent]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

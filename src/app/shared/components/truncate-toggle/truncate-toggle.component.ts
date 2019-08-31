@@ -7,7 +7,6 @@ import { TruncatePipe } from '@app/shared/pipes';
   styleUrls: ['./truncate-toggle.component.scss']
 })
 export class TruncateToggleComponent implements OnInit, OnChanges {
-
   @Input() text: string;
   @Input() toggleLength: number;
   @Input() textEmptyWarning: string;
@@ -31,7 +30,7 @@ export class TruncateToggleComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.text) {
       this.text = changes.text.currentValue;
-      this.toggleRequired = this.text && (this.text.length > this.toggleLength);
+      this.toggleRequired = this.text && this.text.length > this.toggleLength;
       this.determineDisplayText();
     }
   }
@@ -43,8 +42,8 @@ export class TruncateToggleComponent implements OnInit, OnChanges {
   }
 
   determineDisplayText() {
-    this.displayText = this.toggleState ?
-      this.truncatePipe.transform(this.text, this.toggleLength) : this.text;
+    this.displayText = this.toggleState
+      ? this.truncatePipe.transform(this.text, this.toggleLength)
+      : this.text;
   }
-
 }

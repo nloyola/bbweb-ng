@@ -8,9 +8,8 @@ describe('ModalSpecimensExistInAnotherShipmentComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ModalSpecimensExistInAnotherShipmentComponent ]
-    })
-    .compileComponents();
+      declarations: [ModalSpecimensExistInAnotherShipmentComponent]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

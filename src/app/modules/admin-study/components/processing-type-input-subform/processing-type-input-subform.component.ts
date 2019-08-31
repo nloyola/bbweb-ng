@@ -1,13 +1,16 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
-import { CollectedSpecimenDefinitionName, ProcessedSpecimenDefinitionName, ProcessingType, SpecimenDefinitionName } from '@app/domain/studies';
+import {
+  CollectedSpecimenDefinitionName,
+  ProcessedSpecimenDefinitionName,
+  ProcessingType,
+  SpecimenDefinitionName
+} from '@app/domain/studies';
 import { CustomValidators } from '@app/shared/validators';
 
 interface SpecimenDefinitionNameWithCombinedName {
-
   combinedName: string;
   specimenDefinitionName: ProcessedSpecimenDefinitionName;
-
 }
 
 @Component({
@@ -16,7 +19,6 @@ interface SpecimenDefinitionNameWithCombinedName {
   styleUrls: ['./processing-type-input-subform.component.scss']
 })
 export class ProcessingTypeInputSubformComponent implements OnInit, OnChanges {
-
   @Input() processingType: ProcessingType;
   @Input() processedDefinitionNames: ProcessedSpecimenDefinitionName[];
   @Input() collectedDefinitionNames: CollectedSpecimenDefinitionName[];
@@ -28,7 +30,8 @@ export class ProcessingTypeInputSubformComponent implements OnInit, OnChanges {
   static buildSubForm(processingType: ProcessingType) {
     const entityId = !!processingType.input.entityId ? processingType.input.entityId : '';
     const definitionId = !!processingType.input.specimenDefinitionId
-      ? processingType.input.specimenDefinitionId : '';
+      ? processingType.input.specimenDefinitionId
+      : '';
 
     const subform = new FormGroup({
       definitionType: new FormControl(processingType.input.definitionType),
@@ -49,7 +52,7 @@ export class ProcessingTypeInputSubformComponent implements OnInit, OnChanges {
     return subform;
   }
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit(): void {
     const entityId = !!this.processingType.input.entityId ? this.processingType.input.entityId : '';
@@ -169,9 +172,13 @@ export class ProcessingTypeInputSubformComponent implements OnInit, OnChanges {
   }
 
   private getCollectedDefinitionNames(): SpecimenDefinitionName[] {
-    if ((this.entityId.value === '') ||
-        (this.definitionType.value !== 'collected')
-        || (this.collectedDefinitionNames.length <= 0)) { return; }
+    if (
+      this.entityId.value === '' ||
+      this.definitionType.value !== 'collected' ||
+      this.collectedDefinitionNames.length <= 0
+    ) {
+      return;
+    }
 
     const eventTypeName = this.collectedDefinitionNames.find(et => et.id === this.entityId.value);
     if (eventTypeName) {
@@ -185,10 +192,8 @@ export class ProcessingTypeInputSubformComponent implements OnInit, OnChanges {
     return this.processedDefinitionNames
       .filter(definitionName => definitionName.id !== this.processingType.id)
       .map(specimenDefinitionName => {
-        const combinedName =
-          `${specimenDefinitionName.specimenDefinitionName.name} (${specimenDefinitionName.name})`;
+        const combinedName = `${specimenDefinitionName.specimenDefinitionName.name} (${specimenDefinitionName.name})`;
         return { combinedName, specimenDefinitionName };
       });
   }
-
 }

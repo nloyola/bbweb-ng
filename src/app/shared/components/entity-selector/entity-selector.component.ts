@@ -1,5 +1,16 @@
 import { NgForOfContext } from '@angular/common';
-import { Component, ContentChild, EventEmitter, Input, OnDestroy, OnInit, OnChanges, Output, TemplateRef, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  ContentChild,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  OnChanges,
+  Output,
+  TemplateRef,
+  SimpleChanges
+} from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { DomainEntity, PagedReplyInfo } from '@app/domain';
 import { NameFilter, SearchFilter } from '@app/domain/search-filters';
@@ -12,7 +23,6 @@ import { debounce, distinct, takeUntil } from 'rxjs/operators';
   styleUrls: ['./entity-selector.component.scss']
 })
 export class EntitySelectorComponent<T extends DomainEntity> implements OnInit, OnDestroy, OnChanges {
-
   @Input() entities: T[];
   @Input() isLoading: boolean;
   @Input() entitiesLimit: number;
@@ -34,7 +44,7 @@ export class EntitySelectorComponent<T extends DomainEntity> implements OnInit, 
   hasNoResultsToDisplay: boolean;
   hasResultsToDisplay: boolean;
 
-  private filters: { [ name: string]: SearchFilter };
+  private filters: { [name: string]: SearchFilter };
   private unsubscribe$: Subject<void> = new Subject<void>();
 
   constructor(private formBuilder: FormBuilder) {
@@ -45,20 +55,22 @@ export class EntitySelectorComponent<T extends DomainEntity> implements OnInit, 
   }
 
   ngOnInit() {
-    this.hasNoEntitiesToDisplay = (this.entities !== null) && (this.entities.length > 0);
+    this.hasNoEntitiesToDisplay = this.entities !== null && this.entities.length > 0;
     this.hasResultsToDisplay = !this.hasNoEntitiesToDisplay && !this.hasNoMatches;
 
     this.filterForm = this.formBuilder.group({ name: [''] });
 
     // debounce the input to the name filter and then apply it to the search
-    this.name.valueChanges.pipe(
-      debounce(() => timer(500)),
-      distinct(() => this.filterForm.value),
-      takeUntil(this.unsubscribe$)
-    ).subscribe(() => {
-      this.filters.nameFilter.setValue(this.filterForm.value.name);
-      this.nameFilterUpdated.emit(this.getFilters().join(';'));
-    });
+    this.name.valueChanges
+      .pipe(
+        debounce(() => timer(500)),
+        distinct(() => this.filterForm.value),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe(() => {
+        this.filters.nameFilter.setValue(this.filterForm.value.name);
+        this.nameFilterUpdated.emit(this.getFilters().join(';'));
+      });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -78,7 +90,9 @@ export class EntitySelectorComponent<T extends DomainEntity> implements OnInit, 
   }
 
   public paginationPageChange(newPage: number) {
-    if (isNaN(newPage)) { return; }
+    if (isNaN(newPage)) {
+      return;
+    }
     this.pageChange.emit(newPage);
   }
 
@@ -87,5 +101,4 @@ export class EntitySelectorComponent<T extends DomainEntity> implements OnInit, 
       .map(f => f.getValue())
       .filter(value => value !== '');
   }
-
 }

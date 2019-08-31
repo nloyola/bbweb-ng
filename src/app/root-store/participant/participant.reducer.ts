@@ -12,15 +12,11 @@ export const adapter: EntityAdapter<Participant> = createEntityAdapter<Participa
 
 export const initialState: State = adapter.getInitialState({
   lastAddedId: null,
-  error: null,
+  error: null
 });
 
-export function reducer(
-  state = initialState,
-  action: ParticipantActions.ParticipantActionsUnion
-): State {
+export function reducer(state = initialState, action: ParticipantActions.ParticipantActionsUnion): State {
   switch (action.type) {
-
     case ParticipantActions.addParticipantRequest.type: {
       return {
         ...state,
@@ -79,7 +75,8 @@ export function reducer(
           id: action.participant.id,
           changes: action.participant
         },
-        state);
+        state
+      );
     }
 
     case ParticipantActions.updateParticipantFailure.type: {
@@ -98,9 +95,4 @@ export function reducer(
   }
 }
 
-export const {
-  selectIds,
-  selectEntities,
-  selectAll,
-  selectTotal,
-} = adapter.getSelectors();
+export const { selectIds, selectEntities, selectAll, selectTotal } = adapter.getSelectors();

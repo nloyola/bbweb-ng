@@ -10,13 +10,9 @@ describe('AnnotationTypeSummaryComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [
-        AnnotationTypeSummaryComponent,
-        TruncatePipe
-      ],
+      declarations: [AnnotationTypeSummaryComponent, TruncatePipe],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {

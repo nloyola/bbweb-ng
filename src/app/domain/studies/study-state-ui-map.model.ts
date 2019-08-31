@@ -26,5 +26,4 @@ export const StudyStateUIMap = new Map<StudyState, EntityUI>([
       iconClass: 'danger-icon'
     }
   ]
-
 ]);

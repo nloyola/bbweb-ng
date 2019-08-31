@@ -8,9 +8,8 @@ describe('ModalShipmentTagAsLostComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ModalShipmentTagAsLostComponent ]
-    })
-    .compileComponents();
+      declarations: [ModalShipmentTagAsLostComponent]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

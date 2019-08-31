@@ -1,27 +1,14 @@
-<app-modal-input [modalInputValid]="modalInputValid"
-                 (confirm)="confirm($event)"
-                 (dismiss)="dismiss($event)">
+<app-modal-input [modalInputValid]="modalInputValid" (confirm)="confirm($event)" (dismiss)="dismiss($event)">
   <span class="title">{{ title }}</span>
-  <form class="body form-horizontal"
-        [formGroup]="form"
-        autocomplete="on"
-        novalidate>
-
+  <form class="body form-horizontal" [formGroup]="form" autocomplete="on" novalidate>
     <div class="form-group row">
       <label for="email" class="col-md-3 col-form-label" i18n>{{ label }}</label>
       <div class="col-md-2">
-        <input class="mr-1"
-               type="radio"
-               formControlName="input"
-               [value]="true"
-               ngbAutoFocus>
+        <input class="mr-1" type="radio" formControlName="input" [value]="true" ngbAutoFocus />
         <ng-container i18n>Yes</ng-container>
       </div>
       <div class="col-md-2">
-        <input class="mr-1"
-               type="radio"
-               formControlName="input"
-               [value]="false">
+        <input class="mr-1" type="radio" formControlName="input" [value]="false" />
         <ng-container i18n>No</ng-container>
       </div>
     </div>

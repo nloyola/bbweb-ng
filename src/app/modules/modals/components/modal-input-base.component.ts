@@ -6,7 +6,6 @@ import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 
 export class ModalInputBaseComponent<T> implements OnInit, OnDestroy {
-
   @Input() modal: NgbActiveModal;
   @Input() title: string;
   @Input() label: string;
@@ -19,17 +18,19 @@ export class ModalInputBaseComponent<T> implements OnInit, OnDestroy {
   protected validators: ValidatorFn[] = [];
   protected unsubscribe$: Subject<void> = new Subject<void>();
 
-  constructor(protected formBuilder: FormBuilder) { }
+  constructor(protected formBuilder: FormBuilder) {}
 
   ngOnInit() {
-    this.form = this.formBuilder.group({ input: [ this.value, this.validators ] });
+    this.form = this.formBuilder.group({ input: [this.value, this.validators] });
 
-    this.form.valueChanges.pipe(
-      debounceTime(300),
-      takeUntil(this.unsubscribe$)
-    ).subscribe(() => {
-      this.modalInputValid = !this.form.errors;
-    });
+    this.form.valueChanges
+      .pipe(
+        debounceTime(300),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe(() => {
+        this.modalInputValid = !this.form.errors;
+      });
   }
 
   ngOnDestroy() {

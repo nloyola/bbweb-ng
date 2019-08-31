@@ -7,19 +7,18 @@ import { SpecimenDefinitionAddComponent } from './specimen-definition-add.compon
 
 describe('SpecimenDefinitionAddComponent', () => {
   @Component({
-    template  : `<form [formGroup]="form">
-                   <app-specimen-definition-add [specimenDefinition]="specimenDefinition"
-                                                [subform]="subform">
-                   </app-specimen-definition-add>
-                 </form>`
+    template: `
+      <form [formGroup]="form">
+        <app-specimen-definition-add [specimenDefinition]="specimenDefinition" [subform]="subform">
+        </app-specimen-definition-add>
+      </form>
+    `
   })
   class TestComponent implements OnInit {
-
     form: FormGroup;
     processingType: ProcessingType;
 
-    constructor(private formBuilder: FormBuilder) {
-    }
+    constructor(private formBuilder: FormBuilder) {}
 
     ngOnInit() {
       this.form = this.formBuilder.group({
@@ -38,17 +37,10 @@ describe('SpecimenDefinitionAddComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [
-        FormsModule,
-        ReactiveFormsModule
-      ],
-      declarations: [
-        TestComponent,
-        SpecimenDefinitionAddComponent
-      ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
-    .compileComponents();
+      imports: [FormsModule, ReactiveFormsModule],
+      declarations: [TestComponent, SpecimenDefinitionAddComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

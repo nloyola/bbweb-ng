@@ -11,8 +11,7 @@ import { filter, map, tap, take } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class EventTypeResolver implements Resolve<CollectionEventType> {
-  constructor(private store$: Store<RootStoreState.State>,
-              private router: Router) {}
+  constructor(private store$: Store<RootStoreState.State>, private router: Router) {}
 
   resolve(route: ActivatedRouteSnapshot, _state: RouterStateSnapshot): Observable<CollectionEventType> {
     const studySlug = route.parent.parent.parent.paramMap.get('slug');
@@ -24,14 +23,16 @@ export class EventTypeResolver implements Resolve<CollectionEventType> {
       this.store$.pipe(
         select(EventTypeStoreSelectors.selectError),
         filter(s => !!s),
-        tap(() => this.router.navigateByUrl('/404'))),
+        tap(() => this.router.navigateByUrl('/404'))
+      ),
       this.store$.pipe(
         select(EventTypeStoreSelectors.selectAllEventTypes),
         filter(ets => ets.length > 0),
         map((ets: CollectionEventType[]) => {
           const eventType = ets.find(et => et.slug === eventTypeSlug);
           return eventType ? eventType : throwError('collection event type not found');
-        })))
-      .pipe(take(1));
+        })
+      )
+    ).pipe(take(1));
   }
 }

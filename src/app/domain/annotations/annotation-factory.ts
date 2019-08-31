@@ -7,7 +7,6 @@ import { TextAnnotation } from './text-annotation.model';
 import { ValueTypes } from './value-type.enum';
 
 export namespace AnnotationFactory {
-
   export function annotationFromValueType(valueType: ValueTypes): Annotation {
     let annotation: Annotation;
 
@@ -48,5 +47,4 @@ export namespace AnnotationFactory {
     const annotation = annotationFromValueType(obj.valueType as ValueTypes);
     return annotation.deserialize(obj);
   }
-
 }

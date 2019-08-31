@@ -10,17 +10,15 @@ import { ProcessingTypeOutputSubformComponent } from '../processing-type-output-
   styleUrls: ['./processing-output-specimen-modal.component.scss']
 })
 export class ProcessingOutputSpecimenModalComponent implements OnInit {
-
   @Input() processingType: ProcessingType;
 
   form: FormGroup;
 
-  constructor(public activeModal: NgbActiveModal,
-              private formBuilder: FormBuilder) { }
+  constructor(public activeModal: NgbActiveModal, private formBuilder: FormBuilder) {}
 
   ngOnInit() {
     this.form = this.formBuilder.group({
-      outputSubForm: ProcessingTypeOutputSubformComponent.buildSubForm(this.processingType),
+      outputSubForm: ProcessingTypeOutputSubformComponent.buildSubForm(this.processingType)
     });
   }
 
@@ -30,19 +28,18 @@ export class ProcessingOutputSpecimenModalComponent implements OnInit {
 
   onSubmit(): void {
     const output = new OutputSpecimenProcessing().deserialize({
-        specimenDefinition: {
-          name:                    this.outputSubForm.value.spcDefSubForm.name,
-          description:             this.outputSubForm.value.spcDefSubForm.description,
-          anatomicalSourceType:    this.outputSubForm.value.spcDefSubForm.anatomicalSource,
-          preservationType:        this.outputSubForm.value.spcDefSubForm.preservation,
-          preservationTemperature: this.outputSubForm.value.spcDefSubForm.temperature,
-          specimenType:            this.outputSubForm.value.spcDefSubForm.specimenType,
-          units:                   this.outputSubForm.value.spcDefSubForm.units
-        },
-        expectedChange: this.outputSubForm.value.expectedChange,
-        count:          this.outputSubForm.value.count
-      });
+      specimenDefinition: {
+        name: this.outputSubForm.value.spcDefSubForm.name,
+        description: this.outputSubForm.value.spcDefSubForm.description,
+        anatomicalSourceType: this.outputSubForm.value.spcDefSubForm.anatomicalSource,
+        preservationType: this.outputSubForm.value.spcDefSubForm.preservation,
+        preservationTemperature: this.outputSubForm.value.spcDefSubForm.temperature,
+        specimenType: this.outputSubForm.value.spcDefSubForm.specimenType,
+        units: this.outputSubForm.value.spcDefSubForm.units
+      },
+      expectedChange: this.outputSubForm.value.expectedChange,
+      count: this.outputSubForm.value.count
+    });
     this.activeModal.close(output);
   }
-
 }

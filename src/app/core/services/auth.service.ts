@@ -12,16 +12,14 @@ export const AUTH_TOKEN_LOCAL_STORAGE_KEY = 'authToken';
   providedIn: 'root'
 })
 export class AuthService {
-
   readonly BASE_URL = '/api/users';
   private authToken: AuthInfo;
 
-  constructor(private http: HttpClient) {
-  }
+  constructor(private http: HttpClient) {}
 
   login(email: string, password: string) {
-    return this.http.post<ApiReply>(this.BASE_URL + '/login', { email, password })
-      .pipe(map((reply: ApiReply) => {
+    return this.http.post<ApiReply>(this.BASE_URL + '/login', { email, password }).pipe(
+      map((reply: ApiReply) => {
         if (reply && reply.data) {
           const jObj = reply.data as JSONObject;
           if (jObj.user && jObj.token) {
@@ -37,7 +35,8 @@ export class AuthService {
           }
         }
         throw new Error('expected an auth token object');
-      }));
+      })
+    );
   }
 
   logout() {
@@ -46,7 +45,8 @@ export class AuthService {
   }
 
   register(name: string, email: string, password: string) {
-    return this.http.post<any>(this.BASE_URL + '/', { name, email, password })
+    return this.http
+      .post<any>(this.BASE_URL + '/', { name, email, password })
       .pipe(map((res: JSONObject) => new User().deserialize(res.data as any)));
   }
 

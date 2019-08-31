@@ -14,7 +14,6 @@ import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { StudyAddComponent } from './study-add.component';
 
 describe('StudyAddComponent', () => {
-
   let store: Store<RootStoreState.State>;
   let component: StudyAddComponent;
   let fixture: ComponentFixture<StudyAddComponent>;
@@ -32,16 +31,16 @@ describe('StudyAddComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            'study': StudyStoreReducer.reducer,
-            'spinner': SpinnerStoreReducer.reducer
+            study: StudyStoreReducer.reducer,
+            spinner: SpinnerStoreReducer.reducer
           },
-          NgrxRuntimeChecks),
+          NgrxRuntimeChecks
+        ),
         ToastrModule.forRoot()
       ],
       declarations: [StudyAddComponent],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
-      .compileComponents();
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -65,7 +64,6 @@ describe('StudyAddComponent', () => {
   });
 
   describe('name input validity', () => {
-
     it('is required', () => {
       const errors = component.name.errors || {};
       expect(errors['required']).toBeTruthy();
@@ -76,11 +74,9 @@ describe('StudyAddComponent', () => {
       const errors = component.name.errors || {};
       expect(errors).toEqual({});
     });
-
   });
 
   describe('when submitting', () => {
-
     it('on valid submission', fakeAsync(() => {
       const study = new Study().deserialize(factory.study());
       spyOn(toastr, 'success').and.returnValue(null);
@@ -122,7 +118,7 @@ describe('StudyAddComponent', () => {
         {
           status: 404,
           error: {
-              message: 'simulated error'
+            message: 'simulated error'
           }
         },
         {
@@ -147,7 +143,6 @@ describe('StudyAddComponent', () => {
         expect(toastr.error).toHaveBeenCalled();
       });
     }));
-
   });
 
   it('on cancel', async(() => {
@@ -156,5 +151,4 @@ describe('StudyAddComponent', () => {
     expect(router.navigate).toHaveBeenCalled();
     expect((router.navigate as any).calls.mostRecent().args[0]).toEqual(['../']);
   }));
-
 });

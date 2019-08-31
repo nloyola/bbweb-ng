@@ -18,7 +18,6 @@ import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { CentreSummaryComponent } from './centre-summary.component';
 
 describe('CentreSummaryComponent', () => {
-
   let component: CentreSummaryComponent;
   let fixture: ComponentFixture<CentreSummaryComponent>;
   let ngZone: NgZone;
@@ -40,8 +39,8 @@ describe('CentreSummaryComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            'centre': CentreStoreReducer.reducer,
-            'spinner': SpinnerStoreReducer.reducer
+            centre: CentreStoreReducer.reducer,
+            spinner: SpinnerStoreReducer.reducer
           },
           NgrxRuntimeChecks
         ),
@@ -65,10 +64,9 @@ describe('CentreSummaryComponent', () => {
           }
         }
       ],
-      declarations: [ CentreSummaryComponent ],
+      declarations: [CentreSummaryComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -94,7 +92,7 @@ describe('CentreSummaryComponent', () => {
 
     const newNameAndSlug = factory.nameAndSlug();
     const centreWithNewName = new Centre().deserialize({
-      ...centre as any,
+      ...(centre as any),
       ...newNameAndSlug
     });
 
@@ -109,34 +107,35 @@ describe('CentreSummaryComponent', () => {
     fixture.detectChanges();
 
     expect(routerListener.mock.calls.length).toBe(1);
-    expect(routerListener.mock.calls[0][0]).toEqual([ '../..', centreWithNewName.slug, 'summary' ]);
+    expect(routerListener.mock.calls[0][0]).toEqual(['../..', centreWithNewName.slug, 'summary']);
   }));
 
   describe('when updating attributes', () => {
-
     const context: EntityUpdateComponentBehaviour.Context<CentreSummaryComponent> = {} as any;
 
     beforeEach(() => {
       context.fixture = fixture;
-      context.componentInitialize =
-        () => { store.dispatch(CentreStoreActions.getCentreSuccess({ centre })); };
+      context.componentInitialize = () => {
+        store.dispatch(CentreStoreActions.getCentreSuccess({ centre }));
+      };
       context.componentValidateInitialization = () => undefined;
-      context.dispatchSuccessAction =
-        () => { store.dispatch(CentreStoreActions.updateCentreSuccess({ centre })); };
-      context.createExpectedFailureAction =
-        (error) => CentreStoreActions.updateCentreFailure({ error });
+      context.dispatchSuccessAction = () => {
+        store.dispatch(CentreStoreActions.updateCentreSuccess({ centre }));
+      };
+      context.createExpectedFailureAction = error => CentreStoreActions.updateCentreFailure({ error });
       context.duplicateAttibuteValueError = 'name already used';
     });
 
     describe('when updating name', () => {
-
       beforeEach(() => {
         const newName = factory.stringNext();
         context.modalReturnValue = { result: Promise.resolve(newName) };
-        context.updateEntity = () => { component.updateName(); };
+        context.updateEntity = () => {
+          component.updateName();
+        };
 
         const centreWithUpdatedSlug = new Centre().deserialize({
-          ...centre as any,
+          ...(centre as any),
           slug: factory.slugify(newName),
           name: newName
         });
@@ -152,15 +151,15 @@ describe('CentreSummaryComponent', () => {
       });
 
       EntityUpdateComponentBehaviour.sharedBehaviour(context);
-
     });
 
     describe('when updating description', () => {
-
       beforeEach(() => {
         const newValue = faker.lorem.paragraphs();
         context.modalReturnValue = { result: Promise.resolve(newValue) };
-        context.updateEntity = () => { component.updateDescription(); };
+        context.updateEntity = () => {
+          component.updateDescription();
+        };
 
         context.expectedSuccessAction = CentreStoreActions.updateCentreRequest({
           centre,
@@ -170,14 +169,14 @@ describe('CentreSummaryComponent', () => {
       });
 
       EntityUpdateComponentBehaviour.sharedBehaviour(context);
-
     });
 
     describe('when DISABLING a centre', () => {
-
       beforeEach(() => {
         const newValue = 'disable';
-        context.updateEntity = () => { component.disable(); };
+        context.updateEntity = () => {
+          component.disable();
+        };
         context.expectedSuccessAction = CentreStoreActions.updateCentreRequest({
           centre,
           attributeName: 'state',
@@ -186,14 +185,14 @@ describe('CentreSummaryComponent', () => {
       });
 
       EntityUpdateComponentBehaviour.sharedBehaviour(context);
-
     });
 
     describe('when ENABLING a centre', () => {
-
       beforeEach(() => {
         const newValue = 'enable';
-        context.updateEntity = () => { component.enable(); };
+        context.updateEntity = () => {
+          component.enable();
+        };
         context.expectedSuccessAction = CentreStoreActions.updateCentreRequest({
           centre,
           attributeName: 'state',
@@ -202,13 +201,10 @@ describe('CentreSummaryComponent', () => {
       });
 
       EntityUpdateComponentBehaviour.sharedBehaviour(context);
-
     });
-
   });
 
   describe('common behaviour', () => {
-
     const componentModalFuncs = [
       (c: CentreSummaryComponent) => c.updateName(),
       (c: CentreSummaryComponent) => c.updateDescription()
@@ -217,12 +213,12 @@ describe('CentreSummaryComponent', () => {
     it('functions should open a modal', fakeAsync(() => {
       const testData = [
         {
-          componentFunc: (c) => c.updateName(),
+          componentFunc: c => c.updateName(),
           attribute: 'name',
           value: 'test'
         },
         {
-          componentFunc: (c) => c.updateDescription(),
+          componentFunc: c => c.updateDescription(),
           attribute: 'description',
           value: 'test'
         }
@@ -245,11 +241,13 @@ describe('CentreSummaryComponent', () => {
         tick(1000);
 
         expect(storeListener.mock.calls.length).toBe(index + 1);
-        expect(storeListener.mock.calls[index][0]).toEqual(CentreStoreActions.updateCentreRequest({
-          centre,
-          attributeName: testInfo.attribute as CentreUpdateAttribute,
-          value: testInfo.value
-        }));
+        expect(storeListener.mock.calls[index][0]).toEqual(
+          CentreStoreActions.updateCentreRequest({
+            centre,
+            attributeName: testInfo.attribute as CentreUpdateAttribute,
+            value: testInfo.value
+          })
+        );
       });
       expect(modalListener.mock.calls.length).toBe(componentModalFuncs.length);
     }));
@@ -290,8 +288,8 @@ describe('CentreSummaryComponent', () => {
       fixture.detectChanges();
 
       const testData = [
-        { componentFunc: (c) => c.disable(),  value: 'disable' },
-        { componentFunc: (c) => c.enable(),   value: 'enable' }
+        { componentFunc: c => c.disable(), value: 'disable' },
+        { componentFunc: c => c.enable(), value: 'enable' }
       ];
 
       const storeListener = jest.spyOn(store, 'dispatch');
@@ -301,11 +299,13 @@ describe('CentreSummaryComponent', () => {
         tick(1000);
 
         expect(storeListener.mock.calls.length).toBe(index + 1);
-        expect(storeListener.mock.calls[index][0]).toEqual(CentreStoreActions.updateCentreRequest({
-          centre,
-          attributeName: 'state',
-          value: testInfo.value
-        }));
+        expect(storeListener.mock.calls[index][0]).toEqual(
+          CentreStoreActions.updateCentreRequest({
+            centre,
+            attributeName: 'state',
+            value: testInfo.value
+          })
+        );
       });
     }));
   });

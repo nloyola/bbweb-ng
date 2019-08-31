@@ -1,5 +1,4 @@
 export enum RoleIds {
-
   WebsiteAdministrator = 'website-administrator',
   UserAdministrator = 'user-administrator',
   SpecimenCollector = 'specimen-collector',
@@ -10,5 +9,4 @@ export enum RoleIds {
   CentreUser = 'centre-user',
   ShippingAdministrator = 'shipping-administrator',
   ShippingUser = 'shipping-user'
-
 }

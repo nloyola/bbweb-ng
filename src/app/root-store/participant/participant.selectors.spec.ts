@@ -5,7 +5,6 @@ import { Participant } from '@app/domain/participants';
 import { EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 
 describe('participant-store selectors', () => {
-
   const factory = new Factory();
 
   it('selectParticipantLastAdded', () => {
@@ -26,10 +25,9 @@ describe('participant-store selectors', () => {
       selectId: (s: Participant) => s.id
     });
     const state = {
-      participant: adapter.addAll([ participant ], ParticipantStoreReducer.initialState)
+      participant: adapter.addAll([participant], ParticipantStoreReducer.initialState)
     };
 
-    expect(ParticipantStoreSelectors.selectAllParticipants(state)).toEqual([ participant ]);
+    expect(ParticipantStoreSelectors.selectAllParticipants(state)).toEqual([participant]);
   });
-
 });

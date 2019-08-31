@@ -10,10 +10,7 @@ describe('PageNotFoundComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        NgbModule,
-        RouterTestingModule
-      ],
+      imports: [NgbModule, RouterTestingModule],
       declarations: [PageNotFoundComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     });

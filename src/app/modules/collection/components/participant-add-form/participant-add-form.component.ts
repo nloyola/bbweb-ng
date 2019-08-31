@@ -1,4 +1,15 @@
-import { Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
+  SimpleChanges,
+  ViewChild
+} from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Annotation, AnnotationFactory } from '@app/domain/annotations';
 import { Participant } from '@app/domain/participants';
@@ -12,7 +23,6 @@ import { AnnotationsAddSubformComponent } from '../annotations-add-subform/annot
   styleUrls: ['./participant-add-form.component.scss']
 })
 export class ParticipantAddFormComponent implements OnInit, OnDestroy, OnChanges {
-
   /* tslint:disable-next-line:no-input-rename */
   @Input('isSaving') isSaving$: Observable<boolean>;
 
@@ -33,14 +43,14 @@ export class ParticipantAddFormComponent implements OnInit, OnDestroy, OnChanges
 
   private unsubscribe$ = new Subject<void>();
 
-  constructor(private formBuilder: FormBuilder) { }
+  constructor(private formBuilder: FormBuilder) {}
 
   ngOnInit() {
     this.studySelect.nativeElement.focus();
 
     this.form = this.formBuilder.group({
-      study: [ '', [ Validators.required ]],
-      uniqueId: [ this.defaultUniqueId, [ Validators.required ]],
+      study: ['', [Validators.required]],
+      uniqueId: [this.defaultUniqueId, [Validators.required]],
       annotationsGroup: this.formBuilder.group({ annotations: new FormArray([]) })
     });
   }
@@ -59,7 +69,8 @@ export class ParticipantAddFormComponent implements OnInit, OnDestroy, OnChanges
         this.annotations = study.annotationTypes.map(at => AnnotationFactory.annotationFromType(at));
         this.annotationsGroup.setControl(
           'annotations',
-          AnnotationsAddSubformComponent.buildSubForm(this.annotations, this.unsubscribe$));
+          AnnotationsAddSubformComponent.buildSubForm(this.annotations, this.unsubscribe$)
+        );
       }
     }
   }
@@ -108,5 +119,4 @@ export class ParticipantAddFormComponent implements OnInit, OnDestroy, OnChanges
     participant.annotations = AnnotationsAddSubformComponent.valueToAnnotations(this.annotationsGroup);
     return participant;
   }
-
 }

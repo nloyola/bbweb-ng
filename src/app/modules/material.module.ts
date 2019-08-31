@@ -8,19 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { NgModule } from '@angular/core';
 
 @NgModule({
-  imports: [
-    MatButtonModule,
-    MatCheckboxModule,
-    MatIconModule,
-    MatProgressBarModule,
-    MatStepperModule
-  ],
-  exports: [
-    MatButtonModule,
-    MatCheckboxModule,
-    MatIconModule,
-    MatProgressBarModule,
-    MatStepperModule
-  ]
+  imports: [MatButtonModule, MatCheckboxModule, MatIconModule, MatProgressBarModule, MatStepperModule],
+  exports: [MatButtonModule, MatCheckboxModule, MatIconModule, MatProgressBarModule, MatStepperModule]
 })
-export class MaterialModule { }
+export class MaterialModule {}

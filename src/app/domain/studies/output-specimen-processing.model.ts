@@ -1,9 +1,11 @@
 import { JSONObject } from '@app/domain';
-import { IProcessedSpecimenDefinition, ProcessedSpecimenDefinition } from './processed-specimen-definition.model';
+import {
+  IProcessedSpecimenDefinition,
+  ProcessedSpecimenDefinition
+} from './processed-specimen-definition.model';
 import { ISpecimenProcessing } from './specimen-processing.model';
 
 export interface IOutputSpecimenProcessing extends ISpecimenProcessing {
-
   specimenDefinition: IProcessedSpecimenDefinition;
 
   expectedChange: number;
@@ -11,11 +13,9 @@ export interface IOutputSpecimenProcessing extends ISpecimenProcessing {
   count: number;
 
   containerTypeId: string | null;
-
 }
 
 export class OutputSpecimenProcessing implements IOutputSpecimenProcessing {
-
   specimenDefinition: ProcessedSpecimenDefinition;
   expectedChange: number;
   count: number;
@@ -30,5 +30,4 @@ export class OutputSpecimenProcessing implements IOutputSpecimenProcessing {
     Object.assign(this, { specimenDefinition, expectedChange, count, containerTypeId });
     return this;
   }
-
 }

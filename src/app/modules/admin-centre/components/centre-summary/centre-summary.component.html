@@ -1,16 +1,11 @@
-<div class="card mt-2" *ngIf="(centre$ | async) as centre">
-  <div class="card-header bg-primary text-light"
-       *ngIf="(isLoading$ | async) === false; else showLoading">
+<div class="card mt-2" *ngIf="centre$ | async as centre">
+  <div class="card-header bg-primary text-light" *ngIf="(isLoading$ | async) === false; else showLoading">
     <mat-icon [ngClass]="centre.stateIconClass()">
       {{ centre.stateIcon() }}
     </mat-icon>
     {{ centre.name }}
     <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
-
-      <button class="btn btn-sm btn-light"
-              type="button"
-              id="centreSummaryMenu"
-              ngbDropdownToggle>
+      <button class="btn btn-sm btn-light" type="button" id="centreSummaryMenu" ngbDropdownToggle>
         <mat-icon inline="true">more_vert</mat-icon>
       </button>
 
@@ -29,7 +24,11 @@
           </mat-icon>
           <ng-container i18n>Disable this centre</ng-container>
         </a>
-        <a class="dropdown-item" *ngIf="centre.isDisabled() && ((isEnableAllowed$ | async) === true)" (click)="enable()">
+        <a
+          class="dropdown-item"
+          *ngIf="centre.isDisabled() && (isEnableAllowed$ | async) === true"
+          (click)="enable()"
+        >
           <mat-icon class="mr-1" [ngClass]="getStateIconClass('enabled')">
             {{ getStateIcon('enabled') }}
           </mat-icon>
@@ -56,9 +55,11 @@
           <strong i18n>Description:</strong>
         </div>
         <div class="col-md-10">
-          <app-truncate-toggle [text]="centre.description"
-                               [toggleLength]="descriptionToggleLength"
-                               [textEmptyWarning]="'Description not entered yet.'">
+          <app-truncate-toggle
+            [text]="centre.description"
+            [toggleLength]="descriptionToggleLength"
+            [textEmptyWarning]="'Description not entered yet.'"
+          >
           </app-truncate-toggle>
         </div>
       </div>
@@ -72,13 +73,14 @@
       </div>
     </li>
     <li class="list-group-item m-0 p-0">
-      <app-entity-status [state]="centre.stateLabel()"
-                         [timeAdded]="centre.timeAdded"
-                         [timeModified]="centre.timeModified"
-                         [useBadges]="false">
+      <app-entity-status
+        [state]="centre.stateLabel()"
+        [timeAdded]="centre.timeAdded"
+        [timeModified]="centre.timeModified"
+        [useBadges]="false"
+      >
       </app-entity-status>
     </li>
-
   </ul>
 </div>
 
@@ -91,21 +93,25 @@
 </ng-template>
 
 <ng-template #updateNameModal let-modal>
-  <app-modal-input-text [title]="'Update Name'"
-                        [label]="'New centre name'"
-                        [value]="(centre$ | async)?.name"
-                        [options]="updateNameModalOptions"
-                        (onConfirm)="confirm($event)"
-                        [modal]="modal">
+  <app-modal-input-text
+    [title]="'Update Name'"
+    [label]="'New centre name'"
+    [value]="(centre$ | async)?.name"
+    [options]="updateNameModalOptions"
+    (onConfirm)="confirm($event)"
+    [modal]="modal"
+  >
   </app-modal-input-text>
 </ng-template>
 
 <ng-template #updateDescriptionModal let-modal>
-  <app-modal-input-textarea [title]="'Update Description'"
-                            [label]="'New centre description'"
-                            [value]="(centre$ | async)?.description"
-                            [options]="updateDescriptionModalOptions"
-                            (onConfirm)="confirm($event)"
-                            [modal]="modal">
+  <app-modal-input-textarea
+    [title]="'Update Description'"
+    [label]="'New centre description'"
+    [value]="(centre$ | async)?.description"
+    [options]="updateDescriptionModalOptions"
+    (onConfirm)="confirm($event)"
+    [modal]="modal"
+  >
   </app-modal-input-textarea>
 </ng-template>

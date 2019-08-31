@@ -13,14 +13,15 @@ import { Dictionary } from '@ngrx/entity';
   styleUrls: ['./study-collection.component.scss']
 })
 export class StudyCollectionComponent implements OnInit, OnDestroy {
-
   study$: Observable<Study>;
   private studySubject = new BehaviorSubject(null);
   private unsubscribe$ = new Subject<void>();
 
-  constructor(private store$: Store<RootStoreState.State>,
-              private router: Router,
-              private route: ActivatedRoute) {}
+  constructor(
+    private store$: Store<RootStoreState.State>,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit() {
     this.study$ = this.store$.pipe(
@@ -28,11 +29,12 @@ export class StudyCollectionComponent implements OnInit, OnDestroy {
       map((studies: Dictionary<Study>) => {
         const studyEntity = studies[this.route.parent.parent.snapshot.data.study.id];
         if (studyEntity) {
-          return (studyEntity instanceof Study) ? studyEntity :  new Study().deserialize(studyEntity);
+          return studyEntity instanceof Study ? studyEntity : new Study().deserialize(studyEntity);
         }
         return undefined;
       }),
-      shareReplay());
+      shareReplay()
+    );
 
     this.study$.pipe(takeUntil(this.unsubscribe$)).subscribe(this.studySubject);
   }
@@ -48,11 +50,10 @@ export class StudyCollectionComponent implements OnInit, OnDestroy {
       throw new Error('modifications not allowed');
     }
 
-    this.router.navigate([ '../add' ], { relativeTo: this.route });
+    this.router.navigate(['../add'], { relativeTo: this.route });
   }
 
   eventTypeSelected(eventType: CollectionEventType) {
-    this.router.navigate([ eventType.slug ], { relativeTo: this.route });
+    this.router.navigate([eventType.slug], { relativeTo: this.route });
   }
-
 }

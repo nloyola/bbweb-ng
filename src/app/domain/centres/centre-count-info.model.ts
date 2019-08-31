@@ -18,15 +18,15 @@ export function centreCountsToUIMap(counts: CentreCounts): CentreCountsUIMap {
     [
       CentreState.Disabled,
       {
-      count: counts.disabledCount,
-      ...CentreStateUIMap.get(CentreState.Disabled)
+        count: counts.disabledCount,
+        ...CentreStateUIMap.get(CentreState.Disabled)
       }
     ],
     [
       CentreState.Enabled,
       {
-      count: counts.enabledCount,
-      ...CentreStateUIMap.get(CentreState.Enabled)
+        count: counts.enabledCount,
+        ...CentreStateUIMap.get(CentreState.Enabled)
       }
     ]
   ]);

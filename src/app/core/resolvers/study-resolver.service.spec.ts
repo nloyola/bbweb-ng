@@ -12,7 +12,6 @@ import { cold } from 'jasmine-marbles';
 import { StudyResolver } from './study-resolver.service';
 
 describe('StudyResolver', () => {
-
   let ngZone: NgZone;
   let resolver: StudyResolver;
   let store: Store<RootStoreState.State>;
@@ -26,9 +25,10 @@ describe('StudyResolver', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            'study': StudyStoreReducer.reducer
+            study: StudyStoreReducer.reducer
           },
-          NgrxRuntimeChecks)
+          NgrxRuntimeChecks
+        )
       ]
     });
 
@@ -78,5 +78,4 @@ describe('StudyResolver', () => {
       expect(resolver.resolve(route, null)).toBeObservable(expected);
     });
   });
-
 });

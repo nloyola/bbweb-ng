@@ -8,20 +8,20 @@ import * as AuthActions from './auth-store.actions';
 
 @Injectable()
 export class AuthStoreEffects {
-
-  constructor(private actions$: Actions<AuthActions.AuthStoreActionsUnion>,
-              private authService: AuthService) { }
+  constructor(
+    private actions$: Actions<AuthActions.AuthStoreActionsUnion>,
+    private authService: AuthService
+  ) {}
 
   @Effect()
   loginRequest$: Observable<Action> = this.actions$.pipe(
     ofType(AuthActions.loginRequestAction.type),
-    switchMap(
-      action =>
-        this.authService.login(action.email, action.password)
-        .pipe(
-          map(user => AuthActions.loginSuccessAction({ user })),
-          catchError(error => observableOf(AuthActions.loginFailureAction({ error }))))
-             )
+    switchMap(action =>
+      this.authService.login(action.email, action.password).pipe(
+        map(user => AuthActions.loginSuccessAction({ user })),
+        catchError(error => observableOf(AuthActions.loginFailureAction({ error })))
+      )
+    )
   );
 
   @Effect()
@@ -36,13 +36,11 @@ export class AuthStoreEffects {
   @Effect()
   registerRequest$: Observable<Action> = this.actions$.pipe(
     ofType(AuthActions.registerRequestAction),
-    switchMap(
-      action =>
-        this.authService.register(action.name, action.email, action.password)
-        .pipe(
-          map(user => AuthActions.registerSuccessAction({ user })),
-          catchError(error => observableOf(AuthActions.registerFailureAction({ error }))))
+    switchMap(action =>
+      this.authService.register(action.name, action.email, action.password).pipe(
+        map(user => AuthActions.registerSuccessAction({ user })),
+        catchError(error => observableOf(AuthActions.registerFailureAction({ error })))
+      )
     )
   );
-
 }

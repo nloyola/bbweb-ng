@@ -10,14 +10,10 @@ describe('ServerErrorPageComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [
-        NgbModule,
-        RouterTestingModule
-      ],
-      declarations: [ ServerErrorPageComponent ],
+      imports: [NgbModule, RouterTestingModule],
+      declarations: [ServerErrorPageComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {

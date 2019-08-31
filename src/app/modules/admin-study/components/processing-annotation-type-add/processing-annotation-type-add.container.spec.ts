@@ -4,7 +4,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AnnotationType } from '@app/domain/annotations';
 import { ProcessingType, Study } from '@app/domain/studies';
-import { ProcessingTypeStoreActions, ProcessingTypeStoreReducer, RootStoreState, StudyStoreReducer } from '@app/root-store';
+import {
+  ProcessingTypeStoreActions,
+  ProcessingTypeStoreReducer,
+  RootStoreState,
+  StudyStoreReducer
+} from '@app/root-store';
 import { NgrxRuntimeChecks } from '@app/root-store/root-store.module';
 import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
@@ -12,7 +17,6 @@ import { MockActivatedRoute } from '@test/mocks';
 import { cold } from 'jasmine-marbles';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { ProcessingAnnotationTypeAddContainerComponent } from './processing-annotation-type-add.container';
-
 
 describe('ProcessingAnnotationTypeAddContainerComponent', () => {
   let component: ProcessingAnnotationTypeAddContainerComponent;
@@ -30,10 +34,11 @@ describe('ProcessingAnnotationTypeAddContainerComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            'study': StudyStoreReducer.reducer,
+            study: StudyStoreReducer.reducer,
             'processing-type': ProcessingTypeStoreReducer.reducer
           },
-          NgrxRuntimeChecks),
+          NgrxRuntimeChecks
+        ),
         ToastrModule.forRoot()
       ],
       providers: [
@@ -42,12 +47,9 @@ describe('ProcessingAnnotationTypeAddContainerComponent', () => {
           useValue: mockActivatedRoute
         }
       ],
-      declarations: [
-        ProcessingAnnotationTypeAddContainerComponent
-      ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
-      .compileComponents();
+      declarations: [ProcessingAnnotationTypeAddContainerComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -73,10 +75,12 @@ describe('ProcessingAnnotationTypeAddContainerComponent', () => {
     fixture.detectChanges();
 
     expect(storeListener.mock.calls.length).toBe(1);
-    expect(storeListener.mock.calls[0][0]).toEqual(new ProcessingTypeStoreActions.GetProcessingTypeRequest({
-      studySlug: study.slug,
-      processingTypeSlug: processingType.slug
-    }));
+    expect(storeListener.mock.calls[0][0]).toEqual(
+      new ProcessingTypeStoreActions.GetProcessingTypeRequest({
+        studySlug: study.slug,
+        processingTypeSlug: processingType.slug
+      })
+    );
   });
 
   it('assigns the processing type when it is added to the store', () => {
@@ -93,19 +97,18 @@ describe('ProcessingAnnotationTypeAddContainerComponent', () => {
     ];
 
     testData.forEach((testInfo, index) => {
-      const { study, processingType } = (testInfo.path === 'annotationAdd')
-        ? createFixtureEntitiesForAdd() : createFixtureEntitiesForUpdate();
+      const { study, processingType } =
+        testInfo.path === 'annotationAdd' ? createFixtureEntitiesForAdd() : createFixtureEntitiesForUpdate();
       component.ngOnInit();
       fixture.detectChanges();
 
       ngZone.run(() => component.onCancel());
       expect(routerListener.mock.calls.length).toBe(index + 1);
-      expect(routerListener.mock.calls[index][0]).toEqual([ testInfo.returnPath ]);
+      expect(routerListener.mock.calls[index][0]).toEqual([testInfo.returnPath]);
     });
   });
 
   describe('when submitting', () => {
-
     it('on valid submission', async(() => {
       jest.spyOn(store, 'dispatch');
       jest.spyOn(toastr, 'success').mockReturnValue(null);
@@ -114,19 +117,21 @@ describe('ProcessingAnnotationTypeAddContainerComponent', () => {
       const annotationType = new AnnotationType().deserialize(factory.annotationType());
       component.annotationType = annotationType;
       const { study, processingType } = createFixtureEntitiesForAdd();
-      const expectedAction =
-        new ProcessingTypeStoreActions.UpdateProcessingTypeAddOrUpdateAnnotationTypeRequest({
+      const expectedAction = new ProcessingTypeStoreActions.UpdateProcessingTypeAddOrUpdateAnnotationTypeRequest(
+        {
           processingType,
           annotationType
-        });
+        }
+      );
 
       component.onSubmit(annotationType);
       expect(store.dispatch).toHaveBeenCalledWith(expectedAction);
 
       expect(component.isSaving$).toBeObservable(cold('b', { b: true }));
 
-      ngZone.run(() => store.dispatch(
-        new ProcessingTypeStoreActions.UpdateProcessingTypeSuccess({ processingType })));
+      ngZone.run(() =>
+        store.dispatch(new ProcessingTypeStoreActions.UpdateProcessingTypeSuccess({ processingType }))
+      );
 
       fixture.whenStable().then(() => {
         fixture.detectChanges();
@@ -156,7 +161,7 @@ describe('ProcessingAnnotationTypeAddContainerComponent', () => {
         {
           status: 404,
           error: {
-              message: 'simulated error'
+            message: 'simulated error'
           }
         },
         {
@@ -171,8 +176,10 @@ describe('ProcessingAnnotationTypeAddContainerComponent', () => {
       jest.spyOn(router, 'navigate');
 
       testData.forEach(testInfo => {
-        const { study, processingType } = (testInfo.path === 'annotationAdd')
-          ? createFixtureEntitiesForAdd() : createFixtureEntitiesForUpdate();
+        const { study, processingType } =
+          testInfo.path === 'annotationAdd'
+            ? createFixtureEntitiesForAdd()
+            : createFixtureEntitiesForUpdate();
         component.ngOnInit();
 
         store.dispatch(new ProcessingTypeStoreActions.GetProcessingTypeSuccess({ processingType }));
@@ -197,19 +204,17 @@ describe('ProcessingAnnotationTypeAddContainerComponent', () => {
         });
       });
     }));
-
   });
 
-  function createFixtureEntitiesForAdd(): { study: Study, processingType: ProcessingType } {
+  function createFixtureEntitiesForAdd(): { study: Study; processingType: ProcessingType } {
     const processingType = new ProcessingType().deserialize(factory.processingType());
     createFixtureEntities(processingType);
     return createFixtureEntities(processingType);
   }
 
-  function createFixtureEntitiesForUpdate(): { study: Study, processingType: ProcessingType } {
-    const annotationTypes = [ factory.annotationType() ];
-    const processingType =
-      new ProcessingType().deserialize(factory.processingType({ annotationTypes }));
+  function createFixtureEntitiesForUpdate(): { study: Study; processingType: ProcessingType } {
+    const annotationTypes = [factory.annotationType()];
+    const processingType = new ProcessingType().deserialize(factory.processingType({ annotationTypes }));
     return createFixtureEntities(processingType);
   }
 
@@ -242,8 +247,8 @@ describe('ProcessingAnnotationTypeAddContainerComponent', () => {
       }
     }));
 
-    const annotationTypeId = (processingType.annotationTypes.length > 0)
-      ? processingType.annotationTypes[0].id : undefined;
+    const annotationTypeId =
+      processingType.annotationTypes.length > 0 ? processingType.annotationTypes[0].id : undefined;
 
     mockActivatedRoute.spyOnSnapshot(() => ({
       params: {

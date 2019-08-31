@@ -12,7 +12,6 @@ import { CollectedSpecimenDefinitionAddComponent } from './collected-specimen-de
 import { NgrxRuntimeChecks } from '@app/root-store/root-store.module';
 
 describe('CollectedSpecimenDefinitionAddComponent', () => {
-
   let factory: Factory;
   let component: CollectedSpecimenDefinitionAddComponent;
   let fixture: ComponentFixture<CollectedSpecimenDefinitionAddComponent>;
@@ -25,17 +24,16 @@ describe('CollectedSpecimenDefinitionAddComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            'auth': AuthStoreReducer.reducer,
-            'spinner': SpinnerStoreReducer.reducer
+            auth: AuthStoreReducer.reducer,
+            spinner: SpinnerStoreReducer.reducer
           },
           NgrxRuntimeChecks
         ),
         ToastrModule.forRoot()
       ],
-      declarations: [ CollectedSpecimenDefinitionAddComponent ],
+      declarations: [CollectedSpecimenDefinitionAddComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -66,10 +64,7 @@ describe('CollectedSpecimenDefinitionAddComponent', () => {
       }
     ];
 
-    [
-      eventType.specimenDefinitions[0],
-      new CollectedSpecimenDefinition()
-    ].forEach(specimenDefinition => {
+    [eventType.specimenDefinitions[0], new CollectedSpecimenDefinition()].forEach(specimenDefinition => {
       component.specimenDefinition = specimenDefinition;
       fixture.detectChanges();
 
@@ -79,7 +74,6 @@ describe('CollectedSpecimenDefinitionAddComponent', () => {
         expect(testInfo.emitter.emit).toHaveBeenCalled();
       });
     });
-
   });
 
   it('specimen definition can be assigned using change detection', () => {
@@ -100,10 +94,8 @@ describe('CollectedSpecimenDefinitionAddComponent', () => {
   function eventTypeForTest(): CollectionEventType {
     return new CollectionEventType().deserialize({
       ...factory.collectionEventType({
-        specimenDefinitions: [ factory.collectedSpecimenDefinition() ]
+        specimenDefinitions: [factory.collectedSpecimenDefinition()]
       })
     });
   }
-
-
 });

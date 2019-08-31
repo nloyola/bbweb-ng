@@ -11,7 +11,6 @@ import * as ParticipantActions from './participant.actions';
 import { ParticipantStoreEffects } from './participant.effects';
 
 describe('participant-store effects', () => {
-
   let effects: ParticipantStoreEffects;
   let actions: Observable<any>;
   let participantService: ParticipantService;
@@ -19,13 +18,8 @@ describe('participant-store effects', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        HttpClientTestingModule
-      ],
-      providers: [
-        ParticipantStoreEffects,
-        provideMockActions(() => actions)
-      ]
+      imports: [HttpClientTestingModule],
+      providers: [ParticipantStoreEffects, provideMockActions(() => actions)]
     });
 
     effects = TestBed.get(ParticipantStoreEffects);
@@ -33,7 +27,6 @@ describe('participant-store effects', () => {
   });
 
   describe('addParticipantRequestEffect', () => {
-
     it('should respond with success', () => {
       const participant = new Participant().deserialize(factory.participant());
       const action = ParticipantActions.addParticipantRequest({ participant });
@@ -66,9 +59,7 @@ describe('participant-store effects', () => {
   });
 
   describe('getParticipantRequestEffect', () => {
-
     describe('when using participant slug', () => {
-
       it('should respond with success', () => {
         const participant = new Participant().deserialize(factory.participant());
         const action = ParticipantActions.getParticipantRequest({ slug: participant.slug });
@@ -98,11 +89,9 @@ describe('participant-store effects', () => {
 
         expect(effects.getRequest$).toBeObservable(expected);
       });
-
     });
 
     describe('when using participant uniqueId', () => {
-
       it('should respond with success', () => {
         const study = factory.study();
         const participant = new Participant().deserialize(factory.participant());
@@ -134,7 +123,6 @@ describe('participant-store effects', () => {
 
         expect(effects.getRequest$).toBeObservable(expected);
       });
-
     });
 
     it('throws error when invalid parameters are used', () => {
@@ -150,7 +138,6 @@ describe('participant-store effects', () => {
   });
 
   describe('updateRequestEffect', () => {
-
     let participant: Participant;
     let action: Action;
     let participantListener: any;
@@ -187,5 +174,4 @@ describe('participant-store effects', () => {
       expect(effects.updateRequest$).toBeObservable(cold('--b', { b: completion }));
     });
   });
-
 });

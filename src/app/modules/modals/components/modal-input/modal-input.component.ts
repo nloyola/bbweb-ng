@@ -6,14 +6,13 @@ import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
   styleUrls: ['./modal-input.component.scss']
 })
 export class ModalInputComponent {
-
   @Input() modalInputValid = true;
   @Input() cancelButtonShow = true;
 
   @Output() confirm = new EventEmitter<any>();
   @Output() dismiss = new EventEmitter<any>();
 
-  constructor() { }
+  constructor() {}
 
   onConfirm(): void {
     this.confirm.emit(null);
@@ -22,5 +21,4 @@ export class ModalInputComponent {
   onDismiss(): void {
     this.dismiss.emit(null);
   }
-
 }

@@ -26,5 +26,4 @@ export const UserStateUIMap = new Map<UserState, EntityUI>([
       iconClass: 'danger-icon'
     }
   ]
-
 ]);

@@ -9,7 +9,6 @@ import { cold } from 'jasmine-marbles';
 import { UserResolver } from './user-resolver.service';
 
 describe('UserResolver', () => {
-
   let resolver: UserResolver;
   let store: Store<RootStoreState.State>;
   let factory: Factory;
@@ -20,9 +19,10 @@ describe('UserResolver', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            'user': UserStoreReducer.reducer
+            user: UserStoreReducer.reducer
           },
-          NgrxRuntimeChecks)
+          NgrxRuntimeChecks
+        )
       ]
     });
 
@@ -72,5 +72,4 @@ describe('UserResolver', () => {
 
     expect(routerListener.mock.calls.length).toBe(1);
   });
-
 });

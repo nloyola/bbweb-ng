@@ -9,15 +9,10 @@ describe('SpecimenDefinitionRemoveComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [
-        NgbModule
-      ],
-      providers: [
-        NgbActiveModal
-      ],
-      declarations: [ SpecimenDefinitionRemoveComponent ]
-    })
-    .compileComponents();
+      imports: [NgbModule],
+      providers: [NgbActiveModal],
+      declarations: [SpecimenDefinitionRemoveComponent]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

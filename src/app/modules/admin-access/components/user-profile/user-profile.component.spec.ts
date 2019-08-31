@@ -35,10 +35,11 @@ describe('UserProfileComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            'user': UserStoreReducer.reducer,
-            'spinner': SpinnerStoreReducer.reducer
+            user: UserStoreReducer.reducer,
+            spinner: SpinnerStoreReducer.reducer
           },
-          NgrxRuntimeChecks),
+          NgrxRuntimeChecks
+        ),
         ToastrModule.forRoot()
       ],
       providers: [
@@ -56,10 +57,9 @@ describe('UserProfileComponent', () => {
           }
         }
       ],
-      declarations: [ UserProfileComponent ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
-      .compileComponents();
+      declarations: [UserProfileComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -79,7 +79,7 @@ describe('UserProfileComponent', () => {
 
     const newNameAndSlug = factory.nameAndSlug();
     const userWithNewName = new User().deserialize({
-      ...user as any,
+      ...(user as any),
       ...newNameAndSlug
     });
 
@@ -96,11 +96,10 @@ describe('UserProfileComponent', () => {
     fixture.detectChanges();
 
     expect(routerListener.mock.calls.length).toBe(1);
-    expect(routerListener.mock.calls[0][0]).toEqual([ '..', userWithNewName.slug ]);
+    expect(routerListener.mock.calls[0][0]).toEqual(['..', userWithNewName.slug]);
   }));
 
   describe('when updating attributes', () => {
-
     const context: EntityUpdateComponentBehaviour.Context<UserProfileComponent> = {} as any;
 
     beforeEach(() => {
@@ -112,20 +111,20 @@ describe('UserProfileComponent', () => {
       context.dispatchSuccessAction = () => {
         store.dispatch(UserStoreActions.updateUserSuccess({ user }));
       };
-      context.createExpectedFailureAction =
-        (error) => UserStoreActions.updateUserFailure({ error });
+      context.createExpectedFailureAction = error => UserStoreActions.updateUserFailure({ error });
       context.duplicateAttibuteValueError = 'EmailNotAvailable: user with email already exists';
     });
 
     describe('when updating name', () => {
-
       beforeEach(() => {
         const newName = factory.stringNext();
         context.modalReturnValue = { result: Promise.resolve(newName) };
-        context.updateEntity = () => { component.updateName(); };
+        context.updateEntity = () => {
+          component.updateName();
+        };
 
         const userWithUpdatedSlug = new User().deserialize({
-          ...user as any,
+          ...(user as any),
           slug: factory.slugify(newName),
           name: newName
         });
@@ -141,15 +140,15 @@ describe('UserProfileComponent', () => {
       });
 
       EntityUpdateComponentBehaviour.sharedBehaviour(context);
-
     });
 
     describe('when updating email', () => {
-
       beforeEach(() => {
         const newValue = faker.internet.email();
         context.modalReturnValue = { result: Promise.resolve(newValue) };
-        context.updateEntity = () => { component.updateEmail(); };
+        context.updateEntity = () => {
+          component.updateEmail();
+        };
         context.expectedSuccessAction = UserStoreActions.updateUserRequest({
           user,
           attributeName: 'email',
@@ -158,18 +157,18 @@ describe('UserProfileComponent', () => {
       });
 
       EntityUpdateComponentBehaviour.sharedBehaviour(context);
-
     });
 
     describe('when updating password', () => {
-
       beforeEach(() => {
         const newValue = {
           currentPassword: faker.lorem.word(),
           newPassword: faker.lorem.word()
         };
         context.modalReturnValue = { result: Promise.resolve(newValue) };
-        context.updateEntity = () => { component.updatePassword(); };
+        context.updateEntity = () => {
+          component.updatePassword();
+        };
         context.expectedSuccessAction = UserStoreActions.updateUserRequest({
           user,
           attributeName: 'password',
@@ -178,15 +177,15 @@ describe('UserProfileComponent', () => {
       });
 
       EntityUpdateComponentBehaviour.sharedBehaviour(context);
-
     });
 
     describe('when updating avatar URL', () => {
-
       beforeEach(() => {
         const newValue = faker.internet.url();
         context.modalReturnValue = { result: Promise.resolve(newValue) };
-        context.updateEntity = () => { component.updateAvatarUrl(); };
+        context.updateEntity = () => {
+          component.updateAvatarUrl();
+        };
         context.expectedSuccessAction = UserStoreActions.updateUserRequest({
           user,
           attributeName: 'avatarUrl',
@@ -195,15 +194,15 @@ describe('UserProfileComponent', () => {
       });
 
       EntityUpdateComponentBehaviour.sharedBehaviour(context);
-
     });
 
     describe('when a user is ACTIVATED', () => {
-
       beforeEach(() => {
         const newValue = 'activate';
         context.modalReturnValue = undefined;
-        context.updateEntity = () => { component.activate(); };
+        context.updateEntity = () => {
+          component.activate();
+        };
         context.expectedSuccessAction = UserStoreActions.updateUserRequest({
           user,
           attributeName: 'state',
@@ -212,15 +211,15 @@ describe('UserProfileComponent', () => {
       });
 
       EntityUpdateComponentBehaviour.sharedBehaviour(context);
-
     });
 
     describe('when a user is LOCKED', () => {
-
       beforeEach(() => {
         const newValue = 'lock';
         context.modalReturnValue = undefined;
-        context.updateEntity = () => { component.lock(); };
+        context.updateEntity = () => {
+          component.lock();
+        };
         context.expectedSuccessAction = UserStoreActions.updateUserRequest({
           user,
           attributeName: 'state',
@@ -229,15 +228,15 @@ describe('UserProfileComponent', () => {
       });
 
       EntityUpdateComponentBehaviour.sharedBehaviour(context);
-
     });
 
     describe('when a user is UNLOCKED', () => {
-
       beforeEach(() => {
         const newValue = 'unlock';
         context.modalReturnValue = undefined;
-        context.updateEntity = () => { component.unlock(); };
+        context.updateEntity = () => {
+          component.unlock();
+        };
         context.expectedSuccessAction = UserStoreActions.updateUserRequest({
           user,
           attributeName: 'state',
@@ -246,8 +245,6 @@ describe('UserProfileComponent', () => {
       });
 
       EntityUpdateComponentBehaviour.sharedBehaviour(context);
-
     });
-
   });
 });

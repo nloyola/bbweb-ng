@@ -8,7 +8,6 @@ import { ModalInputBaseComponent } from '../modal-input-base.component';
   styleUrls: ['./modal-input-number.component.scss']
 })
 export class ModalInputNumberComponent extends ModalInputBaseComponent<number> implements OnInit, OnDestroy {
-
   constructor(formBuilder: FormBuilder) {
     super(formBuilder);
   }
@@ -19,5 +18,4 @@ export class ModalInputNumberComponent extends ModalInputBaseComponent<number> i
     }
     super.ngOnInit();
   }
-
 }

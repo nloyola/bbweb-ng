@@ -23,9 +23,11 @@
             <strong i18n>Description</strong>
           </div>
           <div class="col-md-9">
-            <app-truncate-toggle [text]="specimenDefinition.description"
-                                 [toggleLength]="60"
-                                 [textEmptyWarning]="'Description not entered yet.'">
+            <app-truncate-toggle
+              [text]="specimenDefinition.description"
+              [toggleLength]="60"
+              [textEmptyWarning]="'Description not entered yet.'"
+            >
             </app-truncate-toggle>
           </div>
         </div>
@@ -82,14 +84,11 @@
           </div>
         </div>
       </li>
-
     </ul>
   </div>
 </div>
 <div class="modal-footer">
-  <button class="btn btn-primary"
-          type="button"
-          (click)="activeModal.close()">
+  <button class="btn btn-primary" type="button" (click)="activeModal.close()">
     OK
   </button>
 </div>

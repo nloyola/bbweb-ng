@@ -6,7 +6,6 @@ import { StoreModule } from '@ngrx/store';
 import { NgrxRuntimeChecks } from '@app/root-store/root-store.module';
 
 describe('StudiesAdminComponent', () => {
-
   let component: StudiesAdminComponent;
   let fixture: ComponentFixture<StudiesAdminComponent>;
 
@@ -15,9 +14,10 @@ describe('StudiesAdminComponent', () => {
       imports: [
         StoreModule.forRoot(
           {
-            'study': StudyStoreReducer.reducer
+            study: StudyStoreReducer.reducer
           },
-          NgrxRuntimeChecks)
+          NgrxRuntimeChecks
+        )
       ],
       declarations: [StudiesAdminComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
@@ -31,5 +31,4 @@ describe('StudiesAdminComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
-
 });

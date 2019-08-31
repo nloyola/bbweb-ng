@@ -1,8 +1,10 @@
 <div class="row" *ngIf="participant$ | async as participant">
   <div class="col-md-3">
-    <app-event-add-select [participant]="participant"
-                          (addSelected)="addEventSelected($event)"
-                          (selected)="eventSelected($event)">
+    <app-event-add-select
+      [participant]="participant"
+      (addSelected)="addEventSelected($event)"
+      (selected)="eventSelected($event)"
+    >
     </app-event-add-select>
   </div>
   <div class="col-md-9">

@@ -18,22 +18,11 @@ describe('ModalInputAnnotationComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [
-        FormsModule,
-        ReactiveFormsModule,
-        OwlDateTimeModule,
-        OwlNativeDateTimeModule
-      ],
-      providers: [
-        NgbActiveModal
-      ],
-      declarations: [
-        ModalInputAnnotationComponent,
-        AnnotationsAddSubformComponent
-      ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
-      .compileComponents();
+      imports: [FormsModule, ReactiveFormsModule, OwlDateTimeModule, OwlNativeDateTimeModule],
+      providers: [NgbActiveModal],
+      declarations: [ModalInputAnnotationComponent, AnnotationsAddSubformComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -50,14 +39,13 @@ describe('ModalInputAnnotationComponent', () => {
   });
 
   it('for modalInputValid$', fakeAsync(() => {
-    const testData = [
-      { value: factory.stringNext(), expected: true },
-      { value: '',                   expected: false }
-    ];
-    const annotationType = new AnnotationType().deserialize(factory.annotationType({
-      valueType: ValueTypes.Text,
-      required: true
-    }));
+    const testData = [{ value: factory.stringNext(), expected: true }, { value: '', expected: false }];
+    const annotationType = new AnnotationType().deserialize(
+      factory.annotationType({
+        valueType: ValueTypes.Text,
+        required: true
+      })
+    );
     const { annotation } = createAnnotation({ annotationType });
     component.annotation = annotation;
     fixture.detectChanges();
@@ -82,7 +70,6 @@ describe('ModalInputAnnotationComponent', () => {
   });
 
   describe('when the user presses OK', () => {
-
     it('closes the modal and passes an annotation', () => {
       const closeListener = jest.fn();
       const mockModal = {
@@ -118,12 +105,12 @@ describe('ModalInputAnnotationComponent', () => {
 
       component.annotationsGroup.setControl(
         'annotations',
-        AnnotationsAddSubformComponent.buildSubForm([ annotation, annotation ], null));
+        AnnotationsAddSubformComponent.buildSubForm([annotation, annotation], null)
+      );
       expect(() => {
         component.confirm();
       }).toThrowError(/there should only be one annotation being modified/);
     });
-
   });
 
   it('dismiss closes the modal', () => {
@@ -144,5 +131,4 @@ describe('ModalInputAnnotationComponent', () => {
   function createAnnotation(options: AnnotationSpecCommon.AnnotationOptions = {}) {
     return AnnotationSpecCommon.createAnnotation(options, factory);
   }
-
 });

@@ -8,9 +8,8 @@ describe('FilterValueInputComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ FilterValueInputComponent ]
-    })
-    .compileComponents();
+      declarations: [FilterValueInputComponent]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

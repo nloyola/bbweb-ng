@@ -1,9 +1,21 @@
-import { ConcurrencySafeEntity, EntityInfoAndState, HasDescription, HasName, HasSlug, IConcurrencySafeEntity, IEntityInfo, IEntityInfoAndState, IEntitySet, JSONArray, JSONObject, Location } from '@app/domain';
+import {
+  ConcurrencySafeEntity,
+  EntityInfoAndState,
+  HasDescription,
+  HasName,
+  HasSlug,
+  IConcurrencySafeEntity,
+  IEntityInfo,
+  IEntityInfoAndState,
+  IEntitySet,
+  JSONArray,
+  JSONObject,
+  Location
+} from '@app/domain';
 import { Study, StudyState, StudyStateInfo } from '@app/domain/studies';
 import { CentreState } from './centre-state.enum';
 
 export interface ICentre extends IConcurrencySafeEntity, HasSlug, HasName, HasDescription {
-
   /**
    * The state can be one of: enabled or disabled.
    */
@@ -24,7 +36,6 @@ export type ICentreInfoSet = IEntitySet<ICentre>;
  * A Centre represents a collection of participants and specimens collected for a particular research centre.
  */
 export class Centre extends ConcurrencySafeEntity implements ICentre {
-
   slug: string;
   name: string;
   description: string | null;
@@ -42,8 +53,9 @@ export class Centre extends ConcurrencySafeEntity implements ICentre {
     }
 
     if (input.studyNames) {
-      this.studyNames = input.studyNames
-        .map(sn => new EntityInfoAndState<Study, StudyState>().deserialize(sn));
+      this.studyNames = input.studyNames.map(sn =>
+        new EntityInfoAndState<Study, StudyState>().deserialize(sn)
+      );
     }
 
     if (input.locations) {
@@ -58,7 +70,7 @@ export class Centre extends ConcurrencySafeEntity implements ICentre {
    * @returns {boolean} <code>true</code> if the centre is in <code>disabled</code> state.
    */
   isDisabled(): boolean {
-    return (this.state === CentreState.Disabled);
+    return this.state === CentreState.Disabled;
   }
 
   /**
@@ -67,7 +79,7 @@ export class Centre extends ConcurrencySafeEntity implements ICentre {
    * @returns {boolean} <code>true</code> if the centre is in <code>enabled</code> state.
    */
   isEnabled(): boolean {
-    return (this.state === CentreState.Enabled);
+    return this.state === CentreState.Enabled;
   }
 
   hasStudies(): boolean {
@@ -77,5 +89,4 @@ export class Centre extends ConcurrencySafeEntity implements ICentre {
   hasLocations(): boolean {
     return this.locations.length > 0;
   }
-
 }

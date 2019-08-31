@@ -8,9 +8,20 @@ import { ActivatedRoute } from '@angular/router';
 import { SearchParams } from '@app/domain';
 import { Centre } from '@app/domain/centres';
 import { Study, StudyState, StudyStateInfo, StudyStateUIMap } from '@app/domain/studies';
-import { CentreStoreActions, CentreStoreReducer, RootStoreState, StudyStoreActions, NgrxRuntimeChecks } from '@app/root-store';
+import {
+  CentreStoreActions,
+  CentreStoreReducer,
+  RootStoreState,
+  StudyStoreActions,
+  NgrxRuntimeChecks
+} from '@app/root-store';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
-import { NgbModal, NgbModule, NgbTypeaheadModule, NgbTypeaheadSelectItemEvent } from '@ng-bootstrap/ng-bootstrap';
+import {
+  NgbModal,
+  NgbModule,
+  NgbTypeaheadModule,
+  NgbTypeaheadSelectItemEvent
+} from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
 import { MockActivatedRoute } from '@test/mocks';
@@ -39,10 +50,11 @@ describe('CentreStudiesComponent', () => {
         NgbTypeaheadModule,
         StoreModule.forRoot(
           {
-            'centre': CentreStoreReducer.reducer,
-            'spinner': SpinnerStoreReducer.reducer
+            centre: CentreStoreReducer.reducer,
+            spinner: SpinnerStoreReducer.reducer
           },
-          NgrxRuntimeChecks),
+          NgrxRuntimeChecks
+        ),
         ToastrModule.forRoot()
       ],
       providers: [
@@ -51,10 +63,9 @@ describe('CentreStudiesComponent', () => {
           useValue: mockActivatedRoute
         }
       ],
-      declarations: [ CentreStudiesComponent ],
+      declarations: [CentreStudiesComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
-    })
-      .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -88,7 +99,8 @@ describe('CentreStudiesComponent', () => {
     expect(storeListener.mock.calls[0][0]).toEqual(
       StudyStoreActions.searchStudiesRequest({
         searchParams: {} as SearchParams
-      }));
+      })
+    );
   }));
 
   it('study state label is valid', () => {
@@ -115,7 +127,7 @@ describe('CentreStudiesComponent', () => {
     const study = new Study().deserialize(factory.study());
     const storeListener = jest.spyOn(store, 'dispatch');
 
-    component.studyAddTypeahead.onEntitySelected({ item: { id: study.id }} as NgbTypeaheadSelectItemEvent);
+    component.studyAddTypeahead.onEntitySelected({ item: { id: study.id } } as NgbTypeaheadSelectItemEvent);
 
     expect(storeListener.mock.calls.length).toBe(1);
     expect(storeListener.mock.calls[0][0]).toEqual(
@@ -123,11 +135,11 @@ describe('CentreStudiesComponent', () => {
         centre,
         attributeName: 'studyAdd',
         value: study.id
-      }));
+      })
+    );
   });
 
   describe('when removing a study', () => {
-
     let study: Study;
 
     beforeEach(() => {
@@ -158,7 +170,8 @@ describe('CentreStudiesComponent', () => {
             centre,
             attributeName: 'studyRemove',
             value: study.id
-          }));
+          })
+        );
       });
     }));
 

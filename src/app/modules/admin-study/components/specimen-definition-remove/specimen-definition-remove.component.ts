@@ -8,9 +8,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['./specimen-definition-remove.component.scss']
 })
 export class SpecimenDefinitionRemoveComponent {
-
   @Input() specimenDefinition: SpecimenDefinition;
 
   constructor(public activeModal: NgbActiveModal) {}
-
 }

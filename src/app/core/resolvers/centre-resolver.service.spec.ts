@@ -12,7 +12,6 @@ import { cold } from 'jasmine-marbles';
 import { CentreResolver } from './centre-resolver.service';
 
 describe('CentreResolver', () => {
-
   let ngZone: NgZone;
   let resolver: CentreResolver;
   let store: Store<RootStoreState.State>;
@@ -26,9 +25,10 @@ describe('CentreResolver', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            'centre': CentreStoreReducer.reducer
+            centre: CentreStoreReducer.reducer
           },
-          NgrxRuntimeChecks)
+          NgrxRuntimeChecks
+        )
       ]
     });
 
@@ -73,5 +73,4 @@ describe('CentreResolver', () => {
       expect(resolver.resolve(route, null)).toBeObservable(expected);
     });
   });
-
 });

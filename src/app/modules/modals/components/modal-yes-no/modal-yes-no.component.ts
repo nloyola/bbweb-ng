@@ -7,10 +7,9 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['./modal-yes-no.component.scss']
 })
 export class ModalYesNoComponent {
-
   @Input() modal: NgbActiveModal;
 
-  constructor() { }
+  constructor() {}
 
   confirm(): void {
     this.modal.close();
@@ -19,5 +18,4 @@ export class ModalYesNoComponent {
   dismiss(): void {
     this.modal.dismiss();
   }
-
 }

@@ -16,28 +16,26 @@ interface Permissions {
   styleUrls: ['./access-admin.component.scss']
 })
 export class AccessAdminComponent implements OnInit {
-
   permissions$: Observable<Permissions>;
 
-  constructor(private store$: Store<RootStoreState.State>) { }
+  constructor(private store$: Store<RootStoreState.State>) {}
 
   public ngOnInit() {
-    this.permissions$ = this.store$
-      .pipe(
-        select(AuthStoreSelectors.selectAuthUser),
-        map((user: User) => {
-          if (user === null) {
-            return {
-              user,
-              hasUserAdminRole: false
-            };
-          }
-
+    this.permissions$ = this.store$.pipe(
+      select(AuthStoreSelectors.selectAuthUser),
+      map((user: User) => {
+        if (user === null) {
           return {
-              user,
-              hasUserAdminRole: user.hasUserAdminRole()
+            user,
+            hasUserAdminRole: false
           };
-        }));
-  }
+        }
 
+        return {
+          user,
+          hasUserAdminRole: user.hasUserAdminRole()
+        };
+      })
+    );
+  }
 }

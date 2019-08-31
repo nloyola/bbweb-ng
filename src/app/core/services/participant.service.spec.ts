@@ -6,7 +6,6 @@ import { Factory } from '@test/factory';
 import { ParticipantService } from './participant.service';
 
 describe('ParticipantService', () => {
-
   const BASE_URL = '/api/participants';
 
   let httpMock: HttpTestingController;
@@ -15,9 +14,7 @@ describe('ParticipantService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        HttpClientTestingModule
-      ],
+      imports: [HttpClientTestingModule],
       providers: [ParticipantService]
     });
 
@@ -53,19 +50,21 @@ describe('ParticipantService', () => {
 
     it('handles an error reply correctly', () => {
       service.get(participant.slug).subscribe(
-        () => { fail('should have been an error response'); },
-        err => { expect(err.message).toContain('expected a participant object'); }
+        () => {
+          fail('should have been an error response');
+        },
+        err => {
+          expect(err.message).toContain('expected a participant object');
+        }
       );
 
       const req = httpMock.expectOne(`${BASE_URL}/${participant.slug}`);
       req.flush({ status: 'error', data: undefined });
       httpMock.verify();
     });
-
   });
 
   describe('when adding a participant', () => {
-
     it('request contains correct JSON and reply is handled correctly', () => {
       const rawParticipant = factory.participant();
       const participant = new Participant().deserialize(rawParticipant);
@@ -91,19 +90,21 @@ describe('ParticipantService', () => {
       const participant = new Participant().deserialize(rawParticipant);
 
       service.add(participant).subscribe(
-        () => { fail('should have been an error response'); },
-        err => { expect(err.message).toContain('expected a participant object'); }
+        () => {
+          fail('should have been an error response');
+        },
+        err => {
+          expect(err.message).toContain('expected a participant object');
+        }
       );
 
       const req = httpMock.expectOne(`${BASE_URL}/${participant.study.id}`);
       req.flush({ status: 'error', data: undefined });
       httpMock.verify();
     });
-
   });
 
   describe('for updating a participant', () => {
-
     const annotationType = factory.annotationType();
     const annotation = factory.annotation(null, annotationType);
     let rawParticipant: any;
@@ -130,7 +131,6 @@ describe('ParticipantService', () => {
           url: `${BASE_URL}/annot/${participant.id}/${participant.version}/${annotation.id}`
         }
       ];
-
     });
 
     it('request contains correct JSON and reply is handled correctly', () => {
@@ -171,8 +171,12 @@ describe('ParticipantService', () => {
     it('handles an error reply correctly', () => {
       testData.forEach((testInfo: any) => {
         service.update(participant, testInfo.attribute, testInfo.value).subscribe(
-          () => { fail('should have been an error response'); },
-          err => { expect(err.message).toContain('expected a participant object'); }
+          () => {
+            fail('should have been an error response');
+          },
+          err => {
+            expect(err.message).toContain('expected a participant object');
+          }
         );
 
         const req = httpMock.expectOne(testInfo.url);
@@ -191,10 +195,10 @@ describe('ParticipantService', () => {
         }
       ];
       testData.forEach((testInfo: any) => {
-        expect(() => service.update(participant, testInfo.attribute, testInfo.value))
-          .toThrowError(testInfo.expectedErrMsg);
+        expect(() => service.update(participant, testInfo.attribute, testInfo.value)).toThrowError(
+          testInfo.expectedErrMsg
+        );
       });
     });
   });
-
 });

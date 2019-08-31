@@ -6,21 +6,16 @@ import { AnnotationType, ValueTypes } from '@app/domain/annotations';
 import { Factory } from '@test/factory';
 
 describe('AnnotationTypeAddComponent', () => {
-
   let component: AnnotationTypeAddComponent;
   let fixture: ComponentFixture<AnnotationTypeAddComponent>;
   const factory = new Factory();
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [
-        FormsModule,
-        ReactiveFormsModule
-      ],
-      declarations: [ AnnotationTypeAddComponent ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
-    .compileComponents();
+      imports: [FormsModule, ReactiveFormsModule],
+      declarations: [AnnotationTypeAddComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -36,12 +31,11 @@ describe('AnnotationTypeAddComponent', () => {
 
   it('can be created with an existing annotation', () => {
     Object.values(ValueTypes).forEach(valueType => {
-
       component.annotationType = new AnnotationType().deserialize({
         ...factory.annotationType(),
         id: factory.stringNext(),
         valueType,
-        options: (valueType === ValueTypes.Select) ? ['opt1', 'opt2'] : undefined
+        options: valueType === ValueTypes.Select ? ['opt1', 'opt2'] : undefined
       });
 
       component.ngOnInit();
@@ -84,7 +78,7 @@ describe('AnnotationTypeAddComponent', () => {
       ...factory.annotationType(),
       valueType: ValueTypes.Select,
       maxValueCount: 2,
-      options: [ 'opt1', 'opt2'],
+      options: ['opt1', 'opt2'],
       id: factory.stringNext()
     });
     const testData = [
@@ -106,6 +100,5 @@ describe('AnnotationTypeAddComponent', () => {
       testInfo.componentFunc();
       expect(testInfo.emitter.emit).toHaveBeenCalled();
     });
-
   });
 });

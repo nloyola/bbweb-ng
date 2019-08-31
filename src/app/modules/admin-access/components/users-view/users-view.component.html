@@ -1,29 +1,29 @@
-<app-entity-filters class="mb-2"
-                    [useNameFilter]="true"
-                    [stateData]="stateData"
-                    (filters)="onFiltersUpdated($event)">
+<app-entity-filters
+  class="mb-2"
+  [useNameFilter]="true"
+  [stateData]="stateData"
+  (filters)="onFiltersUpdated($event)"
+>
 </app-entity-filters>
 
 <div class="row">
   <div class="col-sm-12 mt-2">
     <div class="card">
       <div class="card-header bg-default">
-        <app-user-counts [countData]="userCountData$ | async">
-        </app-user-counts>
+        <app-user-counts [countData]="userCountData$ | async"> </app-user-counts>
 
         <span class="float-right d-inline-block" ngbDropdown>
-          <button class="btn btn-sm btn-outline-primary"
-                  type="button"
-                  id="tableMenu"
-                  ngbDropdownToggle>
+          <button class="btn btn-sm btn-outline-primary" type="button" id="tableMenu" ngbDropdownToggle>
             <mat-icon inline="true">more_vert</mat-icon>
           </button>
 
           <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="tableMenu">
             <h5 class="dropdown-header" i18n>Sort by</h5>
-            <a class="dropdown-item"
-               *ngFor="let sortChoice of sortChoices"
-               (click)="sortFieldSelected(sortChoice.id)">
+            <a
+              class="dropdown-item"
+              *ngFor="let sortChoice of sortChoices"
+              (click)="sortFieldSelected(sortChoice.id)"
+            >
               {{ sortChoice.label }}
             </a>
           </div>
@@ -40,8 +40,7 @@
         </div>
       </div>
 
-      <ng-container *ngIf="(userPageInfo$ | async); let userPageInfo">
-
+      <ng-container *ngIf="userPageInfo$ | async; let userPageInfo">
         <div class="card-body" *ngIf="userPageInfo.hasNoEntitiesToDisplay">
           <div class="card-text">
             <div class="alert alert-warning" role="alert">
@@ -69,7 +68,7 @@
             <div class="row">
               <div class="col-md-12">
                 <mat-icon class="mr-1" [ngClass]="user.stateIconClass()">{{ user.stateIcon() }}</mat-icon>
-                <a [routerLink]="[ '/admin/access/users', user.slug ]">
+                <a [routerLink]="['/admin/access/users', user.slug]">
                   <strong>{{ user.name }}</strong>
                 </a>
               </div>
@@ -94,10 +93,12 @@
             </div>
             <div class="row">
               <div class="col-md-12">
-                <app-entity-status [state]="user.stateLabel()"
-                                   [timeAdded]="user.entity.timeAdded"
-                                   [timeModified]="user.entity.timeModified"
-                                   [useBadges]="false">
+                <app-entity-status
+                  [state]="user.stateLabel()"
+                  [timeAdded]="user.entity.timeAdded"
+                  [timeModified]="user.entity.timeModified"
+                  [useBadges]="false"
+                >
                 </app-entity-status>
               </div>
             </div>
@@ -105,20 +106,20 @@
         </ul>
 
         <div class="card-footer" *ngIf="userPageInfo.hasResultsToDisplay">
-          <ngb-pagination size="sm"
-                          [collectionSize]="userPageInfo.total"
-                          [(page)]="currentPage"
-                          [maxSize]="usersLimit"
-                          [pageSize]="usersLimit"
-                          [rotate]="false"
-                          [boundaryLinks]="true"
-                          aria-label="Default pagination"
-                          (pageChange)="paginationPageChanged($event)">
+          <ngb-pagination
+            size="sm"
+            [collectionSize]="userPageInfo.total"
+            [(page)]="currentPage"
+            [maxSize]="usersLimit"
+            [pageSize]="usersLimit"
+            [rotate]="false"
+            [boundaryLinks]="true"
+            aria-label="Default pagination"
+            (pageChange)="paginationPageChanged($event)"
+          >
           </ngb-pagination>
         </div>
-
       </ng-container>
-
     </div>
   </div>
 </div>

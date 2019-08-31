@@ -8,9 +8,7 @@ import { Location } from '@app/domain';
   styleUrls: ['./location-remove.component.scss']
 })
 export class LocationRemoveComponent {
-
   @Input() location: Location;
 
   constructor(public activeModal: NgbActiveModal) {}
-
 }

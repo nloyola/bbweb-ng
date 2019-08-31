@@ -25,8 +25,6 @@ import { AdminAccessModule } from '../admin-access/admin-access.module';
     AdminCentreModule,
     AdminAccessModule
   ],
-  declarations: [
-    AdminComponent
-  ]
+  declarations: [AdminComponent]
 })
-export class AdminModule { }
+export class AdminModule {}

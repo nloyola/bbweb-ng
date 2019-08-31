@@ -1,22 +1,26 @@
 <div class="row">
   <div class="col-md-12">
     <mat-icon [ngClass]="iconClass">{{ icon }}</mat-icon>
-    <a href="#" (click)="!!linkSelected()"><strong>
-      {{ entity.entity.name }}
-    </strong></a>
+    <a href="#" (click)="!!linkSelected()"
+      ><strong>
+        {{ entity.entity.name }}
+      </strong></a
+    >
   </div>
 </div>
 <div class="row" *ngIf="entity.entity.description">
   <div class="col-md-12">
-    {{ entity.entity.description | truncate:100 }}
+    {{ entity.entity.description | truncate: 100 }}
   </div>
 </div>
 <div class="row">
   <div class="col-md-12">
-    <app-entity-status [state]="entity.stateLabel()"
-                       [timeAdded]="entity.entity.timeAdded"
-                       [timeModified]="entity.entity.timeModified"
-                       [useBadges]="false">
+    <app-entity-status
+      [state]="entity.stateLabel()"
+      [timeAdded]="entity.entity.timeAdded"
+      [timeModified]="entity.entity.timeModified"
+      [useBadges]="false"
+    >
     </app-entity-status>
   </div>
 </div>

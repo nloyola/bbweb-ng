@@ -8,10 +8,9 @@ import { ModalInputTextComponent } from '@app/modules/modals/components/modal-in
   styleUrls: ['./modal-input-email.component.scss']
 })
 export class ModalInputEmailComponent extends ModalInputTextComponent implements OnInit {
-
   constructor(formBuilder: FormBuilder) {
     super(formBuilder);
-    this.validators = [ Validators.email ];
+    this.validators = [Validators.email];
   }
 
   ngOnInit() {
@@ -21,5 +20,4 @@ export class ModalInputEmailComponent extends ModalInputTextComponent implements
     };
     super.ngOnInit();
   }
-
 }

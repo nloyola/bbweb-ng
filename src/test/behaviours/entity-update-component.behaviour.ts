@@ -6,7 +6,6 @@ import { Action, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 
 export namespace EntityUpdateComponentBehaviour {
-
   export interface Context<T> {
     fixture: ComponentFixture<T>;
     componentInitialize: () => void;
@@ -25,9 +24,7 @@ export namespace EntityUpdateComponentBehaviour {
   }
 
   export function sharedBehaviour<T>(context: Context<T>) {
-
     describe('(shared behaviour)', () => {
-
       let store: Store<RootStoreState.State>;
       let router: Router;
       let modalService: NgbModal;
@@ -54,7 +51,6 @@ export namespace EntityUpdateComponentBehaviour {
       });
 
       describe('when successful', () => {
-
         const testCommon = () => {
           context.componentInitialize();
           flush();
@@ -79,7 +75,6 @@ export namespace EntityUpdateComponentBehaviour {
           context.fixture.detectChanges();
           expect(toastrSuccessListener.mock.calls.length).toBe(1);
         }));
-
       });
 
       it('informs the user when an error occurs', fakeAsync(() => {
@@ -118,11 +113,7 @@ export namespace EntityUpdateComponentBehaviour {
 
           expect(toastrErrorListener.mock.calls.length).toBe(1);
         });
-
       }));
-
     });
-
   }
-
 }

@@ -14,18 +14,18 @@ import { SpecimenStoreReducer } from './specimen';
 import { UserStoreReducer } from './user';
 
 export interface State {
-  'auth':              AuthStoreReducer.State;
-  'centre':            CentreStoreReducer.State;
-  'event':             EventStoreReducer.State;
-  'event-type':        EventTypeStoreReducer.State;
-  'membership':        MembershipStoreReducer.State;
-  'participant':       ParticipantStoreReducer.State;
-  'processing-type':   ProcessingTypeStoreReducer.State;
-  'role':              RoleStoreReducer.State;
-  'shipment':          ShipmentStoreReducer.State;
+  auth: AuthStoreReducer.State;
+  centre: CentreStoreReducer.State;
+  event: EventStoreReducer.State;
+  'event-type': EventTypeStoreReducer.State;
+  membership: MembershipStoreReducer.State;
+  participant: ParticipantStoreReducer.State;
+  'processing-type': ProcessingTypeStoreReducer.State;
+  role: RoleStoreReducer.State;
+  shipment: ShipmentStoreReducer.State;
   'shipemnt-specimen': ShipmentSpecimenStoreReducer.State;
-  'specimen':          SpecimenStoreReducer.State;
-  'spinner':           SpinnerStoreReducer.State;
-  'study':             StudyStoreReducer.State;
-  'user':              UserStoreReducer.State;
+  specimen: SpecimenStoreReducer.State;
+  spinner: SpinnerStoreReducer.State;
+  study: StudyStoreReducer.State;
+  user: UserStoreReducer.State;
 }

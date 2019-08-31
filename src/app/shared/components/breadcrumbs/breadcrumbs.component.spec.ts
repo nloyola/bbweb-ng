@@ -10,10 +10,7 @@ describe('BreadcrumbsComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        NgbModule,
-        RouterTestingModule
-      ],
+      imports: [NgbModule, RouterTestingModule],
       declarations: [BreadcrumbsComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     });

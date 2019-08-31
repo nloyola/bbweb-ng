@@ -14,22 +14,17 @@ describe('EntitySelectorComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [
-        FormsModule,
-        ReactiveFormsModule,
-        NgbModule
-      ],
-      declarations: [ EntitySelectorComponent ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
-    .compileComponents();
+      imports: [FormsModule, ReactiveFormsModule, NgbModule],
+      declarations: [EntitySelectorComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent<EntitySelectorComponent<TestEntity>>(EntitySelectorComponent);
     component = fixture.componentInstance;
 
-    component.entities = [ new TestEntity() ];
+    component.entities = [new TestEntity()];
     component.isLoading = false;
     component.entitiesLimit = 5;
     component.page = 1;
@@ -60,7 +55,9 @@ describe('EntitySelectorComponent', () => {
   it('changes to page should emit an event', async(() => {
     fixture.detectChanges();
     let eventProduced = false;
-    component.pageChange.subscribe(() => { eventProduced = true; });
+    component.pageChange.subscribe(() => {
+      eventProduced = true;
+    });
 
     component.paginationPageChange(1);
     fixture.whenStable().then(() => {

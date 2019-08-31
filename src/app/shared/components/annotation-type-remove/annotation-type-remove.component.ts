@@ -8,7 +8,6 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['./annotation-type-remove.component.scss']
 })
 export class AnnotationTypeRemoveComponent {
-
   @Input() annotationType: AnnotationType;
 
   constructor(public activeModal: NgbActiveModal) {}

@@ -2,7 +2,6 @@ import { ISpecimenProcessing } from './specimen-processing.model';
 import { JSONObject } from '@app/domain';
 
 export interface IInputSpecimenProcessing extends ISpecimenProcessing {
-
   definitionType: 'collected' | 'processed';
 
   entityId: string;
@@ -17,7 +16,6 @@ export interface IInputSpecimenProcessing extends ISpecimenProcessing {
 }
 
 export class InputSpecimenProcessing implements IInputSpecimenProcessing {
-
   definitionType: 'collected' | 'processed';
   entityId: string;
   specimenDefinitionId: string;
@@ -41,5 +39,4 @@ export class InputSpecimenProcessing implements IInputSpecimenProcessing {
     });
     return this;
   }
-
 }

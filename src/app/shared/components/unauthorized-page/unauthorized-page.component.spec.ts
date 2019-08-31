@@ -10,14 +10,10 @@ describe('UnauthorizedPageComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [
-        NgbModule,
-        RouterTestingModule
-      ],
-      declarations: [ UnauthorizedPageComponent ],
+      imports: [NgbModule, RouterTestingModule],
+      declarations: [UnauthorizedPageComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {

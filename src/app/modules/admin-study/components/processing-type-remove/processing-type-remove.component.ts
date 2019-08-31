@@ -8,9 +8,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['./processing-type-remove.component.scss']
 })
 export class ProcessingTypeRemoveComponent {
-
   @Input() processingType: ProcessingType;
 
- constructor(public activeModal: NgbActiveModal) {}
-
+  constructor(public activeModal: NgbActiveModal) {}
 }

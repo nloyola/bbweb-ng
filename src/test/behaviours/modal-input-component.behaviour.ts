@@ -5,25 +5,22 @@ import { ModalInputOptions } from '@app/modules/modals/models';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 export namespace ModalInputComponentBehaviour {
-
   export interface Context<T, S> {
-    fixture?:             ComponentFixture<T>;
+    fixture?: ComponentFixture<T>;
     componentInitialize?: () => void;
-    assignOptions?:       (options:   ModalInputOptions) => void;
-    assignMockModal?:     (mockModal: NgbActiveModal) => void;
-    assignInputValue?:    (value: S) => void;
-    getValidValue?:       () => S;
-    inputElement?:        () => DebugElement;
-    markInputAsTouched?:  () => void;
-    requiredText?:        string;
-    confirm?:             () => void;
-    dismiss?:             () => void;
+    assignOptions?: (options: ModalInputOptions) => void;
+    assignMockModal?: (mockModal: NgbActiveModal) => void;
+    assignInputValue?: (value: S) => void;
+    getValidValue?: () => S;
+    inputElement?: () => DebugElement;
+    markInputAsTouched?: () => void;
+    requiredText?: string;
+    confirm?: () => void;
+    dismiss?: () => void;
   }
 
   export function sharedBehaviour<T, S>(context: Context<T, S>) {
-
     describe('(modal input shared behaviour)', () => {
-
       it('when a value is required, the modal displays the error message', () => {
         context.assignOptions({ required: true });
         context.fixture.detectChanges();
@@ -71,9 +68,6 @@ export namespace ModalInputComponentBehaviour {
         context.dismiss();
         expect(dismissListener.mock.calls.length).toBe(1);
       });
-
     });
-
   }
-
 }

@@ -1,4 +1,15 @@
-import { ConcurrencySafeEntity, HasDescription, HasName, HasSlug, IConcurrencySafeEntity, IEntityInfo, IEntityInfoAndState, IEntitySet, JSONArray, JSONObject } from '@app/domain';
+import {
+  ConcurrencySafeEntity,
+  HasDescription,
+  HasName,
+  HasSlug,
+  IConcurrencySafeEntity,
+  IEntityInfo,
+  IEntityInfoAndState,
+  IEntitySet,
+  JSONArray,
+  JSONObject
+} from '@app/domain';
 import { AnnotationType } from '@app/domain/annotations/annotation-type.model';
 import { StudyState } from './study-state.enum';
 import { EntityInfoAndState } from '../entity-info-and-state.model';
@@ -7,7 +18,6 @@ import { EntityInfoAndState } from '../entity-info-and-state.model';
  * A Study represents a collection of participants and specimens collected for a particular research study.
  */
 export interface IStudy extends IConcurrencySafeEntity, HasSlug, HasName, HasDescription {
-
   /**
    * The annotation types associated with participants of this study.
    */
@@ -20,7 +30,6 @@ export interface IStudy extends IConcurrencySafeEntity, HasSlug, HasName, HasDes
 }
 
 export class Study extends ConcurrencySafeEntity implements IStudy {
-
   slug: string;
   name: string;
   description: string | null;
@@ -48,7 +57,7 @@ export class Study extends ConcurrencySafeEntity implements IStudy {
    * @returns {boolean} <code>true</code> if the study is in <code>disabled</code> state.
    */
   isDisabled(): boolean {
-    return (this.state === StudyState.Disabled);
+    return this.state === StudyState.Disabled;
   }
 
   /**
@@ -57,7 +66,7 @@ export class Study extends ConcurrencySafeEntity implements IStudy {
    * @returns {boolean} <code>true</code> if the study is in <code>enabled</code> state.
    */
   isEnabled(): boolean {
-    return (this.state === StudyState.Enabled);
+    return this.state === StudyState.Enabled;
   }
 
   /**
@@ -66,9 +75,8 @@ export class Study extends ConcurrencySafeEntity implements IStudy {
    * @returns {boolean} <code>true</code> if the study is in <code>retired</code> state.
    */
   isRetired(): boolean {
-    return (this.state === StudyState.Retired);
+    return this.state === StudyState.Retired;
   }
-
 }
 
 export type IStudyInfo = IEntityInfo<IStudy>;
@@ -78,4 +86,4 @@ export type IStudyInfoSet = IEntitySet<IStudy>;
 export type IStudyStateInfo = IEntityInfoAndState<IStudy, StudyState>;
 
 /* tslint:disable-next-line:max-classes-per-file */
-export class StudyStateInfo extends EntityInfoAndState<Study, StudyState> { }
+export class StudyStateInfo extends EntityInfoAndState<Study, StudyState> {}

@@ -1,5 +1,11 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, NavigationEnd, Router, RouterStateSnapshot, UrlSegment } from '@angular/router';
+import {
+  ActivatedRouteSnapshot,
+  NavigationEnd,
+  Router,
+  RouterStateSnapshot,
+  UrlSegment
+} from '@angular/router';
 import { Crumb } from '@app/domain/crumb';
 // borrowed from:
 //
@@ -19,27 +25,26 @@ _.templateSettings.interpolate = /{{([\s\S]+?)}}/g;
   providedIn: 'root'
 })
 export class BreadcrumbService {
-
   private breadcrumbs = new BehaviorSubject<Crumb[]>([]);
 
   constructor(private router: Router) {
-    this.router.events
-      .pipe(filter(x => x instanceof NavigationEnd))
-      .subscribe(() => {
-        const currentRoot = router.routerState.snapshot.root;
+    this.router.events.pipe(filter(x => x instanceof NavigationEnd)).subscribe(() => {
+      const currentRoot = router.routerState.snapshot.root;
 
-        this.buildBreadcrumbs(currentRoot).pipe(
-          flatMap((x) => x),
-          distinct((x) => x.label),
+      this.buildBreadcrumbs(currentRoot)
+        .pipe(
+          flatMap(x => x),
+          distinct(x => x.label),
           toArray(),
-          flatMap((x) => {
+          flatMap(x => {
             const y = this.postProcess(x);
             return this.wrapIntoObservable<Crumb[]>(y).pipe(first());
-          }))
-          .subscribe((x) => {
-            this.breadcrumbs.next(x);
-          });
-      });
+          })
+        )
+        .subscribe(x => {
+          this.breadcrumbs.next(x);
+        });
+    });
   }
 
   get crumbs$(): Observable<Crumb[]> {
@@ -47,7 +52,7 @@ export class BreadcrumbService {
   }
 
   private postProcess(x: Crumb[]): Crumb[] {
-    if (x.length && (x[0].label !== 'Home')) {
+    if (x.length && x[0].label !== 'Home') {
       return [{ label: 'Home', path: '' }].concat(x);
     }
     return x;
@@ -75,8 +80,8 @@ export class BreadcrumbService {
     const data = route.routeConfig.data;
     const path = this.getFullPath(route);
 
-    let label = typeof (data.breadcrumbs) === 'string'
-      ? data.breadcrumbs : data.breadcrumbs.text || data.text || path;
+    let label =
+      typeof data.breadcrumbs === 'string' ? data.breadcrumbs : data.breadcrumbs.text || data.text || path;
     label = this.stringFormat(label, route.data);
 
     const crumbs: Crumb[] = [{ label: label, path: path }];
@@ -84,9 +89,9 @@ export class BreadcrumbService {
   }
 
   private getFullPath(route: ActivatedRouteSnapshot): string {
-    const relativePath = (segments: UrlSegment[]) => segments.reduce((a, v) => a += '/' + v.path, '');
-    const fullPath =
-      (routes: ActivatedRouteSnapshot[]) => routes.reduce((a, v) => a += relativePath(v.url), '');
+    const relativePath = (segments: UrlSegment[]) => segments.reduce((a, v) => (a += '/' + v.path), '');
+    const fullPath = (routes: ActivatedRouteSnapshot[]) =>
+      routes.reduce((a, v) => (a += relativePath(v.url)), '');
 
     return fullPath(route.pathFromRoot);
   }
@@ -104,12 +109,11 @@ export class BreadcrumbService {
   }
 
   private isPromise(value: any): boolean {
-    return value && (typeof value.then === 'function');
+    return value && typeof value.then === 'function';
   }
 
   private stringFormat(tplt: string, binding: any): string {
     const compiled = _.template(tplt);
     return compiled(binding);
   }
-
 }

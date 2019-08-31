@@ -21,7 +21,7 @@ export enum SpecimenType {
   LITHIUM_HEPARIN_PLASMA = 'Lithium Heparin Plasma',
   MECONIUM_BABY = 'Meconium - BABY',
   NAN3_URINE = 'NaN3 Urine',
-  PAXGENE = 'Paxgene' ,
+  PAXGENE = 'Paxgene',
   PERITONEAL_DIALYSATE = 'Peritoneal Dialysate',
   PLASMA_NA_HEPARIN_DAD = 'Plasma (Na Heparin) - DAD',
   PLASMA = 'Plasma',

@@ -4,7 +4,13 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Study, StudyState } from '@app/domain/studies';
-import { EventTypeStoreReducer, NgrxRuntimeChecks, RootStoreState, StudyStoreActions, StudyStoreReducer } from '@app/root-store';
+import {
+  EventTypeStoreReducer,
+  NgrxRuntimeChecks,
+  RootStoreState,
+  StudyStoreActions,
+  StudyStoreReducer
+} from '@app/root-store';
 import { TruncatePipe } from '@app/shared/pipes';
 import { YesNoPipe } from '@app/shared/pipes/yes-no-pipe';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -17,7 +23,6 @@ import { EventTypesAddAndSelectComponent } from '../event-types-add-and-select/e
 import { StudyCollectionComponent } from './study-collection.component';
 
 describe('StudyCollectionComponent', () => {
-
   let component: StudyCollectionComponent;
   let fixture: ComponentFixture<StudyCollectionComponent>;
   let ngZone: NgZone;
@@ -36,10 +41,11 @@ describe('StudyCollectionComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            'study': StudyStoreReducer.reducer,
+            study: StudyStoreReducer.reducer,
             'event-type': EventTypeStoreReducer.reducer
           },
-          NgrxRuntimeChecks),
+          NgrxRuntimeChecks
+        ),
         ToastrModule.forRoot()
       ],
       providers: [
@@ -55,9 +61,8 @@ describe('StudyCollectionComponent', () => {
         TruncatePipe,
         YesNoPipe
       ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
-    .compileComponents();
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -82,7 +87,6 @@ describe('StudyCollectionComponent', () => {
   });
 
   describe('when user wants to add an event type', () => {
-
     it('changes state if study is disabled', async(() => {
       const study = new Study().deserialize(factory.study());
       expect(study.state).toBe(StudyState.Disabled);
@@ -93,12 +97,12 @@ describe('StudyCollectionComponent', () => {
       fixture.whenStable().then(() => {
         ngZone.run(() => component.addEventTypeSelected());
         expect(routerListener.mock.calls.length).toBe(1);
-        expect(routerListener.mock.calls[0][0]).toEqual([ '../add' ]);
+        expect(routerListener.mock.calls[0][0]).toEqual(['../add']);
       });
     }));
 
     it('throws an error if is study is not disabled', () => {
-      [ StudyState.Enabled, StudyState.Retired ].forEach(state => {
+      [StudyState.Enabled, StudyState.Retired].forEach(state => {
         const studyWrongState = new Study().deserialize({
           ...factory.study(),
           state
@@ -109,7 +113,6 @@ describe('StudyCollectionComponent', () => {
         expect(() => component.addEventTypeSelected()).toThrowError('modifications not allowed');
       });
     });
-
   });
 
   function mockActivatedRouteSnapshot(study: Study): void {

@@ -22,7 +22,6 @@ interface TestEntities {
 }
 
 describe('shipment-specimens.Service', () => {
-
   const BASE_URL = '/api/shipments/specimens';
 
   let httpMock: HttpTestingController;
@@ -31,9 +30,7 @@ describe('shipment-specimens.Service', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        HttpClientTestingModule
-      ],
+      imports: [HttpClientTestingModule],
       providers: [ShipmentSpecimenService]
     });
 
@@ -46,40 +43,41 @@ describe('shipment-specimens.Service', () => {
   });
 
   describe('when requesting a shipment specimen', () => {
-
     it('reply is handled correctly', () => {
       const { specimenData } = createEntities();
       const shipmentSpecimen = specimenData[0].shipmentSpecimen;
       const obs = service.get(shipmentSpecimen.id).subscribe(s => {
         expect(s).toEqual(jasmine.any(ShipmentSpecimen));
       });
-      expect(obs).toBeHttpSuccess(httpMock,
-                                  'GET',
-                                  `${BASE_URL}/${shipmentSpecimen.id}`,
-                                  specimenData[0].rawShipmentSpecimen);
+      expect(obs).toBeHttpSuccess(
+        httpMock,
+        'GET',
+        `${BASE_URL}/${shipmentSpecimen.id}`,
+        specimenData[0].rawShipmentSpecimen
+      );
     });
 
     it('handles an error reply correctly', () => {
       const { rawShipment, shipment, specimenData } = createEntities();
       const shipmentSpecimen = specimenData[0].shipmentSpecimen;
       const obs = service.get(shipmentSpecimen.id);
-      expect(obs).toBeHttpError(httpMock,
-                                'GET',
-                                `${BASE_URL}/${shipmentSpecimen.id}`,
-                                'expected a shipment specimen object');
+      expect(obs).toBeHttpError(
+        httpMock,
+        'GET',
+        `${BASE_URL}/${shipmentSpecimen.id}`,
+        'expected a shipment specimen object'
+      );
     });
-
   });
 
   describe('when searching shipment specimens', () => {
-
     const context: PagedQueryBehaviour.Context<ShipmentSpecimen> = {};
 
     beforeEach(() => {
       const { shipment } = createEntities();
       context.search = (searchParams: SearchParams) => service.search(shipment, searchParams);
       context.url = `${BASE_URL}/${shipment.id}`;
-      context.replyItems = [ factory.shipment() ];
+      context.replyItems = [factory.shipment()];
       context.subscription = (pr: PagedReply<ShipmentSpecimen>) => {
         expect(pr.entities.length).toBe(1);
         expect(pr.entities[0]).toEqual(jasmine.any(ShipmentSpecimen));
@@ -87,11 +85,9 @@ describe('shipment-specimens.Service', () => {
     });
 
     PagedQueryBehaviour.sharedBehaviour(context);
-
   });
 
   describe('for removing a shipment specimen', () => {
-
     it('request contains correct JSON and reply is handled correctly', () => {
       const { specimenData } = createEntities();
       const shipmentSpecimen = specimenData[0].shipmentSpecimen;
@@ -112,9 +108,9 @@ describe('shipment-specimens.Service', () => {
         httpMock,
         'DELETE',
         `${BASE_URL}/${shipmentSpecimen.shipmentId}/${shipmentSpecimen.id}/${shipmentSpecimen.version}`,
-        'expected a shipment specimen object');
+        'expected a shipment specimen object'
+      );
     });
-
   });
 
   function createEntities(): TestEntities {
@@ -134,5 +130,4 @@ describe('shipment-specimens.Service', () => {
       ]
     };
   }
-
 });

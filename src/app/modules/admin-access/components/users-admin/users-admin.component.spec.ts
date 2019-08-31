@@ -14,14 +14,14 @@ describe('UsersAdminComponent', () => {
       imports: [
         StoreModule.forRoot(
           {
-            'user': UserStoreReducer.reducer
+            user: UserStoreReducer.reducer
           },
-          NgrxRuntimeChecks)
+          NgrxRuntimeChecks
+        )
       ],
-      declarations: [ UsersAdminComponent ],
+      declarations: [UsersAdminComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {

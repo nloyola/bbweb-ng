@@ -18,5 +18,4 @@ export const CentreStateUIMap = new Map<CentreState, EntityUI>([
       iconClass: 'success-icon'
     }
   ]
-
 ]);

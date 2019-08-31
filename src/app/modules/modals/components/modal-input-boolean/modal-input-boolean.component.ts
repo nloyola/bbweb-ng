@@ -11,7 +11,6 @@ import { ModalInputBaseComponent } from '../modal-input-base.component';
 })
 export class ModalInputBooleanComponent extends ModalInputBaseComponent<boolean>
   implements OnInit, OnDestroy {
-
   constructor(formBuilder: FormBuilder) {
     super(formBuilder);
   }
@@ -23,5 +22,4 @@ export class ModalInputBooleanComponent extends ModalInputBaseComponent<boolean>
 
     super.ngOnInit();
   }
-
 }

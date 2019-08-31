@@ -13,32 +13,32 @@ import { CollectedSpecimenDefinition, SpecimenDefinition } from '@app/domain/stu
   styleUrls: ['./specimen-definition-add.component.scss']
 })
 export class SpecimenDefinitionAddComponent implements OnInit {
-
   @Input() specimenDefinition: CollectedSpecimenDefinition;
   @Input() subform: FormGroup;
 
-  @ViewChild('nameInput', { static: true}) nameInput: ElementRef;
+  @ViewChild('nameInput', { static: true }) nameInput: ElementRef;
 
   anatomicalSources: string[];
-  anatomicalSourceLabels: { [ key: string]: string };
+  anatomicalSourceLabels: { [key: string]: string };
 
   preservationTypes: string[];
-  preservationTypeLabels: { [ key: string]: string };
+  preservationTypeLabels: { [key: string]: string };
 
   preservationTemperatures: string[];
-  preservationTemperatureLabels: { [ key: string]: string };
+  preservationTemperatureLabels: { [key: string]: string };
 
   specimenTypes: string[];
-  specimenTypeLabels: { [ key: string]: string };
+  specimenTypeLabels: { [key: string]: string };
 
   static buildSubForm(specimenDefinition: SpecimenDefinition): FormGroup {
     const name = specimenDefinition.name ? specimenDefinition.name : '';
     const anatomicalSource = specimenDefinition.anatomicalSourceType
-      ? specimenDefinition.anatomicalSourceType : '';
-    const preservationType = specimenDefinition.preservationType
-      ? specimenDefinition.preservationType : '';
+      ? specimenDefinition.anatomicalSourceType
+      : '';
+    const preservationType = specimenDefinition.preservationType ? specimenDefinition.preservationType : '';
     const preservationTemperature = specimenDefinition.preservationTemperature
-      ? specimenDefinition.preservationTemperature : '';
+      ? specimenDefinition.preservationTemperature
+      : '';
     const specimenType = specimenDefinition.specimenType ? specimenDefinition.specimenType : '';
 
     return new FormGroup({
@@ -99,20 +99,20 @@ export class SpecimenDefinitionAddComponent implements OnInit {
   private createEnumLabels() {
     this.anatomicalSources = Object.values(AnatomicalSource);
     this.anatomicalSourceLabels = {};
-    Object.values(AnatomicalSource).forEach(a => this.anatomicalSourceLabels[a] = a.toUpperCase());
+    Object.values(AnatomicalSource).forEach(a => (this.anatomicalSourceLabels[a] = a.toUpperCase()));
 
     this.preservationTypes = Object.values(PreservationType);
     this.preservationTypeLabels = {};
-    Object.values(PreservationType).forEach(a => this.preservationTypeLabels[a] = a.toUpperCase());
+    Object.values(PreservationType).forEach(a => (this.preservationTypeLabels[a] = a.toUpperCase()));
 
     this.preservationTemperatures = Object.values(PreservationTemperature);
     this.preservationTemperatureLabels = {};
-    Object.values(PreservationTemperature)
-      .forEach(a => this.preservationTemperatureLabels[a] = a.toUpperCase());
+    Object.values(PreservationTemperature).forEach(
+      a => (this.preservationTemperatureLabels[a] = a.toUpperCase())
+    );
 
     this.specimenTypes = Object.values(SpecimenType);
     this.specimenTypeLabels = {};
-    Object.values(SpecimenType).forEach(a => this.specimenTypeLabels[a] = a.toUpperCase());
+    Object.values(SpecimenType).forEach(a => (this.specimenTypeLabels[a] = a.toUpperCase()));
   }
-
 }

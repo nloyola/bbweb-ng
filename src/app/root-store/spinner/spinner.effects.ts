@@ -9,18 +9,17 @@ import * as spinnerActions from './spinner.actions';
 
 @Injectable()
 export class SpinnerEffects {
-
   constructor(private actions$: Actions) {}
 
   @Effect()
   showLoader$ = this.actions$.pipe(
-    filter((action: any) => action && action.showLoader ? action : null),
+    filter((action: any) => (action && action.showLoader ? action : null)),
     map((action: any) => new spinnerActions.ShowSpinner(action))
   );
 
   @Effect()
   hideLoader$ = this.actions$.pipe(
-    filter((action: any) => action && action.triggerAction ? action : null),
+    filter((action: any) => (action && action.triggerAction ? action : null)),
     map((action: any) => new spinnerActions.HideSpinner(action))
   );
 }

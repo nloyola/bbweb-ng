@@ -32,10 +32,11 @@ describe('RoleViewComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            'role': RoleStoreReducer.reducer,
-            'spinner': SpinnerStoreReducer.reducer
+            role: RoleStoreReducer.reducer,
+            spinner: SpinnerStoreReducer.reducer
           },
-          NgrxRuntimeChecks),
+          NgrxRuntimeChecks
+        ),
         ToastrModule.forRoot()
       ],
       providers: [
@@ -43,17 +44,16 @@ describe('RoleViewComponent', () => {
           provide: ActivatedRoute,
           useValue: {
             snapshot: {
-                params: {
-                  slug: role.slug
-                }
+              params: {
+                slug: role.slug
+              }
             }
           }
         }
       ],
-      declarations: [ RoleViewComponent ],
+      declarations: [RoleViewComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -68,7 +68,6 @@ describe('RoleViewComponent', () => {
   });
 
   describe('when adding and removing a user', () => {
-
     let baseContext: EntityWithSubEntityBehaviour.BaseContext = {} as any;
 
     beforeEach(() => {
@@ -95,7 +94,6 @@ describe('RoleViewComponent', () => {
     const user = new User().deserialize(factory.user());
 
     describe('when adding', () => {
-
       const context: EntityWithSubEntityBehaviour.AddContext = {} as any;
 
       beforeEach(() => {
@@ -106,12 +104,13 @@ describe('RoleViewComponent', () => {
           },
           checkAddUpdateRequest: (storeListener: any) => {
             expect(storeListener.mock.calls.length).toBe(1);
-            expect(storeListener.mock.calls[0][0])
-              .toEqual(RoleStoreActions.updateRoleRequest({
+            expect(storeListener.mock.calls[0][0]).toEqual(
+              RoleStoreActions.updateRoleRequest({
                 role,
                 attributeName: 'userAdd',
                 value: user.id
-              }));
+              })
+            );
           }
         });
       });
@@ -120,7 +119,6 @@ describe('RoleViewComponent', () => {
     });
 
     describe('when removing', () => {
-
       const context: EntityWithSubEntityBehaviour.RemoveContext = {} as any;
 
       beforeEach(() => {
@@ -131,17 +129,18 @@ describe('RoleViewComponent', () => {
           },
           checkRemoveUpdateRequest: (storeListener: any) => {
             expect(storeListener.mock.calls.length).toBe(1);
-            expect(storeListener.mock.calls[0][0]).toEqual(RoleStoreActions.updateRoleRequest({
-              role,
-              attributeName: 'userRemove',
-              value: user.id
-            }));
+            expect(storeListener.mock.calls[0][0]).toEqual(
+              RoleStoreActions.updateRoleRequest({
+                role,
+                attributeName: 'userRemove',
+                value: user.id
+              })
+            );
           }
         });
       });
 
       EntityWithSubEntityBehaviour.removeSharedBehaviour(context);
     });
-
   });
 });

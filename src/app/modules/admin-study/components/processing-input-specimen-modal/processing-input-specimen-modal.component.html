@@ -9,11 +9,13 @@
 </div>
 <div class="modal-body" i18n>
   <form [formGroup]="inputSubForm">
-    <app-processing-type-input-subform *ngIf="entityNames$ | async as entityNames"
-                                       [processingType]="processingType"
-                                       [processedDefinitionNames]="entityNames.processed"
-                                       [collectedDefinitionNames]="entityNames.collected"
-                                       [subform]="inputSubForm">
+    <app-processing-type-input-subform
+      *ngIf="entityNames$ | async as entityNames"
+      [processingType]="processingType"
+      [processedDefinitionNames]="entityNames.processed"
+      [collectedDefinitionNames]="entityNames.collected"
+      [subform]="inputSubForm"
+    >
     </app-processing-type-input-subform>
   </form>
 </div>

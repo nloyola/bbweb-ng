@@ -8,19 +8,18 @@ import { ProcessingType } from '@app/domain/studies';
   styleUrls: ['./processing-type-information-subform.component.scss']
 })
 export class ProcessingTypeInformationSubformComponent {
-
   @Input() processingType: ProcessingType;
   @Input() subform: FormGroup;
 
   static buildSubForm(processingType: ProcessingType) {
     return new FormGroup({
-      name: new FormControl(processingType.name, [ Validators.required ]),
+      name: new FormControl(processingType.name, [Validators.required]),
       description: new FormControl(processingType.description),
       enabled: new FormControl(processingType.enabled)
     });
   }
 
-  constructor() { }
+  constructor() {}
 
   get name() {
     return this.subform.get('name');

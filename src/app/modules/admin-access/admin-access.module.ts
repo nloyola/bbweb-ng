@@ -49,10 +49,6 @@ import { UsersViewComponent } from './components/users-view/users-view.component
     MembershipViewComponent,
     MembershipAddComponent
   ],
-  entryComponents: [
-    UserRemoveModalComponent,
-    StudyRemoveModalComponent,
-    CentreRemoveModalComponent
-  ]
+  entryComponents: [UserRemoveModalComponent, StudyRemoveModalComponent, CentreRemoveModalComponent]
 })
-export class AdminAccessModule { }
+export class AdminAccessModule {}

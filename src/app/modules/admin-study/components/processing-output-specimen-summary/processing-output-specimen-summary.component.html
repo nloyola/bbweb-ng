@@ -24,7 +24,9 @@
     <small class="text-muted">
       <span i18n>Preservation Type:</span>
       <strong class="ml-1">
-        {{ output.specimenDefinition.preservationType }} ({{ output.specimenDefinition.preservationTemperature }})
+        {{ output.specimenDefinition.preservationType }} ({{
+          output.specimenDefinition.preservationTemperature
+        }})
       </strong>
     </small>
   </div>
@@ -45,6 +47,6 @@
 </div>
 <div class="row" *ngIf="output.specimenDefinition.description">
   <div class="col-md-12">
-    <p>{{ output.specimenDefinition.description | truncate:100 }}</p>
+    <p>{{ output.specimenDefinition.description | truncate: 100 }}</p>
   </div>
 </div>

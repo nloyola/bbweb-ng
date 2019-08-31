@@ -6,33 +6,23 @@ import { TruncatePipe } from '@app/shared/pipes';
 import { EntitySummaryComponent } from './entity-summary.component';
 
 class TestDomainEntity extends ConcurrencySafeEntity {
-
   name: string;
-
 }
 
 describe('EntitySummaryComponent', () => {
-
   let component: EntitySummaryComponent<TestDomainEntity>;
   let fixture: ComponentFixture<EntitySummaryComponent<TestDomainEntity>>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [
-        RouterTestingModule
-      ],
-      declarations: [
-        EntitySummaryComponent,
-        TruncatePipe
-      ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
-    .compileComponents();
+      imports: [RouterTestingModule],
+      declarations: [EntitySummaryComponent, TruncatePipe],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent<EntitySummaryComponent<TestDomainEntity>>(
-      EntitySummaryComponent);
+    fixture = TestBed.createComponent<EntitySummaryComponent<TestDomainEntity>>(EntitySummaryComponent);
     component = fixture.componentInstance;
   });
 
@@ -49,7 +39,7 @@ describe('EntitySummaryComponent', () => {
 
   it('emits an event when the entity is selected', fakeAsync(() => {
     let entityUI: DomainEntityUI<TestDomainEntity>;
-    component.selected.subscribe((e: DomainEntityUI<TestDomainEntity>) => entityUI = e);
+    component.selected.subscribe((e: DomainEntityUI<TestDomainEntity>) => (entityUI = e));
     component.entity = {
       entity: new TestDomainEntity(),
       stateLabel: () => 'test',

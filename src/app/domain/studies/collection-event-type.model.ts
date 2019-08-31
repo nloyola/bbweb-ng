@@ -6,8 +6,11 @@ import { CollectedSpecimenDefinition } from './collected-specimen-definition.mod
 import { EntityInfo } from '../entity-info.model';
 
 export interface ICollectionEventType
-extends IConcurrencySafeEntity, ProcessingTypeInputEntity, HasSlug, HasName, HasDescription {
-
+  extends IConcurrencySafeEntity,
+    ProcessingTypeInputEntity,
+    HasSlug,
+    HasName,
+    HasDescription {
   /**
    * True if collection events of this type occur more than once for the duration of the study.
    */
@@ -26,12 +29,10 @@ extends IConcurrencySafeEntity, ProcessingTypeInputEntity, HasSlug, HasName, Has
   /**
    * The definitions of the specimens that are collected for this collection event type.
    */
-   specimenDefinitions: CollectedSpecimenDefinition[];
-
+  specimenDefinitions: CollectedSpecimenDefinition[];
 }
 
 export class CollectionEventType extends ConcurrencySafeEntity implements ICollectionEventType {
-
   slug: string;
   name: string;
   description: string | null;
@@ -54,16 +55,16 @@ export class CollectionEventType extends ConcurrencySafeEntity implements IColle
     }
 
     if (input.specimenDefinitions) {
-      this.specimenDefinitions =
-        input.specimenDefinitions.map(sd => new CollectedSpecimenDefinition().deserialize(sd));
+      this.specimenDefinitions = input.specimenDefinitions.map(sd =>
+        new CollectedSpecimenDefinition().deserialize(sd)
+      );
     }
 
     return this;
   }
-
 }
 
 export type IEventTypeInfo = IEntityInfo<ICollectionEventType>;
 
 /* tslint:disable-next-line:max-classes-per-file */
-export class EventTypeInfo extends EntityInfo<CollectionEventType> { }
+export class EventTypeInfo extends EntityInfo<CollectionEventType> {}

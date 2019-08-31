@@ -1,7 +1,6 @@
 import { SpinnerStoreActions } from '@app/root-store/spinner';
 
 describe('spinner-store actions', () => {
-
   it('ShowSpinner', () => {
     const payload = {
       type: 'test-action',
@@ -25,5 +24,4 @@ describe('spinner-store actions', () => {
       payload
     });
   });
-
 });

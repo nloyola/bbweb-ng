@@ -1,20 +1,12 @@
-<div class="card mt-2" *ngIf="(centre$ | async) as centre">
-  <div class="card-header bg-primary text-light"
-       *ngIf="(isLoading$ | async) === false; else showLoading">
+<div class="card mt-2" *ngIf="centre$ | async as centre">
+  <div class="card-header bg-primary text-light" *ngIf="(isLoading$ | async) === false; else showLoading">
     <mat-icon [ngClass]="centre.stateIconClass()">
       {{ centre.stateIcon() }}
     </mat-icon>
     {{ centre.name }}: <small i18n>Locations</small>
 
-    <span class="float-right d-inline-block"
-          *ngIf="centre.isDisabled()"
-          ngbDropdown
-          placement="bottom-right">
-
-      <button class="btn btn-sm btn-light"
-              type="button"
-              id="centreSummaryMenu"
-              ngbDropdownToggle>
+    <span class="float-right d-inline-block" *ngIf="centre.isDisabled()" ngbDropdown placement="bottom-right">
+      <button class="btn btn-sm btn-light" type="button" id="centreSummaryMenu" ngbDropdownToggle>
         <mat-icon inline="true">more_vert</mat-icon>
       </button>
 
@@ -28,7 +20,6 @@
   </div>
 
   <ul class="list-group">
-
     <li class="list-group-item" *ngIf="!centre.entity.hasLocations()">
       <div class="alert alert-warning">
         <mat-icon>warning</mat-icon>
@@ -44,15 +35,18 @@
           <strong>{{ location.name }}</strong>
         </div>
         <div class="col-md-2">
-
-          <span class="float-right d-inline-block"
-                *ngIf="centre.isDisabled()"
-                ngbDropdown
-                placement="bottom-right">
-            <button class="btn btn-sm btn-outline-secondary"
-                    type="button"
-                    id="annotationTypeActions"
-                    ngbDropdownToggle>
+          <span
+            class="float-right d-inline-block"
+            *ngIf="centre.isDisabled()"
+            ngbDropdown
+            placement="bottom-right"
+          >
+            <button
+              class="btn btn-sm btn-outline-secondary"
+              type="button"
+              id="annotationTypeActions"
+              ngbDropdownToggle
+            >
               <mat-icon inline="true">more_vert</mat-icon>
             </button>
 
@@ -73,8 +67,8 @@
         <div class="col-md-12" *ngIf="location.poBoxNumber">
           <small>
             <strong>
-              {{ location.street }}<br>
-              {{ location.city }}, {{ location.province }}, {{ location.postalCode }}<br>
+              {{ location.street }}<br />
+              {{ location.city }}, {{ location.province }}, {{ location.postalCode }}<br />
               {{ location.poBoxNumber }}, {{ location.countryIsoCode }}
             </strong>
           </small>
@@ -82,8 +76,8 @@
         <div class="col-md-12" *ngIf="!location.poBoxNumber">
           <small>
             <strong>
-              {{ location.street }}<br>
-              {{ location.city }}, {{ location.province }}, {{ location.postalCode }}<br>
+              {{ location.street }}<br />
+              {{ location.city }}, {{ location.province }}, {{ location.postalCode }}<br />
               {{ location.countryIsoCode }}
             </strong>
           </small>

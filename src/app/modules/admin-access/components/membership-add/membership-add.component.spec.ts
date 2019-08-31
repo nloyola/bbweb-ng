@@ -5,7 +5,12 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Membership } from '@app/domain/access';
-import { MembershipStoreActions, MembershipStoreReducer, NgrxRuntimeChecks, RootStoreState } from '@app/root-store';
+import {
+  MembershipStoreActions,
+  MembershipStoreReducer,
+  NgrxRuntimeChecks,
+  RootStoreState
+} from '@app/root-store';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
@@ -29,16 +34,16 @@ describe('MembershipAddComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            'membership': MembershipStoreReducer.reducer,
-            'spinner': SpinnerStoreReducer.reducer
+            membership: MembershipStoreReducer.reducer,
+            spinner: SpinnerStoreReducer.reducer
           },
-          NgrxRuntimeChecks),
+          NgrxRuntimeChecks
+        ),
         ToastrModule.forRoot()
       ],
-      declarations: [ MembershipAddComponent ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
-    .compileComponents();
+      declarations: [MembershipAddComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -60,7 +65,6 @@ describe('MembershipAddComponent', () => {
   });
 
   describe('name input validity', () => {
-
     it('is required', () => {
       const errors = component.name.errors || {};
       expect(errors['required']).toBeTruthy();
@@ -71,11 +75,9 @@ describe('MembershipAddComponent', () => {
       const errors = component.name.errors || {};
       expect(errors).toEqual({});
     });
-
   });
 
   describe('when submitting', () => {
-
     it('on valid submission', fakeAsync(() => {
       const membership = new Membership().deserialize(factory.membership());
       spyOn(toastr, 'success').and.returnValue(null);
@@ -135,13 +137,12 @@ describe('MembershipAddComponent', () => {
         component.description.setValue(membership.description);
         component.onSubmit();
 
-        store.dispatch(MembershipStoreActions.addMembershipFailure({ error } as any ));
+        store.dispatch(MembershipStoreActions.addMembershipFailure({ error } as any));
         flush();
         fixture.detectChanges();
         expect(toastrErrorListener.mock.calls.length).toBe(1);
       });
     }));
-
   });
 
   it('on cancel', () => {
@@ -151,5 +152,4 @@ describe('MembershipAddComponent', () => {
     expect(routerListener.mock.calls.length).toBe(1);
     expect(routerListener.mock.calls[0][0]).toEqual(['../']);
   });
-
 });

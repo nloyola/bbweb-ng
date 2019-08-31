@@ -10,8 +10,7 @@ import { CollectionEvent } from '@app/domain/participants';
   providedIn: 'root'
 })
 export class CollectionEventResolver implements Resolve<CollectionEvent> {
-  constructor(private store$: Store<RootStoreState.State>,
-              private router: Router) {}
+  constructor(private store$: Store<RootStoreState.State>, private router: Router) {}
 
   resolve(route: ActivatedRouteSnapshot, _state: RouterStateSnapshot): Observable<CollectionEvent> {
     const participant = route.parent.parent.parent.data.participant;
@@ -23,7 +22,8 @@ export class CollectionEventResolver implements Resolve<CollectionEvent> {
       this.store$.pipe(
         select(EventStoreSelectors.selectCollectionEventError),
         filter(s => !!s),
-        tap(() => this.router.navigateByUrl('/404'))),
+        tap(() => this.router.navigateByUrl('/404'))
+      ),
       this.store$.pipe(
         select(EventStoreSelectors.selectAllCollectionEvents),
         filter(s => s.length > 0),
@@ -32,9 +32,11 @@ export class CollectionEventResolver implements Resolve<CollectionEvent> {
           if (collectionEvent === undefined) {
             return throwError('collection event not found');
           }
-          return (collectionEvent instanceof CollectionEvent)
-            ? collectionEvent : new CollectionEvent().deserialize(collectionEvent);
-        })))
-      .pipe(take(1));
+          return collectionEvent instanceof CollectionEvent
+            ? collectionEvent
+            : new CollectionEvent().deserialize(collectionEvent);
+        })
+      )
+    ).pipe(take(1));
   }
 }

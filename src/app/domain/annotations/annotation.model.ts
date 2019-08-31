@@ -11,7 +11,6 @@ type AnnotationValueType = string | Date | Number | string[];
  * AnnotationType}.
  */
 export interface IAnnotation extends IDomainEntity {
-
   /**
    * The ID of the {@link app.domain.annotations.AnnotationType| AnnotationType} that defines
    * the contents of this annotation.
@@ -22,11 +21,9 @@ export interface IAnnotation extends IDomainEntity {
 
   /** The value stored in this annotation. */
   value: AnnotationValueType;
-
 }
 
 export abstract class Annotation extends DomainEntity implements IAnnotation {
-
   annotationTypeId: string;
   valueType: ValueTypes;
   value: AnnotationValueType;
@@ -53,5 +50,4 @@ export abstract class Annotation extends DomainEntity implements IAnnotation {
     super.deserialize(input);
     return this;
   }
-
 }

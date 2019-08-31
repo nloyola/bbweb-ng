@@ -38,7 +38,7 @@ export const NgrxRuntimeChecks = {
     strictStateImmutability: false,
     strictActionImmutability: false,
     strictStateSerializability: false,
-    strictActionSerializability: false,
+    strictActionSerializability: false
   }
 };
 
@@ -78,10 +78,8 @@ export const NgrxRuntimeChecks = {
       UserStoreEffects
     ]),
     StoreDevtoolsModule.instrument(),
-    !environment.production ?
-      StoreDevtoolsModule.instrument({ maxAge: 25, /* Retains last 25 states */ })
-      : [],
+    !environment.production ? StoreDevtoolsModule.instrument({ maxAge: 25 /* Retains last 25 states */ }) : []
   ],
   declarations: []
 })
-export class RootStoreModule { }
+export class RootStoreModule {}

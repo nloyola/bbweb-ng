@@ -1,10 +1,7 @@
-<app-entity-filters class="mb-2"
-                    [useNameFilter]="true"
-                    (filters)="onFiltersUpdated($event)">
+<app-entity-filters class="mb-2" [useNameFilter]="true" (filters)="onFiltersUpdated($event)">
 </app-entity-filters>
 
-<ng-container *ngIf="(rolePageInfo$ | async); let rolePageInfo">
-
+<ng-container *ngIf="rolePageInfo$ | async; let rolePageInfo">
   <div class="row">
     <div class="col-sm-12 mt-2">
       <div class="card">
@@ -49,7 +46,7 @@
           <li class="list-group-item" *ngFor="let role of rolePageInfo.entities">
             <div class="row">
               <div class="col-md-12">
-                <a [routerLink]="[ '/admin/access/roles', role.slug ]">
+                <a [routerLink]="['/admin/access/roles', role.slug]">
                   <mat-icon class="warning-icon">settings</mat-icon>
                   <strong>{{ role.name }}</strong>
                 </a>
@@ -58,15 +55,17 @@
             <div class="row" *ngIf="role.description">
               <div class="col-md-12">
                 <small class="text-info">
-                  {{ role.description | truncate:100 }}
+                  {{ role.description | truncate: 100 }}
                 </small>
               </div>
             </div>
             <div class="row">
               <div class="col-md-12">
-                <app-entity-status [timeAdded]="role.timeAdded"
-                                   [timeModified]="role.timeModified"
-                                   [useBadges]="false">
+                <app-entity-status
+                  [timeAdded]="role.timeAdded"
+                  [timeModified]="role.timeModified"
+                  [useBadges]="false"
+                >
                 </app-entity-status>
               </div>
             </div>
@@ -74,19 +73,20 @@
         </ul>
 
         <div class="card-footer" *ngIf="rolePageInfo.hasResultsToDisplay">
-          <ngb-pagination size="sm"
-                          [collectionSize]="rolePageInfo.total"
-                          [(page)]="currentPage"
-                          [maxSize]="rolesLimit"
-                          [pageSize]="rolesLimit"
-                          [rotate]="false"
-                          [boundaryLinks]="true"
-                          aria-label="Default pagination"
-                          (pageChange)="paginationPageChanged($event)">
+          <ngb-pagination
+            size="sm"
+            [collectionSize]="rolePageInfo.total"
+            [(page)]="currentPage"
+            [maxSize]="rolesLimit"
+            [pageSize]="rolesLimit"
+            [rotate]="false"
+            [boundaryLinks]="true"
+            aria-label="Default pagination"
+            (pageChange)="paginationPageChanged($event)"
+          >
           </ngb-pagination>
         </div>
       </div>
     </div>
   </div>
-
 </ng-container>

@@ -20,8 +20,7 @@
             <strong i18n>Description</strong>
           </div>
           <div class="col-md-9">
-            <app-truncate-toggle [text]="processingType.description"
-                                 [toggleLength]="60">
+            <app-truncate-toggle [text]="processingType.description" [toggleLength]="60">
             </app-truncate-toggle>
           </div>
         </div>
@@ -40,8 +39,7 @@
             <strong translate>Annotation</strong>
           </div>
           <div class="col-md-7">
-            <app-annotation-type-summary [annotationType]="annotationType">
-            </app-annotation-type-summary>
+            <app-annotation-type-summary [annotationType]="annotationType"> </app-annotation-type-summary>
           </div>
         </div>
       </li>
@@ -131,8 +129,10 @@
             <strong i18n>Description</strong>
           </div>
           <div class="col-md-9">
-            <app-truncate-toggle [text]="processingType.output.specimenDefinition.description"
-                                 [toggleLength]="60">
+            <app-truncate-toggle
+              [text]="processingType.output.specimenDefinition.description"
+              [toggleLength]="60"
+            >
             </app-truncate-toggle>
           </div>
         </div>
@@ -163,7 +163,9 @@
             <strong i18n>Preservation</strong>
           </div>
           <div class="col-md-9">
-            {{ processingType.output.specimenDefinition.preservationType }} ({{ processingType.output.specimenDefinition.preservationTemperature }})
+            {{ processingType.output.specimenDefinition.preservationType }} ({{
+              processingType.output.specimenDefinition.preservationTemperature
+            }})
           </div>
         </div>
       </li>
@@ -187,7 +189,6 @@
           </div>
         </div>
       </li>
-
     </ul>
   </div>
 </div>

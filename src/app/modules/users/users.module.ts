@@ -10,14 +10,7 @@ import { ForgotPasswordComponent } from './components/forgot-password/forgot-pas
 import { RegisterComponent } from './components/register/register.component';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MaterialModule,
-    SharedModule,
-    UsersRoutingModule
-  ],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, MaterialModule, SharedModule, UsersRoutingModule],
   declarations: [LoginComponent, ForgotPasswordComponent, RegisterComponent]
 })
-export class UsersModule { }
+export class UsersModule {}

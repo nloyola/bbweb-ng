@@ -12,7 +12,6 @@ import { Factory } from '@test/factory';
 import { EventTypesAddAndSelectComponent } from './event-types-add-and-select.component';
 
 describe('EventTypesAddAndSelectComponent', () => {
-
   let component: EventTypesAddAndSelectComponent;
   let fixture: ComponentFixture<EventTypesAddAndSelectComponent>;
   let store: Store<RootStoreState.State>;
@@ -25,19 +24,15 @@ describe('EventTypesAddAndSelectComponent', () => {
       imports: [
         StoreModule.forRoot(
           {
-            'study': StudyStoreReducer.reducer,
+            study: StudyStoreReducer.reducer,
             'event-type': EventTypeStoreReducer.reducer
           },
           NgrxRuntimeChecks
         )
       ],
-      declarations: [
-        EventTypesAddAndSelectComponent,
-        TruncatePipe
-      ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
-    .compileComponents();
+      declarations: [EventTypesAddAndSelectComponent, TruncatePipe],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -68,7 +63,6 @@ describe('EventTypesAddAndSelectComponent', () => {
   });
 
   describe('common functionality', () => {
-
     it('makes a request from the server', () => {
       const study = new Study().deserialize(factory.study());
       const testData = [
@@ -109,7 +103,6 @@ describe('EventTypesAddAndSelectComponent', () => {
         expect(testInfo.emitter.emit).toHaveBeenCalled();
       });
     });
-
   });
 
   it('returns the correct recurring label for an event type', () => {
@@ -117,7 +110,7 @@ describe('EventTypesAddAndSelectComponent', () => {
     component.study = study;
     fixture.detectChanges();
 
-    [ true, false ].forEach(recurring => {
+    [true, false].forEach(recurring => {
       const eventType = new CollectionEventType().deserialize({
         ...factory.collectionEventType(),
         recurring
@@ -125,5 +118,4 @@ describe('EventTypesAddAndSelectComponent', () => {
       expect(component.getRecurringLabel(eventType)).toBe(recurring ? 'Rec' : 'NonRec');
     });
   });
-
 });

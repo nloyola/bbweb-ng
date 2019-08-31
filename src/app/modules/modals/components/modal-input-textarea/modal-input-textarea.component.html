@@ -1,20 +1,16 @@
-<app-modal-input [modalInputValid]="modalInputValid"
-                 (confirm)="confirm($event)"
-                 (dismiss)="dismiss($event)">
+<app-modal-input [modalInputValid]="modalInputValid" (confirm)="confirm($event)" (dismiss)="dismiss($event)">
   <span class="title">{{ title }}</span>
-  <form class="body form-horizontal"
-        [formGroup]="form"
-        autocomplete="on"
-        novalidate>
-
+  <form class="body form-horizontal" [formGroup]="form" autocomplete="on" novalidate>
     <div class="form-group row">
       <label for="email" class="col-md-3 col-form-label" i18n>{{ label }}</label>
       <div class="col-md-9">
-        <textarea class="form-control"
-                  formControlName="input"
-                  [rows]="options.rows"
-                  [cols]="options.cols"
-                  ngbAutoFocus>
+        <textarea
+          class="form-control"
+          formControlName="input"
+          [rows]="options.rows"
+          [cols]="options.cols"
+          ngbAutoFocus
+        >
         </textarea>
       </div>
       <div class="col-md-8 offset-3" *ngIf="input.invalid && input.touched">

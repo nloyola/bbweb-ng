@@ -13,20 +13,11 @@ describe('ProcessingOutputSpecimenModalComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [
-        FormsModule,
-        ReactiveFormsModule,
-        NgbModule
-      ],
-      declarations: [
-        ProcessingOutputSpecimenModalComponent
-      ],
-      providers: [
-        NgbActiveModal
-      ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
-      .compileComponents();
+      imports: [FormsModule, ReactiveFormsModule, NgbModule],
+      declarations: [ProcessingOutputSpecimenModalComponent],
+      providers: [NgbActiveModal],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
 
     factory = new Factory();
   }));

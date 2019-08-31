@@ -3,16 +3,13 @@ import { IUserInfo, UserInfo } from '@app/domain/users';
 import { MembershipBase, IMembershipBase } from './membership-base.model';
 
 export interface IMembership extends IMembershipBase {
-
   /**
    * This users associated with this membership.
    */
   userData: IUserInfo[];
-
 }
 
 export class Membership extends MembershipBase {
-
   userData: UserInfo[];
 
   deserialize(input: IMembership): this {
@@ -22,5 +19,4 @@ export class Membership extends MembershipBase {
     }
     return this;
   }
-
 }

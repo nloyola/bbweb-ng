@@ -9,7 +9,6 @@ import { RoleService } from './role.service';
 import { AnnotationType } from '@app/domain/annotations';
 
 describe('RoleService', () => {
-
   const BASE_URL = '/api/access/roles';
 
   let httpMock: HttpTestingController;
@@ -18,9 +17,7 @@ describe('RoleService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        HttpClientTestingModule
-      ],
+      imports: [HttpClientTestingModule],
       providers: [RoleService]
     });
 
@@ -55,25 +52,27 @@ describe('RoleService', () => {
 
     it('handles an error reply correctly', () => {
       service.get(role.slug).subscribe(
-        () => { fail('should have been an error response'); },
-        err => { expect(err.message).toContain('expected a role object'); }
+        () => {
+          fail('should have been an error response');
+        },
+        err => {
+          expect(err.message).toContain('expected a role object');
+        }
       );
 
       const req = httpMock.expectOne(`${BASE_URL}/${role.slug}`);
       req.flush({ status: 'error', data: undefined });
       httpMock.verify();
     });
-
   });
 
   describe('when searching roles', () => {
-
     const context: PagedQueryBehaviour.Context<Role> = {};
 
     beforeEach(() => {
       context.search = (searchParams: SearchParams) => service.search(searchParams);
       context.url = BASE_URL;
-      context.replyItems = [ factory.role() ];
+      context.replyItems = [factory.role()];
       context.subscription = (pr: PagedReply<Role>) => {
         expect(pr.entities.length).toBe(1);
         expect(pr.entities[0]).toEqual(jasmine.any(Role));
@@ -81,11 +80,9 @@ describe('RoleService', () => {
     });
 
     PagedQueryBehaviour.sharedBehaviour(context);
-
   });
 
   describe('for updating a role', () => {
-
     let rawRole: any;
     let role: Role;
     let testData: any;
@@ -107,7 +104,6 @@ describe('RoleService', () => {
           url: `${BASE_URL}/user/${role.id}/${role.version}/${user.id}`
         }
       ];
-
     });
 
     it('request contains correct JSON and reply is handled correctly', () => {
@@ -145,8 +141,12 @@ describe('RoleService', () => {
     it('handles an error reply correctly', () => {
       testData.forEach((testInfo: any) => {
         service.update(role, testInfo.attribute, testInfo.value).subscribe(
-          () => { fail('should have been an error response'); },
-          err => { expect(err.message).toContain('expected a role object'); }
+          () => {
+            fail('should have been an error response');
+          },
+          err => {
+            expect(err.message).toContain('expected a role object');
+          }
         );
 
         const req = httpMock.expectOne(testInfo.url);
@@ -165,10 +165,10 @@ describe('RoleService', () => {
         }
       ];
       testData.forEach((testInfo: any) => {
-        expect(() => service.update(role, testInfo.attribute, testInfo.value))
-          .toThrowError(testInfo.expectedErrMsg);
+        expect(() => service.update(role, testInfo.attribute, testInfo.value)).toThrowError(
+          testInfo.expectedErrMsg
+        );
       });
     });
   });
-
 });

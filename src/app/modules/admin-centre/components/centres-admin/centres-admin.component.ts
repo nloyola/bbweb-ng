@@ -6,7 +6,5 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./centres-admin.component.scss']
 })
 export class CentresAdminComponent {
-
-  constructor() { }
-
+  constructor() {}
 }

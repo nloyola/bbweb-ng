@@ -6,7 +6,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./roles-admin.component.scss']
 })
 export class RolesAdminComponent {
-
-  constructor() { }
-
+  constructor() {}
 }

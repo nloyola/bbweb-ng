@@ -4,13 +4,10 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
-
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        RouterTestingModule
-      ],
-     declarations: [AppComponent],
+      imports: [RouterTestingModule],
+      declarations: [AppComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     });
   });
@@ -20,5 +17,4 @@ describe('AppComponent', () => {
     const app = fixture.debugElement.componentInstance;
     expect(app).toBeTruthy();
   }));
-
 });

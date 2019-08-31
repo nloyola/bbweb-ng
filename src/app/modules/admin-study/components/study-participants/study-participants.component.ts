@@ -19,7 +19,6 @@ import { filter, map, shareReplay, takeUntil, tap, withLatestFrom } from 'rxjs/o
   styleUrls: ['./study-participants.component.scss']
 })
 export class StudyParticipantsComponent implements OnInit, OnDestroy {
-
   isLoading$: Observable<boolean>;
   study$: Observable<StudyUI>;
   sortedAnnotationTypes: AnnotationType[];
@@ -28,11 +27,13 @@ export class StudyParticipantsComponent implements OnInit, OnDestroy {
   private updatedMessage$ = new Subject<string>();
   private unsubscribe$ = new Subject<void>();
 
-  constructor(private store$: Store<RootStoreState.State>,
-              private router: Router,
-              private route: ActivatedRoute,
-              private modalService: NgbModal,
-              private toastr: ToastrService) { }
+  constructor(
+    private store$: Store<RootStoreState.State>,
+    private router: Router,
+    private route: ActivatedRoute,
+    private modalService: NgbModal,
+    private toastr: ToastrService
+  ) {}
 
   ngOnInit() {
     this.study$ = this.store$.pipe(
@@ -40,7 +41,7 @@ export class StudyParticipantsComponent implements OnInit, OnDestroy {
       map((studies: Dictionary<Study>) => {
         const studyEntity = studies[this.route.parent.parent.snapshot.data.study.id];
         if (studyEntity) {
-          const study = (studyEntity instanceof Study) ? studyEntity :  new Study().deserialize(studyEntity);
+          const study = studyEntity instanceof Study ? studyEntity : new Study().deserialize(studyEntity);
           return new StudyUI(study);
         }
         return undefined;
@@ -50,27 +51,32 @@ export class StudyParticipantsComponent implements OnInit, OnDestroy {
           this.setAnnotations(study.entity);
         }
       }),
-      shareReplay());
+      shareReplay()
+    );
 
     this.study$.pipe(takeUntil(this.unsubscribe$)).subscribe(this.studySubject);
     this.isLoading$ = this.study$.pipe(map(study => study === undefined));
 
-    this.store$.pipe(
-      select(StudyStoreSelectors.selectStudyError),
-      filter(error => !!error),
-      withLatestFrom(this.updatedMessage$),
-      takeUntil(this.unsubscribe$)
-    ).subscribe(([error, _msg]) => {
-      const errMessage = error.error.error ? error.error.error.message : error.error.statusText;
-      this.toastr.error(errMessage, 'Update Error', { disableTimeOut: true });
-    });
+    this.store$
+      .pipe(
+        select(StudyStoreSelectors.selectStudyError),
+        filter(error => !!error),
+        withLatestFrom(this.updatedMessage$),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe(([error, _msg]) => {
+        const errMessage = error.error.error ? error.error.error.message : error.error.statusText;
+        this.toastr.error(errMessage, 'Update Error', { disableTimeOut: true });
+      });
 
-    this.study$.pipe(
-      withLatestFrom(this.updatedMessage$),
-      takeUntil(this.unsubscribe$)
-    ).subscribe(([ _study, msg ]) => {
-      this.toastr.success(msg, 'Update Successfull');
-    });
+    this.study$
+      .pipe(
+        withLatestFrom(this.updatedMessage$),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe(([_study, msg]) => {
+        this.toastr.success(msg, 'Update Successfull');
+      });
   }
 
   ngOnDestroy() {
@@ -83,7 +89,7 @@ export class StudyParticipantsComponent implements OnInit, OnDestroy {
     if (!study.isDisabled()) {
       throw new Error('modifications not allowed');
     }
-    this.router.navigate([ 'add' ], { relativeTo: this.route });
+    this.router.navigate(['add'], { relativeTo: this.route });
   }
 
   view(annotationType: AnnotationType) {
@@ -97,7 +103,7 @@ export class StudyParticipantsComponent implements OnInit, OnDestroy {
     if (!study.isDisabled()) {
       throw new Error('modifications not allowed');
     }
-    this.router.navigate([ `../${annotationType.id}` ], { relativeTo: this.route });
+    this.router.navigate([`../${annotationType.id}`], { relativeTo: this.route });
   }
 
   remove(annotationType: AnnotationType) {
@@ -110,10 +116,12 @@ export class StudyParticipantsComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.annotationType = annotationType;
     modalRef.result
       .then(() => {
-        this.store$.dispatch(StudyStoreActions.updateStudyRemoveAnnotationTypeRequest({
-          study,
-          annotationTypeId: annotationType.id
-        }));
+        this.store$.dispatch(
+          StudyStoreActions.updateStudyRemoveAnnotationTypeRequest({
+            study,
+            annotationTypeId: annotationType.id
+          })
+        );
         this.updatedMessage$.next('Annotation removed');
       })
       .catch(() => undefined);
@@ -122,5 +130,4 @@ export class StudyParticipantsComponent implements OnInit, OnDestroy {
   private setAnnotations(study: Study) {
     this.sortedAnnotationTypes = AnnotationType.sortAnnotationTypes(study.annotationTypes);
   }
-
 }

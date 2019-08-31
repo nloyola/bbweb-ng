@@ -20,9 +20,10 @@ describe('HomeComponent', () => {
       imports: [
         StoreModule.forRoot(
           {
-            'auth': AuthStoreReducer.reducer
+            auth: AuthStoreReducer.reducer
           },
-          NgrxRuntimeChecks)
+          NgrxRuntimeChecks
+        )
       ],
       declarations: [HomeComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
@@ -54,15 +55,17 @@ describe('HomeComponent', () => {
       RoleIds.UserAdministrator
     ];
 
-    const roles = roleIds.map(id => new UserRole().deserialize({
-      ...factory.userRole(),
-      id
-    }));
+    const roles = roleIds.map(id =>
+      new UserRole().deserialize({
+        ...factory.userRole(),
+        id
+      })
+    );
 
     roles.forEach(role => {
       const user = new User().deserialize({
         ...factory.user(),
-        roles: [ role ]  as any
+        roles: [role] as any
       });
       const action = AuthStoreActions.loginSuccessAction({ user });
       store.dispatch(action);
@@ -82,5 +85,4 @@ describe('HomeComponent', () => {
     const alert = fixture.debugElement.queryAll(By.css('.alert'));
     expect(alert).toBeTruthy();
   });
-
 });

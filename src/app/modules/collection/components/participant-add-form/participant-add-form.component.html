@@ -4,23 +4,20 @@
     <span class="ml-1" i18n>Add Participant</span>
   </div>
   <div class="card-body">
-    <form class="form-horizontal"
-          [formGroup]="form"
-          autocomplete="on"
-          (ngSubmit)="onSubmit()"
-          novalidate>
-
+    <form class="form-horizontal" [formGroup]="form" autocomplete="on" (ngSubmit)="onSubmit()" novalidate>
       <!--STUDY  -->
       <div class="form-group row">
         <label for="study" class="col-md-3 col-form-label" i18n>Study</label>
         <div class="col-md-9">
-          <select #studySelect
-                  class="form-control"
-                  id="study"
-                  formControlName="study"
-                  (change)="onStudySelected($event)">
+          <select
+            #studySelect
+            class="form-control"
+            id="study"
+            formControlName="study"
+            (change)="onStudySelected($event)"
+          >
             <option value="" i18n>-- make a selection --</option>
-            <option *ngFor="let study of studies;trackBy: studyTrackBy" [value]="study.id">
+            <option *ngFor="let study of studies; trackBy: studyTrackBy" [value]="study.id">
               {{ study.name }}
             </option>
           </select>
@@ -37,11 +34,13 @@
       <div class="form-group row">
         <label for="uniqueId" class="col-md-3 col-form-label" i18n>Unique ID</label>
         <div class="col-md-9">
-          <input class="form-control"
-                 type="text"
-                 formControlName="uniqueId"
-                 i18n-placeholder
-                 placeholder="The participants unique ID">
+          <input
+            class="form-control"
+            type="text"
+            formControlName="uniqueId"
+            i18n-placeholder
+            placeholder="The participants unique ID"
+          />
         </div>
         <div class="offset-3 col-md-9" *ngIf="uniqueId.invalid && (uniqueId.dirty || uniqueId.touched)">
           <div class="text-danger small" *ngIf="uniqueId.errors.required" i18n>
@@ -54,20 +53,21 @@
       </div>
 
       <!-- ANNOTATIONS  -->
-      <app-annotations-add-subform [annotationsGroup]="annotationsGroup">
-      </app-annotations-add-subform>
+      <app-annotations-add-subform [annotationsGroup]="annotationsGroup"> </app-annotations-add-subform>
 
       <!-- BUTTONS  -->
       <div class="form-group row">
         <div class="col-md-9 offset-3">
-          <button class="btn btn-primary mr-2"
-                  type="submit"
-                  [disabled]="form.invalid || (isSaving$ | async) !== false"
-                  i18n>
+          <button
+            class="btn btn-primary mr-2"
+            type="submit"
+            [disabled]="form.invalid || (isSaving$ | async) !== false"
+            i18n
+          >
             <ng-container *ngIf="(isSaving$ | async) === false">
               Submit
             </ng-container>
-            <app-spinner name="annotationTypeSaving" [show]="(isSaving$ | async)">
+            <app-spinner name="annotationTypeSaving" [show]="isSaving$ | async">
               Saving
             </app-spinner>
           </button>
@@ -76,7 +76,6 @@
           </button>
         </div>
       </div>
-
     </form>
   </div>
 </div>

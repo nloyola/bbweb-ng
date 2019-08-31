@@ -6,7 +6,6 @@ import { AnnotationType } from '@app/domain/annotations';
   templateUrl: './annotation-type-actions.component.html'
 })
 export class AnnotationTypeActionsComponent {
-
   @Input() annotationType: AnnotationType;
   @Input() modifyAllowed: boolean;
 
@@ -14,7 +13,7 @@ export class AnnotationTypeActionsComponent {
   @Output() editSelected = new EventEmitter<AnnotationType>();
   @Output() removeSelected = new EventEmitter<AnnotationType>();
 
-  constructor() { }
+  constructor() {}
 
   view() {
     this.viewSelected.emit(this.annotationType);
@@ -27,5 +26,4 @@ export class AnnotationTypeActionsComponent {
   remove() {
     this.removeSelected.emit(this.annotationType);
   }
-
 }

@@ -3,7 +3,15 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { Study } from '@app/domain/studies';
-import { EventTypeStoreActions, EventTypeStoreReducer, NgrxRuntimeChecks, ProcessingTypeStoreActions, ProcessingTypeStoreReducer, RootStoreState, StudyStoreReducer } from '@app/root-store';
+import {
+  EventTypeStoreActions,
+  EventTypeStoreReducer,
+  NgrxRuntimeChecks,
+  ProcessingTypeStoreActions,
+  ProcessingTypeStoreReducer,
+  RootStoreState,
+  StudyStoreReducer
+} from '@app/root-store';
 import { NgbActiveModal, NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
@@ -27,23 +35,17 @@ describe('ProcessingInputSpecimenModalComponent', () => {
         ReactiveFormsModule,
         StoreModule.forRoot(
           {
-            'study': StudyStoreReducer.reducer,
+            study: StudyStoreReducer.reducer,
             'processing-type': ProcessingTypeStoreReducer.reducer,
             'event-type': EventTypeStoreReducer.reducer
           },
-          NgrxRuntimeChecks)
+          NgrxRuntimeChecks
+        )
       ],
-      providers: [
-        NgbModal,
-        NgbActiveModal
-      ],
-      declarations: [
-        ProcessingTypeInputSubformComponent,
-        ProcessingInputSpecimenModalComponent
-      ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
-      .compileComponents();
+      providers: [NgbModal, NgbActiveModal],
+      declarations: [ProcessingTypeInputSubformComponent, ProcessingInputSpecimenModalComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -72,40 +74,45 @@ describe('ProcessingInputSpecimenModalComponent', () => {
 
     expect(storeListener.mock.calls.length).toBe(2);
 
-    expect(storeListener.mock.calls[0][0])
-      .toEqual(new ProcessingTypeStoreActions.GetSpecimenDefinitionNamesRequest({ studyId: study.id }));
+    expect(storeListener.mock.calls[0][0]).toEqual(
+      new ProcessingTypeStoreActions.GetSpecimenDefinitionNamesRequest({ studyId: study.id })
+    );
 
-    expect(storeListener.mock.calls[1][0])
-      .toEqual(EventTypeStoreActions.getSpecimenDefinitionNamesRequest({ studySlug: study.slug }));
+    expect(storeListener.mock.calls[1][0]).toEqual(
+      EventTypeStoreActions.getSpecimenDefinitionNamesRequest({ studySlug: study.slug })
+    );
   });
 
   it('selects the processed and collected specimen definitions', () => {
-    const { study,
-            eventType,
-            input,
-            processingType,
-            processedDefinitionNames,
-            collectedDefinitionNames
-          } = createFixtureEntities();
+    const {
+      study,
+      eventType,
+      input,
+      processingType,
+      processedDefinitionNames,
+      collectedDefinitionNames
+    } = createFixtureEntities();
     fixture.detectChanges();
-    expect(component.entityNames$).toBeObservable(cold('b', {
-      b: {
-        processed: processedDefinitionNames,
-        collected: collectedDefinitionNames
-      }
-    }));
+    expect(component.entityNames$).toBeObservable(
+      cold('b', {
+        b: {
+          processed: processedDefinitionNames,
+          collected: collectedDefinitionNames
+        }
+      })
+    );
   });
 
   describe('when user presses submit', () => {
-
     it('and a collected specimen is selected', () => {
-      const { study,
-              eventType,
-              input,
-              processingType,
-              processedDefinitionNames,
-              collectedDefinitionNames
-            } = createFixtureEntities();
+      const {
+        study,
+        eventType,
+        input,
+        processingType,
+        processedDefinitionNames,
+        collectedDefinitionNames
+      } = createFixtureEntities();
       fixture.detectChanges();
 
       const collectedDefinitionId = eventType.specimenDefinitions[0].id;
@@ -120,8 +127,9 @@ describe('ProcessingInputSpecimenModalComponent', () => {
       entityIdOptionElem.parent.nativeElement.dispatchEvent(new Event('change'));
       fixture.detectChanges();
 
-      const collectedDefinitionOptionElem = fixture.debugElement
-        .query(By.css(`option[value="${collectedDefinitionId}"`));
+      const collectedDefinitionOptionElem = fixture.debugElement.query(
+        By.css(`option[value="${collectedDefinitionId}"`)
+      );
       expect(collectedDefinitionOptionElem).not.toBeNull();
       collectedDefinitionOptionElem.parent.nativeElement.value = collectedDefinitionId;
       collectedDefinitionOptionElem.parent.nativeElement.dispatchEvent(new Event('change'));
@@ -136,13 +144,13 @@ describe('ProcessingInputSpecimenModalComponent', () => {
 
       const activeModalListener = jest.spyOn(component.activeModal, 'close');
       component.onSubmit();
-      expect (activeModalListener).toHaveBeenCalledWith({
-        entityId:             eventType.id,
-        definitionType:       'collected',
+      expect(activeModalListener).toHaveBeenCalledWith({
+        entityId: eventType.id,
+        definitionType: 'collected',
         specimenDefinitionId: eventType.specimenDefinitions[0].id,
-        expectedChange:       1,
-        count:                1,
-        containerTypeId:      null
+        expectedChange: 1,
+        count: 1,
+        containerTypeId: null
       });
     });
 
@@ -162,23 +170,22 @@ describe('ProcessingInputSpecimenModalComponent', () => {
 
       const activeModalListener = jest.spyOn(component.activeModal, 'close');
       component.onSubmit();
-      expect (activeModalListener).toHaveBeenCalledWith({
-        entityId:             input.id,
-        definitionType:       'processed',
+      expect(activeModalListener).toHaveBeenCalledWith({
+        entityId: input.id,
+        definitionType: 'processed',
         specimenDefinitionId: input.output.specimenDefinition.id,
-        expectedChange:       2,
-        count:                2,
-        containerTypeId:      null
+        expectedChange: 2,
+        count: 2,
+        containerTypeId: null
       });
     });
-
   });
 
   function createFixtureEntities() {
     const study = new Study().deserialize(factory.defaultStudy());
     const { eventType, input, processingType } = entityFixture.createProcessingTypeFromProcessed();
-    const processedDefinitionNames = entityFixture.processedDefinitionNames([ input, processingType ]);
-    const collectedDefinitionNames = entityFixture.collectedDefinitionNames([ eventType ]);
+    const processedDefinitionNames = entityFixture.processedDefinitionNames([input, processingType]);
+    const collectedDefinitionNames = entityFixture.collectedDefinitionNames([eventType]);
 
     component.study = study;
     component.processingType = processingType;
@@ -186,11 +193,14 @@ describe('ProcessingInputSpecimenModalComponent', () => {
     store.dispatch(
       new ProcessingTypeStoreActions.GetSpecimenDefinitionNamesSuccess({
         specimenDefinitionNames: processedDefinitionNames
-      }));
-    store.dispatch(EventTypeStoreActions.getSpecimenDefinitionNamesSuccess({
-      studySlug: study.slug,
-      specimenDefinitionNames: collectedDefinitionNames
-    }));
+      })
+    );
+    store.dispatch(
+      EventTypeStoreActions.getSpecimenDefinitionNamesSuccess({
+        studySlug: study.slug,
+        specimenDefinitionNames: collectedDefinitionNames
+      })
+    );
     return { study, eventType, input, processingType, processedDefinitionNames, collectedDefinitionNames };
   }
 });

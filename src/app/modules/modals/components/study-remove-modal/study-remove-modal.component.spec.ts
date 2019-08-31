@@ -12,16 +12,11 @@ describe('StudyRemoveComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [
-        NgbModule
-      ],
-      providers: [
-        NgbActiveModal
-      ],
-      declarations: [ StudyRemoveModalComponent ],
+      imports: [NgbModule],
+      providers: [NgbActiveModal],
+      declarations: [StudyRemoveModalComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {

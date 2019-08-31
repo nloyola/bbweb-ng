@@ -13,15 +13,10 @@ describe('PagedEntitySelectorComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [
-        FormsModule,
-        ReactiveFormsModule,
-        NgbModule
-      ],
-      declarations: [ PagedEntitySelectorComponent ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
-    .compileComponents();
+      imports: [FormsModule, ReactiveFormsModule, NgbModule],
+      declarations: [PagedEntitySelectorComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -50,7 +45,9 @@ describe('PagedEntitySelectorComponent', () => {
   it('changes to page should emit an event', () => {
     fixture.detectChanges();
     let eventProduced = false;
-    component.pageChange.subscribe(() => { eventProduced = true; });
+    component.pageChange.subscribe(() => {
+      eventProduced = true;
+    });
 
     component.paginationPageChange(1);
     fixture.detectChanges();

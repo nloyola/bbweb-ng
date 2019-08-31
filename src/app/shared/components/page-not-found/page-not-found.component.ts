@@ -7,14 +7,11 @@ import { Location } from '@angular/common';
   styleUrls: ['./page-not-found.component.scss']
 })
 export class PageNotFoundComponent implements OnInit {
+  constructor(private location: Location) {}
 
-  constructor(private location: Location) { }
-
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   goBack(): void {
     this.location.back();
   }
-
 }

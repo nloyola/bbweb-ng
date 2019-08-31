@@ -1,28 +1,34 @@
-<app-specimen-definition-add [specimenDefinition]="processingType.output.specimenDefinition"
-                             [subform]="spcDefSubForm">
+<app-specimen-definition-add
+  [specimenDefinition]="processingType.output.specimenDefinition"
+  [subform]="spcDefSubForm"
+>
 </app-specimen-definition-add>
 
 <!-- EXPECTED CHANGE -->
 <div class="form-group row" [formGroup]="subform">
   <label for="expectedChange" class="col-md-3 col-form-label" i18n>Expected Change</label>
   <div class="input-group col-md-9">
-    <input name="expectedChange"
-           class="form-control"
-           type="number"
-           formControlName="expectedChange"
-           i18n-placeholder
-           placeholder="the amount stored in this specimen">
+    <input
+      name="expectedChange"
+      class="form-control"
+      type="number"
+      formControlName="expectedChange"
+      i18n-placeholder
+      placeholder="the amount stored in this specimen"
+    />
     <div class="input-group-append">
       <span class="input-group-text" id="basic-addon2">{{ this.units.value }}</span>
     </div>
   </div>
-  <div class="col-md-9 offset-3"
-       *ngIf="expectedChange.invalid && expectedChange.touched">
+  <div class="col-md-9 offset-3" *ngIf="expectedChange.invalid && expectedChange.touched">
     <div class="text-danger small" *ngIf="expectedChange.errors.required" i18n>
       Expected change is required
     </div>
-    <div class="text-danger small"
-         *ngIf="expectedChange.errors.required || expectedChange.errors.pattern" i18n>
+    <div
+      class="text-danger small"
+      *ngIf="expectedChange.errors.required || expectedChange.errors.pattern"
+      i18n
+    >
       Should be a positive floating point number
     </div>
   </div>
@@ -32,16 +38,17 @@
 <div class="form-group row" [formGroup]="subform">
   <label for="units" class="col-md-3 col-form-label" i18n>Specimen Count</label>
   <div class="col-md-9">
-    <input name="count"
-           class="form-control"
-           type="number"
-           formControlName="count"
-           i18n-placeholder
-           placeholder="the number of specimens that are created">
+    <input
+      name="count"
+      class="form-control"
+      type="number"
+      formControlName="count"
+      i18n-placeholder
+      placeholder="the number of specimens that are created"
+    />
   </div>
 
-  <div class="col-md-9 offset-3"
-       *ngIf="count.invalid && count.touched">
+  <div class="col-md-9 offset-3" *ngIf="count.invalid && count.touched">
     <div class="text-danger small" *ngIf="count.errors.required" i18n>
       Specimen count is required
     </div>

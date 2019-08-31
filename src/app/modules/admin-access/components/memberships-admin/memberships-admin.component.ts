@@ -6,7 +6,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./memberships-admin.component.scss']
 })
 export class MembershipsAdminComponent {
-
-  constructor() { }
-
+  constructor() {}
 }

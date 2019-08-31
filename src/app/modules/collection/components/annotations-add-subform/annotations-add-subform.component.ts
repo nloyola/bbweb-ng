@@ -11,7 +11,6 @@ import { takeUntil } from 'rxjs/operators';
   styleUrls: ['./annotations-add-subform.component.scss']
 })
 export class AnnotationsAddSubformComponent {
-
   /* tslint:disable-next-line:max-line-length */
   // see: https://stackoverflow.com/questions/43384804/how-to-validate-that-at-least-one-checkbox-should-be-selected/43386577
 
@@ -43,9 +42,7 @@ export class AnnotationsAddSubformComponent {
           selectedOptions: hiddenControl
         });
 
-        checkboxArray.valueChanges.pipe(
-          takeUntil(unsubscribe$)
-        ).subscribe(v => {
+        checkboxArray.valueChanges.pipe(takeUntil(unsubscribe$)).subscribe(v => {
           hiddenControl.setValue(this.mapSelectedOptions(v));
           hiddenControl.markAsTouched();
         });
@@ -55,14 +52,16 @@ export class AnnotationsAddSubformComponent {
         control = new FormControl(annotation.value, validators);
       }
 
-      formArray.push(new FormGroup({
-        id:            new FormControl(annotation.annotationType.id),
-        text:          new FormControl(annotation.annotationType.name),
-        valueType:     new FormControl(annotation.annotationType.valueType),
-        maxValueCount: new FormControl(annotation.annotationType.maxValueCount),
-        options:       new FormControl(annotation.annotationType.options),
-        field:         control
-      }));
+      formArray.push(
+        new FormGroup({
+          id: new FormControl(annotation.annotationType.id),
+          text: new FormControl(annotation.annotationType.name),
+          valueType: new FormControl(annotation.annotationType.valueType),
+          maxValueCount: new FormControl(annotation.annotationType.maxValueCount),
+          options: new FormControl(annotation.annotationType.options),
+          field: control
+        })
+      );
     });
     return formArray;
   }
@@ -83,7 +82,7 @@ export class AnnotationsAddSubformComponent {
 
       if (value.valueType === ValueTypes.Select) {
         if (value.maxValueCount === 1) {
-          annotation.value = [ value.field ];
+          annotation.value = [value.field];
         } else if (value.maxValueCount > 1) {
           annotation.value = value.field.options.filter(o => o.checkbox).map(o => o.id);
         } else {
