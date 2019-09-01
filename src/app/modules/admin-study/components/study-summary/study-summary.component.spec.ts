@@ -76,8 +76,7 @@ describe('StudySummaryComponent', () => {
     modalService = TestBed.get(NgbModal);
     fixture = TestBed.createComponent(StudySummaryComponent);
     component = fixture.componentInstance;
-
-    ngZone.run(() => router.initialNavigation());
+    jest.spyOn(router, 'navigate').mockResolvedValue(true);
   });
 
   it('should create', () => {

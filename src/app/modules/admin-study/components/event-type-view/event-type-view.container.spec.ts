@@ -78,6 +78,7 @@ describe('EventTypeViewContainer', () => {
     router = TestBed.get(Router);
     fixture = TestBed.createComponent(EventTypeViewContainerComponent);
     component = fixture.componentInstance;
+    jest.spyOn(router, 'navigate').mockResolvedValue(true);
   });
 
   it('should create', () => {
