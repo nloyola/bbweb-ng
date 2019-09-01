@@ -80,6 +80,21 @@ export class ShipmentInformationCardComponent implements OnInit, OnDestroy {
         this.toastr.success(msg, 'Update Successfull');
         this.updatedMessage$.next(null);
       });
+
+    this.store$
+      .pipe(
+        select(ShipmentStoreSelectors.selectShipmentError),
+        filter(error => !!error),
+        withLatestFrom(this.updatedMessage$),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe(([error, _msg]) => {
+        let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
+        if (errMessage.match(/EntityCriteriaError: tracking number/)) {
+          errMessage = `The tracking number is already in use.`;
+        }
+        this.toastr.error(errMessage, 'Update Error', { disableTimeOut: true });
+      });
   }
 
   public ngOnDestroy() {

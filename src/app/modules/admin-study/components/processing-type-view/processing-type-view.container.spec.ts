@@ -67,6 +67,7 @@ describe('ProcessingTypeViewContainerComponent', () => {
     router = TestBed.get(Router);
     fixture = TestBed.createComponent(ProcessingTypeViewContainerComponent);
     component = fixture.componentInstance;
+    jest.spyOn(router, 'navigate').mockResolvedValue(true);
   });
 
   it('should create', () => {

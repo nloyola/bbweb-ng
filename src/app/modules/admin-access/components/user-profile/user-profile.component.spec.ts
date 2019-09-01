@@ -21,6 +21,8 @@ describe('UserProfileComponent', () => {
   let fixture: ComponentFixture<UserProfileComponent>;
   const factory = new Factory();
   let store: Store<RootStoreState.State>;
+  let router: Router;
+  let routerListener: jest.MockInstance<Promise<boolean>, any[]>;
   let user: User;
 
   beforeEach(async(() => {
@@ -64,8 +66,10 @@ describe('UserProfileComponent', () => {
 
   beforeEach(() => {
     store = TestBed.get(Store);
+    router = TestBed.get(Router);
     fixture = TestBed.createComponent(UserProfileComponent);
     component = fixture.componentInstance;
+    routerListener = jest.spyOn(router, 'navigate').mockResolvedValue(true);
   });
 
   it('should create', () => {
@@ -83,8 +87,6 @@ describe('UserProfileComponent', () => {
       ...newNameAndSlug
     });
 
-    const router = TestBed.get(Router);
-    const routerListener = jest.spyOn(router, 'navigate').mockResolvedValue(true);
     const modalService = TestBed.get(NgbModal);
     jest.spyOn(modalService, 'open').mockReturnValue({ result: Promise.resolve(newNameAndSlug.name) } as any);
     component.updateName();

@@ -12,11 +12,11 @@ describe('CentreShipmentsComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-    imports: [
-      NgbModule,
-      RouterTestingModule,
-      StoreModule.forRoot({ centres: CentreStoreReducer.reducer }, NgrxRuntimeChecks)
-    ],
+      imports: [
+        NgbModule,
+        RouterTestingModule,
+        StoreModule.forRoot({ centre: CentreStoreReducer.reducer }, NgrxRuntimeChecks)
+      ],
       providers: [NgbActiveModal],
       declarations: [CentreShipmentsPageComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]

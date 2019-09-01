@@ -26,6 +26,8 @@ describe('MembershipViewComponent', () => {
   const factory = new Factory();
   let membership: Membership;
   let store: Store<RootStoreState.State>;
+  let router: Router;
+  let routerListener: jest.MockInstance<Promise<boolean>, any[]>;
 
   beforeEach(async(() => {
     membership = new Membership().deserialize(factory.membership());
@@ -68,6 +70,8 @@ describe('MembershipViewComponent', () => {
 
   beforeEach(() => {
     store = TestBed.get(Store);
+    router = TestBed.get(Router);
+    routerListener = jest.spyOn(router, 'navigate').mockResolvedValue(true);
     fixture = TestBed.createComponent(MembershipViewComponent);
     component = fixture.componentInstance;
   });
@@ -87,8 +91,6 @@ describe('MembershipViewComponent', () => {
       ...newNameAndSlug
     });
 
-    const router = TestBed.get(Router);
-    const routerListener = jest.spyOn(router, 'navigate').mockResolvedValue(true);
     const modalService = TestBed.get(NgbModal);
     jest.spyOn(modalService, 'open').mockReturnValue({ result: Promise.resolve(newNameAndSlug.name) } as any);
     component.updateName();
@@ -480,9 +482,6 @@ describe('MembershipViewComponent', () => {
     }));
 
     it('new page is displayed', fakeAsync(() => {
-      const router = TestBed.get(Router);
-      const routerListener = jest.spyOn(router, 'navigate').mockResolvedValue(true);
-
       component.removeMembership();
       flush();
       fixture.detectChanges();

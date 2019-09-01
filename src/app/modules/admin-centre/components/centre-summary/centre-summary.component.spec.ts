@@ -20,7 +20,6 @@ import { CentreSummaryComponent } from './centre-summary.component';
 describe('CentreSummaryComponent', () => {
   let component: CentreSummaryComponent;
   let fixture: ComponentFixture<CentreSummaryComponent>;
-  let ngZone: NgZone;
   let store: Store<RootStoreState.State>;
   let router: Router;
   let modalService: NgbModal;
@@ -70,14 +69,13 @@ describe('CentreSummaryComponent', () => {
   }));
 
   beforeEach(() => {
-    ngZone = TestBed.get(NgZone);
     store = TestBed.get(Store);
     router = TestBed.get(Router);
     modalService = TestBed.get(NgbModal);
     fixture = TestBed.createComponent(CentreSummaryComponent);
     component = fixture.componentInstance;
 
-    ngZone.run(() => router.initialNavigation());
+    jest.spyOn(router, 'navigate').mockResolvedValue(true);
   });
 
   it('should create', () => {
@@ -226,7 +224,7 @@ describe('CentreSummaryComponent', () => {
 
       const modalListener = jest.spyOn(modalService, 'open');
 
-      ngZone.run(() => store.dispatch(CentreStoreActions.getCentreSuccess({ centre })));
+      store.dispatch(CentreStoreActions.getCentreSuccess({ centre }));
       fixture.detectChanges();
 
       const storeListener = jest.spyOn(store, 'dispatch');
@@ -262,7 +260,7 @@ describe('CentreSummaryComponent', () => {
         result: Promise.resolve('test')
       } as any);
 
-      ngZone.run(() => store.dispatch(CentreStoreActions.getCentreSuccess({ centre })));
+      store.dispatch(CentreStoreActions.getCentreSuccess({ centre }));
       fixture.detectChanges();
 
       const componentUpdateFuncs = [
@@ -275,7 +273,7 @@ describe('CentreSummaryComponent', () => {
         fixture.detectChanges();
         tick(1000);
         expect(store.dispatch).toHaveBeenCalled();
-        ngZone.run(() => store.dispatch(CentreStoreActions.updateCentreSuccess({ centre })));
+        store.dispatch(CentreStoreActions.updateCentreSuccess({ centre }));
         tick(1000);
       });
 
@@ -284,7 +282,7 @@ describe('CentreSummaryComponent', () => {
     }));
 
     it('functions that change the centre state', fakeAsync(() => {
-      ngZone.run(() => store.dispatch(CentreStoreActions.getCentreSuccess({ centre })));
+      store.dispatch(CentreStoreActions.getCentreSuccess({ centre }));
       fixture.detectChanges();
 
       const testData = [

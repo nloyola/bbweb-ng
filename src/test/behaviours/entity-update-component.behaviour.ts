@@ -26,7 +26,6 @@ export namespace EntityUpdateComponentBehaviour {
   export function sharedBehaviour<T>(context: Context<T>) {
     describe('(shared behaviour)', () => {
       let store: Store<RootStoreState.State>;
-      let router: Router;
       let modalService: NgbModal;
       let toastr: ToastrService;
       let storeListener: any;
@@ -38,11 +37,8 @@ export namespace EntityUpdateComponentBehaviour {
         store = TestBed.get(Store);
         modalService = TestBed.get(NgbModal);
         toastr = TestBed.get(ToastrService);
-        router = TestBed.get(Router);
 
-        jest.spyOn(router, 'navigate').mockResolvedValue(true);
         jest.spyOn(modalService, 'open').mockReturnValue(context.modalReturnValue);
-
         storeListener = jest.spyOn(store, 'dispatch');
         modalListener = jest.spyOn(modalService, 'open');
         modalListener.mockReturnValue(context.modalReturnValue);

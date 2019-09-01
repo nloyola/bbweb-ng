@@ -70,6 +70,7 @@ describe('EventViewComponent', () => {
     fixture = TestBed.createComponent(EventViewComponent);
     component = fixture.componentInstance;
     store = TestBed.get(Store);
+    jest.spyOn(TestBed.get(Router), 'navigate').mockResolvedValue(true);
   });
 
   it('should create', () => {
