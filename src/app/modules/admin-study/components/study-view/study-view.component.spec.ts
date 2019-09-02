@@ -25,6 +25,7 @@ describe('StudyViewComponent', () => {
     study = new Study().deserialize(factory.study());
 
     TestBed.configureTestingModule({
+      declarations: [StudyViewComponent],
       imports: [
         NgbModule,
         RouterTestingModule,
@@ -39,24 +40,15 @@ describe('StudyViewComponent', () => {
       providers: [
         {
           provide: ActivatedRoute,
-          useValue: mockActivatedRoute
+          useValue: {}
         },
         {
           provide: Router,
           useValue: {
-            url: 'admin/studies',
-            events: of(
-              new NavigationEnd(
-                0,
-                `/admin/studies/${study.slug}/collection`,
-                `/admin/studies/${study.slug}/collection`
-              )
-            ),
             navigate: jasmine.createSpy('navigate')
           }
         }
-      ],
-      declarations: [StudyViewComponent]
+      ]
     }).compileComponents();
   }));
 
@@ -64,7 +56,8 @@ describe('StudyViewComponent', () => {
     store = TestBed.get(Store);
     fixture = TestBed.createComponent(StudyViewComponent);
     component = fixture.componentInstance;
-    createMockActivatedRouteSpies(study);
+    updateRouter(study);
+    updateActivatedRoute(study);
     store.dispatch(StudyStoreActions.getStudySuccess({ study }));
   });
 
@@ -97,11 +90,19 @@ describe('StudyViewComponent', () => {
     expect(routerListener.mock.calls[0][0]).toEqual(['/admin/studies', study.slug, 'collection']);
   });
 
-  function createMockActivatedRouteSpies(s: Study): void {
-    mockActivatedRoute.spyOnSnapshot(() => ({
-      params: {
-        slug: s.slug
-      }
-    }));
+  function updateRouter(study: Study) {
+    const router = TestBed.get(Router);
+    router.url = 'admin/studies';
+    router.events = of(
+      new NavigationEnd(
+        0,
+        `/admin/studies/${study.slug}/collection`,
+        `/admin/studies/${study.slug}/collection`
+      )
+    );
+  }
+
+  function updateActivatedRoute(study: Study) {
+    TestBed.get(ActivatedRoute).snapshot = { params: { slug: study.slug } };
   }
 });

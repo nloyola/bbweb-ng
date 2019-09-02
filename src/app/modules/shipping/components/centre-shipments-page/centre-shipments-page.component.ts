@@ -6,7 +6,7 @@ import { CentreStoreSelectors, RootStoreState } from '@app/root-store';
 import { NgbTabChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 import { select, Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
-import { filter, map, takeUntil } from 'rxjs/operators';
+import { filter, map, shareReplay, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-centre-shipments-page',
@@ -39,7 +39,8 @@ export class CentreShipmentsPageComponent implements OnInit, OnDestroy {
       filter(s => s.length > 0),
       map((centres: Centre[]) => centres.find(s => s.slug === this.route.snapshot.params.slug)),
       filter(centre => centre !== undefined),
-      takeUntil(this.unsubscribe$)
+      takeUntil(this.unsubscribe$),
+      shareReplay()
     );
 
     this.activeTabId = this.getActiveTabId(this.router.url);
@@ -64,6 +65,9 @@ export class CentreShipmentsPageComponent implements OnInit, OnDestroy {
   }
 
   private getActiveTabId(routeUrl: string): string {
+    if (routeUrl === undefined) {
+      throw new Error('router URL is undefined');
+    }
     return Object.keys(this.tabData).find(key => routeUrl.includes(key));
   }
 }
