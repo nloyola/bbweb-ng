@@ -2,17 +2,16 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Centre } from '@app/domain/centres';
 import { CentreUI } from '@app/domain/centres/centre-ui.model';
-import { Study, StudyStateUIMap, StudyStateInfo } from '@app/domain/studies';
+import { Study, StudyStateInfo, StudyStateUIMap } from '@app/domain/studies';
 import { StudyRemoveModalComponent } from '@app/modules/modals/components/study-remove-modal/study-remove-modal.component';
 import { CentreStoreActions, CentreStoreSelectors, RootStoreState } from '@app/root-store';
+import { StudySelectTypeahead } from '@app/shared/typeaheads';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Dictionary } from '@ngrx/entity';
 import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subject, BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { filter, map, shareReplay, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
-import { SpinnerStoreSelectors } from '@app/root-store/spinner';
-import { Dictionary } from '@ngrx/entity';
-import { StudySelectTypeahead } from '@app/shared/typeaheads';
 
 @Component({
   selector: 'app-centre-studies',
@@ -25,7 +24,6 @@ export class CentreStudiesComponent implements OnInit, OnDestroy {
   updatedMessage: string;
   selectedStudy: Study;
   getStudyNames: (text: Observable<string>) => Observable<any[]>;
-  typeaheadFormatter: (value: any) => string;
   sortedStudyNames: StudyStateInfo[];
   studyAddTypeahead: StudySelectTypeahead;
 

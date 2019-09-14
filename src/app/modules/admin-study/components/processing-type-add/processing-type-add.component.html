@@ -1,5 +1,5 @@
 <mat-horizontal-stepper [linear]="'true'" (selectionChange)="stepClick($event)" #stepper>
-  <mat-step [stepControl]="infoFormGroup">
+  <mat-step [stepControl]="infoSubForm">
     <div class="row">
       <div class="col-sm-12 mt-4">
         <div class="card">
@@ -26,7 +26,7 @@
       </div>
     </div>
   </mat-step>
-  <mat-step [stepControl]="inputFormGroup">
+  <mat-step [stepControl]="inputSubForm">
     <div class="row">
       <div class="col-sm-12 mt-4">
         <div class="card">
@@ -57,7 +57,7 @@
     </div>
   </mat-step>
 
-  <mat-step [stepControl]="outputFormGroup">
+  <mat-step [stepControl]="outputSubForm">
     <div class="row">
       <div class="col-sm-12 mt-4">
         <div class="card">

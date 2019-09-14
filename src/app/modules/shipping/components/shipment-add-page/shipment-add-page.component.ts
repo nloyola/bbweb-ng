@@ -4,7 +4,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CentreLocationInfo } from '@app/domain/centres';
 import { Shipment, ShipmentState } from '@app/domain/shipments';
 import { RootStoreState, ShipmentStoreSelectors, ShipmentStoreActions } from '@app/root-store';
-import { SpinnerStoreSelectors } from '@app/root-store/spinner';
 import {
   CentreLocationResultsMapper,
   CentreLocationSelectTypeahead
@@ -29,7 +28,7 @@ export class ShipmentAddPageComponent implements OnInit, OnDestroy {
   form: FormGroup;
   fromLocationInfoTypeahead: CentreLocationSelectTypeahead;
   toLocationInfoTypeahead: CentreLocationSelectTypeahead;
-  isSaving$: Observable<boolean>;
+  isSaving$ = new Subject<boolean>();
 
   private unsubscribe$: Subject<void> = new Subject<void>();
 
@@ -53,8 +52,6 @@ export class ShipmentAddPageComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.courierNameInput.nativeElement.focus();
-
-    this.isSaving$ = this.store$.pipe(select(SpinnerStoreSelectors.selectSpinnerIsActive));
 
     this.store$
       .pipe(
@@ -110,6 +107,7 @@ export class ShipmentAddPageComponent implements OnInit, OnDestroy {
       state: ShipmentState.Created
     });
     this.store$.dispatch(ShipmentStoreActions.addShipmentRequest({ shipment }));
+    this.isSaving$.next(true);
   }
 
   onCancel() {

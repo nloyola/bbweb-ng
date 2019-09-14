@@ -58,7 +58,7 @@
             class="form-control"
             id="valueType"
             formControlName="valueType"
-            (change)="valueTypeSelected($event)"
+            (change)="valueTypeSelected()"
           >
             <option value="" i18n>-- make a selection --</option>
             <option *ngFor="let valueType of valueTypes" [value]="valueType">

@@ -10,9 +10,9 @@ import { StudyStateInfo } from '@app/domain/studies';
 export class StudyRemoveModalComponent {
   @Input() study: StudyStateInfo;
 
-  constructor(private activeModal: NgbActiveModal) {}
+  constructor(public modal: NgbActiveModal) {}
 
   confirm(): void {
-    this.activeModal.close(this.study);
+    this.modal.close(this.study);
   }
 }

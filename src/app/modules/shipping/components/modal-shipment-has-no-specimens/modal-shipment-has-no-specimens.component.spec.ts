@@ -1,6 +1,7 @@
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { ModalShipmentHasNoSpecimensComponent } from './modal-shipment-has-no-specimens.component';
+import { NgbModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 describe('ModalShipmentHasNoSpecimensComponent', () => {
   let component: ModalShipmentHasNoSpecimensComponent;
@@ -8,7 +9,10 @@ describe('ModalShipmentHasNoSpecimensComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ModalShipmentHasNoSpecimensComponent]
+      imports: [NgbModule],
+      providers: [NgbActiveModal],
+      declarations: [ModalShipmentHasNoSpecimensComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
   }));
 

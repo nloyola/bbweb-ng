@@ -1,18 +1,7 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnDestroy,
-  OnInit,
-  Output,
-  SimpleChanges
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Sort } from '@angular/material';
-import { ActivatedRoute, Router } from '@angular/router';
-import { PagedReplyInfo, SearchParams } from '@app/domain';
-import { Specimen } from '@app/domain/participants';
+import { PagedReplyInfo } from '@app/domain';
 import { Shipment, ShipmentSpecimen } from '@app/domain/shipments';
 import {
   RootStoreState,
@@ -21,7 +10,7 @@ import {
 } from '@app/root-store';
 import { select, Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
-import { filter, map, shareReplay, tap } from 'rxjs/operators';
+import { filter, map, shareReplay } from 'rxjs/operators';
 
 @Component({
   selector: 'app-shipment-specimens-table',

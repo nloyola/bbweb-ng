@@ -16,7 +16,7 @@ import { ProcessingTypeAddComponent } from './components/processing-type-add/pro
 import { ProcessingTypeViewContainerComponent } from './components/processing-type-view/processing-type-view.container';
 import { StudiesAdminComponent } from './components/studies-admin/studies-admin.component';
 import { StudyAddComponent } from './components/study-add/study-add.component';
-import { StudyResolver, EventTypeResolver, ProcessingTypeResolver } from '@app/core/resolvers';
+import { EventTypeResolver, StudyResolver, ProcessingTypeResolver } from '@app/core/resolvers';
 
 export const routes: Routes = [
   {

@@ -311,11 +311,11 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
   }
 
   private createStudyTypeahead() {
-    this.studyAddTypeahead = new StudySelectTypeahead(this.store$, (studys: Study[]) => {
+    this.studyAddTypeahead = new StudySelectTypeahead(this.store$, (studies: Study[]) => {
       const membership = this.membershipSubject.value;
       // filter out studys already linked to this membership
       const existingStudyIds = membership.studyData.entityData.map(sd => sd.id);
-      return studys.filter(entity => existingStudyIds.indexOf(entity.id) < 0);
+      return studies.filter(entity => existingStudyIds.indexOf(entity.id) < 0);
     });
 
     this.studyAddTypeahead.selected$.pipe(takeUntil(this.unsubscribe$)).subscribe((study: Study) => {

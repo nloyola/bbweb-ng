@@ -1,18 +1,19 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ActivatedRoute } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
+import { ProcessingType, Study, StudyState } from '@app/domain/studies';
 import {
-  ProcessingTypeStoreReducer,
-  StudyStoreReducer,
   NgrxRuntimeChecks,
-  RootStoreState
+  ProcessingTypeStoreReducer,
+  RootStoreState,
+  StudyStoreReducer
 } from '@app/root-store';
 import { TruncatePipe } from '@app/shared/pipes';
-import { StoreModule, Store } from '@ngrx/store';
-import { ProcessingTypesAddAndSelectComponent } from './processing-types-add-and-select.component';
+import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
-import { Study, StudyState, ProcessingType } from '@app/domain/studies';
 import { MockActivatedRoute } from '@test/mocks';
-import { ActivatedRoute } from '@angular/router';
+import { ProcessingTypesAddAndSelectComponent } from './processing-types-add-and-select.component';
 
 describe('ProcessingTypesAddAndSelectComponent', () => {
   let component: ProcessingTypesAddAndSelectComponent;
@@ -24,6 +25,7 @@ describe('ProcessingTypesAddAndSelectComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
+        RouterTestingModule,
         StoreModule.forRoot(
           {
             study: StudyStoreReducer.reducer,

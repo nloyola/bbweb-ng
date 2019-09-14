@@ -29,8 +29,8 @@ export class CollectedSpecimenDefinitionAddContainerComponent implements OnInit,
   eventType: CollectionEventType;
   specimenDefinition$: Observable<CollectedSpecimenDefinition>;
   isSaving$ = new BehaviorSubject<boolean>(false);
+  specimenDefinition: CollectedSpecimenDefinition;
 
-  private specimenDefinition: CollectedSpecimenDefinition;
   private specimenDefinitionToSave: CollectedSpecimenDefinition;
   private updatedMessage$ = new Subject<string>();
   private unsubscribe$: Subject<void> = new Subject<void>();

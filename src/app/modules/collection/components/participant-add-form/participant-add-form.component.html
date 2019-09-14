@@ -14,7 +14,7 @@
             class="form-control"
             id="study"
             formControlName="study"
-            (change)="onStudySelected($event)"
+            (change)="onStudySelected()"
           >
             <option value="" i18n>-- make a selection --</option>
             <option *ngFor="let study of studies; trackBy: studyTrackBy" [value]="study.id">

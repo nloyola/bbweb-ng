@@ -167,7 +167,7 @@ describe('ShipmentService', () => {
           shipment,
           attribute: 'state',
           value,
-          url: `${BASE_URL}/${transition}/${shipment.id}`,
+          url: `${BASE_URL}/state/${transition}/${shipment.id}`,
           json
         });
       });

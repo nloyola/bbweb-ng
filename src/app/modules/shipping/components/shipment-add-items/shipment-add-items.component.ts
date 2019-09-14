@@ -1,11 +1,8 @@
-import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Shipment } from '@app/domain/shipments';
+import { Component, Input, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ModalInputOptions } from '@app/modules/modals/models';
 import {
   RootStoreState,
   ShipmentSpecimenStoreActions,
-  ShipmentSpecimenStoreSelectors,
   ShipmentStoreActions,
   ShipmentStoreSelectors
 } from '@app/root-store';
@@ -13,12 +10,13 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject } from 'rxjs';
-import { filter, takeUntil, withLatestFrom } from 'rxjs/operators';
+import { takeUntil, withLatestFrom } from 'rxjs/operators';
 import { ShipmentStateTransision } from '../../../../core/services/shipment.service';
 import { ModalShipmentHasNoSpecimensComponent } from '../modal-shipment-has-no-specimens/modal-shipment-has-no-specimens.component';
 import { ModalShipmentHasSpecimensComponent } from '../modal-shipment-has-specimens/modal-shipment-has-specimens.component';
 import { ModalShipmentRemoveComponent } from '../modal-shipment-remove/modal-shipment-remove.component';
 import { ShipmentViewerComponent } from '../shipment-viewer/shipment-viewer.component';
+import { Shipment } from '@app/domain/shipments';
 
 @Component({
   selector: 'app-shipment-add-items',
@@ -28,6 +26,8 @@ import { ShipmentViewerComponent } from '../shipment-viewer/shipment-viewer.comp
 export class ShipmentAddItemsComponent extends ShipmentViewerComponent implements OnInit, OnDestroy {
   @ViewChild('packedTimeModal', { static: false }) packedTimeModal: TemplateRef<any>;
   @ViewChild('sentTimeModal', { static: false }) sentTimeModal: TemplateRef<any>;
+
+  @Input() shipment: Shipment;
 
   packedTimeModalOptions: ModalInputOptions = { required: true };
   sentTimeModalOptions: ModalInputOptions = { required: true };
@@ -179,14 +179,5 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent implement
       .subscribe(() => {
         this.toastr.success('Packed time and sent time recorded');
       });
-  }
-
-  private queryForSpecimens() {
-    this.store$.dispatch(
-      ShipmentSpecimenStoreActions.searchShipmentSpecimensRequest({
-        shipment: this.shipment,
-        searchParams: {}
-      })
-    );
   }
 }

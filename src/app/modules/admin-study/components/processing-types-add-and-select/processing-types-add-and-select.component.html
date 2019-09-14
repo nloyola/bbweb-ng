@@ -9,11 +9,11 @@
   [noResultsToDisplay]="noResultsToDisplay"
   [loadingContent]="showLoading"
   (filterUpdated)="onFiltersUpdated($event)"
-  (pageChange)="paginationPageChange($event)"
+  (pageChange)="paginationPageChange()"
 >
   <ng-template let-entity>
     <li class="list-group-item">
-      <a href="#" (click)="!!processingTypeSelected(entity)">
+      <a [routerLink]="" (click)="!!processingTypeSelected(entity)">
         <small>{{ entity.name | truncate: 18 }}</small>
       </a>
     </li>

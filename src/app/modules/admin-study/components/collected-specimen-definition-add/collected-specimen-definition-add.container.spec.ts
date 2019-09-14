@@ -117,7 +117,7 @@ describe('CollectedSpecimenDefinitionAddContainer', () => {
     const eventType = initializeComponent();
     const spy = jest.spyOn(router, 'navigate');
 
-    const testData = [{ path: 'spcDefAdd', returnPath: '..' }, { path: 'spcDef', returnPath: '..' }];
+    const testData = [{ path: 'spcDefAdd', returnPath: '../../' }, { path: 'spcDef', returnPath: '../../' }];
 
     testData.forEach((testInfo, index) => {
       mockActivatedRouteSnapshot(testInfo.path, eventType);
@@ -159,7 +159,7 @@ describe('CollectedSpecimenDefinitionAddContainer', () => {
         expect(component.isSaving$).toBeObservable(cold('b', { b: false }));
         expect(store.dispatch).toHaveBeenCalled();
         expect(toastr.success).toHaveBeenCalled();
-        expect(spy.mock.calls[0][0]).toEqual(['..']);
+        expect(spy.mock.calls[0][0]).toEqual(['../../']);
       });
     }));
 

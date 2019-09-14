@@ -67,8 +67,8 @@
               [ngbTypeahead]="studyAddTypeahead.getEntities"
               i18-placeholder
               placeholder="enter a study's name or partial name"
-              [inputFormatter]="studyAddTypeahead.typeaheadFormatter"
-              [resultFormatter]="studyAddTypeahead.typeaheadFormatter"
+              [inputFormatter]="studyAddTypeahead.formatter"
+              [resultFormatter]="studyAddTypeahead.formatter"
               (selectItem)="studyAddTypeahead.onEntitySelected($event)"
               [editable]="false"
             />

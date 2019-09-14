@@ -10,7 +10,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 export class UserRemoveModalComponent {
   @Input() user: IUserInfo;
 
-  constructor(private modal: NgbActiveModal) {}
+  constructor(public modal: NgbActiveModal) {}
 
   confirm(): void {
     this.modal.close(this.user);

@@ -4,25 +4,22 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AnnotationFactory } from '@app/domain/annotations';
-import { CollectionEvent, Participant, Specimen } from '@app/domain/participants';
-import { CollectionEventType, Study } from '@app/domain/studies';
+import { CollectionEvent, Participant } from '@app/domain/participants';
+import { CollectionEventType } from '@app/domain/studies';
 import {
   EventStoreActions,
   EventStoreReducer,
-  EventTypeStoreActions,
   EventTypeStoreReducer,
   NgrxRuntimeChecks,
-  ParticipantStoreActions,
   ParticipantStoreReducer,
   RootStoreState,
-  SpecimenStoreActions,
   SpecimenStoreReducer,
-  StudyStoreActions,
   StudyStoreReducer
 } from '@app/root-store';
 import { NgbActiveModal, NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
 import { EntityUpdateComponentBehaviour } from '@test/behaviours/entity-update-component.behaviour';
+import { EventSpecCommon } from '@test/event-spec-common';
 import { Factory } from '@test/factory';
 import { MockActivatedRoute } from '@test/mocks';
 import * as faker from 'faker';
@@ -30,7 +27,7 @@ import { cold } from 'jasmine-marbles';
 import { ToastrModule } from 'ngx-toastr';
 import { of as observableOf } from 'rxjs';
 import { EventViewComponent } from './event-view.component';
-import { EventSpecCommon } from '@test/event-spec-common';
+import { LocalTimePipe } from '@app/shared/pipes';
 
 describe('EventViewComponent', () => {
   let component: EventViewComponent;
@@ -64,7 +61,7 @@ describe('EventViewComponent', () => {
           useValue: mockActivatedRoute
         }
       ],
-      declarations: [EventViewComponent],
+      declarations: [EventViewComponent, LocalTimePipe],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
   }));

@@ -1,14 +1,13 @@
-import { Component, Input, OnDestroy, OnInit, ViewChild, TemplateRef } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Shipment } from '@app/domain/shipments';
 import { RootStoreState, ShipmentStoreActions, ShipmentStoreSelectors } from '@app/root-store';
-import { select, Store } from '@ngrx/store';
-import { Subject, Observable } from 'rxjs';
-import { filter, takeUntil, map, shareReplay } from 'rxjs/operators';
-import { ToastrService } from 'ngx-toastr';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ModalInputOptions } from '@app/modules/modals/models';
-import { ModalSpecimensExistInAnotherShipmentComponent } from '../modal-specimens-exist-in-another-shipment/modal-specimens-exist-in-another-shipment.component';
+import { select, Store } from '@ngrx/store';
+import { ToastrService } from 'ngx-toastr';
+import { Observable, Subject } from 'rxjs';
+import { filter, map, shareReplay, takeUntil } from 'rxjs/operators';
+import { ModalSpecimensInOtherShipmentComponent } from '../modal-specimens-in-other-shipment/modal-specimens-in-other-shipment.component';
 
 @Component({
   selector: 'app-shipment-add-specimens-card',
@@ -21,6 +20,8 @@ export class ShipmentAddSpecimensCardComponent implements OnInit, OnDestroy {
 
   // specimensExistModalOptions: ModalInputOptions = { required: true };
 
+  isLoading$: Observable<boolean>;
+  shipmentLoading$: Observable<boolean>;
   shipment$: Observable<Shipment>;
   specimenCount: number;
   form: FormGroup;
@@ -57,7 +58,7 @@ export class ShipmentAddSpecimensCardComponent implements OnInit, OnDestroy {
             const splitted = errorMsg.split(':')[2];
             if (splitted !== undefined) {
               this.existingInventoryIds = splitted.split(',');
-              const modalRef = this.modalService.open(ModalSpecimensExistInAnotherShipmentComponent);
+              const modalRef = this.modalService.open(ModalSpecimensInOtherShipmentComponent);
               modalRef.componentInstance.specimenIds = this.existingInventoryIds;
             }
           } else {

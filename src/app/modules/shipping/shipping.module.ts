@@ -29,7 +29,7 @@ import { ShippingCentresSelectComponent } from './components/shipping-centres-se
 import { ShippingPageComponent } from './components/shipping-page/shipping-page.component';
 import { ShippingRoutingModule } from './shipping-routing.module';
 import { ShipmentViewComponent } from './components/shipment-view/shipment-view.component';
-import { ModalSpecimensExistInAnotherShipmentComponent } from './components/modal-specimens-exist-in-another-shipment/modal-specimens-exist-in-another-shipment.component';
+import { ModalSpecimensInOtherShipmentComponent } from './components/modal-specimens-in-other-shipment/modal-specimens-in-other-shipment.component';
 
 @NgModule({
   imports: [
@@ -55,7 +55,7 @@ import { ModalSpecimensExistInAnotherShipmentComponent } from './components/moda
     ModalShipmentHasSpecimensComponent,
     ModalShipmentRemoveComponent,
     ModalShipmentTagAsLostComponent,
-    ModalSpecimensExistInAnotherShipmentComponent,
+    ModalSpecimensInOtherShipmentComponent,
     ShipmentAddItemsComponent,
     ShipmentAddPageComponent,
     ShipmentAddSpecimensCardComponent,
@@ -80,7 +80,7 @@ import { ModalSpecimensExistInAnotherShipmentComponent } from './components/moda
     ModalShipmentHasSpecimensComponent,
     ModalShipmentRemoveComponent,
     ModalShipmentTagAsLostComponent,
-    ModalSpecimensExistInAnotherShipmentComponent
+    ModalSpecimensInOtherShipmentComponent
   ]
 })
 export class ShippingModule {}

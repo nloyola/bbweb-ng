@@ -1,6 +1,6 @@
 <div class="pb-2 mt-4 mb-2">
   <h1>
-    {{ shipment.courierName }}: {{ shipment.trackingNumber }}
+    {{ shipment?.courierName }}: {{ shipment?.trackingNumber }}
     <app-shipment-page-buttons
       [shipment]="shipment"
       (backEvent)="backToCreated()"

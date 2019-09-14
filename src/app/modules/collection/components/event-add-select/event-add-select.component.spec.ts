@@ -1,5 +1,7 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ReactiveFormsModule } from '@angular/forms';
+import { RouterTestingModule } from '@angular/router/testing';
 import { VisitNumberFilter } from '@app/domain/search-filters';
 import {
   EventStoreActions,
@@ -13,7 +15,6 @@ import { Store, StoreModule } from '@ngrx/store';
 import { EventSpecCommon } from '@test/event-spec-common';
 import { Factory } from '@test/factory';
 import { EventAddSelectComponent } from './event-add-select.component';
-import { ReactiveFormsModule } from '@angular/forms';
 
 describe('EventAddSelectComponent', () => {
   let component: EventAddSelectComponent;
@@ -25,6 +26,7 @@ describe('EventAddSelectComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         ReactiveFormsModule,
+        RouterTestingModule,
         StoreModule.forRoot(
           {
             study: StudyStoreReducer.reducer,

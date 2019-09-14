@@ -11,6 +11,7 @@ import { Factory } from '@test/factory';
 import { cold } from 'jasmine-marbles';
 import { SpecimenViewModalComponent } from '../specimen-view-modal/specimen-view-modal.component';
 import { EventSpecimensViewComponent } from './event-specimens-view.component';
+import { LocalTimePipe } from '@app/shared/pipes';
 
 describe('EventSpecimensViewComponent', () => {
   let component: EventSpecimensViewComponent;
@@ -25,7 +26,7 @@ describe('EventSpecimensViewComponent', () => {
         StoreModule.forRoot({ specimen: SpecimenStoreReducer.reducer }, NgrxRuntimeChecks)
       ],
       providers: [NgbActiveModal],
-      declarations: [EventSpecimensViewComponent, ModalInputComponent],
+      declarations: [EventSpecimensViewComponent, ModalInputComponent, LocalTimePipe],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
   }));

@@ -1,6 +1,7 @@
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { ModalShipmentRemoveComponent } from './shipment-remove-modal.component';
+import { ModalShipmentRemoveComponent } from './modal-shipment-remove.component';
+import { NgbActiveModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 describe('ModalShipmentRemoveComponent', () => {
   let component: ModalShipmentRemoveComponent;
@@ -8,7 +9,10 @@ describe('ModalShipmentRemoveComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ModalShipmentRemoveComponent]
+      imports: [NgbModule],
+      providers: [NgbActiveModal],
+      declarations: [ModalShipmentRemoveComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
   }));
 

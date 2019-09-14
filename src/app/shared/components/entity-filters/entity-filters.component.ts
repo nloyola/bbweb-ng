@@ -18,8 +18,8 @@ export class EntityFiltersComponent implements OnInit, OnDestroy {
 
   form: FormGroup;
   multipleFilters: boolean;
+  hasStateFilter: boolean;
 
-  private hasStateFilter: boolean;
   private allStates: EntityStateInfo = {
     id: 'all',
     label: 'All'

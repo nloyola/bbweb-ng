@@ -43,8 +43,8 @@ export class ProcessingTypeAddComponent implements OnInit, OnDestroy {
   inputEntityName: string;
   inputDefinitionName: string;
   entityNames$: Observable<EntityNames>;
+  processingTypeToSave: ProcessingType;
 
-  private processingTypeToSave: ProcessingType;
   private unsubscribe$: Subject<void> = new Subject<void>();
 
   constructor(

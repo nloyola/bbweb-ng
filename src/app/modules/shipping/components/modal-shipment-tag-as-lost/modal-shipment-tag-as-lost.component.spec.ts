@@ -1,5 +1,6 @@
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { NgbActiveModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ModalShipmentTagAsLostComponent } from './modal-shipment-tag-as-lost.component';
 
 describe('ModalShipmentTagAsLostComponent', () => {
@@ -8,7 +9,10 @@ describe('ModalShipmentTagAsLostComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ModalShipmentTagAsLostComponent]
+      imports: [NgbModule],
+      providers: [NgbActiveModal],
+      declarations: [ModalShipmentTagAsLostComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
   }));
 

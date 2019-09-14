@@ -1,10 +1,9 @@
 <app-annotation-type-add
-  *ngIf="!isLoading; else showLoading"
   [entityName]="eventType?.name"
   [annotationType]="(annotationType$ | async)"
   [isSaving]="isSaving$"
   (submitted)="onSubmit($event)"
-  (cancelled)="onCancel($event)"
+  (cancelled)="onCancel()"
 >
 </app-annotation-type-add>
 

@@ -1,4 +1,4 @@
-<ng-container [ngSwitch]="shipment.state">
+<ng-container [ngSwitch]="shipment?.state">
   <app-shipment-add-items [shipment]="shipment" *ngSwitchCase="'created'"> </app-shipment-add-items>
   <app-shipment-view-packed [shipment]="shipment" *ngSwitchCase="'packed'"> </app-shipment-view-packed>
   <app-shipment-view-sent [shipment]="shipment" *ngSwitchCase="'sent'"> </app-shipment-view-sent>
@@ -12,6 +12,6 @@
   -->
 
   <div class="mt-4" *ngSwitchDefault>
-    Shipment state <b>{{ shipment.state }}</b> NOT implemented Yet!
+    Shipment state <b>{{ shipment?.state }}</b> NOT implemented Yet!
   </div>
 </ng-container>

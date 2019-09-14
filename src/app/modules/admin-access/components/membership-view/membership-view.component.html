@@ -103,8 +103,8 @@
                 [ngbTypeahead]="userAddTypeahead.getEntities"
                 i18-placeholder
                 placeholder="enter a user's name or partial name"
-                [inputFormatter]="userAddTypeahead.typeaheadFormatter"
-                [resultFormatter]="userAddTypeahead.typeaheadFormatter"
+                [inputFormatter]="userAddTypeahead.formatter"
+                [resultFormatter]="userAddTypeahead.formatter"
                 (selectItem)="userAddTypeahead.onEntitySelected($event)"
                 [editable]="false"
               />
@@ -158,8 +158,8 @@
                 [ngbTypeahead]="studyAddTypeahead.getEntities"
                 i18-placeholder
                 placeholder="enter a study's name or partial name"
-                [inputFormatter]="studyAddTypeahead.typeaheadFormatter"
-                [resultFormatter]="studyAddTypeahead.typeaheadFormatter"
+                [inputFormatter]="studyAddTypeahead.formatter"
+                [resultFormatter]="studyAddTypeahead.formatter"
                 (selectItem)="studyAddTypeahead.onEntitySelected($event)"
                 [editable]="false"
               />
@@ -213,8 +213,8 @@
                 [ngbTypeahead]="centreAddTypeahead.getEntities"
                 i18-placeholder
                 placeholder="enter a centre's name or partial name"
-                [inputFormatter]="centreAddTypeahead.typeaheadFormatter"
-                [resultFormatter]="centreAddTypeahead.typeaheadFormatter"
+                [inputFormatter]="centreAddTypeahead.formatter"
+                [resultFormatter]="centreAddTypeahead.formatter"
                 (selectItem)="centreAddTypeahead.onEntitySelected($event)"
                 [editable]="false"
               />

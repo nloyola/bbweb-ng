@@ -8,12 +8,11 @@
   [noEntitiesToDisplay]="noEntitiesToDisplay"
   [noResultsToDisplay]="noResultsToDisplay"
   [loadingContent]="showLoading"
-  (filterUpdated)="onFiltersUpdated($event)"
-  (pageChange)="paginationPageChange($event)"
+  (pageChange)="paginationPageChange()"
 >
   <ng-template let-entity>
     <li class="list-group-item" *ngIf="entity">
-      <a href="#" (click)="!!centreSelected(entity)">
+      <a [routerLink]="" (click)="!!centreSelected(entity)">
         <small>{{ entity.name }}</small>
       </a>
     </li>

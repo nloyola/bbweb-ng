@@ -1,10 +1,9 @@
 <app-collected-specimen-definition-add-ui
-  *ngIf="!isLoading; else showLoading"
   [entityName]="eventType?.name"
   [specimenDefinition]="specimenDefinition"
   [isSaving]="isSaving$"
   (submitted)="onSubmit($event)"
-  (cancelled)="onCancel($event)"
+  (cancelled)="onCancel()"
 >
 </app-collected-specimen-definition-add-ui>
 

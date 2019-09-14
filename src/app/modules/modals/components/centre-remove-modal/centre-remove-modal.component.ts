@@ -10,9 +10,9 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 export class CentreRemoveModalComponent {
   @Input() centre: ICentreInfoAndState;
 
-  constructor(private activeModal: NgbActiveModal) {}
+  constructor(public modal: NgbActiveModal) {}
 
   confirm(): void {
-    this.activeModal.close(this.centre);
+    this.modal.close(this.centre);
   }
 }

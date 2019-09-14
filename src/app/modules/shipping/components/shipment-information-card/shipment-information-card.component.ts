@@ -33,6 +33,7 @@ export class ShipmentInformationCardComponent implements OnInit, OnDestroy {
   @ViewChild('updateFromLocationModal', { static: false }) updateFromLocationModal: TemplateRef<any>;
   @ViewChild('updateToLocationModal', { static: false }) updateToLocationModal: TemplateRef<any>;
 
+  isLoading$: Observable<boolean>;
   shipment$: Observable<Shipment>;
   isCardCollapsed: boolean;
   updateCourierModalOptions: ModalInputTextOptions;

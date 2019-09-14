@@ -1,6 +1,6 @@
 <div class="pb-2 mt-4 mb-2">
   <h1>
-    {{ shipment.courierName }}: {{ shipment.trackingNumber }}
+    {{ shipment?.courierName }}: {{ shipment?.trackingNumber }}
     <app-shipment-page-buttons
       [shipment]="shipment"
       (forwardEvent)="tagAsPacked()"
@@ -9,8 +9,7 @@
   </h1>
   <h3 i18n>Add items to ship</h3>
 
-  <app-shipment-information-card [shipment]="shipment" (onRemove)="remove($event)">
-  </app-shipment-information-card>
+  <app-shipment-information-card [shipment]="shipment" (onRemove)="remove()"> </app-shipment-information-card>
 
   <app-shipment-add-specimens-card [shipment]="shipment"></app-shipment-add-specimens-card>
 

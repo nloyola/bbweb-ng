@@ -27,6 +27,7 @@ export class EntitySelectorComponent<T extends DomainEntity> implements OnInit, 
   @Input() isLoading: boolean;
   @Input() entitiesLimit: number;
   @Input() page: number;
+  @Input() showPagination: boolean;
   @Input() hasNoMatches: boolean;
 
   @Input() heading: TemplateRef<any>;

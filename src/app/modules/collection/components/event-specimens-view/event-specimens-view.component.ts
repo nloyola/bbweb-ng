@@ -91,9 +91,13 @@ export class EventSpecimensViewComponent implements OnInit, OnChanges {
 
     // FIXME: not working 100%
     // scrolling works only in some cases
-    if (this.specimensTable.nativeElement.scrollIntoView) {
-      this.specimensTable.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'end' });
-    }
+    // if (this.specimensTable.nativeElement.scrollIntoView) {
+    //   this.specimensTable.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    // }
+  }
+
+  addSpecimen() {
+    alert('needs implementation');
   }
 
   viewSpecimen(specimen: Specimen) {

@@ -15,7 +15,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrModule } from 'ngx-toastr';
 
 @Injectable()
-class UIErrorHandler extends ErrorHandler {
+export class UIErrorHandler extends ErrorHandler {
   constructor() {
     super();
   }

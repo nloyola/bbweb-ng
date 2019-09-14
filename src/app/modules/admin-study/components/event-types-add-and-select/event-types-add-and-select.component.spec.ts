@@ -1,11 +1,8 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CollectionEventType, Study, StudyState } from '@app/domain/studies';
 import { EventTypeStoreReducer, NgrxRuntimeChecks, RootStoreState, StudyStoreReducer } from '@app/root-store';
-import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { TruncatePipe } from '@app/shared/pipes';
 import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
@@ -22,6 +19,7 @@ describe('EventTypesAddAndSelectComponent', () => {
 
     TestBed.configureTestingModule({
       imports: [
+        RouterTestingModule,
         StoreModule.forRoot(
           {
             study: StudyStoreReducer.reducer,
@@ -66,7 +64,7 @@ describe('EventTypesAddAndSelectComponent', () => {
     it('makes a request from the server', () => {
       const study = new Study().deserialize(factory.study());
       const testData = [
-        { componentFunc: () => component.onFiltersUpdated('name::test') },
+        { componentFunc: () => component.nameFilterChanged('test') },
         { componentFunc: () => component.paginationPageChange() }
       ];
       const storeListener = jest.spyOn(store, 'dispatch');

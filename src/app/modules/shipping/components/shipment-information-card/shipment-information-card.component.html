@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col-sm-12 mt-4">
     <div class="card">
-      <div class="card-header bg-primary text-light" *ngIf="(isLoading$ | async) !== false; else showLoading">
+      <div class="card-header bg-primary text-light">
         Shipment information
         <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
           <button
@@ -18,7 +18,7 @@
             class="btn btn-sm btn-light"
             type="button"
             (click)="isCardCollapsed = !isCardCollapsed"
-            [attr.aria-expanded]="!isCollapsed"
+            [attr.aria-expanded]="!isCardCollapsed"
             aria-controls="infoCollapse"
           >
             <mat-icon *ngIf="!isCardCollapsed" inline="true">keyboard_arrow_down</mat-icon>

@@ -75,8 +75,8 @@
                 [ngbTypeahead]="userAddTypeahead.getEntities"
                 i18-placeholder
                 placeholder="enter a user's name or partial name"
-                [inputFormatter]="userAddTypeahead.typeaheadFormatter"
-                [resultFormatter]="userAddTypeahead.typeaheadFormatter"
+                [inputFormatter]="userAddTypeahead.formatter"
+                [resultFormatter]="userAddTypeahead.formatter"
                 (selectItem)="userAddTypeahead.onEntitySelected($event)"
                 [editable]="false"
               />

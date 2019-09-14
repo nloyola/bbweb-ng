@@ -384,7 +384,7 @@ describe('EventTypeViewContainer', () => {
 
       ngZone.run(() => component.editSpecimenDefinition(eventType.specimenDefinitions[0]));
       expect(router.navigate).toHaveBeenCalled();
-      expect((router.navigate as any).calls.mostRecent().args[0]).toEqual(['spcDef', specimenDefinition.id]);
+      expect((router.navigate as any).calls.mostRecent().args[0]).toEqual(['spc-def', specimenDefinition.id]);
     });
 
     describe('when removing an specimen definition', () => {

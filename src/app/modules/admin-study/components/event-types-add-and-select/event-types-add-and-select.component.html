@@ -8,11 +8,11 @@
   [noEntitiesToDisplay]="noEntitiesToDisplay"
   [noResultsToDisplay]="noResultsToDisplay"
   [loadingContent]="showLoading"
-  (pageChange)="paginationPageChange($event)"
+  (pageChange)="paginationPageChange()"
 >
   <ng-template let-entity>
     <li class="list-group-item" *ngIf="entity">
-      <a href="#" (click)="!!eventTypeSelected(entity)">
+      <a [routerLink]="" (click)="!!eventTypeSelected(entity)">
         <small>{{ entity.name | truncate: 18 }}</small>
       </a>
       <span class="float-right badge badge-secondary">{{ getRecurringLabel(entity) }}</span>
