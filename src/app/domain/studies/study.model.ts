@@ -8,7 +8,8 @@ import {
   IEntityInfoAndState,
   IEntitySet,
   JSONArray,
-  JSONObject
+  JSONObject,
+  EntitySet
 } from '@app/domain';
 import { AnnotationType } from '@app/domain/annotations/annotation-type.model';
 import { StudyState } from './study-state.enum';
@@ -87,3 +88,6 @@ export type IStudyStateInfo = IEntityInfoAndState<IStudy, StudyState>;
 
 /* tslint:disable-next-line:max-classes-per-file */
 export class StudyStateInfo extends EntityInfoAndState<Study, StudyState> {}
+
+/* tslint:disable-next-line:max-classes-per-file */
+export class StudyInfoSet extends EntitySet<IStudy, Study> {}

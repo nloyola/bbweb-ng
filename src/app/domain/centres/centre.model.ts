@@ -10,7 +10,8 @@ import {
   IEntitySet,
   JSONArray,
   JSONObject,
-  Location
+  Location,
+  EntitySet
 } from '@app/domain';
 import { Study, StudyState, StudyStateInfo } from '@app/domain/studies';
 import { CentreState } from './centre-state.enum';
@@ -90,3 +91,6 @@ export class Centre extends ConcurrencySafeEntity implements ICentre {
     return this.locations.length > 0;
   }
 }
+
+/* tslint:disable-next-line:max-classes-per-file */
+export class CentreInfoSet extends EntitySet<ICentre, Centre> {}

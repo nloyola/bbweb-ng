@@ -10,10 +10,13 @@ export interface IEntitySet<T extends IDomainEntity & HasSlug & HasName> {
   entityData: IEntityInfo<T>[];
 }
 
-export class EntitySet<T extends DomainEntity & HasSlug & HasName> implements IEntitySet<T>, Deserializable {
+export class EntitySet<
+  I extends IDomainEntity & HasSlug & HasName,
+  T extends DomainEntity & HasSlug & HasName
+> implements IEntitySet<I>, Deserializable {
   allEntities: boolean;
 
-  entityData: IEntityInfo<T>[];
+  entityData: EntityInfo<T>[];
 
   isContentTypeAll(): boolean {
     return this.allEntities;
@@ -27,7 +30,7 @@ export class EntitySet<T extends DomainEntity & HasSlug & HasName> implements IE
     return !this.allEntities && this.entityData.length > 0;
   }
 
-  deserialize(input: IEntitySet<T>): this {
+  deserialize(input: IEntitySet<I>): this {
     const { allEntities, entityData } = input;
     Object.assign(this, { allEntities });
 

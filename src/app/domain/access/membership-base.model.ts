@@ -7,8 +7,8 @@ import {
   IEntityInfo,
   JSONObject
 } from '@app/domain';
-import { ICentreInfoSet } from '@app/domain/centres';
-import { IStudyInfoSet } from '@app/domain/studies';
+import { ICentreInfoSet, CentreInfoSet } from '@app/domain/centres';
+import { IStudyInfoSet, StudyInfoSet } from '@app/domain/studies';
 import { HasDescription } from '../has-description.model';
 
 export interface IMembershipBase extends IConcurrencySafeEntity, HasSlug, HasName, HasDescription {
@@ -29,8 +29,8 @@ export abstract class MembershipBase extends ConcurrencySafeEntity implements Ha
   slug: string;
   name: string;
   description: string | null;
-  studyData: IStudyInfoSet;
-  centreData: ICentreInfoSet;
+  studyData: StudyInfoSet;
+  centreData: CentreInfoSet;
 
   deserialize(input: IMembershipBase): this {
     const { slug, name } = input;
