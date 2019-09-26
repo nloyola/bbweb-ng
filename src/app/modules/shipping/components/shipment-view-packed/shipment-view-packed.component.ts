@@ -1,5 +1,4 @@
-import { ChangeDetectorRef, Component, TemplateRef, ViewChild, SimpleChanges } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, TemplateRef, ViewChild } from '@angular/core';
 import { ShipmentStateTransision } from '@app/core/services';
 import { RootStoreState, ShipmentStoreActions } from '@app/root-store';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';

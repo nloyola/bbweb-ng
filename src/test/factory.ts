@@ -7,7 +7,7 @@ import {
   IDomainEntity,
   IEntityInfo,
   IEntityInfoAndState,
-  IEntitySet,
+  IEntityInfoSet,
   PagedReply,
   PreservationTemperature,
   PreservationType,
@@ -262,7 +262,7 @@ export class Factory {
     };
   }
 
-  entitySet<T extends IDomainEntity & HasSlug & HasName>(): IEntitySet<T> {
+  entitySet<T extends IDomainEntity & HasSlug & HasName>(): IEntityInfoSet<T> {
     return { allEntities: false, entityData: [this.entityInfo()] };
   }
 

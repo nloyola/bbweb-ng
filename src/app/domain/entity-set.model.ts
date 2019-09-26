@@ -4,16 +4,16 @@ import { EntityInfo, IEntityInfo } from './entity-info.model';
 import { HasName } from './has-name.model';
 import { HasSlug } from './has-slug.model';
 
-export interface IEntitySet<T extends IDomainEntity & HasSlug & HasName> {
+export interface IEntityInfoSet<T extends IDomainEntity & HasSlug & HasName> {
   allEntities: boolean;
 
   entityData: IEntityInfo<T>[];
 }
 
-export class EntitySet<
+export class EntityInfoSet<
   I extends IDomainEntity & HasSlug & HasName,
   T extends DomainEntity & HasSlug & HasName
-> implements IEntitySet<I>, Deserializable {
+> implements IEntityInfoSet<I>, Deserializable {
   allEntities: boolean;
 
   entityData: EntityInfo<T>[];
@@ -30,7 +30,7 @@ export class EntitySet<
     return !this.allEntities && this.entityData.length > 0;
   }
 
-  deserialize(input: IEntitySet<I>): this {
+  deserialize(input: IEntityInfoSet<I>): this {
     const { allEntities, entityData } = input;
     Object.assign(this, { allEntities });
 

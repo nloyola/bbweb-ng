@@ -1,17 +1,15 @@
 import {
   ConcurrencySafeEntity,
   EntityInfoAndState,
+  EntityInfoSet,
   HasDescription,
   HasName,
   HasSlug,
   IConcurrencySafeEntity,
   IEntityInfo,
   IEntityInfoAndState,
-  IEntitySet,
-  JSONArray,
-  JSONObject,
-  Location,
-  EntitySet
+  IEntityInfoSet,
+  Location
 } from '@app/domain';
 import { Study, StudyState, StudyStateInfo } from '@app/domain/studies';
 import { CentreState } from './centre-state.enum';
@@ -31,7 +29,7 @@ export type ICentreInfo = IEntityInfo<ICentre>;
 
 export type ICentreInfoAndState = IEntityInfoAndState<ICentre, CentreState>;
 
-export type ICentreInfoSet = IEntitySet<ICentre>;
+export type ICentreInfoSet = IEntityInfoSet<ICentre>;
 
 /*
  * A Centre represents a collection of participants and specimens collected for a particular research centre.
@@ -93,4 +91,7 @@ export class Centre extends ConcurrencySafeEntity implements ICentre {
 }
 
 /* tslint:disable-next-line:max-classes-per-file */
-export class CentreInfoSet extends EntitySet<ICentre, Centre> {}
+export class CentreStateInfo extends EntityInfoAndState<Centre, CentreState> {}
+
+/* tslint:disable-next-line:max-classes-per-file */
+export class CentreInfoSet extends EntityInfoSet<ICentre, Centre> {}
