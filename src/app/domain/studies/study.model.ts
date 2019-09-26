@@ -12,7 +12,6 @@ import {
 import { AnnotationType } from '@app/domain/annotations/annotation-type.model';
 import { EntityInfoAndState } from '../entity-info-and-state.model';
 import { StudyState } from './study-state.enum';
-import { EntityInfoAndState } from '../entity-info-and-state.model';
 
 /**
  * A Study represents a collection of participants and specimens collected for a particular research study.

@@ -46,7 +46,7 @@ export class Shipment extends ConcurrencySafeEntity {
   timePacked?: Date;
   timeSent?: Date;
   timeReceived?: Date;
-  timeUpacked?: Date;
+  timeUnpacked?: Date;
   timeCompleted?: Date;
   specimenCount: number;
 
@@ -121,7 +121,7 @@ export class Shipment extends ConcurrencySafeEntity {
       this.timeReceived = new Date(input.timeReceived);
     }
     if (input.timeUnpacked) {
-      this.timeUpacked = new Date(input.timeUnpacked);
+      this.timeUnpacked = new Date(input.timeUnpacked);
     }
     if (input.timeCompleted) {
       this.timeCompleted = new Date(input.timeCompleted);
@@ -154,7 +154,7 @@ export class Shipment extends ConcurrencySafeEntity {
       case ShipmentState.Received:
         return this.timeReceived;
       case ShipmentState.Unpacked:
-        return this.timeUpacked;
+        return this.timeUnpacked;
       case ShipmentState.Completed:
         return this.timeCompleted;
 

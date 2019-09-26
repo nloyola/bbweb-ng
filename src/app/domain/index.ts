@@ -6,7 +6,7 @@ export * from './deserializable.model';
 export * from './domain-entity.model';
 export * from './entity-info-and-state.model';
 export * from './entity-info.model';
-export * from './entity-set.model';
+export * from './entity-info-set.model';
 export * from './entity-state-info.model';
 export * from './entity-ui.model';
 export * from './has-description.model';
