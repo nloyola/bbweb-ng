@@ -95,7 +95,7 @@
         <small>{{ shipment.getTime() | localTime }}</small>
       </td>
       <td *ngIf="mode !== 'completed'">
-        <small>{{ shipment.state }}</small>
+        <small>{{ shipment.state | titlecase }}</small>
       </td>
       <td>
         <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
