@@ -21,7 +21,7 @@ export class UIErrorHandler extends ErrorHandler {
   }
   handleError(error) {
     super.handleError(error);
-    alert(`Error occurred: ${error.message}`);
+    //alert(`Error occurred: ${error.message}`);
   }
 }
 
