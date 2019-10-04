@@ -98,9 +98,9 @@ describe('MembershipService', () => {
         name: membership.name,
         description: membership.description,
         userIds: [],
-        allStudies: false,
+        allStudies: true,
         studyIds: [],
-        allCentres: false,
+        allCentres: true,
         centreIds: []
       });
       req.flush({ status: 'success', data: rawMembership });
