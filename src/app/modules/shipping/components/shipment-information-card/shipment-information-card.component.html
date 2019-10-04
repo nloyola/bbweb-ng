@@ -3,52 +3,23 @@
     <div class="card">
       <div class="card-header bg-primary text-light">
         Shipment information
-        <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
-          <button
-            class="btn btn-sm btn-light mr-1"
-            type="button"
-            id="shipmentSummaryMenu"
-            ngbDropdownToggle
-            *ngIf="shipment.isCreated()"
-          >
-            <mat-icon inline="true">menu</mat-icon>
-          </button>
 
-          <button
-            class="btn btn-sm btn-light"
-            type="button"
-            (click)="isCardCollapsed = !isCardCollapsed"
-            [attr.aria-expanded]="!isCardCollapsed"
-            aria-controls="infoCollapse"
-          >
-            <mat-icon *ngIf="!isCardCollapsed" inline="true">keyboard_arrow_down</mat-icon>
-            <mat-icon *ngIf="isCardCollapsed" inline="true">keyboard_arrow_right</mat-icon>
-          </button>
+        <button
+          class="float-right d-inline-block btn btn-sm btn-light"
+          type="button"
+          (click)="isCardCollapsed = !isCardCollapsed"
+          [attr.aria-expanded]="!isCardCollapsed"
+          aria-controls="infoCollapse"
+        >
+          <mat-icon *ngIf="!isCardCollapsed" inline="true">keyboard_arrow_down</mat-icon>
+          <mat-icon *ngIf="isCardCollapsed" inline="true">keyboard_arrow_right</mat-icon>
+        </button>
 
-          <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="shipmentSummaryMenu">
-            <a class="dropdown-item" (click)="updateCourier()">
-              <mat-icon class="success-icon mr-1">edit</mat-icon>
-              <ng-container i18n>Update Courier</ng-container>
-            </a>
-            <a class="dropdown-item" (click)="updateTrackingNumber()">
-              <mat-icon class="success-icon mr-1">edit</mat-icon>
-              <ng-container i18n>Update Tracking Number</ng-container>
-            </a>
-            <a class="dropdown-item" (click)="updateFromLocation()">
-              <mat-icon class="success-icon mr-1">edit</mat-icon>
-              <ng-container i18n>Update From Centre</ng-container>
-            </a>
-            <a class="dropdown-item" (click)="updateToLocation()">
-              <mat-icon class="success-icon mr-1">edit</mat-icon>
-              <ng-container i18n>Update To Centre</ng-container>
-            </a>
-
-            <a class="dropdown-item" (click)="removeShipment()">
-              <mat-icon class="danger-icon mr-1">remove_circle</mat-icon>
-              <ng-container i18n>Remove this Shipment</ng-container>
-            </a>
-          </div>
-        </span>
+        <app-dropdown-menu
+          buttonClass="btn btn-sm btn-light btn-light mr-1"
+          [menuItems]="menuItems"
+          placement="bottom-right"
+        ></app-dropdown-menu>
       </div>
 
       <div [ngbCollapse]="isCardCollapsed" id="infoCollapse">
@@ -181,7 +152,7 @@
   <app-modal-input-text
     [modal]="modal"
     [title]="'Update Courier'"
-    [label]="'New courier name'"
+    [label]="'Courier Name'"
     [value]="shipment.courierName"
     [options]="updateCourierModalOptions"
     (onConfirm)="confirm($event)"
@@ -193,7 +164,7 @@
   <app-modal-input-text
     [modal]="modal"
     [title]="'Update Tracking Number'"
-    [label]="'New tracking number'"
+    [label]="'Tracking Number'"
     [value]="shipment.trackingNumber"
     [options]="updateTrackingNumberModalOptions"
     (onConfirm)="confirm($event)"
@@ -204,8 +175,8 @@
 <ng-template #updateFromLocationModal let-modal>
   <app-modal-input-centre-location
     [modal]="modal"
-    [title]="'Update From Location'"
-    [label]="'Select new location'"
+    [title]="'Update Source Location'"
+    [label]="'Source Location'"
     [value]="shipment.fromLocationInfo"
     [options]="updateLocationInfoModalOptions"
     [locationIdToFilterOut]="shipment.toLocationInfo.locationId"
@@ -217,8 +188,8 @@
 <ng-template #updateToLocationModal let-modal>
   <app-modal-input-centre-location
     [modal]="modal"
-    [title]="'Update To Location'"
-    [label]="'New to location'"
+    [title]="'Update Destination Location'"
+    [label]="'Destination Location'"
     [value]="shipment.toLocationInfo"
     [options]="updateLocationInfoModalOptions"
     [locationIdToFilterOut]="shipment.fromLocationInfo.locationId"

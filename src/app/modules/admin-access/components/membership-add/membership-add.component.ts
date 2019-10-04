@@ -18,9 +18,9 @@ export class MembershipAddComponent implements OnInit, OnDestroy {
   @ViewChild('nameInput', { static: true }) nameInput: ElementRef;
 
   form: FormGroup;
-  isSaving$: Observable<boolean>;
+  isSaving = false;
 
-  private unsubscribe$: Subject<void> = new Subject<void>();
+  private unsubscribe$ = new Subject<void>();
 
   constructor(
     private store$: Store<RootStoreState.State>,
@@ -37,8 +37,6 @@ export class MembershipAddComponent implements OnInit, OnDestroy {
     });
 
     this.nameInput.nativeElement.focus();
-
-    this.isSaving$ = this.store$.pipe(select(SpinnerStoreSelectors.selectSpinnerIsActive));
 
     this.store$
       .pipe(
@@ -81,6 +79,8 @@ export class MembershipAddComponent implements OnInit, OnDestroy {
 
   onSubmit() {
     const membership = new Membership().deserialize(this.form.value);
+    console.log('membership', membership);
+    this.isSaving = true;
     this.store$.dispatch(MembershipStoreActions.addMembershipRequest({ membership }));
   }
 

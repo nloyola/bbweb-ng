@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { AnnotationType } from '@app/domain/annotations';
 import { ProcessingType, ProcessingTypeInputEntity, SpecimenDefinition } from '@app/domain/studies';
+import { DropdownMenuItem } from '@app/shared/components/dropdown-menu/dropdown-menu.component';
 
 @Component({
   selector: 'app-processing-type-view-ui',
@@ -26,8 +27,15 @@ export class ProcessingTypeViewComponent implements OnInit, OnChanges {
   isPanelCollapsed = false;
   sortedAnnotationTypes: AnnotationType[];
   sortedSpecimenDefinitions: SpecimenDefinition[];
+  stepMenuItems: DropdownMenuItem[];
+  inputMenuItems: DropdownMenuItem[];
+  outputMenuItems: DropdownMenuItem[];
 
-  constructor() {}
+  constructor() {
+    this.stepMenuItems = this.createStepMenuItems();
+    this.inputMenuItems = this.createInputMenuItems();
+    this.outputMenuItems = this.createOutputMenuItems();
+  }
 
   ngOnInit() {
     this.setProcessingType(this.processingType);
@@ -37,22 +45,6 @@ export class ProcessingTypeViewComponent implements OnInit, OnChanges {
     if (changes.processingType) {
       this.setProcessingType(changes.processingType.currentValue);
     }
-  }
-
-  updateName() {
-    this.updateNameSelected.emit(null);
-  }
-
-  updateDescription() {
-    this.updateDescriptionSelected.emit(null);
-  }
-
-  updateEnabled() {
-    this.updateEnabledSelected.emit(null);
-  }
-
-  addAnnotationType() {
-    this.addAnnotationTypeSelected.emit(null);
   }
 
   viewAnnotationType(annotationType: AnnotationType): void {
@@ -65,14 +57,6 @@ export class ProcessingTypeViewComponent implements OnInit, OnChanges {
 
   removeAnnotationType(annotationType: AnnotationType): void {
     this.removeAnnotationTypeSelected.emit(annotationType);
-  }
-
-  inputSpecimenUpdate() {
-    this.inputSpecimenUpdateSelected.emit(null);
-  }
-
-  outputSpecimenUpdate() {
-    this.outputSpecimenUpdateSelected.emit(null);
   }
 
   removeProcessingType() {
@@ -88,5 +72,86 @@ export class ProcessingTypeViewComponent implements OnInit, OnChanges {
     this.sortedAnnotationTypes = this.processingType
       ? AnnotationType.sortAnnotationTypes(this.processingType.annotationTypes)
       : [];
+  }
+
+  private createStepMenuItems(): DropdownMenuItem[] {
+    const items: DropdownMenuItem[] = [
+      {
+        kind: 'selectable',
+        label: 'Update Name',
+        icon: 'edit',
+        iconClass: 'success-icon',
+        onSelected: () => {
+          this.updateNameSelected.emit(null);
+        }
+      },
+      {
+        kind: 'selectable',
+        label: 'Update Description',
+        icon: 'edit',
+        iconClass: 'success-icon',
+        onSelected: () => {
+          this.updateDescriptionSelected.emit(null);
+        }
+      },
+      {
+        kind: 'selectable',
+        label: 'Update Enabled',
+        icon: 'edit',
+        iconClass: 'success-icon',
+        onSelected: () => {
+          this.updateEnabledSelected.emit(null);
+        }
+      },
+      {
+        kind: 'selectable',
+        label: 'Add Annotation',
+        icon: 'edit',
+        iconClass: 'success-icon',
+        onSelected: () => {
+          this.addAnnotationTypeSelected.emit(null);
+        }
+      },
+      {
+        kind: 'selectable',
+        label: 'Remove this Step',
+        icon: 'warning',
+        iconClass: 'danger-icon',
+        onSelected: () => {
+          this.removeProcessingTypeSelected.emit(null);
+        }
+      }
+    ];
+    return items;
+  }
+
+  private createInputMenuItems(): DropdownMenuItem[] {
+    const items: DropdownMenuItem[] = [
+      {
+        kind: 'selectable',
+        label: 'Make changes to the Input Specimen',
+        icon: 'edit',
+        iconClass: 'success-icon',
+        onSelected: () => {
+          this.inputSpecimenUpdateSelected.emit(null);
+        }
+      }
+    ];
+    return items;
+  }
+
+  private createOutputMenuItems(): DropdownMenuItem[] {
+    const items: DropdownMenuItem[] = [
+      {
+        kind: 'selectable',
+        label: 'Make changes to the Output Specimen',
+        icon: 'edit',
+        iconClass: 'success-icon',
+        onSelected: () => {
+          this.outputSpecimenUpdateSelected.emit(null);
+        }
+      }
+    ];
+    return items;
   }
 }

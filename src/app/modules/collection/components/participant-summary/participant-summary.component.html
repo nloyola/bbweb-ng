@@ -1,85 +1,69 @@
 <ng-container *ngIf="participant$ | async as participant">
-  <ng-container *ngIf="annotations$ | async as annotations">
-    <div class="card mt-2">
-      <div class="card-header bg-primary text-light" *ngIf="(isLoading$ | async) !== false; else showLoading">
-        <mat-icon inline="false">account_box</mat-icon>
-        {{ participant.uniqueId }}
-        <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
-          <button class="btn btn-sm btn-light" type="button" id="participantSummaryMenu" ngbDropdownToggle>
-            <mat-icon inline="true">menu</mat-icon>
-          </button>
+  <div class="card mt-2">
+    <div class="card-header bg-primary text-light" *ngIf="(isLoading$ | async) !== false; else showLoading">
+      <mat-icon inline="false">account_box</mat-icon>
+      {{ participant.uniqueId }}
 
-          <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="participantSummaryMenu">
-            <a class="dropdown-item" (click)="updateUniqueId()">
-              <mat-icon class="success-icon mr-1">edit</mat-icon>
-              <ng-container i18n>Update Unique ID</ng-container>
-            </a>
-            <a
-              class="dropdown-item"
-              *ngFor="let annotation of annotations"
-              (click)="updateAnnotation(annotation)"
-            >
-              <mat-icon class="success-icon mr-1">edit</mat-icon>
-              <ng-container i18n>Update {{ annotation.label }}</ng-container>
-            </a>
-          </div>
-        </span>
-      </div>
-
-      <ul class="list-group list-group-flush">
-        <li class="list-group-item">
-          <div class="row">
-            <div class="col-md-2">
-              <strong i18n>UniqueId:</strong>
-            </div>
-            <div class="col-md-10">
-              {{ participant.uniqueId }}
-            </div>
-          </div>
-        </li>
-        <li class="list-group-item" *ngFor="let annotation of annotations">
-          <div class="row">
-            <div class="col-md-2">
-              <strong i18n>{{ annotation.label }}</strong>
-            </div>
-            <div class="col-md-10">
-              {{ annotation.value }}
-            </div>
-          </div>
-        </li>
-        <li class="list-group-item m-0 p-0">
-          <app-entity-status
-            [timeAdded]="participant.timeAdded"
-            [timeModified]="participant.timeModified"
-            [useBadges]="false"
-          >
-          </app-entity-status>
-        </li>
-      </ul>
+      <app-dropdown-menu
+        [menuItems]="menuItems"
+        buttonClass="btn btn-sm btn-light"
+        placement="bottom-right"
+      ></app-dropdown-menu>
     </div>
 
-    <ng-template #updateUniqueIdModal let-modal>
-      <app-modal-input-text
-        [title]="'Update Unique ID'"
-        [label]="'New participant Unique ID'"
-        [value]="participant.uniqueId"
-        [options]="uniqueIdModalOptions"
-        (onConfirm)="confirm($event)"
-        [modal]="modal"
-      >
-      </app-modal-input-text>
-    </ng-template>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-md-2">
+            <strong i18n>UniqueId:</strong>
+          </div>
+          <div class="col-md-10">
+            {{ participant.uniqueId }}
+          </div>
+        </div>
+      </li>
+      <li class="list-group-item" *ngFor="let annotation of annotations$ | async">
+        <div class="row">
+          <div class="col-md-2">
+            <strong i18n>{{ annotation.label }}</strong>
+          </div>
+          <div class="col-md-10">
+            {{ annotation.value }}
+          </div>
+        </div>
+      </li>
+      <li class="list-group-item m-0 p-0">
+        <app-entity-status
+          [timeAdded]="participant.timeAdded"
+          [timeModified]="participant.timeModified"
+          [useBadges]="false"
+        >
+        </app-entity-status>
+      </li>
+    </ul>
+  </div>
 
-    <ng-template #updateAnnotationModal let-modal>
-      <app-modal-input-annotation
-        [annotation]="annotationToEdit"
-        [options]="annotationModalOptions"
-        (onConfirm)="confirm($event)"
-        [modal]="modal"
-      >
-      </app-modal-input-annotation>
-    </ng-template>
-  </ng-container>
+  <ng-template #updateUniqueIdModal let-modal>
+    <app-modal-input-text
+      [title]="'Update Unique ID'"
+      [label]="'New participant Unique ID'"
+      [value]="participant.uniqueId"
+      [options]="uniqueIdModalOptions"
+      (onConfirm)="confirm($event)"
+      [modal]="modal"
+    >
+    </app-modal-input-text>
+  </ng-template>
+
+  <ng-template #updateAnnotationModal let-modal>
+    <app-modal-input-annotation
+      [annotation]="annotationToEdit"
+      [options]="annotationModalOptions"
+      (onConfirm)="confirm($event)"
+      [modal]="modal"
+    >
+    </app-modal-input-annotation>
+  </ng-template>
 </ng-container>
 
 <ng-template #showLoading>

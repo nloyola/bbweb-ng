@@ -7,26 +7,11 @@
       <mat-icon inline="true" class="warning-icon">settings</mat-icon>
       {{ membership?.name }} <small class="mr-3" i18n>Membership</small>
 
-      <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
-        <button class="btn btn-sm btn-light" type="button" id="membershipActionsMenu" ngbDropdownToggle>
-          <mat-icon inline="true">menu</mat-icon>
-        </button>
-
-        <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="membershipActionsMenu">
-          <a class="dropdown-item" *ngIf="changesAllowed" (click)="updateName()">
-            <mat-icon class="success-icon mr-1">edit</mat-icon>
-            <ng-container i18n>Update name</ng-container>
-          </a>
-          <a class="dropdown-item" *ngIf="changesAllowed" (click)="updateDescription()">
-            <mat-icon class="success-icon mr-1">edit</mat-icon>
-            <ng-container i18n>Update description</ng-container>
-          </a>
-          <a class="dropdown-item" *ngIf="changesAllowed" (click)="removeMembership()">
-            <mat-icon class="danger-icon mr-1">warning</mat-icon>
-            <ng-container i18n>Remove this membership</ng-container>
-          </a>
-        </div>
-      </span>
+      <app-dropdown-menu
+        [menuItems]="menuItems"
+        buttonClass="btn btn-sm btn-light"
+        placement="bottom-right"
+      ></app-dropdown-menu>
 
       <p *ngIf="isRemoving">
         <app-spinner name="membership" [show]="isRemoving" i18n>

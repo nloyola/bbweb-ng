@@ -1,52 +1,22 @@
 <div class="card mt-2" *ngIf="processingType">
   <div class="card-header bg-primary text-light">
     <ng-container i18>Processing Step:</ng-container> {{ processingType.name }}
-    <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
-      <button
-        class="btn btn-sm btn-light mr-1"
-        type="button"
-        id="processingTypeMenu"
-        ngbDropdownToggle
-        *ngIf="allowChanges"
-      >
-        <mat-icon inline="true">menu</mat-icon>
-      </button>
+    <button
+      class="btn btn-sm btn-light float-right"
+      type="button"
+      (click)="isPanelCollapsed = !isPanelCollapsed"
+      [attr.aria-expanded]="!isCollapsed"
+      aria-controls="processingTypeCollapse"
+    >
+      <mat-icon *ngIf="!isPanelCollapsed" inline="true">keyboard_arrow_down</mat-icon>
+      <mat-icon *ngIf="isPanelCollapsed">keyboard_arrow_right</mat-icon>
+    </button>
 
-      <button
-        class="btn btn-sm btn-light"
-        type="button"
-        (click)="isPanelCollapsed = !isPanelCollapsed"
-        [attr.aria-expanded]="!isCollapsed"
-        aria-controls="processingTypeCollapse"
-      >
-        <mat-icon *ngIf="!isPanelCollapsed" inline="true">keyboard_arrow_down</mat-icon>
-        <mat-icon *ngIf="isPanelCollapsed">keyboard_arrow_right</mat-icon>
-      </button>
-
-      <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="processingTypeMenu">
-        <a class="dropdown-item" (click)="updateName()">
-          <mat-icon class="success-icon mr-1">edit</mat-icon>
-          <ng-container i18n>Update name</ng-container>
-        </a>
-        <a class="dropdown-item" (click)="updateDescription()">
-          <mat-icon class="success-icon mr-1">edit</mat-icon>
-          <ng-container i18n>Update description</ng-container>
-        </a>
-        <a class="dropdown-item" (click)="updateEnabled()">
-          <mat-icon class="success-icon mr-1">edit</mat-icon>
-          <ng-container i18n>Update enabled</ng-container>
-        </a>
-        <div class="dropdown-divider"></div>
-        <a class="dropdown-item" (click)="addAnnotationType()">
-          <mat-icon class="success-icon mr-1">edit</mat-icon>
-          <ng-container i18n>Add an Annotation</ng-container>
-        </a>
-        <a class="dropdown-item" (click)="removeProcessingType()">
-          <mat-icon class="danger-icon mr-1">warning</mat-icon>
-          <ng-container i18n>Remove this Processing Step</ng-container>
-        </a>
-      </div>
-    </span>
+    <app-dropdown-menu
+      [menuItems]="stepMenuItems"
+      buttonClass="btn btn-sm btn-light mr-1 float-right"
+      placement="bottom-right"
+    ></app-dropdown-menu>
   </div>
   <div [ngbCollapse]="isPanelCollapsed" id="processingTypeCollapse">
     <ul class="list-group list-group-flush">
@@ -115,24 +85,12 @@
 <div class="card mt-2" *ngIf="processingType">
   <div class="card-header bg-primary text-light">
     <span i18>Input Specimen</span>
-    <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
-      <button
-        class="btn btn-sm btn-light mr-1"
-        type="button"
-        id="inputSpecimenMenu"
-        ngbDropdownToggle
-        *ngIf="allowChanges"
-      >
-        <mat-icon inline="true">menu</mat-icon>
-      </button>
 
-      <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="inputSpecimenMenu">
-        <a class="dropdown-item" (click)="inputSpecimenUpdate()">
-          <mat-icon class="success-icon mr-1">edit</mat-icon>
-          <ng-container i18n>Make changes to this specimen</ng-container>
-        </a>
-      </div>
-    </span>
+    <app-dropdown-menu
+      [menuItems]="inputMenuItems"
+      buttonClass="btn btn-sm btn-light mr-1 float-right"
+      placement="bottom-right"
+    ></app-dropdown-menu>
   </div>
   <ul class="list-group list-group-flush">
     <li class="list-group-item">
@@ -146,24 +104,12 @@
 <div class="card mt-2" *ngIf="processingType">
   <div class="card-header bg-primary text-light">
     <span i18>Output Specimen</span>
-    <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
-      <button
-        class="btn btn-sm btn-light mr-1"
-        type="button"
-        id="outputSpecimenMenu"
-        ngbDropdownToggle
-        *ngIf="allowChanges"
-      >
-        <mat-icon inline="true">menu</mat-icon>
-      </button>
 
-      <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="outputSpecimenMenu">
-        <a class="dropdown-item" (click)="outputSpecimenUpdate()">
-          <mat-icon class="success-icon mr-1">edit</mat-icon>
-          <ng-container i18n>Make changes to this specimen</ng-container>
-        </a>
-      </div>
-    </span>
+    <app-dropdown-menu
+      [menuItems]="outputMenuItems"
+      buttonClass="btn btn-sm btn-light mr-1 float-right"
+      placement="bottom-right"
+    ></app-dropdown-menu>
   </div>
   <ul class="list-group list-group-flush">
     <li class="list-group-item">

@@ -17,6 +17,7 @@ import { Annotation, AnnotationFactory } from '@app/domain/annotations';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { ModalInputTextOptions } from '@app/modules/modals/models';
+import { DropdownMenuItem } from '@app/shared/components/dropdown-menu/dropdown-menu.component';
 
 interface EntityData {
   participant: Participant;
@@ -43,6 +44,7 @@ export class ParticipantSummaryComponent implements OnInit, OnDestroy {
   };
 
   annotationModalOptions: ModalInputTextOptions = {};
+  menuItems: DropdownMenuItem[];
 
   private newUniqueId: string;
   private entitiesSubject = new BehaviorSubject(null);
@@ -151,6 +153,10 @@ export class ParticipantSummaryComponent implements OnInit, OnDestroy {
           }
           return annotation;
         });
+      }),
+      tap(annotations => {
+        annotations.forEach(annotation => console.log(annotation.value));
+        this.menuItems = this.createMenuItems().concat(this.createMenuItemsForAnnotations(annotations));
       })
     );
   }
@@ -209,5 +215,33 @@ export class ParticipantSummaryComponent implements OnInit, OnDestroy {
       return study instanceof Study ? study : new Study().deserialize(study);
     }
     return undefined;
+  }
+
+  private createMenuItems(): DropdownMenuItem[] {
+    const items: DropdownMenuItem[] = [
+      {
+        kind: 'selectable',
+        label: 'Update Unique ID',
+        icon: 'edit',
+        iconClass: 'success-icon',
+        onSelected: () => {
+          this.updateUniqueId();
+        }
+      }
+    ];
+    return items;
+  }
+
+  private createMenuItemsForAnnotations(annotations: Annotation[]): DropdownMenuItem[] {
+    const items: DropdownMenuItem[] = annotations.map(annotation => ({
+      kind: 'selectable',
+      label: `Update ${annotation.label}`,
+      icon: 'edit',
+      iconClass: 'success-icon',
+      onSelected: () => {
+        this.updateAnnotation(annotation);
+      }
+    }));
+    return items;
   }
 }

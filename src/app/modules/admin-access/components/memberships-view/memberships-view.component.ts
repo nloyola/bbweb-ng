@@ -1,13 +1,14 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EntityStateInfo, LabelledId, SearchFilterValues, SearchParams, PagedReplyInfo } from '@app/domain';
+import { EntityStateInfo, LabelledId, PagedReplyInfo, SearchFilterValues } from '@app/domain';
 import { Membership } from '@app/domain/access';
 import { NameFilter, SearchFilter, StateFilter } from '@app/domain/search-filters';
 import { RootStoreState } from '@app/root-store';
 import { MembershipStoreActions, MembershipStoreSelectors } from '@app/root-store/membership';
 import { select, Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
-import { filter, map, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
+import { DropdownMenuItem } from '@app/shared/components/dropdown-menu/dropdown-menu.component';
 
 @Component({
   selector: 'app-memberships-view',
@@ -19,18 +20,15 @@ export class MembershipsViewComponent implements OnInit, OnDestroy {
   isLoading$: Observable<boolean>;
   hasLoaded$: Observable<boolean>;
   membershipPageInfo$: Observable<PagedReplyInfo<Membership>>;
-
   membershipsLimit = 5;
-
   sortField: string;
   stateData: EntityStateInfo[];
-  sortChoices: LabelledId[];
+  currentPage = 1;
+  membershipToAdd: any;
+  menuItems: DropdownMenuItem[];
 
   private filters: { [name: string]: SearchFilter };
   private unsubscribe$: Subject<void> = new Subject<void>();
-
-  currentPage = 1;
-  membershipToAdd: any;
 
   constructor(
     private store$: Store<RootStoreState.State>,
@@ -42,7 +40,7 @@ export class MembershipsViewComponent implements OnInit, OnDestroy {
       stateFilter: new StateFilter(this.stateData, 'all', true)
     };
 
-    this.sortChoices = [{ id: 'name', label: 'Name' }, { id: 'state', label: 'State' }];
+    this.menuItems = this.createMenuItems();
   }
 
   ngOnInit() {
@@ -100,5 +98,20 @@ export class MembershipsViewComponent implements OnInit, OnDestroy {
       limit: this.membershipsLimit
     };
     this.store$.dispatch(MembershipStoreActions.searchMembershipsRequest({ searchParams }));
+  }
+
+  private createMenuItems(): DropdownMenuItem[] {
+    const items: DropdownMenuItem[] = [
+      {
+        kind: 'selectable',
+        label: 'Add Membership',
+        icon: 'add_circle',
+        iconClass: 'success-icon',
+        onSelected: () => {
+          this.router.navigate(['/admin/access/memberships/add']);
+        }
+      }
+    ];
+    return items;
   }
 }

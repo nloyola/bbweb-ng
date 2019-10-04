@@ -6,9 +6,7 @@ import {
   OnDestroy,
   OnInit,
   Output,
-  SimpleChanges,
-  TemplateRef,
-  ViewChild
+  SimpleChanges
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Sort } from '@angular/material';
@@ -156,27 +154,29 @@ export class ShipmentsTableViewComponent implements OnInit, OnChanges, OnDestroy
   }
 
   menuItemsForShipment(shipment: Shipment): DropdownMenuItem[] {
-    const result = [
+    const result: DropdownMenuItem[] = [
       {
+        kind: 'selectable',
         label: 'View Shipment',
         icon: 'search',
         iconClass: 'success-icon',
-        selected: () => {
+        onSelected: () => {
           this.viewShipment.emit(shipment);
         }
       }
     ];
 
-    if (shipment.isCreated()) {
-      result.push({
-        label: 'Remove Shipment',
-        icon: 'remove_circle',
-        iconClass: 'danger-icon',
-        selected: () => {
-          this.removeShipment.emit(shipment);
-        }
-      });
-    }
+    // if (shipment.isCreated()) {
+    //   result.push({
+    //     kind: 'selectable',
+    //     label: 'Remove Shipment',
+    //     icon: 'remove_circle',
+    //     iconClass: 'danger-icon',
+    //     onSelected: () => {
+    //       this.removeShipment.emit(shipment);
+    //     }
+    //   });
+    // }
     return result;
   }
 }

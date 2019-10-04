@@ -8,6 +8,7 @@ import { RootStoreState, UserStoreActions, UserStoreSelectors } from '@app/root-
 import { select, Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
 import { filter, map, takeUntil, shareReplay } from 'rxjs/operators';
+import { DropdownMenuItem } from '@app/shared/components/dropdown-menu/dropdown-menu.component';
 
 @Component({
   selector: 'app-users-view',
@@ -21,12 +22,11 @@ export class UsersViewComponent implements OnInit, OnDestroy {
   userCountData$: Observable<UserCountsUIMap>;
   userPageInfo$: Observable<PagedReplyInfo<User>>;
   users$: Observable<UserUI[]>;
-
   usersLimit = 5;
-
   sortField: string;
   stateData: EntityStateInfo[];
   sortChoices: LabelledId[];
+  sortMenuItems: DropdownMenuItem[];
 
   private filters: { [name: string]: SearchFilter };
   private unsubscribe$: Subject<void> = new Subject<void>();
@@ -50,6 +50,7 @@ export class UsersViewComponent implements OnInit, OnDestroy {
     };
 
     this.sortChoices = [{ id: 'name', label: 'Name' }, { id: 'state', label: 'State' }];
+    this.sortMenuItems = this.createSortMenuItems();
   }
 
   ngOnInit() {
@@ -128,5 +129,23 @@ export class UsersViewComponent implements OnInit, OnDestroy {
       limit: this.usersLimit
     };
     this.store$.dispatch(UserStoreActions.searchUsersRequest({ searchParams }));
+  }
+
+  private createSortMenuItems(): DropdownMenuItem[] {
+    const sortItems: DropdownMenuItem[] = this.sortChoices.map(sort => ({
+      kind: 'selectable',
+      label: sort.label,
+      onSelected: () => {
+        this.sortFieldSelected(sort.id);
+      }
+    }));
+    const items: DropdownMenuItem[] = [
+      {
+        kind: 'header',
+        header: 'Sort By'
+      },
+      ...sortItems
+    ];
+    return items;
   }
 }

@@ -12,6 +12,7 @@ import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject, BehaviorSubject } from 'rxjs';
 import { filter, map, shareReplay, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
+import { DropdownMenuItem } from '@app/shared/components/dropdown-menu/dropdown-menu.component';
 
 @Component({
   selector: 'app-study-participants',
@@ -22,6 +23,7 @@ export class StudyParticipantsComponent implements OnInit, OnDestroy {
   isLoading$: Observable<boolean>;
   study$: Observable<StudyUI>;
   sortedAnnotationTypes: AnnotationType[];
+  menuItems: DropdownMenuItem[];
 
   private studySubject = new BehaviorSubject(null);
   private updatedMessage$ = new Subject<string>();
@@ -33,7 +35,9 @@ export class StudyParticipantsComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private modalService: NgbModal,
     private toastr: ToastrService
-  ) {}
+  ) {
+    this.menuItems = this.createMenuItems();
+  }
 
   ngOnInit() {
     this.study$ = this.store$.pipe(
@@ -129,5 +133,20 @@ export class StudyParticipantsComponent implements OnInit, OnDestroy {
 
   private setAnnotations(study: Study) {
     this.sortedAnnotationTypes = AnnotationType.sortAnnotationTypes(study.annotationTypes);
+  }
+
+  private createMenuItems(): DropdownMenuItem[] {
+    const items: DropdownMenuItem[] = [
+      {
+        kind: 'selectable',
+        label: 'Add Annotation',
+        icon: 'edit',
+        iconClass: 'success-icon',
+        onSelected: () => {
+          this.add();
+        }
+      }
+    ];
+    return items;
   }
 }

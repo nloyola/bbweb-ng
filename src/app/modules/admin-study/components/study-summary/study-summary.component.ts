@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Study, StudyStateUIMap } from '@app/domain/studies';
+import { Study, StudyStateUIMap, StudyState } from '@app/domain/studies';
 import { StudyUI } from '@app/domain/studies/study-ui.model';
 import { ModalInputTextareaOptions, ModalInputTextOptions } from '@app/modules/modals/models';
 import { RootStoreState, StudyStoreActions, StudyStoreSelectors } from '@app/root-store';
@@ -10,7 +10,8 @@ import { Dictionary } from '@ngrx/entity';
 import { createSelector, select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { filter, map, shareReplay, takeUntil, withLatestFrom } from 'rxjs/operators';
+import { filter, map, shareReplay, takeUntil, withLatestFrom, tap } from 'rxjs/operators';
+import { DropdownMenuItem } from '@app/shared/components/dropdown-menu/dropdown-menu.component';
 
 interface StoreData {
   study: StudyUI;
@@ -31,8 +32,6 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
   isEnableAllowed$: Observable<boolean>;
   studyStateUIMap = StudyStateUIMap;
   descriptionToggleLength = 80;
-  getStateIcon = StudyUI.getStateIcon;
-  getStateIconClass = StudyUI.getStateIconClass;
   updateNameModalOptions: ModalInputTextOptions = {
     required: true,
     minLength: 2
@@ -41,6 +40,7 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
     rows: 20,
     cols: 10
   };
+  menuItems: DropdownMenuItem[];
 
   private data$: Observable<StoreData>;
   private studyId: string;
@@ -79,6 +79,9 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
     );
 
     this.data$.pipe(takeUntil(this.unsubscribe$)).subscribe(this.studySubject);
+    this.data$.pipe(takeUntil(this.unsubscribe$)).subscribe(data => {
+      this.menuItems = this.createMenuItems(data);
+    });
 
     this.study$ = this.data$.pipe(map(data => (data ? data.study : undefined)));
     this.isEnableAllowed$ = this.data$.pipe(map(data => (data ? data.isEnableAllowed : undefined)));
@@ -206,5 +209,84 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
     }
 
     fn(study);
+  }
+
+  private createMenuItems(storeData: StoreData): DropdownMenuItem[] {
+    const items: DropdownMenuItem[] = [];
+
+    const study = storeData.study.entity;
+    console.log('data', storeData);
+
+    if (study.isDisabled()) {
+      items.push(
+        {
+          kind: 'selectable',
+          label: 'Update Name',
+          icon: 'edit',
+          iconClass: 'success-icon',
+          onSelected: () => {
+            this.updateName();
+          }
+        },
+        {
+          kind: 'selectable',
+          label: 'Update Description',
+          icon: 'edit',
+          iconClass: 'success-icon',
+          onSelected: () => {
+            this.updateDescription();
+          }
+        }
+      );
+    }
+
+    if (study.isEnabled()) {
+      items.push({
+        kind: 'selectable',
+        label: 'Disable this Study',
+        icon: StudyUI.getStateIcon(StudyState.Disabled),
+        iconClass: StudyUI.getStateIconClass(StudyState.Disabled),
+        onSelected: () => {
+          this.disable();
+        }
+      });
+    }
+
+    if (study.isDisabled() && storeData.isEnableAllowed) {
+      items.push({
+        kind: 'selectable',
+        label: 'Enable this Study',
+        icon: StudyUI.getStateIcon(StudyState.Enabled),
+        iconClass: StudyUI.getStateIconClass(StudyState.Enabled),
+        onSelected: () => {
+          this.enable();
+        }
+      });
+    }
+
+    if (study.isDisabled()) {
+      items.push({
+        kind: 'selectable',
+        label: 'Retire this Study',
+        icon: StudyUI.getStateIcon(StudyState.Retired),
+        iconClass: StudyUI.getStateIconClass(StudyState.Retired),
+        onSelected: () => {
+          this.retire();
+        }
+      });
+    }
+
+    if (study.isRetired()) {
+      items.push({
+        kind: 'selectable',
+        label: 'Unretire this Study',
+        icon: StudyUI.getStateIcon(StudyState.Disabled),
+        iconClass: StudyUI.getStateIconClass(StudyState.Disabled),
+        onSelected: () => {
+          this.unretire();
+        }
+      });
+    }
+    return items;
   }
 }

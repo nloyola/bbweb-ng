@@ -8,48 +8,11 @@
         {{ user?.stateIcon() }}
       </mat-icon>
       {{ user?.name }}
-      <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
-        <button class="btn btn-sm btn-light" type="button" id="userSummaryMenu" ngbDropdownToggle>
-          <mat-icon inline="true">menu</mat-icon>
-        </button>
-
-        <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="userSummaryMenu">
-          <a class="dropdown-item" *ngIf="!user?.isLocked()" (click)="updateName()">
-            <mat-icon class="success-icon mr-1">edit</mat-icon>
-            <ng-container i18n>Update name</ng-container>
-          </a>
-          <a class="dropdown-item" *ngIf="!user?.isLocked()" (click)="updateEmail()">
-            <mat-icon class="success-icon mr-1">edit</mat-icon>
-            <ng-container i18n>Update email</ng-container>
-          </a>
-          <a class="dropdown-item" *ngIf="!user?.isLocked()" (click)="updatePassword()">
-            <mat-icon class="success-icon mr-1">edit</mat-icon>
-            <ng-container i18n>Change password</ng-container>
-          </a>
-          <a class="dropdown-item" *ngIf="!user?.isLocked()" (click)="updateAvatarUrl()">
-            <mat-icon class="success-icon mr-1">edit</mat-icon>
-            <ng-container i18n>Change avatar</ng-container>
-          </a>
-          <a class="dropdown-item" *ngIf="user?.isRegistered()" (click)="activate()">
-            <mat-icon class="mr-1" [ngClass]="getStateIconClass('active')">
-              {{ getStateIcon('active') }}
-            </mat-icon>
-            <ng-container i18n>Activate this user</ng-container>
-          </a>
-          <a class="dropdown-item" *ngIf="user?.isActive()" (click)="lock()">
-            <mat-icon class="mr-1" [ngClass]="getStateIconClass('locked')">
-              {{ getStateIcon('locked') }}
-            </mat-icon>
-            <ng-container i18n>Lock this user</ng-container>
-          </a>
-          <a class="dropdown-item" *ngIf="user?.isLocked()" (click)="unlock()">
-            <mat-icon class="mr-1" [ngClass]="getStateIconClass('active')">
-              {{ getStateIcon('active') }}
-            </mat-icon>
-            <ng-container i18n>Unlock this user</ng-container>
-          </a>
-        </div>
-      </span>
+      <app-dropdown-menu
+        [menuItems]="menuItems"
+        buttonClass="btn btn-sm btn-light"
+        placement="bottom-right"
+      ></app-dropdown-menu>
     </div>
 
     <!-- NAME -->

@@ -4,6 +4,7 @@ import { NameFilter } from '@app/domain/search-filters';
 import { CollectionEventType, Study } from '@app/domain/studies';
 import { RootStoreState } from '@app/root-store';
 import { EventTypeStoreActions, EventTypeStoreSelectors } from '@app/root-store/event-type';
+import { DropdownMenuItem } from '@app/shared/components/dropdown-menu/dropdown-menu.component';
 import { select, Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
@@ -21,15 +22,27 @@ export class EventTypesAddAndSelectComponent implements OnInit, OnDestroy {
   isLoading$: Observable<boolean>;
   pageInfo$: Observable<PagedReplyInfo<CollectionEventType>>;
   isAddAllowed: boolean;
-
   currentPage = 1;
   eventTypesLimit = 5;
   sortField = 'name';
+  menuItems: DropdownMenuItem[];
 
   private filterValues = '';
   private unsubscribe$: Subject<void> = new Subject<void>();
 
-  constructor(private store$: Store<RootStoreState.State>) {}
+  constructor(private store$: Store<RootStoreState.State>) {
+    this.menuItems = [
+      {
+        kind: 'selectable',
+        label: 'Add Event',
+        icon: 'add_circle',
+        iconClass: 'success-icon',
+        onSelected: () => {
+          this.add();
+        }
+      }
+    ];
+  }
 
   ngOnInit() {
     this.isAddAllowed = this.study.isDisabled();

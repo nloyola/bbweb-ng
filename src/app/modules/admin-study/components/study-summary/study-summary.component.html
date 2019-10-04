@@ -5,50 +5,11 @@
         {{ study.stateIcon() }}
       </mat-icon>
       {{ study.name }}
-      <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
-        <button class="btn btn-sm btn-light" type="button" id="studySummaryMenu" ngbDropdownToggle>
-          <mat-icon inline="true">menu</mat-icon>
-        </button>
-
-        <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="studySummaryMenu">
-          <a class="dropdown-item" *ngIf="study.isDisabled()" (click)="updateName()">
-            <mat-icon class="success-icon mr-1">edit</mat-icon>
-            <ng-container i18n>Update name</ng-container>
-          </a>
-          <a class="dropdown-item" *ngIf="study.isDisabled()" (click)="updateDescription()">
-            <mat-icon class="success-icon mr-1">edit</mat-icon>
-            <ng-container i18n>Update description</ng-container>
-          </a>
-          <a class="dropdown-item" *ngIf="study.isEnabled()" (click)="disable()">
-            <mat-icon class="mr-1" [ngClass]="getStateIconClass('disabled')">
-              {{ getStateIcon('disabled') }}
-            </mat-icon>
-            <ng-container i18n>Disable this study</ng-container>
-          </a>
-          <a
-            class="dropdown-item"
-            *ngIf="study.isDisabled() && (isEnableAllowed$ | async) === true"
-            (click)="enable()"
-          >
-            <mat-icon class="mr-1" [ngClass]="getStateIconClass('enabled')">
-              {{ getStateIcon('enabled') }}
-            </mat-icon>
-            <ng-container i18n>Enable this study</ng-container>
-          </a>
-          <a class="dropdown-item" *ngIf="study.isDisabled()" (click)="retire()">
-            <mat-icon class="mr-1" [ngClass]="getStateIconClass('retired')">
-              {{ getStateIcon('retired') }}
-            </mat-icon>
-            <ng-container i18n>Retire this study</ng-container>
-          </a>
-          <a class="dropdown-item" *ngIf="study.isRetired()" (click)="unretire()">
-            <mat-icon class="mr-1" [ngClass]="getStateIconClass('disabled')">
-              {{ getStateIcon('disabled') }}
-            </mat-icon>
-            <ng-container i18n>Unretire this study</ng-container>
-          </a>
-        </div>
-      </span>
+      <app-dropdown-menu
+        [menuItems]="menuItems"
+        buttonClass="btn btn-sm btn-light"
+        placement="bottom-right"
+      ></app-dropdown-menu>
     </div>
 
     <ul class="list-group list-group-flush">

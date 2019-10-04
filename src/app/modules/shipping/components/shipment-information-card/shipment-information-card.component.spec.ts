@@ -186,7 +186,10 @@ describe('ShipmentInformationCardComponent', () => {
       eventProduced = true;
     });
 
-    component.removeShipment();
+    const menuItem = component.menuItems.find(item => item.label === 'Remove Shipment');
+    expect(menuItem).toBeTruthy();
+    menuItem.selected();
+
     fixture.detectChanges();
     expect(eventProduced).toBe(true);
   });

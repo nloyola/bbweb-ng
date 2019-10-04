@@ -4,6 +4,7 @@ import { NameFilter } from '@app/domain/search-filters';
 import { ProcessingType, Study } from '@app/domain/studies';
 import { RootStoreState } from '@app/root-store';
 import { ProcessingTypeStoreActions, ProcessingTypeStoreSelectors } from '@app/root-store/processing-type';
+import { DropdownMenuItem } from '@app/shared/components/dropdown-menu/dropdown-menu.component';
 import { select, Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
@@ -32,15 +33,27 @@ export class ProcessingTypesAddAndSelectComponent implements OnInit, OnDestroy {
   isLoading$: Observable<boolean>;
   pageInfo$: Observable<PagedReplyInfo<ProcessingType>>;
   isAddAllowed: boolean;
-
   currentPage = 1;
   processingTypesLimit = 5;
   sortField = 'name';
+  menuItems: DropdownMenuItem[];
 
   private filterValues = '';
   private unsubscribe$: Subject<void> = new Subject<void>();
 
-  constructor(private store$: Store<RootStoreState.State>) {}
+  constructor(private store$: Store<RootStoreState.State>) {
+    this.menuItems = [
+      {
+        kind: 'selectable',
+        label: 'Add Step',
+        icon: 'add_circle',
+        iconClass: 'success-icon',
+        onSelected: () => {
+          this.addSelected.emit(null);
+        }
+      }
+    ];
+  }
 
   ngOnInit() {
     this.isAddAllowed = this.study.isDisabled();
@@ -90,10 +103,6 @@ export class ProcessingTypesAddAndSelectComponent implements OnInit, OnDestroy {
 
   public paginationPageChange() {
     this.applySearchParams();
-  }
-
-  public add() {
-    this.addSelected.emit(null);
   }
 
   private applySearchParams() {

@@ -51,27 +51,10 @@
             </td>
 
             <td>
-              <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
-                <button
-                  class="btn btn-sm btn-outline-secondary"
-                  type="button"
-                  id="specimenMenu"
-                  ngbDropdownToggle
-                >
-                  <mat-icon inline="true">menu</mat-icon>
-                </button>
-
-                <div class="dropdown-menu" ngbDropdownMenu role="menu" aria-labelledby="specimenMenu">
-                  <a class="dropdown-item" (click)="viewSpecimen(specimen)">
-                    <mat-icon class="success-icon mr-1">search</mat-icon>
-                    <span i18n>View specimen</span>
-                  </a>
-                  <a class="dropdown-item" (click)="removeSpecimen(specimen)">
-                    <mat-icon class="danger-icon mr-1">remove_circle</mat-icon>
-                    <span i18n>Remove specimen from shipment</span>
-                  </a>
-                </div>
-              </span>
+              <app-dropdown-menu
+                [menuItems]="menuItemsForShipmentSpecimen(specimen)"
+                placement="bottom-right"
+              ></app-dropdown-menu>
             </td>
           </tr>
           <tr *ngIf="specimens.length <= 0">

@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EntityStateInfo, LabelledId, PagedReplyInfo, SearchFilterValues, SearchParams } from '@app/domain';
+import { EntityStateInfo, LabelledId, PagedReplyInfo, SearchFilterValues } from '@app/domain';
 import { NameFilter, SearchFilter, StateFilter } from '@app/domain/search-filters';
 import {
   Study,
@@ -11,6 +11,10 @@ import {
 } from '@app/domain/studies';
 import { StudyUI } from '@app/domain/studies/study-ui.model';
 import { RootStoreState, StudyStoreActions, StudyStoreSelectors } from '@app/root-store';
+import {
+  DropdownMenuItem,
+  DropdownMenuDivider
+} from '@app/shared/components/dropdown-menu/dropdown-menu.component';
 import { select, Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
 import { filter, map, shareReplay, takeUntil } from 'rxjs/operators';
@@ -27,15 +31,13 @@ export class StudiesViewComponent implements OnInit, OnDestroy {
   studyCountData$: Observable<StudyCountsUIMap>;
   studyPageInfo$: Observable<PagedReplyInfo<Study>>;
   studies$: Observable<StudyUI[]>;
-
   studiesLimit = 5;
-
   sortField: string;
   stateData: EntityStateInfo[];
   sortChoices: LabelledId[];
-
   currentPage = 1;
   studyToAdd: any;
+  menuItems: DropdownMenuItem[];
 
   private filters: { [name: string]: SearchFilter };
   private unsubscribe$ = new Subject<void>();
@@ -56,6 +58,7 @@ export class StudiesViewComponent implements OnInit, OnDestroy {
     };
 
     this.sortChoices = [{ id: 'name', label: 'Name' }, { id: 'state', label: 'State' }];
+    this.menuItems = this.createSortMenuItems();
   }
 
   ngOnInit() {
@@ -129,5 +132,33 @@ export class StudiesViewComponent implements OnInit, OnDestroy {
       limit: this.studiesLimit
     };
     this.store$.dispatch(StudyStoreActions.searchStudiesRequest({ searchParams }));
+  }
+
+  private createSortMenuItems(): DropdownMenuItem[] {
+    const sortItems: DropdownMenuItem[] = this.sortChoices.map(sort => ({
+      kind: 'selectable',
+      label: sort.label,
+      onSelected: () => {
+        this.sortFieldSelected(sort.id);
+      }
+    }));
+    const items: DropdownMenuItem[] = [
+      {
+        kind: 'selectable',
+        label: 'Add Study',
+        icon: 'add_circle',
+        iconClass: 'success-icon',
+        onSelected: () => {
+          this.router.navigate(['/admin/studies/add']);
+        }
+      },
+      DropdownMenuDivider,
+      {
+        kind: 'header',
+        header: 'Sort By'
+      },
+      ...sortItems
+    ];
+    return items;
   }
 }

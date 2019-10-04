@@ -14,11 +14,47 @@ export type DropdownMenuPlacement =
   | 'right-top'
   | 'right-bottom';
 
-export interface DropdownMenuItem {
-  label: string;
-  icon: string;
-  iconClass: string;
-  selected: () => void;
+export interface DropdownMenuHeader {
+  kind: 'header';
+  readonly header: string;
+}
+
+export interface DropdownMenuDividerItem {
+  kind: 'divider';
+}
+
+export interface DropdownMenuSelectableItem {
+  kind: 'selectable';
+  readonly label: string;
+  readonly onSelected: () => void;
+  readonly icon?: string;
+  readonly iconClass?: string;
+}
+
+export type DropdownMenuItem = DropdownMenuHeader | DropdownMenuDividerItem | DropdownMenuSelectableItem;
+
+export const DropdownMenuDivider: DropdownMenuDividerItem = { kind: 'divider' };
+
+export function dropdownMenuHeader(label: string): DropdownMenuHeader {
+  return {
+    kind: 'header',
+    header: label
+  };
+}
+
+export function dropdownMenuSelectable(
+  label: string,
+  onSelected: () => void,
+  icon?: string,
+  iconClass?: string
+): DropdownMenuSelectableItem {
+  return {
+    kind: 'selectable',
+    label,
+    onSelected,
+    icon,
+    iconClass
+  };
 }
 
 @Component({
@@ -27,6 +63,7 @@ export interface DropdownMenuItem {
   styleUrls: ['./dropdown-menu.component.scss']
 })
 export class DropdownMenuComponent implements OnInit {
+  @Input() buttonClass: string = 'btn btn-sm btn-outline-secondary';
   @Input() menuItems: DropdownMenuItem[] = [];
   @Input() placement: DropdownMenuPlacement = 'right-top';
 

@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChange
 import { AnnotationType } from '@app/domain/annotations';
 import { CollectionEventType, SpecimenDefinition } from '@app/domain/studies';
 import { CollectedSpecimenDefinition } from '@app/domain/studies/collected-specimen-definition.model';
+import { DropdownMenuItem } from '@app/shared/components/dropdown-menu/dropdown-menu.component';
 
 @Component({
   selector: 'app-event-type-view-ui',
@@ -28,8 +29,11 @@ export class EventTypeViewComponent implements OnInit, OnChanges {
   isPanelCollapsed = false;
   sortedAnnotationTypes: AnnotationType[];
   sortedSpecimenDefinitions: SpecimenDefinition[];
+  menuItems: DropdownMenuItem[];
 
-  constructor() {}
+  constructor() {
+    this.menuItems = this.createMenuItems();
+  }
 
   ngOnInit() {
     if (this.eventType) {
@@ -41,22 +45,6 @@ export class EventTypeViewComponent implements OnInit, OnChanges {
     if (changes.eventType) {
       this.setEventType(changes.eventType.currentValue);
     }
-  }
-
-  updateName() {
-    this.updateNameSelected.emit(null);
-  }
-
-  updateDescription() {
-    this.updateDescriptionSelected.emit(null);
-  }
-
-  updateRecurring() {
-    this.updateRecurringSelected.emit(null);
-  }
-
-  addAnnotationType() {
-    this.addAnnotationTypeSelected.emit(null);
   }
 
   viewAnnotationType(annotationType: AnnotationType): void {
@@ -87,10 +75,6 @@ export class EventTypeViewComponent implements OnInit, OnChanges {
     this.removeSpecimenDefinitionSelected.emit(specimenDefinition);
   }
 
-  removeEventType() {
-    this.removeEventTypeSelected.emit(null);
-  }
-
   private setEventType(eventType: CollectionEventType): void {
     this.eventType = eventType;
     this.setSortedAnnotationTypes();
@@ -107,5 +91,56 @@ export class EventTypeViewComponent implements OnInit, OnChanges {
     this.sortedSpecimenDefinitions = this.eventType
       ? SpecimenDefinition.sortSpecimenDefinitions(this.eventType.specimenDefinitions)
       : [];
+  }
+
+  private createMenuItems(): DropdownMenuItem[] {
+    const items: DropdownMenuItem[] = [
+      {
+        kind: 'selectable',
+        label: 'Update Name',
+        icon: 'edit',
+        iconClass: 'success-icon',
+        onSelected: () => {
+          this.updateNameSelected.emit(null);
+        }
+      },
+      {
+        kind: 'selectable',
+        label: 'Update Description',
+        icon: 'edit',
+        iconClass: 'success-icon',
+        onSelected: () => {
+          this.updateDescriptionSelected.emit(null);
+        }
+      },
+      {
+        kind: 'selectable',
+        label: 'Update Recurring',
+        icon: 'edit',
+        iconClass: 'success-icon',
+        onSelected: () => {
+          this.updateRecurringSelected.emit(null);
+        }
+      },
+      {
+        kind: 'selectable',
+        label: 'Add Annotation',
+        icon: 'edit',
+        iconClass: 'success-icon',
+        onSelected: () => {
+          this.addAnnotationTypeSelected.emit(null);
+        }
+      },
+      {
+        kind: 'selectable',
+        label: 'Remove this Event',
+        icon: 'warning',
+        iconClass: 'danger-icon',
+        onSelected: () => {
+          this.removeEventTypeSelected.emit(null);
+        }
+      }
+    ];
+    return items;
   }
 }
