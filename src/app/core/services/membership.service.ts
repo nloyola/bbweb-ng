@@ -82,9 +82,9 @@ export class MembershipService {
       name: membership.name,
       description: membership.description ? membership.description : null,
       userIds: [],
-      allStudies: false,
+      allStudies: true,
       studyIds: [],
-      allCentres: false,
+      allCentres: true,
       centreIds: []
     };
     return this.http.post<ApiReply>(this.BASE_URL, json).pipe(
