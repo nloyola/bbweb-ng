@@ -30,6 +30,7 @@ import { ServerErrorPageComponent } from './components/server-error-page/server-
 import { PagedEntitySelectorComponent } from './components/paged-entity-selector/paged-entity-selector.component';
 import { LocalTimePipe } from './pipes';
 import { FilterValueInputComponent } from './components/filter-value-input/filter-value-input.component';
+import { DropdownMenuComponent } from './components/dropdown-menu/dropdown-menu.component';
 
 @NgModule({
   imports: [
@@ -66,7 +67,8 @@ import { FilterValueInputComponent } from './components/filter-value-input/filte
     UnauthorizedPageComponent,
     ServerErrorPageComponent,
     PagedEntitySelectorComponent,
-    FilterValueInputComponent
+    FilterValueInputComponent,
+    DropdownMenuComponent
   ],
   exports: [
     BreadcrumbsComponent,
@@ -90,7 +92,8 @@ import { FilterValueInputComponent } from './components/filter-value-input/filte
     EntitySelectorComponent,
     PagedEntitySelectorComponent,
     LocationAddComponent,
-    FilterValueInputComponent
+    FilterValueInputComponent,
+    DropdownMenuComponent
   ]
 })
 export class SharedModule {}

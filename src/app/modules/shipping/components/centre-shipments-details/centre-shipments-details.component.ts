@@ -28,6 +28,9 @@ export enum CentreShipmentsViewMode {
   Completed = 'completed'
 }
 
+/**
+ *
+ */
 @Component({
   selector: 'app-centre-shipments-details',
   templateUrl: './centre-shipments-details.component.html',

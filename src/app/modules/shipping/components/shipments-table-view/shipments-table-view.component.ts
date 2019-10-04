@@ -6,11 +6,14 @@ import {
   OnDestroy,
   OnInit,
   Output,
-  SimpleChanges
+  SimpleChanges,
+  TemplateRef,
+  ViewChild
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Sort } from '@angular/material';
 import { Shipment, ShipmentState } from '@app/domain/shipments';
+import { DropdownMenuItem } from '@app/shared/components/dropdown-menu/dropdown-menu.component';
 import { Subject, timer } from 'rxjs';
 import { debounce, distinct, takeUntil } from 'rxjs/operators';
 import { CentreShipmentsViewMode } from '../centre-shipments-details/centre-shipments-details.component';
@@ -152,11 +155,28 @@ export class ShipmentsTableViewComponent implements OnInit, OnChanges, OnDestroy
     this.filterByState.emit(state);
   }
 
-  shipmentView(shipment: Shipment) {
-    this.viewShipment.emit(shipment);
-  }
+  menuItemsForShipment(shipment: Shipment): DropdownMenuItem[] {
+    const result = [
+      {
+        label: 'View Shipment',
+        icon: 'search',
+        iconClass: 'success-icon',
+        selected: () => {
+          this.viewShipment.emit(shipment);
+        }
+      }
+    ];
 
-  shipmentRemove(shipment: Shipment) {
-    this.removeShipment.emit(shipment);
+    if (shipment.isCreated()) {
+      result.push({
+        label: 'Remove Shipment',
+        icon: 'remove_circle',
+        iconClass: 'danger-icon',
+        selected: () => {
+          this.removeShipment.emit(shipment);
+        }
+      });
+    }
+    return result;
   }
 }
