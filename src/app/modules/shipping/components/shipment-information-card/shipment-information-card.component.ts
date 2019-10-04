@@ -16,6 +16,7 @@ import { RootStoreState, ShipmentStoreActions, ShipmentStoreSelectors } from '@a
 import { Subject, Observable } from 'rxjs';
 import { map, shareReplay, tap, withLatestFrom, takeUntil, filter } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
+import { DropdownMenuItem } from '@app/shared/components/dropdown-menu/dropdown-menu.component';
 
 @Component({
   selector: 'app-shipment-information-card',
@@ -40,6 +41,7 @@ export class ShipmentInformationCardComponent implements OnInit, OnDestroy {
   updateTrackingNumberModalOptions: ModalInputTextOptions;
   updateFromLocationInfoModalOptions: ModalInputTextOptions;
   updateToLocationInfoModalOptions: ModalInputTextOptions;
+  menuItems: DropdownMenuItem[];
 
   private updatedMessage$ = new Subject<string>();
   private unsubscribe$ = new Subject<void>();
@@ -51,6 +53,7 @@ export class ShipmentInformationCardComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    this.menuItems = this.createMenuItems();
     this.shipment$ = this.store$.pipe(
       select(ShipmentStoreSelectors.selectAllShipmentEntities),
       map(shipments => {
@@ -105,7 +108,7 @@ export class ShipmentInformationCardComponent implements OnInit, OnDestroy {
   updateCourier() {
     this.updateCourierModalOptions = { required: true };
     this.modalService
-      .open(this.updateCourierModal)
+      .open(this.updateCourierModal, { size: 'lg' })
       .result.then(value => {
         this.store$.dispatch(
           ShipmentStoreActions.updateShipmentRequest({
@@ -122,7 +125,7 @@ export class ShipmentInformationCardComponent implements OnInit, OnDestroy {
   updateTrackingNumber() {
     this.updateTrackingNumberModalOptions = { required: true };
     this.modalService
-      .open(this.updateTrackingNumberModal)
+      .open(this.updateTrackingNumberModal, { size: 'lg' })
       .result.then(value => {
         this.store$.dispatch(
           ShipmentStoreActions.updateShipmentRequest({
@@ -139,7 +142,7 @@ export class ShipmentInformationCardComponent implements OnInit, OnDestroy {
   updateFromLocation() {
     this.updateFromLocationInfoModalOptions = { required: true };
     this.modalService
-      .open(this.updateFromLocationModal)
+      .open(this.updateFromLocationModal, { size: 'lg' })
       .result.then(value => {
         this.store$.dispatch(
           ShipmentStoreActions.updateShipmentRequest({
@@ -156,7 +159,7 @@ export class ShipmentInformationCardComponent implements OnInit, OnDestroy {
   updateToLocation() {
     this.updateToLocationInfoModalOptions = { required: true };
     this.modalService
-      .open(this.updateToLocationModal)
+      .open(this.updateToLocationModal, { size: 'lg' })
       .result.then(value => {
         this.store$.dispatch(
           ShipmentStoreActions.updateShipmentRequest({
@@ -170,7 +173,53 @@ export class ShipmentInformationCardComponent implements OnInit, OnDestroy {
       .catch(() => undefined);
   }
 
-  removeShipment() {
-    this.onRemove.emit(this.shipment);
+  private createMenuItems(): DropdownMenuItem[] {
+    return [
+      {
+        kind: 'selectable',
+        label: 'Update Courier',
+        icon: 'edit',
+        iconClass: 'success-icon',
+        onSelected: () => {
+          this.updateCourier();
+        }
+      },
+      {
+        kind: 'selectable',
+        label: 'Update Tracking Number',
+        icon: 'edit',
+        iconClass: 'success-icon',
+        onSelected: () => {
+          this.updateTrackingNumber();
+        }
+      },
+      {
+        kind: 'selectable',
+        label: 'Update Source Location',
+        icon: 'edit',
+        iconClass: 'success-icon',
+        onSelected: () => {
+          this.updateFromLocation();
+        }
+      },
+      {
+        kind: 'selectable',
+        label: 'Update Destination Location',
+        icon: 'edit',
+        iconClass: 'success-icon',
+        onSelected: () => {
+          this.updateToLocation();
+        }
+      },
+      {
+        kind: 'selectable',
+        label: 'Remove Shipment',
+        icon: 'remove_circle',
+        iconClass: 'danger-icon',
+        onSelected: () => {
+          this.onRemove.emit(this.shipment);
+        }
+      }
+    ];
   }
 }

@@ -101,16 +101,11 @@
           <!-- BUTTONS  -->
           <div class="form-group row">
             <div class="col-md-9 offset-3">
-              <button
-                class="btn btn-primary mr-2"
-                type="submit"
-                [disabled]="form.invalid || (isSaving$ | async)"
-                i18n
-              >
-                <ng-container *ngIf="(isSaving$ | async) === false">
+              <button class="btn btn-primary mr-2" type="submit" [disabled]="form.invalid || isSaving" i18n>
+                <ng-container *ngIf="isSaving === false">
                   Submit
                 </ng-container>
-                <app-spinner name="shipmentSaving" [show]="isSaving$ | async">
+                <app-spinner name="shipmentSaving" [show]="isSaving">
                   Saving
                 </app-spinner>
               </button>

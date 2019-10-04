@@ -1,18 +1,7 @@
 <div class="pb-2 mt-4 mb-2 border-bottom">
   <h1 i18n>
     Shipping
-    <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
-      <button class="btn btn-sm btn-outline-secondary" type="button" id="eventTypeMenu" ngbDropdownToggle>
-        <mat-icon inline="true">menu</mat-icon>
-      </button>
-
-      <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="eventTypeMenu">
-        <a class="dropdown-item" (click)="add()">
-          <mat-icon class="success-icon mr-1">add_circle</mat-icon>
-          <span i18n>Add Shipment</span>
-        </a>
-      </div>
-    </span>
+    <app-dropdown-menu [menuItems]="menuItems" placement="bottom-right"></app-dropdown-menu>
   </h1>
 </div>
 

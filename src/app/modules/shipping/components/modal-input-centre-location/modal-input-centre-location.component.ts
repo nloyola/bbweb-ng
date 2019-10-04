@@ -26,6 +26,7 @@ export class ModalInputCentreLocationComponent extends ModalInputBaseComponent<C
 
   ngOnInit() {
     super.ngOnInit();
+    this.locationInfoTypeahead.selectedEntity = this.value;
   }
 
   public ngOnDestroy() {

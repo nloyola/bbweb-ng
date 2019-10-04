@@ -2,24 +2,12 @@
   <div class="card-header bg-primary text-light" *ngIf="(isLoading$ | async) === false; else showLoading">
     <mat-icon [ngClass]="study.stateIconClass()">{{ study.stateIcon() }}</mat-icon>
     {{ study.name }} <small i18n>Participant Annotations</small>
-    <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
-      <button
-        class="btn btn-sm btn-light"
-        type="button"
-        id="studyMenu"
-        *ngIf="study.isDisabled()"
-        ngbDropdownToggle
-      >
-        <mat-icon inline="true">menu</mat-icon>
-      </button>
 
-      <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="studyMenu">
-        <a class="dropdown-item" (click)="add()">
-          <mat-icon class="success-icon mr-1">add_circle</mat-icon>
-          <ng-container i18n>Add Annotation</ng-container>
-        </a>
-      </div>
-    </span>
+    <app-dropdown-menu
+      [menuItems]="menuItems"
+      buttonClass="btn btn-sm btn-light"
+      placement="bottom-right"
+    ></app-dropdown-menu>
   </div>
   <ul class="list-group list-group-flush">
     <li class="list-group-item" *ngIf="study.annotationTypes.length <= 0">

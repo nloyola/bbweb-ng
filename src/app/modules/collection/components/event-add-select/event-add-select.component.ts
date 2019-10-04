@@ -7,6 +7,7 @@ import { EventStoreActions, EventStoreSelectors, RootStoreState } from '@app/roo
 import { select, Store } from '@ngrx/store';
 import { Observable, Subject, timer } from 'rxjs';
 import { debounce, distinct, filter, takeUntil } from 'rxjs/operators';
+import { DropdownMenuItem } from '@app/shared/components/dropdown-menu/dropdown-menu.component';
 
 @Component({
   selector: 'app-event-add-select',
@@ -20,16 +21,18 @@ export class EventAddSelectComponent implements OnInit, OnDestroy {
 
   isLoading$: Observable<boolean>;
   pageInfo$: Observable<PagedReplyInfo<CollectionEvent>>;
-
   currentPage = 1;
   eventsLimit = 5;
   sortField = 'visitNumber';
   filterForm: FormGroup;
+  menuItems: DropdownMenuItem[];
 
   private filterValues = '';
   private unsubscribe$: Subject<void> = new Subject<void>();
 
-  constructor(private store$: Store<RootStoreState.State>) {}
+  constructor(private store$: Store<RootStoreState.State>) {
+    this.menuItems = this.createMenuItems();
+  }
 
   ngOnInit() {
     this.isLoading$ = this.store$.pipe(select(EventStoreSelectors.selectCollectionEventSearchActive));
@@ -76,10 +79,6 @@ export class EventAddSelectComponent implements OnInit, OnDestroy {
     this.applySearchParams();
   }
 
-  public add() {
-    this.addSelected.emit(null);
-  }
-
   private applySearchParams() {
     const searchParams = {
       filter: this.filterValues,
@@ -93,5 +92,20 @@ export class EventAddSelectComponent implements OnInit, OnDestroy {
         searchParams
       })
     );
+  }
+
+  private createMenuItems(): DropdownMenuItem[] {
+    const items: DropdownMenuItem[] = [
+      {
+        kind: 'selectable',
+        label: 'Add Event',
+        icon: 'add_circle',
+        iconClass: 'success-icon',
+        onSelected: () => {
+          this.addSelected.emit(null);
+        }
+      }
+    ];
+    return items;
   }
 }

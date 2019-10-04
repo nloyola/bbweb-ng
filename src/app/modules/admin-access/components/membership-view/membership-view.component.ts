@@ -16,6 +16,7 @@ import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { filter, map, shareReplay, takeUntil, withLatestFrom } from 'rxjs/operators';
+import { DropdownMenuItem } from '@app/shared/components/dropdown-menu/dropdown-menu.component';
 
 @Component({
   selector: 'app-membership-view',
@@ -38,6 +39,7 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
   studyAddTypeahead: StudySelectTypeahead;
   centreAddTypeahead: CentreSelectTypeahead;
   isRemoving = false;
+  menuItems: DropdownMenuItem[];
 
   private membershipSubject = new BehaviorSubject(null);
   private updatedMessage$ = new Subject<string>();
@@ -119,7 +121,9 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
       });
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.menuItems = this.createMenuItems();
+  }
 
   ngOnDestroy() {
     this.unsubscribe$.next();
@@ -352,5 +356,37 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
 
       this.updatedMessage$.next('Centre added');
     });
+  }
+
+  private createMenuItems(): DropdownMenuItem[] {
+    return [
+      {
+        kind: 'selectable',
+        label: 'Update Name',
+        icon: 'edit',
+        iconClass: 'success-icon',
+        onSelected: () => {
+          this.updateName();
+        }
+      },
+      {
+        kind: 'selectable',
+        label: 'Update Description',
+        icon: 'edit',
+        iconClass: 'success-icon',
+        onSelected: () => {
+          this.updateDescription();
+        }
+      },
+      {
+        kind: 'selectable',
+        label: 'Remove Membership',
+        icon: 'remove_circle',
+        iconClass: 'danger-icon',
+        onSelected: () => {
+          this.removeMembership();
+        }
+      }
+    ];
   }
 }

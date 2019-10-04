@@ -72,7 +72,7 @@
               *ngFor="let shipmentState of shipmentStates"
               (click)="filterUpdated(shipmentState)"
             >
-              {{ shipmentState }}
+              {{ shipmentState | titlecase }}
             </a>
           </div>
         </div>

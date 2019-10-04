@@ -8,6 +8,7 @@ import {
   ShipmentSpecimenStoreActions,
   ShipmentSpecimenStoreSelectors
 } from '@app/root-store';
+import { DropdownMenuItem } from '@app/shared/components/dropdown-menu/dropdown-menu.component';
 import { select, Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
 import { filter, map, shareReplay } from 'rxjs/operators';
@@ -107,5 +108,30 @@ export class ShipmentSpecimensTableComponent implements OnInit, OnDestroy {
         searchParams
       })
     );
+  }
+
+  protected menuItemsForShipmentSpecimen(shipmentSpecimen: ShipmentSpecimen): DropdownMenuItem[] {
+    return [
+      {
+        kind: 'selectable',
+        label: 'View Specimen',
+        icon: 'search',
+        iconClass: 'success-icon',
+        onSelected: () => {
+          // TODO: implement this method
+          console.error('view specimen');
+        }
+      },
+      {
+        kind: 'selectable',
+        label: 'Remove Specimen from Shipment',
+        icon: 'remove_circle',
+        iconClass: 'danger-icon',
+        onSelected: () => {
+          // TODO: implement this method
+          console.error('remove specimen');
+        }
+      }
+    ];
   }
 }

@@ -21,18 +21,11 @@
 
 <ng-template #heading>
   <small i18n>Events</small>
-  <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
-    <button class="btn btn-sm btn-outline-secondary" type="button" id="eventTypeMenu" ngbDropdownToggle>
-      <mat-icon inline="true">menu</mat-icon>
-    </button>
-
-    <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="eventTypeMenu">
-      <a class="dropdown-item" (click)="add()">
-        <mat-icon class="success-icon mr-1">add_circle</mat-icon>
-        <ng-container i18n>Add Event</ng-container>
-      </a>
-    </div>
-  </span>
+  <app-dropdown-menu
+    [menuItems]="menuItems"
+    buttonClass="btn btn-sm btn-outline-secondary"
+    placement="bottom-right"
+  ></app-dropdown-menu>
 </ng-template>
 
 <ng-template #footer>

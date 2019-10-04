@@ -1,52 +1,23 @@
 <div class="card mt-2" *ngIf="eventType">
   <div class="card-header bg-primary text-light">
     <ng-container i18>Event:</ng-container> {{ eventType.name }}
-    <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
-      <button
-        class="btn btn-sm btn-light mr-1"
-        type="button"
-        id="eventTypeMenu"
-        ngbDropdownToggle
-        *ngIf="allowChanges"
-      >
-        <mat-icon inline="true">menu</mat-icon>
-      </button>
 
-      <button
-        class="btn btn-sm btn-light"
-        type="button"
-        (click)="isPanelCollapsed = !isPanelCollapsed"
-        [attr.aria-expanded]="!isCollapsed"
-        aria-controls="eventTypeCollapse"
-      >
-        <mat-icon *ngIf="!isPanelCollapsed" inline="true">keyboard_arrow_down</mat-icon>
-        <mat-icon *ngIf="isPanelCollapsed" inline="true">keyboard_arrow_right</mat-icon>
-      </button>
+    <button
+      class="btn btn-sm btn-light float-right"
+      type="button"
+      (click)="isPanelCollapsed = !isPanelCollapsed"
+      [attr.aria-expanded]="!isCollapsed"
+      aria-controls="eventTypeCollapse"
+    >
+      <mat-icon *ngIf="!isPanelCollapsed" inline="true">keyboard_arrow_down</mat-icon>
+      <mat-icon *ngIf="isPanelCollapsed" inline="true">keyboard_arrow_right</mat-icon>
+    </button>
 
-      <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="eventTypeMenu">
-        <a class="dropdown-item" (click)="updateName()">
-          <mat-icon class="success-icon mr-1">edit</mat-icon>
-          <ng-container i18n>Update name</ng-container>
-        </a>
-        <a class="dropdown-item" (click)="updateDescription()">
-          <mat-icon class="success-icon mr-1">edit</mat-icon>
-          <ng-container i18n>Update description</ng-container>
-        </a>
-        <a class="dropdown-item" (click)="updateRecurring()">
-          <mat-icon class="success-icon mr-1">edit</mat-icon>
-          <ng-container i18n>Update recurring</ng-container>
-        </a>
-        <div class="dropdown-divider"></div>
-        <a class="dropdown-item" (click)="addAnnotationType()">
-          <mat-icon class="success-icon mr-1">add_circle</mat-icon>
-          <ng-container i18n>Add an Annotation</ng-container>
-        </a>
-        <a class="dropdown-item" (click)="removeEventType()">
-          <mat-icon class="danger-icon mr-1">warning</mat-icon>
-          <ng-container i18n>Remove this Event</ng-container>
-        </a>
-      </div>
-    </span>
+    <app-dropdown-menu
+      [menuItems]="menuItems"
+      buttonClass="btn btn-sm btn-light mr-1 float-right"
+      placement="bottom-right"
+    ></app-dropdown-menu>
   </div>
   <div [ngbCollapse]="isPanelCollapsed" id="eventTypeCollapse">
     <ul class="list-group list-group-flush">

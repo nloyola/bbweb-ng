@@ -1,15 +1,15 @@
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { User, UserUI } from '@app/domain/users';
+import { User, UserState, UserUI } from '@app/domain/users';
 import { ModalInputTextOptions } from '@app/modules/modals/models';
 import { RootStoreState, UserStoreActions, UserStoreSelectors } from '@app/root-store';
-import { SpinnerStoreSelectors } from '@app/root-store/spinner';
+import { DropdownMenuItem } from '@app/shared/components/dropdown-menu/dropdown-menu.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Dictionary } from '@ngrx/entity';
 import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subject, BehaviorSubject } from 'rxjs';
-import { filter, map, shareReplay, takeUntil, withLatestFrom, tap } from 'rxjs/operators';
-import { Dictionary } from '@ngrx/entity';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { filter, map, shareReplay, takeUntil, withLatestFrom } from 'rxjs/operators';
 
 @Component({
   selector: 'app-user-profile',
@@ -33,6 +33,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   updateEmailModalOptions: ModalInputTextOptions = {
     required: true
   };
+  menuItems: DropdownMenuItem[];
 
   private userSubject = new BehaviorSubject(null);
   private updatedMessage$ = new Subject<string>();
@@ -59,6 +60,9 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     );
 
     this.user$.pipe(takeUntil(this.unsubscribe$)).subscribe(this.userSubject);
+    this.user$.pipe(takeUntil(this.unsubscribe$)).subscribe(user => {
+      this.menuItems = this.createSortMenuItems(user);
+    });
     this.isLoading$ = this.user$.pipe(map(user => user === undefined));
 
     this.user$
@@ -195,5 +199,75 @@ export class UserProfileComponent implements OnInit, OnDestroy {
       })
     );
     this.updatedMessage$.next('User state was updated');
+  }
+
+  private createSortMenuItems(user: UserUI): DropdownMenuItem[] {
+    const items: DropdownMenuItem[] = [
+      {
+        kind: 'selectable',
+        label: 'Update Name',
+        icon: 'edit',
+        iconClass: 'success-icon',
+        onSelected: () => {
+          this.updateName();
+        }
+      },
+      {
+        kind: 'selectable',
+        label: 'Update Email',
+        icon: 'edit',
+        iconClass: 'success-icon',
+        onSelected: () => {
+          this.updateEmail();
+        }
+      },
+      {
+        kind: 'selectable',
+        label: 'Change Avatar',
+        icon: 'edit',
+        iconClass: 'success-icon',
+        onSelected: () => {
+          this.updateAvatarUrl();
+        }
+      }
+    ];
+
+    if (user.isRegistered()) {
+      items.push({
+        kind: 'selectable',
+        label: 'Activate User',
+        icon: this.getStateIcon(UserState.Active),
+        iconClass: this.getStateIconClass(UserState.Active),
+        onSelected: () => {
+          this.activate();
+        }
+      });
+    }
+
+    if (user.isActive()) {
+      items.push({
+        kind: 'selectable',
+        label: 'Lock User',
+        icon: this.getStateIcon(UserState.Locked),
+        iconClass: this.getStateIconClass(UserState.Locked),
+        onSelected: () => {
+          this.lock();
+        }
+      });
+    }
+
+    if (user.isLocked()) {
+      items.push({
+        kind: 'selectable',
+        label: 'Unlock User',
+        icon: this.getStateIcon(UserState.Active),
+        iconClass: this.getStateIconClass(UserState.Active),
+        onSelected: () => {
+          this.unlock();
+        }
+      });
+    }
+
+    return items;
   }
 }
