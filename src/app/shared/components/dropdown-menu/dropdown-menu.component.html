@@ -1,0 +1,12 @@
+<span class="float-right d-inline-block" ngbDropdown placement="{{ placement }}">
+  <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenu" ngbDropdownToggle>
+    <mat-icon inline="true">menu</mat-icon>
+  </button>
+
+  <div class="dropdown-menu" ngbDropdownMenu role="menu" aria-labelledby="dropdownMenu">
+    <a *ngFor="let item of menuItems" class="dropdown-item" (click)="item.selected()">
+      <mat-icon *ngIf="item.icon" [ngClass]="item.iconClass" class="mr-1">{{ item.icon }}</mat-icon>
+      {{ item.label }}
+    </a>
+  </div>
+</span>

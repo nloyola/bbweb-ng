@@ -98,22 +98,8 @@
         <small>{{ shipment.state | titlecase }}</small>
       </td>
       <td>
-        <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
-          <button class="btn btn-sm btn-outline-secondary" type="button" id="shipmentMenu" ngbDropdownToggle>
-            <mat-icon inline="true">menu</mat-icon>
-          </button>
-
-          <div class="dropdown-menu" ngbDropdownMenu role="menu" aria-labelledby="shipmentMenu">
-            <a class="dropdown-item" (click)="shipmentView(shipment)">
-              <mat-icon class="success-icon mr-1">search</mat-icon>
-              <span i18n>View shipment</span>
-            </a>
-            <a class="dropdown-item" (click)="shipmentRemove(shipment)">
-              <mat-icon class="danger-icon mr-1">remove_circle</mat-icon>
-              <span i18n>Remove shipment</span>
-            </a>
-          </div>
-        </span>
+        <app-dropdown-menu [menuItems]="menuItemsForShipment(shipment)" [placement]="'bottom-right'">
+        </app-dropdown-menu>
       </td>
     </tr>
     <tr *ngIf="shipments.length <= 0">
