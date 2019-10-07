@@ -28,7 +28,7 @@ export class ShipmentAddPageComponent implements OnInit, OnDestroy {
   form: FormGroup;
   fromLocationInfoTypeahead: CentreLocationSelectTypeahead;
   toLocationInfoTypeahead: CentreLocationSelectTypeahead;
-  isSaving$ = new Subject<boolean>();
+  isSaving = false;
 
   private unsubscribe$: Subject<void> = new Subject<void>();
 
@@ -60,8 +60,9 @@ export class ShipmentAddPageComponent implements OnInit, OnDestroy {
         takeUntil(this.unsubscribe$)
       )
       .subscribe((shipment: Shipment) => {
+        console.log('shipment', shipment);
         this.toastr.success(`Shipment was added successfully: ${shipment.trackingNumber}`, 'Add Successfull');
-        this.router.navigate(['/shipping/add-items', shipment.id]);
+        this.router.navigate(['/shipping', shipment.fromLocationInfo.slug, 'outgoing', 'view', shipment.id]);
         this.store$.dispatch(ShipmentStoreActions.clearLastAdded());
       });
 
@@ -107,7 +108,7 @@ export class ShipmentAddPageComponent implements OnInit, OnDestroy {
       state: ShipmentState.Created
     });
     this.store$.dispatch(ShipmentStoreActions.addShipmentRequest({ shipment }));
-    this.isSaving$.next(true);
+    this.isSaving = true;
   }
 
   onCancel() {
