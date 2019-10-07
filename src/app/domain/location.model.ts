@@ -1,8 +1,9 @@
 import { DomainEntity, IDomainEntity } from './domain-entity.model';
 import { HasName } from './has-name.model';
 import { JSONObject } from './json-object.model';
+import { HasSlug } from './has-slug.model';
 
-export interface ILocation extends IDomainEntity, HasName {
+export interface ILocation extends IDomainEntity, HasSlug, HasName {
   /** The street address for this location. */
   street: string;
 
@@ -23,6 +24,7 @@ export interface ILocation extends IDomainEntity, HasName {
 }
 
 export class Location extends DomainEntity implements ILocation {
+  slug: string;
   name: string;
   street: string;
   city: string;
