@@ -22,6 +22,6 @@ export class CentreLocationSelectTypeahead extends EntitySelectTypeahead<CentreL
   }
 
   formatter(centreLocationInfo: CentreLocationInfo): string {
-    return centreLocationInfo.name;
+    return centreLocationInfo.combinedName;
   }
 }

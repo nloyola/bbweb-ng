@@ -519,11 +519,7 @@ export class Factory {
   shipment(options: any = {}): IShipment {
     const loc = this.location();
     const ctr = this.centre({ locations: [loc] });
-    const locationInfo = {
-      centreId: ctr.id,
-      locationId: loc.id,
-      name: ctr.name + ': ' + loc.name
-    };
+    const locationInfo = this.centreLocationInfo(ctr, loc);
     const s = {
       ...this.commonFields(),
       id: this.domainEntityIdNext(DomainEntities.SHIPMENT),
@@ -636,14 +632,21 @@ export class Factory {
     return annotation;
   }
 
-  centreLocationInfo(centre: ICentre): ICentreLocationInfo {
-    if (!centre.locations || centre.locations.length < 1) {
+  centreLocationInfo(centre: ICentre, location?: ILocation): ICentreLocationInfo {
+    if (location === undefined && (!centre.locations || centre.locations.length < 1)) {
       throw new Error('centre does not have any locations');
     }
+    location = centre.locations[0];
     return {
-      centreId: centre.id,
-      locationId: centre.locations[0].id,
-      name: centre.name + ': ' + centre.locations[0].name
+      id: centre.id,
+      slug: centre.slug,
+      name: centre.name,
+      location: {
+        id: location.id,
+        slug: location.slug,
+        name: location.name
+      },
+      combinedName: centre.name + ': ' + location.name
     };
   }
 

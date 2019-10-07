@@ -85,8 +85,8 @@ describe('ShipmentService', () => {
         expect(body).toEqual({
           courierName: shipment.courierName,
           trackingNumber: shipment.trackingNumber,
-          fromLocationId: shipment.fromLocationInfo.locationId,
-          toLocationId: shipment.toLocationInfo.locationId
+          fromLocationId: shipment.fromLocationInfo.location.id,
+          toLocationId: shipment.toLocationInfo.location.id
         });
       });
     });
@@ -125,21 +125,21 @@ describe('ShipmentService', () => {
           shipment,
           attribute: 'trackingNumber',
           value: factory.stringNext(),
-          url: `${BASE_URL}/trackingnumber/${shipment.id}`
+          url: `${BASE_URL}/tracking-number/${shipment.id}`
         },
         {
           shipment,
           attribute: 'fromLocation',
           value: centreLocationInfo,
           url: `${BASE_URL}/fromlocation/${shipment.id}`,
-          json: { locationId: centreLocationInfo.locationId }
+          json: { locationId: centreLocationInfo.location.id }
         },
         {
           shipment,
           attribute: 'toLocation',
           value: centreLocationInfo,
           url: `${BASE_URL}/tolocation/${shipment.id}`,
-          json: { locationId: centreLocationInfo.locationId }
+          json: { locationId: centreLocationInfo.location.id }
         }
       ];
 

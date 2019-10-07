@@ -81,8 +81,8 @@ export class ShipmentService {
     const json = {
       courierName: shipment.courierName,
       trackingNumber: shipment.trackingNumber,
-      fromLocationId: shipment.fromLocationInfo.locationId,
-      toLocationId: shipment.toLocationInfo.locationId
+      fromLocationId: shipment.fromLocationInfo.location.id,
+      toLocationId: shipment.toLocationInfo.location.id
     };
     return this.http.post<ApiReply>(`${this.BASE_URL}/`, json).pipe(
       // delay(2000),
@@ -111,14 +111,14 @@ export class ShipmentService {
 
       case 'fromLocation': {
         const locationInfo = value as CentreLocationInfo;
-        json = { ...json, locationId: locationInfo.locationId };
+        json = { ...json, locationId: locationInfo.location.id };
         url = `${this.BASE_URL}/fromlocation/${shipment.id}`;
         break;
       }
 
       case 'toLocation': {
         const locationInfo = value as CentreLocationInfo;
-        json = { ...json, locationId: locationInfo.locationId };
+        json = { ...json, locationId: locationInfo.location.id };
         url = `${this.BASE_URL}/tolocation/${shipment.id}`;
         break;
       }

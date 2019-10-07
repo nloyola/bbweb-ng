@@ -79,6 +79,7 @@ export class LocationAddComponent implements OnInit {
   private formToLocation(): Location {
     return new Location().deserialize({
       id: this.location ? this.location.id : undefined,
+      slug: undefined,
       name: this.form.value.name,
       street: this.form.value.street,
       city: this.form.value.city,

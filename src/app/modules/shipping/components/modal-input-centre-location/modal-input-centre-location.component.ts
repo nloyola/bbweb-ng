@@ -41,7 +41,7 @@ export class ModalInputCentreLocationComponent extends ModalInputBaseComponent<C
         this.modalInputValid = false;
       } else {
         return centreLocations.filter(
-          centreLocationInfo => centreLocationInfo.locationId !== this.locationIdToFilterOut
+          centreLocationInfo => centreLocationInfo.location.id !== this.locationIdToFilterOut
         );
       }
       return centreLocations;

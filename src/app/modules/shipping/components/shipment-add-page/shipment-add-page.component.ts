@@ -154,10 +154,10 @@ export class ShipmentAddPageComponent implements OnInit, OnDestroy {
         formControl.setValue('');
       } else {
         const locationToFilter = locationToFilterFn();
-        const locationToFilterId = locationToFilter === undefined ? undefined : locationToFilter.locationId;
+        const locationToFilterId = locationToFilter === undefined ? undefined : locationToFilter.location.id;
         if (locationToFilterId !== undefined) {
           return centreLocations.filter(
-            centreLocationInfo => centreLocationInfo.locationId !== locationToFilterId
+            centreLocationInfo => centreLocationInfo.location.id !== locationToFilterId
           );
         }
       }
