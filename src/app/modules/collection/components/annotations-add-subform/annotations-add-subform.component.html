@@ -88,14 +88,17 @@
             <ng-container *ngIf="control.controls.maxValueCount.value > 1">
               <div class="col-md-9">
                 <ng-container
-                  *ngFor="let control of control.controls.field.controls['options'].controls; let last = last"
+                  *ngFor="
+                    let subcontrol of control.controls.field.controls['options'].controls;
+                    let last = last
+                  "
                 >
                   <input
                     type="checkbox"
-                    [formControl]="control.controls.checkbox"
-                    [value]="control.controls.id"
+                    [formControl]="subcontrol.controls.checkbox"
+                    [value]="subcontrol.controls.id"
                   />
-                  <span class="ml-1" i18n>{{ control.controls.id.value }}</span>
+                  <span class="ml-1" i18n>{{ subcontrol.controls.id.value }}</span>
                   <br *ngIf="!last" />
                 </ng-container>
               </div>

@@ -29,10 +29,11 @@ export class AnnotationsAddSubformComponent {
 
       if (annotation.annotationType.maxValueCount > 1) {
         const checkboxGroup = annotation.annotationType.options.map(option => {
+          const selectedOptions = annotation.value as string[];
           return new FormGroup({
             id: new FormControl(option),
             text: new FormControl(option),
-            checkbox: new FormControl(false)
+            checkbox: new FormControl(selectedOptions.includes(option))
           });
         });
         const checkboxArray = new FormArray(checkboxGroup);
