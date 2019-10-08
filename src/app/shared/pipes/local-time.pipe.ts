@@ -1,5 +1,6 @@
-import { Pipe, PipeTransform } from '@angular/core';
 import { formatDate } from '@angular/common';
+import { Pipe, PipeTransform } from '@angular/core';
+import { AppSettings } from '@app/app-settings';
 
 @Pipe({ name: 'localTime' })
 export class LocalTimePipe implements PipeTransform {
@@ -8,7 +9,7 @@ export class LocalTimePipe implements PipeTransform {
       return '';
     }
     if (!format) {
-      format = 'yyyy-MM-dd, HH:mm';
+      format = AppSettings.DATE_FORMAT;
     }
 
     return formatDate(input, format, 'en_CA');

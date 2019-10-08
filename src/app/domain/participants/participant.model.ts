@@ -54,7 +54,13 @@ export class Participant extends ConcurrencySafeEntity implements IParticipant, 
     this.study = new EntityInfo().deserialize(input.study);
 
     if (input.annotations) {
-      this.annotations = input.annotations.map(a => AnnotationFactory.annotationFactory(a));
+      this.annotations = input.annotations.map(a => {
+        if (a instanceof Annotation) {
+          return a;
+        }
+        // it is a plain object then
+        return AnnotationFactory.annotationFactory(a);
+      });
     }
     return this;
   }

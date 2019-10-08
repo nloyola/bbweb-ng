@@ -3,6 +3,10 @@ import { Annotation, IAnnotation } from './annotation.model';
 export class SelectAnnotation extends Annotation {
   value: string[] = [];
 
+  displayValue(): string {
+    return this.value.join(', ');
+  }
+
   serverAnnotation() {
     return {
       annotationTypeId: this.annotationTypeId,
