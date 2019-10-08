@@ -3,6 +3,10 @@ import { Annotation, IAnnotation } from './annotation.model';
 export class TextAnnotation extends Annotation {
   value: string;
 
+  displayValue(): string {
+    return this.value;
+  }
+
   serverAnnotation(): any {
     return {
       annotationTypeId: this.annotationTypeId,

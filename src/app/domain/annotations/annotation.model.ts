@@ -30,10 +30,16 @@ export abstract class Annotation extends DomainEntity implements IAnnotation {
   _annotationType: AnnotationType;
 
   get label(): string {
+    if (this._annotationType === undefined) {
+      throw new Error('annotation type is undefined');
+    }
     return this._annotationType.name;
   }
 
   get annotationType(): AnnotationType {
+    if (this._annotationType === undefined) {
+      throw new Error('annotation type is undefined');
+    }
     return this._annotationType;
   }
 
@@ -41,6 +47,8 @@ export abstract class Annotation extends DomainEntity implements IAnnotation {
     this.valueType = at.valueType;
     this._annotationType = at;
   }
+
+  abstract displayValue(): string;
 
   abstract serverAnnotation(): any;
 

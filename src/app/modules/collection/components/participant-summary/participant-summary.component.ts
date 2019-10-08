@@ -99,6 +99,29 @@ export class ParticipantSummaryComponent implements OnInit, OnDestroy {
     this.entities$.pipe(takeUntil(this.unsubscribe$)).subscribe(this.entitiesSubject);
     this.participant$ = this.entities$.pipe(map(entities => (entities ? entities.participant : undefined)));
 
+    this.annotations$ = this.entities$.pipe(
+      map(entities => {
+        if (entities === undefined || entities.study === undefined) {
+          return [];
+        }
+
+        return entities.study.annotationTypes.map(at => {
+          const annotation = AnnotationFactory.annotationFromType(at);
+          const participantAnnotation = entities.participant.annotations.find(
+            a => a.annotationTypeId === annotation.annotationTypeId
+          );
+          if (participantAnnotation) {
+            annotation.value = participantAnnotation.value;
+          }
+          return annotation;
+        });
+      }),
+      tap(annotations => {
+        annotations.forEach(annotation => console.log(annotation.value));
+        this.menuItems = this.createMenuItems().concat(this.createMenuItemsForAnnotations(annotations));
+      })
+    );
+
     this.entities$
       .pipe(
         withLatestFrom(this.updatedMessage$),
@@ -136,29 +159,6 @@ export class ParticipantSummaryComponent implements OnInit, OnDestroy {
         }
         this.toastr.error(errMessage, 'Update Error', { disableTimeOut: true });
       });
-
-    this.annotations$ = this.entities$.pipe(
-      map(entities => {
-        if (entities === undefined || entities.study === undefined) {
-          return [];
-        }
-
-        return entities.study.annotationTypes.map(at => {
-          const annotation = AnnotationFactory.annotationFromType(at);
-          const participantAnnotation = entities.participant.annotations.find(
-            a => a.annotationTypeId === annotation.annotationTypeId
-          );
-          if (participantAnnotation) {
-            annotation.value = participantAnnotation.value;
-          }
-          return annotation;
-        });
-      }),
-      tap(annotations => {
-        annotations.forEach(annotation => console.log(annotation.value));
-        this.menuItems = this.createMenuItems().concat(this.createMenuItemsForAnnotations(annotations));
-      })
-    );
   }
 
   ngOnDestroy() {
