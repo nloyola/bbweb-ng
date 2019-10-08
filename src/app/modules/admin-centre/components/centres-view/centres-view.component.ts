@@ -14,6 +14,10 @@ import { CentreStoreActions, CentreStoreSelectors, RootStoreState } from '@app/r
 import { select, Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
 import { filter, map, shareReplay, takeUntil, tap } from 'rxjs/operators';
+import {
+  DropdownMenuItem,
+  DropdownMenuDivider
+} from '@app/shared/components/dropdown-menu/dropdown-menu.component';
 
 @Component({
   selector: 'app-centres-view',
@@ -26,19 +30,17 @@ export class CentresViewComponent implements OnInit, OnDestroy {
   hasLoaded$: Observable<boolean>;
   centreCountData$: Observable<CentreCountsUIMap>;
   centrePageInfo$: Observable<PagedReplyInfo<Centre>>;
-
   centresLimit = 5;
-
   sortField: string;
   stateData: EntityStateInfo[];
   sortChoices: LabelledId[];
   centres$: Observable<CentreUI[]>;
+  menuItems: DropdownMenuItem[];
+  currentPage = 1;
+  centreToAdd: Centre;
 
   private filters: { [name: string]: SearchFilter };
   private unsubscribe$: Subject<void> = new Subject<void>();
-
-  currentPage = 1;
-  centreToAdd: any;
 
   constructor(
     private store$: Store<RootStoreState.State>,
@@ -56,6 +58,7 @@ export class CentresViewComponent implements OnInit, OnDestroy {
     };
 
     this.sortChoices = [{ id: 'name', label: 'Name' }, { id: 'state', label: 'State' }];
+    this.menuItems = this.createSortMenuItems();
   }
 
   ngOnInit() {
@@ -130,5 +133,33 @@ export class CentresViewComponent implements OnInit, OnDestroy {
       limit: this.centresLimit
     };
     this.store$.dispatch(CentreStoreActions.searchCentresRequest({ searchParams }));
+  }
+
+  private createSortMenuItems(): DropdownMenuItem[] {
+    const sortItems: DropdownMenuItem[] = this.sortChoices.map(sort => ({
+      kind: 'selectable',
+      label: sort.label,
+      onSelected: () => {
+        this.sortFieldSelected(sort.id);
+      }
+    }));
+    const items: DropdownMenuItem[] = [
+      {
+        kind: 'selectable',
+        label: 'Add Centre',
+        icon: 'add_circle',
+        iconClass: 'success-icon',
+        onSelected: () => {
+          this.router.navigate(['/admin/centres/add']);
+        }
+      },
+      DropdownMenuDivider,
+      {
+        kind: 'header',
+        header: 'Sort By'
+      },
+      ...sortItems
+    ];
+    return items;
   }
 }

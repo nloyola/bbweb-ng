@@ -14,7 +14,7 @@ import { filter, map, shareReplay, takeUntil, withLatestFrom, tap } from 'rxjs/o
 import { DropdownMenuItem } from '@app/shared/components/dropdown-menu/dropdown-menu.component';
 
 interface StoreData {
-  study: StudyUI;
+  study: Study;
   isEnableAllowed: boolean;
 }
 
@@ -44,7 +44,7 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
 
   private data$: Observable<StoreData>;
   private studyId: string;
-  private studySubject = new BehaviorSubject(null);
+  private dataSubject = new BehaviorSubject(null);
   private updatedMessage$ = new Subject<string>();
   private unsubscribe$ = new Subject<void>();
 
@@ -67,7 +67,7 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
         const study = studies[this.studyId];
         const isEnableAllowed = enableAllowedIds[this.studyId];
         return {
-          study: study ? this.studyEntityToUI(study) : undefined,
+          study: study ? (study instanceof Study ? study : new Study().deserialize(study)) : undefined,
           isEnableAllowed
         };
       }
@@ -75,16 +75,16 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
 
     this.data$ = this.store$.pipe(
       select(selector),
+      filter(data => data !== undefined && data.study !== undefined && data.isEnableAllowed !== undefined),
+      tap(data => {
+        this.menuItems = this.createMenuItems(data);
+      }),
       shareReplay()
     );
 
-    this.data$.pipe(takeUntil(this.unsubscribe$)).subscribe(this.studySubject);
-    this.data$.pipe(takeUntil(this.unsubscribe$)).subscribe(data => {
-      this.menuItems = this.createMenuItems(data);
-    });
-
-    this.study$ = this.data$.pipe(map(data => (data ? data.study : undefined)));
-    this.isEnableAllowed$ = this.data$.pipe(map(data => (data ? data.isEnableAllowed : undefined)));
+    this.data$.pipe(takeUntil(this.unsubscribe$)).subscribe(this.dataSubject);
+    this.study$ = this.data$.pipe(map(data => new StudyUI(data.study)));
+    this.isEnableAllowed$ = this.data$.pipe(map(data => data.isEnableAllowed));
     this.isLoading$ = this.data$.pipe(map(data => data === undefined || data.study === undefined));
 
     this.data$
@@ -170,9 +170,9 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
   }
 
   enable() {
-    if (!this.studySubject.value.isEnableAllowed) {
+    const storeData = this.dataSubject.value;
+    if (storeData && !storeData.isEnableAllowed) {
       throw new Error('not allowed to enable study');
-      return;
     }
     this.changeState('enable');
   }
@@ -186,10 +186,13 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
   }
 
   private changeState(action: 'disable' | 'enable' | 'retire' | 'unretire') {
-    const study = this.studySubject.value.study.entity;
+    const storeData = this.dataSubject.value;
+    if (!storeData) {
+      return;
+    }
     this.store$.dispatch(
       StudyStoreActions.updateStudyRequest({
-        study,
+        study: storeData.study,
         attributeName: 'state',
         value: action
       })
@@ -197,25 +200,24 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
     this.updatedMessage$.next('Study state was updated');
   }
 
-  private studyEntityToUI(entity: any): StudyUI {
-    const study = entity instanceof Study ? entity : new Study().deserialize(entity);
-    return new StudyUI(study);
-  }
-
   private whenStudyDisabled(fn: (study: Study) => void) {
-    const study = this.studySubject.value.study.entity;
-    if (!study.isDisabled()) {
+    const storeData = this.dataSubject.value;
+    if (!storeData) {
+      return;
+    }
+    if (!storeData.study.isDisabled()) {
       throw new Error('modifications not allowed');
     }
-
-    fn(study);
+    fn(storeData.study);
   }
 
   private createMenuItems(storeData: StoreData): DropdownMenuItem[] {
-    const items: DropdownMenuItem[] = [];
+    if (!storeData || !storeData.study) {
+      throw new Error('study is undefined');
+    }
 
-    const study = storeData.study.entity;
-    console.log('data', storeData);
+    const study = storeData.study;
+    const items: DropdownMenuItem[] = [];
 
     if (study.isDisabled()) {
       items.push(

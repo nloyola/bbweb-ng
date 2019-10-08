@@ -16,6 +16,7 @@ import { ToastrModule } from 'ngx-toastr';
 import { ShipmentInformationCardComponent } from './shipment-information-card.component';
 import { EntityUpdateComponentBehaviour } from '@test/behaviours/entity-update-component.behaviour';
 import { Centre, CentreLocationInfo } from '@app/domain/centres';
+import { DropdownMenuSelectableItem } from '@app/shared/components/dropdown-menu/dropdown-menu.component';
 
 describe('ShipmentInformationCardComponent', () => {
   let component: ShipmentInformationCardComponent;
@@ -170,9 +171,12 @@ describe('ShipmentInformationCardComponent', () => {
       eventProduced = true;
     });
 
-    const menuItem = component.menuItems.find(item => item.label === 'Remove Shipment');
-    expect(menuItem).toBeTruthy();
-    menuItem.selected();
+    const menuItem = component.menuItems.find(
+      item => item.kind === 'selectable' && item.label === 'Remove Shipment'
+    );
+    const selectableMenuItem = menuItem as DropdownMenuSelectableItem;
+    expect(selectableMenuItem).toBeTruthy();
+    selectableMenuItem.onSelected();
 
     fixture.detectChanges();
     expect(eventProduced).toBe(true);

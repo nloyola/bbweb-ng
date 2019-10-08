@@ -28,7 +28,6 @@ export class ShipmentSpecimensTableComponent implements OnInit, OnDestroy {
 
   filterForm: FormGroup;
   pageInfo$: Observable<PagedReplyInfo<ShipmentSpecimen>>;
-
   maxPages$: Observable<number>;
   totalSpecimens$: Observable<number>;
   specimens$: Observable<ShipmentSpecimen[]>;

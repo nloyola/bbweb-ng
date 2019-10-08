@@ -28,7 +28,7 @@ describe('ModalInputTextareaComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  fdescribe('shared behaviour', () => {
+  describe('shared behaviour', () => {
     const context: ModalInputComponentBehaviour.Context<ModalInputTextareaComponent, string> = {};
 
     beforeEach(() => {

@@ -5,6 +5,7 @@ import { YesNoPipe } from '@app/shared/pipes/yes-no-pipe';
 import { Factory } from '@test/factory';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { EventTypeViewComponent } from './event-type-view.component';
+import { DropdownMenuSelectableItem } from '@app/shared/components/dropdown-menu/dropdown-menu.component';
 
 describe('EventTypeViewComponent', () => {
   let component: EventTypeViewComponent;
@@ -60,82 +61,60 @@ describe('EventTypeViewComponent', () => {
     expect(component.sortedSpecimenDefinitions.length).toBe(0);
   });
 
-  it('test for emitters', () => {
-    const eventType = createTestEventType();
-    const annotationType = eventType.annotationTypes[0];
-    const specimenDefinition = eventType.specimenDefinitions[0];
-    const testData = [
-      {
-        componentFunc: () => component.updateName(),
-        emitter: component.updateNameSelected,
-        arg: null
-      },
-      {
-        componentFunc: () => component.updateDescription(),
-        emitter: component.updateDescriptionSelected,
-        arg: null
-      },
-      {
-        componentFunc: () => component.updateRecurring(),
-        emitter: component.updateRecurringSelected,
-        arg: null
-      },
-      {
-        componentFunc: () => component.addAnnotationType(),
-        emitter: component.addAnnotationTypeSelected,
-        arg: null
-      },
-      {
-        componentFunc: () => component.viewAnnotationType(annotationType),
-        emitter: component.viewAnnotationTypeSelected,
-        arg: annotationType
-      },
-      {
-        componentFunc: () => component.editAnnotationType(annotationType),
-        emitter: component.editAnnotationTypeSelected,
-        arg: annotationType
-      },
-      {
-        componentFunc: () => component.removeAnnotationType(annotationType),
-        emitter: component.removeAnnotationTypeSelected,
-        arg: annotationType
-      },
-      {
-        componentFunc: () => component.addSpecimenDefinition(),
-        emitter: component.addSpecimenDefinitionSelected,
-        arg: null
-      },
-      {
-        componentFunc: () => component.viewSpecimenDefinition(specimenDefinition),
-        emitter: component.viewSpecimenDefinitionSelected,
-        arg: specimenDefinition
-      },
-      {
-        componentFunc: () => component.editSpecimenDefinition(specimenDefinition),
-        emitter: component.editSpecimenDefinitionSelected,
-        arg: specimenDefinition
-      },
-      {
-        componentFunc: () => component.removeSpecimenDefinition(specimenDefinition),
-        emitter: component.removeSpecimenDefinitionSelected,
-        arg: specimenDefinition
-      },
-      {
-        componentFunc: () => component.removeEventType(),
-        emitter: component.removeEventTypeSelected,
-        arg: null
-      }
-    ];
+  const outputData = [
+    ['viewAnnotationType', 'viewAnnotationTypeSelected', 'annotationType'],
+    ['editAnnotationType', 'editAnnotationTypeSelected', 'annotationType'],
+    ['removeAnnotationType', 'removeAnnotationTypeSelected', 'annotationType'],
+    ['viewSpecimenDefinition', 'viewSpecimenDefinitionSelected', 'specimenDefinition'],
+    ['editSpecimenDefinition', 'editSpecimenDefinitionSelected', 'specimenDefinition'],
+    ['removeSpecimenDefinition', 'removeSpecimenDefinitionSelected', 'specimenDefinition']
+  ];
 
-    component.eventType = createTestEventType();
+  it.each(outputData)('method %s emits event %s', (componentMethod, outputName, argumentType) => {
+    const eventType = createTestEventType();
+    const argument =
+      argumentType == 'annotationType' ? eventType.annotationTypes[0] : eventType.specimenDefinitions[0];
+
+    component.eventType = eventType;
     component.allowChanges = false;
     fixture.detectChanges();
 
-    testData.forEach(testInfo => {
-      spyOn(testInfo.emitter, 'emit').and.returnValue(null);
-      testInfo.componentFunc();
-      expect(testInfo.emitter.emit).toHaveBeenCalledWith(testInfo.arg);
+    expect(component[outputName]).toBeDefined();
+    const emitterListener = jest.spyOn(component[outputName], 'emit').mockReturnValue(null);
+
+    expect(component[componentMethod]).toBeFunction();
+    component[componentMethod](argument);
+    expect(emitterListener.mock.calls.length).toBe(1);
+    expect(emitterListener.mock.calls[0][0]).toBe(argument);
+  });
+
+  const menuItemData = [
+    ['Update Name', 'updateNameSelected'],
+    ['Update Description', 'updateDescriptionSelected'],
+    ['Update Recurring', 'updateRecurringSelected'],
+    ['Add Annotation', 'addAnnotationTypeSelected'],
+    ['Remove this Event', 'removeEventTypeSelected']
+  ];
+
+  it.each(menuItemData)('menu item "%s" emits the "%s" event', (itemLabel, outputName) => {
+    const eventType = createTestEventType();
+
+    component.eventType = eventType;
+    component.allowChanges = false;
+    fixture.detectChanges();
+
+    expect(component[outputName]).toBeDefined();
+    let eventProduced = false;
+    component[outputName].subscribe(() => {
+      eventProduced = true;
     });
+
+    const menuItem = component.menuItems.find(mi => mi.kind === 'selectable' && mi.label == itemLabel);
+    const selectableMenuItem = menuItem as DropdownMenuSelectableItem;
+    expect(selectableMenuItem).toBeDefined();
+    expect(selectableMenuItem.onSelected).toBeFunction();
+    selectableMenuItem.onSelected();
+    expect(eventProduced).toBe(true);
   });
 
   function createTestEventType(): CollectionEventType {

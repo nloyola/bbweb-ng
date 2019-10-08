@@ -117,7 +117,6 @@ export class ParticipantSummaryComponent implements OnInit, OnDestroy {
         });
       }),
       tap(annotations => {
-        annotations.forEach(annotation => console.log(annotation.value));
         this.menuItems = this.createMenuItems().concat(this.createMenuItemsForAnnotations(annotations));
       })
     );

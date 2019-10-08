@@ -9,7 +9,7 @@ import { Dictionary } from '@ngrx/entity';
 import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { filter, map, shareReplay, takeUntil, withLatestFrom } from 'rxjs/operators';
+import { filter, map, shareReplay, takeUntil, withLatestFrom, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-user-profile',
@@ -55,14 +55,15 @@ export class UserProfileComponent implements OnInit, OnDestroy {
         }
         return undefined;
       }),
+      filter(user => user !== undefined),
+      tap(user => {
+        this.menuItems = this.createSortMenuItems(user);
+      }),
       map(user => (user ? new UserUI(user) : undefined)),
       shareReplay()
     );
 
     this.user$.pipe(takeUntil(this.unsubscribe$)).subscribe(this.userSubject);
-    this.user$.pipe(takeUntil(this.unsubscribe$)).subscribe(user => {
-      this.menuItems = this.createSortMenuItems(user);
-    });
     this.isLoading$ = this.user$.pipe(map(user => user === undefined));
 
     this.user$
@@ -201,7 +202,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     this.updatedMessage$.next('User state was updated');
   }
 
-  private createSortMenuItems(user: UserUI): DropdownMenuItem[] {
+  private createSortMenuItems(user: User): DropdownMenuItem[] {
     const items: DropdownMenuItem[] = [
       {
         kind: 'selectable',

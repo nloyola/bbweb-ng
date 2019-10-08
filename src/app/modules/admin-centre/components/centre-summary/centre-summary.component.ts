@@ -1,16 +1,15 @@
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Centre, CentreStateUIMap } from '@app/domain/centres';
+import { Centre, CentreStateUIMap, CentreState } from '@app/domain/centres';
 import { CentreUI } from '@app/domain/centres/centre-ui.model';
 import { ModalInputTextareaOptions, ModalInputTextOptions } from '@app/modules/modals/models';
-import { RootStoreState, CentreStoreActions, CentreStoreSelectors } from '@app/root-store';
-import { SpinnerStoreSelectors } from '@app/root-store/spinner';
+import { CentreStoreActions, CentreStoreSelectors, RootStoreState } from '@app/root-store';
+import { DropdownMenuItem } from '@app/shared/components/dropdown-menu/dropdown-menu.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subject, BehaviorSubject } from 'rxjs';
-import { filter, map, takeUntil, tap, shareReplay, withLatestFrom } from 'rxjs/operators';
-import { Dictionary } from '@ngrx/entity';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { filter, map, shareReplay, takeUntil, withLatestFrom, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-centre-summary',
@@ -22,7 +21,6 @@ export class CentreSummaryComponent implements OnInit, OnDestroy {
   @ViewChild('updateDescriptionModal', { static: false }) updateDescriptionModal: TemplateRef<any>;
 
   isLoading$: Observable<boolean>;
-  isEnableAllowed$: Observable<boolean>;
   centre$: Observable<CentreUI>;
   centreStateUIMap = CentreStateUIMap;
   descriptionToggleLength = 80;
@@ -30,8 +28,8 @@ export class CentreSummaryComponent implements OnInit, OnDestroy {
   getStateIconClass = CentreUI.getStateIconClass;
   updateNameModalOptions: ModalInputTextOptions;
   updateDescriptionModalOptions: ModalInputTextareaOptions;
+  menuItems: DropdownMenuItem[];
 
-  private centreId: string;
   private centreSubject = new BehaviorSubject(null);
   private updatedMessage$ = new Subject<string>();
   private unsubscribe$ = new Subject<void>();
@@ -54,14 +52,16 @@ export class CentreSummaryComponent implements OnInit, OnDestroy {
         }
         return undefined;
       }),
+      tap(centre => {
+        if (centre) {
+          this.menuItems = this.createMenuItems(centre);
+        }
+      }),
       map(centre => (centre ? new CentreUI(centre) : undefined)),
       shareReplay()
     );
 
     this.centre$.pipe(takeUntil(this.unsubscribe$)).subscribe(this.centreSubject);
-    this.isEnableAllowed$ = this.centre$.pipe(
-      map(centre => (centre ? centre.entity.studyNames.length > 0 : false))
-    );
     this.isLoading$ = this.centre$.pipe(map(centre => centre === undefined));
 
     this.centre$
@@ -179,5 +179,57 @@ export class CentreSummaryComponent implements OnInit, OnDestroy {
     }
 
     fn(centre);
+  }
+
+  private createMenuItems(centre): DropdownMenuItem[] {
+    const items: DropdownMenuItem[] = [];
+
+    if (centre.isDisabled()) {
+      items.push(
+        {
+          kind: 'selectable',
+          label: 'Update Name',
+          icon: 'edit',
+          iconClass: 'success-icon',
+          onSelected: () => {
+            this.updateName();
+          }
+        },
+        {
+          kind: 'selectable',
+          label: 'Update Description',
+          icon: 'edit',
+          iconClass: 'success-icon',
+          onSelected: () => {
+            this.updateDescription();
+          }
+        }
+      );
+    }
+
+    if (centre.isDisabled() && centre.isEnableAllowed()) {
+      items.push({
+        kind: 'selectable',
+        label: 'Enable this Study',
+        icon: CentreUI.getStateIcon(CentreState.Enabled),
+        iconClass: CentreUI.getStateIconClass(CentreState.Enabled),
+        onSelected: () => {
+          this.enable();
+        }
+      });
+    }
+
+    if (centre.isEnabled()) {
+      items.push({
+        kind: 'selectable',
+        label: 'Disable this Study',
+        icon: CentreUI.getStateIcon(CentreState.Disabled),
+        iconClass: CentreUI.getStateIconClass(CentreState.Disabled),
+        onSelected: () => {
+          this.disable();
+        }
+      });
+    }
+    return items;
   }
 }

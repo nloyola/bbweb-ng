@@ -10,6 +10,7 @@ import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { filter, map, shareReplay, takeUntil, withLatestFrom } from 'rxjs/operators';
+import { DropdownMenuItem } from '@app/shared/components/dropdown-menu/dropdown-menu.component';
 
 @Component({
   selector: 'app-centre-locations',
@@ -19,6 +20,7 @@ import { filter, map, shareReplay, takeUntil, withLatestFrom } from 'rxjs/operat
 export class CentreLocationsComponent implements OnInit, OnDestroy {
   isLoading$: Observable<boolean>;
   centre$: Observable<CentreUI>;
+  menuItems: DropdownMenuItem[];
 
   private centreSubject = new BehaviorSubject(null);
   private updatedMessage$ = new Subject<string>();
@@ -30,7 +32,9 @@ export class CentreLocationsComponent implements OnInit, OnDestroy {
     private router: Router,
     private modalService: NgbModal,
     private toastr: ToastrService
-  ) {}
+  ) {
+    this.menuItems = this.createMenuItems();
+  }
 
   ngOnInit() {
     this.centre$ = this.store$.pipe(
@@ -117,5 +121,48 @@ export class CentreLocationsComponent implements OnInit, OnDestroy {
     }
 
     fn(centre);
+  }
+
+  private createMenuItems(): DropdownMenuItem[] {
+    const items: DropdownMenuItem[] = [
+      {
+        kind: 'selectable',
+        label: 'Add Location',
+        icon: 'add_circle',
+        iconClass: 'success-icon',
+        onSelected: () => {
+          this.addLocation();
+        }
+      }
+    ];
+    return items;
+  }
+
+  createLocationMenuItems(centre: Centre, location: Location): DropdownMenuItem[] {
+    const items: DropdownMenuItem[] = [];
+
+    if (centre.isDisabled()) {
+      items.push(
+        {
+          kind: 'selectable',
+          label: 'Edit',
+          icon: 'edit',
+          iconClass: 'success-icon',
+          onSelected: () => {
+            this.edit(location);
+          }
+        },
+        {
+          kind: 'selectable',
+          label: 'Remove',
+          icon: 'remove_circle',
+          iconClass: 'danger-icon',
+          onSelected: () => {
+            this.remove(location);
+          }
+        }
+      );
+    }
+    return items;
   }
 }

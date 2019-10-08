@@ -14,6 +14,7 @@ import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
 import { MockActivatedRoute } from '@test/mocks';
 import { ProcessingTypesAddAndSelectComponent } from './processing-types-add-and-select.component';
+import { DropdownMenuSelectableItem } from '@app/shared/components/dropdown-menu/dropdown-menu.component';
 
 describe('ProcessingTypesAddAndSelectComponent', () => {
   let component: ProcessingTypesAddAndSelectComponent;
@@ -92,29 +93,25 @@ describe('ProcessingTypesAddAndSelectComponent', () => {
       expect(storeListener.mock.calls.length).toBe(testData.length);
     });
 
-    it('test for emitters', () => {
-      const study = new Study().deserialize(factory.study());
-      const processingType = new ProcessingType().deserialize(factory.processingType());
-      const testData = [
-        {
-          componentFunc: () => component.add(),
-          emitter: component.addSelected
-        },
-        {
-          componentFunc: () => component.processingTypeSelected(processingType),
-          emitter: component.selected
-        }
-      ];
-      jest.spyOn(store, 'dispatch');
+    const menuItemData = [['Add Step', 'addSelected']];
 
+    it.each(menuItemData)('menu item "%s" emits the "%s" event', (label, emitterName) => {
+      const study = new Study().deserialize(factory.study());
       component.study = study;
       mockActivatedRouteSnapshot(study);
       fixture.detectChanges();
-      testData.forEach(testInfo => {
-        jest.spyOn(testInfo.emitter, 'emit').mockReturnValue(null);
-        testInfo.componentFunc();
-        expect(testInfo.emitter.emit).toHaveBeenCalled();
+
+      let eventProduced = false;
+      component[emitterName].subscribe(() => {
+        eventProduced = true;
       });
+
+      const menuItem = component.menuItems.find(mi => mi.kind === 'selectable' && mi.label == label);
+      const selectableMenuItem = menuItem as DropdownMenuSelectableItem;
+      expect(selectableMenuItem).toBeDefined();
+      expect(selectableMenuItem.onSelected).toBeFunction();
+      selectableMenuItem.onSelected();
+      expect(eventProduced).toBe(true);
     });
   });
 

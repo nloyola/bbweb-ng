@@ -15,6 +15,7 @@ import { Store, StoreModule } from '@ngrx/store';
 import { EventSpecCommon } from '@test/event-spec-common';
 import { Factory } from '@test/factory';
 import { EventAddSelectComponent } from './event-add-select.component';
+import { DropdownMenuSelectableItem } from '@app/shared/components/dropdown-menu/dropdown-menu.component';
 
 describe('EventAddSelectComponent', () => {
   let component: EventAddSelectComponent;
@@ -86,29 +87,25 @@ describe('EventAddSelectComponent', () => {
         expect(storeListener.mock.calls[0][0]).toEqual(testInfo.expectedAction);
       });
     });
+  });
 
-    it('test for emitters', () => {
-      const entities = createEntities();
-      const testData = [
-        {
-          componentFunc: () => component.add(),
-          emitter: component.addSelected
-        },
-        {
-          componentFunc: () => component.eventSelected(entities.event),
-          emitter: component.selected
-        }
-      ];
-      jest.spyOn(store, 'dispatch');
+  const menuItemData = [['Add Event', 'addSelected']];
 
-      component.participant = entities.participant;
-      fixture.detectChanges();
-      testData.forEach(testInfo => {
-        const emitListener = jest.spyOn(testInfo.emitter, 'emit').mockReturnValue(null);
-        testInfo.componentFunc();
-        expect(emitListener.mock.calls.length).toBe(1);
-      });
+  it.each(menuItemData)('menu item "%s" emits the "%s" event', (label, emitterName) => {
+    createEntities();
+    fixture.detectChanges();
+
+    let eventProduced = false;
+    component[emitterName].subscribe(() => {
+      eventProduced = true;
     });
+
+    const menuItem = component.menuItems.find(mi => mi.kind === 'selectable' && mi.label == label);
+    const selectableMenuItem = menuItem as DropdownMenuSelectableItem;
+    expect(selectableMenuItem).toBeDefined();
+    expect(selectableMenuItem.onSelected).toBeFunction();
+    selectableMenuItem.onSelected();
+    expect(eventProduced).toBe(true);
   });
 
   it('removing an event causes a page reload', () => {

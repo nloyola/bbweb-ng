@@ -30,9 +30,11 @@ export class EventTypeViewComponent implements OnInit, OnChanges {
   sortedAnnotationTypes: AnnotationType[];
   sortedSpecimenDefinitions: SpecimenDefinition[];
   menuItems: DropdownMenuItem[];
+  specimensMenuItems: DropdownMenuItem[];
 
   constructor() {
     this.menuItems = this.createMenuItems();
+    this.specimensMenuItems = this.createSpecimensMenuItems();
   }
 
   ngOnInit() {
@@ -57,10 +59,6 @@ export class EventTypeViewComponent implements OnInit, OnChanges {
 
   removeAnnotationType(annotationType: AnnotationType): void {
     this.removeAnnotationTypeSelected.emit(annotationType);
-  }
-
-  addSpecimenDefinition() {
-    this.addSpecimenDefinitionSelected.emit(null);
   }
 
   viewSpecimenDefinition(specimenDefinition: CollectedSpecimenDefinition): void {
@@ -138,6 +136,21 @@ export class EventTypeViewComponent implements OnInit, OnChanges {
         iconClass: 'danger-icon',
         onSelected: () => {
           this.removeEventTypeSelected.emit(null);
+        }
+      }
+    ];
+    return items;
+  }
+
+  private createSpecimensMenuItems(): DropdownMenuItem[] {
+    const items: DropdownMenuItem[] = [
+      {
+        kind: 'selectable',
+        label: 'Add a Specimen',
+        icon: 'add_circle',
+        iconClass: 'success-icon',
+        onSelected: () => {
+          this.addSpecimenDefinitionSelected.emit(null);
         }
       }
     ];
