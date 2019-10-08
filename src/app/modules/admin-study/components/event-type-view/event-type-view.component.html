@@ -84,24 +84,11 @@
 <div class="card mt-2" *ngIf="eventType">
   <div class="card-header bg-primary text-light">
     <ng-container i18>Collected Specimens</ng-container>
-    <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
-      <button
-        class="btn btn-sm btn-light mr-1"
-        type="button"
-        id="specimensMenu"
-        ngbDropdownToggle
-        *ngIf="allowChanges"
-      >
-        <mat-icon inline="true">menu</mat-icon>
-      </button>
-
-      <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="specimensMenu">
-        <a class="dropdown-item" (click)="addSpecimenDefinition()">
-          <mat-icon class="success-icon mr-1">add_circle</mat-icon>
-          <ng-container i18n>Add a Specimen</ng-container>
-        </a>
-      </div>
-    </span>
+    <app-dropdown-menu
+      [menuItems]="specimensMenuItems"
+      buttonClass="btn btn-sm btn-light mr-1 float-right"
+      placement="bottom-right"
+    ></app-dropdown-menu>
   </div>
   <ul class="list-group list-group-flush" *ngIf="sortedSpecimenDefinitions.length > 0">
     <li class="list-group-item" *ngFor="let specimenDefinition of sortedSpecimenDefinitions">

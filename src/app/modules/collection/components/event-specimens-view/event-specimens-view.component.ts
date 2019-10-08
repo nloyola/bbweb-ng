@@ -18,6 +18,7 @@ import { select, Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
 import { filter, map, shareReplay, takeUntil, tap } from 'rxjs/operators';
 import { SpecimenViewModalComponent } from '../specimen-view-modal/specimen-view-modal.component';
+import { DropdownMenuItem } from '@app/shared/components/dropdown-menu/dropdown-menu.component';
 
 // For an example see:
 // https://stackoverflow.com/questions/47871840/angular-material-2-table-server-side-pagination
@@ -42,10 +43,13 @@ export class EventSpecimensViewComponent implements OnInit, OnChanges {
   currentPage = 1;
   specimensLimit = 5;
   sortField: string;
+  menuItems: DropdownMenuItem[];
 
   private unsubscribe$ = new Subject<void>();
 
-  constructor(private store$: Store<RootStoreState.State>, private modalService: NgbModal) {}
+  constructor(private store$: Store<RootStoreState.State>, private modalService: NgbModal) {
+    this.menuItems = this.createMenuItems();
+  }
 
   ngOnInit() {
     this.sortField = 'inventoryId';
@@ -94,10 +98,6 @@ export class EventSpecimensViewComponent implements OnInit, OnChanges {
     // if (this.specimensTable.nativeElement.scrollIntoView) {
     //   this.specimensTable.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'end' });
     // }
-  }
-
-  addSpecimen() {
-    alert('needs implementation');
   }
 
   viewSpecimen(specimen: Specimen) {
@@ -151,5 +151,44 @@ export class EventSpecimensViewComponent implements OnInit, OnChanges {
 
     this.currentPage = 1;
     this.applySearchParams();
+  }
+
+  private createMenuItems(): DropdownMenuItem[] {
+    const items: DropdownMenuItem[] = [
+      {
+        kind: 'selectable',
+        label: 'Add Specimen',
+        icon: 'add_circle',
+        iconClass: 'success-icon',
+        onSelected: () => {
+          alert('needs implementation');
+        }
+      }
+    ];
+    return items;
+  }
+
+  createSpecimenMenuItems(specimen: Specimen): DropdownMenuItem[] {
+    const items: DropdownMenuItem[] = [
+      {
+        kind: 'selectable',
+        label: 'View Specimen',
+        icon: 'search',
+        iconClass: 'success-icon',
+        onSelected: () => {
+          this.viewSpecimen(specimen);
+        }
+      },
+      {
+        kind: 'selectable',
+        label: 'Remove Specimen',
+        icon: 'remove_circle',
+        iconClass: 'danger-icon',
+        onSelected: () => {
+          this.removeSpecimen(specimen);
+        }
+      }
+    ];
+    return items;
   }
 }

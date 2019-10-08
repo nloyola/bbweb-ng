@@ -9,45 +9,12 @@
           <mat-icon inline="false">event</mat-icon>
           <span class="ml-1" i18n>Visit Number</span>
           {{ event.visitNumber }}
-          <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
-            <button class="btn btn-sm btn-light mr-1" type="button" id="eventSummaryMenu" ngbDropdownToggle>
-              <mat-icon inline="true">menu</mat-icon>
-            </button>
 
-            <button
-              class="btn btn-sm btn-light"
-              type="button"
-              (click)="isCardCollapsed = !isCardCollapsed"
-              [attr.aria-expanded]="!isCollapsed"
-              aria-controls="eventCollapse"
-            >
-              <mat-icon *ngIf="!isCardCollapsed" inline="true">keyboard_arrow_down</mat-icon>
-              <mat-icon *ngIf="isCardCollapsed" inline="true">keyboard_arrow_right</mat-icon>
-            </button>
-
-            <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="eventSummaryMenu">
-              <a class="dropdown-item" (click)="updateVisitNumber()">
-                <mat-icon class="success-icon mr-1">edit</mat-icon>
-                <ng-container i18n>Update Visit Number</ng-container>
-              </a>
-              <a class="dropdown-item" (click)="updateTimeCompleted()">
-                <mat-icon class="success-icon mr-1">edit</mat-icon>
-                <ng-container i18n>Update Time Completed</ng-container>
-              </a>
-              <a
-                class="dropdown-item"
-                *ngFor="let annotation of annotations"
-                (click)="updateAnnotation(annotation)"
-              >
-                <mat-icon class="success-icon mr-1">edit</mat-icon>
-                <ng-container i18n>Update {{ annotation.label }}</ng-container>
-              </a>
-              <a class="dropdown-item" (click)="remove()">
-                <mat-icon class="danger-icon mr-1">remove_circle</mat-icon>
-                <ng-container i18n>Remove this Event</ng-container>
-              </a>
-            </div>
-          </span>
+          <app-dropdown-menu
+            [menuItems]="menuItems"
+            buttonClass="btn btn-sm btn-light mr-1 float-right"
+            placement="bottom-right"
+          ></app-dropdown-menu>
         </div>
 
         <div [ngbCollapse]="isCardCollapsed" id="eventCollapse">

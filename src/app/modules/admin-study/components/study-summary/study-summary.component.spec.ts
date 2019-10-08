@@ -1,25 +1,26 @@
-import { CUSTOM_ELEMENTS_SCHEMA, NgZone } from '@angular/core';
-import { async, ComponentFixture, fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { async, ComponentFixture, fakeAsync, flush, TestBed } from '@angular/core/testing';
+import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { Study } from '@app/domain/studies';
-import { StudyStoreActions, StudyStoreReducer, RootStoreState } from '@app/root-store';
+import { Study, StudyState } from '@app/domain/studies';
+import { RootStoreState, StudyStoreActions, StudyStoreReducer } from '@app/root-store';
+import { NgrxRuntimeChecks } from '@app/root-store/root-store.module';
 import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
-import { Factory } from '@test/factory';
-import { ToastrModule, ToastrService } from 'ngx-toastr';
-import { StudySummaryComponent } from './study-summary.component';
 import { EntityUpdateComponentBehaviour } from '@test/behaviours/entity-update-component.behaviour';
+import { Factory } from '@test/factory';
+import { TestUtils } from '@test/utils';
 import * as faker from 'faker';
-import { NgrxRuntimeChecks } from '@app/root-store/root-store.module';
+import { ToastrModule } from 'ngx-toastr';
+import { StudySummaryComponent } from './study-summary.component';
+import { DropdownMenuSelectableItem } from '@app/shared/components/dropdown-menu/dropdown-menu.component';
 
 describe('StudySummaryComponent', () => {
   let component: StudySummaryComponent;
   let fixture: ComponentFixture<StudySummaryComponent>;
-  let ngZone: NgZone;
   let store: Store<RootStoreState.State>;
   let router: Router;
   let modalService: NgbModal;
@@ -33,7 +34,6 @@ describe('StudySummaryComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         BrowserAnimationsModule,
-        FormsModule,
         ReactiveFormsModule,
         NgbModule,
         RouterTestingModule,
@@ -70,7 +70,6 @@ describe('StudySummaryComponent', () => {
   }));
 
   beforeEach(() => {
-    ngZone = TestBed.get(NgZone);
     store = TestBed.get(Store);
     router = TestBed.get(Router);
     modalService = TestBed.get(NgbModal);
@@ -85,28 +84,28 @@ describe('StudySummaryComponent', () => {
   });
 
   it('navigates to new path when study name is changed', fakeAsync(() => {
-    store.dispatch(StudyStoreActions.getStudySuccess({ study }));
+    dispatchSetupActions();
     flush();
     fixture.detectChanges();
 
+    const navigateListener = TestUtils.routerNavigateListener();
     const newNameAndSlug = factory.nameAndSlug();
     const studyWithNewName = new Study().deserialize({
       ...(study as any),
       ...newNameAndSlug
     });
 
-    const routerListener = jest.spyOn(router, 'navigate');
     jest.spyOn(modalService, 'open').mockReturnValue({ result: Promise.resolve(newNameAndSlug.name) } as any);
     component.updateName();
     flush();
     fixture.detectChanges();
 
-    ngZone.run(() => store.dispatch(StudyStoreActions.updateStudySuccess({ study: studyWithNewName })));
+    store.dispatch(StudyStoreActions.updateStudySuccess({ study: studyWithNewName }));
     flush();
     fixture.detectChanges();
 
-    expect(routerListener.mock.calls.length).toBe(1);
-    expect(routerListener.mock.calls[0][0]).toEqual(['../..', studyWithNewName.slug, 'summary']);
+    expect(navigateListener.mock.calls.length).toBe(1);
+    expect(navigateListener.mock.calls[0][0]).toEqual(['../..', studyWithNewName.slug, 'summary']);
   }));
 
   describe('when updating attributes', () => {
@@ -114,15 +113,7 @@ describe('StudySummaryComponent', () => {
 
     beforeEach(() => {
       context.fixture = fixture;
-      context.componentInitialize = () => {
-        store.dispatch(StudyStoreActions.getStudySuccess({ study }));
-        store.dispatch(
-          StudyStoreActions.getEnableAllowedSuccess({
-            studyId: study.id,
-            allowed: true
-          })
-        );
-      };
+      context.componentInitialize = () => dispatchSetupActions();
       context.componentValidateInitialization = () => undefined;
       context.dispatchSuccessAction = () => {
         store.dispatch(StudyStoreActions.updateStudySuccess({ study }));
@@ -241,128 +232,47 @@ describe('StudySummaryComponent', () => {
     });
   });
 
-  describe('common behaviour', () => {
-    it('functions should open a modal', fakeAsync(() => {
-      const testData = [
-        {
-          componentFunc: c => c.updateName(),
-          attribute: 'name',
-          value: 'test'
-        },
-        {
-          componentFunc: c => c.updateDescription(),
-          attribute: 'description',
-          value: 'test'
-        }
-      ];
+  const menuItemData = [
+    ['Update Name', 'updateName', StudyState.Disabled],
+    ['Update Description', 'updateDescription', StudyState.Disabled],
+    ['Disable this Study', 'disable', StudyState.Enabled],
+    ['Enable this Study', 'enable', StudyState.Disabled],
+    ['Retire this Study', 'retire', StudyState.Disabled],
+    ['Unretire this Study', 'unretire', StudyState.Retired]
+  ];
 
-      const storeListener = jest.spyOn(store, 'dispatch');
-      const modalListener = jest.spyOn(modalService, 'open');
-
-      ngZone.run(() => store.dispatch(StudyStoreActions.getStudySuccess({ study })));
-      fixture.detectChanges();
-
-      storeListener.mockClear();
-      testData.forEach((testInfo, index) => {
-        modalListener.mockReturnValue({
-          componentInstance: {},
-          result: Promise.resolve(testInfo.value)
-        } as any);
-
-        testInfo.componentFunc(component);
-        fixture.detectChanges();
-        tick(1000);
-
-        expect(storeListener.mock.calls.length).toBe(index + 1);
-        expect(storeListener.mock.calls[index][0]).toEqual(
-          StudyStoreActions.updateStudyRequest({
-            study,
-            attributeName: testInfo.attribute,
-            value: testInfo.value
-          })
-        );
-      });
-      expect(modalListener.mock.calls.length).toBe(testData.length);
-    }));
-
-    it('functions that should notify the user', fakeAsync(() => {
-      const toastr = TestBed.get(ToastrService);
-
-      jest.spyOn(toastr, 'success').mockReturnValue(null);
-      jest.spyOn(store, 'dispatch');
-      jest.spyOn(modalService, 'open').mockReturnValue({
-        componentInstance: {},
-        result: Promise.resolve('test')
-      } as any);
-
-      ngZone.run(() => store.dispatch(StudyStoreActions.getStudySuccess({ study })));
-      fixture.detectChanges();
-
-      const componentUpdateFuncs = [
-        () => component.updateName(),
-        () => component.updateDescription(),
-        () => component.disable(),
-        () => {
-          store.dispatch(
-            StudyStoreActions.getEnableAllowedSuccess({
-              studyId: study.id,
-              allowed: true
-            })
-          );
-          fixture.detectChanges();
-          component.enable();
-        },
-        () => component.retire(),
-        () => component.unretire()
-      ];
-
-      componentUpdateFuncs.forEach(updateFunc => {
-        updateFunc();
-        fixture.detectChanges();
+  describe.each(menuItemData)(
+    'menu item "%s" invokes %s when study is %s',
+    (itemLabel, componentMethodName, state) => {
+      it("menu item emits inokes the component's method", fakeAsync(() => {
+        study = new Study().deserialize({
+          ...(study as any),
+          state
+        });
+        dispatchSetupActions();
         flush();
-        expect(store.dispatch).toHaveBeenCalled();
-        ngZone.run(() => store.dispatch(StudyStoreActions.updateStudySuccess({ study })));
-        flush();
-      });
-
-      flush();
-      expect(toastr.success.mock.calls.length).toBe(componentUpdateFuncs.length);
-    }));
-
-    it('functions that change the study state', fakeAsync(() => {
-      ngZone.run(() => {
-        store.dispatch(StudyStoreActions.getStudySuccess({ study }));
-        store.dispatch(
-          StudyStoreActions.getEnableAllowedSuccess({
-            studyId: study.id,
-            allowed: true
-          })
-        );
-      });
-      fixture.detectChanges();
-
-      const testData = [
-        { componentFunc: () => component.disable(), value: 'disable' },
-        { componentFunc: () => component.enable(), value: 'enable' },
-        { componentFunc: () => component.retire(), value: 'retire' },
-        { componentFunc: () => component.unretire(), value: 'unretire' }
-      ];
-
-      const storeListener = jest.spyOn(store, 'dispatch');
-      testData.forEach((testInfo, index) => {
-        testInfo.componentFunc();
         fixture.detectChanges();
-        flush();
 
-        expect(storeListener.mock.calls.length).toBe(1 + index);
-        expect(storeListener.mock.calls[index][0]).toEqual(
-          StudyStoreActions.updateStudyRequest({
-            study,
-            attributeName: 'state',
-            value: testInfo.value
-          })
-        );
-      });
-    }));
-  });
+        expect(component[componentMethodName]).toBeFunction();
+        component[componentMethodName] = jest.fn();
+
+        const menuItem = component.menuItems.find(mi => mi.kind === 'selectable' && mi.label == itemLabel);
+        const selectableMenuItem = menuItem as DropdownMenuSelectableItem;
+        expect(selectableMenuItem).toBeDefined();
+        expect(selectableMenuItem.onSelected).toBeFunction();
+        selectableMenuItem.onSelected();
+        expect(component[componentMethodName].mock.calls.length).toBe(1);
+      }));
+    }
+  );
+
+  function dispatchSetupActions(): void {
+    store.dispatch(StudyStoreActions.getStudySuccess({ study }));
+    store.dispatch(
+      StudyStoreActions.getEnableAllowedSuccess({
+        studyId: study.id,
+        allowed: true
+      })
+    );
+  }
 });

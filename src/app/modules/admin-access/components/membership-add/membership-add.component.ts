@@ -79,7 +79,6 @@ export class MembershipAddComponent implements OnInit, OnDestroy {
 
   onSubmit() {
     const membership = new Membership().deserialize(this.form.value);
-    console.log('membership', membership);
     this.isSaving = true;
     this.store$.dispatch(MembershipStoreActions.addMembershipRequest({ membership }));
   }

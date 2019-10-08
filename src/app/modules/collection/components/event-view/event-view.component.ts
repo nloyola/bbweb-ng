@@ -1,25 +1,28 @@
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CollectionEvent, Specimen, Participant } from '@app/domain/participants';
+import { Annotation, AnnotationFactory } from '@app/domain/annotations';
+import { CollectionEvent, Participant, Specimen } from '@app/domain/participants';
 import { CollectionEventType } from '@app/domain/studies';
+import { ModalInputOptions } from '@app/modules/modals/models';
 import {
+  EventStoreActions,
+  EventStoreSelectors,
   EventTypeStoreActions,
   EventTypeStoreSelectors,
   RootStoreState,
-  EventStoreActions,
-  EventStoreSelectors,
   SpecimenStoreActions,
   SpecimenStoreSelectors
 } from '@app/root-store';
-import { Dictionary } from '@ngrx/entity';
-import { select, Store, createSelector } from '@ngrx/store';
-import { Observable, Subject, combineLatest, BehaviorSubject } from 'rxjs';
-import { map, takeUntil, tap, withLatestFrom, shareReplay, take, filter } from 'rxjs/operators';
-import { Annotation, AnnotationFactory } from '@app/domain/annotations';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Dictionary } from '@ngrx/entity';
+import { createSelector, select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
-import { SearchParams } from '@app/domain';
-import { ModalInputOptions } from '@app/modules/modals/models';
+import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
+import { filter, map, shareReplay, takeUntil, withLatestFrom, tap } from 'rxjs/operators';
+import {
+  DropdownMenuComponent,
+  DropdownMenuItem
+} from '@app/shared/components/dropdown-menu/dropdown-menu.component';
 
 interface SelectorData {
   events: Dictionary<CollectionEvent>;
@@ -56,6 +59,7 @@ export class EventViewComponent implements OnInit, OnDestroy {
   visitNumberModalOptions: ModalInputOptions;
   timeCompletedModalOptions: ModalInputOptions;
   isCardCollapsed = false;
+  menuItems: DropdownMenuItem[];
 
   private entitiesSubject = new BehaviorSubject(null);
   private updatedMessage$ = new Subject<string>();
@@ -142,6 +146,9 @@ export class EventViewComponent implements OnInit, OnDestroy {
           }
           return annotation;
         });
+      }),
+      tap(annotations => {
+        this.menuItems = this.createMenuItems(this.createMenuItemsForAnnotations(annotations));
       })
     );
 
@@ -279,5 +286,52 @@ export class EventViewComponent implements OnInit, OnDestroy {
         this.updatedMessage$.next('Event Removed');
       })
       .catch(() => undefined);
+  }
+
+  private createMenuItems(annotationMenuItems: DropdownMenuItem[]): DropdownMenuItem[] {
+    const items: DropdownMenuItem[] = [
+      {
+        kind: 'selectable',
+        label: 'Update Visit Number',
+        icon: 'edit',
+        iconClass: 'success-icon',
+        onSelected: () => {
+          this.updateVisitNumber();
+        }
+      },
+      {
+        kind: 'selectable',
+        label: 'Update Time Completed',
+        icon: 'edit',
+        iconClass: 'success-icon',
+        onSelected: () => {
+          this.updateTimeCompleted();
+        }
+      },
+      ...annotationMenuItems,
+      {
+        kind: 'selectable',
+        label: 'Remove this Event',
+        icon: 'warning',
+        iconClass: 'danger-icon',
+        onSelected: () => {
+          this.remove();
+        }
+      }
+    ];
+    return items;
+  }
+
+  private createMenuItemsForAnnotations(annotations: Annotation[]): DropdownMenuItem[] {
+    const items: DropdownMenuItem[] = annotations.map(annotation => ({
+      kind: 'selectable',
+      label: `Update ${annotation.label}`,
+      icon: 'edit',
+      iconClass: 'success-icon',
+      onSelected: () => {
+        this.updateAnnotation(annotation);
+      }
+    }));
+    return items;
   }
 }

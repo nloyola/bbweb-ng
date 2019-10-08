@@ -1,41 +1,12 @@
 <div class="card mt-2" *ngIf="centre$ | async as centre">
   <div class="card-header bg-primary text-light" *ngIf="(isLoading$ | async) === false; else showLoading">
-    <mat-icon [ngClass]="centre.stateIconClass()">
-      {{ centre.stateIcon() }}
-    </mat-icon>
+    <mat-icon [ngClass]="centre.stateIconClass()">store</mat-icon>
     {{ centre.name }}
-    <span class="float-right d-inline-block" ngbDropdown placement="bottom-right">
-      <button class="btn btn-sm btn-light" type="button" id="centreSummaryMenu" ngbDropdownToggle>
-        <mat-icon inline="true">menu</mat-icon>
-      </button>
-
-      <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="centreSummaryMenu">
-        <a class="dropdown-item" *ngIf="centre.isDisabled()" (click)="updateName()">
-          <mat-icon class="success-icon mr-1">edit</mat-icon>
-          <ng-container i18n>Update name</ng-container>
-        </a>
-        <a class="dropdown-item" *ngIf="centre.isDisabled()" (click)="updateDescription()">
-          <mat-icon class="success-icon mr-1">edit</mat-icon>
-          <ng-container i18n>Update description</ng-container>
-        </a>
-        <a class="dropdown-item" *ngIf="centre.isEnabled()" (click)="disable()">
-          <mat-icon class="mr-1" [ngClass]="getStateIconClass('disabled')">
-            {{ getStateIcon('disabled') }}
-          </mat-icon>
-          <ng-container i18n>Disable this centre</ng-container>
-        </a>
-        <a
-          class="dropdown-item"
-          *ngIf="centre.isDisabled() && (isEnableAllowed$ | async) === true"
-          (click)="enable()"
-        >
-          <mat-icon class="mr-1" [ngClass]="getStateIconClass('enabled')">
-            {{ getStateIcon('enabled') }}
-          </mat-icon>
-          <ng-container i18n>Enable this centre</ng-container>
-        </a>
-      </div>
-    </span>
+    <app-dropdown-menu
+      [menuItems]="menuItems"
+      buttonClass="btn btn-sm btn-light"
+      placement="bottom-right"
+    ></app-dropdown-menu>
   </div>
 
   <ul class="list-group list-group-flush">
@@ -64,7 +35,7 @@
         </div>
       </div>
     </li>
-    <li class="list-group-item" *ngIf="(isEnableAllowed$ | async) === false">
+    <li class="list-group-item" *ngIf="centre.entity.isEnableAllowed() === false">
       <div class="alert alert-warning">
         <mat-icon color="warning-icon">warning</mat-icon>
         <span i18n>

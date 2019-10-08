@@ -4,19 +4,11 @@
       {{ centre.stateIcon() }}
     </mat-icon>
     {{ centre.name }}: <small i18n>Locations</small>
-
-    <span class="float-right d-inline-block" *ngIf="centre.isDisabled()" ngbDropdown placement="bottom-right">
-      <button class="btn btn-sm btn-light" type="button" id="centreSummaryMenu" ngbDropdownToggle>
-        <mat-icon inline="true">menu</mat-icon>
-      </button>
-
-      <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="centreLocationsMenu">
-        <a class="dropdown-item" *ngIf="centre.isDisabled()" (click)="addLocation()">
-          <mat-icon class="success-icon mr-1">add_circle</mat-icon>
-          <ng-container i18n>Add Location</ng-container>
-        </a>
-      </div>
-    </span>
+    <app-dropdown-menu
+      [menuItems]="menuItems"
+      buttonClass="btn btn-sm btn-light float-right"
+      placement="bottom-right"
+    ></app-dropdown-menu>
   </div>
 
   <ul class="list-group">
@@ -35,32 +27,11 @@
           <strong>{{ location.name }}</strong>
         </div>
         <div class="col-md-2">
-          <span
-            class="float-right d-inline-block"
-            *ngIf="centre.isDisabled()"
-            ngbDropdown
+          <app-dropdown-menu
+            [menuItems]="createLocationMenuItems(centre, location)"
+            buttonClass="btn btn-sm btn-outline-secondary"
             placement="bottom-right"
-          >
-            <button
-              class="btn btn-sm btn-outline-secondary"
-              type="button"
-              id="annotationTypeActions"
-              ngbDropdownToggle
-            >
-              <mat-icon inline="true">menu</mat-icon>
-            </button>
-
-            <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="locationActions">
-              <a class="dropdown-item" *ngIf="centre.isDisabled()" (click)="edit(location)">
-                <mat-icon class="success-icon mr-1">edit</mat-icon>
-                <ng-container i18n>Edit</ng-container>
-              </a>
-              <a class="dropdown-item" *ngIf="centre.isDisabled()" (click)="remove(location)">
-                <mat-icon class="danger-icon mr-1">remove_circle</mat-icon>
-                <ng-container i18n>Remove</ng-container>
-              </a>
-            </div>
-          </span>
+          ></app-dropdown-menu>
         </div>
       </div>
       <div class="row">

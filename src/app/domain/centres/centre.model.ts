@@ -88,6 +88,10 @@ export class Centre extends ConcurrencySafeEntity implements ICentre {
   hasLocations(): boolean {
     return this.locations.length > 0;
   }
+
+  isEnableAllowed(): boolean {
+    return this.hasStudies();
+  }
 }
 
 /* tslint:disable-next-line:max-classes-per-file */
