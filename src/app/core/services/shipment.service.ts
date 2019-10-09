@@ -106,7 +106,7 @@ export class ShipmentService {
 
       case 'trackingNumber':
         json = { ...json, trackingNumber: value };
-        url = `${this.BASE_URL}/trackingnumber/${shipment.id}`;
+        url = `${this.BASE_URL}/tracking-number/${shipment.id}`;
         break;
 
       case 'fromLocation': {
