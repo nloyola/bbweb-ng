@@ -1,0 +1,3 @@
+* Dropdown for entity status
+
+[[file:src/app/modules/admin-study/components/study-summary/study-summary.component.ts::214][study-summary.component.ts]]
