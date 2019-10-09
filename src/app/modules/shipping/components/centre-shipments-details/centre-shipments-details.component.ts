@@ -111,6 +111,7 @@ export class CentreShipmentsDetailsComponent implements OnInit, OnDestroy {
           .catch(() => undefined);
       });
 
+    this.stateFilterInit();
     this.updateShipments();
   }
 

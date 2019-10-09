@@ -1,3 +1,4 @@
+import { TitleCasePipe } from '@angular/common';
 import {
   Component,
   EventEmitter,
@@ -43,7 +44,7 @@ export class ShipmentsTableViewComponent implements OnInit, OnChanges, OnDestroy
 
   private unsubscribe$: Subject<void> = new Subject<void>();
 
-  constructor(private formBuilder: FormBuilder) {
+  constructor(private formBuilder: FormBuilder, private titleCasePipe: TitleCasePipe) {
     this.currentPage = 1;
     this.shipmentStates = Object.values(ShipmentState).filter(state => state !== ShipmentState.Completed);
   }
@@ -148,7 +149,7 @@ export class ShipmentsTableViewComponent implements OnInit, OnChanges, OnDestroy
     if (state === undefined) {
       this.filterByLabel = 'Filter by state';
     } else {
-      this.filterByLabel = 'By ' + state;
+      this.filterByLabel = 'By ' + this.titleCasePipe.transform(state);
     }
     this.filterByState.emit(state);
   }
@@ -166,17 +167,17 @@ export class ShipmentsTableViewComponent implements OnInit, OnChanges, OnDestroy
       }
     ];
 
-    // if (shipment.isCreated()) {
-    //   result.push({
-    //     kind: 'selectable',
-    //     label: 'Remove Shipment',
-    //     icon: 'remove_circle',
-    //     iconClass: 'danger-icon',
-    //     onSelected: () => {
-    //       this.removeShipment.emit(shipment);
-    //     }
-    //   });
-    // }
+    if (shipment.isCreated()) {
+      result.push({
+        kind: 'selectable',
+        label: 'Remove Shipment',
+        icon: 'remove_circle',
+        iconClass: 'danger-icon',
+        onSelected: () => {
+          this.removeShipment.emit(shipment);
+        }
+      });
+    }
     return result;
   }
 }
