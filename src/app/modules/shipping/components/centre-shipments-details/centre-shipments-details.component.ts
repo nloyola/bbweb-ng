@@ -48,13 +48,12 @@ export class CentreShipmentsDetailsComponent implements OnInit, OnDestroy {
   totalShipments$: Observable<number>;
   shipments$: Observable<Shipment[]>;
   sortField: string;
-  currentPage: number;
+  currentPage: number = 1;
   courierNameFilter = new CourierNameFilter();
   trackingNumberFilter = new TrackingNumberFilter();
   stateFilter: StateFilter;
   mode: CentreShipmentsViewMode;
 
-  private shipmentToRemove$ = new Subject<Shipment>();
   private updatedMessage$ = new Subject<string>();
   protected unsubscribe$: Subject<void> = new Subject<void>();
 
@@ -70,7 +69,7 @@ export class CentreShipmentsDetailsComponent implements OnInit, OnDestroy {
     this.centre = this.route.parent.parent.snapshot.data.centre;
     this.mode = this.determineMode();
 
-    this.initCheckRemoved();
+    this.initCheckShipmentRemoved();
 
     this.pageInfo$ = this.store$.pipe(
       select(ShipmentStoreSelectors.selectShipmentSearchRepliesAndEntities),
@@ -86,30 +85,9 @@ export class CentreShipmentsDetailsComponent implements OnInit, OnDestroy {
           .map((s: any) => (s instanceof Shipment ? s : new Shipment().deserialize(s)))
       )
     );
+
     this.maxPages$ = this.pageInfo$.pipe(map(info => info.maxPages));
     this.totalShipments$ = this.pageInfo$.pipe(map(info => info.total));
-
-    this.store$
-      .pipe(
-        select(ShipmentSpecimenStoreSelectors.selectShipmentSpecimenSearchRepliesAndEntities),
-        filter(specimens => specimens !== undefined),
-        withLatestFrom(this.shipmentToRemove$),
-        takeUntil(this.unsubscribe$)
-      )
-      .subscribe(([pagedReply, shipment]) => {
-        if (pagedReply.entities.length > 0) {
-          this.modalService.open(ModalShipmentHasSpecimensComponent);
-          return;
-        }
-
-        this.modalService
-          .open(ModalShipmentRemoveComponent)
-          .result.then(() => {
-            this.store$.dispatch(ShipmentStoreActions.removeShipmentRequest({ shipment }));
-            this.updatedMessage$.next('Shipment removed');
-          })
-          .catch(() => undefined);
-      });
 
     this.stateFilterInit();
     this.updateShipments();
@@ -139,9 +117,9 @@ export class CentreShipmentsDetailsComponent implements OnInit, OnDestroy {
         field = 'fromLocationName';
       }
       this.sortField = (sortField.charAt(0) === '-' ? '-' : '') + field;
+    } else {
+      this.sortField = sortField;
     }
-
-    this.sortField = sortField;
     this.updateShipments();
   }
 
@@ -169,53 +147,65 @@ export class CentreShipmentsDetailsComponent implements OnInit, OnDestroy {
     this.router.navigate(['../view', shipment.id], { relativeTo: this.route });
   }
 
-  shipmentRemoved(shipment: Shipment) {
+  shipmentRemove(shipment: Shipment) {
     if (this.mode === CentreShipmentsViewMode.Completed) {
       throw Error('should never be called when viewing completed shipments');
     }
 
     if (!shipment.isCreated()) {
-      this.modalService.open(ShipmentNotInCreatedModalComponent);
+      throw Error('should never be called for a shipment not in CREATED state');
+    }
+
+    if (shipment.hasSpecimens()) {
+      this.modalService.open(ModalShipmentHasSpecimensComponent);
       return;
     }
 
-    this.shipmentToRemove$.next(shipment);
-    this.store$.dispatch(
-      ShipmentSpecimenStoreActions.searchShipmentSpecimensRequest({
-        shipment,
-        searchParams: {}
+    this.modalService
+      .open(ModalShipmentRemoveComponent)
+      .result.then(() => {
+        this.store$.dispatch(ShipmentStoreActions.removeShipmentRequest({ shipment }));
+        this.updatedMessage$.next('Shipment removed');
       })
-    );
+      .catch(() => undefined);
   }
 
   protected updateShipments(): void {
-    let filter: string;
+    const filters: string[] = [];
 
     switch (this.mode) {
       case CentreShipmentsViewMode.Incoming:
-        filter = `toCentre::${this.centre.name}`;
+        filters.push(`toCentre::${this.centre.name}`);
         break;
       case CentreShipmentsViewMode.Outgoing:
-        filter = `fromCentre::${this.centre.name}`;
+        filters.push(`fromCentre::${this.centre.name}`);
         break;
       case CentreShipmentsViewMode.Completed:
-        filter = `toCentre::${this.centre.name};state::completed`;
+        filters.push(`toCentre::${this.centre.name}`, 'state::completed');
         break;
+      default:
+        throw new Error(`invalid component mode: ${this.mode}`);
     }
 
+    filters.push(this.courierNameFilter.getValue());
+    filters.push(this.trackingNumberFilter.getValue());
+    filters.push(this.stateFilter.getValue());
+
     const searchParams = {
-      filter,
-      sort: this.sortField,
+      filter: filters.filter(f => f.length > 0).join(';'),
+      sort: this.sortField ? this.sortField : '',
       page: this.currentPage
     };
     this.store$.dispatch(ShipmentStoreActions.searchShipmentsRequest({ searchParams }));
   }
 
   private determineMode(): CentreShipmentsViewMode {
-    return Object.values(CentreShipmentsViewMode).find(viewMode => this.router.url.includes(viewMode));
+    return this.route.parent.snapshot.data.mode;
   }
 
-  private initCheckRemoved() {
+  // When a shipment is removed, the search results should be reloaded so the removed shipment does not show
+  // up
+  private initCheckShipmentRemoved() {
     this.store$
       .pipe(
         select(ShipmentStoreSelectors.selectShipmentLastRemovedId),

@@ -4,7 +4,9 @@ import { ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 export class MockActivatedRoute extends ActivatedRoute {
   constructor(parameters?: { [key: string]: any }) {
     super();
-    this.params = observableOf(parameters);
+    if (parameters) {
+      this.params = observableOf(parameters);
+    }
   }
 
   get parent(): ActivatedRoute {

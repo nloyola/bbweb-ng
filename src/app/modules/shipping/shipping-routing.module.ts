@@ -1,12 +1,15 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from '@app/core/guards';
-import { CentreShipmentsDetailsComponent } from './components/centre-shipments-details/centre-shipments-details.component';
+import { CentreResolver, ShipmentResolver } from '@app/core/resolvers';
+import {
+  CentreShipmentsDetailsComponent,
+  CentreShipmentsViewMode
+} from './components/centre-shipments-details/centre-shipments-details.component';
 import { CentreShipmentsPageComponent } from './components/centre-shipments-page/centre-shipments-page.component';
 import { ShipmentAddPageComponent } from './components/shipment-add-page/shipment-add-page.component';
-import { ShippingPageComponent } from './components/shipping-page/shipping-page.component';
 import { ShipmentViewComponent } from './components/shipment-view/shipment-view.component';
-import { ShipmentResolver, CentreResolver } from '@app/core/resolvers';
+import { ShippingPageComponent } from './components/shipping-page/shipping-page.component';
 
 const ShippingCentreChildStates = [
   { path: '', redirectTo: 'all', pathMatch: 'full' },
@@ -57,21 +60,24 @@ const routes: Routes = [
             path: 'incoming',
             children: ShippingCentreChildStates,
             data: {
-              breadcrumbs: 'Incoming'
+              breadcrumbs: 'Incoming',
+              mode: CentreShipmentsViewMode.Incoming
             }
           },
           {
             path: 'outgoing',
             children: ShippingCentreChildStates,
             data: {
-              breadcrumbs: 'Outgoing'
+              breadcrumbs: 'Outgoing',
+              mode: CentreShipmentsViewMode.Outgoing
             }
           },
           {
             path: 'completed',
             children: ShippingCentreChildStates,
             data: {
-              breadcrumbs: 'Completed'
+              breadcrumbs: 'Completed',
+              mode: CentreShipmentsViewMode.Completed
             }
           }
         ]
