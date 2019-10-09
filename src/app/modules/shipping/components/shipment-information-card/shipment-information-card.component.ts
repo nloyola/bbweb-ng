@@ -93,8 +93,8 @@ export class ShipmentInformationCardComponent implements OnInit, OnDestroy {
       )
       .subscribe(([error, _msg]) => {
         let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
-        if (errMessage.match(/EntityCriteriaError: tracking number/)) {
-          errMessage = `The tracking number is already in use.`;
+        if (errMessage.match(/EntityCriteriaError: shipment with tracking number already exists/)) {
+          errMessage = `That Tracking Number is already in use by another shipment.`;
         }
         this.toastr.error(errMessage, 'Update Error', { disableTimeOut: true });
       });
