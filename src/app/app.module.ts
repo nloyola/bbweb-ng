@@ -1,3 +1,4 @@
+import { TitleCasePipe } from '@angular/common';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ErrorHandler, Injectable, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
@@ -16,12 +17,8 @@ import { ToastrModule } from 'ngx-toastr';
 
 @Injectable()
 export class UIErrorHandler extends ErrorHandler {
-  constructor() {
-    super();
-  }
-  handleError(error) {
-    super.handleError(error);
-    //alert(`Error occurred: ${error.message}`);
+  handleError(error: Error) {
+    console.error({ error });
   }
 }
 
@@ -45,7 +42,8 @@ export class UIErrorHandler extends ErrorHandler {
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
-    { provide: ErrorHandler, useClass: UIErrorHandler }
+    { provide: ErrorHandler, useClass: UIErrorHandler },
+    TitleCasePipe
   ],
   bootstrap: [AppComponent]
 })
