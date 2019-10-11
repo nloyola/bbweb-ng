@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { LocalTimePipe } from '@app/shared/pipes';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ShipmentsTableViewComponent } from './shipments-table-view.component';
+import { TitleCasePipe, CommonModule } from '@angular/common';
 
 describe('ShipmentsTableViewComponent', () => {
   let component: ShipmentsTableViewComponent;
@@ -11,7 +12,13 @@ describe('ShipmentsTableViewComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ReactiveFormsModule, NgbModule],
+      imports: [ReactiveFormsModule, NgbModule, CommonModule],
+      providers: [
+        {
+          provide: TitleCasePipe,
+          useClass: TitleCasePipe
+        }
+      ],
       declarations: [ShipmentsTableViewComponent, LocalTimePipe],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
@@ -27,3 +34,5 @@ describe('ShipmentsTableViewComponent', () => {
     expect(component).toBeTruthy();
   });
 });
+
+// /home/nelson/src/cbsr/node/bbweb-ng/

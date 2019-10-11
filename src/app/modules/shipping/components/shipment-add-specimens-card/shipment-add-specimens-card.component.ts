@@ -52,7 +52,6 @@ export class ShipmentAddSpecimensCardComponent implements OnInit, OnDestroy {
       )
       .subscribe(error => {
         if (error.actionType === ShipmentStoreActions.addSpecimensFailure.type) {
-          console.log(error.error.error.message);
           const errorMsg = error.error.error.message;
           if (errorMsg.match(/specimens are already in an active shipment/)) {
             const splitted = errorMsg.split(':')[2];
