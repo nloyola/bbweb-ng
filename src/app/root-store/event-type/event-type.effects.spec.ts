@@ -1,18 +1,17 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { EventTypeService } from '@app/core/services';
-import { SearchParams } from '@app/domain';
+import { AnnotationType } from '@app/domain/annotations';
+import { CollectedSpecimenDefinition, CollectionEventType, EventTypeInfo } from '@app/domain/studies';
 import { EventTypeStoreActions } from '@app/root-store';
-import { Factory } from '@test/factory';
 import { provideMockActions } from '@ngrx/effects/testing';
+import { Factory } from '@test/factory';
 import { cold, hot } from 'jasmine-marbles';
 import { Observable, of, throwError } from 'rxjs';
-import { EventTypeStoreEffects } from './event-type.effects';
-import { CollectionEventType, CollectedSpecimenDefinition, EventTypeInfo } from '@app/domain/studies';
-import { AnnotationType } from '@app/domain/annotations';
 import { EventTypeActionsUnion } from './event-type.actions';
+import { EventTypeStoreEffects } from './event-type.effects';
 
-describe('eventType-store effects', () => {
+describe('event-type effects', () => {
   let effects: EventTypeStoreEffects;
   let actions: Observable<any>;
   let eventTypeService: EventTypeService;
