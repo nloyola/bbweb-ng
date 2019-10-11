@@ -1,3 +1,7 @@
+* Using a pipe from CommonModule in test suite
+
+[[file:src/app/modules/shipping/components/shipments-table-view/shipments-table-view.component.spec.ts::16][shipments-table-view.component.spec.ts]]
+
 * Dropdown for entity status
 
 [[file:src/app/modules/admin-study/components/study-summary/study-summary.component.ts::214][study-summary.component.ts]]
