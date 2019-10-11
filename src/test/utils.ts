@@ -23,7 +23,7 @@ export namespace TestUtils {
   }
 
   export function toastrErrorListener() {
-    return jest.spyOn(TestBed.get(ToastrService), 'success').mockReturnValue(null);
+    return jest.spyOn(TestBed.get(ToastrService), 'error').mockReturnValue(null);
   }
 
   export function routerNavigateListener() {

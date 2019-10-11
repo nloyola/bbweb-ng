@@ -1,6 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed, fakeAsync, flush } from '@angular/core/testing';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
+import { async, ComponentFixture, fakeAsync, flush, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { PagedReply, SearchParams } from '@app/domain';
@@ -13,27 +12,19 @@ import {
   ShipmentStoreActions,
   ShipmentStoreReducer
 } from '@app/root-store';
-import { NgbModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
 import { MockActivatedRoute } from '@test/mocks';
 import { TestUtils } from '@test/utils';
 import { cold } from 'jasmine-marbles';
 import { ToastrModule } from 'ngx-toastr';
-import { ModalShipmentRemoveComponent } from '../modal-shipment-remove/modal-shipment-remove.component';
 import {
   CentreShipmentsDetailsComponent,
   CentreShipmentsViewMode
 } from './centre-shipments-details.component';
-
-interface ComponentBehavourContext {
-  component?: CentreShipmentsDetailsComponent;
-  fixture?: ComponentFixture<CentreShipmentsDetailsComponent>;
-  store?: Store<RootStoreState.State>;
-  centre?: Centre;
-  filter?: string;
-  locationSort?: string;
-}
+import { ModalShipmentHasSpecimensComponent } from '../modal-shipment-has-specimens/modal-shipment-has-specimens.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 interface SortBehaviourContext {
   sortField?: string;
@@ -48,17 +39,12 @@ describe('CentreShipmentsDetailsComponent', () => {
   const factory = new Factory();
   let centre: Centre;
   let store: Store<RootStoreState.State>;
-  let context: ComponentBehavourContext = {
-    component,
-    fixture,
-    store,
-    centre
-  };
 
   beforeEach(async(() => {
     centre = new Centre().deserialize(factory.centre());
     TestBed.configureTestingModule({
       imports: [
+        BrowserAnimationsModule,
         NgbModule,
         RouterTestingModule,
         StoreModule.forRoot(
@@ -85,54 +71,19 @@ describe('CentreShipmentsDetailsComponent', () => {
     store = TestBed.get(Store);
     fixture = TestBed.createComponent(CentreShipmentsDetailsComponent);
     component = fixture.componentInstance;
-
-    context.component = component;
-    context.fixture = fixture;
-    context.store = store;
-    context.centre = centre;
   });
 
-  describe('for incoming shipments', () => {
-    beforeEach(() => {
-      mockActivatedRouteConfigure(centre, CentreShipmentsViewMode.Incoming);
-      fixture.detectChanges();
-      context.filter = `toCentre::${centre.slug}`;
-      context.locationSort = 'fromLocationName';
-    });
+  const modeTable = [
+    [CentreShipmentsViewMode.Incoming, 'toCentre::', 'fromLocationName'],
+    [CentreShipmentsViewMode.Outgoing, 'fromCentre::', 'toLocationName'],
+    [CentreShipmentsViewMode.Completed, `state::${ShipmentState.Completed};toCentre::`, 'fromLocationName']
+  ];
 
-    componentSharedBehaviour(CentreShipmentsViewMode.Incoming, context);
-  });
-
-  describe('for outgoing shipments', () => {
-    beforeEach(() => {
-      mockActivatedRouteConfigure(centre, CentreShipmentsViewMode.Outgoing);
-      fixture.detectChanges();
-      context.filter = `fromCentre::${centre.slug}`;
-      context.locationSort = 'toLocationName';
-    });
-
-    componentSharedBehaviour(CentreShipmentsViewMode.Outgoing, context);
-  });
-
-  describe('for completed shipments', () => {
-    beforeEach(() => {
-      mockActivatedRouteConfigure(centre, CentreShipmentsViewMode.Completed);
-      fixture.detectChanges();
-      context.filter = `toCentre::${centre.slug};state::${ShipmentState.Completed}`;
-      context.locationSort = 'fromLocationName';
-    });
-
-    componentSharedBehaviour(CentreShipmentsViewMode.Completed, context);
-  });
-});
-
-function componentSharedBehaviour(mode: CentreShipmentsViewMode, context: ComponentBehavourContext) {
-  const factory = new Factory();
-
-  describe('component (shared behavour)', () => {
+  describe.each(modeTable)("for centre's %s shipments", (mode, filterPrefix, locationSort) => {
     it('should create', () => {
-      context.fixture.detectChanges();
-      expect(context.component).toBeTruthy();
+      mockActivatedRouteConfigure(centre, mode as CentreShipmentsViewMode);
+      fixture.detectChanges();
+      expect(component).toBeTruthy();
     });
 
     describe('extracts data from search replies', () => {
@@ -146,163 +97,114 @@ function componentSharedBehaviour(mode: CentreShipmentsViewMode, context: Compon
         const emptyPagedReply = factory.pagedReply([shipment]);
         pagedReply = {
           ...emptyPagedReply,
-          searchParams: {
-            ...emptyPagedReply.searchParams,
-            filter: '',
-            sort: undefined,
-            page: 1,
-            limit: 5
-          }
+          searchParams: createSearchParams('')
         };
-        mockActivatedRouteConfigure(context.centre, CentreShipmentsViewMode.Outgoing);
-        context.fixture.detectChanges();
+        mockActivatedRouteConfigure(centre, mode as CentreShipmentsViewMode);
+        fixture.detectChanges();
 
         const action = ShipmentStoreActions.searchShipmentsSuccess({ pagedReply });
-        context.store.dispatch(action);
-        context.fixture.detectChanges();
+        store.dispatch(action);
+        fixture.detectChanges();
       });
 
       it('extracts shipments for the last search', () => {
-        expect(context.component.shipments$).toBeObservable(cold('a', { a: [shipment] }));
+        expect(component.shipments$).toBeObservable(cold('a', { a: [shipment] }));
       });
 
       it('extracts the the maximun pages for the last search', () => {
-        expect(context.component.maxPages$).toBeObservable(cold('a', { a: 1 }));
+        expect(component.maxPages$).toBeObservable(cold('a', { a: 1 }));
       });
 
       it('extracts the the total shipments for the last search', () => {
-        expect(context.component.totalShipments$).toBeObservable(cold('a', { a: 1 }));
+        expect(component.totalShipments$).toBeObservable(cold('a', { a: 1 }));
       });
     });
 
-    const filterTable = [['courierName', 'filterByCourierName']];
+    const filterTable = [
+      ['courierName', 'filterByCourierName'],
+      ['trackingNumber', 'filterByTrackingNumber']
+    ];
 
-    describe.each(filterTable)('when requestinng filtering by $filter', (filterName, filterMethod) => {
-      let dispatchListener: jest.MockInstance<void, any[]>;
+    describe.each(filterTable)('when requestinng filtering by %s', (filterName, filterMethod) => {
+      it('action is dispatched', () => {
+        mockActivatedRouteConfigure(centre, mode as CentreShipmentsViewMode);
+        fixture.detectChanges();
 
-      beforeEach(() => {
-        context.fixture.detectChanges();
-        dispatchListener = jest.spyOn(context.store, 'dispatch');
-      });
-
-      it('action is dispatched when filtering by courier name', () => {
+        const dispatchListener = jest.spyOn(store, 'dispatch');
         const value = factory.stringNext();
-        expect(context.component[filterMethod]).toBeFunction();
-        context.component[filterMethod](value);
-        context.fixture.detectChanges();
+        expect(component[filterMethod]).toBeFunction();
+        component[filterMethod](value);
+        fixture.detectChanges();
 
         expect(dispatchListener.mock.calls.length).toBe(1);
-        const searchParams = {
-          filter: `${context.filter};${filterName}:like:${value}`,
-          sort: '',
-          page: 1
-        };
-        const expectedAction = ShipmentStoreActions.searchShipmentsRequest({ searchParams });
+        const expectedAction = ShipmentStoreActions.searchShipmentsRequest({
+          searchParams: createSearchParams(`${filterName}:like:${value}`)
+        });
         expect(dispatchListener.mock.calls[0][0]).toEqual(expectedAction);
       });
     });
 
-    // describe('for filtering', () => {
-    //   it('action is dispatched when filtering by tracking number', () => {
-    //     const trackingNumber = factory.stringNext();
-    //     context.component.filterByTrackingNumber(trackingNumber);
-    //     context.fixture.detectChanges();
+    describe('action is dispatched when filtering by state', () => {
+      test.each`
+        state                     | stateFilter
+        ${undefined}              | ${''}
+        ${ShipmentState.Created}  | ${`state::${ShipmentState.Created}`}
+        ${ShipmentState.Packed}   | ${`state::${ShipmentState.Packed}`}
+        ${ShipmentState.Sent}     | ${`state::${ShipmentState.Sent}`}
+        ${ShipmentState.Received} | ${`state::${ShipmentState.Received}`}
+        ${ShipmentState.Unpacked} | ${`state::${ShipmentState.Unpacked}`}
+        ${ShipmentState.Lost}     | ${`state::${ShipmentState.Lost}`}
+      `(`should filter by $state state`, ({ state, stateFilter }) => {
+        mockActivatedRouteConfigure(centre, mode as CentreShipmentsViewMode);
+        fixture.detectChanges();
 
-    //     expect(dispatchListener.mock.calls.length).toBe(1);
-    //     const searchParams = {
-    //       filter: `${context.filter};trackingNumber:like:${trackingNumber}`,
-    //       sort: '',
-    //       page: 1
-    //     };
-    //     const expectedAction = ShipmentStoreActions.searchShipmentsRequest({ searchParams });
-    //     expect(dispatchListener.mock.calls[0][0]).toEqual(expectedAction);
-    //   });
+        const dispatchListener = jest.spyOn(store, 'dispatch');
+        component.filterByState(state);
+        fixture.detectChanges();
 
-    //   describe('action is dispatched when filtering by state', () => {
-    //     test.each`
-    //       state                     | stateFilter
-    //       ${undefined}              | ${''}
-    //       ${ShipmentState.Created}  | ${`;state::${ShipmentState.Created}`}
-    //       ${ShipmentState.Packed}   | ${`;state::${ShipmentState.Packed}`}
-    //       ${ShipmentState.Sent}     | ${`;state::${ShipmentState.Sent}`}
-    //       ${ShipmentState.Received} | ${`;state::${ShipmentState.Received}`}
-    //       ${ShipmentState.Unpacked} | ${`;state::${ShipmentState.Unpacked}`}
-    //       ${ShipmentState.Lost}     | ${`;state::${ShipmentState.Lost}`}
-    //     `(`should filter by $state state`, ({ state, stateFilter }) => {
-    //       context.component.filterByState(state);
-    //       context.fixture.detectChanges();
-
-    //       expect(dispatchListener.mock.calls.length).toBe(1);
-    //       const searchParams = {
-    //         filter: `${context.filter}${stateFilter}`,
-    //         sort: '',
-    //         page: 1
-    //       };
-    //       const expectedAction = ShipmentStoreActions.searchShipmentsRequest({ searchParams });
-    //       expect(dispatchListener.mock.calls[0][0]).toEqual(expectedAction);
-    //     });
-    //   });
-    // });
+        expect(dispatchListener.mock.calls.length).toBe(1);
+        const expectedAction = ShipmentStoreActions.searchShipmentsRequest({
+          searchParams: createSearchParams(stateFilter)
+        });
+        expect(dispatchListener.mock.calls[0][0]).toEqual(expectedAction);
+      });
+    });
 
     it('action is dispatched when a page is selected', () => {
-      const pageNumber = 2;
-      const dispatchListener = jest.spyOn(context.store, 'dispatch');
-      context.fixture.detectChanges();
+      mockActivatedRouteConfigure(centre, mode as CentreShipmentsViewMode);
+      fixture.detectChanges();
 
-      context.component.paginationPageChange(pageNumber);
-      context.fixture.detectChanges();
+      const pageNumber = 2;
+      const dispatchListener = jest.spyOn(store, 'dispatch');
+      component.paginationPageChange(pageNumber);
+      fixture.detectChanges();
 
       expect(dispatchListener.mock.calls.length).toBe(1);
-      const searchParams = {
-        filter: context.filter,
-        sort: '',
-        page: pageNumber
-      };
-      const expectedAction = ShipmentStoreActions.searchShipmentsRequest({ searchParams });
+      const expectedAction = ShipmentStoreActions.searchShipmentsRequest({
+        searchParams: {
+          ...createSearchParams(),
+          page: pageNumber
+        }
+      });
       expect(dispatchListener.mock.calls[0][0]).toEqual(expectedAction);
     });
 
     it('navigates to new state when user wants to view a shipment', () => {
       const navigateListener = TestUtils.routerNavigateListener();
-      context.fixture.detectChanges();
+      fixture.detectChanges();
 
       const shipment = new Shipment().deserialize(factory.shipment());
-      context.component.shipmentView(shipment);
-      context.fixture.detectChanges();
+      component.shipmentView(shipment);
+      fixture.detectChanges();
 
       expect(navigateListener.mock.calls.length).toBe(1);
       expect(navigateListener.mock.calls[0][0]).toEqual(['../view', shipment.id]);
     });
 
-    describe('when removing a shipment', () => {
-      it('dispatches the remove action', fakeAsync(() => {
-        if (mode === CentreShipmentsViewMode.Completed) {
-        } else {
-          context.fixture.detectChanges();
-
-          const shipment = new Shipment().deserialize(factory.shipment());
-          const dispatchListener = jest.spyOn(context.store, 'dispatch');
-          const modalService = TestBed.get(NgbModal);
-          const modalListener = jest.spyOn(modalService, 'open').mockReturnValue({
-            result: Promise.resolve('OK')
-          });
-          context.component.shipmentRemove(shipment);
-          flush();
-          context.fixture.detectChanges();
-
-          expect(modalListener.mock.calls.length).toBe(1);
-          expect(dispatchListener.mock.calls.length).toBe(1);
-          expect(dispatchListener.mock.calls[0][0]).toEqual(
-            ShipmentStoreActions.removeShipmentRequest({ shipment })
-          );
-        }
-      }));
-    });
-
     const sortTable = [
       ['courierName', 'courierName'],
       ['trackingNumber', 'trackingNumber'],
-      ['location', undefined], // use context.locationSort
+      ['location', undefined], // use locationSort
       ['state', 'state']
     ];
 
@@ -310,78 +212,162 @@ function componentSharedBehaviour(mode: CentreShipmentsViewMode, context: Compon
       let dispatchListener: jest.MockInstance<void, any[]>;
 
       beforeEach(() => {
-        context.fixture.detectChanges();
-        dispatchListener = jest.spyOn(context.store, 'dispatch');
+        mockActivatedRouteConfigure(centre, mode as CentreShipmentsViewMode);
+        fixture.detectChanges();
+        dispatchListener = jest.spyOn(store, 'dispatch');
       });
 
       it('requests sorting in ascending order', () => {
-        context.component.sortBy(term);
-        context.fixture.detectChanges();
+        component.sortBy(term);
+        fixture.detectChanges();
 
         expect(dispatchListener.mock.calls.length).toBe(1);
         const expectedAction = ShipmentStoreActions.searchShipmentsRequest({
           searchParams: {
-            filter: context.filter,
-            sort: searchSortParam ? searchSortParam : context.locationSort,
-            page: 1
+            ...createSearchParams(),
+            sort: searchSortParam ? searchSortParam : locationSort
           }
         });
         expect(dispatchListener.mock.calls[0][0]).toEqual(expectedAction);
       });
 
       it('requesst sorting in descending order', () => {
-        context.component.sortBy(`-${term}`);
-        context.fixture.detectChanges();
+        component.sortBy(`-${term}`);
+        fixture.detectChanges();
 
         expect(dispatchListener.mock.calls.length).toBe(1);
         const expectedAction = ShipmentStoreActions.searchShipmentsRequest({
           searchParams: {
-            filter: context.filter,
-            sort: searchSortParam ? `-${searchSortParam}` : `-${context.locationSort}`,
-            page: 1
+            ...createSearchParams(),
+            sort: searchSortParam ? `-${searchSortParam}` : `-${locationSort}`
           }
         });
         expect(dispatchListener.mock.calls[0][0]).toEqual(expectedAction);
       });
     });
+
+    function createSearchParams(additionalFilter: string = ''): SearchParams {
+      let filters = `${filterPrefix}${centre.slug}`;
+      if (additionalFilter.length > 0) {
+        filters += `;${additionalFilter}`;
+      }
+      return {
+        filter: filters,
+        sort: '',
+        page: 1
+      };
+    }
   });
 
-  function sortSharedBehaviour(sortContext: SortBehaviourContext) {
-    describe('sort behaviour (shared)', () => {
+  describe('when removing a shipment', () => {
+    describe.each`
+      mode
+      ${CentreShipmentsViewMode.Incoming}
+      ${CentreShipmentsViewMode.Outgoing}
+    `('when mode is $mode', ({ mode }) => {
+      let modalListener: jest.MockInstance<void, any[]>;
       let dispatchListener: jest.MockInstance<void, any[]>;
 
       beforeEach(() => {
-        context.fixture.detectChanges();
-        dispatchListener = jest.spyOn(context.store, 'dispatch');
-      });
+        mockActivatedRouteConfigure(centre, mode);
+        fixture.detectChanges();
 
-      it('the search request action is dispatched when sorting in ascending order', () => {
-        context.component.sortBy(sortContext.sortField);
-        context.fixture.detectChanges();
-
-        expect(dispatchListener.mock.calls.length).toBe(1);
-        const expectedAction = ShipmentStoreActions.searchShipmentsRequest({
-          searchParams: sortContext.searchParams
+        const modalService = TestBed.get(NgbModal);
+        modalListener = jest.spyOn(modalService, 'open').mockReturnValue({
+          result: Promise.resolve('OK')
         });
-        expect(dispatchListener.mock.calls[0][0]).toEqual(expectedAction);
+        dispatchListener = jest.spyOn(store, 'dispatch');
       });
 
-      it('the search request action is dispatched when sorting in descending order', () => {
-        context.component.sortBy(`-${sortContext.sortField}`);
-        context.fixture.detectChanges();
+      it('dispatches the remove action', fakeAsync(() => {
+        const shipment = new Shipment().deserialize(factory.shipment());
+        component.shipmentRemove(shipment);
+        flush();
+        fixture.detectChanges();
 
+        expect(modalListener.mock.calls.length).toBe(1);
         expect(dispatchListener.mock.calls.length).toBe(1);
-        const expectedAction = ShipmentStoreActions.searchShipmentsRequest({
-          searchParams: {
-            ...sortContext.searchParams,
-            sort: `-${sortContext.searchParams.sort}`
-          }
-        });
-        expect(dispatchListener.mock.calls[0][0]).toEqual(expectedAction);
-      });
+        expect(dispatchListener.mock.calls[0][0]).toEqual(
+          ShipmentStoreActions.removeShipmentRequest({ shipment })
+        );
+      }));
+
+      it('infoms the user if the shipment was removed', fakeAsync(() => {
+        const shipment = new Shipment().deserialize(factory.shipment());
+        const toastrListener = TestUtils.toastrSuccessListener();
+
+        component.shipmentRemove(shipment);
+        flush();
+        fixture.detectChanges();
+
+        store.dispatch(
+          ShipmentStoreActions.removeShipmentSuccess({
+            shipmentId: shipment.id
+          })
+        );
+        flush();
+        fixture.detectChanges();
+
+        expect(toastrListener.mock.calls.length).toBe(1);
+      }));
+
+      it('infoms the user if there was an error when removing', fakeAsync(() => {
+        const shipment = new Shipment().deserialize(factory.shipment());
+        const toastrListener = TestUtils.toastrErrorListener();
+
+        component.shipmentRemove(shipment);
+        flush();
+        fixture.detectChanges();
+
+        store.dispatch(
+          ShipmentStoreActions.removeShipmentFailure({
+            error: {
+              error: {
+                message: 'simulated error'
+              }
+            }
+          })
+        );
+        flush();
+        fixture.detectChanges();
+
+        expect(toastrListener.mock.calls.length).toBe(1);
+      }));
+
+      it('throws an error if shipment is not in "created" state', fakeAsync(() => {
+        const shipment = new Shipment().deserialize(
+          factory.shipment({
+            state: ShipmentState.Packed
+          })
+        );
+        expect(() => {
+          component.shipmentRemove(shipment);
+        }).toThrowError(/should never be called for a shipment not in CREATED state/);
+      }));
+
+      it('opens a modal informing the user if the shipment contains specimens', fakeAsync(() => {
+        const shipment = new Shipment().deserialize(factory.shipment({ specimenCount: 1 }));
+        component.shipmentRemove(shipment);
+        flush();
+        fixture.detectChanges();
+
+        expect(modalListener.mock.calls.length).toBe(1);
+        expect(modalListener.mock.calls[0][0]).toBe(ModalShipmentHasSpecimensComponent);
+        expect(dispatchListener.mock.calls.length).toBe(0);
+      }));
     });
-  }
-}
+  });
+
+  it('when removing a shipment, and mode is "completed", an exception is thrown', fakeAsync(() => {
+    mockActivatedRouteConfigure(centre, CentreShipmentsViewMode.Completed);
+    fixture.detectChanges();
+
+    const shipment = new Shipment().deserialize(factory.shipment());
+    expect(() => {
+      component.shipmentRemove(shipment);
+    }).toThrowError(/should never be called when viewing completed shipments/);
+  }));
+});
 
 function mockActivatedRouteConfigure(centre: Centre, mode: CentreShipmentsViewMode): void {
   mockActivatedRoute.spyOnParent(() => ({

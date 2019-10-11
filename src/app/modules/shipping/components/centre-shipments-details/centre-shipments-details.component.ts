@@ -6,21 +6,14 @@ import { StateFilter } from '@app/domain/search-filters';
 import { CourierNameFilter } from '@app/domain/search-filters/courier-name-filter.model';
 import { TrackingNumberFilter } from '@app/domain/search-filters/tracking-number-filter.model';
 import { Shipment, ShipmentState } from '@app/domain/shipments';
-import {
-  RootStoreState,
-  ShipmentSpecimenStoreActions,
-  ShipmentSpecimenStoreSelectors,
-  ShipmentStoreActions,
-  ShipmentStoreSelectors
-} from '@app/root-store';
+import { RootStoreState, ShipmentStoreActions, ShipmentStoreSelectors } from '@app/root-store';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject } from 'rxjs';
-import { filter, map, takeUntil, withLatestFrom, shareReplay } from 'rxjs/operators';
+import { filter, map, shareReplay, takeUntil, withLatestFrom } from 'rxjs/operators';
 import { ModalShipmentHasSpecimensComponent } from '../modal-shipment-has-specimens/modal-shipment-has-specimens.component';
 import { ModalShipmentRemoveComponent } from '../modal-shipment-remove/modal-shipment-remove.component';
-import { ShipmentNotInCreatedModalComponent } from '../shipment-not-in-created-modal/shipment-not-in-created-modal.component';
 
 export enum CentreShipmentsViewMode {
   Incoming = 'incoming',
@@ -91,6 +84,7 @@ export class CentreShipmentsDetailsComponent implements OnInit, OnDestroy {
 
     this.stateFilterInit();
     this.updateShipments();
+    this.initErrorSelector();
   }
 
   public ngOnDestroy() {
@@ -181,7 +175,7 @@ export class CentreShipmentsDetailsComponent implements OnInit, OnDestroy {
         filters.push(`fromCentre::${this.centre.name}`);
         break;
       case CentreShipmentsViewMode.Completed:
-        filters.push(`toCentre::${this.centre.name}`, 'state::completed');
+        filters.push('state::completed', `toCentre::${this.centre.name}`);
         break;
       default:
         throw new Error(`invalid component mode: ${this.mode}`);
@@ -215,6 +209,20 @@ export class CentreShipmentsDetailsComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.toastr.success('The shipment was removed');
         this.updateShipments();
+      });
+  }
+
+  private initErrorSelector() {
+    this.store$
+      .pipe(
+        select(ShipmentStoreSelectors.selectShipmentError),
+        filter(s => !!s),
+        withLatestFrom(this.updatedMessage$),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe(([error, _msg]) => {
+        let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
+        this.toastr.error(errMessage, 'Error', { disableTimeOut: true });
       });
   }
 }
