@@ -1,14 +1,5 @@
 import { TitleCasePipe } from '@angular/common';
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnDestroy,
-  OnInit,
-  Output,
-  SimpleChanges
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Sort } from '@angular/material';
 import { Shipment, ShipmentState } from '@app/domain/shipments';
@@ -22,7 +13,7 @@ import { CentreShipmentsViewMode } from '../centre-shipments-details/centre-ship
   templateUrl: './shipments-table-view.component.html',
   styleUrls: ['./shipments-table-view.component.scss']
 })
-export class ShipmentsTableViewComponent implements OnInit, OnChanges, OnDestroy {
+export class ShipmentsTableViewComponent implements OnInit, OnDestroy {
   @Input() mode = CentreShipmentsViewMode.Incoming;
   @Input() shipments: Shipment[];
   @Input() numPages: number;
@@ -87,20 +78,6 @@ export class ShipmentsTableViewComponent implements OnInit, OnChanges, OnDestroy
       });
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes.shipments && changes.shipments.currentValue) {
-      this.shipments = changes.shipments.currentValue;
-    }
-
-    if (changes.numPages) {
-      this.numPages = changes.numPages.currentValue;
-    }
-
-    if (changes.totalShipments) {
-      this.totalShipments = changes.totalShipments.currentValue;
-    }
-  }
-
   public ngOnDestroy() {
     this.unsubscribe$.next();
     this.unsubscribe$.complete();
@@ -129,18 +106,10 @@ export class ShipmentsTableViewComponent implements OnInit, OnChanges, OnDestroy
         sortField = '';
     }
 
-    if (sort.active === 'date') {
-      console.error('invalid sort field');
-      return;
-    }
-
     this.sortBy.emit(sortField);
   }
 
   public paginationPageChanged(page: number) {
-    if (isNaN(page)) {
-      return;
-    }
     this.currentPage = page;
     this.pageChanged.emit(page);
   }

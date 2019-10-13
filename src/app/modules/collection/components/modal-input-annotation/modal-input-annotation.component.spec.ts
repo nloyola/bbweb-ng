@@ -1,15 +1,15 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
-import { FormArray, FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormArray, ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
-import { Annotation, AnnotationFactory, AnnotationType, ValueTypes } from '@app/domain/annotations';
+import { AnnotationType, ValueTypes } from '@app/domain/annotations';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { AnnotationSpecCommon } from '@test/annotation-spec-common';
 import { Factory } from '@test/factory';
 import { cold } from 'jasmine-marbles';
 import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
 import { AnnotationsAddSubformComponent } from '../annotations-add-subform/annotations-add-subform.component';
 import { ModalInputAnnotationComponent } from './modal-input-annotation.component';
-import { AnnotationSpecCommon } from '@test/annotation-spec-common';
 
 describe('ModalInputAnnotationComponent', () => {
   let component: ModalInputAnnotationComponent;
@@ -18,7 +18,7 @@ describe('ModalInputAnnotationComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [FormsModule, ReactiveFormsModule, OwlDateTimeModule, OwlNativeDateTimeModule],
+      imports: [ReactiveFormsModule, OwlDateTimeModule, OwlNativeDateTimeModule],
       providers: [NgbActiveModal],
       declarations: [ModalInputAnnotationComponent, AnnotationsAddSubformComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
