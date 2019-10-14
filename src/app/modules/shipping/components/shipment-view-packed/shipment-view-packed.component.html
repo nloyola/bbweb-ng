@@ -1,11 +1,17 @@
 <div class="pb-2 mt-4 mb-2">
   <h1>
     {{ shipment?.courierName }}: {{ shipment?.trackingNumber }}
-    <app-shipment-page-buttons
-      [shipment]="shipment"
-      (backEvent)="backToCreated()"
-      (forwardEvent)="tagAsSent()"
-    ></app-shipment-page-buttons>
+
+    <span class="float-right d-inline-block">
+      <button class="btn btn-warning btn-sm mr-1" (click)="backToCreated()">
+        <mat-icon class="mr-1">arrow_left</mat-icon>
+        <span i18n>Back to created</span>
+      </button>
+      <button class="btn btn-primary btn-sm mr-1" (click)="tagAsSent()">
+        <span i18n>Tag as sent</span>
+        <mat-icon class="ml-1">arrow_right</mat-icon>
+      </button>
+    </span>
   </h1>
 
   <app-shipment-information-card [shipment]="shipment" [displayState]="true"> </app-shipment-information-card>
