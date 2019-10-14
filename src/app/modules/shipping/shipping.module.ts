@@ -30,6 +30,7 @@ import { ShippingPageComponent } from './components/shipping-page/shipping-page.
 import { ShippingRoutingModule } from './shipping-routing.module';
 import { ShipmentViewComponent } from './components/shipment-view/shipment-view.component';
 import { ModalSpecimensInOtherShipmentComponent } from './components/modal-specimens-in-other-shipment/modal-specimens-in-other-shipment.component';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @NgModule({
   imports: [
@@ -42,7 +43,8 @@ import { ModalSpecimensInOtherShipmentComponent } from './components/modal-speci
     NgbModule,
     MatTableModule,
     MatSortModule,
-    ModalInputModule
+    ModalInputModule,
+    FontAwesomeModule
   ],
   declarations: [
     CentreShipmentsDetailsComponent,

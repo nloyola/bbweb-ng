@@ -8,6 +8,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject } from 'rxjs';
 import { filter, map, shareReplay, takeUntil } from 'rxjs/operators';
 import { ModalSpecimensInOtherShipmentComponent } from '../modal-specimens-in-other-shipment/modal-specimens-in-other-shipment.component';
+import { faVial } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-shipment-add-specimens-card',
@@ -20,6 +21,7 @@ export class ShipmentAddSpecimensCardComponent implements OnInit, OnDestroy {
 
   // specimensExistModalOptions: ModalInputOptions = { required: true };
 
+  faVial = faVial;
   isLoading$: Observable<boolean>;
   shipmentLoading$: Observable<boolean>;
   shipment$: Observable<Shipment>;

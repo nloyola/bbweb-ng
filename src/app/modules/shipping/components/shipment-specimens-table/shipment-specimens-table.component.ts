@@ -12,6 +12,7 @@ import { DropdownMenuItem } from '@app/shared/components/dropdown-menu/dropdown-
 import { select, Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
 import { filter, map, shareReplay } from 'rxjs/operators';
+import { faVial } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-shipment-specimens-table',
@@ -26,6 +27,7 @@ export class ShipmentSpecimensTableComponent implements OnInit, OnDestroy {
   @Output() sortBy = new EventEmitter<string>();
   @Output() pageChanged = new EventEmitter<number>();
 
+  faVial = faVial;
   filterForm: FormGroup;
   pageInfo$: Observable<PagedReplyInfo<ShipmentSpecimen>>;
   maxPages$: Observable<number>;
