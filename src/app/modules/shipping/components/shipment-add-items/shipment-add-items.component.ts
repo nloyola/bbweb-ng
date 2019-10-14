@@ -10,7 +10,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject } from 'rxjs';
-import { takeUntil, withLatestFrom } from 'rxjs/operators';
+import { takeUntil, withLatestFrom, filter, tap } from 'rxjs/operators';
 import { ShipmentStateTransision } from '../../../../core/services/shipment.service';
 import { ModalShipmentHasNoSpecimensComponent } from '../modal-shipment-has-no-specimens/modal-shipment-has-no-specimens.component';
 import { ModalShipmentHasSpecimensComponent } from '../modal-shipment-has-specimens/modal-shipment-has-specimens.component';
@@ -23,7 +23,7 @@ import { Shipment } from '@app/domain/shipments';
   templateUrl: './shipment-add-items.component.html',
   styleUrls: ['./shipment-add-items.component.scss']
 })
-export class ShipmentAddItemsComponent extends ShipmentViewerComponent implements OnInit, OnDestroy {
+export class ShipmentAddItemsComponent extends ShipmentViewerComponent {
   @ViewChild('packedTimeModal', { static: false }) packedTimeModal: TemplateRef<any>;
   @ViewChild('sentTimeModal', { static: false }) sentTimeModal: TemplateRef<any>;
 
@@ -31,16 +31,14 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent implement
 
   packedTimeModalOptions: ModalInputOptions = { required: true };
   sentTimeModalOptions: ModalInputOptions = { required: true };
+  maxPages$: Observable<number>;
+  totalSpecimens$: Observable<number>;
+  sortField = '';
+  currentPage = 1;
 
   private updatedMessage$ = new Subject<string>();
   private packedTime$ = new Subject<Date>();
   private sentTime$ = new Subject<Date>();
-
-  maxPages$: Observable<number>;
-  totalSpecimens$: Observable<number>;
-
-  sortField: string;
-  currentPage: number;
 
   constructor(
     store$: Store<RootStoreState.State>,
@@ -52,9 +50,9 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent implement
 
   ngOnInit() {
     super.ngOnInit();
-    this.initRemove();
-    this.initTagAsPacked();
-    this.initTagAsSent();
+    this.initOnRemoved();
+    this.initOnShipmentModified();
+    this.initErrorSelector();
   }
 
   sortBy(sortField: string) {
@@ -68,12 +66,14 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent implement
   }
 
   updateSpecimens(): void {
-    const searchParams = {
-      sort: this.sortField,
-      page: this.currentPage
-    };
     this.store$.dispatch(
-      ShipmentSpecimenStoreActions.searchShipmentSpecimensRequest({ shipment: this.shipment, searchParams })
+      ShipmentSpecimenStoreActions.searchShipmentSpecimensRequest({
+        shipment: this.shipment,
+        searchParams: {
+          sort: this.sortField,
+          page: this.currentPage
+        }
+      })
     );
   }
 
@@ -116,7 +116,7 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent implement
             }
           })
         );
-        this.packedTime$.next(datetime);
+        this.updatedMessage$.next('Packed time recorded');
       })
       .catch(() => undefined);
   }
@@ -142,12 +142,23 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent implement
             }
           })
         );
-        this.sentTime$.next(sentTime);
+        this.updatedMessage$.next('Packed and Sent time recorded');
       })
       .catch(() => undefined);
   }
 
-  private initRemove(): void {
+  private initOnShipmentModified(): void {
+    this.shipment$
+      .pipe(
+        withLatestFrom(this.updatedMessage$),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe(([_shipment, message]) => {
+        this.toastr.success(message);
+      });
+  }
+
+  private initOnRemoved(): void {
     this.store$
       .pipe(
         select(ShipmentStoreSelectors.selectShipmentLastRemovedId),
@@ -159,25 +170,18 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent implement
       });
   }
 
-  private initTagAsPacked(): void {
-    this.shipment$
+  private initErrorSelector() {
+    this.store$
       .pipe(
-        withLatestFrom(this.packedTime$),
+        select(ShipmentStoreSelectors.selectShipmentError),
+        filter(s => !!s),
+        withLatestFrom(this.updatedMessage$),
         takeUntil(this.unsubscribe$)
       )
-      .subscribe(() => {
-        this.toastr.success('Packed time recorded');
-      });
-  }
-
-  private initTagAsSent(): void {
-    this.shipment$
-      .pipe(
-        withLatestFrom(this.sentTime$),
-        takeUntil(this.unsubscribe$)
-      )
-      .subscribe(() => {
-        this.toastr.success('Packed time and sent time recorded');
+      .subscribe(([error, _msg]) => {
+        debugger;
+        let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
+        this.toastr.error(errMessage, 'Error', { disableTimeOut: true });
       });
   }
 }

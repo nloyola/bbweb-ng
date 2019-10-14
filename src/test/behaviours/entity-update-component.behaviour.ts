@@ -4,6 +4,7 @@ import { RootStoreState } from '@app/root-store';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Action, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
+import { TestUtils } from '@test/utils';
 
 export namespace EntityUpdateComponentBehaviour {
   export interface Context<T> {
@@ -27,7 +28,6 @@ export namespace EntityUpdateComponentBehaviour {
     describe('(shared behaviour)', () => {
       let store: Store<RootStoreState.State>;
       let modalService: NgbModal;
-      let toastr: ToastrService;
       let storeListener: any;
       let modalListener: any;
       let toastrSuccessListener: any;
@@ -36,14 +36,12 @@ export namespace EntityUpdateComponentBehaviour {
       beforeEach(() => {
         store = TestBed.get(Store);
         modalService = TestBed.get(NgbModal);
-        toastr = TestBed.get(ToastrService);
 
-        jest.spyOn(modalService, 'open').mockReturnValue(context.modalReturnValue);
         storeListener = jest.spyOn(store, 'dispatch');
         modalListener = jest.spyOn(modalService, 'open');
         modalListener.mockReturnValue(context.modalReturnValue);
-        toastrSuccessListener = jest.spyOn(toastr, 'success').mockReturnValue(null);
-        toastrErrorListener = jest.spyOn(toastr, 'error').mockReturnValue(null);
+        toastrSuccessListener = TestUtils.toastrSuccessListener();
+        toastrErrorListener = TestUtils.toastrErrorListener();
       });
 
       describe('when successful', () => {
