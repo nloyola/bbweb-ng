@@ -2,7 +2,7 @@ import { CentreLocationInfo } from '@app/domain/centres';
 import { CentreStoreActions, CentreStoreSelectors, RootStoreState } from '@app/root-store';
 import { select, Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { tap, filter } from 'rxjs/operators';
 import { EntitySelectTypeahead } from './entity-select-typeahead';
 
 export type CentreLocationResultsMapper = (entities: CentreLocationInfo[]) => CentreLocationInfo[];

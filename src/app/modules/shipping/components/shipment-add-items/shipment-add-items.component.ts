@@ -179,7 +179,6 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent {
         takeUntil(this.unsubscribe$)
       )
       .subscribe(([error, _msg]) => {
-        debugger;
         let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
         this.toastr.error(errMessage, 'Error', { disableTimeOut: true });
       });

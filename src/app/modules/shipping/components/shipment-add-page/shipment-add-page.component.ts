@@ -11,7 +11,7 @@ import {
 import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
+import { filter, takeUntil, tap } from 'rxjs/operators';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 
 @Component({
@@ -73,9 +73,9 @@ export class ShipmentAddPageComponent implements OnInit, OnDestroy {
       )
       .subscribe((error: any) => {
         let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
-        // if (errMessage.match(/EntityCriteriaError: name already used/)) {
-        //   errMessage = `A study with the name ${this.name.value} already exits. Please use a different one.`;
-        // }
+        if (errMessage.match(/EntityCriteriaError: shipment with tracking number already exists/)) {
+          errMessage = `That Tracking Number is already in use by another shipment.`;
+        }
         this.toastr.error(errMessage, 'Add Error', { disableTimeOut: true });
       });
   }
@@ -163,12 +163,5 @@ export class ShipmentAddPageComponent implements OnInit, OnDestroy {
       }
       return centreLocations;
     };
-  }
-
-  stepClick(event: StepperSelectionEvent) {
-    if (event.selectedIndex < 3) {
-      return;
-    } else {
-    }
   }
 }

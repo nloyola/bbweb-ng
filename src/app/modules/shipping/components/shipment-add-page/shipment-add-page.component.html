@@ -83,7 +83,7 @@
                 [ngModelOptions]="{ standalone: true }"
                 [ngbTypeahead]="toLocationInfoTypeahead.getEntities"
                 i18n-placeholder
-                placeholder="The location of the centre this shipment is coming to"
+                placeholder="The location of the centre this shipment is going to"
                 [inputFormatter]="toLocationInfoTypeahead.formatter"
                 [resultFormatter]="toLocationInfoTypeahead.formatter"
                 (selectItem)="toLocationInfoTypeahead.onEntitySelected($event)"

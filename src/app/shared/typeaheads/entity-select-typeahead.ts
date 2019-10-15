@@ -1,7 +1,6 @@
-import { ConcurrencySafeEntity } from '@app/domain';
 import { NgbTypeaheadSelectItemEvent } from '@ng-bootstrap/ng-bootstrap';
-import { Observable, Subject, of } from 'rxjs';
-import { debounceTime, distinctUntilChanged, filter, map, switchMap } from 'rxjs/operators';
+import { Observable, of, Subject } from 'rxjs';
+import { tap, debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
 
 export abstract class EntitySelectTypeahead<T> {
   selectedEntity: T;
