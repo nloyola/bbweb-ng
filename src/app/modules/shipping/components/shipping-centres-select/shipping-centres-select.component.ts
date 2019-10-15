@@ -1,20 +1,12 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { PagedReplyInfo, SearchParams } from '@app/domain';
-import { CollectionEvent, Participant } from '@app/domain/participants';
-import { VisitNumberFilter, NameFilter } from '@app/domain/search-filters';
-import {
-  EventStoreActions,
-  EventStoreSelectors,
-  RootStoreState,
-  CentreStoreSelectors,
-  CentreStoreActions
-} from '@app/root-store';
-import { select, Store } from '@ngrx/store';
-import { Observable, Subject, timer } from 'rxjs';
-import { filter, takeUntil, debounce, distinct } from 'rxjs/operators';
+import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { PagedReplyInfo } from '@app/domain';
 import { Centre } from '@app/domain/centres';
-import { FormGroup, FormBuilder } from '@angular/forms';
-import { CourierNameFilter } from '@app/domain/search-filters/courier-name-filter.model';
+import { NameFilter } from '@app/domain/search-filters';
+import { CentreStoreActions, CentreStoreSelectors, RootStoreState } from '@app/root-store';
+import { select, Store } from '@ngrx/store';
+import { ToastrService } from 'ngx-toastr';
+import { Observable, Subject } from 'rxjs';
+import { filter, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-shipping-centres-select',
@@ -22,7 +14,7 @@ import { CourierNameFilter } from '@app/domain/search-filters/courier-name-filte
   styleUrls: ['./shipping-centres-select.component.scss']
 })
 export class ShippingCentresSelectComponent implements OnInit, OnDestroy {
-  @Output() selected = new EventEmitter<Centre>();
+  @Output() onSelected = new EventEmitter<Centre>();
 
   isLoading$: Observable<boolean>;
 
@@ -35,7 +27,7 @@ export class ShippingCentresSelectComponent implements OnInit, OnDestroy {
   private filterValues = 'state::enabled';
   private unsubscribe$: Subject<void> = new Subject<void>();
 
-  constructor(private store$: Store<RootStoreState.State>) {}
+  constructor(private store$: Store<RootStoreState.State>, private toastr: ToastrService) {}
 
   ngOnInit() {
     this.isLoading$ = this.store$.pipe(select(CentreStoreSelectors.selectCentreSearchActive));
@@ -44,6 +36,17 @@ export class ShippingCentresSelectComponent implements OnInit, OnDestroy {
       select(CentreStoreSelectors.selectCentreSearchRepliesAndEntities),
       takeUntil(this.unsubscribe$)
     );
+
+    this.store$
+      .pipe(
+        select(CentreStoreSelectors.selectCentreError),
+        filter(error => !!error),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe(error => {
+        let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
+        this.toastr.error(errMessage, 'Error', { disableTimeOut: true });
+      });
 
     this.applySearchParams();
   }
@@ -66,7 +69,7 @@ export class ShippingCentresSelectComponent implements OnInit, OnDestroy {
   }
 
   public centreSelected(centre: Centre) {
-    this.selected.emit(centre);
+    this.onSelected.emit(centre);
   }
 
   public paginationPageChange() {
