@@ -526,8 +526,8 @@ export class Factory {
       state: ShipmentState.Created,
       courierName: this.stringNext(),
       trackingNumber: this.stringNext(),
-      fromLocationInfo: locationInfo,
-      toLocationInfo: locationInfo,
+      origin: locationInfo,
+      destination: locationInfo,
       specimenCount: 0,
       ...options
     };

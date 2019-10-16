@@ -4,22 +4,25 @@
   </span>
   <form class="body form-horizontal" [formGroup]="form" autocomplete="on" novalidate>
     <div class="form-group row">
-      <label for="fromLocationInfo" class="col-md-3 col-form-label" i18n>{{ label }}</label>
+      <label for="value" class="col-md-3 col-form-label" i18n>{{ label }}</label>
       <div class="col-md-9">
         <input
           type="text"
           class="form-control"
-          [(ngModel)]="locationInfoTypeahead.selectedEntity"
-          [ngModelOptions]="{ standalone: true }"
+          formControlName="value"
           [ngbTypeahead]="locationInfoTypeahead.getEntities"
           i18n-placeholder
           placeholder="location"
           [inputFormatter]="locationInfoTypeahead.formatter"
           [resultFormatter]="locationInfoTypeahead.formatter"
-          (selectItem)="locationInfoTypeahead.onEntitySelected($event)"
           [editable]="false"
           required
         />
+      </div>
+      <div class="col-md-9 offset-3" *ngIf="input.invalid && input.touched">
+        <div class="text-danger small" *ngIf="input.errors.required" i18n>
+          A Centre Location is required
+        </div>
       </div>
     </div>
   </form>

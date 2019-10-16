@@ -1,19 +1,23 @@
 <div class="pb-2 mt-4 mb-2">
-  <h1>
-    {{ shipment?.courierName }}: {{ shipment?.trackingNumber }}
-    <small i18n>Add items to ship</small>
+  <div class="row">
+    <div class="col-md-12">
+      <h1>
+        {{ shipment?.courierName }}: {{ shipment?.trackingNumber }}
+        <small i18n>Add items to ship</small>
 
-    <span class="float-right d-inline-block">
-      <button class="btn btn-primary btn-sm mr-1" (click)="tagAsPacked()">
-        <span i18n>Tag as packed</span>
-        <mat-icon class="ml-1">arrow_right</mat-icon>
-      </button>
-      <button class="btn btn-primary btn-sm mr-1" (click)="tagAsSent()">
-        <span i18n>Tag as sent</span>
-        <mat-icon class="ml-1">fast_forward</mat-icon>
-      </button>
-    </span>
-  </h1>
+        <span class="float-right d-inline-block">
+          <button class="btn btn-primary btn-sm mr-1" (click)="tagAsPacked()">
+            <span i18n>Tag as packed</span>
+            <mat-icon class="ml-1">arrow_right</mat-icon>
+          </button>
+          <button class="btn btn-primary btn-sm mr-1" (click)="tagAsSent()">
+            <span i18n>Tag as sent</span>
+            <mat-icon class="ml-1">fast_forward</mat-icon>
+          </button>
+        </span>
+      </h1>
+    </div>
+  </div>
 
   <app-shipment-information-card [shipment]="shipment" (onRemove)="remove()"> </app-shipment-information-card>
 

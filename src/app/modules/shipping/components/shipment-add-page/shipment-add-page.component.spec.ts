@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, DebugElement } from '@angular/core';
 import { async, ComponentFixture, fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
@@ -90,16 +90,16 @@ describe('ShipmentAddPageComponent', () => {
 
       component.courierName.setValue(shipment.courierName);
       component.trackingNumber.setValue(shipment.trackingNumber);
-      component.fromLocationInfo.setValue(shipment.fromLocationInfo);
-      component.toLocationInfo.setValue(shipment.toLocationInfo);
+      component.origin.setValue(shipment.origin);
+      component.destination.setValue(shipment.destination);
       component.onSubmit();
 
       const expectedAction = ShipmentStoreActions.addShipmentRequest({
         shipment: new Shipment().deserialize({
           courierName: shipment.courierName,
           trackingNumber: shipment.trackingNumber,
-          fromLocationInfo: shipment.fromLocationInfo,
-          toLocationInfo: shipment.toLocationInfo,
+          origin: shipment.origin,
+          destination: shipment.destination,
           state: ShipmentState.Created
         } as any)
       });
@@ -115,7 +115,7 @@ describe('ShipmentAddPageComponent', () => {
       expect(routerListener.mock.calls.length).toBe(1);
       expect(routerListener.mock.calls[0][0]).toEqual([
         '/shipping',
-        shipment.fromLocationInfo.slug,
+        shipment.origin.slug,
         'outgoing',
         'view',
         shipment.id
@@ -148,8 +148,8 @@ describe('ShipmentAddPageComponent', () => {
 
         component.courierName.setValue(shipment.courierName);
         component.trackingNumber.setValue(shipment.trackingNumber);
-        component.fromLocationInfo.setValue(shipment.fromLocationInfo);
-        component.toLocationInfo.setValue(shipment.toLocationInfo);
+        component.origin.setValue(shipment.origin);
+        component.destination.setValue(shipment.destination);
         component.onSubmit();
         flush();
         fixture.detectChanges();
@@ -171,9 +171,9 @@ describe('ShipmentAddPageComponent', () => {
   });
 
   describe.each`
-    inputType | typeAhead                      | otherTypeahead                 | formControlName
-    ${'from'} | ${'fromLocationInfoTypeahead'} | ${'toLocationInfoTypeahead'}   | ${'fromLocationInfo'}
-    ${'to'}   | ${'toLocationInfoTypeahead'}   | ${'fromLocationInfoTypeahead'} | ${'toLocationInfo'}
+    inputType        | typeAhead                 | otherTypeahead            | formControlName
+    ${'origin'}      | ${'originTypeahead'}      | ${'destinationTypeahead'} | ${'origin'}
+    ${'destination'} | ${'destinationTypeahead'} | ${'originTypeahead'}      | ${'destination'}
   `(
     'when selecting from the "$inputType" type ahead',
     ({ inputType, typeAhead, otherTypeahead, formControlName }) => {
@@ -193,12 +193,10 @@ describe('ShipmentAddPageComponent', () => {
         const { centreLocations } = locationsFixture();
         const filter = centreLocations[0].combinedName.charAt(0);
         const searchReply: CentreLocationsSearchReply = { filter, centreLocations };
-        const placeholder = getInputPlaceholder(inputType);
 
-        const inputElements = fixture.debugElement.queryAll(By.css(`input[placeholder="${placeholder}"]`));
-        expect(inputElements.length).toBe(1);
-        inputElements[0].nativeElement.value = filter;
-        inputElements[0].nativeElement.dispatchEvent(new Event('input'));
+        const inputElement = getInputByFormControlName(formControlName);
+        inputElement.nativeElement.value = filter;
+        inputElement.nativeElement.dispatchEvent(new Event('input'));
 
         tick(500);
         fixture.detectChanges();
@@ -220,12 +218,10 @@ describe('ShipmentAddPageComponent', () => {
         const { centreLocations } = locationsFixture();
         const filter = centreLocations[0].combinedName.charAt(0);
         const searchReply: CentreLocationsSearchReply = { filter, centreLocations };
-        const placeholder = getInputPlaceholder(inputType);
 
-        const inputElements = fixture.debugElement.queryAll(By.css(`input[placeholder="${placeholder}"]`));
-        expect(inputElements.length).toBe(1);
-        inputElements[0].nativeElement.value = filter;
-        inputElements[0].nativeElement.dispatchEvent(new Event('input'));
+        const inputElement = getInputByFormControlName(formControlName);
+        inputElement.nativeElement.value = filter;
+        inputElement.nativeElement.dispatchEvent(new Event('input'));
 
         expect(component[otherTypeahead]).toBeDefined();
         component[otherTypeahead].selectedEntity = centreLocations[1];
@@ -248,12 +244,10 @@ describe('ShipmentAddPageComponent', () => {
         const centreLocations = [];
         const filter = factory.stringNext().charAt(0);
         const searchReply: CentreLocationsSearchReply = { filter, centreLocations };
-        const placeholder = getInputPlaceholder(inputType);
 
-        const inputElements = fixture.debugElement.queryAll(By.css(`input[placeholder="${placeholder}"]`));
-        expect(inputElements.length).toBe(1);
-        inputElements[0].nativeElement.value = filter;
-        inputElements[0].nativeElement.dispatchEvent(new Event('input'));
+        const inputElement = getInputByFormControlName(formControlName);
+        inputElement.nativeElement.value = filter;
+        inputElement.nativeElement.dispatchEvent(new Event('input'));
 
         tick(500);
         fixture.detectChanges();
@@ -285,9 +279,9 @@ describe('ShipmentAddPageComponent', () => {
     return { centres, centreLocations };
   }
 
-  function getInputPlaceholder(inputType: 'from' | 'to'): string {
-    return inputType === 'from'
-      ? 'The location of the centre this shipment is coming from'
-      : 'The location of the centre this shipment is going to';
+  function getInputByFormControlName(name: string): DebugElement {
+    const inputElement = fixture.debugElement.query(By.css(`input[formControlName="${name}"]`));
+    expect(inputElement).toBeDefined();
+    return inputElement;
   }
 });

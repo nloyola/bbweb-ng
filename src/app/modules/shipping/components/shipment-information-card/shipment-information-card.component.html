@@ -49,10 +49,10 @@
           <li class="list-group-item">
             <div class="row">
               <div class="col-md-2">
-                <strong i18n>From:</strong>
+                <strong i18n>Origin:</strong>
               </div>
               <div class="col-md-10">
-                {{ shipment.fromLocationInfo.name }}
+                {{ shipment.origin.combinedName }}
               </div>
             </div>
           </li>
@@ -60,10 +60,10 @@
           <li class="list-group-item">
             <div class="row">
               <div class="col-md-2">
-                <strong i18n>To:</strong>
+                <strong i18n>Destination:</strong>
               </div>
               <div class="col-md-10">
-                {{ shipment.toLocationInfo.name }}
+                {{ shipment.destination.combinedName }}
               </div>
             </div>
           </li>
@@ -172,27 +172,27 @@
   </app-modal-input-text>
 </ng-template>
 
-<ng-template #updateFromLocationModal let-modal>
+<ng-template #updateOriginModal let-modal>
   <app-modal-input-centre-location
     [modal]="modal"
     [title]="'Update Source Location'"
     [label]="'Source Location'"
-    [value]="shipment.fromLocationInfo"
+    [value]="shipment.origin"
     [options]="updateLocationInfoModalOptions"
-    [locationIdToFilterOut]="shipment.toLocationInfo.locationId"
+    [locationIdToFilterOut]="shipment.destination.locationId"
     (onConfirm)="confirm($event)"
   >
   </app-modal-input-centre-location>
 </ng-template>
 
-<ng-template #updateToLocationModal let-modal>
+<ng-template #updateDestinationModal let-modal>
   <app-modal-input-centre-location
     [modal]="modal"
     [title]="'Update Destination Location'"
     [label]="'Destination Location'"
-    [value]="shipment.toLocationInfo"
+    [value]="shipment.destination"
     [options]="updateLocationInfoModalOptions"
-    [locationIdToFilterOut]="shipment.fromLocationInfo.locationId"
+    [locationIdToFilterOut]="shipment.origin.locationId"
     (onConfirm)="confirm($event)"
   >
   </app-modal-input-centre-location>

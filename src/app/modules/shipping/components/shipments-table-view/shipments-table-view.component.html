@@ -88,8 +88,7 @@
         <small>{{ shipment.trackingNumber }} </small>
       </td>
       <td>
-        <small *ngIf="mode == 'incoming' || mode == 'completed'">{{ shipment.fromLocationInfo.name }}</small>
-        <small *ngIf="mode == 'outgoing'">{{ shipment.toLocationInfo.name }}</small>
+        <small>{{ getLocation(shipment) }}</small>
       </td>
       <td>
         <small>{{ shipment.getTime() | localTime }}</small>

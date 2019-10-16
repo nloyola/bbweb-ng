@@ -74,9 +74,9 @@ describe('CentreShipmentsDetailsComponent', () => {
   });
 
   const modeTable = [
-    [CentreShipmentsViewMode.Incoming, 'toCentre::', 'fromLocationName'],
-    [CentreShipmentsViewMode.Outgoing, 'fromCentre::', 'toLocationName'],
-    [CentreShipmentsViewMode.Completed, `state::${ShipmentState.Completed};toCentre::`, 'fromLocationName']
+    [CentreShipmentsViewMode.Incoming, 'destination::', 'origin'],
+    [CentreShipmentsViewMode.Outgoing, 'origin::', 'destination'],
+    [CentreShipmentsViewMode.Completed, `state::${ShipmentState.Completed};destination::`, 'origin']
   ];
 
   describe.each(modeTable)("for centre's %s shipments", (mode, filterPrefix, locationSort) => {

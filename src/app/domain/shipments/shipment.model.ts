@@ -12,11 +12,11 @@ export interface IShipment extends IConcurrencySafeEntity {
   /** The tracking number used by the courier company used to track the package. */
   trackingNumber: string;
 
-  /** The information for the centre location which is sending the specimens. */
-  fromLocationInfo: CentreLocationInfo;
+  /** The information for the centre and location where the shipment is originating from. */
+  origin: CentreLocationInfo;
 
-  /** The information for the centre location which is receiving the specimens. */
-  toLocationInfo: CentreLocationInfo;
+  /** The information for the centre and location where the shipment is destined to. */
+  destination: CentreLocationInfo;
 
   /** The date and time when the shipment was packed. */
   timePacked?: Date;
@@ -41,8 +41,8 @@ export class Shipment extends ConcurrencySafeEntity {
   state: ShipmentState;
   courierName: string;
   trackingNumber: string;
-  fromLocationInfo: CentreLocationInfo;
-  toLocationInfo: CentreLocationInfo;
+  origin: CentreLocationInfo;
+  destination: CentreLocationInfo;
   timePacked?: Date;
   timeSent?: Date;
   timeReceived?: Date;
@@ -131,11 +131,11 @@ export class Shipment extends ConcurrencySafeEntity {
       this.timeCompleted = new Date(input.timeCompleted);
     }
 
-    if (input.fromLocationInfo) {
-      this.fromLocationInfo = new CentreLocationInfo().deserialize(input.fromLocationInfo);
+    if (input.origin) {
+      this.origin = new CentreLocationInfo().deserialize(input.origin);
     }
-    if (input.toLocationInfo) {
-      this.toLocationInfo = new CentreLocationInfo().deserialize(input.toLocationInfo);
+    if (input.destination) {
+      this.destination = new CentreLocationInfo().deserialize(input.destination);
     }
 
     ['timePacked', 'timeSent', 'timeReceived', 'timeUpacked', 'timeCompleted'].forEach(time => {

@@ -3,16 +3,15 @@ import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/fo
 import { ActivatedRoute, Router } from '@angular/router';
 import { CentreLocationInfo } from '@app/domain/centres';
 import { Shipment, ShipmentState } from '@app/domain/shipments';
-import { RootStoreState, ShipmentStoreSelectors, ShipmentStoreActions } from '@app/root-store';
+import { RootStoreState, ShipmentStoreActions, ShipmentStoreSelectors } from '@app/root-store';
 import {
   CentreLocationResultsMapper,
   CentreLocationSelectTypeahead
 } from '@app/shared/typeaheads/centre-loction-select-typeahead';
 import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subject } from 'rxjs';
-import { filter, takeUntil, tap } from 'rxjs/operators';
-import { StepperSelectionEvent } from '@angular/cdk/stepper';
+import { Subject } from 'rxjs';
+import { filter, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-shipment-add-page',
@@ -22,12 +21,12 @@ import { StepperSelectionEvent } from '@angular/cdk/stepper';
 export class ShipmentAddPageComponent implements OnInit, OnDestroy {
   @ViewChild('courierNameInput', { static: true }) courierNameInput: ElementRef;
   @ViewChild('trackingNumberInput', { static: true }) trackingNumberInput: ElementRef;
-  @ViewChild('fromCentreInput', { static: true }) fromCentreInput: ElementRef;
-  @ViewChild('toCentreInput', { static: true }) toCentreInput: ElementRef;
+  @ViewChild('originInput', { static: true }) originInput: ElementRef;
+  @ViewChild('destinationInput', { static: true }) destinationInput: ElementRef;
 
   form: FormGroup;
-  fromLocationInfoTypeahead: CentreLocationSelectTypeahead;
-  toLocationInfoTypeahead: CentreLocationSelectTypeahead;
+  originTypeahead: CentreLocationSelectTypeahead;
+  destinationTypeahead: CentreLocationSelectTypeahead;
   isSaving = false;
 
   private unsubscribe$: Subject<void> = new Subject<void>();
@@ -42,12 +41,12 @@ export class ShipmentAddPageComponent implements OnInit, OnDestroy {
     this.form = this.formBuilder.group({
       courierName: ['', [Validators.required]],
       trackingNumber: ['', [Validators.required]],
-      fromLocationInfo: ['', [Validators.required]],
-      toLocationInfo: ['', [Validators.required]]
+      origin: ['', [Validators.required]],
+      destination: ['', [Validators.required]]
     });
 
-    this.createFromCentreTypeahead();
-    this.createToCentreTypeahead();
+    this.createOriginTypeahead();
+    this.createDestinationTypeahead();
   }
 
   ngOnInit() {
@@ -61,7 +60,7 @@ export class ShipmentAddPageComponent implements OnInit, OnDestroy {
       )
       .subscribe((shipment: Shipment) => {
         this.toastr.success(`Shipment was added successfully: ${shipment.trackingNumber}`, 'Add Successfull');
-        this.router.navigate(['/shipping', shipment.fromLocationInfo.slug, 'outgoing', 'view', shipment.id]);
+        this.router.navigate(['/shipping', shipment.origin.slug, 'outgoing', 'view', shipment.id]);
         this.store$.dispatch(ShipmentStoreActions.clearLastAdded());
       });
 
@@ -93,12 +92,12 @@ export class ShipmentAddPageComponent implements OnInit, OnDestroy {
     return this.form.get('trackingNumber');
   }
 
-  get fromLocationInfo() {
-    return this.form.get('fromLocationInfo');
+  get origin() {
+    return this.form.get('origin');
   }
 
-  get toLocationInfo() {
-    return this.form.get('toLocationInfo');
+  get destination() {
+    return this.form.get('destination');
   }
 
   onSubmit() {
@@ -114,54 +113,43 @@ export class ShipmentAddPageComponent implements OnInit, OnDestroy {
     this.router.navigate(['..'], { relativeTo: this.route });
   }
 
-  private createFromCentreTypeahead() {
+  private createOriginTypeahead() {
     const locationIdToFilterFn = () =>
-      this.toLocationInfoTypeahead.selectedEntity !== undefined
-        ? this.toLocationInfoTypeahead.selectedEntity
-        : undefined;
-    const resultsMapper = this.resultMapperForCentreControl(this.fromLocationInfo, locationIdToFilterFn);
-    this.fromLocationInfoTypeahead = new CentreLocationSelectTypeahead(this.store$, resultsMapper);
+      this.destination.value ? this.destination.value.location.id : undefined;
+    const resultsMapper = this.resultMapperForCentreControl(locationIdToFilterFn);
+    this.originTypeahead = new CentreLocationSelectTypeahead(this.store$, resultsMapper);
 
-    this.fromLocationInfoTypeahead.selected$
+    this.originTypeahead.selected$
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((centreLocationInfo: CentreLocationInfo) => {
-        this.fromLocationInfo.setValue(centreLocationInfo);
+        this.origin.setValue(centreLocationInfo);
       });
   }
 
-  private createToCentreTypeahead() {
-    const locationIdToFilterFn = () =>
-      this.fromLocationInfoTypeahead.selectedEntity !== undefined
-        ? this.fromLocationInfoTypeahead.selectedEntity
-        : undefined;
-    const resultsMapper = this.resultMapperForCentreControl(this.toLocationInfo, locationIdToFilterFn);
-    this.toLocationInfoTypeahead = new CentreLocationSelectTypeahead(this.store$, resultsMapper);
+  private createDestinationTypeahead() {
+    const locationIdToFilterFn = () => (this.origin.value ? this.origin.value.location.id : undefined);
+    const resultsMapper = this.resultMapperForCentreControl(locationIdToFilterFn);
+    this.destinationTypeahead = new CentreLocationSelectTypeahead(this.store$, resultsMapper);
 
-    this.toLocationInfoTypeahead.selected$
+    this.destinationTypeahead.selected$
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((centreLocationInfo: CentreLocationInfo) => {
-        this.toLocationInfo.setValue(centreLocationInfo);
+        this.destination.setValue(centreLocationInfo);
       });
   }
 
-  private resultMapperForCentreControl(
-    formControl: AbstractControl,
-    locationToFilterFn: () => CentreLocationInfo
-  ): CentreLocationResultsMapper {
-    return (centreLocations: CentreLocationInfo[]) => {
-      formControl.markAsTouched();
-      if (centreLocations.length <= 0) {
-        formControl.setValue('');
-      } else {
-        const locationToFilter = locationToFilterFn();
-        const locationToFilterId = locationToFilter === undefined ? undefined : locationToFilter.location.id;
-        if (locationToFilterId !== undefined) {
-          return centreLocations.filter(
-            centreLocationInfo => centreLocationInfo.location.id !== locationToFilterId
-          );
-        }
+  private resultMapperForCentreControl(locationIdToFilterFn: () => string): CentreLocationResultsMapper {
+    return (locations: CentreLocationInfo[]) => {
+      if (locations.length <= 0) {
+        debugger;
+        return;
       }
-      return centreLocations;
+
+      const locationToFilterId = locationIdToFilterFn();
+      if (locationToFilterId !== undefined) {
+        return locations.filter(info => info.location.id !== locationToFilterId);
+      }
+      return locations;
     };
   }
 }

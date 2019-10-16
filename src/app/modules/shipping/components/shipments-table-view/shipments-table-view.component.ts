@@ -91,6 +91,12 @@ export class ShipmentsTableViewComponent implements OnInit, OnDestroy {
     return this.filterForm.get('courierName');
   }
 
+  getLocation(shipment: Shipment) {
+    return this.mode === CentreShipmentsViewMode.Outgoing
+      ? shipment.destination.combinedName
+      : shipment.origin.combinedName;
+  }
+
   sortData(sort: Sort) {
     let sortField: string;
     switch (sort.direction) {

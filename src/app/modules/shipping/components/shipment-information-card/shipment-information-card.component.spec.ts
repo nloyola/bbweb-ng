@@ -121,12 +121,12 @@ describe('ShipmentInformationCardComponent', () => {
         const newLocationInfo = new CentreLocationInfo().deserialize(factory.centreLocationInfo(centre));
         context.modalReturnValue = { result: Promise.resolve(newLocationInfo) };
         context.updateEntity = () => {
-          component.updateFromLocation();
+          component.updateOrigin();
         };
 
         context.expectedSuccessAction = ShipmentStoreActions.updateShipmentRequest({
           shipment,
-          attributeName: 'fromLocation',
+          attributeName: 'origin',
           value: newLocationInfo
         });
         context.dispatchSuccessAction = () => {
@@ -147,12 +147,12 @@ describe('ShipmentInformationCardComponent', () => {
         const newLocationInfo = new CentreLocationInfo().deserialize(factory.centreLocationInfo(centre));
         context.modalReturnValue = { result: Promise.resolve(newLocationInfo) };
         context.updateEntity = () => {
-          component.updateToLocation();
+          component.updateDestination();
         };
 
         context.expectedSuccessAction = ShipmentStoreActions.updateShipmentRequest({
           shipment,
-          attributeName: 'toLocation',
+          attributeName: 'destination',
           value: newLocationInfo
         });
         context.dispatchSuccessAction = () => {
@@ -168,8 +168,8 @@ describe('ShipmentInformationCardComponent', () => {
     label
     ${'Update Courier'}
     ${'Update Tracking Number'}
-    ${'Update Source Location'}
-    ${'Update Destination Location'}
+    ${'Update Origin'}
+    ${'Update Destination'}
     ${'Remove Shipment'}
   `('menu item with $label is defined', ({ label }) => {
     fixture.detectChanges();

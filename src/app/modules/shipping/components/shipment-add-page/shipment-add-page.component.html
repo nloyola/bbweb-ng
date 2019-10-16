@@ -46,54 +46,50 @@
             </div>
           </div>
 
-          <!-- FROM CENTRE -->
+          <!-- ORIGIN LOCATION -->
           <div class="form-group row">
-            <label for="fromLocationInfo" class="col-md-3 col-form-label" i18n>From Centre</label>
+            <label for="origin" class="col-md-3 col-form-label" i18n>Origin Location</label>
             <div class="col-md-9">
               <input
                 type="text"
                 class="form-control"
-                [(ngModel)]="fromLocationInfoTypeahead.selectedEntity"
-                [ngModelOptions]="{ standalone: true }"
-                [ngbTypeahead]="fromLocationInfoTypeahead.getEntities"
+                formControlName="origin"
+                [ngbTypeahead]="originTypeahead.getEntities"
                 i18n-placeholder
-                placeholder="The location of the centre this shipment is coming from"
-                [inputFormatter]="fromLocationInfoTypeahead.formatter"
-                [resultFormatter]="fromLocationInfoTypeahead.formatter"
-                (selectItem)="fromLocationInfoTypeahead.onEntitySelected($event)"
+                placeholder="The centre and location this shipment is originating from"
+                [inputFormatter]="originTypeahead.formatter"
+                [resultFormatter]="originTypeahead.formatter"
                 [editable]="false"
                 required
               />
             </div>
-            <div class="col-md-9 offset-3" *ngIf="fromLocationInfo.invalid && fromLocationInfo.touched">
-              <div class="text-danger small" *ngIf="fromLocationInfo.errors.required" i18n>
-                A from centre is required
+            <div class="col-md-9 offset-3" *ngIf="origin.invalid && origin.touched">
+              <div class="text-danger small" *ngIf="origin.errors.required" i18n>
+                An origin centre and location are required
               </div>
             </div>
           </div>
 
-          <!-- TO CENTRE -->
+          <!-- DESTINATION LOCATION -->
           <div class="form-group row">
-            <label for="toLocationInfo" class="col-md-3 col-form-label" i18n>To Centre</label>
+            <label for="destination" class="col-md-3 col-form-label" i18n>Destination Location</label>
             <div class="col-md-9">
               <input
                 type="text"
                 class="form-control"
-                [(ngModel)]="toLocationInfoTypeahead.selectedEntity"
-                [ngModelOptions]="{ standalone: true }"
-                [ngbTypeahead]="toLocationInfoTypeahead.getEntities"
+                formControlName="destination"
+                [ngbTypeahead]="destinationTypeahead.getEntities"
                 i18n-placeholder
-                placeholder="The location of the centre this shipment is going to"
-                [inputFormatter]="toLocationInfoTypeahead.formatter"
-                [resultFormatter]="toLocationInfoTypeahead.formatter"
-                (selectItem)="toLocationInfoTypeahead.onEntitySelected($event)"
+                placeholder="The centre and location this shipment is destined to"
+                [inputFormatter]="destinationTypeahead.formatter"
+                [resultFormatter]="destinationTypeahead.formatter"
                 [editable]="false"
                 required
               />
             </div>
-            <div class="col-md-9 offset-3" *ngIf="toLocationInfo.invalid && toLocationInfo.touched">
-              <div class="text-danger small" *ngIf="toLocationInfo.errors.required" i18n>
-                A to centre is required
+            <div class="col-md-9 offset-3" *ngIf="destination.invalid && destination.touched">
+              <div class="text-danger small" *ngIf="destination.errors.required" i18n>
+                A destination centre and location are required
               </div>
             </div>
           </div>

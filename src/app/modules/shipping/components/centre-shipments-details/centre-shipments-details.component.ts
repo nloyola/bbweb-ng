@@ -106,9 +106,9 @@ export class CentreShipmentsDetailsComponent implements OnInit, OnDestroy {
     if (sortField.includes('location')) {
       let field: string;
       if (this.mode === CentreShipmentsViewMode.Outgoing) {
-        field = 'toLocationName';
+        field = 'destination';
       } else {
-        field = 'fromLocationName';
+        field = 'origin';
       }
       this.sortField = (sortField.charAt(0) === '-' ? '-' : '') + field;
     } else {
@@ -169,13 +169,13 @@ export class CentreShipmentsDetailsComponent implements OnInit, OnDestroy {
 
     switch (this.mode) {
       case CentreShipmentsViewMode.Incoming:
-        filters.push(`toCentre::${this.centre.name}`);
+        filters.push(`destination::${this.centre.name}`);
         break;
       case CentreShipmentsViewMode.Outgoing:
-        filters.push(`fromCentre::${this.centre.name}`);
+        filters.push(`origin::${this.centre.name}`);
         break;
       case CentreShipmentsViewMode.Completed:
-        filters.push('state::completed', `toCentre::${this.centre.name}`);
+        filters.push('state::completed', `destination::${this.centre.name}`);
         break;
       default:
         throw new Error(`invalid component mode: ${this.mode}`);

@@ -31,16 +31,16 @@ export class ShipmentInformationCardComponent implements OnInit, OnDestroy {
 
   @ViewChild('updateCourierModal', { static: false }) updateCourierModal: TemplateRef<any>;
   @ViewChild('updateTrackingNumberModal', { static: false }) updateTrackingNumberModal: TemplateRef<any>;
-  @ViewChild('updateFromLocationModal', { static: false }) updateFromLocationModal: TemplateRef<any>;
-  @ViewChild('updateToLocationModal', { static: false }) updateToLocationModal: TemplateRef<any>;
+  @ViewChild('updateOriginModal', { static: false }) updateOriginModal: TemplateRef<any>;
+  @ViewChild('updateDestinationModal', { static: false }) updateDestinationModal: TemplateRef<any>;
 
   isLoading$: Observable<boolean>;
   shipment$: Observable<Shipment>;
   isCardCollapsed: boolean;
   updateCourierModalOptions: ModalInputTextOptions;
   updateTrackingNumberModalOptions: ModalInputTextOptions;
-  updateFromLocationInfoModalOptions: ModalInputTextOptions;
-  updateToLocationInfoModalOptions: ModalInputTextOptions;
+  updateOriginModalOptions: ModalInputTextOptions;
+  updateDestinationModalOptions: ModalInputTextOptions;
   menuItems: DropdownMenuItem[];
 
   private updatedMessage$ = new Subject<string>();
@@ -139,15 +139,15 @@ export class ShipmentInformationCardComponent implements OnInit, OnDestroy {
       .catch(() => undefined);
   }
 
-  updateFromLocation() {
-    this.updateFromLocationInfoModalOptions = { required: true };
+  updateOrigin() {
+    this.updateOriginModalOptions = { required: true };
     this.modalService
-      .open(this.updateFromLocationModal, { size: 'lg' })
+      .open(this.updateOriginModal, { size: 'lg' })
       .result.then(value => {
         this.store$.dispatch(
           ShipmentStoreActions.updateShipmentRequest({
             shipment: this.shipment,
-            attributeName: 'fromLocation',
+            attributeName: 'origin',
             value
           })
         );
@@ -156,15 +156,15 @@ export class ShipmentInformationCardComponent implements OnInit, OnDestroy {
       .catch(() => undefined);
   }
 
-  updateToLocation() {
-    this.updateToLocationInfoModalOptions = { required: true };
+  updateDestination() {
+    this.updateDestinationModalOptions = { required: true };
     this.modalService
-      .open(this.updateToLocationModal, { size: 'lg' })
+      .open(this.updateDestinationModal, { size: 'lg' })
       .result.then(value => {
         this.store$.dispatch(
           ShipmentStoreActions.updateShipmentRequest({
             shipment: this.shipment,
-            attributeName: 'toLocation',
+            attributeName: 'destination',
             value
           })
         );
@@ -195,20 +195,20 @@ export class ShipmentInformationCardComponent implements OnInit, OnDestroy {
       },
       {
         kind: 'selectable',
-        label: 'Update Source Location',
+        label: 'Update Origin',
         icon: 'edit',
         iconClass: 'success-icon',
         onSelected: () => {
-          this.updateFromLocation();
+          this.updateOrigin();
         }
       },
       {
         kind: 'selectable',
-        label: 'Update Destination Location',
+        label: 'Update Destination',
         icon: 'edit',
         iconClass: 'success-icon',
         onSelected: () => {
-          this.updateToLocation();
+          this.updateDestination();
         }
       },
       {

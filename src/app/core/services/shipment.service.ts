@@ -8,12 +8,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CentreLocationInfo } from '@app/domain/centres';
 
-export type ShipmentUpdateAttribute =
-  | 'courierName'
-  | 'trackingNumber'
-  | 'fromLocation'
-  | 'toLocation'
-  | 'state';
+export type ShipmentUpdateAttribute = 'courierName' | 'trackingNumber' | 'origin' | 'destination' | 'state';
 
 export enum ShipmentStateTransision {
   Created = 'created',
@@ -81,8 +76,8 @@ export class ShipmentService {
     const json = {
       courierName: shipment.courierName,
       trackingNumber: shipment.trackingNumber,
-      fromLocationId: shipment.fromLocationInfo.location.id,
-      toLocationId: shipment.toLocationInfo.location.id
+      originId: shipment.origin.location.id,
+      destinationId: shipment.destination.location.id
     };
     return this.http.post<ApiReply>(`${this.BASE_URL}/`, json).pipe(
       // delay(2000),
@@ -109,17 +104,17 @@ export class ShipmentService {
         url = `${this.BASE_URL}/tracking-number/${shipment.id}`;
         break;
 
-      case 'fromLocation': {
+      case 'origin': {
         const locationInfo = value as CentreLocationInfo;
         json = { ...json, locationId: locationInfo.location.id };
-        url = `${this.BASE_URL}/fromlocation/${shipment.id}`;
+        url = `${this.BASE_URL}/origin/${shipment.id}`;
         break;
       }
 
-      case 'toLocation': {
+      case 'destination': {
         const locationInfo = value as CentreLocationInfo;
         json = { ...json, locationId: locationInfo.location.id };
-        url = `${this.BASE_URL}/tolocation/${shipment.id}`;
+        url = `${this.BASE_URL}/destination/${shipment.id}`;
         break;
       }
 

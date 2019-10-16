@@ -36,9 +36,7 @@ export class ModalInputCentreLocationComponent extends ModalInputBaseComponent<C
 
   private createCentreTypeahead() {
     const resultsMapper = (centreLocations: CentreLocationInfo[]) => {
-      this.input.markAsTouched();
       if (centreLocations.length <= 0) {
-        this.input.setValue('');
         this.modalInputValid = false;
       } else {
         return centreLocations.filter(
