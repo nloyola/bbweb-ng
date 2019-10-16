@@ -29,7 +29,7 @@ export class ModalInputBaseComponent<T> implements OnInit, OnDestroy {
         takeUntil(this.unsubscribe$)
       )
       .subscribe(() => {
-        this.modalInputValid = !this.form.errors;
+        this.modalInputValid = !this.form.invalid;
       });
   }
 

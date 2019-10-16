@@ -6,7 +6,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CentreLocationsSearchReply } from '@app/core/services';
-import { Centre, CentreLocationInfo } from '@app/domain/centres';
+import { Centre } from '@app/domain/centres';
 import { Shipment, ShipmentState } from '@app/domain/shipments';
 import {
   CentreStoreActions,
@@ -19,6 +19,7 @@ import {
 import { NgbModule, NgbTypeaheadSelectItemEvent } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
+import { LocationFixture } from '@test/fixtures';
 import { TestUtils } from '@test/utils';
 import { ToastrModule } from 'ngx-toastr';
 import { ShipmentAddPageComponent } from './shipment-add-page.component';
@@ -190,7 +191,7 @@ describe('ShipmentAddPageComponent', () => {
       });
 
       it('location from the search results are displayed to the user', fakeAsync(() => {
-        const { centreLocations } = locationsFixture();
+        const { centreLocations } = LocationFixture.locationsFixture(factory);
         const filter = centreLocations[0].combinedName.charAt(0);
         const searchReply: CentreLocationsSearchReply = { filter, centreLocations };
 
@@ -215,7 +216,7 @@ describe('ShipmentAddPageComponent', () => {
       }));
 
       it('location is filtered if already selected as from / to', fakeAsync(() => {
-        const { centreLocations } = locationsFixture();
+        const { centreLocations } = LocationFixture.locationsFixture(factory);
         const filter = centreLocations[0].combinedName.charAt(0);
         const searchReply: CentreLocationsSearchReply = { filter, centreLocations };
 
@@ -263,21 +264,6 @@ describe('ShipmentAddPageComponent', () => {
       }));
     }
   );
-
-  interface LocationsFixture {
-    centres: Centre[];
-    centreLocations: CentreLocationInfo[];
-  }
-
-  function locationsFixture(): LocationsFixture {
-    const centres = [1, 2].map(() =>
-      new Centre().deserialize(factory.centre({ locations: [factory.location()] }))
-    );
-    const centreLocations = centres.map(centre =>
-      new CentreLocationInfo().deserialize(factory.centreLocationInfo(centre))
-    );
-    return { centres, centreLocations };
-  }
 
   function getInputByFormControlName(name: string): DebugElement {
     const inputElement = fixture.debugElement.query(By.css(`input[formControlName="${name}"]`));

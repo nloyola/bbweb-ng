@@ -1,5 +1,5 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CentreLocationInfo } from '@app/domain/centres';
 import { ModalInputBaseComponent } from '@app/modules/modals/components/modal-input-base.component';
 import { RootStoreState } from '@app/root-store';
@@ -16,17 +16,18 @@ export class ModalInputCentreLocationComponent extends ModalInputBaseComponent<C
   @Input() locationIdToFilterOut: string;
 
   form: FormGroup;
-  locationInfoTypeahead: CentreLocationSelectTypeahead;
+  locationTypeahead: CentreLocationSelectTypeahead;
   modalInputValid = false;
 
   constructor(formBuilder: FormBuilder, private store$: Store<RootStoreState.State>) {
     super(formBuilder);
+    this.validators = [Validators.required];
     this.createCentreTypeahead();
   }
 
   ngOnInit() {
     super.ngOnInit();
-    this.locationInfoTypeahead.selectedEntity = this.value;
+    this.locationTypeahead.selectedEntity = this.value;
   }
 
   public ngOnDestroy() {
@@ -46,9 +47,9 @@ export class ModalInputCentreLocationComponent extends ModalInputBaseComponent<C
       return centreLocations;
     };
 
-    this.locationInfoTypeahead = new CentreLocationSelectTypeahead(this.store$, resultsMapper);
+    this.locationTypeahead = new CentreLocationSelectTypeahead(this.store$, resultsMapper);
 
-    this.locationInfoTypeahead.selected$
+    this.locationTypeahead.selected$
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((centreLocationInfo: CentreLocationInfo) => {
         this.input.setValue(centreLocationInfo);

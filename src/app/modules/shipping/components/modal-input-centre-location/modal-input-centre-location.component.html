@@ -9,12 +9,12 @@
         <input
           type="text"
           class="form-control"
-          formControlName="value"
-          [ngbTypeahead]="locationInfoTypeahead.getEntities"
+          formControlName="input"
+          [ngbTypeahead]="locationTypeahead.getEntities"
           i18n-placeholder
           placeholder="location"
-          [inputFormatter]="locationInfoTypeahead.formatter"
-          [resultFormatter]="locationInfoTypeahead.formatter"
+          [inputFormatter]="locationTypeahead.formatter"
+          [resultFormatter]="locationTypeahead.formatter"
           [editable]="false"
           required
         />
