@@ -65,9 +65,6 @@ export class CentreShipmentsPageComponent implements OnInit, OnDestroy {
   }
 
   private getActiveTabId(routeUrl: string): string {
-    if (routeUrl === undefined) {
-      throw new Error('router URL is undefined');
-    }
     return Object.keys(this.tabData).find(key => routeUrl.includes(key));
   }
 }
