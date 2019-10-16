@@ -6,83 +6,79 @@
         <span class="ml-1" i18n>Specimens in this Shipment</span>
       </div>
 
-      <form [formGroup]="filterForm" novalidate>
-        <table
-          #shipmentSpecimensTable
-          matSort
-          (matSortChange)="sortData($event)"
-          matSortActive="inventoryId"
-          matSortDirection="asc"
-          class="table table-striped table-condensed"
-          *ngIf="specimens$ | async as specimens"
-        >
-          <tr>
-            <th mat-sort-header="inventoryId">
-              <small><b i18n>Inventory ID</b></small>
-            </th>
-            <th mat-sort-header="amount">
-              <small><b i18n>Amount</b></small>
-            </th>
-            <th mat-sort-header="type">
-              <small><b i18n>Type</b></small>
-            </th>
-            <th mat-sort-header="timeCreated">
-              <small><b i18n>Time Created</b></small>
-            </th>
-            <th mat-sort-header="action">
-              <small><b i18n>Action</b></small>
-            </th>
-          </tr>
+      <table
+        #shipmentSpecimensTable
+        matSort
+        (matSortChange)="sortData($event)"
+        matSortActive="inventoryId"
+        matSortDirection="asc"
+        class="table table-striped table-condensed"
+        *ngIf="specimens$ | async as specimens"
+      >
+        <tr>
+          <th mat-sort-header="inventoryId">
+            <small><b i18n>Inventory ID</b></small>
+          </th>
+          <th>
+            <small><b i18n>Amount</b></small>
+          </th>
+          <th>
+            <small><b i18n>Type</b></small>
+          </th>
+          <th>
+            <small><b i18n>Time Created</b></small>
+          </th>
+        </tr>
 
-          <tr *ngFor="let ss of specimens">
-            <td>
-              <small>{{ ss.specimen.inventoryId }}</small>
-            </td>
-            <td>
-              <small>{{ ss.specimen.amount }} </small>
-            </td>
-            <td>
-              <small>{{ ss.specimen.eventTypeName }}</small>
-            </td>
-            <td>
-              <small>{{ ss.specimen.timeCreated | localTime }}</small>
-            </td>
-            <td>
-              <small>{{ ss.specimen.action }}</small>
-            </td>
+        <tr *ngFor="let ss of specimens">
+          <td>
+            <small>{{ ss.specimen.inventoryId }}</small>
+          </td>
+          <td>
+            <small>{{ ss.specimen.amount }} </small>
+          </td>
+          <td>
+            <small>{{ ss.specimen.eventTypeName }}</small>
+          </td>
+          <td>
+            <small>{{ ss.specimen.timeCreated | localTime }}</small>
+          </td>
+          <td>
+            <small>{{ ss.specimen.action }}</small>
+          </td>
 
-            <td>
-              <app-dropdown-menu
-                [menuItems]="menuItemsForShipmentSpecimen(specimen)"
-                placement="bottom-right"
-              ></app-dropdown-menu>
-            </td>
-          </tr>
-          <tr *ngIf="specimens.length <= 0">
-            <td colspan="6">
-              <div class="alert alert-warning">
-                <span i18n>Shipment does not contain specimens</span>
-              </div>
-            </td>
-          </tr>
-        </table>
-      </form>
+          <td>
+            <app-dropdown-menu
+              [menuItems]="menuItemsForShipmentSpecimen(specimen)"
+              placement="bottom-right"
+            ></app-dropdown-menu>
+          </td>
+        </tr>
+        <tr *ngIf="specimens.length <= 0">
+          <td colspan="6">
+            <div class="alert alert-warning">
+              <span i18n>Shipment does not contain specimens</span>
+            </div>
+          </td>
+        </tr>
+      </table>
 
-      <!-- <pagination widget goes here> -->
-      <div class="card-footer" *ngIf="numPages > 0">
-        <ngb-pagination
-          size="sm"
-          [collectionSize]="totalSpecimens"
-          [(page)]="currentPage"
-          [maxSize]="totalSpecimens"
-          [pageSize]="5"
-          [rotate]="false"
-          [boundaryLinks]="true"
-          aria-label="Default pagination"
-          (pageChange)="paginationPageChanged($event)"
-        >
-        </ngb-pagination>
-      </div>
+      <ng-container *ngIf="totalSpecimens$ | async as totalSpecimens">
+        <div class="card-footer" *ngIf="(maxPages$ | async) > 0">
+          <ngb-pagination
+            size="sm"
+            [collectionSize]="totalSpecimens"
+            [(page)]="currentPage"
+            [maxSize]="totalSpecimens"
+            [pageSize]="5"
+            [rotate]="false"
+            [boundaryLinks]="true"
+            aria-label="Default pagination"
+            (pageChange)="paginationPageChanged($event)"
+          >
+          </ngb-pagination>
+        </div>
+      </ng-container>
     </div>
   </div>
 </div>

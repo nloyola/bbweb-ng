@@ -17,6 +17,7 @@ import { Subject, Observable } from 'rxjs';
 import { map, shareReplay, tap, withLatestFrom, takeUntil, filter } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 import { DropdownMenuItem } from '@app/shared/components/dropdown-menu/dropdown-menu.component';
+import { faBoxOpen } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-shipment-information-card',
@@ -34,6 +35,7 @@ export class ShipmentInformationCardComponent implements OnInit, OnDestroy {
   @ViewChild('updateOriginModal', { static: false }) updateOriginModal: TemplateRef<any>;
   @ViewChild('updateDestinationModal', { static: false }) updateDestinationModal: TemplateRef<any>;
 
+  faBoxOpen = faBoxOpen;
   isLoading$: Observable<boolean>;
   shipment$: Observable<Shipment>;
   isCardCollapsed: boolean;

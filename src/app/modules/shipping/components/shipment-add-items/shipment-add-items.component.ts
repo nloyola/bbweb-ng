@@ -31,14 +31,8 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent {
 
   packedTimeModalOptions: ModalInputOptions = { required: true };
   sentTimeModalOptions: ModalInputOptions = { required: true };
-  maxPages$: Observable<number>;
-  totalSpecimens$: Observable<number>;
-  sortField = '';
-  currentPage = 1;
 
   private updatedMessage$ = new Subject<string>();
-  private packedTime$ = new Subject<Date>();
-  private sentTime$ = new Subject<Date>();
 
   constructor(
     store$: Store<RootStoreState.State>,
@@ -53,28 +47,6 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent {
     this.initOnRemoved();
     this.initOnShipmentModified();
     this.initErrorSelector();
-  }
-
-  sortBy(sortField: string) {
-    this.sortField = sortField;
-    this.updateSpecimens();
-  }
-
-  paginationPageChange(page: number) {
-    this.currentPage = page;
-    this.updateSpecimens();
-  }
-
-  updateSpecimens(): void {
-    this.store$.dispatch(
-      ShipmentSpecimenStoreActions.searchShipmentSpecimensRequest({
-        shipment: this.shipment,
-        searchParams: {
-          sort: this.sortField,
-          page: this.currentPage
-        }
-      })
-    );
   }
 
   remove() {

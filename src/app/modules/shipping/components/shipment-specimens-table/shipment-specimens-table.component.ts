@@ -11,7 +11,7 @@ import {
 import { DropdownMenuItem } from '@app/shared/components/dropdown-menu/dropdown-menu.component';
 import { select, Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
-import { filter, map, shareReplay } from 'rxjs/operators';
+import { filter, map, shareReplay, tap } from 'rxjs/operators';
 import { faVial } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
@@ -28,24 +28,22 @@ export class ShipmentSpecimensTableComponent implements OnInit, OnDestroy {
   @Output() pageChanged = new EventEmitter<number>();
 
   faVial = faVial;
-  filterForm: FormGroup;
   pageInfo$: Observable<PagedReplyInfo<ShipmentSpecimen>>;
   maxPages$: Observable<number>;
   totalSpecimens$: Observable<number>;
   specimens$: Observable<ShipmentSpecimen[]>;
-  sortField: string;
-  currentPage: number;
+  sortField = 'inventoryId';
+  currentPage = 1;
 
   private unsubscribe$: Subject<void> = new Subject<void>();
 
-  constructor(private store$: Store<RootStoreState.State>, private formBuilder: FormBuilder) {}
+  constructor(private store$: Store<RootStoreState.State>) {}
 
   ngOnInit() {
-    this.filterForm = this.formBuilder.group({ name: [''] });
-
     this.pageInfo$ = this.store$.pipe(
       select(ShipmentSpecimenStoreSelectors.selectShipmentSpecimenSearchRepliesAndEntities),
       filter(x => x !== undefined),
+      tap(x => console.log(x)),
       shareReplay()
     );
 
@@ -75,19 +73,8 @@ export class ShipmentSpecimensTableComponent implements OnInit, OnDestroy {
         sortField = '';
     }
 
-    if (sort.active === 'date') {
-      console.error('invalid sort field');
-      return;
-    }
-
-    this.sortBy.emit(sortField);
-  }
-
-  public paginationPageChanged(page: number) {
-    if (isNaN(page)) {
-      return;
-    }
-    this.pageChanged.emit(page);
+    this.sortField = sortField;
+    this.updateSpecimens();
   }
 
   viewSpecimen(specimen: ShipmentSpecimen) {}
@@ -96,17 +83,19 @@ export class ShipmentSpecimensTableComponent implements OnInit, OnDestroy {
     console.error('removeSpecimen');
   }
 
-  public paginationPageChange(page: number) {
+  public paginationPageChanged(page: number) {
     this.currentPage = page;
     this.updateSpecimens();
   }
 
   protected updateSpecimens(): void {
-    const searchParams = { page: this.currentPage };
     this.store$.dispatch(
       ShipmentSpecimenStoreActions.searchShipmentSpecimensRequest({
         shipment: this.shipment,
-        searchParams
+        searchParams: {
+          sort: this.sortField,
+          page: this.currentPage
+        }
       })
     );
   }
