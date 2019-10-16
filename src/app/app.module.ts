@@ -42,7 +42,7 @@ export class UIErrorHandler extends ErrorHandler {
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
-    { provide: ErrorHandler, useClass: UIErrorHandler },
+    //{ provide: ErrorHandler, useClass: UIErrorHandler },
     TitleCasePipe
   ],
   bootstrap: [AppComponent]
