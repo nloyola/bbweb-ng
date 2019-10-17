@@ -1,4 +1,4 @@
-<app-modal-input [cancelButtonShow]="false" (confirm)="confirm()" (dismiss)="dismiss()">
+<app-modal [cancelButtonShow]="false" (confirm)="confirm()" (dismiss)="dismiss()">
   <div class="title" i18n>
     <span i18n>Specimen</span><span class="ml-1">{{ specimen.inventoryId }}</span>
   </div>
@@ -110,4 +110,4 @@
     <app-entity-status [timeAdded]="specimen.timeAdded" [timeModified]="specimen.timeModified">
     </app-entity-status>
   </div>
-</app-modal-input>
+</app-modal>

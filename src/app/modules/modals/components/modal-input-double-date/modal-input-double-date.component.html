@@ -1,4 +1,4 @@
-<app-modal-input [modalInputValid]="modalInputValid" (confirm)="confirm()" (dismiss)="dismiss()">
+<app-modal [modalInputValid]="modalInputValid" (confirm)="confirm()" (dismiss)="dismiss()">
   <span class="title">{{ title }}</span>
   <form class="body form-horizontal" [formGroup]="form" autocomplete="on" novalidate>
     <div class="form-group row">
@@ -58,4 +58,4 @@
       </div>
     </div>
   </form>
-</app-modal-input>
+</app-modal>

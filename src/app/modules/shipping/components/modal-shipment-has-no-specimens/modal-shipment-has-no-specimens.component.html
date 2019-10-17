@@ -1,4 +1,4 @@
-<app-modal-input [cancelButtonShow]="false" (confirm)="confirm()">
+<app-modal [cancelButtonShow]="false" (confirm)="confirm()">
   <span class="title" *ngIf="transitionIsPacked()" i18n>Cannot Tag As Packed</span>
   <span class="title" *ngIf="transitionIsSkipToSent()" i18n>Cannot Tag As Sent</span>
   <div class="body" i18n>
@@ -18,4 +18,4 @@
       </div>
     </div>
   </div>
-</app-modal-input>
+</app-modal>

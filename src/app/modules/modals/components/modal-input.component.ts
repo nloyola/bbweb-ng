@@ -5,7 +5,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 
-export class ModalInputBaseComponent<T> implements OnInit, OnDestroy {
+export class ModalInputComponent<T> implements OnInit, OnDestroy {
   @Input() modal: NgbActiveModal;
   @Input() title: string;
   @Input() label: string;

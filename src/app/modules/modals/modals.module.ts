@@ -16,8 +16,8 @@ import { ModalInputPasswordComponent } from './components/modal-input-password/m
 import { ModalInputTextComponent } from './components/modal-input-text/modal-input-text.component';
 import { ModalInputTextareaComponent } from './components/modal-input-textarea/modal-input-textarea.component';
 import { ModalInputUrlComponent } from './components/modal-input-url/modal-input-url.component';
-import { ModalInputComponent } from './components/modal-input/modal-input.component';
 import { ModalYesNoComponent } from './components/modal-yes-no/modal-yes-no.component';
+import { ModalComponent } from './components/modal/modal.component';
 import { StudyRemoveModalComponent } from './components/study-remove-modal/study-remove-modal.component';
 import { UserRemoveModalComponent } from './components/user-remove-modal/user-remove-modal.component';
 
@@ -34,7 +34,7 @@ import { UserRemoveModalComponent } from './components/user-remove-modal/user-re
     OwlNativeDateTimeModule
   ],
   declarations: [
-    ModalInputComponent,
+    ModalComponent,
     ModalInputTextComponent,
     ModalInputTextareaComponent,
     ModalInputNumberComponent,
@@ -50,7 +50,7 @@ import { UserRemoveModalComponent } from './components/user-remove-modal/user-re
     ModalInputDoubleDateComponent
   ],
   exports: [
-    ModalInputComponent,
+    ModalComponent,
     ModalInputBooleanComponent,
     ModalInputTextComponent,
     ModalInputTextareaComponent,

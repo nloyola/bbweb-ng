@@ -7,7 +7,7 @@ import { CustomValidators } from '@app/shared/validators';
   templateUrl: './modal-input-url.component.html',
   styleUrls: ['./modal-input-url.component.scss']
 })
-export class ModalInputUrlComponent extends ModalInputTextComponent implements OnInit {
+export class ModalInputUrlComponent extends ModalInputTextComponent {
   ngOnInit() {
     this.validators = [CustomValidators.url()];
     this.options = {
