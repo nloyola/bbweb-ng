@@ -7,9 +7,9 @@ import {
   HasSlug,
   IConcurrencySafeEntity,
   IEntityInfo,
-  IEntityInfoAndState,
   IEntityInfoSet,
-  Location
+  Location,
+  IEntityInfoAndState
 } from '@app/domain';
 import { Study, StudyState, StudyStateInfo } from '@app/domain/studies';
 import { CentreState } from './centre-state.enum';

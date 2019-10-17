@@ -8,13 +8,13 @@ import {
   IEntityInfo,
   IEntityInfoAndState,
   IEntityInfoSet,
+  ILocation,
+  INamedEntityInfo,
   PagedReply,
   PreservationTemperature,
   PreservationType,
-  SearchParams,
   slugify,
-  SpecimenType,
-  ILocation
+  SpecimenType
 } from '@app/domain';
 import {
   IAccessItem,
@@ -42,8 +42,8 @@ import {
   StudyState
 } from '@app/domain/studies';
 import { IUser, UserCounts, UserState } from '@app/domain/users';
-import * as _ from 'lodash';
 import * as faker from 'faker';
+import * as _ from 'lodash';
 
 enum DomainEntities {
   STUDY = 'study',
@@ -149,7 +149,7 @@ export class Factory {
   role(options: any = {}): IRole {
     const role = {
       ...this.accessItem(options),
-      userData: [this.entityInfo()],
+      userData: [this.namedEntityInfo()],
       ...options
     };
     this.defaultEntities.set(DomainEntities.ROLE, role);
@@ -247,14 +247,14 @@ export class Factory {
     return dflt ? dflt : this.processingType();
   }
 
-  entityInfo<T extends IDomainEntity & HasSlug & HasName>(): IEntityInfo<T> {
+  namedEntityInfo<T extends IDomainEntity & HasSlug & HasName>(): INamedEntityInfo<T> {
     return {
       id: this.stringNext(),
       ...this.nameAndSlug()
     };
   }
 
-  entityToInfo<T extends IDomainEntity & HasSlug & HasName>(entity: any): IEntityInfo<T> {
+  entityToInfo<T extends IDomainEntity & HasSlug & HasName>(entity: any): INamedEntityInfo<T> {
     return {
       id: entity.id,
       name: entity.name,
@@ -263,7 +263,7 @@ export class Factory {
   }
 
   entitySet<T extends IDomainEntity & HasSlug & HasName>(): IEntityInfoSet<T> {
-    return { allEntities: false, entityData: [this.entityInfo()] };
+    return { allEntities: false, entityData: [this.namedEntityInfo()] };
   }
 
   /**
@@ -467,7 +467,10 @@ export class Factory {
     };
   }
 
-  entityNameDto<T extends IDomainEntity & HasSlug & HasName>(entity: any, options: any = {}): IEntityInfo<T> {
+  namedEntityInfoDto<T extends IDomainEntity & HasSlug & HasName>(
+    entity: any,
+    options: any = {}
+  ): INamedEntityInfo<T> {
     const combined = { ...entity, ...options };
     return {
       id: combined.id,
@@ -482,7 +485,7 @@ export class Factory {
   ): IEntityInfoAndState<T, S> {
     const combined = { ...entity, ...options };
     return {
-      ...this.entityNameDto(entity, options),
+      ...this.namedEntityInfoDto(entity, options),
       state: combined.state
     };
   }
@@ -654,6 +657,7 @@ export class Factory {
     const eventType = this.collectionEventType({
       specimenDefinitions: [this.collectedSpecimenDefinition()]
     });
+    const participant = this.defaultParticipant();
     const event = this.defaultCollectionEvent();
     const ctr = this.centre({ locations: [this.location()] });
     const inventoryId = this.domainEntityNameNext(DomainEntities.SPECIMEN);
@@ -663,14 +667,24 @@ export class Factory {
       version: 0,
       slug: slugify(inventoryId),
       inventoryId: inventoryId,
-      eventId: event.id,
+      collectionEvent: {
+        id: event.id,
+        slug: event.slug,
+        visitNumber: event.visitNumber
+      },
       specimenDefinitionId: null,
       originLocationInfo: null,
       locationInfo: null,
       timeCreated: faker.date.recent(10),
       amount: 1,
       state: SpecimenState.USABLE,
-      eventTypeName: eventType.name,
+      eventType: this.entityToInfo(eventType),
+      study: this.entityToInfo(this.defaultStudy),
+      participant: {
+        id: participant.id,
+        slug: participant.slug,
+        visitNumber: participant.uniqueId
+      },
       ...options
     };
 
@@ -815,8 +829,8 @@ export class Factory {
       name: name,
       slug: slugify(name),
       description: faker.lorem.sentences(4),
-      parentData: [this.entityInfo()],
-      childData: [this.entityInfo()]
+      parentData: [this.namedEntityInfo()],
+      childData: [this.namedEntityInfo()]
     };
   }
 }

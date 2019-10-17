@@ -1,4 +1,4 @@
-<app-modal [cancelButtonShow]="false" (confirm)="confirm()">
+<app-modal [cancelButtonShow]="false" (confirm)="modal.close()">
   <span class="title" *ngIf="transitionIsPacked()" i18n>Cannot Tag As Packed</span>
   <span class="title" *ngIf="transitionIsSkipToSent()" i18n>Cannot Tag As Sent</span>
   <div class="body" i18n>

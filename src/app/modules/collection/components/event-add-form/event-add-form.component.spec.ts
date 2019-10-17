@@ -147,7 +147,7 @@ describe('ParticipantAddEventComponent', () => {
 
     it('recreated when event type is selected', () => {
       const { eventType } = createEntities();
-      const eventTypeData = [new EventTypeInfo().deserialize(factory.entityNameDto(eventType))];
+      const eventTypeData = [new EventTypeInfo().deserialize(factory.namedEntityInfoDto(eventType))];
       fixture.detectChanges();
 
       component.eventType.setValue(eventType.id);
@@ -187,7 +187,7 @@ describe('ParticipantAddEventComponent', () => {
   describe('when submitting', () => {
     const testCommon = (event: CollectionEvent, eventType: CollectionEventType) => {
       component.eventType.setValue(eventType.id);
-      const eventTypeData = [new EventTypeInfo().deserialize(factory.entityNameDto(eventType))];
+      const eventTypeData = [new EventTypeInfo().deserialize(factory.namedEntityInfoDto(eventType))];
       store.dispatch(EventTypeStoreActions.searchEventTypeNamesSuccess({ eventTypeData }));
       store.dispatch(EventTypeStoreActions.getEventTypeSuccess({ eventType }));
       fixture.detectChanges();

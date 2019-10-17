@@ -10,7 +10,7 @@
             <strong translate>Study</strong>
           </div>
           <div class="col-md-7">
-            {{ participant.study.name }}
+            {{ specimen.study.name }}
           </div>
         </div>
       </li>
@@ -20,7 +20,7 @@
             <strong translate>Participant ID</strong>
           </div>
           <div class="col-md-9">
-            {{ participant.uniqueId }}
+            {{ specimen.participant.uniqueId }}
           </div>
         </div>
       </li>
@@ -30,7 +30,7 @@
             <strong translate>Visit #</strong>
           </div>
           <div class="col-md-7">
-            {{ event.visitNumber }}
+            {{ specimen.event.visitNumber }}
           </div>
         </div>
       </li>
@@ -40,7 +40,7 @@
             <strong translate>Event type</strong>
           </div>
           <div class="col-md-7">
-            {{ specimen.eventTypeName }}
+            {{ specimen.eventType.name }}
           </div>
         </div>
       </li>
@@ -82,14 +82,14 @@
             <strong translate>State</strong>
           </div>
           <div class="col-md-7">
-            {{ specimen.state }}
+            {{ specimen.state | titlecase }}
           </div>
         </div>
       </li>
       <li class="list-group-item">
         <div class="row">
           <div class="col-md-3">
-            <strong translate>Origin location</strong>
+            <strong translate>Origin Location</strong>
           </div>
           <div class="col-md-7">
             {{ specimen.originLocationInfo.name }}
@@ -99,7 +99,7 @@
       <li class="list-group-item">
         <div class="row">
           <div class="col-md-3">
-            <strong translate>Current location</strong>
+            <strong translate>Current Location</strong>
           </div>
           <div class="col-md-7">
             {{ specimen.locationInfo.name }}

@@ -3,7 +3,7 @@ import { ConcurrencySafeEntity, IConcurrencySafeEntity } from '@app/domain/concu
 import { AnnotationType, IAnnotationType } from '@app/domain/annotations';
 import { ProcessingTypeInputEntity } from './processing-type-input-entity.model';
 import { CollectedSpecimenDefinition } from './collected-specimen-definition.model';
-import { EntityInfo } from '../entity-info.model';
+import { NamedEntityInfo } from '../entity-info.model';
 
 export interface ICollectionEventType
   extends IConcurrencySafeEntity,
@@ -67,4 +67,4 @@ export class CollectionEventType extends ConcurrencySafeEntity implements IColle
 export type IEventTypeInfo = IEntityInfo<ICollectionEventType>;
 
 /* tslint:disable-next-line:max-classes-per-file */
-export class EventTypeInfo extends EntityInfo<CollectionEventType> {}
+export class EventTypeInfo extends NamedEntityInfo<CollectionEventType> {}

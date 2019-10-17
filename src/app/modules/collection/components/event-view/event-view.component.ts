@@ -102,7 +102,7 @@ export class EventViewComponent implements OnInit, OnDestroy {
         const event = entities.events[routeData.event.id];
         const eventType = entities.eventTypes[routeData.event.eventTypeId];
         const specimens = entities.specimens
-          ? entities.specimens.filter(spc => spc.eventId === routeData.event.id)
+          ? entities.specimens.filter(spc => spc.event.id === routeData.event.id)
           : [];
 
         if (eventType === undefined) {

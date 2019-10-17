@@ -20,6 +20,7 @@ import { ModalYesNoComponent } from './components/modal-yes-no/modal-yes-no.comp
 import { ModalComponent } from './components/modal/modal.component';
 import { StudyRemoveModalComponent } from './components/study-remove-modal/study-remove-modal.component';
 import { UserRemoveModalComponent } from './components/user-remove-modal/user-remove-modal.component';
+import { SpecimenViewModalComponent } from './components/specimen-view-modal/specimen-view-modal.component';
 
 @NgModule({
   imports: [
@@ -47,7 +48,8 @@ import { UserRemoveModalComponent } from './components/user-remove-modal/user-re
     UserRemoveModalComponent,
     CentreRemoveModalComponent,
     ModalYesNoComponent,
-    ModalInputDoubleDateComponent
+    ModalInputDoubleDateComponent,
+    SpecimenViewModalComponent
   ],
   exports: [
     ModalComponent,
@@ -63,7 +65,8 @@ import { UserRemoveModalComponent } from './components/user-remove-modal/user-re
     UserRemoveModalComponent,
     CentreRemoveModalComponent,
     ModalYesNoComponent,
-    ModalInputDoubleDateComponent
+    ModalInputDoubleDateComponent,
+    SpecimenViewModalComponent
   ]
 })
 export class ModalInputModule {}

@@ -1,22 +1,24 @@
-import { Component, Input, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, Input, TemplateRef, ViewChild } from '@angular/core';
+import { Shipment, ShipmentSpecimen } from '@app/domain/shipments';
 import { ModalInputOptions } from '@app/modules/modals/models';
 import {
   RootStoreState,
-  ShipmentSpecimenStoreActions,
   ShipmentStoreActions,
-  ShipmentStoreSelectors
+  ShipmentStoreSelectors,
+  ShipmentSpecimenStoreActions,
+  ShipmentSpecimenStoreSelectors
 } from '@app/root-store';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subject } from 'rxjs';
-import { takeUntil, withLatestFrom, filter, tap } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { filter, takeUntil, withLatestFrom } from 'rxjs/operators';
 import { ShipmentStateTransision } from '../../../../core/services/shipment.service';
 import { ModalShipmentHasNoSpecimensComponent } from '../modal-shipment-has-no-specimens/modal-shipment-has-no-specimens.component';
 import { ModalShipmentHasSpecimensComponent } from '../modal-shipment-has-specimens/modal-shipment-has-specimens.component';
 import { ModalShipmentRemoveComponent } from '../modal-shipment-remove/modal-shipment-remove.component';
 import { ShipmentViewerComponent } from '../shipment-viewer/shipment-viewer.component';
-import { Shipment } from '@app/domain/shipments';
+import { Specimen } from '@app/domain/participants';
 
 @Component({
   selector: 'app-shipment-add-items',
@@ -26,11 +28,13 @@ import { Shipment } from '@app/domain/shipments';
 export class ShipmentAddItemsComponent extends ShipmentViewerComponent {
   @ViewChild('packedTimeModal', { static: false }) packedTimeModal: TemplateRef<any>;
   @ViewChild('sentTimeModal', { static: false }) sentTimeModal: TemplateRef<any>;
+  @ViewChild('removeShipmentSpecimenModal', { static: false }) removeShipmentSpecimenModal: TemplateRef<any>;
 
   @Input() shipment: Shipment;
 
   packedTimeModalOptions: ModalInputOptions = { required: true };
   sentTimeModalOptions: ModalInputOptions = { required: true };
+  shipmentSpecimenToRemove: ShipmentSpecimen;
 
   private updatedMessage$ = new Subject<string>();
 
@@ -46,10 +50,11 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent {
     super.ngOnInit();
     this.initOnRemoved();
     this.initOnShipmentModified();
+    this.initOnShipmentSpecimenRemoved();
     this.initErrorSelector();
   }
 
-  remove() {
+  removeShipment() {
     if (this.shipment.specimenCount > 0) {
       this.modalService.open(ModalShipmentHasSpecimensComponent, { size: 'lg' });
       return;
@@ -64,6 +69,19 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent {
           })
         );
         this.updatedMessage$.next('Shipment removed');
+      })
+      .catch(() => undefined);
+  }
+
+  removeShipmentSpecimen(shipmentSpecimen: ShipmentSpecimen) {
+    this.shipmentSpecimenToRemove = shipmentSpecimen;
+    const modal = this.modalService.open(this.removeShipmentSpecimenModal, { size: 'lg' });
+    modal.result
+      .then(() => {
+        this.store$.dispatch(
+          ShipmentSpecimenStoreActions.removeShipmentSpecimenRequest({ shipmentSpecimen })
+        );
+        this.updatedMessage$.next('Specimen Removed');
       })
       .catch(() => undefined);
   }
@@ -139,6 +157,20 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent {
       )
       .subscribe(() => {
         this.toastr.success('The shipment was removed');
+      });
+  }
+
+  private initOnShipmentSpecimenRemoved(): void {
+    this.store$
+      .pipe(
+        select(ShipmentSpecimenStoreSelectors.selectShipmentSpecimenLastRemovedId),
+        withLatestFrom(this.updatedMessage$),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe(([id, message]) => {
+        if (id === this.shipmentSpecimenToRemove.id) {
+          this.toastr.success(message);
+        }
       });
   }
 

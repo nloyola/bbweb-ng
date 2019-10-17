@@ -1,12 +1,5 @@
-import {
-  ConcurrencySafeEntity,
-  HasSlug,
-  IConcurrencySafeEntity,
-  JSONArray,
-  JSONObject,
-  applyMixins
-} from '@app/domain';
-import { Annotation, IAnnotation, HasAnnotations, AnnotationType, AnnotationFactory } from '../annotations';
+import { applyMixins, ConcurrencySafeEntity, HasSlug, IConcurrencySafeEntity, EntityInfo } from '@app/domain';
+import { Annotation, AnnotationFactory, AnnotationType, HasAnnotations, IAnnotation } from '../annotations';
 import { CollectionEventType } from '../studies';
 
 /**
@@ -100,3 +93,18 @@ export class CollectionEvent extends ConcurrencySafeEntity implements ICollectio
 }
 
 applyMixins(CollectionEvent, [HasAnnotations]);
+
+export type IEventInfo = Pick<CollectionEvent, 'id' | 'slug' | 'visitNumber'>;
+
+/* tslint:disable-next-line:max-classes-per-file */
+
+export class EventInfo extends EntityInfo<CollectionEvent> implements IEventInfo {
+  visitNumber: number;
+
+  deserialize(input: IEventInfo): this {
+    const { visitNumber } = input;
+    Object.assign(this, { visitNumber });
+    super.deserialize(input);
+    return this;
+  }
+}

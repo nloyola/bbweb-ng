@@ -106,14 +106,14 @@ describe('SpecimenService', () => {
         expect(id).toEqual(specimen.id);
       });
 
-      const url = `${BASE_URL}/${specimen.eventId}/${specimen.id}/${specimen.version}`;
+      const url = `${BASE_URL}/${specimen.event.id}/${specimen.id}/${specimen.version}`;
       expect(obs).toBeHttpSuccess(httpMock, 'DELETE', url, true);
     });
 
     it('handles an error reply correctly', () => {
       const rawSpecimen = factory.specimen();
       const specimen = new Specimen().deserialize(rawSpecimen);
-      const url = `${BASE_URL}/${specimen.eventId}/${specimen.id}/${specimen.version}`;
+      const url = `${BASE_URL}/${specimen.event.id}/${specimen.id}/${specimen.version}`;
       expect(service.remove(specimen)).toBeHttpError(httpMock, 'DELETE', url, 'expected a specimen object');
     });
   });

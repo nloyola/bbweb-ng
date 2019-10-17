@@ -13,7 +13,14 @@
   <button type="button" class="btn btn-secondary" (click)="onDismiss()" *ngIf="cancelButtonShow" i18n>
     Cancel
   </button>
-  <button type="button" class="btn btn-primary" [disabled]="!modalInputValid" (click)="onConfirm()" i18n>
+  <button
+    type="button"
+    ngbAutoFocus
+    class="btn btn-primary"
+    [disabled]="!modalInputValid"
+    (click)="onConfirm()"
+    i18n
+  >
     OK
   </button>
 </div>

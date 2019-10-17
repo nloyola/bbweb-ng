@@ -65,7 +65,7 @@ export class SpecimenService {
   }
 
   remove(specimen: Specimen): Observable<string> {
-    const url = `${this.BASE_URL}/${specimen.eventId}/${specimen.id}/${specimen.version}`;
+    const url = `${this.BASE_URL}/${specimen.event.id}/${specimen.id}/${specimen.version}`;
     return this.http.delete<ApiReply>(url).pipe(
       map((reply: ApiReply) => {
         if (reply && reply.data) {

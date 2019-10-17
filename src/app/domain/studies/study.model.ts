@@ -5,12 +5,12 @@ import {
   HasName,
   HasSlug,
   IConcurrencySafeEntity,
-  IEntityInfo,
-  IEntityInfoAndState,
-  IEntityInfoSet
+  INamedEntityInfo,
+  IEntityInfoSet,
+  NamedEntityInfo
 } from '@app/domain';
 import { AnnotationType } from '@app/domain/annotations/annotation-type.model';
-import { EntityInfoAndState } from '../entity-info-and-state.model';
+import { EntityInfoAndState, IEntityInfoAndState } from '../entity-info-and-state.model';
 import { StudyState } from './study-state.enum';
 
 /**
@@ -78,11 +78,14 @@ export class Study extends ConcurrencySafeEntity implements IStudy {
   }
 }
 
-export type IStudyInfo = IEntityInfo<IStudy>;
+export type IStudyInfo = INamedEntityInfo<IStudy>;
 
 export type IStudyInfoSet = IEntityInfoSet<IStudy>;
 
 export type IStudyStateInfo = IEntityInfoAndState<IStudy, StudyState>;
+
+/* tslint:disable-next-line:max-classes-per-file */
+export class StudyInfo extends NamedEntityInfo<Study> {}
 
 /* tslint:disable-next-line:max-classes-per-file */
 export class StudyStateInfo extends EntityInfoAndState<Study, StudyState> {}

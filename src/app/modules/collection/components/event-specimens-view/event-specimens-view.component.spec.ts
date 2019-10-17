@@ -2,6 +2,7 @@ import { CUSTOM_ELEMENTS_SCHEMA, SimpleChange } from '@angular/core';
 import { async, ComponentFixture, fakeAsync, flush, TestBed } from '@angular/core/testing';
 import { SortDirection } from '@angular/material';
 import { ModalComponent } from '@app/modules/modals/components/modal/modal.component';
+import { SpecimenViewModalComponent } from '@app/modules/modals/components/specimen-view-modal/specimen-view-modal.component';
 import { RootStoreState, SpecimenStoreActions, SpecimenStoreReducer } from '@app/root-store';
 import { NgrxRuntimeChecks } from '@app/root-store/root-store.module';
 import { LocalTimePipe } from '@app/shared/pipes';
@@ -10,7 +11,6 @@ import { Store, StoreModule } from '@ngrx/store';
 import { EventSpecCommon } from '@test/event-spec-common';
 import { Factory } from '@test/factory';
 import { cold } from 'jasmine-marbles';
-import { SpecimenViewModalComponent } from '../specimen-view-modal/specimen-view-modal.component';
 import { EventSpecimensViewComponent } from './event-specimens-view.component';
 
 describe('EventSpecimensViewComponent', () => {

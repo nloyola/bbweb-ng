@@ -1,4 +1,11 @@
-import { applyMixins, ConcurrencySafeEntity, EntityInfo, HasSlug, IConcurrencySafeEntity } from '@app/domain';
+import {
+  applyMixins,
+  ConcurrencySafeEntity,
+  NamedEntityInfo,
+  HasSlug,
+  IConcurrencySafeEntity,
+  EntityInfo
+} from '@app/domain';
 import {
   Annotation,
   AnnotationType,
@@ -6,7 +13,7 @@ import {
   IAnnotation,
   AnnotationFactory
 } from '@app/domain/annotations';
-import { IStudyInfo, Study } from '@app/domain/studies';
+import { IStudyInfo, Study, StudyInfo } from '@app/domain/studies';
 
 /**
  * The subject for which a set of Specimens were collected from. The subject can be human or
@@ -33,7 +40,7 @@ export interface IParticipant extends IConcurrencySafeEntity, HasSlug {
 export class Participant extends ConcurrencySafeEntity implements IParticipant, HasAnnotations {
   slug: string;
   uniqueId: string;
-  study: EntityInfo<Study>;
+  study: NamedEntityInfo<Study>;
   studyEntity: Study;
 
   annotations: Annotation[];
@@ -51,7 +58,7 @@ export class Participant extends ConcurrencySafeEntity implements IParticipant, 
     const { slug, uniqueId } = input;
     Object.assign(this, { slug, uniqueId });
     super.deserialize(input);
-    this.study = new EntityInfo().deserialize(input.study);
+    this.study = new StudyInfo().deserialize(input.study);
 
     if (input.annotations) {
       this.annotations = input.annotations.map(a => {
@@ -67,3 +74,18 @@ export class Participant extends ConcurrencySafeEntity implements IParticipant, 
 }
 
 applyMixins(Participant, [HasAnnotations]);
+
+export type IParticipantInfo = Pick<Participant, 'id' | 'slug' | 'uniqueId'>;
+
+/* tslint:disable-next-line:max-classes-per-file */
+
+export class ParticipantInfo extends EntityInfo<Participant> implements IParticipantInfo {
+  uniqueId: string;
+
+  deserialize(input: IParticipantInfo): this {
+    const { uniqueId } = input;
+    Object.assign(this, { uniqueId });
+    super.deserialize(input);
+    return this;
+  }
+}

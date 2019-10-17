@@ -1,14 +1,14 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component, Input, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Shipment } from '@app/domain/shipments';
 import { RootStoreState, ShipmentStoreActions, ShipmentStoreSelectors } from '@app/root-store';
+import { faVial } from '@fortawesome/free-solid-svg-icons';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject } from 'rxjs';
 import { filter, map, shareReplay, takeUntil } from 'rxjs/operators';
-import { ModalSpecimensInOtherShipmentComponent } from '../modal-specimens-in-other-shipment/modal-specimens-in-other-shipment.component';
-import { faVial } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-shipment-add-specimens-card',
@@ -16,10 +16,8 @@ import { faVial } from '@fortawesome/free-solid-svg-icons';
   styleUrls: ['./shipment-add-specimens-card.component.scss']
 })
 export class ShipmentAddSpecimensCardComponent implements OnInit, OnDestroy {
-  // @ViewChild('specimensExistModal', { static: false }) specimensExistModal: TemplateRef<any>;
+  @ViewChild('addSpecimenError', { static: false }) addSpecimenError: TemplateRef<any>;
   @Input() shipment: Shipment;
-
-  // specimensExistModalOptions: ModalInputOptions = { required: true };
 
   faVial = faVial;
   isLoading$: Observable<boolean>;
@@ -28,8 +26,8 @@ export class ShipmentAddSpecimensCardComponent implements OnInit, OnDestroy {
   specimenCount: number;
   form: FormGroup;
   inputInventoryIds = [];
-
   existingInventoryIds = [];
+  addErrorMessage = '';
 
   private unsubscribe$: Subject<void> = new Subject<void>();
 
@@ -53,23 +51,27 @@ export class ShipmentAddSpecimensCardComponent implements OnInit, OnDestroy {
         takeUntil(this.unsubscribe$)
       )
       .subscribe(error => {
-        if (error.actionType === ShipmentStoreActions.addSpecimensFailure.type) {
-          const errorMsg = error.error.error.message;
-          if (errorMsg.match(/specimens are already in an active shipment/)) {
-            const splitted = errorMsg.split(':')[2];
-            if (splitted !== undefined) {
-              this.existingInventoryIds = splitted.split(',');
-              const modalRef = this.modalService.open(ModalSpecimensInOtherShipmentComponent);
-              modalRef.componentInstance.specimenIds = this.existingInventoryIds;
-            }
+        if (
+          error.actionType === ShipmentStoreActions.addSpecimensFailure.type &&
+          error.error instanceof HttpErrorResponse
+        ) {
+          const errorMessage = error.error.error.message;
+          const inventoryIds = errorMessage.split(': ');
+
+          if (errorMessage.match(/invalid specimen inventory IDs/)) {
+            this.addErrorMessage = `Inventory IDs not present in the system:<br><b>${inventoryIds[2]}</b>`;
+          } else if (errorMessage.match(/specimens are already in an active shipment/)) {
+            this.addErrorMessage = `Inventory IDs already in this shipment or another shipment:<br><b>${inventoryIds[2]}</b>`;
+          } else if (errorMessage.match(/invalid centre for specimen inventory IDs/)) {
+            this.addErrorMessage = `Inventory IDs at a different location than where shipment is coming from:<br><b>${inventoryIds[2]}</b>`;
           } else {
-            // FIXME: what do we do here?
-            //
-            // also handle:
-            // - invalid inventory id
-            // - inventory id for specimen at a different centre
+            this.addErrorMessage = errorMessage;
           }
+        } else {
+          this.addErrorMessage = JSON.stringify(error);
         }
+
+        this.modalService.open(this.addSpecimenError, { size: 'lg' });
       });
 
     this.shipment$ = this.store$.pipe(

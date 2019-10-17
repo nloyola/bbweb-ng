@@ -6,7 +6,8 @@ import {
   IEntityInfo,
   JSONArray,
   JSONObject,
-  EntityInfo
+  NamedEntityInfo,
+  INamedEntityInfo
 } from '@app/domain';
 import { RoleIds, UserMembership, UserRole } from '@app/domain/access';
 import { UserState } from '@app/domain/users/user-state.enum';
@@ -126,7 +127,7 @@ export class User extends ConcurrencySafeEntity implements IUser {
   }
 }
 
-export type IUserInfo = IEntityInfo<IUser>;
+export type IUserInfo = INamedEntityInfo<IUser>;
 
 /* tslint:disable-next-line:max-classes-per-file */
-export class UserInfo extends EntityInfo<User> {}
+export class UserInfo extends NamedEntityInfo<User> {}

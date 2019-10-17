@@ -1,13 +1,13 @@
 import { Deserializable } from './deserializable.model';
 import { DomainEntity, IDomainEntity } from './domain-entity.model';
-import { EntityInfo, IEntityInfo } from './entity-info.model';
+import { INamedEntityInfo, NamedEntityInfo } from './entity-info.model';
 import { HasName } from './has-name.model';
 import { HasSlug } from './has-slug.model';
 
 export interface IEntityInfoSet<T extends IDomainEntity & HasSlug & HasName> {
   allEntities: boolean;
 
-  entityData: IEntityInfo<T>[];
+  entityData: INamedEntityInfo<T>[];
 }
 
 export class EntityInfoSet<
@@ -16,7 +16,7 @@ export class EntityInfoSet<
 > implements IEntityInfoSet<I>, Deserializable {
   allEntities: boolean;
 
-  entityData: EntityInfo<T>[];
+  entityData: NamedEntityInfo<T>[];
 
   isContentTypeAll(): boolean {
     return this.allEntities;
@@ -35,7 +35,7 @@ export class EntityInfoSet<
     Object.assign(this, { allEntities });
 
     if (entityData) {
-      this.entityData = entityData.map(ed => new EntityInfo().deserialize(ed));
+      this.entityData = entityData.map(ed => new NamedEntityInfo().deserialize(ed));
     }
     return this;
   }

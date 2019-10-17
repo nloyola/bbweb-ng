@@ -1,8 +1,6 @@
-import { props, createAction, union } from '@ngrx/store';
-import { SearchParams, PagedReply } from '@app/domain';
-import { Shipment, ShipmentItemState, ShipmentSpecimen } from '@app/domain/shipments';
-import { ShipmentUpdateAttribute } from '@app/core/services';
-import { Specimen } from '@app/domain/participants';
+import { PagedReply, SearchParams } from '@app/domain';
+import { Shipment, ShipmentSpecimen } from '@app/domain/shipments';
+import { createAction, props, union } from '@ngrx/store';
 
 export const searchShipmentSpecimensRequest = createAction(
   '[ShipmentSpecimen] Search Shipment Specimens Request',

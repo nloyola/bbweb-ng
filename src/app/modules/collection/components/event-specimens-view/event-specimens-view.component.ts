@@ -9,16 +9,16 @@ import {
   ViewChild
 } from '@angular/core';
 import { Sort } from '@angular/material';
-import { PagedReplyInfo } from '@app/domain';
+import { PagedReplyInfo, SearchParams } from '@app/domain';
 import { CollectionEvent, Participant, Specimen } from '@app/domain/participants';
 import { RootStoreState, SpecimenStoreActions, SpecimenStoreSelectors } from '@app/root-store';
-import { DropdownMenuItem } from '@app/shared/components/dropdown-menu/dropdown-menu.component';
 import { faVial } from '@fortawesome/free-solid-svg-icons';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { select, Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
 import { filter, map, shareReplay, takeUntil, tap } from 'rxjs/operators';
-import { SpecimenViewModalComponent } from '../specimen-view-modal/specimen-view-modal.component';
+import { DropdownMenuItem } from '@app/shared/components/dropdown-menu/dropdown-menu.component';
+import { SpecimenViewModalComponent } from '@app/modules/modals/components/specimen-view-modal/specimen-view-modal.component';
 
 // For an example see:
 // https://stackoverflow.com/questions/47871840/angular-material-2-table-server-side-pagination
