@@ -1,11 +1,11 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { ModalInputComponent } from '@app/modules/modals/components/modal-input/modal-input.component';
-import { NgbActiveModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { SpecimenViewModalComponent } from './specimen-view-modal.component';
+import { CollectionEvent, Participant, Specimen } from '@app/domain/participants';
+import { ModalComponent } from '@app/modules/modals/components/modal/modal.component';
 import { YesNoPipe } from '@app/shared/pipes/yes-no-pipe';
+import { NgbActiveModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Factory } from '@test/factory';
-import { Specimen, CollectionEvent, Participant } from '@app/domain/participants';
+import { SpecimenViewModalComponent } from './specimen-view-modal.component';
 
 describe('SpecimenViewModalComponent', () => {
   let component: SpecimenViewModalComponent;
@@ -16,7 +16,7 @@ describe('SpecimenViewModalComponent', () => {
     TestBed.configureTestingModule({
       imports: [NgbModule],
       providers: [NgbActiveModal],
-      declarations: [SpecimenViewModalComponent, ModalInputComponent, YesNoPipe],
+      declarations: [SpecimenViewModalComponent, ModalComponent, YesNoPipe],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
   }));

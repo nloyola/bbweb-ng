@@ -1,7 +1,7 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder } from '@angular/forms';
 import { faCalendar } from '@fortawesome/free-solid-svg-icons';
-import { ModalInputBaseComponent } from '../modal-input-base.component';
+import { ModalInputComponent } from '../modal-input.component';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 
 @Component({
@@ -9,8 +9,7 @@ import { debounceTime, takeUntil } from 'rxjs/operators';
   templateUrl: './modal-input-double-date.component.html',
   styleUrls: ['./modal-input-double-date.component.scss']
 })
-export class ModalInputDoubleDateComponent extends ModalInputBaseComponent<Date>
-  implements OnInit, OnDestroy {
+export class ModalInputDoubleDateComponent extends ModalInputComponent<Date> {
   @Input() label2: string;
   @Input() date1value: Date;
   @Input() date2value: Date;

@@ -3,7 +3,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalInputComponentBehaviour } from '@test/behaviours/modal-input-component.behaviour';
-import { ModalInputComponent } from '../modal-input/modal-input.component';
+import { ModalComponent } from '../modal/modal.component';
 import { ModalInputBooleanComponent } from './modal-input-boolean.component';
 
 describe('ModalInputBooleanComponent', () => {
@@ -13,7 +13,7 @@ describe('ModalInputBooleanComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [FormsModule, ReactiveFormsModule],
-      declarations: [ModalInputComponent, ModalInputBooleanComponent]
+      declarations: [ModalComponent, ModalInputBooleanComponent]
     }).compileComponents();
   }));
 

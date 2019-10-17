@@ -1,11 +1,10 @@
-import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
-  selector: 'app-modal-input',
-  templateUrl: './modal-input.component.html',
-  styleUrls: ['./modal-input.component.scss']
+  selector: 'app-modal',
+  templateUrl: './modal.component.html'
 })
-export class ModalInputComponent {
+export class ModalComponent {
   @Input() modalInputValid = true;
   @Input() cancelButtonShow = true;
 

@@ -3,7 +3,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { ModalInputComponentBehaviour } from '@test/behaviours/modal-input-component.behaviour';
 import * as faker from 'faker';
-import { ModalInputComponent } from '../modal-input/modal-input.component';
+import { ModalComponent } from '../modal/modal.component';
 import { ModalInputEmailComponent } from './modal-input-email.component';
 
 describe('ModalInputEmailComponent', () => {
@@ -13,7 +13,7 @@ describe('ModalInputEmailComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [FormsModule, ReactiveFormsModule],
-      declarations: [ModalInputComponent, ModalInputEmailComponent]
+      declarations: [ModalComponent, ModalInputEmailComponent]
     }).compileComponents();
   }));
 

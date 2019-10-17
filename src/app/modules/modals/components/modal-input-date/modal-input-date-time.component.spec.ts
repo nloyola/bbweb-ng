@@ -1,12 +1,12 @@
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ModalInputComponent } from '../modal-input/modal-input.component';
-import { ModalInputDateTimeComponent } from './modal-input-date-time.component';
-import { OwlNativeDateTimeModule, OwlDateTimeModule } from 'ng-pick-datetime';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import * as faker from 'faker';
 import { By } from '@angular/platform-browser';
 import { ModalInputComponentBehaviour } from '@test/behaviours/modal-input-component.behaviour';
+import * as faker from 'faker';
+import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
+import { ModalComponent } from '../modal/modal.component';
+import { ModalInputDateTimeComponent } from './modal-input-date-time.component';
 
 describe('ModalInputDateTimeComponent', () => {
   let component: ModalInputDateTimeComponent;
@@ -15,7 +15,7 @@ describe('ModalInputDateTimeComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [FormsModule, ReactiveFormsModule, OwlDateTimeModule, OwlNativeDateTimeModule],
-      declarations: [ModalInputComponent, ModalInputDateTimeComponent],
+      declarations: [ModalComponent, ModalInputDateTimeComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
   }));

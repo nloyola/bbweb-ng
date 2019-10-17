@@ -1,4 +1,4 @@
-<app-modal-input [modalInputValid]="modalInputValid$ | async" (confirm)="confirm()" (dismiss)="dismiss()">
+<app-modal [modalInputValid]="modalInputValid$ | async" (confirm)="confirm()" (dismiss)="dismiss()">
   <span class="title">
     <span i18n>Update</span>
     <span class="ml-1">{{ annotation.label }}</span>
@@ -6,4 +6,4 @@
   <form class="body form-horizontal" [formGroup]="form" autocomplete="on" novalidate>
     <app-annotations-add-subform [annotationsGroup]="annotationsGroup"> </app-annotations-add-subform>
   </form>
-</app-modal-input>
+</app-modal>

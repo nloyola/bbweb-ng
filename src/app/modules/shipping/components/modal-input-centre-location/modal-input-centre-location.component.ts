@@ -1,7 +1,7 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CentreLocationInfo } from '@app/domain/centres';
-import { ModalInputBaseComponent } from '@app/modules/modals/components/modal-input-base.component';
+import { ModalInputComponent } from '@app/modules/modals/components/modal-input.component';
 import { RootStoreState } from '@app/root-store';
 import { CentreLocationSelectTypeahead } from '@app/shared/typeaheads/centre-loction-select-typeahead';
 import { Store } from '@ngrx/store';
@@ -11,7 +11,7 @@ import { takeUntil } from 'rxjs/operators';
   templateUrl: './modal-input-centre-location.component.html',
   styleUrls: ['./modal-input-centre-location.component.scss']
 })
-export class ModalInputCentreLocationComponent extends ModalInputBaseComponent<CentreLocationInfo>
+export class ModalInputCentreLocationComponent extends ModalInputComponent<CentreLocationInfo>
   implements OnInit, OnDestroy {
   @Input() locationIdToFilterOut: string;
 

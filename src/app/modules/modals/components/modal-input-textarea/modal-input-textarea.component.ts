@@ -1,14 +1,14 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
-import { ModalInputTextComponent } from '@app/modules/modals/components/modal-input-text/modal-input-text.component';
-import { ModalInputTextareaOptions, ModalInputTextOptions } from '../../models';
+import { Component, Input } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { ModalInputTextComponent } from '@app/modules/modals/components/modal-input-text/modal-input-text.component';
+import { ModalInputTextareaOptions } from '../../models';
 
 @Component({
   selector: 'app-modal-input-textarea',
   templateUrl: './modal-input-textarea.component.html',
   styleUrls: ['./modal-input-textarea.component.scss']
 })
-export class ModalInputTextareaComponent extends ModalInputTextComponent implements OnInit, OnDestroy {
+export class ModalInputTextareaComponent extends ModalInputTextComponent {
   @Input() options: ModalInputTextareaOptions;
 
   constructor(formBuilder: FormBuilder) {

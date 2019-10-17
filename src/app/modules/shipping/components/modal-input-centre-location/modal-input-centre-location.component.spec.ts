@@ -1,7 +1,6 @@
 import { CUSTOM_ELEMENTS_SCHEMA, DebugElement } from '@angular/core';
 import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { ModalInputComponent } from '@app/modules/modals/components/modal-input/modal-input.component';
 import { CentreStoreReducer, NgrxRuntimeChecks, CentreStoreActions, RootStoreState } from '@app/root-store';
 import { NgbModule, NgbTypeaheadModule, NgbTypeaheadSelectItemEvent } from '@ng-bootstrap/ng-bootstrap';
 import { By } from '@angular/platform-browser';
@@ -15,6 +14,7 @@ import { Centre } from '@app/domain/centres';
 import { Factory } from '@test/factory';
 import { LocationFixture } from '@test/fixtures';
 import { CentreLocationsSearchReply } from '@app/core/services';
+import { ModalComponent } from '@app/modules/modals/components/modal/modal.component';
 
 describe('ModalInputCentreLocationComponent', () => {
   let component: ModalInputCentreLocationComponent;
@@ -33,7 +33,7 @@ describe('ModalInputCentreLocationComponent', () => {
         ReactiveFormsModule,
         StoreModule.forRoot({ centre: CentreStoreReducer.reducer }, NgrxRuntimeChecks)
       ],
-      declarations: [ModalInputCentreLocationComponent, ModalInputComponent],
+      declarations: [ModalInputCentreLocationComponent, ModalComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
   }));

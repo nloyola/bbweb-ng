@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { NgbActiveModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { UserRemoveModalComponent } from './user-remove-modal.component';
-import { ModalInputComponent } from '../modal-input/modal-input.component';
+import { ModalComponent } from '../modal/modal.component';
 import { Factory } from '@test/factory';
 import { User } from '@app/domain/users';
 
@@ -14,7 +14,7 @@ describe('RoleUserRemoveComponent', () => {
     TestBed.configureTestingModule({
       imports: [NgbModule],
       providers: [NgbActiveModal],
-      declarations: [UserRemoveModalComponent, ModalInputComponent]
+      declarations: [UserRemoveModalComponent, ModalComponent]
     }).compileComponents();
   }));
 

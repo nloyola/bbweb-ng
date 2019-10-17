@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ModalInputComponent } from '../modal-input/modal-input.component';
+import { ModalComponent } from '../modal/modal.component';
 import { ModalInputUrlComponent } from './modal-input-url.component';
 import { By } from '@angular/platform-browser';
 import * as faker from 'faker';
@@ -13,7 +13,7 @@ describe('ModalInputUrlComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [FormsModule, ReactiveFormsModule],
-      declarations: [ModalInputUrlComponent, ModalInputComponent]
+      declarations: [ModalInputUrlComponent, ModalComponent]
     }).compileComponents();
   }));
 

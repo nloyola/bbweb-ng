@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { ModalComponent } from '@app/modules/modals/components/modal.component';
+import { ModalComponent } from '@app/modules/modals/components/modal/modal.component';
 import { ShipmentStateTransision } from '@app/core/services';
 
 @Component({
@@ -8,12 +8,9 @@ import { ShipmentStateTransision } from '@app/core/services';
   templateUrl: './modal-shipment-has-no-specimens.component.html',
   styleUrls: ['./modal-shipment-has-no-specimens.component.scss']
 })
-export class ModalShipmentHasNoSpecimensComponent extends ModalComponent implements OnInit {
+export class ModalShipmentHasNoSpecimensComponent implements OnInit {
+  @Input() modal: NgbActiveModal;
   @Input() transition: ShipmentStateTransision.Packed | ShipmentStateTransision.SkipToSent;
-
-  constructor(modal: NgbActiveModal) {
-    super(modal);
-  }
 
   ngOnInit() {}
 

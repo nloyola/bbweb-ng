@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ModalInputTextComponent } from './modal-input-text.component';
-import { ModalInputComponent } from '../modal-input/modal-input.component';
+import { ModalComponent } from '../modal/modal.component';
 import { By } from '@angular/platform-browser';
 import * as faker from 'faker';
 import { ModalInputComponentBehaviour } from '@test/behaviours/modal-input-component.behaviour';
@@ -13,7 +13,7 @@ describe('ModalInputTextComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [FormsModule, ReactiveFormsModule],
-      declarations: [ModalInputComponent, ModalInputTextComponent]
+      declarations: [ModalComponent, ModalInputTextComponent]
     }).compileComponents();
   }));
 
