@@ -1,13 +1,11 @@
 import {
   ConcurrencySafeEntity,
-  EntityInfo,
   HasDescription,
   HasName,
   HasSlug,
   IConcurrencySafeEntity,
-  IEntityInfo,
-  JSONArray,
-  JSONObject
+  NamedEntityInfo,
+  INamedEntityInfo
 } from '@app/domain';
 
 export interface IAccessItem extends IConcurrencySafeEntity, HasSlug, HasName, HasDescription {
@@ -22,7 +20,7 @@ export interface IAccessItem extends IConcurrencySafeEntity, HasSlug, HasName, H
   childData: IAccessItemInfo[];
 }
 
-export type IAccessItemInfo = IEntityInfo<IAccessItem>;
+export type IAccessItemInfo = INamedEntityInfo<IAccessItem>;
 
 export abstract class AccessItem extends ConcurrencySafeEntity implements IAccessItem {
   slug: string;
@@ -41,10 +39,10 @@ export abstract class AccessItem extends ConcurrencySafeEntity implements IAcces
     }
 
     if (input.parentData) {
-      this.parentData = input.parentData.map(pd => new EntityInfo().deserialize(pd));
+      this.parentData = input.parentData.map(pd => new NamedEntityInfo().deserialize(pd));
     }
     if (input.childData) {
-      this.childData = input.childData.map(cd => new EntityInfo().deserialize(cd));
+      this.childData = input.childData.map(cd => new NamedEntityInfo().deserialize(cd));
     }
     return this;
   }

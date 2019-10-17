@@ -1,7 +1,11 @@
-import { ConcurrencySafeEntity, HasSlug, IConcurrencySafeEntity, JSONArray, JSONObject } from '@app/domain';
+import { ConcurrencySafeEntity, HasSlug, IConcurrencySafeEntity } from '@app/domain';
+import { CentreLocationInfo, ICentreLocationInfo } from '../centres';
+import { NamedEntityInfo } from '../entity-info.model';
+import { CollectionEventType, EventTypeInfo } from '../studies/collection-event-type.model';
+import { EventInfo } from './collection-event.model';
+import { ParticipantInfo } from './participant.model';
 import { SpecimenState } from './specimen-state.enum';
-import { ICentreLocationInfo, CentreLocationInfo } from '../centres';
-import { SpecimenDefinition, CollectedSpecimenDefinition } from '../studies';
+import { StudyInfo, CollectedSpecimenDefinition, SpecimenDefinition } from '../studies';
 
 export interface ISpecimen extends IConcurrencySafeEntity, HasSlug {
   /**
@@ -13,7 +17,7 @@ export interface ISpecimen extends IConcurrencySafeEntity, HasSlug {
    * The ID corresponding to the the {@link domain.studies.CollectionEvent CollectionEvent} this specimen
    * belongs to.
    */
-  eventId: string;
+  event: EventInfo;
 
   /**
    * The ID corresponding to the the {@link domain.studies.CollectionSpecimenDefinition
@@ -77,15 +81,25 @@ export interface ISpecimen extends IConcurrencySafeEntity, HasSlug {
   state: SpecimenState;
 
   /**
-   * The name of the event type this specimen belongs to.
+   * The collection event type this specimen belongs to.
    */
-  eventTypeName: string;
+  eventType: EventTypeInfo;
+
+  /**
+   * The study this specimen belongs to.
+   */
+  study: StudyInfo;
+
+  /**
+   * The participant this specimen belongs to.
+   */
+  participant: ParticipantInfo;
 }
 
 export class Specimen extends ConcurrencySafeEntity implements ISpecimen {
   slug: string;
   inventoryId: string;
-  eventId: string;
+  event: EventInfo;
   specimenDefinitionId: string;
   specimenDefinitionName?: string;
   specimenDefinitionUnits?: string;
@@ -97,7 +111,9 @@ export class Specimen extends ConcurrencySafeEntity implements ISpecimen {
   amount: number;
   isDefaultAmount?: boolean;
   state: SpecimenState;
-  eventTypeName: string;
+  eventType: NamedEntityInfo<CollectionEventType>;
+  study: StudyInfo;
+  participant: ParticipantInfo;
   _specimenDefinition: SpecimenDefinition;
 
   /**
@@ -130,24 +146,20 @@ export class Specimen extends ConcurrencySafeEntity implements ISpecimen {
     const {
       slug,
       inventoryId,
-      eventId,
       specimenDefinitionId,
       specimenDefinitionName,
       specimenDefinitionUnits,
       amount,
-      state,
-      eventTypeName
+      state
     } = input;
     Object.assign(this, {
       slug,
       inventoryId,
-      eventId,
       specimenDefinitionId,
       specimenDefinitionName,
       specimenDefinitionUnits,
       amount,
-      state,
-      eventTypeName
+      state
     });
     super.deserialize(input);
 
@@ -155,9 +167,9 @@ export class Specimen extends ConcurrencySafeEntity implements ISpecimen {
       this.timeCreated = new Date(input.timeCreated);
     }
 
-    const { collectionEventId } = input as any;
-    if (collectionEventId !== undefined) {
-      this.eventId = collectionEventId;
+    const { collectionEvent } = input as any;
+    if (collectionEvent !== undefined) {
+      this.event = new EventInfo().deserialize(collectionEvent);
     }
 
     if (input.originLocationInfo) {
@@ -166,6 +178,18 @@ export class Specimen extends ConcurrencySafeEntity implements ISpecimen {
 
     if (input.locationInfo) {
       this.locationInfo = new CentreLocationInfo().deserialize(input.locationInfo);
+    }
+
+    if (input.eventType !== undefined) {
+      this.eventType = new EventTypeInfo().deserialize(input.eventType);
+    }
+
+    if (input.study !== undefined) {
+      this.study = new StudyInfo().deserialize(input.study);
+    }
+
+    if (input.participant !== undefined) {
+      this.participant = new ParticipantInfo().deserialize(input.participant);
     }
 
     return this;

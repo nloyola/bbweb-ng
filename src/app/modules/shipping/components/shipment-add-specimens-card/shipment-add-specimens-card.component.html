@@ -47,3 +47,19 @@
     </div>
   </div>
 </div>
+
+<ng-template #addSpecimenError let-modal>
+  <app-modal [cancelButtonShow]="false" (confirm)="modal.close()">
+    <span class="title" i18n>Specimens cannot be added to this Shipment</span>
+    <div class="body alert alert-warning" role="alert">
+      <div class="row vertical-align">
+        <div class="col-md-1 text-center">
+          <mat-icon>warning</mat-icon>
+        </div>
+        <div class="col-md-11">
+          <span [innerHTML]="addErrorMessage"></span>
+        </div>
+      </div>
+    </div>
+  </app-modal>
+</ng-template>

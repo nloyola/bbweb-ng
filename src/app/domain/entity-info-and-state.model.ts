@@ -1,13 +1,14 @@
 import { IDomainEntity } from './domain-entity.model';
-import { EntityInfo, IEntityInfo } from './entity-info.model';
+import { INamedEntityInfo, NamedEntityInfo } from './entity-info.model';
 import { HasName } from './has-name.model';
 import { HasSlug } from './has-slug.model';
 
-export interface IEntityInfoAndState<T extends IDomainEntity & HasSlug & HasName, S> extends IEntityInfo<T> {
+export interface IEntityInfoAndState<T extends IDomainEntity & HasSlug & HasName, S>
+  extends INamedEntityInfo<T> {
   state: S;
 }
 
-export class EntityInfoAndState<T extends IDomainEntity & HasSlug & HasName, S> extends EntityInfo<T>
+export class EntityInfoAndState<T extends IDomainEntity & HasSlug & HasName, S> extends NamedEntityInfo<T>
   implements IEntityInfoAndState<T, S> {
   state: S;
 

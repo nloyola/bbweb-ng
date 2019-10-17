@@ -180,7 +180,7 @@
     [label]="'Source Location'"
     [value]="shipment.origin"
     [options]="updateLocationInfoModalOptions"
-    [locationIdToFilterOut]="shipment.destination.locationId"
+    [locationIdToFilterOut]="shipment.destination.location.id"
     (onConfirm)="confirm($event)"
   >
   </app-modal-input-centre-location>
@@ -193,7 +193,7 @@
     [label]="'Destination Location'"
     [value]="shipment.destination"
     [options]="updateLocationInfoModalOptions"
-    [locationIdToFilterOut]="shipment.origin.locationId"
+    [locationIdToFilterOut]="shipment.origin.location.id"
     (onConfirm)="confirm($event)"
   >
   </app-modal-input-centre-location>

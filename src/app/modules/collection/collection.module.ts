@@ -20,7 +20,6 @@ import { ParticipantViewPageComponent } from './components/participant-view-page
 import { EventAddSelectComponent } from './components/event-add-select/event-add-select.component';
 import { EventViewComponent } from './components/event-view/event-view.component';
 import { EventSpecimensViewComponent } from './components/event-specimens-view/event-specimens-view.component';
-import { SpecimenViewModalComponent } from './components/specimen-view-modal/specimen-view-modal.component';
 import { MatSortModule, MatTableModule } from '@angular/material';
 
 @NgModule({
@@ -51,9 +50,7 @@ import { MatSortModule, MatTableModule } from '@angular/material';
     ModalInputAnnotationComponent,
     EventAddSelectComponent,
     EventViewComponent,
-    EventSpecimensViewComponent,
-    SpecimenViewModalComponent
-  ],
-  entryComponents: [SpecimenViewModalComponent]
+    EventSpecimensViewComponent
+  ]
 })
 export class CollectionModule {}

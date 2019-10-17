@@ -31,6 +31,8 @@ import { ShippingRoutingModule } from './shipping-routing.module';
 import { ShipmentViewComponent } from './components/shipment-view/shipment-view.component';
 import { ModalSpecimensInOtherShipmentComponent } from './components/modal-specimens-in-other-shipment/modal-specimens-in-other-shipment.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { ShipmentSpecimensTableContainerComponent } from './components/shipment-specimens-table/shipment-specimens-table.container';
+import { SpecimenViewModalComponent } from '../modals/components/specimen-view-modal/specimen-view-modal.component';
 
 @NgModule({
   imports: [
@@ -66,6 +68,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     ShipmentPageButtonsComponent,
     ShipmentPageButtonsComponent,
     ShipmentSpecimensTableComponent,
+    ShipmentSpecimensTableContainerComponent,
     ShipmentViewComponent,
     ShipmentViewPackedComponent,
     ShipmentViewSentComponent,
@@ -82,7 +85,8 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     ModalShipmentHasSpecimensComponent,
     ModalShipmentRemoveComponent,
     ModalShipmentTagAsLostComponent,
-    ModalSpecimensInOtherShipmentComponent
+    ModalSpecimensInOtherShipmentComponent,
+    SpecimenViewModalComponent
   ]
 })
 export class ShippingModule {}

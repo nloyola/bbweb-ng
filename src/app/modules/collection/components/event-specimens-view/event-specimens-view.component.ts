@@ -17,8 +17,8 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { select, Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
 import { filter, map, shareReplay, takeUntil, tap } from 'rxjs/operators';
-import { SpecimenViewModalComponent } from '../specimen-view-modal/specimen-view-modal.component';
 import { DropdownMenuItem } from '@app/shared/components/dropdown-menu/dropdown-menu.component';
+import { SpecimenViewModalComponent } from '@app/modules/modals/components/specimen-view-modal/specimen-view-modal.component';
 
 // For an example see:
 // https://stackoverflow.com/questions/47871840/angular-material-2-table-server-side-pagination
@@ -103,8 +103,6 @@ export class EventSpecimensViewComponent implements OnInit, OnChanges {
   viewSpecimen(specimen: Specimen) {
     const modalRef = this.modalService.open(SpecimenViewModalComponent, { size: 'lg' });
     modalRef.componentInstance.specimen = specimen;
-    modalRef.componentInstance.event = this.event;
-    modalRef.componentInstance.participant = this.participant;
   }
 
   removeSpecimen(specimen: Specimen) {

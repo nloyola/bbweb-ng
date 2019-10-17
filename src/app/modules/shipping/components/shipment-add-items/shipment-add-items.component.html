@@ -19,11 +19,16 @@
     </div>
   </div>
 
-  <app-shipment-information-card [shipment]="shipment" (onRemove)="remove()"> </app-shipment-information-card>
+  <app-shipment-information-card [shipment]="shipment" (onRemove)="removeShipment()">
+  </app-shipment-information-card>
 
   <app-shipment-add-specimens-card [shipment]="shipment"></app-shipment-add-specimens-card>
 
-  <app-shipment-specimens-table [shipment]="shipment"></app-shipment-specimens-table>
+  <app-shipment-specimens-table
+    [shipment]="shipment"
+    [readOnly]="false"
+    (onRemove)="removeShipmentSpecimen($event)"
+  ></app-shipment-specimens-table>
 </div>
 
 <ng-template #packedTimeModal let-modal>
@@ -50,4 +55,16 @@
     [modal]="modal"
   >
   </app-modal-input-double-date>
+</ng-template>
+
+<ng-template #removeShipmentSpecimenModal let-modal>
+  <app-modal (confirm)="modal.close()" (dismiss)="modal.dismiss()">
+    <div class="title" i18n>
+      Remove Specimen from this Shipment
+    </div>
+    <div class="body" i18n>
+      Are you sure you want to remove the Specimen with Inventory ID
+      <b>{{ shipmentSpecimenToRemove.specimen.inventoryId }}</b> from the shipment?
+    </div>
+  </app-modal>
 </ng-template>

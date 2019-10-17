@@ -1,5 +1,5 @@
 import { AccessItem, IAccessItem } from './access-item.model';
-import { EntityInfo, JSONObject, JSONArray } from '@app/domain';
+import { NamedEntityInfo, JSONObject, JSONArray } from '@app/domain';
 import { IUserInfo } from '@app/domain/users';
 
 export interface IRole extends IAccessItem {
@@ -15,7 +15,7 @@ export class Role extends AccessItem implements IRole {
   deserialize(input: IRole): this {
     super.deserialize(input);
     if (input.userData) {
-      this.userData = input.userData.map(ui => new EntityInfo().deserialize(ui));
+      this.userData = input.userData.map(ui => new NamedEntityInfo().deserialize(ui));
     }
     return this;
   }

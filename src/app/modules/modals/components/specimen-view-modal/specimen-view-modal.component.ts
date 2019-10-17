@@ -9,8 +9,6 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 })
 export class SpecimenViewModalComponent {
   @Input() specimen: Specimen;
-  @Input() event: CollectionEvent;
-  @Input() participant: Participant;
 
   cancelButtonShow = false;
 
