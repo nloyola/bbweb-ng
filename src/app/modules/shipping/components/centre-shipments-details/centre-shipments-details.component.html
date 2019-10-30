@@ -3,6 +3,7 @@
   [mode]="mode"
   [numPages]="maxPages$ | async"
   [totalShipments]="totalShipments$ | async"
+  [loading]="isLoading$ | async"
   (sortBy)="sortBy($event)"
   (filterByCourierName)="filterByCourierName($event)"
   (filterByTrackingNumber)="filterByTrackingNumber($event)"

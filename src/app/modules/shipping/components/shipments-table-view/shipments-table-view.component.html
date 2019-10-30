@@ -80,6 +80,16 @@
       <th></th>
     </tr>
 
+    <tr *ngIf="loading">
+      <td colspan="6">
+        <div class="alert alert-warning" role="alert">
+          <app-spinner name="shipments" [show]="loading" i18n>
+            Loading...
+          </app-spinner>
+        </div>
+      </td>
+    </tr>
+
     <tr *ngFor="let shipment of shipments">
       <td>
         <small>{{ shipment.courierName }}</small>
@@ -101,7 +111,7 @@
         </app-dropdown-menu>
       </td>
     </tr>
-    <tr *ngIf="shipments.length <= 0">
+    <tr *ngIf="!loading && shipments.length <= 0">
       <td colspan="6">
         <div class="alert alert-warning">
           <span i18n>No shipments found.</span>

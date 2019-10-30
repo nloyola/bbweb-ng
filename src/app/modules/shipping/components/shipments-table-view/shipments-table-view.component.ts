@@ -18,6 +18,7 @@ export class ShipmentsTableViewComponent implements OnInit, OnDestroy {
   @Input() shipments: Shipment[];
   @Input() numPages: number;
   @Input() totalShipments: number;
+  @Input() loading: boolean;
 
   @Output() sortBy = new EventEmitter<string>();
   @Output() filterByCourierName = new EventEmitter<string>();

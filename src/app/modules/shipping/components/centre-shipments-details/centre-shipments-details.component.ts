@@ -10,8 +10,8 @@ import { RootStoreState, ShipmentStoreActions, ShipmentStoreSelectors } from '@a
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subject } from 'rxjs';
-import { filter, map, shareReplay, takeUntil, withLatestFrom } from 'rxjs/operators';
+import { Observable, Subject, BehaviorSubject } from 'rxjs';
+import { filter, map, shareReplay, takeUntil, withLatestFrom, tap } from 'rxjs/operators';
 import { ModalShipmentHasSpecimensComponent } from '../modal-shipment-has-specimens/modal-shipment-has-specimens.component';
 import { ModalShipmentRemoveComponent } from '../modal-shipment-remove/modal-shipment-remove.component';
 
@@ -40,6 +40,8 @@ export class CentreShipmentsDetailsComponent implements OnInit, OnDestroy {
   maxPages$: Observable<number>;
   totalShipments$: Observable<number>;
   shipments$: Observable<Shipment[]>;
+  isLoading$ = new BehaviorSubject<boolean>(true);
+
   sortField: string;
   currentPage: number = 1;
   courierNameFilter = new CourierNameFilter();
@@ -66,21 +68,28 @@ export class CentreShipmentsDetailsComponent implements OnInit, OnDestroy {
 
     this.pageInfo$ = this.store$.pipe(
       select(ShipmentStoreSelectors.selectShipmentSearchRepliesAndEntities),
-      filter(x => x !== undefined),
       takeUntil(this.unsubscribe$),
       shareReplay()
     );
 
     this.shipments$ = this.pageInfo$.pipe(
-      map(info =>
-        info.entities
+      tap(info => {
+        if (info !== undefined) {
+          this.isLoading$.next(false);
+        }
+      }),
+      map(info => {
+        if (info === undefined) {
+          return [];
+        }
+        return info.entities
           .filter((s: any) => s !== undefined)
-          .map((s: any) => (s instanceof Shipment ? s : new Shipment().deserialize(s)))
-      )
+          .map((s: any) => (s instanceof Shipment ? s : new Shipment().deserialize(s)));
+      })
     );
 
-    this.maxPages$ = this.pageInfo$.pipe(map(info => info.maxPages));
-    this.totalShipments$ = this.pageInfo$.pipe(map(info => info.total));
+    this.maxPages$ = this.pageInfo$.pipe(map(info => (info ? info.maxPages : 0)));
+    this.totalShipments$ = this.pageInfo$.pipe(map(info => (info ? info.total : 0)));
 
     this.stateFilterInit();
     this.updateShipments();
@@ -191,6 +200,7 @@ export class CentreShipmentsDetailsComponent implements OnInit, OnDestroy {
       page: this.currentPage
     };
     this.store$.dispatch(ShipmentStoreActions.searchShipmentsRequest({ searchParams }));
+    this.isLoading$.next(true);
   }
 
   private determineMode(): CentreShipmentsViewMode {
