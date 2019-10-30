@@ -15,18 +15,13 @@ import { filter, takeUntil, tap, shareReplay, map } from 'rxjs/operators';
   styleUrls: ['./roles-view.component.scss']
 })
 export class RolesViewComponent implements OnInit, OnDestroy {
-  isCountsLoading$: Observable<boolean>;
   isLoading$: Observable<boolean>;
-  hasLoaded$: Observable<boolean>;
-
   rolesLimit = 5;
-
   sortField: string;
   stateData: EntityStateInfo[];
   sortChoices: LabelledId[];
 
   currentPage = 1;
-  roleToAdd: any;
   totalRoles$: Observable<number>;
   maxPages$: Observable<number>;
   roles$: Observable<Role[]>;

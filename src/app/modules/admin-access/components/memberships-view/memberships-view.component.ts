@@ -7,7 +7,7 @@ import { RootStoreState } from '@app/root-store';
 import { MembershipStoreActions, MembershipStoreSelectors } from '@app/root-store/membership';
 import { select, Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, map } from 'rxjs/operators';
 import { DropdownMenuItem } from '@app/shared/components/dropdown-menu/dropdown-menu.component';
 
 @Component({
@@ -16,16 +16,19 @@ import { DropdownMenuItem } from '@app/shared/components/dropdown-menu/dropdown-
   styleUrls: ['./memberships-view.component.scss']
 })
 export class MembershipsViewComponent implements OnInit, OnDestroy {
-  isCountsLoading$: Observable<boolean>;
   isLoading$: Observable<boolean>;
-  hasLoaded$: Observable<boolean>;
-  membershipPageInfo$: Observable<PagedReplyInfo<Membership>>;
+
   membershipsLimit = 5;
   sortField: string;
   stateData: EntityStateInfo[];
   currentPage = 1;
-  membershipToAdd: any;
   menuItems: DropdownMenuItem[];
+
+  totalMemberships$: Observable<number>;
+  maxPages$: Observable<number>;
+  memberships$: Observable<Membership[]>;
+  hasNoEntitiesToDisplay$: Observable<boolean>;
+  hasNoResultsToDisplay$: Observable<boolean>;
 
   private filters: { [name: string]: SearchFilter };
   private unsubscribe$: Subject<void> = new Subject<void>();
@@ -46,10 +49,16 @@ export class MembershipsViewComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.isLoading$ = this.store$.pipe(select(MembershipStoreSelectors.selectMembershipSearchActive));
 
-    this.membershipPageInfo$ = this.store$.pipe(
+    const pageInfo$ = this.store$.pipe(
       select(MembershipStoreSelectors.selectMembershipSearchRepliesAndEntities),
       takeUntil(this.unsubscribe$)
     );
+
+    this.totalMemberships$ = pageInfo$.pipe(map(info => (info ? info.total : 0)));
+    this.maxPages$ = pageInfo$.pipe(map(info => (info ? info.maxPages : 0)));
+    this.memberships$ = pageInfo$.pipe(map(info => (info ? info.entities : [])));
+    this.hasNoEntitiesToDisplay$ = pageInfo$.pipe(map(info => (info ? info.hasNoEntitiesToDisplay : false)));
+    this.hasNoResultsToDisplay$ = pageInfo$.pipe(map(info => (info ? info.hasNoResultsToDisplay : false)));
 
     this.applySearchParams();
   }
