@@ -1,49 +1,49 @@
 <app-entity-filters class="mb-2" [useNameFilter]="true" (filters)="onFiltersUpdated($event)">
 </app-entity-filters>
 
-<ng-container *ngIf="rolePageInfo$ | async; let rolePageInfo">
-  <div class="row">
-    <div class="col-sm-12 mt-2">
-      <div class="card">
-        <div class="card-header bg-default">
-          <mat-icon class="warning-icon">settings</mat-icon>
-          {{ rolePageInfo.total }} <span i18n>Roles</span>
-        </div>
+<div class="row">
+  <div class="col-sm-12 mt-2">
+    <div class="card">
+      <div class="card-header bg-default">
+        <mat-icon class="warning-icon">settings</mat-icon>
+        <span class="mr-1" i18n>Roles</span>
+      </div>
 
-        <div class="card-body" *ngIf="isLoading$ | async">
-          <div class="card-text">
-            <div class="alert alert-warning" role="alert">
-              <app-spinner name="studies" [show]="isLoading$ | async" i18n>
-                Loading...
-              </app-spinner>
-            </div>
+      <div class="card-body" *ngIf="isLoading$ | async">
+        <div class="card-text">
+          <div class="alert alert-warning" role="alert">
+            <app-spinner name="studies" [show]="isLoading$ | async" i18n>
+              Loading...
+            </app-spinner>
           </div>
         </div>
+      </div>
 
-        <div class="card-body" *ngIf="rolePageInfo.hasNoEntitiesToDisplay">
-          <div class="card-text">
-            <div class="alert alert-warning" role="alert">
-              <mat-icon>warning</mat-icon>
-              <ng-container i18n>
-                No roles have been added yet.
-              </ng-container>
-            </div>
+      <div class="card-body" *ngIf="hasNoEntitiesToDisplay$ | async">
+        <div class="card-text">
+          <div class="alert alert-warning" role="alert">
+            <mat-icon>warning</mat-icon>
+            <ng-container i18n>
+              No roles have been added yet.
+            </ng-container>
           </div>
         </div>
+      </div>
 
-        <div class="card-body" *ngIf="rolePageInfo.hasNoResultsToDisplay">
-          <div class="card-text">
-            <div class="alert alert-warning" role="alert">
-              <mat-icon>warning</mat-icon>
-              <ng-container i18n>
-                There are no roles that match your criteria.
-              </ng-container>
-            </div>
+      <div class="card-body" *ngIf="hasNoResultsToDisplay$ | async">
+        <div class="card-text">
+          <div class="alert alert-warning" role="alert">
+            <mat-icon>warning</mat-icon>
+            <ng-container i18n>
+              There are no roles that match your criteria.
+            </ng-container>
           </div>
         </div>
+      </div>
 
+      <ng-container *ngIf="roles$ | async; let roles">
         <ul class="list-group list-group-flush">
-          <li class="list-group-item" *ngFor="let role of rolePageInfo.entities">
+          <li class="list-group-item" *ngFor="let role of roles">
             <div class="row">
               <div class="col-md-12">
                 <a [routerLink]="['/admin/access/roles', role.slug]">
@@ -71,22 +71,22 @@
             </div>
           </li>
         </ul>
+      </ng-container>
 
-        <div class="card-footer" *ngIf="rolePageInfo.hasResultsToDisplay">
-          <ngb-pagination
-            size="sm"
-            [collectionSize]="rolePageInfo.total"
-            [(page)]="currentPage"
-            [maxSize]="rolesLimit"
-            [pageSize]="rolesLimit"
-            [rotate]="false"
-            [boundaryLinks]="true"
-            aria-label="Default pagination"
-            (pageChange)="paginationPageChanged($event)"
-          >
-          </ngb-pagination>
-        </div>
+      <div class="card-footer" *ngIf="(maxPages$ | async) > 1">
+        <ngb-pagination
+          size="sm"
+          [collectionSize]="totalRoles$ | async"
+          [(page)]="currentPage"
+          [maxSize]="rolesLimit"
+          [pageSize]="rolesLimit"
+          [rotate]="false"
+          [boundaryLinks]="true"
+          aria-label="Default pagination"
+          (pageChange)="paginationPageChanged($event)"
+        >
+        </ngb-pagination>
       </div>
     </div>
   </div>
-</ng-container>
+</div>

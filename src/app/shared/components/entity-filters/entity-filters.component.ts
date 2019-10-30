@@ -94,6 +94,9 @@ export class EntityFiltersComponent implements OnInit, OnDestroy {
   clearFilters() {
     this.name.setValue('');
     this.email.setValue('');
-    this.state.setValue(this.stateData[0].id);
+
+    if (this.stateData && this.stateData.length > 0) {
+      this.state.setValue(this.stateData[0].id);
+    }
   }
 }
