@@ -1,13 +1,14 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EntityStateInfo, LabelledId, PagedReplyInfo, SearchFilterValues, SearchParams } from '@app/domain';
+import { BlockingProgressService } from '@app/core/services';
+import { EntityStateInfo, LabelledId, PagedReplyInfo, SearchFilterValues } from '@app/domain';
 import { Role } from '@app/domain/access';
 import { NameFilter, SearchFilter, StateFilter } from '@app/domain/search-filters';
 import { RootStoreState } from '@app/root-store';
 import { RoleStoreActions, RoleStoreSelectors } from '@app/root-store/role';
 import { select, Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
+import { takeUntil, tap, filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-roles-view',
@@ -35,7 +36,8 @@ export class RolesViewComponent implements OnInit, OnDestroy {
   constructor(
     private store$: Store<RootStoreState.State>,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private progressService: BlockingProgressService
   ) {
     this.filters = {
       nameFilter: new NameFilter(),
@@ -46,7 +48,15 @@ export class RolesViewComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.isLoading$ = this.store$.pipe(select(RoleStoreSelectors.selectRoleSearchActive));
+    this.store$
+      .pipe(
+        select(RoleStoreSelectors.selectRoleSearchActive),
+        filter(active => !active),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe(() => {
+        this.progressService.hide();
+      });
 
     this.rolePageInfo$ = this.store$.pipe(
       select(RoleStoreSelectors.selectRoleSearchRepliesAndEntities),
@@ -100,5 +110,7 @@ export class RolesViewComponent implements OnInit, OnDestroy {
       limit: this.rolesLimit
     };
     this.store$.dispatch(RoleStoreActions.searchRolesRequest({ searchParams }));
+    this.progressService.show();
+    this.progressService.message('Loading...');
   }
 }

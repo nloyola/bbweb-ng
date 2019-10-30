@@ -88,9 +88,7 @@
 
 <ng-template #showLoading>
   <div class="card-header">
-    <app-spinner name="user" [show]="true" i18n>
-      Loading
-    </app-spinner>
+    <app-blocking-progress></app-blocking-progress>
   </div>
 </ng-template>
 

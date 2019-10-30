@@ -81,9 +81,7 @@
                 <ng-container *ngIf="(isRegistering$ | async) === false" i18n>
                   Submit
                 </ng-container>
-                <app-spinner name="login" [show]="isRegistering$ | async" i18n>
-                  Registering
-                </app-spinner>
+                <app-blocking-progress></app-blocking-progress>
               </button>
               <button class="btn btn-secondary" type="button" (click)="onCancel()" i18n>
                 Cancel

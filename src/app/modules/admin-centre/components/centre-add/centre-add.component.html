@@ -47,12 +47,7 @@
                 [disabled]="form.invalid || (isSaving$ | async)"
                 i18n
               >
-                <ng-container *ngIf="(isSaving$ | async) === false">
-                  Submit
-                </ng-container>
-                <app-spinner name="studySaving" [show]="isSaving$ | async">
-                  Saving
-                </app-spinner>
+                Submit
               </button>
               <button class="btn btn-secondary" type="button" (click)="onCancel()" i18n>
                 Cancel

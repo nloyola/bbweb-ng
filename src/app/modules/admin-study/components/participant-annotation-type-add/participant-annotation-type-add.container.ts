@@ -7,6 +7,7 @@ import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 import { Subject, BehaviorSubject, Observable } from 'rxjs';
 import { filter, takeUntil, map, withLatestFrom, tap, shareReplay } from 'rxjs/operators';
+import { BlockingProgressService } from '@app/core/services';
 
 interface StoreData {
   study: Study;
@@ -33,7 +34,8 @@ export class ParticipantAnnotationTypeAddContainerComponent implements OnInit, O
     private route: ActivatedRoute,
     private router: Router,
     private store$: Store<RootStoreState.State>,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private progressService: BlockingProgressService
   ) {}
 
   ngOnInit() {
@@ -71,6 +73,7 @@ export class ParticipantAnnotationTypeAddContainerComponent implements OnInit, O
         takeUntil(this.unsubscribe$)
       )
       .subscribe(([_data, msg]) => {
+        this.progressService.hide();
         this.isSaving$.next(false);
         this.toastr.success(msg, 'Update Successfull');
         this.router.navigate([this.parentStateRelativePath], { relativeTo: this.route });
@@ -84,6 +87,7 @@ export class ParticipantAnnotationTypeAddContainerComponent implements OnInit, O
         takeUntil(this.unsubscribe$)
       )
       .subscribe(([error, _msg]) => {
+        this.progressService.hide();
         this.isSaving$.next(false);
 
         let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
@@ -100,6 +104,9 @@ export class ParticipantAnnotationTypeAddContainerComponent implements OnInit, O
   }
 
   onSubmit(annotationType: AnnotationType): void {
+    this.progressService.show();
+    this.progressService.message('Saving');
+
     this.isSaving$.next(true);
     this.annotationTypeToSave = annotationType;
     this.store$.dispatch(

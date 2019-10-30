@@ -12,12 +12,6 @@
         buttonClass="btn btn-sm btn-light"
         placement="bottom-right"
       ></app-dropdown-menu>
-
-      <p *ngIf="isRemoving">
-        <app-spinner name="membership" [show]="isRemoving" i18n>
-          Removing...
-        </app-spinner>
-      </p>
     </div>
 
     <!-- NAME -->
@@ -213,9 +207,7 @@
 
 <ng-template #showLoading>
   <div class="card-header">
-    <app-spinner name="membership" [show]="true" i18n>
-      Loading
-    </app-spinner>
+    <app-blocking-progress></app-blocking-progress>
   </div>
 </ng-template>
 

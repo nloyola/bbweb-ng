@@ -61,9 +61,7 @@
             <ng-container *ngIf="(isSaving$ | async) === false">
               Submit
             </ng-container>
-            <app-spinner name="annotationTypeSaving" [show]="isSaving$ | async">
-              Saving
-            </app-spinner>
+            <app-blocking-progress></app-blocking-progress>
           </button>
           <button class="btn btn-secondary" type="button" (click)="onCancel()" i18n>
             Cancel

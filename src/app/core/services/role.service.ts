@@ -40,7 +40,7 @@ export class RoleService {
   search(searchParams: SearchParams): Observable<PagedReply<Role>> {
     let params = searchParamsToHttpParams(searchParams);
     return this.http.get<ApiReply>(`${this.BASE_URL}`, { params }).pipe(
-      // delay(1000),
+      delay(2000),
       map((reply: ApiReply) => {
         const jObj = reply.data as JSONObject;
         if (reply && reply.data && jObj.items) {

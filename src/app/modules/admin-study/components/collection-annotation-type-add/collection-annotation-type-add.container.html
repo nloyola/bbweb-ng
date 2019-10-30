@@ -10,9 +10,7 @@
 <ng-template #showLoading>
   <div class="card mt-2">
     <div class="card-header bg-primary text-light">
-      <app-spinner name="login" [show]="true" i18n>
-        Loading
-      </app-spinner>
+      <app-blocking-progress></app-blocking-progress>
     </div>
   </div>
 </ng-template>

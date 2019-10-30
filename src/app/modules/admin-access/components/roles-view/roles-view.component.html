@@ -1,6 +1,8 @@
 <app-entity-filters class="mb-2" [useNameFilter]="true" (filters)="onFiltersUpdated($event)">
 </app-entity-filters>
 
+<app-blocking-progress></app-blocking-progress>
+
 <ng-container *ngIf="rolePageInfo$ | async; let rolePageInfo">
   <div class="row">
     <div class="col-sm-12 mt-2">
@@ -8,16 +10,6 @@
         <div class="card-header bg-default">
           <mat-icon class="warning-icon">settings</mat-icon>
           {{ rolePageInfo.total }} <span i18n>Roles</span>
-        </div>
-
-        <div class="card-body" *ngIf="isLoading$ | async">
-          <div class="card-text">
-            <div class="alert alert-warning" role="alert">
-              <app-spinner name="studies" [show]="isLoading$ | async" i18n>
-                Loading...
-              </app-spinner>
-            </div>
-          </div>
         </div>
 
         <div class="card-body" *ngIf="rolePageInfo.hasNoEntitiesToDisplay">

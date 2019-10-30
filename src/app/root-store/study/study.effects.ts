@@ -3,7 +3,7 @@ import { StudyService } from '@app/core/services';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
 import { Observable, of as observableOf } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { catchError, map, switchMap, delay } from 'rxjs/operators';
 import * as StudyActions from './study.actions';
 
 @Injectable()
@@ -76,7 +76,7 @@ export class StudyStoreEffects {
     ofType(StudyActions.updateStudyAddOrUpdateAnnotationTypeRequest.type),
     switchMap(action =>
       this.studyService.addOrUpdateAnnotationType(action.study, action.annotationType).pipe(
-        // delay(2000),
+        delay(5000),
         map(study => StudyActions.updateStudySuccess({ study })),
         catchError(error => observableOf(StudyActions.updateStudyFailure({ error })))
       )

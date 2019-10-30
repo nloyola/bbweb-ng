@@ -51,9 +51,7 @@
                 <ng-container *ngIf="(isLoggingIn$ | async) === false" i18n>
                   Log In
                 </ng-container>
-                <app-spinner name="login" [show]="isLoggingIn$ | async" i18n>
-                  Logging in
-                </app-spinner>
+                <app-blocking-progress></app-blocking-progress>
               </button>
             </div>
           </div>

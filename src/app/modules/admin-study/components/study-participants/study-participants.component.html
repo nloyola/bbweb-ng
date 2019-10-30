@@ -44,9 +44,7 @@
     <li class="list-group-item" *ngIf="isAddingAnnotation">
       <div class="row">
         <div class="col-md-10">
-          <app-spinner name="addingAnnotation" [show]="true" i18n>
-            Saving annotation
-          </app-spinner>
+          <app-blocking-progress></app-blocking-progress>
         </div>
       </div>
     </li>
@@ -67,8 +65,6 @@
 
 <ng-template #showLoading>
   <div class="card-header">
-    <app-spinner name="login" [show]="true" i18n>
-      Loading
-    </app-spinner>
+    <app-blocking-progress></app-blocking-progress>
   </div>
 </ng-template>

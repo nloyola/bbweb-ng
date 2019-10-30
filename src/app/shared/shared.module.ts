@@ -12,25 +12,26 @@ import { AnnotationTypeActionsComponent } from './components/annotation-type-act
 import { AnnotationTypeAddComponent } from './components/annotation-type-add/annotation-type-add.component';
 import { AnnotationTypeRemoveComponent } from './components/annotation-type-remove/annotation-type-remove.component';
 import { AnnotationTypeViewComponent } from './components/annotation-type-view/annotation-type-view.component';
+import { BlockingProgressComponent } from './components/blocking-progress/blocking-progress.component';
 import { BreadcrumbsComponent } from './components/breadcrumbs/breadcrumbs.component';
+import { DropdownMenuComponent } from './components/dropdown-menu/dropdown-menu.component';
 import { EntityFiltersComponent } from './components/entity-filters/entity-filters.component';
+import { EntitySelectorComponent } from './components/entity-selector/entity-selector.component';
 import { EntityStatusComponent } from './components/entity-status/entity-status.component';
 import { EntitySummaryComponent } from './components/entity-summary/entity-summary.component';
+import { FilterValueInputComponent } from './components/filter-value-input/filter-value-input.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { HeaderComponent } from './components/header/header.component';
 import { LocationAddComponent } from './components/location-add/location-add.component';
 import { LocationRemoveComponent } from './components/location-remove/location-remove.component';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
+import { PagedEntitySelectorComponent } from './components/paged-entity-selector/paged-entity-selector.component';
+import { ServerErrorPageComponent } from './components/server-error-page/server-error-page.component';
 import { SpinnerComponent } from './components/spinner/spinner.component';
 import { TruncateToggleComponent } from './components/truncate-toggle/truncate-toggle.component';
-import { YesNoPipe } from './pipes/yes-no-pipe';
-import { EntitySelectorComponent } from './components/entity-selector/entity-selector.component';
 import { UnauthorizedPageComponent } from './components/unauthorized-page/unauthorized-page.component';
-import { ServerErrorPageComponent } from './components/server-error-page/server-error-page.component';
-import { PagedEntitySelectorComponent } from './components/paged-entity-selector/paged-entity-selector.component';
 import { LocalTimePipe } from './pipes';
-import { FilterValueInputComponent } from './components/filter-value-input/filter-value-input.component';
-import { DropdownMenuComponent } from './components/dropdown-menu/dropdown-menu.component';
+import { YesNoPipe } from './pipes/yes-no-pipe';
 
 @NgModule({
   imports: [
@@ -68,7 +69,8 @@ import { DropdownMenuComponent } from './components/dropdown-menu/dropdown-menu.
     ServerErrorPageComponent,
     PagedEntitySelectorComponent,
     FilterValueInputComponent,
-    DropdownMenuComponent
+    DropdownMenuComponent,
+    BlockingProgressComponent
   ],
   exports: [
     BreadcrumbsComponent,
@@ -93,7 +95,8 @@ import { DropdownMenuComponent } from './components/dropdown-menu/dropdown-menu.
     PagedEntitySelectorComponent,
     LocationAddComponent,
     FilterValueInputComponent,
-    DropdownMenuComponent
+    DropdownMenuComponent,
+    BlockingProgressComponent
   ]
 })
 export class SharedModule {}

@@ -33,12 +33,7 @@
                 [disabled]="form.invalid || (shipmentLoading$ | async) === true"
                 i18n
               >
-                <ng-container *ngIf="(shipmentLoading$ | async) !== true">
-                  Add
-                </ng-container>
-                <app-spinner name="uniqueIdGet" [show]="shipmentLoading$ | async">
-                  Loading
-                </app-spinner>
+                Add
               </button>
             </div>
           </div>

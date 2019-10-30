@@ -6,7 +6,7 @@ import { SpinnerComponent } from './spinner.component';
 
 describe('SpinnerComponent', () => {
   @Component({
-    template: '<app-spinner name="test-component" [show]="show"></app-spinner>'
+    template: '<app-spinner [fill]="\'#aaa\'" [margin]="\'20px auto\'"></app-spinner>'
   })
   class TestComponent {
     show = true;

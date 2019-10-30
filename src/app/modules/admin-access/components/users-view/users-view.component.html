@@ -21,9 +21,7 @@
       <div class="card-body" *ngIf="isLoading$ | async">
         <div class="card-text">
           <div class="alert alert-warning" role="alert">
-            <app-spinner name="users" [show]="isLoading$ | async" i18n>
-              Loading...
-            </app-spinner>
+            <app-blocking-progress></app-blocking-progress>
           </div>
         </div>
       </div>
