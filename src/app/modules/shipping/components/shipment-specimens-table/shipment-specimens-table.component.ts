@@ -28,8 +28,6 @@ export class ShipmentSpecimensTableComponent {
 
   constructor() {}
 
-  //ngOnInit() {}
-
   sortData(sort: Sort) {
     let sortField: string;
     switch (sort.direction) {

@@ -39,30 +39,6 @@
           </td>
         </tr>
 
-        <tr *ngFor="let ss of specimensThisPage">
-          <td>
-            <small>{{ ss.specimen.inventoryId }}</small>
-          </td>
-          <td>
-            <small>{{ ss.specimen.amount }} {{ ss.specimenDefinitionUnits }}</small>
-          </td>
-          <td>
-            <small>{{ ss.specimen.specimenDefinitionName }}</small>
-          </td>
-          <td>
-            <small>{{ ss.specimen.timeCreated | localTime }}</small>
-          </td>
-          <td>
-            <small>{{ ss.specimen.action }}</small>
-          </td>
-
-          <td>
-            <app-dropdown-menu
-              [menuItems]="menuItemsForShipmentSpecimen(ss)"
-              placement="bottom-right"
-            ></app-dropdown-menu>
-          </td>
-        </tr>
         <tr *ngIf="!loading && totalSpecimens <= 0">
           <td colspan="6">
             <div class="alert alert-warning">
@@ -70,9 +46,36 @@
             </div>
           </td>
         </tr>
+
+        <ng-container *ngIf="!loading">
+          <tr *ngFor="let ss of specimensThisPage">
+            <td>
+              <small>{{ ss.specimen.inventoryId }}</small>
+            </td>
+            <td>
+              <small>{{ ss.specimen.amount }} {{ ss.specimenDefinitionUnits }}</small>
+            </td>
+            <td>
+              <small>{{ ss.specimen.specimenDefinitionName }}</small>
+            </td>
+            <td>
+              <small>{{ ss.specimen.timeCreated | localTime }}</small>
+            </td>
+            <td>
+              <small>{{ ss.specimen.action }}</small>
+            </td>
+
+            <td>
+              <app-dropdown-menu
+                [menuItems]="menuItemsForShipmentSpecimen(ss)"
+                placement="bottom-right"
+              ></app-dropdown-menu>
+            </td>
+          </tr>
+        </ng-container>
       </table>
 
-      <div class="card-footer" *ngIf="maxPages > 0">
+      <div class="card-footer" *ngIf="maxPages > 1">
         <ngb-pagination
           size="sm"
           [collectionSize]="totalSpecimens"

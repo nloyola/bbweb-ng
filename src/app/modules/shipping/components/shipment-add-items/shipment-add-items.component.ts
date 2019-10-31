@@ -28,13 +28,11 @@ import { Specimen } from '@app/domain/participants';
 export class ShipmentAddItemsComponent extends ShipmentViewerComponent {
   @ViewChild('packedTimeModal', { static: false }) packedTimeModal: TemplateRef<any>;
   @ViewChild('sentTimeModal', { static: false }) sentTimeModal: TemplateRef<any>;
-  @ViewChild('removeShipmentSpecimenModal', { static: false }) removeShipmentSpecimenModal: TemplateRef<any>;
 
   @Input() shipment: Shipment;
 
   packedTimeModalOptions: ModalInputOptions = { required: true };
   sentTimeModalOptions: ModalInputOptions = { required: true };
-  shipmentSpecimenToRemove: ShipmentSpecimen;
 
   private updatedMessage$ = new Subject<string>();
 
@@ -50,7 +48,6 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent {
     super.ngOnInit();
     this.initOnRemoved();
     this.initOnShipmentModified();
-    this.initOnShipmentSpecimenRemoved();
     this.initErrorSelector();
   }
 
@@ -69,19 +66,6 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent {
           })
         );
         this.updatedMessage$.next('Shipment removed');
-      })
-      .catch(() => undefined);
-  }
-
-  removeShipmentSpecimen(shipmentSpecimen: ShipmentSpecimen) {
-    this.shipmentSpecimenToRemove = shipmentSpecimen;
-    const modal = this.modalService.open(this.removeShipmentSpecimenModal, { size: 'lg' });
-    modal.result
-      .then(() => {
-        this.store$.dispatch(
-          ShipmentSpecimenStoreActions.removeShipmentSpecimenRequest({ shipmentSpecimen })
-        );
-        this.updatedMessage$.next('Specimen Removed');
       })
       .catch(() => undefined);
   }
@@ -157,20 +141,6 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent {
       )
       .subscribe(() => {
         this.toastr.success('The shipment was removed');
-      });
-  }
-
-  private initOnShipmentSpecimenRemoved(): void {
-    this.store$
-      .pipe(
-        select(ShipmentSpecimenStoreSelectors.selectShipmentSpecimenLastRemovedId),
-        withLatestFrom(this.updatedMessage$),
-        takeUntil(this.unsubscribe$)
-      )
-      .subscribe(([id, message]) => {
-        if (id === this.shipmentSpecimenToRemove.id) {
-          this.toastr.success(message);
-        }
       });
   }
 
