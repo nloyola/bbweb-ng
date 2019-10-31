@@ -28,8 +28,6 @@ describe('SpecimenViewModalComponent', () => {
 
   it('should create', () => {
     component.specimen = new Specimen().deserialize(factory.specimen());
-    component.event = new CollectionEvent().deserialize(factory.defaultCollectionEvent());
-    component.participant = new Participant().deserialize(factory.defaultParticipant());
     fixture.detectChanges();
     expect(component).toBeTruthy();
   });

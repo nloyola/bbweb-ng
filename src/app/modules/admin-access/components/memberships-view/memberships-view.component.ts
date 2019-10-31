@@ -7,7 +7,7 @@ import { RootStoreState } from '@app/root-store';
 import { MembershipStoreActions, MembershipStoreSelectors } from '@app/root-store/membership';
 import { select, Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
-import { takeUntil, map } from 'rxjs/operators';
+import { takeUntil, map, tap } from 'rxjs/operators';
 import { DropdownMenuItem } from '@app/shared/components/dropdown-menu/dropdown-menu.component';
 
 @Component({

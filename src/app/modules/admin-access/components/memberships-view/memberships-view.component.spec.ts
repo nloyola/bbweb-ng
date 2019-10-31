@@ -1,5 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed, fakeAsync, flush } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -17,6 +17,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
 import { MembershipsViewComponent } from './memberships-view.component';
+import { By } from '@angular/platform-browser';
 
 describe('MembershipsViewComponent', () => {
   let component: MembershipsViewComponent;
@@ -63,8 +64,8 @@ describe('MembershipsViewComponent', () => {
     const pagedReply = factory.pagedReply(memberships);
     store.dispatch(MembershipStoreActions.searchMembershipsSuccess({ pagedReply }));
 
-    component.membershipPageInfo$.subscribe((pageInfo: any) => {
-      expect(pageInfo.total).toBe(memberships.length);
+    component.totalMemberships$.subscribe(total => {
+      expect(total).toBe(memberships.length);
     });
   });
 
@@ -147,13 +148,15 @@ describe('MembershipsViewComponent', () => {
   });
 
   it('displays memberships', () => {
-    const membership = new Membership().deserialize(factory.membership());
-    const pagedReply = factory.pagedReply([membership]);
+    const memberships = [new Membership().deserialize(factory.membership())];
+    const pagedReply = {
+      ...factory.pagedReply(memberships),
+      maxPages: 5
+    };
     store.dispatch(MembershipStoreActions.searchMembershipsSuccess({ pagedReply }));
     fixture.detectChanges();
 
-    const de = fixture.debugElement;
-    expect(de.nativeElement.querySelectorAll('.list-group-item').length).toBe(1);
-    expect(de.nativeElement.querySelectorAll('.card-footer').length).toBe(1);
+    expect(fixture.debugElement.queryAll(By.css('.list-group-item')).length).toBe(memberships.length);
+    expect(fixture.debugElement.queryAll(By.css('.card-footer')).length).toBe(1);
   });
 });

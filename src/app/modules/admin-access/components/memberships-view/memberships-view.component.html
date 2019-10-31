@@ -82,7 +82,7 @@
       <div class="card-footer" *ngIf="(maxPages$ | async) > 1">
         <ngb-pagination
           size="sm"
-          [collectionSize]="membershipPageInfo.total"
+          [collectionSize]="totalMemberships$ | async"
           [(page)]="currentPage"
           [maxSize]="membershipsLimit"
           [pageSize]="membershipsLimit"

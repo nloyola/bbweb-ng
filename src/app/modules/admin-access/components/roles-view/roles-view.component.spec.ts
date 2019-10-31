@@ -12,6 +12,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
 import { RolesViewComponent } from './roles-view.component';
+import { By } from '@angular/platform-browser';
 
 describe('RolesViewComponent', () => {
   let component: RolesViewComponent;
@@ -58,8 +59,8 @@ describe('RolesViewComponent', () => {
     const pagedReply = factory.pagedReply(roles);
     store.dispatch(RoleStoreActions.searchRolesSuccess({ pagedReply }));
 
-    component.rolePageInfo$.subscribe((pageInfo: any) => {
-      expect(pageInfo.total).toBe(roles.length);
+    component.totalRoles$.subscribe(total => {
+      expect(total).toBe(roles.length);
     });
   });
 
@@ -142,13 +143,15 @@ describe('RolesViewComponent', () => {
   });
 
   it('displays roles', () => {
-    const role = new Role().deserialize(factory.role());
-    const pagedReply = factory.pagedReply([role]);
+    const roles = [new Role().deserialize(factory.role())];
+    const pagedReply = {
+      ...factory.pagedReply(roles),
+      maxPages: 5
+    };
     store.dispatch(RoleStoreActions.searchRolesSuccess({ pagedReply }));
     fixture.detectChanges();
 
-    const de = fixture.debugElement;
-    expect(de.nativeElement.querySelectorAll('.list-group-item').length).toBe(1);
-    expect(de.nativeElement.querySelectorAll('.card-footer').length).toBe(1);
+    expect(fixture.debugElement.queryAll(By.css('.list-group-item')).length).toBe(roles.length);
+    expect(fixture.debugElement.queryAll(By.css('.card-footer')).length).toBe(1);
   });
 });

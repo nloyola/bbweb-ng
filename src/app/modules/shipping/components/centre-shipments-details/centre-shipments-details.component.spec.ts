@@ -108,15 +108,15 @@ describe('CentreShipmentsDetailsComponent', () => {
       });
 
       it('extracts shipments for the last search', () => {
-        expect(component.shipments$).toBeObservable(cold('a', { a: [shipment] }));
+        expect(component.shipments$).toBeObservable(cold('(ab)', { a: [], b: [shipment] }));
       });
 
       it('extracts the the maximun pages for the last search', () => {
-        expect(component.maxPages$).toBeObservable(cold('a', { a: 1 }));
+        expect(component.maxPages$).toBeObservable(cold('(ab)', { a: 0, b: 1 }));
       });
 
       it('extracts the the total shipments for the last search', () => {
-        expect(component.totalShipments$).toBeObservable(cold('a', { a: 1 }));
+        expect(component.totalShipments$).toBeObservable(cold('(ab)', { a: 0, b: 1 }));
       });
     });
 
