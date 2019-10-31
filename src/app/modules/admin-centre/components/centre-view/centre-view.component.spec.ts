@@ -7,7 +7,6 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { RouterTestingModule } from '@angular/router/testing';
 import { StoreModule, Store } from '@ngrx/store';
 import { CentreStoreReducer, CentreStoreActions, RootStoreState, NgrxRuntimeChecks } from '@app/root-store';
-import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { MockActivatedRoute } from '@test/mocks';
 import { cold } from 'jasmine-marbles';
@@ -30,8 +29,7 @@ describe('CentreViewComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            centre: CentreStoreReducer.reducer,
-            spinner: SpinnerStoreReducer.reducer
+            centre: CentreStoreReducer.reducer
           },
           NgrxRuntimeChecks
         )

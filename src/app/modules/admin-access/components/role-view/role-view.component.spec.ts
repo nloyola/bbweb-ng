@@ -6,7 +6,6 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { Role } from '@app/domain/access';
 import { User } from '@app/domain/users';
 import { RoleStoreActions, RoleStoreReducer, RootStoreState, NgrxRuntimeChecks } from '@app/root-store';
-import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
 import { EntityWithSubEntityBehaviour } from '@test/behaviours/entity-with-sub-entity.behaviour';
@@ -32,8 +31,7 @@ describe('RoleViewComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            role: RoleStoreReducer.reducer,
-            spinner: SpinnerStoreReducer.reducer
+            role: RoleStoreReducer.reducer
           },
           NgrxRuntimeChecks
         ),

@@ -7,7 +7,6 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { User } from '@app/domain/users';
 import { UserStoreActions, UserStoreReducer, RootStoreState } from '@app/root-store';
 import { NgrxRuntimeChecks } from '@app/root-store/root-store.module';
-import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
 import { EntityUpdateComponentBehaviour } from '@test/behaviours/entity-update-component.behaviour';
@@ -37,8 +36,7 @@ describe('UserProfileComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            user: UserStoreReducer.reducer,
-            spinner: SpinnerStoreReducer.reducer
+            user: UserStoreReducer.reducer
           },
           NgrxRuntimeChecks
         ),

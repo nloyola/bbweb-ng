@@ -1,12 +1,11 @@
-import { Component, OnDestroy, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthStoreActions, AuthStoreSelectors, RootStoreState } from '@app/root-store';
-import { SpinnerStoreSelectors } from '@app/root-store/spinner';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { select, Store } from '@ngrx/store';
-import { Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 
 @Component({
@@ -18,7 +17,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   @ViewChild('modal', { static: true }) private modal: ElementRef;
 
   private unsubscribe$: Subject<void> = new Subject<void>();
-  isLoggingIn$: Observable<boolean>;
+  isLoggingIn$ = new BehaviorSubject<boolean>(false);
   returnUrl: string;
   loginForm: FormGroup;
   faSpinner = faSpinner;
@@ -40,8 +39,6 @@ export class LoginComponent implements OnInit, OnDestroy {
     // get return url from route parameters or default to '/'
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
 
-    this.isLoggingIn$ = this.store$.pipe(select(SpinnerStoreSelectors.selectSpinnerIsActive));
-
     this.store$
       .pipe(
         select(AuthStoreSelectors.selectAuthUser),
@@ -49,6 +46,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         takeUntil(this.unsubscribe$)
       )
       .subscribe(() => {
+        this.isLoggingIn$.next(false);
         this.navigateToReturnUrl();
       });
 
@@ -59,6 +57,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         takeUntil(this.unsubscribe$)
       )
       .subscribe(() => {
+        this.isLoggingIn$.next(false);
         this.store$.dispatch(AuthStoreActions.loginClearFailureAction());
         this.modalService
           .open(this.modal, { ariaLabelledBy: 'modal-basic-title' })
@@ -87,6 +86,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         password: this.loginForm.value.password
       })
     );
+    this.isLoggingIn$.next(true);
   }
 
   private navigateToReturnUrl() {

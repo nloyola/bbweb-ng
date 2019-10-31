@@ -10,7 +10,6 @@ import {
   RootStoreState,
   NgrxRuntimeChecks
 } from '@app/root-store';
-import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
@@ -36,8 +35,7 @@ describe('EventTypeAddComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            'event-type': EventTypeStoreReducer.reducer,
-            spinner: SpinnerStoreReducer.reducer
+            'event-type': EventTypeStoreReducer.reducer
           },
           NgrxRuntimeChecks
         ),

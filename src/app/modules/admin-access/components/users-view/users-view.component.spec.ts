@@ -6,7 +6,6 @@ import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { User, UserState, UserUI } from '@app/domain/users';
 import { NgrxRuntimeChecks, RootStoreState, UserStoreActions, UserStoreReducer } from '@app/root-store';
-import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { EntityFiltersComponent } from '@app/shared/components/entity-filters/entity-filters.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
@@ -30,8 +29,7 @@ describe('UsersViewComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            user: UserStoreReducer.reducer,
-            spinner: SpinnerStoreReducer.reducer
+            user: UserStoreReducer.reducer
           },
           NgrxRuntimeChecks
         )

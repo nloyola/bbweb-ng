@@ -141,7 +141,7 @@ export class StudyParticipantsComponent implements OnInit, OnDestroy {
         kind: 'selectable',
         label: 'Add Annotation',
         icon: 'edit',
-        iconClass: 'success-icon',
+        iconClass: 'add-circle',
         onSelected: () => {
           this.add();
         }

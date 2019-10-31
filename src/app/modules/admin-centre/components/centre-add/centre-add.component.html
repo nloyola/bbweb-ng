@@ -44,13 +44,13 @@
               <button
                 class="btn btn-primary mr-2"
                 type="submit"
-                [disabled]="form.invalid || (isSaving$ | async)"
+                [disabled]="form.invalid || (isSaving$ | async) === true"
                 i18n
               >
                 <ng-container *ngIf="(isSaving$ | async) === false">
                   Submit
                 </ng-container>
-                <app-spinner name="studySaving" [show]="isSaving$ | async">
+                <app-spinner name="studySaving" [show]="(isSaving$ | async) === true">
                   Saving
                 </app-spinner>
               </button>

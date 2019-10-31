@@ -7,7 +7,6 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { Study, StudyState } from '@app/domain/studies';
 import { RootStoreState, StudyStoreActions, StudyStoreReducer } from '@app/root-store';
 import { NgrxRuntimeChecks } from '@app/root-store/root-store.module';
-import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
 import { EntityUpdateComponentBehaviour } from '@test/behaviours/entity-update-component.behaviour';
@@ -39,8 +38,7 @@ describe('StudySummaryComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            study: StudyStoreReducer.reducer,
-            spinner: SpinnerStoreReducer.reducer
+            study: StudyStoreReducer.reducer
           },
           NgrxRuntimeChecks
         ),

@@ -11,7 +11,6 @@ import {
   NgrxRuntimeChecks,
   RootStoreState
 } from '@app/root-store';
-import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
@@ -34,8 +33,7 @@ describe('MembershipAddComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            membership: MembershipStoreReducer.reducer,
-            spinner: SpinnerStoreReducer.reducer
+            membership: MembershipStoreReducer.reducer
           },
           NgrxRuntimeChecks
         ),

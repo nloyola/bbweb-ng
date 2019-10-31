@@ -4,7 +4,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CollectedSpecimenDefinition, CollectionEventType } from '@app/domain/studies';
 import { AuthStoreReducer } from '@app/root-store/auth-store';
-import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { Factory } from '@test/factory';
 import { StoreModule } from '@ngrx/store';
 import { ToastrModule } from 'ngx-toastr';
@@ -24,8 +23,7 @@ describe('CollectedSpecimenDefinitionAddComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            auth: AuthStoreReducer.reducer,
-            spinner: SpinnerStoreReducer.reducer
+            auth: AuthStoreReducer.reducer
           },
           NgrxRuntimeChecks
         ),

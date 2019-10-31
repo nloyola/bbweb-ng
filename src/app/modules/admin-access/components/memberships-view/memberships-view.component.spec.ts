@@ -11,7 +11,6 @@ import {
   NgrxRuntimeChecks,
   RootStoreState
 } from '@app/root-store';
-import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { TruncatePipe } from '@app/shared/pipes';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
@@ -35,8 +34,7 @@ describe('MembershipsViewComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            membership: MembershipStoreReducer.reducer,
-            spinner: SpinnerStoreReducer.reducer
+            membership: MembershipStoreReducer.reducer
           },
           NgrxRuntimeChecks
         )

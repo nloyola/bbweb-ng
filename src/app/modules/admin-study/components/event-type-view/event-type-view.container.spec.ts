@@ -13,7 +13,6 @@ import {
   StudyStoreReducer
 } from '@app/root-store';
 import { NgrxRuntimeChecks } from '@app/root-store/root-store.module';
-import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { YesNoPipe } from '@app/shared/pipes/yes-no-pipe';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
@@ -48,7 +47,6 @@ describe('EventTypeViewContainer', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            spinner: SpinnerStoreReducer.reducer,
             study: StudyStoreReducer.reducer,
             'event-type': EventTypeStoreReducer.reducer
           },

@@ -15,7 +15,6 @@ import {
   StudyStoreActions,
   NgrxRuntimeChecks
 } from '@app/root-store';
-import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import {
   NgbModal,
   NgbModule,
@@ -50,8 +49,7 @@ describe('CentreStudiesComponent', () => {
         NgbTypeaheadModule,
         StoreModule.forRoot(
           {
-            centre: CentreStoreReducer.reducer,
-            spinner: SpinnerStoreReducer.reducer
+            centre: CentreStoreReducer.reducer
           },
           NgrxRuntimeChecks
         ),

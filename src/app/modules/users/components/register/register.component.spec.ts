@@ -7,7 +7,6 @@ import { RoleIds } from '@app/domain/access';
 import { User } from '@app/domain/users';
 import { NgrxRuntimeChecks, RootStoreState, StudyStoreReducer } from '@app/root-store';
 import { AuthStoreActions, AuthStoreReducer } from '@app/root-store/auth-store';
-import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
@@ -31,7 +30,6 @@ describe('RegisterComponent', () => {
         StoreModule.forRoot(
           {
             auth: AuthStoreReducer.reducer,
-            spinner: SpinnerStoreReducer.reducer,
             study: StudyStoreReducer.reducer
           },
           NgrxRuntimeChecks

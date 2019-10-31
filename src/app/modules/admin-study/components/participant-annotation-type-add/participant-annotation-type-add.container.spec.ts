@@ -6,7 +6,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Study } from '@app/domain/studies';
 import { NgrxRuntimeChecks, RootStoreState, StudyStoreActions, StudyStoreReducer } from '@app/root-store';
-import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { AnnotationTypeAddComponent } from '@app/shared/components/annotation-type-add/annotation-type-add.component';
 import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
@@ -34,7 +33,6 @@ describe('ParticipantAnnotationTypeAddContainer', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            spinner: SpinnerStoreReducer.reducer,
             study: StudyStoreReducer.reducer
           },
           NgrxRuntimeChecks

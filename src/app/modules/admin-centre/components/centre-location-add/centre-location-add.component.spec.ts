@@ -6,7 +6,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Centre } from '@app/domain/centres';
 import { CentreStoreActions, CentreStoreReducer, RootStoreState, NgrxRuntimeChecks } from '@app/root-store';
-import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
 import { MockActivatedRoute } from '@test/mocks';
@@ -32,7 +31,6 @@ describe('CentreLocationAddComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            spinner: SpinnerStoreReducer.reducer,
             centre: CentreStoreReducer.reducer
           },
           NgrxRuntimeChecks

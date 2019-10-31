@@ -3,7 +3,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AnnotationType } from '@app/domain/annotations';
 import { ProcessingType, Study } from '@app/domain/studies';
 import { ProcessingTypeStoreActions, ProcessingTypeStoreSelectors, RootStoreState } from '@app/root-store';
-import { SpinnerStoreSelectors } from '@app/root-store/spinner';
 import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
@@ -15,7 +14,6 @@ import { filter, takeUntil } from 'rxjs/operators';
 })
 export class ProcessingAnnotationTypeAddContainerComponent implements OnInit, OnDestroy {
   annotationType: AnnotationType;
-  isLoading$: Observable<boolean>;
   isSaving$ = new BehaviorSubject<boolean>(false);
 
   study: Study;
@@ -38,8 +36,6 @@ export class ProcessingAnnotationTypeAddContainerComponent implements OnInit, On
     this.study = this.route.parent.parent.parent.parent.snapshot.data.study;
     this.processingTypeSlug = this.route.snapshot.params.processingTypeSlug;
     this.annotationType = new AnnotationType();
-
-    this.isLoading$ = this.store$.pipe(select(SpinnerStoreSelectors.selectSpinnerIsActive));
 
     this.store$
       .pipe(

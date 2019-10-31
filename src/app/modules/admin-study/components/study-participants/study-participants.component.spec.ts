@@ -5,7 +5,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Study, StudyState } from '@app/domain/studies';
 import { RootStoreState, StudyStoreActions, StudyStoreReducer, NgrxRuntimeChecks } from '@app/root-store';
-import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { AnnotationTypeRemoveComponent } from '@app/shared/components/annotation-type-remove/annotation-type-remove.component';
 import { AnnotationTypeViewComponent } from '@app/shared/components/annotation-type-view/annotation-type-view.component';
 import { YesNoPipe } from '@app/shared/pipes/yes-no-pipe';
@@ -36,7 +35,6 @@ describe('StudyParticipantsComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            spinner: SpinnerStoreReducer.reducer,
             study: StudyStoreReducer.reducer
           },
           NgrxRuntimeChecks

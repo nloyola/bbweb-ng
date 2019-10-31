@@ -3,10 +3,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Centre } from '@app/domain/centres';
 import { CentreStoreActions, CentreStoreSelectors, RootStoreState } from '@app/root-store';
-import { SpinnerStoreSelectors } from '@app/root-store/spinner';
 import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, BehaviorSubject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 
 @Component({
@@ -18,7 +17,7 @@ export class CentreAddComponent implements OnInit, OnDestroy {
   @ViewChild('nameInput', { static: true }) nameInput: ElementRef;
 
   form: FormGroup;
-  isSaving$: Observable<boolean>;
+  isSaving$ = new BehaviorSubject<boolean>(false);
 
   private unsubscribe$: Subject<void> = new Subject<void>();
 
@@ -38,8 +37,6 @@ export class CentreAddComponent implements OnInit, OnDestroy {
 
     this.nameInput.nativeElement.focus();
 
-    this.isSaving$ = this.store$.pipe(select(SpinnerStoreSelectors.selectSpinnerIsActive));
-
     this.store$
       .pipe(
         select(CentreStoreSelectors.selectCentreLastAdded),
@@ -49,6 +46,7 @@ export class CentreAddComponent implements OnInit, OnDestroy {
       .subscribe((centre: Centre) => {
         this.toastr.success(`Centre was added successfully: ${centre.name}`, 'Add Successfull');
         this.router.navigate(['..', centre.slug], { relativeTo: this.route });
+        this.isSaving$.next(false);
       });
 
     this.store$
@@ -63,6 +61,7 @@ export class CentreAddComponent implements OnInit, OnDestroy {
           errMessage = `The name is already in use: ${this.form.value.name}`;
         }
         this.toastr.error(errMessage, 'Add Error', { disableTimeOut: true });
+        this.isSaving$.next(false);
       });
   }
 
@@ -82,6 +81,7 @@ export class CentreAddComponent implements OnInit, OnDestroy {
   onSubmit() {
     const centre = new Centre().deserialize(this.form.value);
     this.store$.dispatch(CentreStoreActions.addCentreRequest({ centre }));
+    this.isSaving$.next(true);
   }
 
   onCancel() {

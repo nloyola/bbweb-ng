@@ -1,7 +1,5 @@
-import { Action } from '@ngrx/store';
 import { User } from '@app/domain/users';
-import { ShowSpinner, HideSpinner } from '@app/core/decorators';
-import { props, createAction, union } from '@ngrx/store';
+import { createAction, props, union } from '@ngrx/store';
 
 export const loginRequestAction = createAction(
   '[User Login] Login Request',

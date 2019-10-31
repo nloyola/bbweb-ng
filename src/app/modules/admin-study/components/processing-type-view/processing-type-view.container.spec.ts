@@ -14,7 +14,6 @@ import {
   StudyStoreReducer
 } from '@app/root-store';
 import { NgrxRuntimeChecks } from '@app/root-store/root-store.module';
-import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { YesNoPipe } from '@app/shared/pipes/yes-no-pipe';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
@@ -44,8 +43,7 @@ describe('ProcessingTypeViewContainerComponent', () => {
           {
             study: StudyStoreReducer.reducer,
             'processing-type': ProcessingTypeStoreReducer.reducer,
-            'event-type': EventTypeStoreReducer.reducer,
-            spinner: SpinnerStoreReducer.reducer
+            'event-type': EventTypeStoreReducer.reducer
           },
           NgrxRuntimeChecks
         ),

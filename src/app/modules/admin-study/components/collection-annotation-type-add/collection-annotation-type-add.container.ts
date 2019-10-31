@@ -8,7 +8,6 @@ import {
   RootStoreState,
   StudyStoreSelectors
 } from '@app/root-store';
-import { SpinnerStoreSelectors } from '@app/root-store/spinner';
 import { select, Store, createSelector } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
@@ -26,7 +25,6 @@ interface StoreData {
   templateUrl: './collection-annotation-type-add.container.html'
 })
 export class CollectionAnnotationTypeAddContainerComponent implements OnInit, OnDestroy {
-  isLoading$: Observable<boolean>;
   data$: Observable<StoreData>;
   eventType: CollectionEventType;
   annotationType$: Observable<AnnotationType>;
@@ -46,8 +44,6 @@ export class CollectionAnnotationTypeAddContainerComponent implements OnInit, On
   ) {}
 
   ngOnInit() {
-    this.isLoading$ = this.store$.pipe(select(SpinnerStoreSelectors.selectSpinnerIsActive));
-
     const entitiesSelector = createSelector(
       StudyStoreSelectors.selectAllStudies,
       EventTypeStoreSelectors.selectAllEventTypes,

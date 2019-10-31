@@ -6,7 +6,6 @@ import { SearchFilterValues, SearchParams } from '@app/domain';
 import { Centre, CentreCountsUIMap, CentreState } from '@app/domain/centres';
 import { CentreUI } from '@app/domain/centres/centre-ui.model';
 import { CentreStoreActions, CentreStoreReducer, RootStoreState, NgrxRuntimeChecks } from '@app/root-store';
-import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
 import { ToastrModule } from 'ngx-toastr';
@@ -36,8 +35,7 @@ describe('CentresViewComponent', () => {
         RouterTestingModule.withRoutes(routes),
         StoreModule.forRoot(
           {
-            centre: CentreStoreReducer.reducer,
-            spinner: SpinnerStoreReducer.reducer
+            centre: CentreStoreReducer.reducer
           },
           NgrxRuntimeChecks
         ),

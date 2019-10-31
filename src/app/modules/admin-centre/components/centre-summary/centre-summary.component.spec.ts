@@ -8,7 +8,6 @@ import { CentreUpdateAttribute } from '@app/core/services';
 import { Centre } from '@app/domain/centres';
 import { CentreStoreActions, CentreStoreReducer, RootStoreState } from '@app/root-store';
 import { NgrxRuntimeChecks } from '@app/root-store/root-store.module';
-import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
 import { EntityUpdateComponentBehaviour } from '@test/behaviours/entity-update-component.behaviour';
@@ -38,8 +37,7 @@ describe('CentreSummaryComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            centre: CentreStoreReducer.reducer,
-            spinner: SpinnerStoreReducer.reducer
+            centre: CentreStoreReducer.reducer
           },
           NgrxRuntimeChecks
         ),

@@ -1,6 +1,5 @@
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
-
 import { SpinnerService } from '@app/core/services';
 
 @Component({

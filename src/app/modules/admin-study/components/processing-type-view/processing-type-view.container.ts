@@ -11,7 +11,6 @@ import {
   RootStoreState,
   StudyStoreSelectors
 } from '@app/root-store';
-import { SpinnerStoreSelectors } from '@app/root-store/spinner';
 import { AnnotationTypeRemoveComponent } from '@app/shared/components/annotation-type-remove/annotation-type-remove.component';
 import { AnnotationTypeViewComponent } from '@app/shared/components/annotation-type-view/annotation-type-view.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';

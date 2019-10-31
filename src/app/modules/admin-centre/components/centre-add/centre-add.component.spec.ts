@@ -7,7 +7,6 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { Centre } from '@app/domain/centres';
 import { RootStoreState, NgrxRuntimeChecks } from '@app/root-store';
 import { CentreStoreActions, CentreStoreReducer } from '@app/root-store/centre';
-import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
@@ -31,8 +30,7 @@ describe('CentreAddComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            centre: CentreStoreReducer.reducer,
-            spinner: SpinnerStoreReducer.reducer
+            centre: CentreStoreReducer.reducer
           },
           NgrxRuntimeChecks
         ),

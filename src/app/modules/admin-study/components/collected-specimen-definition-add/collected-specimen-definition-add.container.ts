@@ -11,7 +11,6 @@ import { select, Store, createSelector } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 import { Subject, BehaviorSubject, Observable } from 'rxjs';
 import { filter, takeUntil, map, tap, shareReplay, withLatestFrom } from 'rxjs/operators';
-import { SpinnerStoreSelectors } from '@app/root-store/spinner';
 
 interface StoreData {
   study: Study;
@@ -24,7 +23,6 @@ interface StoreData {
   templateUrl: './collected-specimen-definition-add.container.html'
 })
 export class CollectedSpecimenDefinitionAddContainerComponent implements OnInit, OnDestroy {
-  isLoading$: Observable<boolean>;
   data$: Observable<StoreData>;
   eventType: CollectionEventType;
   specimenDefinition$: Observable<CollectedSpecimenDefinition>;
@@ -43,8 +41,6 @@ export class CollectedSpecimenDefinitionAddContainerComponent implements OnInit,
   ) {}
 
   ngOnInit() {
-    this.isLoading$ = this.store$.pipe(select(SpinnerStoreSelectors.selectSpinnerIsActive));
-
     const entitiesSelector = createSelector(
       StudyStoreSelectors.selectAllStudies,
       EventTypeStoreSelectors.selectAllEventTypes,

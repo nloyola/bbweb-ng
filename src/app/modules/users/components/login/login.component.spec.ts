@@ -8,7 +8,6 @@ import { User } from '@app/domain/users';
 import { RootStoreState } from '@app/root-store';
 import { AuthStoreActions, AuthStoreReducer } from '@app/root-store/auth-store';
 import { NgrxRuntimeChecks } from '@app/root-store/root-store.module';
-import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
@@ -32,8 +31,7 @@ describe('LoginComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            auth: AuthStoreReducer.reducer,
-            spinner: SpinnerStoreReducer.reducer
+            auth: AuthStoreReducer.reducer
           },
           NgrxRuntimeChecks
         )

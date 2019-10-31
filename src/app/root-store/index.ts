@@ -14,7 +14,6 @@ export * from './role';
 export * from './shipment';
 export * from './shipment-specimen';
 export * from './specimen';
-export * from './spinner';
 export * from './study';
 export * from './user';
 export * from './root-store.module';

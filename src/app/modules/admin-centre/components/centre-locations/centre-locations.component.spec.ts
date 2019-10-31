@@ -5,7 +5,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Centre, CentreState } from '@app/domain/centres';
 import { CentreStoreActions, CentreStoreReducer, RootStoreState, NgrxRuntimeChecks } from '@app/root-store';
-import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { LocationRemoveComponent } from '@app/shared/components/location-remove/location-remove.component';
 import { NgbActiveModal, NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
@@ -34,7 +33,6 @@ describe('CentreLocationsComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            spinner: SpinnerStoreReducer.reducer,
             centre: CentreStoreReducer.reducer
           },
           NgrxRuntimeChecks

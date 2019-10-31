@@ -3,7 +3,6 @@ import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Study } from '@app/domain/studies';
 import { NgrxRuntimeChecks, RootStoreState, StudyStoreActions, StudyStoreReducer } from '@app/root-store';
-import { SpinnerStoreReducer } from '@app/root-store/spinner';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
@@ -26,8 +25,7 @@ describe('StudyViewComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            study: StudyStoreReducer.reducer,
-            spinner: SpinnerStoreReducer.reducer
+            study: StudyStoreReducer.reducer
           },
           NgrxRuntimeChecks
         )

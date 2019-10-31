@@ -106,7 +106,7 @@ export class ProcessingTypeViewComponent implements OnInit, OnChanges {
       {
         kind: 'selectable',
         label: 'Add Annotation',
-        icon: 'edit',
+        icon: 'add_circle',
         iconClass: 'success-icon',
         onSelected: () => {
           this.addAnnotationTypeSelected.emit(null);

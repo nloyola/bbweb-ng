@@ -45,13 +45,13 @@
               <button
                 class="btn btn-primary"
                 type="submit"
-                [disabled]="loginForm.invalid || (isLoggingIn$ | async)"
+                [disabled]="loginForm.invalid || (isLoggingIn$ | async) === true"
                 i18n
               >
                 <ng-container *ngIf="(isLoggingIn$ | async) === false" i18n>
                   Log In
                 </ng-container>
-                <app-spinner name="login" [show]="isLoggingIn$ | async" i18n>
+                <app-spinner name="login" [show]="(isLoggingIn$ | async) === true" i18n>
                   Logging in
                 </app-spinner>
               </button>

@@ -1,15 +1,15 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { CUSTOM_ELEMENTS_SCHEMA, NgZone } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, fakeAsync, flush, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Study } from '@app/domain/studies';
-import { RootStoreState, NgrxRuntimeChecks } from '@app/root-store';
-import { SpinnerStoreReducer } from '@app/root-store/spinner';
+import { NgrxRuntimeChecks, RootStoreState } from '@app/root-store';
 import { StudyStoreActions, StudyStoreReducer } from '@app/root-store/study';
 import { Store, StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
+import { TestUtils } from '@test/utils';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { StudyAddComponent } from './study-add.component';
 
@@ -17,7 +17,6 @@ describe('StudyAddComponent', () => {
   let store: Store<RootStoreState.State>;
   let component: StudyAddComponent;
   let fixture: ComponentFixture<StudyAddComponent>;
-  let ngZone: NgZone;
   let router: Router;
   let toastr: ToastrService;
   const factory = new Factory();
@@ -31,8 +30,7 @@ describe('StudyAddComponent', () => {
         RouterTestingModule,
         StoreModule.forRoot(
           {
-            study: StudyStoreReducer.reducer,
-            spinner: SpinnerStoreReducer.reducer
+            study: StudyStoreReducer.reducer
           },
           NgrxRuntimeChecks
         ),
@@ -48,11 +46,8 @@ describe('StudyAddComponent', () => {
     fixture = TestBed.createComponent(StudyAddComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-    ngZone = TestBed.get(NgZone);
     router = TestBed.get(Router);
     toastr = TestBed.get(ToastrService);
-
-    ngZone.run(() => router.initialNavigation());
   });
 
   it('should create', () => {
@@ -146,9 +141,9 @@ describe('StudyAddComponent', () => {
   });
 
   it('on cancel', async(() => {
-    spyOn(router, 'navigate').and.callThrough();
-    ngZone.run(() => component.onCancel());
-    expect(router.navigate).toHaveBeenCalled();
-    expect((router.navigate as any).calls.mostRecent().args[0]).toEqual(['../']);
+    const navigateListener = TestUtils.routerNavigateListener();
+    component.onCancel();
+    expect(navigateListener.mock.calls.length).toBe(1);
+    expect(navigateListener.mock.calls[0][0]).toEqual(['../']);
   }));
 });
