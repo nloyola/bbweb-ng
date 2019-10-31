@@ -6,8 +6,10 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
   templateUrl: './modal-shipment-has-specimens.component.html',
   styleUrls: ['./modal-shipment-has-specimens.component.scss']
 })
-export class ModalShipmentHasSpecimensComponent implements OnInit {
-  @Input() modal: NgbActiveModal;
+export class ModalShipmentHasSpecimensComponent {
+  constructor(private modal: NgbActiveModal) {}
 
-  ngOnInit() {}
+  close() {
+    this.modal.dismiss();
+  }
 }

@@ -1,0 +1,14 @@
+<app-shipment-specimens-table-ui
+  [specimensThisPage]="shipmentSpecimenData.specimens$ | async"
+  [maxPages]="shipmentSpecimenData.maxPages$ | async"
+  [totalSpecimens]="shipmentSpecimenData.totalSpecimens$ | async"
+  [loading]="isLoading$ | async"
+  [readOnly]="readOnly"
+  [actions]="actions"
+  (sortBy)="specimensTableSortBy($event)"
+  (pageChanged)="specimensTablePageChanged($event)"
+  (onAction)="shipmentSpecimenAction($event)"
+>
+  <ng-content select="[tableTitle]" ngProjectAs="[tableTitle]"></ng-content>
+  <ng-content select="[emptySpecimensMessage]" ngProjectAs="[emptySpecimensMessage]"></ng-content>
+</app-shipment-specimens-table-ui>

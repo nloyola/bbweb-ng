@@ -3,7 +3,8 @@
     <div class="card">
       <div class="card-header bg-primary text-light">
         <fa-icon [icon]="faVial"></fa-icon>
-        <span class="ml-1" i18n>Specimens in this Shipment</span>
+        <span class="ml-1" #titleRef><ng-content select="[tableTitle]"></ng-content></span>
+        <span class="ml-1" *ngIf="titleRef.children.length === 0" i18n>Specimens in this Shipment</span>
       </div>
 
       <table
@@ -42,7 +43,12 @@
         <tr *ngIf="!loading && totalSpecimens <= 0">
           <td colspan="6">
             <div class="alert alert-warning">
-              <span i18n>Shipment does not contain specimens</span>
+              <span #warningMsgRef>
+                <ng-content select="[emptySpecimensMessage]"></ng-content>
+              </span>
+              <span *ngIf="warningMsgRef.children.length === 0" i18n>
+                Shipment does not contain specimens
+              </span>
             </div>
           </td>
         </tr>

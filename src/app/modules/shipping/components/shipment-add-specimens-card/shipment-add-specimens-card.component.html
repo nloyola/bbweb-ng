@@ -3,18 +3,18 @@
     <div class="card">
       <div class="card-header bg-primary text-light">
         <fa-icon [icon]="faVial"></fa-icon>
-        <span class="ml-1" i18n>Add Specimens</span>
+        <span class="ml-1"><ng-content select="[title]"></ng-content></span>
       </div>
 
       <div class="card-body">
         <div class="row">
           <div class="col-md-12" i18n>
-            Enter one or more specimen inventory ID to add:
+            <span><ng-content select="[prompt]"></ng-content></span>
           </div>
         </div>
 
         <form class="form-horizontal" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="on" novalidate>
-          <div class="form-group row">
+          <div class="form-group row mt-2">
             <div class="col-md-10">
               <input
                 class="form-control mb-2 mr-sm-2 mb-sm-0"
@@ -30,14 +30,14 @@
               <button
                 class="btn btn-primary mr-2"
                 type="submit"
-                [disabled]="form.invalid || (shipmentLoading$ | async) === true"
+                [disabled]="form.invalid || shipmentLoading"
                 i18n
               >
-                <ng-container *ngIf="(shipmentLoading$ | async) === false">
-                  Add
+                <ng-container *ngIf="!shipmentLoading">
+                  <span><ng-content select="[buttonText]"></ng-content></span>
                 </ng-container>
-                <app-spinner name="addingSpecimens" [show]="(shipmentLoading$ | async) === true">
-                  Adding
+                <app-spinner name="addingSpecimens" [show]="shipmentLoading">
+                  <span><ng-content select="[buttonTextLoading]"></ng-content></span>
                 </app-spinner>
               </button>
             </div>
@@ -47,19 +47,3 @@
     </div>
   </div>
 </div>
-
-<ng-template #addSpecimenError let-modal>
-  <app-modal [cancelButtonShow]="false" (confirm)="modal.close()">
-    <span class="title" i18n>Specimens cannot be added to this Shipment</span>
-    <div class="body alert alert-warning" role="alert">
-      <div class="row vertical-align">
-        <div class="col-md-1 text-center">
-          <mat-icon>warning</mat-icon>
-        </div>
-        <div class="col-md-11">
-          <span [innerHTML]="addErrorMessage"></span>
-        </div>
-      </div>
-    </div>
-  </app-modal>
-</ng-template>

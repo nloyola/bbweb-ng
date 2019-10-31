@@ -1,0 +1,45 @@
+<div class="pb-2 mt-4 mb-2">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="d-inline-block">
+        <h1>
+          {{ shipment.courierName }}: {{ shipment.trackingNumber }}
+          <span class="badge badge-pill badge-danger" i18n>Lost</span>
+        </h1>
+      </div>
+
+      <div class="float-right d-inline-block">
+        <button class="btn btn-warning btn-sm mr-1" (click)="backToSent()">
+          <mat-icon class="mr-1">arrow_left</mat-icon>
+          <span i18n>Back to Sent</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <app-shipment-information-card [shipment]="shipment" [displayState]="true"> </app-shipment-information-card>
+
+  <app-shipment-specimens-table [shipment]="shipment"></app-shipment-specimens-table>
+</div>
+
+<ng-template #unpackedTimeModal let-modal>
+  <app-modal-input-date-time
+    [title]="'Time the shipment was unpacked'"
+    [label]="'Time Unpacked'"
+    [value]=""
+    [options]="modalInputOptions"
+    (onConfirm)="confirm($event)"
+    [modal]="modal"
+  >
+  </app-modal-input-date-time>
+</ng-template>
+
+<ng-template #backToSentModal let-modal>
+  <app-modal (confirm)="modal.close()" (dismiss)="modal.dismiss()">
+    <span class="title" i18n>Back to Sent</span>
+    <div class="body" i18n>
+      Are you sure you want to revert this shipment back to
+      <span class="badge badge-pill badge-warning">Sent</span> state?
+    </div>
+  </app-modal>
+</ng-template>

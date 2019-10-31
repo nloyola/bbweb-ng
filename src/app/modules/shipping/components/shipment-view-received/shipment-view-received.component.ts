@@ -5,20 +5,20 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
-import { takeUntil, withLatestFrom } from 'rxjs/operators';
+import { filter, takeUntil, withLatestFrom } from 'rxjs/operators';
 import { ShipmentViewerComponent } from '../shipment-viewer/shipment-viewer.component';
 
 @Component({
-  selector: 'app-shipment-view-packed',
-  templateUrl: './shipment-view-packed.component.html',
-  styleUrls: ['./shipment-view-packed.component.scss']
+  selector: 'app-shipment-view-received',
+  templateUrl: './shipment-view-received.component.html',
+  styleUrls: ['./shipment-view-received.component.scss']
 })
-export class ShipmentViewPackedComponent extends ShipmentViewerComponent {
-  @ViewChild('sentTimeModal', { static: false }) sentTimeModal: TemplateRef<any>;
-  @ViewChild('backToCreatedModal', { static: false }) backToCreatedModal: TemplateRef<any>;
+export class ShipmentViewReceivedComponent extends ShipmentViewerComponent {
+  @ViewChild('unpackedTimeModal', { static: false }) unpackedTimeModal: TemplateRef<any>;
+  @ViewChild('backToSentModal', { static: false }) backToSentModal: TemplateRef<any>;
 
-  private backToCreated$ = new Subject<boolean>();
-  private sentTime$ = new Subject<Date>();
+  private backToSent$ = new Subject<boolean>();
+  private unpackedTime$ = new Subject<Date>();
 
   constructor(
     store$: Store<RootStoreState.State>,
@@ -30,66 +30,68 @@ export class ShipmentViewPackedComponent extends ShipmentViewerComponent {
 
   ngOnInit() {
     super.ngOnInit();
-    this.initBackToCreated();
-    this.initTagAsSent();
+    this.initBackToSent();
+    this.initTagAsUnpacked();
   }
 
-  backToCreated() {
+  backToSent() {
     this.modalService
-      .open(this.backToCreatedModal)
+      .open(this.backToSentModal)
       .result.then(() => {
         this.store$.dispatch(
           ShipmentStoreActions.updateShipmentRequest({
             shipment: this.shipment,
             attributeName: 'state',
             value: {
-              transition: ShipmentStateTransision.Created
+              transition: ShipmentStateTransision.Sent,
+              datetime: this.shipment.timeSent
             }
           })
         );
-        this.backToCreated$.next(true);
+        this.backToSent$.next(true);
       })
       .catch(() => undefined);
   }
 
-  tagAsSent() {
+  tagAsUnpacked() {
     this.modalService
-      .open(this.sentTimeModal, { size: 'lg' })
-      .result.then((datetime: Date) => {
+      .open(this.unpackedTimeModal, { size: 'lg' })
+      .result.then(unpackedTime => {
         this.store$.dispatch(
           ShipmentStoreActions.updateShipmentRequest({
             shipment: this.shipment,
             attributeName: 'state',
             value: {
-              transition: ShipmentStateTransision.Sent,
-              datetime
+              transition: ShipmentStateTransision.Unpacked,
+              datetime: unpackedTime
             }
           })
         );
-        this.sentTime$.next(datetime);
+        this.unpackedTime$.next(unpackedTime);
       })
       .catch(() => undefined);
   }
 
-  private initBackToCreated(): void {
+  private initBackToSent(): void {
     this.shipment$
       .pipe(
-        withLatestFrom(this.backToCreated$),
-        takeUntil(this.unsubscribe$)
+        withLatestFrom(this.backToSent$),
+        takeUntil(this.unsubscribe$),
+        filter(([_shipment, flag]) => flag !== undefined)
       )
       .subscribe(() => {
-        this.toastr.success('Shipment back in Created state');
+        this.toastr.success('Tagged as Sent');
       });
   }
 
-  private initTagAsSent(): void {
+  private initTagAsUnpacked(): void {
     this.shipment$
       .pipe(
-        withLatestFrom(this.sentTime$),
+        withLatestFrom(this.unpackedTime$),
         takeUntil(this.unsubscribe$)
       )
       .subscribe(() => {
-        this.toastr.success('Sent time recorded');
+        this.toastr.success('Received time recorded');
       });
   }
 }

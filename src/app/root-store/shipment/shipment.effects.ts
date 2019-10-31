@@ -104,6 +104,14 @@ export class ShipmentStoreEffects {
         case ShipmentItemState.Extra:
           methodName = 'tagSpecimensAsExtra';
           break;
+        default:
+          return observableOf(
+            ShipmentActions.tagSpecimensFailure({
+              error: {
+                message: `specimen tag ${action.specimenTag} is invalid`
+              }
+            })
+          );
       }
 
       return this.shipmentService[methodName](action.shipment, action.specimenInventoryIds).pipe(

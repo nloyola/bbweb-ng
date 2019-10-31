@@ -27,6 +27,8 @@ import { faBoxOpen } from '@fortawesome/free-solid-svg-icons';
 export class ShipmentInformationCardComponent implements OnInit, OnDestroy {
   @Input() shipment: Shipment;
   @Input() displayState: boolean;
+  @Input() showMenu = false;
+  @Input() collapsible = false;
 
   @Output() onRemove = new EventEmitter<Shipment>();
 

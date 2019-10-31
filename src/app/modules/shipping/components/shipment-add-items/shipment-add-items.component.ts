@@ -1,11 +1,12 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, Input, TemplateRef, ViewChild } from '@angular/core';
 import { Shipment, ShipmentSpecimen } from '@app/domain/shipments';
 import { ModalInputOptions } from '@app/modules/modals/models';
 import {
   RootStoreState,
+  ShipmentSpecimenStoreActions,
   ShipmentStoreActions,
   ShipmentStoreSelectors,
-  ShipmentSpecimenStoreActions,
   ShipmentSpecimenStoreSelectors
 } from '@app/root-store';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -17,8 +18,8 @@ import { ShipmentStateTransision } from '../../../../core/services/shipment.serv
 import { ModalShipmentHasNoSpecimensComponent } from '../modal-shipment-has-no-specimens/modal-shipment-has-no-specimens.component';
 import { ModalShipmentHasSpecimensComponent } from '../modal-shipment-has-specimens/modal-shipment-has-specimens.component';
 import { ModalShipmentRemoveComponent } from '../modal-shipment-remove/modal-shipment-remove.component';
+import { ShipmentSpecimenAction } from '../shipment-specimens-table/shipment-specimens-table.container';
 import { ShipmentViewerComponent } from '../shipment-viewer/shipment-viewer.component';
-import { Specimen } from '@app/domain/participants';
 
 @Component({
   selector: 'app-shipment-add-items',
@@ -28,13 +29,25 @@ import { Specimen } from '@app/domain/participants';
 export class ShipmentAddItemsComponent extends ShipmentViewerComponent {
   @ViewChild('packedTimeModal', { static: false }) packedTimeModal: TemplateRef<any>;
   @ViewChild('sentTimeModal', { static: false }) sentTimeModal: TemplateRef<any>;
+  @ViewChild('removeShipmentSpecimenModal', { static: false }) removeShipmentSpecimenModal: TemplateRef<any>;
+  @ViewChild('addSpecimenError', { static: false }) addSpecimenError: TemplateRef<any>;
 
   @Input() shipment: Shipment;
 
   packedTimeModalOptions: ModalInputOptions = { required: true };
   sentTimeModalOptions: ModalInputOptions = { required: true };
+  shipmentSpecimenToRemove: ShipmentSpecimen;
+  actions: ShipmentSpecimenAction[] = [
+    {
+      id: 'remove',
+      label: 'Remove Specimen',
+      icon: 'remove_circle',
+      iconClass: 'danger-icon'
+    }
+  ];
+  addErrorMessage = '';
 
-  private updatedMessage$ = new Subject<string>();
+  private notificationMessage$ = new Subject<string>();
 
   constructor(
     store$: Store<RootStoreState.State>,
@@ -48,7 +61,9 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent {
     super.ngOnInit();
     this.initOnRemoved();
     this.initOnShipmentModified();
-    this.initErrorSelector();
+    this.initOnSpecimenRemoved();
+    this.initShipmentErrorSelector();
+    this.initShipmentSpecimenErrorSelector();
   }
 
   removeShipment() {
@@ -65,7 +80,7 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent {
             shipment: this.shipment
           })
         );
-        this.updatedMessage$.next('Shipment removed');
+        this.notificationMessage$.next('Shipment removed');
       })
       .catch(() => undefined);
   }
@@ -90,7 +105,7 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent {
             }
           })
         );
-        this.updatedMessage$.next('Packed time recorded');
+        this.notificationMessage$.next('Packed time recorded');
       })
       .catch(() => undefined);
   }
@@ -116,15 +131,36 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent {
             }
           })
         );
-        this.updatedMessage$.next('Packed and Sent time recorded');
+        this.notificationMessage$.next('Packed and Sent time recorded');
       })
       .catch(() => undefined);
+  }
+
+  addShipmentSpecimens(specimenInventoryIds: string[]): void {
+    this.store$.dispatch(
+      ShipmentStoreActions.addSpecimensRequest({
+        shipment: this.shipment,
+        specimenInventoryIds
+      })
+    );
+    this.notificationMessage$.next('Specimen Added');
+  }
+
+  shipmentSpecimenAction([shipmentSpecimen, actionId]) {
+    console.log('actionId', actionId);
+    switch (actionId) {
+      case 'remove':
+        this.removeShipmentSpecimen(shipmentSpecimen);
+        break;
+      default:
+        throw new Error(`action ${actionId} is not handled`);
+    }
   }
 
   private initOnShipmentModified(): void {
     this.shipment$
       .pipe(
-        withLatestFrom(this.updatedMessage$),
+        withLatestFrom(this.notificationMessage$),
         takeUntil(this.unsubscribe$)
       )
       .subscribe(([_shipment, message]) => {
@@ -136,7 +172,7 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent {
     this.store$
       .pipe(
         select(ShipmentStoreSelectors.selectShipmentLastRemovedId),
-        withLatestFrom(this.updatedMessage$),
+        withLatestFrom(this.notificationMessage$),
         takeUntil(this.unsubscribe$)
       )
       .subscribe(() => {
@@ -144,17 +180,77 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent {
       });
   }
 
-  private initErrorSelector() {
+  private initOnSpecimenRemoved(): void {
+    this.store$
+      .pipe(
+        select(ShipmentSpecimenStoreSelectors.selectShipmentSpecimenLastRemovedId),
+        withLatestFrom(this.notificationMessage$),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe(([_id, message]) => {
+        this.toastr.success(message);
+      });
+  }
+
+  private initShipmentErrorSelector() {
     this.store$
       .pipe(
         select(ShipmentStoreSelectors.selectShipmentError),
         filter(s => !!s),
-        withLatestFrom(this.updatedMessage$),
+        withLatestFrom(this.notificationMessage$),
         takeUntil(this.unsubscribe$)
       )
       .subscribe(([error, _msg]) => {
-        let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
-        this.toastr.error(errMessage, 'Error', { disableTimeOut: true });
+        if (
+          error.actionType === ShipmentStoreActions.removeShipmentFailure.type &&
+          error.error instanceof HttpErrorResponse
+        ) {
+          let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
+          this.toastr.error(errMessage, 'Error', { disableTimeOut: true });
+        }
       });
+  }
+
+  private initShipmentSpecimenErrorSelector(): void {
+    this.store$
+      .pipe(
+        select(ShipmentStoreSelectors.selectShipmentError),
+        filter(error => !!error),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe(error => {
+        if (
+          error.actionType === ShipmentStoreActions.addSpecimensFailure.type &&
+          error.error instanceof HttpErrorResponse
+        ) {
+          const errorMessage = error.error.error.message;
+          const inventoryIds = errorMessage.split(': ');
+
+          if (errorMessage.match(/invalid specimen inventory IDs/)) {
+            this.addErrorMessage = `Inventory IDs not present in the system:<br><b>${inventoryIds[2]}</b>`;
+          } else if (errorMessage.match(/specimens are already in an active shipment/)) {
+            this.addErrorMessage = `Inventory IDs already in this shipment or another shipment:<br><b>${inventoryIds[2]}</b>`;
+          } else if (errorMessage.match(/invalid centre for specimen inventory IDs/)) {
+            this.addErrorMessage = `Inventory IDs at a different location than where shipment is coming from:<br><b>${inventoryIds[2]}</b>`;
+          } else {
+            this.addErrorMessage = errorMessage;
+          }
+
+          this.modalService.open(this.addSpecimenError, { size: 'lg' });
+        }
+      });
+  }
+
+  private removeShipmentSpecimen(shipmentSpecimen: ShipmentSpecimen) {
+    this.shipmentSpecimenToRemove = shipmentSpecimen;
+    const modal = this.modalService.open(this.removeShipmentSpecimenModal, { size: 'lg' });
+    modal.result
+      .then(() => {
+        this.store$.dispatch(
+          ShipmentSpecimenStoreActions.removeShipmentSpecimenRequest({ shipmentSpecimen })
+        );
+        this.notificationMessage$.next('Specimen Removed');
+      })
+      .catch(() => undefined);
   }
 }

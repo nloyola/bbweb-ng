@@ -9,18 +9,14 @@ import { ModalInputModule } from '../modals/modals.module';
 import { CentreShipmentsDetailsComponent } from './components/centre-shipments-details/centre-shipments-details.component';
 import { CentreShipmentsPageComponent } from './components/centre-shipments-page/centre-shipments-page.component';
 import { ModalInputCentreLocationComponent } from './components/modal-input-centre-location/modal-input-centre-location.component';
-import { ModalShipmentBackToCreatedComponent } from './components/modal-shipment-back-to-created/modal-shipment-back-to-created.component';
-import { ModalShipmentBackToPackedComponent } from './components/modal-shipment-back-to-packed/modal-shipment-back-to-packed.component';
 import { ModalShipmentHasNoSpecimensComponent } from './components/modal-shipment-has-no-specimens/modal-shipment-has-no-specimens.component';
 import { ModalShipmentHasSpecimensComponent } from './components/modal-shipment-has-specimens/modal-shipment-has-specimens.component';
 import { ModalShipmentRemoveComponent } from './components/modal-shipment-remove/modal-shipment-remove.component';
-import { ModalShipmentTagAsLostComponent } from './components/modal-shipment-tag-as-lost/modal-shipment-tag-as-lost.component';
 import { ShipmentAddItemsComponent } from './components/shipment-add-items/shipment-add-items.component';
 import { ShipmentAddPageComponent } from './components/shipment-add-page/shipment-add-page.component';
 import { ShipmentAddSpecimensCardComponent } from './components/shipment-add-specimens-card/shipment-add-specimens-card.component';
 import { ShipmentInformationCardComponent } from './components/shipment-information-card/shipment-information-card.component';
 import { ShipmentNotInCreatedModalComponent } from './components/shipment-not-in-created-modal/shipment-not-in-created-modal.component';
-import { ShipmentPageButtonsComponent } from './components/shipment-page-buttons/shipment-page-buttons.component';
 import { ShipmentSpecimensTableComponent } from './components/shipment-specimens-table/shipment-specimens-table.component';
 import { ShipmentViewPackedComponent } from './components/shipment-view-packed/shipment-view-packed.component';
 import { ShipmentViewSentComponent } from './components/shipment-view-sent/shipment-view-sent.component';
@@ -33,6 +29,15 @@ import { ModalSpecimensInOtherShipmentComponent } from './components/modal-speci
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ShipmentSpecimensTableContainerComponent } from './components/shipment-specimens-table/shipment-specimens-table.container';
 import { SpecimenViewModalComponent } from '../modals/components/specimen-view-modal/specimen-view-modal.component';
+import { ShipmentViewReceivedComponent } from './components/shipment-view-received/shipment-view-received.component';
+import { ShipmentViewLostComponent } from './components/shipment-view-lost/shipment-view-lost.component';
+import { ShipmentViewUnpackedComponent } from './components/shipment-view-unpacked/shipment-view-unpacked.component';
+import { UnpackedShipmentInfoComponent } from './components/unpacked-shipment-info/unpacked-shipment-info.component';
+import { UnpackedShipmentUnpackComponent } from './components/unpacked-shipment-unpack/unpacked-shipment-unpack.component';
+import { UnpackedShipmentReceivedComponent } from './components/unpacked-shipment-received/unpacked-shipment-received.component';
+import { UnpackedShipmentMissingComponent } from './components/unpacked-shipment-missing/unpacked-shipment-missing.component';
+import { UnpackedShipmentExtraComponent } from './components/unpacked-shipment-extra/unpacked-shipment-extra.component';
+import { ShipmentViewCompletedComponent } from './components/shipment-view-completed/shipment-view-completed.component';
 
 @NgModule({
   imports: [
@@ -53,38 +58,39 @@ import { SpecimenViewModalComponent } from '../modals/components/specimen-view-m
     CentreShipmentsPageComponent,
     ModalInputCentreLocationComponent,
     ModalInputCentreLocationComponent,
-    ModalShipmentBackToCreatedComponent,
-    ModalShipmentBackToPackedComponent,
     ModalShipmentHasNoSpecimensComponent,
     ModalShipmentHasSpecimensComponent,
     ModalShipmentRemoveComponent,
-    ModalShipmentTagAsLostComponent,
     ModalSpecimensInOtherShipmentComponent,
     ShipmentAddItemsComponent,
     ShipmentAddPageComponent,
     ShipmentAddSpecimensCardComponent,
     ShipmentInformationCardComponent,
     ShipmentNotInCreatedModalComponent,
-    ShipmentPageButtonsComponent,
-    ShipmentPageButtonsComponent,
     ShipmentSpecimensTableComponent,
     ShipmentSpecimensTableContainerComponent,
     ShipmentViewComponent,
     ShipmentViewPackedComponent,
     ShipmentViewSentComponent,
+    ShipmentViewReceivedComponent,
+    ShipmentViewUnpackedComponent,
+    ShipmentViewLostComponent,
     ShipmentsTableViewComponent,
     ShippingCentresSelectComponent,
-    ShippingPageComponent
+    ShippingPageComponent,
+    UnpackedShipmentInfoComponent,
+    UnpackedShipmentUnpackComponent,
+    UnpackedShipmentReceivedComponent,
+    UnpackedShipmentMissingComponent,
+    UnpackedShipmentExtraComponent,
+    ShipmentViewCompletedComponent
   ],
   entryComponents: [
     ModalInputCentreLocationComponent,
     ModalInputCentreLocationComponent,
-    ModalShipmentBackToCreatedComponent,
-    ModalShipmentBackToPackedComponent,
     ModalShipmentHasNoSpecimensComponent,
     ModalShipmentHasSpecimensComponent,
     ModalShipmentRemoveComponent,
-    ModalShipmentTagAsLostComponent,
     ModalSpecimensInOtherShipmentComponent,
     SpecimenViewModalComponent
   ]

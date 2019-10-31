@@ -7,8 +7,6 @@ import { Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
 import { filter, takeUntil, withLatestFrom } from 'rxjs/operators';
-import { ModalShipmentBackToPackedComponent } from '../modal-shipment-back-to-packed/modal-shipment-back-to-packed.component';
-import { ModalShipmentTagAsLostComponent } from '../modal-shipment-tag-as-lost/modal-shipment-tag-as-lost.component';
 import { ShipmentViewerComponent } from '../shipment-viewer/shipment-viewer.component';
 
 @Component({
@@ -19,6 +17,8 @@ import { ShipmentViewerComponent } from '../shipment-viewer/shipment-viewer.comp
 export class ShipmentViewSentComponent extends ShipmentViewerComponent {
   @ViewChild('receivedTimeModal', { static: false }) receivedTimeModal: TemplateRef<any>;
   @ViewChild('unpackedTimeModal', { static: false }) unpackedTimeModal: TemplateRef<any>;
+  @ViewChild('backToPackedModal', { static: false }) backToPackedModal: TemplateRef<any>;
+  @ViewChild('tagAsLostModal', { static: false }) tagAsLostModal: TemplateRef<any>;
 
   private backToPacked$ = new Subject<boolean>();
   private receivedTime$ = new Subject<Date>();
@@ -43,7 +43,7 @@ export class ShipmentViewSentComponent extends ShipmentViewerComponent {
 
   backToPacked() {
     this.modalService
-      .open(ModalShipmentBackToPackedComponent)
+      .open(this.backToPackedModal)
       .result.then(() => {
         this.store$.dispatch(
           ShipmentStoreActions.updateShipmentRequest({
@@ -101,7 +101,7 @@ export class ShipmentViewSentComponent extends ShipmentViewerComponent {
 
   tagAsLost() {
     this.modalService
-      .open(ModalShipmentTagAsLostComponent)
+      .open(this.tagAsLostModal)
       .result.then(() => {
         this.store$.dispatch(
           ShipmentStoreActions.updateShipmentRequest({

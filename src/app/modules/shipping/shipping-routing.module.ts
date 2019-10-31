@@ -10,6 +10,11 @@ import { CentreShipmentsPageComponent } from './components/centre-shipments-page
 import { ShipmentAddPageComponent } from './components/shipment-add-page/shipment-add-page.component';
 import { ShipmentViewComponent } from './components/shipment-view/shipment-view.component';
 import { ShippingPageComponent } from './components/shipping-page/shipping-page.component';
+import { UnpackedShipmentInfoComponent } from './components/unpacked-shipment-info/unpacked-shipment-info.component';
+import { UnpackedShipmentUnpackComponent } from './components/unpacked-shipment-unpack/unpacked-shipment-unpack.component';
+import { UnpackedShipmentReceivedComponent } from './components/unpacked-shipment-received/unpacked-shipment-received.component';
+import { UnpackedShipmentMissingComponent } from './components/unpacked-shipment-missing/unpacked-shipment-missing.component';
+import { UnpackedShipmentExtraComponent } from './components/unpacked-shipment-extra/unpacked-shipment-extra.component';
 
 const ShippingCentreChildStates = [
   { path: '', redirectTo: 'all', pathMatch: 'full' },
@@ -23,6 +28,30 @@ const ShippingCentreChildStates = [
     resolve: {
       shipment: ShipmentResolver
     },
+    children: [
+      // these children are only accessible when shipment is in "unpacked" state
+      { path: '', redirectTo: 'information', pathMatch: 'full' },
+      {
+        path: 'information',
+        component: UnpackedShipmentInfoComponent
+      },
+      {
+        path: 'unpacked-specimens',
+        component: UnpackedShipmentUnpackComponent
+      },
+      {
+        path: 'received-specimens',
+        component: UnpackedShipmentReceivedComponent
+      },
+      {
+        path: 'missing-specimens',
+        component: UnpackedShipmentMissingComponent
+      },
+      {
+        path: 'extra-specimens',
+        component: UnpackedShipmentExtraComponent
+      }
+    ],
     data: {
       breadcrumbs: '{{shipment.courierName}}: {{shipment.trackingNumber}}'
     }

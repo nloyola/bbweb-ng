@@ -2,14 +2,11 @@
   <app-shipment-add-items [shipment]="shipment" *ngSwitchCase="'created'"> </app-shipment-add-items>
   <app-shipment-view-packed [shipment]="shipment" *ngSwitchCase="'packed'"> </app-shipment-view-packed>
   <app-shipment-view-sent [shipment]="shipment" *ngSwitchCase="'sent'"> </app-shipment-view-sent>
-
-  <!--
-       TODO: implement the following
-       view-received
-       view-unpacked
-       view-completed
-       view-lost
-  -->
+  <app-shipment-view-received [shipment]="shipment" *ngSwitchCase="'received'"> </app-shipment-view-received>
+  <app-shipment-view-lost [shipment]="shipment" *ngSwitchCase="'lost'"> </app-shipment-view-lost>
+  <app-shipment-view-unpacked [shipment]="shipment" *ngSwitchCase="'unpacked'"> </app-shipment-view-unpacked>
+  <app-shipment-view-completed [shipment]="shipment" *ngSwitchCase="'completed'">
+  </app-shipment-view-completed>
 
   <div class="mt-4" *ngSwitchDefault>
     Shipment state <b>{{ shipment?.state }}</b> NOT implemented Yet!

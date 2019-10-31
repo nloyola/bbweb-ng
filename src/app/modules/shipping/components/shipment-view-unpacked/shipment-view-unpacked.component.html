@@ -1,0 +1,81 @@
+<div class="pb-2 mt-4 mb-2">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="d-inline-block">
+        <h1>
+          {{ shipment?.courierName }}: {{ shipment?.trackingNumber }}
+          <span class="badge badge-pill badge-secondary" i18n>Unpacked</span>
+        </h1>
+      </div>
+
+      <div class="float-right d-inline-block">
+        <button class="btn btn-warning btn-sm mr-1" (click)="backToReceived()">
+          <mat-icon class="mr-1">arrow_left</mat-icon>
+          <span i18n>Back to Received</span>
+        </button>
+        <button class="btn btn-primary btn-sm mr-1" (click)="tagAsCompleted()">
+          <span i18n>Tag as Completed</span>
+          <mat-icon class="ml-1">arrow_right</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-12 mt-4">
+      <ngb-tabset [activeId]="activeTabId" (tabChange)="tabSelection($event)">
+        <ngb-tab *ngFor="let tabId of tabIds" [id]="tabId">
+          <ng-template ngbTabTitle>
+            {{ tabData[tabId].heading }}
+          </ng-template>
+        </ngb-tab>
+      </ngb-tabset>
+    </div>
+  </div>
+
+  <router-outlet></router-outlet>
+</div>
+
+<ng-template #completedTimeModal let-modal>
+  <app-modal-input-date-time
+    [title]="'Time the shipment was Completed'"
+    [label]="'Time Completed'"
+    [value]=""
+    [options]="modalInputOptions"
+    (onConfirm)="confirm($event)"
+    [modal]="modal"
+  >
+  </app-modal-input-date-time>
+</ng-template>
+
+<ng-template #containsSpecimensModal let-modal>
+  <app-modal [cancelButtonShow]="false" (confirm)="modal.close()">
+    <span class="title">Cannot tag as Completed</span>
+    <div class="body">
+      Cannot tag this shipment as
+      <span class="badge badge-pill badge-warning">Completed</span>
+      since it still has specimens / items that need unpacking.
+    </div>
+  </app-modal>
+</ng-template>
+
+<ng-template #backToReceivedModal let-modal>
+  <app-modal (confirm)="modal.close()" (dismiss)="modal.dismiss()">
+    <span class="title">Back to Received</span>
+    <div class="body">
+      Are you sure you want to revert this shipment back to
+      <span class="badge badge-pill badge-warning">Received</span> state?
+    </div>
+  </app-modal>
+</ng-template>
+
+<ng-template #containsUnpackedSpecimensModal let-modal>
+  <app-modal [cancelButtonShow]="false" (confirm)="modal.close()">
+    <span class="title">Cannot tag as Received</span>
+    <div class="body">
+      Cannot revert this shipment to
+      <span class="badge badge-pill badge-warning">Received</span>
+      state since specimens have been unpacked.
+    </div>
+  </app-modal>
+</ng-template>

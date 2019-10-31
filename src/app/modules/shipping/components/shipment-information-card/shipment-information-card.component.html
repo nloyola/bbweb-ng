@@ -7,6 +7,7 @@
 
         <button
           class="float-right d-inline-block btn btn-sm btn-light"
+          *ngIf="collapsible"
           type="button"
           (click)="isCardCollapsed = !isCardCollapsed"
           [attr.aria-expanded]="!isCardCollapsed"
@@ -17,6 +18,7 @@
         </button>
 
         <app-dropdown-menu
+          *ngIf="showMenu"
           buttonClass="btn btn-sm btn-light btn-light mr-1"
           [menuItems]="menuItems"
           placement="bottom-right"
@@ -28,7 +30,7 @@
           <li class="list-group-item">
             <div class="row">
               <div class="col-md-2">
-                <strong i18n>Courier:</strong>
+                <strong i18n>Courier</strong>
               </div>
               <div class="col-md-10">
                 {{ shipment.courierName }}
@@ -39,7 +41,7 @@
           <li class="list-group-item">
             <div class="row">
               <div class="col-md-2">
-                <strong i18n>Tracking Number:</strong>
+                <strong i18n>Tracking Number</strong>
               </div>
               <div class="col-md-10">
                 {{ shipment.trackingNumber }}
@@ -50,7 +52,7 @@
           <li class="list-group-item">
             <div class="row">
               <div class="col-md-2">
-                <strong i18n>Origin:</strong>
+                <strong i18n>Origin</strong>
               </div>
               <div class="col-md-10">
                 {{ shipment.origin.combinedName }}
@@ -61,7 +63,7 @@
           <li class="list-group-item">
             <div class="row">
               <div class="col-md-2">
-                <strong i18n>Destination:</strong>
+                <strong i18n>Destination</strong>
               </div>
               <div class="col-md-10">
                 {{ shipment.destination.combinedName }}
@@ -72,10 +74,10 @@
           <li class="list-group-item" *ngIf="displayState">
             <div class="row">
               <div class="col-md-2">
-                <strong i18n>State:</strong>
+                <strong i18n>State</strong>
               </div>
               <div class="col-md-10">
-                {{ shipment.state }}
+                {{ shipment.state | titlecase }}
               </div>
             </div>
           </li>
@@ -83,7 +85,7 @@
           <li class="list-group-item" *ngIf="shipment.timePacked">
             <div class="row" *ngIf="shipment.timePacked !== undefined">
               <div class="col-md-2">
-                <strong i18n>Time packed:</strong>
+                <strong i18n>Packed</strong>
               </div>
               <div class="col-md-10">
                 {{ shipment.timePacked | localTime }}
@@ -94,7 +96,7 @@
           <li class="list-group-item" *ngIf="shipment.timeSent">
             <div class="row" *ngIf="shipment.timeSent !== undefined">
               <div class="col-md-2">
-                <strong i18n>Time sent:</strong>
+                <strong i18n>Sent</strong>
               </div>
               <div class="col-md-10">
                 {{ shipment.timeSent | localTime }}
@@ -105,7 +107,7 @@
           <li class="list-group-item" *ngIf="shipment.timeReceived">
             <div class="row" *ngIf="shipment.timeReceived !== undefined">
               <div class="col-md-2">
-                <strong i18n>Time received:</strong>
+                <strong i18n>Received</strong>
               </div>
               <div class="col-md-10">
                 {{ shipment.timeReceived | localTime }}
@@ -116,7 +118,7 @@
           <li class="list-group-item" *ngIf="shipment.timeUnpacked">
             <div class="row" *ngIf="shipment.timeUnpacked !== undefined">
               <div class="col-md-2">
-                <strong i18n>Time unpacked:</strong>
+                <strong i18n>Unpacked</strong>
               </div>
               <div class="col-md-10">
                 {{ shipment.timeUnpacked | localTime }}
@@ -127,7 +129,7 @@
           <li class="list-group-item" *ngIf="shipment.timeCompleted">
             <div class="row" *ngIf="shipment.timeCompleted !== undefined">
               <div class="col-md-2">
-                <strong i18n>Time completed:</strong>
+                <strong i18n>Completed</strong>
               </div>
               <div class="col-md-10">
                 {{ shipment.timeCompleted | localTime }}

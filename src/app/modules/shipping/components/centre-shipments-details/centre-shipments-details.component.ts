@@ -178,10 +178,10 @@ export class CentreShipmentsDetailsComponent implements OnInit, OnDestroy {
 
     switch (this.mode) {
       case CentreShipmentsViewMode.Incoming:
-        filters.push(`destination::${this.centre.name}`);
+        filters.push('state:out:completed', `destination::${this.centre.name}`);
         break;
       case CentreShipmentsViewMode.Outgoing:
-        filters.push(`origin::${this.centre.name}`);
+        filters.push('state:out:completed', `origin::${this.centre.name}`);
         break;
       case CentreShipmentsViewMode.Completed:
         filters.push('state::completed', `destination::${this.centre.name}`);

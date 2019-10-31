@@ -1,22 +1,30 @@
 <div class="pb-2 mt-4 mb-2">
-  <h1>
-    {{ shipment?.courierName }}: {{ shipment?.trackingNumber }}
+  <div class="row">
+    <div class="col-md-12">
+      <div class="d-inline-block">
+        <h1>
+          {{ shipment?.courierName }}: {{ shipment?.trackingNumber }}
+          <span class="badge badge-pill badge-secondary" i18n>Packed</span>
+        </h1>
+      </div>
 
-    <span class="float-right d-inline-block">
-      <button class="btn btn-warning btn-sm mr-1" (click)="backToCreated()">
-        <mat-icon class="mr-1">arrow_left</mat-icon>
-        <span i18n>Back to created</span>
-      </button>
-      <button class="btn btn-primary btn-sm mr-1" (click)="tagAsSent()">
-        <span i18n>Tag as sent</span>
-        <mat-icon class="ml-1">arrow_right</mat-icon>
-      </button>
-    </span>
-  </h1>
+      <div class="float-right d-inline-block">
+        <button class="btn btn-warning btn-sm mr-1" (click)="backToCreated()">
+          <mat-icon class="mr-1">arrow_left</mat-icon>
+          <span i18n>Back to created</span>
+        </button>
+        <button class="btn btn-primary btn-sm mr-1" (click)="tagAsSent()">
+          <span i18n>Tag as sent</span>
+          <mat-icon class="ml-1">arrow_right</mat-icon>
+        </button>
+      </div>
 
-  <app-shipment-information-card [shipment]="shipment" [displayState]="true"> </app-shipment-information-card>
+      <app-shipment-information-card [shipment]="shipment" [displayState]="true">
+      </app-shipment-information-card>
 
-  <app-shipment-specimens-table [shipment]="shipment"></app-shipment-specimens-table>
+      <app-shipment-specimens-table [shipment]="shipment"></app-shipment-specimens-table>
+    </div>
+  </div>
 </div>
 
 <ng-template #sentTimeModal let-modal>
@@ -29,4 +37,14 @@
     [modal]="modal"
   >
   </app-modal-input-date-time>
+</ng-template>
+
+<ng-template #backToCreatedModal let-modal>
+  <app-modal (confirm)="modal.close()" (dismiss)="modal.dismiss()">
+    <span class="title">Back to Created</span>
+    <div class="body">
+      Are you sure you want to revert this shipment back to
+      <span class="badge badge-pill badge-warning">Created</span> state?
+    </div>
+  </app-modal>
 </ng-template>

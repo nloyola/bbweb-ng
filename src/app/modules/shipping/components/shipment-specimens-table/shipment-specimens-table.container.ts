@@ -1,27 +1,28 @@
 import {
   Component,
-  EventEmitter,
   Input,
   OnDestroy,
   OnInit,
-  Output,
+  TemplateRef,
   ViewChild,
-  TemplateRef
+  Output,
+  EventEmitter
 } from '@angular/core';
-import { PagedReplyInfo } from '@app/domain';
+import { PagedReplyInfo, IconClass } from '@app/domain';
+import { SearchFilter } from '@app/domain/search-filters';
 import { Shipment, ShipmentSpecimen } from '@app/domain/shipments';
+import { SpecimenViewModalComponent } from '@app/modules/modals/components/specimen-view-modal/specimen-view-modal.component';
 import {
   RootStoreState,
   ShipmentSpecimenStoreActions,
   ShipmentSpecimenStoreSelectors,
   ShipmentStoreSelectors
 } from '@app/root-store';
-import { select, Store } from '@ngrx/store';
-import { Observable, Subject, BehaviorSubject } from 'rxjs';
-import { filter, map, shareReplay, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { SpecimenViewModalComponent } from '@app/modules/modals/components/specimen-view-modal/specimen-view-modal.component';
+import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { filter, map, shareReplay, takeUntil, withLatestFrom } from 'rxjs/operators';
 
 interface ShipmentSpecimenData {
   pageInfo$: Observable<PagedReplyInfo<ShipmentSpecimen>>;
@@ -32,44 +33,30 @@ interface ShipmentSpecimenData {
   currentPage: number;
 }
 
+export type ShipmentSpecimenActionId = 'view' | 'remove' | 'tagAsPresent' | 'tagAsReceived ' | 'tagAsMissing';
+
+export interface ShipmentSpecimenAction {
+  readonly id: ShipmentSpecimenActionId;
+  readonly label: string;
+  readonly icon: string;
+  readonly iconClass: IconClass;
+}
+
 @Component({
   selector: 'app-shipment-specimens-table',
-  template: `
-    <app-shipment-specimens-table-ui
-      [specimensThisPage]="shipmentSpecimenData.specimens$ | async"
-      [maxPages]="shipmentSpecimenData.maxPages$ | async"
-      [totalSpecimens]="shipmentSpecimenData.totalSpecimens$ | async"
-      [loading]="isLoading$ | async"
-      [readOnly]="readOnly"
-      (sortBy)="specimensTableSortBy($event)"
-      (pageChanged)="specimensTablePageChanged($event)"
-      (onView)="viewShipmentSpecimen($event)"
-      (onRemove)="removeShipmentSpecimen($event)"
-    ></app-shipment-specimens-table-ui>
-
-    <ng-template #removeShipmentSpecimenModal let-modal>
-      <app-modal (confirm)="modal.close()" (dismiss)="modal.dismiss()">
-        <div class="title" i18n>
-          Remove Specimen from this Shipment
-        </div>
-        <div class="body" i18n>
-          Are you sure you want to remove the Specimen with Inventory ID
-          <b>{{ shipmentSpecimenToRemove.specimen.inventoryId }}</b> from the shipment?
-        </div>
-      </app-modal>
-    </ng-template>
-  `,
-  styleUrls: ['./shipment-specimens-table.component.scss']
+  templateUrl: './shipment-specimens-table.container.html'
 })
 export class ShipmentSpecimensTableContainerComponent implements OnInit, OnDestroy {
-  @ViewChild('removeShipmentSpecimenModal', { static: false }) removeShipmentSpecimenModal: TemplateRef<any>;
-
   @Input() shipment: Shipment;
   @Input() readOnly = true;
+  @Input() baseFilter: SearchFilter = undefined;
+  @Input() actions: ShipmentSpecimenAction[] = [];
+
+  @Output() onAction = new EventEmitter<[ShipmentSpecimen, ShipmentSpecimenActionId]>();
 
   shipmentSpecimenData: ShipmentSpecimenData;
-  shipmentSpecimenToRemove: ShipmentSpecimen;
   isLoading$ = new BehaviorSubject<boolean>(true);
+  filters: SearchFilter[] = [];
 
   private updatedMessage$ = new Subject<string>();
   protected unsubscribe$: Subject<void> = new Subject<void>();
@@ -83,6 +70,10 @@ export class ShipmentSpecimensTableContainerComponent implements OnInit, OnDestr
   }
 
   ngOnInit() {
+    if (this.baseFilter) {
+      this.filters.push(this.baseFilter);
+    }
+
     this.store$
       .pipe(
         select(ShipmentSpecimenStoreSelectors.selectShipmentSpecimenSearchActive),
@@ -109,6 +100,7 @@ export class ShipmentSpecimensTableContainerComponent implements OnInit, OnDestr
         takeUntil(this.unsubscribe$)
       )
       .subscribe(() => {
+        this.shipmentSpecimenData.currentPage = 1;
         this.updateSpecimens();
       });
 
@@ -130,23 +122,19 @@ export class ShipmentSpecimensTableContainerComponent implements OnInit, OnDestr
     this.updateSpecimens();
   }
 
-  viewShipmentSpecimen(shipmentSpecimen: ShipmentSpecimen) {
-    const modalRef = this.modalService.open(SpecimenViewModalComponent, { size: 'lg' });
-    modalRef.componentInstance.specimen = shipmentSpecimen.specimen;
+  shipmentSpecimenAction([shipmentSpecimen, actionId]) {
+    switch (actionId) {
+      case 'view':
+        this.viewShipmentSpecimen(shipmentSpecimen);
+        break;
+      default:
+        this.onAction.emit([shipmentSpecimen, actionId]);
+    }
   }
 
-  removeShipmentSpecimen(shipmentSpecimen: ShipmentSpecimen) {
-    this.shipmentSpecimenToRemove = shipmentSpecimen;
-    const modal = this.modalService.open(this.removeShipmentSpecimenModal, { size: 'lg' });
-    modal.result
-      .then(() => {
-        this.store$.dispatch(
-          ShipmentSpecimenStoreActions.removeShipmentSpecimenRequest({ shipmentSpecimen })
-        );
-        this.updatedMessage$.next('Specimen Removed');
-        this.isLoading$.next(true);
-      })
-      .catch(() => undefined);
+  private viewShipmentSpecimen(shipmentSpecimen: ShipmentSpecimen) {
+    const modalRef = this.modalService.open(SpecimenViewModalComponent, { size: 'lg' });
+    modalRef.componentInstance.specimen = shipmentSpecimen.specimen;
   }
 
   // reload the table if any shipment specimen is removed
@@ -154,14 +142,10 @@ export class ShipmentSpecimensTableContainerComponent implements OnInit, OnDestr
     this.store$
       .pipe(
         select(ShipmentSpecimenStoreSelectors.selectShipmentSpecimenLastRemovedId),
-        withLatestFrom(this.updatedMessage$),
         takeUntil(this.unsubscribe$)
       )
-      .subscribe(([id, message]) => {
-        if (id === this.shipmentSpecimenToRemove.id) {
-          this.toastr.success(message);
-          this.updateSpecimens();
-        }
+      .subscribe(() => {
+        this.updateSpecimens();
       });
   }
 
@@ -187,10 +171,15 @@ export class ShipmentSpecimensTableContainerComponent implements OnInit, OnDestr
   }
 
   private updateSpecimens(): void {
+    const filterValues = this.filters
+      .filter(f => f !== undefined)
+      .map(f => f.getValue())
+      .join(';');
     this.store$.dispatch(
       ShipmentSpecimenStoreActions.searchShipmentSpecimensRequest({
         shipment: this.shipment,
         searchParams: {
+          filter: filterValues,
           sort: this.shipmentSpecimenData.sortField,
           page: this.shipmentSpecimenData.currentPage
         }

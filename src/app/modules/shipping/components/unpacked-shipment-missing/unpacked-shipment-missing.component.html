@@ -1,0 +1,13 @@
+<app-shipment-specimens-table
+  [shipment]="shipment"
+  [baseFilter]="specimenFilter"
+  [actions]="actions"
+  (onAction)="shipmentSpecimenAction($event)"
+>
+  <span tableTitle>Missing Specimens</span>
+  <div emptySpecimensMessage>
+    Shipment does not have any
+    <span class="badge badge-pill badge-secondary" i18n>Missing</span>
+    Specimens
+  </div>
+</app-shipment-specimens-table>

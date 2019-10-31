@@ -1,0 +1,51 @@
+<app-shipment-add-specimens-card [shipment]="shipment" (onAction)="tagShipmentSpecimens($event)">
+  <span title i18n>Add Extra Specimens</span>
+  <span prompt i18n>Enter one or more specimen inventory ID to tag as Extra:</span>
+  <span buttonText i18n>
+    <mat-icon class="ml-1">check_circle</mat-icon>
+    Tag as Extra
+  </span>
+  <span buttonTextLoading i18n>Tagging</span>
+</app-shipment-add-specimens-card>
+
+<app-shipment-specimens-table
+  [shipment]="shipment"
+  [baseFilter]="specimenFilter"
+  [actions]="actions"
+  (onAction)="shipmentSpecimenAction($event)"
+>
+  <span tableTitle>Extra Specimens in this Shipment</span>
+  <span emptySpecimensMessage>
+    No
+    <span class="badge badge-pill badge-secondary">Extra</span>
+    specimens in this Shipment
+  </span>
+</app-shipment-specimens-table>
+
+<ng-template #removeShipmentSpecimenModal let-modal>
+  <app-modal (confirm)="modal.close()" (dismiss)="modal.dismiss()">
+    <div class="title" i18n>
+      Remove Extra Specimen from this Shipment
+    </div>
+    <div class="body" i18n>
+      Are you sure you want to remove the Extra Specimen with Inventory ID
+      <b>{{ shipmentSpecimenToRemove.specimen.inventoryId }}</b> from the shipment?
+    </div>
+  </app-modal>
+</ng-template>
+
+<ng-template #extraSpecimenError let-modal>
+  <app-modal [cancelButtonShow]="false" (confirm)="modal.close()">
+    <span class="title" i18n>Specimens cannot be tagged as Extra</span>
+    <div class="body alert alert-warning" role="alert">
+      <div class="row vertical-align">
+        <div class="col-md-1 text-center">
+          <mat-icon>warning</mat-icon>
+        </div>
+        <div class="col-md-11">
+          <span [innerHTML]="extraErrorMessage"></span>
+        </div>
+      </div>
+    </div>
+  </app-modal>
+</ng-template>

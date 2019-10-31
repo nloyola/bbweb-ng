@@ -1,30 +1,50 @@
 <div class="pb-2 mt-4 mb-2">
   <div class="row">
     <div class="col-md-12">
-      <h1>
-        {{ shipment?.courierName }}: {{ shipment?.trackingNumber }}
-        <small i18n>Add items to ship</small>
+      <div class="d-inline-block">
+        <h1>
+          {{ shipment?.courierName }}: {{ shipment?.trackingNumber }}
+          <small class="badge badge-secondary" i18n>Add items to ship</small>
+        </h1>
+      </div>
 
-        <span class="float-right d-inline-block">
-          <button class="btn btn-primary btn-sm mr-1" (click)="tagAsPacked()">
-            <span i18n>Tag as packed</span>
-            <mat-icon class="ml-1">arrow_right</mat-icon>
-          </button>
-          <button class="btn btn-primary btn-sm mr-1" (click)="tagAsSent()">
-            <span i18n>Tag as sent</span>
-            <mat-icon class="ml-1">fast_forward</mat-icon>
-          </button>
-        </span>
-      </h1>
+      <div class="float-right d-inline-block">
+        <button class="btn btn-primary btn-sm mr-1" (click)="tagAsPacked()">
+          <span i18n>Tag as packed</span>
+          <mat-icon class="ml-1">arrow_right</mat-icon>
+        </button>
+        <button class="btn btn-primary btn-sm mr-1" (click)="tagAsSent()">
+          <span i18n>Tag as sent</span>
+          <mat-icon class="ml-1">fast_forward</mat-icon>
+        </button>
+      </div>
     </div>
   </div>
 
-  <app-shipment-information-card [shipment]="shipment" (onRemove)="removeShipment()">
+  <app-shipment-information-card
+    [shipment]="shipment"
+    [showMenu]="true"
+    [collapsible]="true"
+    (onRemove)="removeShipment()"
+  >
   </app-shipment-information-card>
 
-  <app-shipment-add-specimens-card [shipment]="shipment"></app-shipment-add-specimens-card>
+  <app-shipment-add-specimens-card [shipment]="shipment" (onAction)="addShipmentSpecimens($event)">
+    <span title i18n>Add Specimens</span>
+    <span prompt i18n>Enter one or more specimen inventory ID to add:</span>
+    <span buttonText i18n>
+      <mat-icon class="ml-1">check_circle</mat-icon>
+      Add
+    </span>
+    <span buttonTextLoading i18n>Adding</span>
+  </app-shipment-add-specimens-card>
 
-  <app-shipment-specimens-table [shipment]="shipment" [readOnly]="false"></app-shipment-specimens-table>
+  <app-shipment-specimens-table
+    [shipment]="shipment"
+    [readOnly]="false"
+    [actions]="actions"
+    (onAction)="shipmentSpecimenAction($event)"
+  ></app-shipment-specimens-table>
 </div>
 
 <ng-template #packedTimeModal let-modal>
@@ -51,4 +71,32 @@
     [modal]="modal"
   >
   </app-modal-input-double-date>
+</ng-template>
+
+<ng-template #removeShipmentSpecimenModal let-modal>
+  <app-modal (confirm)="modal.close()" (dismiss)="modal.dismiss()">
+    <div class="title" i18n>
+      Remove Specimen from this Shipment
+    </div>
+    <div class="body" i18n>
+      Are you sure you want to remove the Specimen with Inventory ID
+      <b>{{ shipmentSpecimenToRemove.specimen.inventoryId }}</b> from the shipment?
+    </div>
+  </app-modal>
+</ng-template>
+
+<ng-template #addSpecimenError let-modal>
+  <app-modal [cancelButtonShow]="false" (confirm)="modal.close()">
+    <span class="title" i18n>Specimens cannot be added to this Shipment</span>
+    <div class="body alert alert-warning" role="alert">
+      <div class="row vertical-align">
+        <div class="col-md-1 text-center">
+          <mat-icon>warning</mat-icon>
+        </div>
+        <div class="col-md-11">
+          <span [innerHTML]="addErrorMessage"></span>
+        </div>
+      </div>
+    </div>
+  </app-modal>
 </ng-template>

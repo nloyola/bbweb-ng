@@ -1,0 +1,35 @@
+<app-shipment-add-specimens-card [shipment]="shipment" (onAction)="receiveShipmentSpecimens($event)">
+  <span title i18n>Receive Specimens</span>
+  <span prompt i18n>Enter one or more specimen inventory ID to tag as Received:</span>
+  <span buttonText i18n>
+    <mat-icon class="ml-1">check_circle</mat-icon>
+    Receive
+  </span>
+  <span buttonTextLoading i18n>Receiving</span>
+</app-shipment-add-specimens-card>
+
+<app-shipment-specimens-table
+  [shipment]="shipment"
+  [baseFilter]="specimenFilter"
+  [actions]="actions"
+  (onAction)="shipmentSpecimenAction($event)"
+>
+  <span tableTitle>Unpacked Specimens</span>
+  <span emptySpecimensMessage>All Specimens have been processed</span>
+</app-shipment-specimens-table>
+
+<ng-template #receiveSpecimenError let-modal>
+  <app-modal [cancelButtonShow]="false" (confirm)="modal.close()">
+    <span class="title" i18n>Specimens cannot be Received</span>
+    <div class="body alert alert-warning" role="alert">
+      <div class="row vertical-align">
+        <div class="col-md-1 text-center">
+          <mat-icon>warning</mat-icon>
+        </div>
+        <div class="col-md-11">
+          <span [innerHTML]="receiveErrorMessage"></span>
+        </div>
+      </div>
+    </div>
+  </app-modal>
+</ng-template>
