@@ -14,6 +14,7 @@ export class ShipmentSpecimensTableComponent {
   @Input() specimensThisPage: ShipmentSpecimen;
   @Input() maxPages: number;
   @Input() totalSpecimens: number;
+  @Input() loading: boolean;
   @Input() readOnly: Boolean;
 
   @Output() sortBy = new EventEmitter<string>();

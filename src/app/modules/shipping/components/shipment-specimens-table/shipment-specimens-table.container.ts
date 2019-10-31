@@ -8,7 +8,7 @@ import {
   ShipmentStoreSelectors
 } from '@app/root-store';
 import { select, Store } from '@ngrx/store';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, BehaviorSubject } from 'rxjs';
 import { filter, map, shareReplay, takeUntil, tap } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SpecimenViewModalComponent } from '@app/modules/modals/components/specimen-view-modal/specimen-view-modal.component';
@@ -29,6 +29,7 @@ interface ShipmentSpecimenData {
       [specimensThisPage]="shipmentSpecimenData.specimens$ | async"
       [maxPages]="shipmentSpecimenData.maxPages$ | async"
       [totalSpecimens]="shipmentSpecimenData.totalSpecimens$ | async"
+      [loading]="isLoading$ | async"
       [readOnly]="readOnly"
       (sortBy)="specimensTableSortBy($event)"
       (pageChanged)="specimensTablePageChanged($event)"
@@ -45,6 +46,7 @@ export class ShipmentSpecimensTableContainerComponent implements OnInit, OnDestr
   @Output() onRemove = new EventEmitter<ShipmentSpecimen>();
 
   shipmentSpecimenData: ShipmentSpecimenData;
+  isLoading$ = new BehaviorSubject<boolean>(true);
 
   protected unsubscribe$: Subject<void> = new Subject<void>();
 
@@ -111,13 +113,24 @@ export class ShipmentSpecimensTableContainerComponent implements OnInit, OnDestr
   private createShipmentSpecimenData(): ShipmentSpecimenData {
     const pageInfo$ = this.store$.pipe(
       select(ShipmentSpecimenStoreSelectors.selectShipmentSpecimenSearchRepliesAndEntities),
-      filter(x => x !== undefined),
       shareReplay()
     );
 
-    const specimens$ = pageInfo$.pipe(map(info => info.entities.filter(e => e !== undefined)));
-    const maxPages$ = pageInfo$.pipe(map(info => info.maxPages));
-    const totalSpecimens$ = pageInfo$.pipe(map(info => info.total));
+    const specimens$ = pageInfo$.pipe(
+      tap(info => {
+        if (info !== undefined) {
+          this.isLoading$.next(false);
+        }
+      }),
+      map(info => {
+        if (info === undefined) {
+          return [];
+        }
+        return info.entities.filter(e => e !== undefined);
+      })
+    );
+    const maxPages$ = pageInfo$.pipe(map(info => (info ? info.maxPages : 0)));
+    const totalSpecimens$ = pageInfo$.pipe(map(info => (info ? info.total : 0)));
 
     return {
       pageInfo$,
@@ -139,5 +152,6 @@ export class ShipmentSpecimensTableContainerComponent implements OnInit, OnDestr
         }
       })
     );
+    this.isLoading$.next(true);
   }
 }

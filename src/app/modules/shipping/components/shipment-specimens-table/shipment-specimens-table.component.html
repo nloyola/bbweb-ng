@@ -29,6 +29,16 @@
           </th>
         </tr>
 
+        <tr *ngIf="loading">
+          <td colspan="5">
+            <div class="alert alert-warning" role="alert">
+              <app-spinner name="shipments" [show]="loading" i18n>
+                Loading...
+              </app-spinner>
+            </div>
+          </td>
+        </tr>
+
         <tr *ngFor="let ss of specimensThisPage">
           <td>
             <small>{{ ss.specimen.inventoryId }}</small>
@@ -53,7 +63,7 @@
             ></app-dropdown-menu>
           </td>
         </tr>
-        <tr *ngIf="totalSpecimens <= 0">
+        <tr *ngIf="!loading && totalSpecimens <= 0">
           <td colspan="6">
             <div class="alert alert-warning">
               <span i18n>Shipment does not contain specimens</span>
