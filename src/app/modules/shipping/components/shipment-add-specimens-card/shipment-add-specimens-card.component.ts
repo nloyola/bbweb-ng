@@ -7,8 +7,8 @@ import { faVial } from '@fortawesome/free-solid-svg-icons';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subject } from 'rxjs';
-import { filter, map, shareReplay, takeUntil } from 'rxjs/operators';
+import { Observable, Subject, BehaviorSubject } from 'rxjs';
+import { filter, map, shareReplay, takeUntil, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-shipment-add-specimens-card',
@@ -21,7 +21,7 @@ export class ShipmentAddSpecimensCardComponent implements OnInit, OnDestroy {
 
   faVial = faVial;
   isLoading$: Observable<boolean>;
-  shipmentLoading$: Observable<boolean>;
+  shipmentLoading$ = new BehaviorSubject<boolean>(true);
   shipment$: Observable<Shipment>;
   specimenCount: number;
   form: FormGroup;
@@ -72,6 +72,8 @@ export class ShipmentAddSpecimensCardComponent implements OnInit, OnDestroy {
         }
 
         this.modalService.open(this.addSpecimenError, { size: 'lg' });
+        this.form.controls['inventoryIds'].setValue('');
+        this.shipmentLoading$.next(false);
       });
 
     this.shipment$ = this.store$.pipe(
@@ -84,6 +86,12 @@ export class ShipmentAddSpecimensCardComponent implements OnInit, OnDestroy {
             : new Shipment().deserialize(shipmentEntity);
         }
         return undefined;
+      }),
+      tap(shipment => {
+        if (shipment !== undefined) {
+          this.form.controls['inventoryIds'].setValue('');
+          this.shipmentLoading$.next(false);
+        }
       }),
       takeUntil(this.unsubscribe$),
       shareReplay()
@@ -114,6 +122,6 @@ export class ShipmentAddSpecimensCardComponent implements OnInit, OnDestroy {
         specimenInventoryIds
       })
     );
-    this.form.controls['inventoryIds'].setValue('');
+    this.shipmentLoading$.next(true);
   }
 }
