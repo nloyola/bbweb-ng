@@ -20,6 +20,7 @@ import { ModalShipmentHasSpecimensComponent } from '../modal-shipment-has-specim
 import { ModalShipmentRemoveComponent } from '../modal-shipment-remove/modal-shipment-remove.component';
 import { ShipmentSpecimenAction } from '../shipment-specimens-table/shipment-specimens-table.container';
 import { ShipmentViewerComponent } from '../shipment-viewer/shipment-viewer.component';
+import { BlockingProgressService } from '@app/core/services/blocking-progress.service';
 
 @Component({
   selector: 'app-shipment-add-items',
@@ -52,7 +53,8 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent {
   constructor(
     store$: Store<RootStoreState.State>,
     private modalService: NgbModal,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private blockingProgressService: BlockingProgressService
   ) {
     super(store$);
   }
@@ -80,6 +82,7 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent {
             shipment: this.shipment
           })
         );
+        this.blockingProgressService.show('Removing Shipment...');
         this.notificationMessage$.next('Shipment removed');
       })
       .catch(() => undefined);
@@ -147,7 +150,6 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent {
   }
 
   shipmentSpecimenAction([shipmentSpecimen, actionId]) {
-    console.log('actionId', actionId);
     switch (actionId) {
       case 'remove':
         this.removeShipmentSpecimen(shipmentSpecimen);
@@ -176,7 +178,7 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent {
         takeUntil(this.unsubscribe$)
       )
       .subscribe(() => {
-        this.toastr.success('The shipment was removed');
+        this.blockingProgressService.hide();
       });
   }
 
@@ -188,6 +190,7 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent {
         takeUntil(this.unsubscribe$)
       )
       .subscribe(([_id, message]) => {
+        this.blockingProgressService.hide();
         this.toastr.success(message);
       });
   }
@@ -249,6 +252,7 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent {
         this.store$.dispatch(
           ShipmentSpecimenStoreActions.removeShipmentSpecimenRequest({ shipmentSpecimen })
         );
+        this.blockingProgressService.show('Removing Specimen...');
         this.notificationMessage$.next('Specimen Removed');
       })
       .catch(() => undefined);

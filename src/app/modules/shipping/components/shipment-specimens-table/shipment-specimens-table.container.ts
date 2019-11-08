@@ -1,14 +1,5 @@
-import {
-  Component,
-  Input,
-  OnDestroy,
-  OnInit,
-  TemplateRef,
-  ViewChild,
-  Output,
-  EventEmitter
-} from '@angular/core';
-import { PagedReplyInfo, IconClass } from '@app/domain';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { IconClass, PagedReplyInfo } from '@app/domain';
 import { SearchFilter } from '@app/domain/search-filters';
 import { Shipment, ShipmentSpecimen } from '@app/domain/shipments';
 import { SpecimenViewModalComponent } from '@app/modules/modals/components/specimen-view-modal/specimen-view-modal.component';
@@ -20,9 +11,8 @@ import {
 } from '@app/root-store';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { select, Store } from '@ngrx/store';
-import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { filter, map, shareReplay, takeUntil, withLatestFrom } from 'rxjs/operators';
+import { filter, map, shareReplay, takeUntil } from 'rxjs/operators';
 
 interface ShipmentSpecimenData {
   pageInfo$: Observable<PagedReplyInfo<ShipmentSpecimen>>;
@@ -58,14 +48,9 @@ export class ShipmentSpecimensTableContainerComponent implements OnInit, OnDestr
   isLoading$ = new BehaviorSubject<boolean>(true);
   filters: SearchFilter[] = [];
 
-  private updatedMessage$ = new Subject<string>();
   protected unsubscribe$: Subject<void> = new Subject<void>();
 
-  constructor(
-    private store$: Store<RootStoreState.State>,
-    private modalService: NgbModal,
-    private toastr: ToastrService
-  ) {
+  constructor(private store$: Store<RootStoreState.State>, private modalService: NgbModal) {
     this.shipmentSpecimenData = this.createShipmentSpecimenData();
   }
 

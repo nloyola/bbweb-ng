@@ -58,12 +58,17 @@ export class ShipmentAddSpecimensCardComponent implements OnInit, OnDestroy {
       shareReplay()
     );
 
-    this.shipment$.pipe(takeUntil(this.unsubscribe$)).subscribe(shipment => {
-      this.shipment = shipment;
-      if (this.shipment.specimenCount > this.specimenCount) {
-        this.specimenCount = this.shipment.specimenCount;
-      }
-    });
+    this.shipment$
+      .pipe(
+        filter(shipment => shipment !== undefined),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe(shipment => {
+        this.shipment = shipment;
+        if (this.shipment.specimenCount > this.specimenCount) {
+          this.specimenCount = this.shipment.specimenCount;
+        }
+      });
 
     this.store$
       .pipe(

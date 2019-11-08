@@ -6,8 +6,6 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
   templateUrl: './modal-shipment-remove.component.html',
   styleUrls: ['./modal-shipment-remove.component.scss']
 })
-export class ModalShipmentRemoveComponent implements OnInit {
-  @Input() modal: NgbActiveModal;
-
-  ngOnInit() {}
+export class ModalShipmentRemoveComponent {
+  constructor(public modal: NgbActiveModal) {}
 }
