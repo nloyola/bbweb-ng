@@ -1,0 +1,6 @@
+<div class="blocking-loading-overlay" *ngIf="isLoading">
+  <div>
+    <app-blocking-spinner [fill]="'#aaa'" [margin]="'20px auto'"></app-blocking-spinner>
+    <p>{{ loadingMessage }}</p>
+  </div>
+</div>

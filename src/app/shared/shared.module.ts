@@ -31,6 +31,8 @@ import { PagedEntitySelectorComponent } from './components/paged-entity-selector
 import { LocalTimePipe } from './pipes';
 import { FilterValueInputComponent } from './components/filter-value-input/filter-value-input.component';
 import { DropdownMenuComponent } from './components/dropdown-menu/dropdown-menu.component';
+import { BlockingSpinnerComponent } from './components/blocking-spinner/blocking-spinner.component';
+import { BlockingProgressComponent } from './components/blocking-progress/blocking-progress.component';
 
 @NgModule({
   imports: [
@@ -68,7 +70,9 @@ import { DropdownMenuComponent } from './components/dropdown-menu/dropdown-menu.
     ServerErrorPageComponent,
     PagedEntitySelectorComponent,
     FilterValueInputComponent,
-    DropdownMenuComponent
+    DropdownMenuComponent,
+    BlockingSpinnerComponent,
+    BlockingProgressComponent
   ],
   exports: [
     BreadcrumbsComponent,
@@ -93,7 +97,9 @@ import { DropdownMenuComponent } from './components/dropdown-menu/dropdown-menu.
     PagedEntitySelectorComponent,
     LocationAddComponent,
     FilterValueInputComponent,
-    DropdownMenuComponent
+    DropdownMenuComponent,
+    BlockingSpinnerComponent,
+    BlockingProgressComponent
   ]
 })
 export class SharedModule {}
