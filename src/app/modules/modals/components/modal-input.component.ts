@@ -38,6 +38,10 @@ export class ModalInputComponent<T> implements OnInit, OnDestroy {
     this.unsubscribe$.complete();
   }
 
+  addValidators(...validators: ValidatorFn[]): void {
+    this.validators = this.validators.concat(validators);
+  }
+
   get input(): AbstractControl {
     return this.form.get('input');
   }

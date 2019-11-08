@@ -1,5 +1,5 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder } from '@angular/forms';
+import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { faCalendar } from '@fortawesome/free-solid-svg-icons';
 import { ModalInputComponent } from '../modal-input.component';
 import { debounceTime, takeUntil } from 'rxjs/operators';
@@ -21,6 +21,10 @@ export class ModalInputDoubleDateComponent extends ModalInputComponent<Date> {
   }
 
   ngOnInit() {
+    if (this.options.required) {
+      this.addValidators(Validators.required);
+    }
+
     this.form = this.formBuilder.group({
       date1: [this.date1value, this.validators],
       date2: [this.date2value, this.validators]
@@ -28,13 +32,11 @@ export class ModalInputDoubleDateComponent extends ModalInputComponent<Date> {
 
     this.form.valueChanges
       .pipe(
-        debounceTime(300),
+        debounceTime(200),
         takeUntil(this.unsubscribe$)
       )
-      .subscribe(values => {
-        if (values.date1 !== undefined && values.date2 !== undefined) {
-          this.modalInputValid = !this.form.errors;
-        }
+      .subscribe(() => {
+        this.modalInputValid = this.form.valid;
       });
   }
 

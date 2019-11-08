@@ -20,14 +20,7 @@
           </button>
         </div>
       </div>
-      <div class="col-md-8 offset-3" *ngIf="date1.invalid && date1.touched">
-        <div class="text-danger small" *ngIf="date1.errors.required" i18n>
-          Please enter a date and time
-        </div>
-        <div class="text-danger small" *ngIf="date1.errors.owlDateTimeParse" i18n>
-          Please enter a valid date and time
-        </div>
-      </div>
+      <ng-container *ngTemplateOutlet="dateErrors; context: { field: date1 }"></ng-container>
     </div>
     <div class="form-group row">
       <label for="date2" class="col-md-3 col-form-label" i18n>{{ label2 }}</label>
@@ -39,7 +32,6 @@
           [owlDateTime]="dt2"
           i18n-placeholder
           placeholder="Date and Time"
-          ngbAutoFocus
         />
         <owl-date-time #dt2></owl-date-time>
         <div class="input-group-append">
@@ -48,14 +40,18 @@
           </button>
         </div>
       </div>
-      <div class="col-md-8 offset-3" *ngIf="date2.invalid && date2.touched">
-        <div class="text-danger small" *ngIf="date2.errors.required" i18n>
-          Please enter a date and time
-        </div>
-        <div class="text-danger small" *ngIf="date2.errors.owlDateTimeParse" i18n>
-          Please enter a valid date and time
-        </div>
-      </div>
+      <ng-container *ngTemplateOutlet="dateErrors; context: { field: date2 }"></ng-container>
     </div>
   </form>
 </app-modal>
+
+<ng-template #dateErrors let-field="field">
+  <div class="col-md-8 offset-3" *ngIf="field.invalid && field.touched">
+    <div class="text-danger small" *ngIf="field.errors.required && !field.errors.owlDateTimeParse" i18n>
+      Please enter a date and time
+    </div>
+    <div class="text-danger small" *ngIf="field.errors.owlDateTimeParse" i18n>
+      Please enter a valid date and time
+    </div>
+  </div>
+</ng-template>

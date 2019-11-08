@@ -17,7 +17,7 @@ export class ModalInputTextComponent extends ModalInputComponent<string> {
 
   ngOnInit() {
     if (this.options.required) {
-      this.validators.push(Validators.required);
+      this.addValidators(Validators.required);
     }
 
     if (this.options.minLength) {
