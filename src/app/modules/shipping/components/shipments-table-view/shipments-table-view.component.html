@@ -30,23 +30,45 @@
 
     <tr>
       <td>
-        <div class="form-group">
+        <div class="input-group">
           <input
             type="text"
             class="form-control form-control-sm"
             formControlName="courierName"
             placeholder="search for courier"
           />
+          <div class="input-group-append">
+            <button
+              class="btn btn-sm btn-outline-secondary"
+              type="button"
+              [disabled]="!hasCourierNameFilterValue"
+              (click)="clearCourierNameFilter()"
+              ngbTooltip="Clear filter"
+            >
+              <fa-icon [icon]="faTimes"></fa-icon>
+            </button>
+          </div>
         </div>
       </td>
       <td>
-        <div class="form-group">
+        <div class="input-group">
           <input
             type="text"
             class="form-control form-control-sm"
             formControlName="trackingNumber"
             placeholder="search for tracking#"
           />
+          <div class="input-group-append">
+            <button
+              class="btn btn-sm btn-outline-secondary"
+              type="button"
+              [disabled]="!hasTrackingNumberFilterValue"
+              (click)="clearTrackingNumberFilter()"
+              ngbTooltip="Clear filter"
+            >
+              <fa-icon [icon]="faTimes"></fa-icon>
+            </button>
+          </div>
         </div>
       </td>
       <td></td>

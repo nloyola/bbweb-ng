@@ -3,6 +3,19 @@
     <label class="small">
       <ng-content select=".title"></ng-content>
     </label>
-    <input type="text" class="form-control form-control-sm" formControlName="value" />
+    <div class="input-group">
+      <input type="text" class="form-control form-control-sm" formControlName="value" />
+      <div class="input-group-append">
+        <button
+          class="btn btn-sm btn-outline-secondary"
+          type="button"
+          [disabled]="!hasValue"
+          (click)="clearValue()"
+          ngbTooltip="Clear filter"
+        >
+          <fa-icon [icon]="faTimes"></fa-icon>
+        </button>
+      </div>
+    </div>
   </div>
 </form>

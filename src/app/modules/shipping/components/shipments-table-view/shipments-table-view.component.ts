@@ -7,6 +7,7 @@ import { DropdownMenuItem } from '@app/shared/components/dropdown-menu/dropdown-
 import { Subject, timer } from 'rxjs';
 import { debounce, distinct, takeUntil } from 'rxjs/operators';
 import { CentreShipmentsViewMode } from '../centre-shipments-details/centre-shipments-details.component';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-shipments-table-view',
@@ -28,11 +29,14 @@ export class ShipmentsTableViewComponent implements OnInit, OnDestroy {
   @Output() viewShipment = new EventEmitter<Shipment>();
   @Output() removeShipment = new EventEmitter<Shipment>();
 
+  faTimes = faTimes;
   filterForm: FormGroup;
   shipmentStates: ShipmentState[];
   currentPage: number;
   filterByLabel = 'Filter by state';
   sourceLabel: string;
+  hasCourierNameFilterValue = false;
+  hasTrackingNumberFilterValue = false;
 
   private unsubscribe$: Subject<void> = new Subject<void>();
 
@@ -64,6 +68,7 @@ export class ShipmentsTableViewComponent implements OnInit, OnDestroy {
         takeUntil(this.unsubscribe$)
       )
       .subscribe(value => {
+        this.hasCourierNameFilterValue = value.trim() !== '';
         this.filterByCourierName.emit(value);
       });
 
@@ -75,6 +80,7 @@ export class ShipmentsTableViewComponent implements OnInit, OnDestroy {
         takeUntil(this.unsubscribe$)
       )
       .subscribe(value => {
+        this.hasTrackingNumberFilterValue = value.trim() !== '';
         this.filterByTrackingNumber.emit(value);
       });
   }
@@ -128,6 +134,14 @@ export class ShipmentsTableViewComponent implements OnInit, OnDestroy {
       this.filterByLabel = 'By ' + this.titleCasePipe.transform(state);
     }
     this.filterByState.emit(state);
+  }
+
+  clearCourierNameFilter(): void {
+    this.courierName.setValue('');
+  }
+
+  clearTrackingNumberFilter(): void {
+    this.courierName.setValue('');
   }
 
   menuItemsForShipment(shipment: Shipment): DropdownMenuItem[] {

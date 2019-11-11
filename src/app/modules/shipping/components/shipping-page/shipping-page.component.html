@@ -6,17 +6,19 @@
 </div>
 
 <div class="row" *ngIf="validUser$ | async as validUser; else invalidUser">
-  <app-shipping-centres-select (onSelected)="centreSelected($event)"> </app-shipping-centres-select>
+  <div class="col-md-3">
+    <app-shipping-centres-select (onSelected)="centreSelected($event)"></app-shipping-centres-select>
+  </div>
 </div>
 
 <ng-template #invalidUser>
   <div class="row">
-    <div class="col-md-12" i18n>
+    <div class="col-md-12">
       <div class="alert alert-warning">
         <mat-icon>warning</mat-icon>
-        <ng-container i18n>
+        <span i18n>
           You are not allowed to ship specimens. Please contact your website administrator.
-        </ng-container>
+        </span>
       </div>
     </div>
   </div>

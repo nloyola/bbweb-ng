@@ -1,7 +1,8 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { Observable, Subject, timer } from 'rxjs';
-import { debounce, distinct, filter, takeUntil } from 'rxjs/operators';
+import { Subject, timer } from 'rxjs';
+import { debounce, distinct, takeUntil } from 'rxjs/operators';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-filter-value-input',
@@ -11,7 +12,9 @@ import { debounce, distinct, filter, takeUntil } from 'rxjs/operators';
 export class FilterValueInputComponent implements OnInit, OnDestroy {
   @Output() valueChanged = new EventEmitter<string>();
 
+  faTimes = faTimes;
   filterForm: FormGroup;
+  hasValue = false;
   private unsubscribe$: Subject<void> = new Subject<void>();
 
   constructor(private formBuilder: FormBuilder) {}
@@ -27,7 +30,13 @@ export class FilterValueInputComponent implements OnInit, OnDestroy {
         takeUntil(this.unsubscribe$)
       )
       .subscribe(value => {
-        this.valueChanged.emit(value);
+        if (value.trim() !== '') {
+          this.hasValue = true;
+          this.valueChanged.emit(value);
+        } else {
+          this.hasValue = false;
+          this.valueChanged.emit(value);
+        }
       });
   }
 
@@ -38,5 +47,9 @@ export class FilterValueInputComponent implements OnInit, OnDestroy {
 
   get value() {
     return this.filterForm.get('value');
+  }
+
+  clearValue() {
+    this.value.setValue('');
   }
 }
