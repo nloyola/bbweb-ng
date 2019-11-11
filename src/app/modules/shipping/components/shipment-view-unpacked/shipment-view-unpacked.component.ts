@@ -9,6 +9,7 @@ import { takeUntil, withLatestFrom, filter } from 'rxjs/operators';
 import { ShipmentViewerComponent } from '../shipment-viewer/shipment-viewer.component';
 import { IdToTab } from '@app/domain';
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
+import { BlockingProgressService } from '@app/core/services/blocking-progress.service';
 
 @Component({
   selector: 'app-shipment-view-unpacked',
@@ -42,7 +43,8 @@ export class ShipmentViewUnpackedComponent extends ShipmentViewerComponent {
     private router: Router,
     private route: ActivatedRoute,
     private modalService: NgbModal,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private blockingProgressService: BlockingProgressService
   ) {
     super(store$);
     this.tabIds = Object.keys(this.tabData);
@@ -85,6 +87,7 @@ export class ShipmentViewUnpackedComponent extends ShipmentViewerComponent {
           })
         );
         this.backToReceived$.next(true);
+        this.blockingProgressService.show('Updating Shipment...');
       })
       .catch(() => undefined);
   }
@@ -113,6 +116,7 @@ export class ShipmentViewUnpackedComponent extends ShipmentViewerComponent {
           })
         );
         this.completedTime$.next(datetime);
+        this.blockingProgressService.show('Updating Shipment...');
       })
       .catch(() => undefined);
   }
@@ -125,6 +129,7 @@ export class ShipmentViewUnpackedComponent extends ShipmentViewerComponent {
       )
       .subscribe(() => {
         this.toastr.success('Shipment back in Receivedstate');
+        this.blockingProgressService.hide();
       });
   }
 
@@ -136,6 +141,7 @@ export class ShipmentViewUnpackedComponent extends ShipmentViewerComponent {
       )
       .subscribe(() => {
         this.toastr.success('Completed time recorded');
+        this.blockingProgressService.hide();
       });
   }
 

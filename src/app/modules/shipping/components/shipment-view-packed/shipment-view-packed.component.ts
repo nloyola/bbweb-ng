@@ -7,6 +7,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
 import { takeUntil, withLatestFrom } from 'rxjs/operators';
 import { ShipmentViewerComponent } from '../shipment-viewer/shipment-viewer.component';
+import { BlockingProgressService } from '@app/core/services/blocking-progress.service';
 
 @Component({
   selector: 'app-shipment-view-packed',
@@ -23,7 +24,8 @@ export class ShipmentViewPackedComponent extends ShipmentViewerComponent {
   constructor(
     store$: Store<RootStoreState.State>,
     private modalService: NgbModal,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private blockingProgressService: BlockingProgressService
   ) {
     super(store$);
   }
@@ -48,6 +50,7 @@ export class ShipmentViewPackedComponent extends ShipmentViewerComponent {
           })
         );
         this.backToCreated$.next(true);
+        this.blockingProgressService.show('Updating Shipment...');
       })
       .catch(() => undefined);
   }
@@ -67,6 +70,7 @@ export class ShipmentViewPackedComponent extends ShipmentViewerComponent {
           })
         );
         this.sentTime$.next(datetime);
+        this.blockingProgressService.show('Updating Shipment...');
       })
       .catch(() => undefined);
   }
@@ -79,6 +83,7 @@ export class ShipmentViewPackedComponent extends ShipmentViewerComponent {
       )
       .subscribe(() => {
         this.toastr.success('Shipment back in Created state');
+        this.blockingProgressService.hide();
       });
   }
 
@@ -90,6 +95,7 @@ export class ShipmentViewPackedComponent extends ShipmentViewerComponent {
       )
       .subscribe(() => {
         this.toastr.success('Sent time recorded');
+        this.blockingProgressService.hide();
       });
   }
 }

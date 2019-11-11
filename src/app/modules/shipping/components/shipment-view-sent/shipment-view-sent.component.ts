@@ -8,6 +8,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
 import { filter, takeUntil, withLatestFrom } from 'rxjs/operators';
 import { ShipmentViewerComponent } from '../shipment-viewer/shipment-viewer.component';
+import { BlockingProgressService } from '@app/core/services/blocking-progress.service';
 
 @Component({
   selector: 'app-shipment-view-sent',
@@ -28,7 +29,8 @@ export class ShipmentViewSentComponent extends ShipmentViewerComponent {
   constructor(
     store$: Store<RootStoreState.State>,
     private modalService: NgbModal,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private blockingProgressService: BlockingProgressService
   ) {
     super(store$);
   }
@@ -56,6 +58,7 @@ export class ShipmentViewSentComponent extends ShipmentViewerComponent {
           })
         );
         this.backToPacked$.next(true);
+        this.blockingProgressService.show('Updating Shipment...');
       })
       .catch(() => undefined);
   }
@@ -75,6 +78,7 @@ export class ShipmentViewSentComponent extends ShipmentViewerComponent {
           })
         );
         this.receivedTime$.next(datetime);
+        this.blockingProgressService.show('Updating Shipment...');
       })
       .catch(() => undefined);
   }
@@ -95,6 +99,7 @@ export class ShipmentViewSentComponent extends ShipmentViewerComponent {
           })
         );
         this.unpackedTime$.next(unpackedTime);
+        this.blockingProgressService.show('Updating Shipment...');
       })
       .catch(() => undefined);
   }
@@ -113,6 +118,7 @@ export class ShipmentViewSentComponent extends ShipmentViewerComponent {
           })
         );
         this.tagAsLost$.next(true);
+        this.blockingProgressService.show('Updating Shipment...');
       })
       .catch(() => undefined);
   }
@@ -126,6 +132,7 @@ export class ShipmentViewSentComponent extends ShipmentViewerComponent {
       )
       .subscribe(() => {
         this.toastr.success('Tagged as packed');
+        this.blockingProgressService.hide();
       });
   }
 
@@ -137,6 +144,7 @@ export class ShipmentViewSentComponent extends ShipmentViewerComponent {
       )
       .subscribe(() => {
         this.toastr.success('Received time recorded');
+        this.blockingProgressService.hide();
       });
   }
 
@@ -148,6 +156,7 @@ export class ShipmentViewSentComponent extends ShipmentViewerComponent {
       )
       .subscribe(() => {
         this.toastr.success('Received time and unpacked time recorded');
+        this.blockingProgressService.hide();
       });
   }
 
@@ -159,6 +168,7 @@ export class ShipmentViewSentComponent extends ShipmentViewerComponent {
       )
       .subscribe(() => {
         this.toastr.success('Shipment recorded as lost');
+        this.blockingProgressService.hide();
       });
   }
 }

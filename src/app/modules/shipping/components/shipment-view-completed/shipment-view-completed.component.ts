@@ -1,12 +1,13 @@
 import { Component, TemplateRef, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ShipmentStateTransision } from '@app/core/services';
 import { RootStoreState, ShipmentStoreActions } from '@app/root-store';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
-import { ShipmentViewerComponent } from '../shipment-viewer/shipment-viewer.component';
 import { Subject } from 'rxjs';
-import { ShipmentStateTransision } from '@app/core/services';
+import { filter, takeUntil, withLatestFrom } from 'rxjs/operators';
+import { ShipmentViewerComponent } from '../shipment-viewer/shipment-viewer.component';
+import { BlockingProgressService } from '@app/core/services/blocking-progress.service';
 
 @Component({
   selector: 'app-shipment-view-completed',
@@ -20,16 +21,16 @@ export class ShipmentViewCompletedComponent extends ShipmentViewerComponent {
 
   constructor(
     store$: Store<RootStoreState.State>,
-    private router: Router,
-    private route: ActivatedRoute,
     private modalService: NgbModal,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private blockingProgressService: BlockingProgressService
   ) {
     super(store$);
   }
 
   ngOnInit() {
     super.ngOnInit();
+    this.initBackToUnpacked();
   }
 
   backToUnpacked() {
@@ -47,7 +48,21 @@ export class ShipmentViewCompletedComponent extends ShipmentViewerComponent {
           })
         );
         this.backToUnpacked$.next(true);
+        this.blockingProgressService.show('Updating Shipment...');
       })
       .catch(() => undefined);
+  }
+
+  private initBackToUnpacked(): void {
+    this.shipment$
+      .pipe(
+        withLatestFrom(this.backToUnpacked$),
+        takeUntil(this.unsubscribe$),
+        filter(([_shipment, flag]) => flag !== undefined)
+      )
+      .subscribe(() => {
+        this.toastr.success('Tagged as Unpacked');
+        this.blockingProgressService.hide();
+      });
   }
 }
