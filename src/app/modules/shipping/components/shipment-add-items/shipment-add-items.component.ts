@@ -139,6 +139,15 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent {
       .catch(() => undefined);
   }
 
+  // event emitted by ShipmentInformationCardComponent
+  shipmentChange(changeOngoing: boolean): void {
+    if (changeOngoing) {
+      this.blockingProgressService.show('Updating Shipment...');
+    } else {
+      this.blockingProgressService.hide();
+    }
+  }
+
   addShipmentSpecimens(specimenInventoryIds: string[]): void {
     this.store$.dispatch(
       ShipmentStoreActions.addSpecimensRequest({

@@ -25,6 +25,7 @@
     [shipment]="shipment"
     [showMenu]="true"
     [collapsible]="true"
+    (onShipmentUpdate)="shipmentChange($event)"
     (onRemove)="removeShipment()"
   >
   </app-shipment-information-card>

@@ -25,17 +25,18 @@ import { faBoxOpen } from '@fortawesome/free-solid-svg-icons';
   styleUrls: ['./shipment-information-card.component.scss']
 })
 export class ShipmentInformationCardComponent implements OnInit, OnDestroy {
+  @ViewChild('updateCourierModal', { static: false }) updateCourierModal: TemplateRef<any>;
+  @ViewChild('updateTrackingNumberModal', { static: false }) updateTrackingNumberModal: TemplateRef<any>;
+  @ViewChild('updateOriginModal', { static: false }) updateOriginModal: TemplateRef<any>;
+  @ViewChild('updateDestinationModal', { static: false }) updateDestinationModal: TemplateRef<any>;
+
   @Input() shipment: Shipment;
   @Input() displayState: boolean;
   @Input() showMenu = false;
   @Input() collapsible = false;
 
+  @Output() onShipmentUpdate = new EventEmitter<boolean>();
   @Output() onRemove = new EventEmitter<Shipment>();
-
-  @ViewChild('updateCourierModal', { static: false }) updateCourierModal: TemplateRef<any>;
-  @ViewChild('updateTrackingNumberModal', { static: false }) updateTrackingNumberModal: TemplateRef<any>;
-  @ViewChild('updateOriginModal', { static: false }) updateOriginModal: TemplateRef<any>;
-  @ViewChild('updateDestinationModal', { static: false }) updateDestinationModal: TemplateRef<any>;
 
   faBoxOpen = faBoxOpen;
   isLoading$: Observable<boolean>;
@@ -86,6 +87,7 @@ export class ShipmentInformationCardComponent implements OnInit, OnDestroy {
       .subscribe(([_shipment, msg]) => {
         this.toastr.success(msg, 'Update Successfull');
         this.updatedMessage$.next(null);
+        this.onShipmentUpdate.emit(false);
       });
 
     this.store$
@@ -101,6 +103,7 @@ export class ShipmentInformationCardComponent implements OnInit, OnDestroy {
           errMessage = `That Tracking Number is already in use by another shipment.`;
         }
         this.toastr.error(errMessage, 'Update Error', { disableTimeOut: true });
+        this.onShipmentUpdate.emit(false);
       });
   }
 
@@ -121,6 +124,7 @@ export class ShipmentInformationCardComponent implements OnInit, OnDestroy {
             value
           })
         );
+        this.onShipmentUpdate.emit(true);
         this.updatedMessage$.next('Courier was updated');
       })
       .catch(() => undefined);
@@ -138,6 +142,7 @@ export class ShipmentInformationCardComponent implements OnInit, OnDestroy {
             value
           })
         );
+        this.onShipmentUpdate.emit(true);
         this.updatedMessage$.next('Tracking Number was updated');
       })
       .catch(() => undefined);
@@ -155,6 +160,7 @@ export class ShipmentInformationCardComponent implements OnInit, OnDestroy {
             value
           })
         );
+        this.onShipmentUpdate.emit(true);
         this.updatedMessage$.next('From Location was updated');
       })
       .catch(() => undefined);
@@ -172,6 +178,7 @@ export class ShipmentInformationCardComponent implements OnInit, OnDestroy {
             value
           })
         );
+        this.onShipmentUpdate.emit(true);
         this.updatedMessage$.next('To Location was updated');
       })
       .catch(() => undefined);
