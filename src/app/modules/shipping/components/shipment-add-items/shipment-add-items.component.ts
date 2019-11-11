@@ -109,6 +109,7 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent {
           })
         );
         this.notificationMessage$.next('Packed time recorded');
+        this.blockingProgressService.show('Updating Shipment...');
       })
       .catch(() => undefined);
   }
@@ -135,6 +136,7 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent {
           })
         );
         this.notificationMessage$.next('Packed and Sent time recorded');
+        this.blockingProgressService.show('Updating Shipment...');
       })
       .catch(() => undefined);
   }
@@ -156,6 +158,7 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent {
       })
     );
     this.notificationMessage$.next('Specimen Added');
+    this.blockingProgressService.show('Adding Specimen...');
   }
 
   shipmentSpecimenAction([shipmentSpecimen, actionId]) {
@@ -176,6 +179,8 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent {
       )
       .subscribe(([_shipment, message]) => {
         this.toastr.success(message);
+        this.notificationMessage$.next(undefined);
+        this.blockingProgressService.hide();
       });
   }
 
@@ -249,6 +254,7 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent {
           }
 
           this.modalService.open(this.addSpecimenError, { size: 'lg' });
+          this.blockingProgressService.hide();
         }
       });
   }
@@ -263,6 +269,7 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent {
         );
         this.blockingProgressService.show('Removing Specimen...');
         this.notificationMessage$.next('Specimen Removed');
+        this.blockingProgressService.hide();
       })
       .catch(() => undefined);
   }

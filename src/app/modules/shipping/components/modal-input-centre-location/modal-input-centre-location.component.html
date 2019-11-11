@@ -25,5 +25,10 @@
         </div>
       </div>
     </div>
+    <div class="col-md-9 offset-3" *ngIf="locationTypeahead.searching">
+      <app-spinner name="loading" [show]="true" i18n>
+        searching...
+      </app-spinner>
+    </div>
   </form>
 </app-modal>

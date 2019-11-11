@@ -1,21 +1,26 @@
 import { NgbTypeaheadSelectItemEvent } from '@ng-bootstrap/ng-bootstrap';
 import { Observable, of, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 
 export abstract class EntitySelectTypeahead<T> {
   selectedEntity: T;
-
   selected$: Subject<T> = new Subject<T>();
-
   getEntities: (text$: Observable<string>) => Observable<T[]>;
+  searching = false;
 
   constructor(private resultsMapper: (entities: T[]) => T[]) {
     this.getEntities = (text$: Observable<string>) =>
       text$.pipe(
         debounceTime(200),
         distinctUntilChanged(),
+        tap(() => {
+          this.searching = true;
+        }),
         switchMap(term => (term.trim() === '' ? of([]) : this.termMapper(term))),
-        map(this.resultsMapper)
+        map(this.resultsMapper),
+        tap(() => {
+          this.searching = false;
+        })
       );
   }
 
