@@ -14,6 +14,7 @@ import { Observable, Subject, BehaviorSubject } from 'rxjs';
 import { filter, map, shareReplay, takeUntil, withLatestFrom, tap } from 'rxjs/operators';
 import { ModalShipmentHasSpecimensComponent } from '../modal-shipment-has-specimens/modal-shipment-has-specimens.component';
 import { ModalShipmentRemoveComponent } from '../modal-shipment-remove/modal-shipment-remove.component';
+import { BlockingProgressService } from '@app/core/services/blocking-progress.service';
 
 export enum CentreShipmentsViewMode {
   Incoming = 'incoming',
@@ -57,7 +58,8 @@ export class CentreShipmentsDetailsComponent implements OnInit, OnDestroy {
     protected router: Router,
     protected route: ActivatedRoute,
     protected modalService: NgbModal,
-    protected toastr: ToastrService
+    protected toastr: ToastrService,
+    private blockingProgressService: BlockingProgressService
   ) {}
 
   ngOnInit() {
@@ -76,6 +78,7 @@ export class CentreShipmentsDetailsComponent implements OnInit, OnDestroy {
       tap(info => {
         if (info !== undefined) {
           this.isLoading$.next(false);
+          this.blockingProgressService.hide();
         }
       }),
       map(info => {
@@ -124,6 +127,7 @@ export class CentreShipmentsDetailsComponent implements OnInit, OnDestroy {
       this.sortField = sortField;
     }
     this.updateShipments();
+    this.blockingProgressService.show('Sorting...');
   }
 
   filterByCourierName(value: string) {
@@ -160,15 +164,16 @@ export class CentreShipmentsDetailsComponent implements OnInit, OnDestroy {
     }
 
     if (shipment.hasSpecimens()) {
-      this.modalService.open(ModalShipmentHasSpecimensComponent);
+      this.modalService.open(ModalShipmentHasSpecimensComponent, { size: 'lg' });
       return;
     }
 
     this.modalService
-      .open(ModalShipmentRemoveComponent)
+      .open(ModalShipmentRemoveComponent, { size: 'lg' })
       .result.then(() => {
         this.store$.dispatch(ShipmentStoreActions.removeShipmentRequest({ shipment }));
         this.updatedMessage$.next('Shipment removed');
+        this.blockingProgressService.show('Removing...');
       })
       .catch(() => undefined);
   }
@@ -233,6 +238,7 @@ export class CentreShipmentsDetailsComponent implements OnInit, OnDestroy {
       .subscribe(([error, _msg]) => {
         let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
         this.toastr.error(errMessage, 'Error', { disableTimeOut: true });
+        this.blockingProgressService.hide();
       });
   }
 }
