@@ -1,18 +1,16 @@
-import { NgForOfContext } from '@angular/common';
 import {
   Component,
-  ContentChild,
   EventEmitter,
   Input,
+  OnChanges,
   OnDestroy,
   OnInit,
-  OnChanges,
   Output,
-  TemplateRef,
-  SimpleChanges
+  SimpleChanges,
+  TemplateRef
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { DomainEntity, PagedReplyInfo } from '@app/domain';
+import { DomainEntity } from '@app/domain';
 import { NameFilter, SearchFilter } from '@app/domain/search-filters';
 import { Subject, timer } from 'rxjs';
 import { debounce, distinct, takeUntil } from 'rxjs/operators';
@@ -34,8 +32,6 @@ export class EntitySelectorComponent<T extends DomainEntity> implements OnInit, 
   @Input() noEntitiesToDisplay: TemplateRef<any>;
   @Input() noResultsToDisplay: TemplateRef<any>;
   @Input() loadingContent: TemplateRef<any>;
-
-  @ContentChild(TemplateRef, { static: true }) entityTemplate: TemplateRef<NgForOfContext<T>>;
 
   @Output() nameFilterUpdated = new EventEmitter<string>();
   @Output() pageChange = new EventEmitter<number>();

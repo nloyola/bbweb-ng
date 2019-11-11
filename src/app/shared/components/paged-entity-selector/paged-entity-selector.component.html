@@ -1,21 +1,25 @@
 <div class="card mt-2">
-  <div class="card-header" *ngIf="!isLoading">
-    <ng-container *ngTemplateOutlet="heading"></ng-container>
+  <div class="card-header">
+    <ng-content select="[heading]"></ng-content>
   </div>
 
-  <div class="card-header" *ngIf="isLoading">
-    <ng-container *ngTemplateOutlet="loadingContent"> </ng-container>
-  </div>
-
-  <div class="card-body" *ngIf="pageInfo?.hasNoEntitiesToDisplay">
+  <div class="card-body" *ngIf="isLoading">
     <div class="card-text">
-      <ng-container *ngTemplateOutlet="noEntitiesToDisplay"> </ng-container>
+      <div class="alert alert-warning" role="alert">
+        <app-spinner name="loading" [show]="true" i18n>
+          <ng-content select="[loadingMessage]"></ng-content>
+        </app-spinner>
+      </div>
     </div>
-  </div>
+    </div>
 
-  <div class="card-body" *ngIf="pageInfo?.hasNoResultsToDisplay">
+  <div class="card-body" *ngIf="pageInfo?.hasNoEntitiesToDisplay || pageInfo?.hasNoResultsToDisplay">
     <div class="card-text">
-      <ng-container *ngTemplateOutlet="noResultsToDisplay"> </ng-container>
+      <div class="alert alert-warning" role="alert">
+        <mat-icon>warning</mat-icon>
+        <ng-content select="[noEntitiesToDisplay]" *ngIf="pageInfo?.hasNoEntitiesToDisplay"></ng-content>
+        <ng-content select="[noResultsToDisplay]" *ngIf="pageInfo?.hasNoResultsToDisplay"></ng-content>
+      </div>
     </div>
   </div>
 
@@ -39,6 +43,6 @@
   </div>
 
   <div class="card-footer p-2">
-    <ng-container *ngTemplateOutlet="footer"></ng-container>
+    <ng-content select="[footer]"></ng-content>
   </div>
 </div>

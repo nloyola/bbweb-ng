@@ -1,6 +1,6 @@
-import { Component, ContentChild, ElementRef, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Sort } from '@angular/material';
-import { ShipmentSpecimen, Shipment } from '@app/domain/shipments';
+import { ShipmentSpecimen } from '@app/domain/shipments';
 import { DropdownMenuItem } from '@app/shared/components/dropdown-menu/dropdown-menu.component';
 import { faVial } from '@fortawesome/free-solid-svg-icons';
 import { ShipmentSpecimenAction, ShipmentSpecimenActionId } from './shipment-specimens-table.container';

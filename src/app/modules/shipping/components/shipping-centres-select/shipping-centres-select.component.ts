@@ -17,9 +17,7 @@ export class ShippingCentresSelectComponent implements OnInit, OnDestroy {
   @Output() onSelected = new EventEmitter<Centre>();
 
   isLoading$: Observable<boolean>;
-
   pageInfo$: Observable<PagedReplyInfo<Centre>>;
-
   currentPage = 1;
   centresLimit = 5;
   sortField = 'name';

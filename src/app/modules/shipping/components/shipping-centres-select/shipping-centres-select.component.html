@@ -3,13 +3,12 @@
   [isLoading]="isLoading$ | async"
   [entitiesLimit]="centresLimit"
   [(page)]="currentPage"
-  [heading]="heading"
-  [footer]="footer"
-  [noEntitiesToDisplay]="noEntitiesToDisplay"
-  [noResultsToDisplay]="noResultsToDisplay"
-  [loadingContent]="showLoading"
   (pageChange)="paginationPageChange()"
 >
+  <span heading i18n>Shipping Centres</span>
+
+  <span loadingMessage i18n>Loading...</span>
+
   <ng-template let-entity>
     <li class="list-group-item" *ngIf="entity">
       <a [routerLink]="" (click)="!!centreSelected(entity)">
@@ -17,38 +16,14 @@
       </a>
     </li>
   </ng-template>
+
+  <span noEntitiesToDisplay i18n>There are no centres stored in the system</span>
+
+  <span noResultsToDisplay i18n>There are no centres names that match your criteria</span>
+
+  <p footer>
+    <app-filter-value-input (valueChanged)="nameFilterChanged($event)">
+      <span class="title" i18n>Name filter:</span>
+    </app-filter-value-input>
+  </p>
 </app-paged-entity-selector>
-
-<ng-template #heading>
-  <small i18n>Shipping Centres</small>
-</ng-template>
-
-<ng-template #footer>
-  <app-filter-value-input (valueChanged)="nameFilterChanged($event)">
-    <span class="title" i18n>Name filter:</span>
-  </app-filter-value-input>
-</ng-template>
-
-<ng-template #noEntitiesToDisplay>
-  <div class="alert alert-warning" role="alert">
-    <mat-icon>warning</mat-icon>
-    <ng-container i18n>
-      This participant does not have any events yet
-    </ng-container>
-  </div>
-</ng-template>
-
-<ng-template #noResultsToDisplay>
-  <div class="alert alert-warning" role="alert">
-    <mat-icon>warning</mat-icon>
-    <ng-container i18n>
-      There are no events that match your criteria
-    </ng-container>
-  </div>
-</ng-template>
-
-<ng-template #showLoading>
-  <app-spinner name="loading" [show]="true" i18n>
-    <small>Loading...</small>
-  </app-spinner>
-</ng-template>
