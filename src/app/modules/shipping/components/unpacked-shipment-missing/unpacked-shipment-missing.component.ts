@@ -34,11 +34,18 @@ export class UnpackedShipmentMissingComponent extends UnpackedShipmentSpeciemens
   ngOnInit() {
     super.ngOnInit();
 
-    this.shipment$.pipe(filter(shipment => shipment !== undefined)).subscribe(() => {
-      if (this.toastrMessage) {
-        this.toastr.success(this.toastrMessage);
-        this.toastrMessage = undefined;
-      }
+    this.shipment$
+      .pipe(filter(shipment => shipment !== undefined && this.toastrMessage !== undefined))
+      .subscribe(() => {
+        if (this.toastrMessage) {
+          this.toastr.success(this.toastrMessage);
+          this.toastrMessage = undefined;
+        }
+      });
+
+    this.error$.pipe(filter(() => this.toastrMessage !== undefined)).subscribe(errorMessage => {
+      this.toastr.error(errorMessage);
+      this.toastrMessage = undefined;
     });
   }
 
@@ -46,6 +53,7 @@ export class UnpackedShipmentMissingComponent extends UnpackedShipmentSpeciemens
     switch (actionId) {
       case 'tagAsPresent':
         this.tagSpecimen(shipmentSpecimen, ShipmentItemState.Present);
+        this.markTagPending();
         this.toastrMessage = 'Specimen tagged as Unpacked';
         break;
       default:

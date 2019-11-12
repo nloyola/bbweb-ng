@@ -33,11 +33,16 @@ export class UnpackedShipmentReceivedComponent extends UnpackedShipmentSpeciemen
   ngOnInit() {
     super.ngOnInit();
 
-    this.shipment$.pipe(filter(shipment => shipment !== undefined)).subscribe(() => {
-      if (this.toastrMessage) {
+    this.shipment$
+      .pipe(filter(shipment => shipment !== undefined && this.toastrMessage !== undefined))
+      .subscribe(() => {
         this.toastr.success(this.toastrMessage);
         this.toastrMessage = undefined;
-      }
+      });
+
+    this.error$.pipe(filter(() => this.toastrMessage !== undefined)).subscribe(errorMessage => {
+      this.toastr.error(errorMessage);
+      this.toastrMessage = undefined;
     });
   }
 
@@ -46,7 +51,9 @@ export class UnpackedShipmentReceivedComponent extends UnpackedShipmentSpeciemen
       case 'tagAsPresent':
         this.tagSpecimen(shipmentSpecimen, ShipmentItemState.Present);
         this.toastrMessage = 'Specimen tagged as Unpacked';
+        this.markTagPending();
         break;
+
       default:
         throw new Error(`action ${actionId} is not handled`);
     }

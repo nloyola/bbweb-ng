@@ -3,12 +3,17 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { StateFilter } from '@app/domain/search-filters';
 import { Shipment, ShipmentItemState, ShipmentSpecimen } from '@app/domain/shipments';
-import { RootStoreState, ShipmentSpecimenStoreActions, ShipmentStoreActions } from '@app/root-store';
+import {
+  RootStoreState,
+  ShipmentSpecimenStoreActions,
+  ShipmentStoreActions,
+  ShipmentSpecimenStoreSelectors
+} from '@app/root-store';
 import { faVial } from '@fortawesome/free-solid-svg-icons';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Store } from '@ngrx/store';
+import { Store, select } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
-import { filter } from 'rxjs/operators';
+import { filter, withLatestFrom, takeUntil } from 'rxjs/operators';
 import { ShipmentSpecimenAction } from '../shipment-specimens-table/shipment-specimens-table.container';
 import { UnpackedShipmentSpeciemensComponent } from '../unpacked-shipment-specimens/unpacked-shipment-specimens.component';
 
@@ -50,14 +55,26 @@ export class UnpackedShipmentExtraComponent extends UnpackedShipmentSpeciemensCo
     this.shipment = this.route.parent.snapshot.data.shipment;
     super.ngOnInit();
 
-    this.shipment$.pipe(filter(shipment => shipment !== undefined)).subscribe(() => {
-      if (this.toastrMessage) {
+    this.shipment$
+      .pipe(filter(shipment => shipment !== undefined && this.toastrMessage !== undefined))
+      .subscribe(() => {
+        debugger;
         this.toastr.success(this.toastrMessage);
         this.toastrMessage = undefined;
-      }
-    });
+      });
 
-    this.error$.subscribe(errorMessage => {
+    this.store$
+      .pipe(
+        select(ShipmentSpecimenStoreSelectors.selectShipmentSpecimenLastRemovedId),
+        filter(shipmentSpecimenId => shipmentSpecimenId !== undefined && this.toastrMessage !== undefined),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe(() => {
+        this.toastr.success(this.toastrMessage);
+        this.toastrMessage = undefined;
+      });
+
+    this.error$.pipe(filter(() => this.toastrMessage !== undefined)).subscribe(errorMessage => {
       this.extraErrorMessage = errorMessage;
       this.modalService.open(this.extraSpecimenError, { size: 'lg' });
     });
@@ -96,6 +113,7 @@ export class UnpackedShipmentExtraComponent extends UnpackedShipmentSpeciemensCo
         );
         this.toastrMessage = 'Specimen removed';
         this.markTagPending();
+        //debugger;
       })
       .catch(() => undefined);
   }

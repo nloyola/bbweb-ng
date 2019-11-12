@@ -5,7 +5,6 @@ import '@test/matchers/server-api.matchers';
 import { Observable } from 'rxjs';
 
 export namespace SearchableApiBehaviour {
-  /* tslint:disable-next-line:max-line-length */
   export interface Context<
     E extends IDomainEntity & HasSlug & HasName,
     S,
@@ -17,7 +16,6 @@ export namespace SearchableApiBehaviour {
     subscription?(entities: T[]): void;
   }
 
-  /* tslint:disable-next-line:max-line-length */
   export function sharedBehaviour<
     E extends IDomainEntity & HasSlug & HasName,
     S,

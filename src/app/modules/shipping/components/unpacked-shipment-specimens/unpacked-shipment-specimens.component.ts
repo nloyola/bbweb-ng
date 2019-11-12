@@ -28,6 +28,26 @@ export abstract class UnpackedShipmentSpeciemensComponent implements OnInit, OnD
     this.shipment = this.route.parent.snapshot.data.shipment;
     this.specimenCount = this.shipment.presentSpecimenCount;
 
+    this.shipment$ = this.store$.pipe(
+      select(ShipmentStoreSelectors.selectAllShipmentEntities),
+      map(shipments => {
+        const shipmentEntity = shipments[this.shipment.id];
+        if (shipmentEntity) {
+          return shipmentEntity instanceof Shipment
+            ? shipmentEntity
+            : new Shipment().deserialize(shipmentEntity);
+        }
+        return undefined;
+      }),
+      tap(shipment => {
+        if (shipment !== undefined) {
+          this.shipmentLoading$.next(false);
+        }
+      }),
+      takeUntil(this.unsubscribe$),
+      shareReplay()
+    );
+
     this.error$ = this.store$.pipe(
       select(ShipmentStoreSelectors.selectShipmentError),
       filter(error => !!error),
@@ -59,32 +79,14 @@ export abstract class UnpackedShipmentSpeciemensComponent implements OnInit, OnD
       }),
       takeUntil(this.unsubscribe$)
     );
-
-    this.shipment$ = this.store$.pipe(
-      select(ShipmentStoreSelectors.selectAllShipmentEntities),
-      map(shipments => {
-        const shipmentEntity = shipments[this.shipment.id];
-        if (shipmentEntity) {
-          return shipmentEntity instanceof Shipment
-            ? shipmentEntity
-            : new Shipment().deserialize(shipmentEntity);
-        }
-        return undefined;
-      }),
-      tap(shipment => {
-        if (shipment !== undefined) {
-          this.shipmentLoading$.next(false);
-        }
-      }),
-      takeUntil(this.unsubscribe$),
-      shareReplay()
-    );
   }
 
   ngOnDestroy() {
     this.unsubscribe$.next();
     this.unsubscribe$.complete();
   }
+
+  abstract shipmentSpecimenAction([shipmentSpecimen, actionId]): void;
 
   protected tagSpecimen(shipmentSpecimen: ShipmentSpecimen, specimenTag: ShipmentItemState): void {
     this.store$.dispatch(
