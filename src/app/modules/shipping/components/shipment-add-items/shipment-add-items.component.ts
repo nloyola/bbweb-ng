@@ -191,7 +191,8 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent {
         withLatestFrom(this.notificationMessage$),
         takeUntil(this.unsubscribe$)
       )
-      .subscribe(() => {
+      .subscribe(([id, message]) => {
+        this.toastr.success(message);
         this.blockingProgressService.hide();
       });
   }
@@ -204,8 +205,8 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent {
         takeUntil(this.unsubscribe$)
       )
       .subscribe(([_id, message]) => {
-        this.blockingProgressService.hide();
         this.toastr.success(message);
+        this.blockingProgressService.hide();
       });
   }
 
@@ -218,13 +219,8 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent {
         takeUntil(this.unsubscribe$)
       )
       .subscribe(([error, _msg]) => {
-        if (
-          error.actionType === ShipmentStoreActions.removeShipmentFailure.type &&
-          error.error instanceof HttpErrorResponse
-        ) {
-          let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
-          this.toastr.error(errMessage, 'Error', { disableTimeOut: true });
-        }
+        let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
+        this.toastr.error(errMessage, 'Error', { disableTimeOut: true });
       });
   }
 
@@ -236,10 +232,7 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent {
         takeUntil(this.unsubscribe$)
       )
       .subscribe(error => {
-        if (
-          error.actionType === ShipmentStoreActions.addSpecimensFailure.type &&
-          error.error instanceof HttpErrorResponse
-        ) {
+        if (error.actionType === ShipmentStoreActions.addSpecimensFailure.type) {
           const errorMessage = error.error.error.message;
           const inventoryIds = errorMessage.split(': ');
 

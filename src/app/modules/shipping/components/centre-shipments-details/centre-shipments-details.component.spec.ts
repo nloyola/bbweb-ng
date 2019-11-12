@@ -74,8 +74,8 @@ describe('CentreShipmentsDetailsComponent', () => {
   });
 
   const modeTable = [
-    [CentreShipmentsViewMode.Incoming, 'destination::', 'origin'],
-    [CentreShipmentsViewMode.Outgoing, 'origin::', 'destination'],
+    [CentreShipmentsViewMode.Incoming, 'state:out:completed;destination::', 'origin'],
+    [CentreShipmentsViewMode.Outgoing, 'state:out:completed;origin::', 'destination'],
     [CentreShipmentsViewMode.Completed, `state::${ShipmentState.Completed};destination::`, 'origin']
   ];
 
@@ -145,7 +145,7 @@ describe('CentreShipmentsDetailsComponent', () => {
     });
 
     describe('action is dispatched when filtering by state', () => {
-      test.each`
+      it.each`
         state                     | stateFilter
         ${undefined}              | ${''}
         ${ShipmentState.Created}  | ${`state::${ShipmentState.Created}`}

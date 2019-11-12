@@ -1,7 +1,6 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { ShipmentService } from '@app/core/services';
-import { SearchParams } from '@app/domain';
 import { Specimen } from '@app/domain/participants';
 import { Shipment, ShipmentItemState } from '@app/domain/shipments';
 import { provideMockActions } from '@ngrx/effects/testing';

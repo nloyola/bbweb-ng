@@ -141,7 +141,6 @@ export class ShipmentAddPageComponent implements OnInit, OnDestroy {
   private resultMapperForCentreControl(locationIdToFilterFn: () => string): CentreLocationResultsMapper {
     return (locations: CentreLocationInfo[]) => {
       if (locations.length <= 0) {
-        debugger;
         return;
       }
 

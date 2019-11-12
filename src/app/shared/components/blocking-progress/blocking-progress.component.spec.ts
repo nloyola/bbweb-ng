@@ -1,5 +1,5 @@
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { BlockingProgressComponent } from './blocking-progress.component';
 
 describe('BlockingProgressComponent', () => {
@@ -8,9 +8,9 @@ describe('BlockingProgressComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ BlockingProgressComponent ]
-    })
-    .compileComponents();
+      declarations: [BlockingProgressComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

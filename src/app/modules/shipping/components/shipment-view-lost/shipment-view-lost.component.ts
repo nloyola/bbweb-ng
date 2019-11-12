@@ -1,5 +1,4 @@
 import { Component, TemplateRef, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { ShipmentStateTransision } from '@app/core/services';
 import { RootStoreState, ShipmentStoreActions } from '@app/root-store';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -19,7 +18,6 @@ export class ShipmentViewLostComponent extends ShipmentViewerComponent {
   @ViewChild('backToSentModal', { static: false }) backToSentModal: TemplateRef<any>;
 
   private backToSent$ = new Subject<boolean>();
-  private unpackedTime$ = new Subject<Date>();
 
   constructor(
     store$: Store<RootStoreState.State>,

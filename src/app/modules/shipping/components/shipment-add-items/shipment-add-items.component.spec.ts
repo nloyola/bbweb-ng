@@ -57,44 +57,6 @@ describe('ShipmentAddItemsComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  // it('sortBy reloads specimens according to selected field', () => {
-  //   const dispatchListener = jest.spyOn(store, 'dispatch');
-  //   const value = factory.stringNext();
-
-  //   shipment = initializeComponent();
-  //   component.sortBy(value);
-  //   fixture.detectChanges();
-
-  //   expect(dispatchListener.mock.calls.length).toBe(1);
-  //   const expectedAction = ShipmentSpecimenStoreActions.searchShipmentSpecimensRequest({
-  //     shipment,
-  //     searchParams: {
-  //       sort: value,
-  //       page: 1
-  //     }
-  //   });
-  //   expect(dispatchListener.mock.calls[0][0]).toEqual(expectedAction);
-  // });
-
-  // it('paginationPageChange reloads specimens according to selected page', () => {
-  //   const dispatchListener = jest.spyOn(store, 'dispatch');
-  //   const value = 1;
-
-  //   shipment = initializeComponent();
-  //   component.paginationPageChange(value);
-  //   fixture.detectChanges();
-
-  //   expect(dispatchListener.mock.calls.length).toBe(1);
-  //   const expectedAction = ShipmentSpecimenStoreActions.searchShipmentSpecimensRequest({
-  //     shipment,
-  //     searchParams: {
-  //       sort: '',
-  //       page: value
-  //     }
-  //   });
-  //   expect(dispatchListener.mock.calls[0][0]).toEqual(expectedAction);
-  // });
-
   describe('when removing a shipment', () => {
     let modalListener: jest.MockInstance<void, any[]>;
     let dispatchListener: jest.MockInstance<void, any[]>;

@@ -6,12 +6,12 @@ import { Shipment } from '@app/domain/shipments';
 import { NgrxRuntimeChecks, ShipmentStoreReducer } from '@app/root-store';
 import { StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
-import { ShipmentViewPackedComponent } from './shipment-view-packed.component';
+import { ShipmentViewUnpackedComponent } from './shipment-view-unpacked.component';
 import { ToastrModule } from 'ngx-toastr';
 
-describe('ShipmentViewPageComponent', () => {
-  let component: ShipmentViewPackedComponent;
-  let fixture: ComponentFixture<ShipmentViewPackedComponent>;
+describe('ShipmentViewUnpackedComponent', () => {
+  let component: ShipmentViewUnpackedComponent;
+  let fixture: ComponentFixture<ShipmentViewUnpackedComponent>;
   const factory = new Factory();
   let shipment: Shipment;
 
@@ -28,13 +28,13 @@ describe('ShipmentViewPageComponent', () => {
           useValue: {}
         }
       ],
-      declarations: [ShipmentViewPackedComponent],
+      declarations: [ShipmentViewUnpackedComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ShipmentViewPackedComponent);
+    fixture = TestBed.createComponent(ShipmentViewUnpackedComponent);
     component = fixture.componentInstance;
     shipment = new Shipment().deserialize(factory.shipment());
     fixture.detectChanges();
