@@ -71,7 +71,6 @@ export class EventAddFormComponent implements OnInit, OnDestroy {
           );
         }
       }),
-      //tap(x => console.log('eventTypes$', x)),
       takeUntil(this.unsubscribe$),
       shareReplay()
     );

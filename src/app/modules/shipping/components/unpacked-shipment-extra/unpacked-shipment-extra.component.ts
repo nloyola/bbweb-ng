@@ -77,7 +77,6 @@ export class UnpackedShipmentExtraComponent extends UnpackedShipmentSpeciemensCo
   }
 
   shipmentSpecimenAction([shipmentSpecimen, actionId]) {
-    console.log('actionId', actionId);
     switch (actionId) {
       case 'remove':
         this.removeShipmentSpecimen(shipmentSpecimen);
