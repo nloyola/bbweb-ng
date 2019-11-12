@@ -32,12 +32,9 @@ export abstract class UnpackedShipmentSpeciemensComponent implements OnInit, OnD
       select(ShipmentStoreSelectors.selectShipmentError),
       filter(error => !!error),
       withLatestFrom(this.tagPending$),
-      tap(x => console.log(x)),
+      filter(([_error, tagPending]) => tagPending !== undefined),
       map(([error, _tagPending]) => {
-        if (
-          error.actionType === ShipmentStoreActions.tagSpecimensFailure.type &&
-          error.error instanceof HttpErrorResponse
-        ) {
+        if (error.actionType === ShipmentStoreActions.tagSpecimensFailure.type) {
           const errorMessage = error.error.error.message;
           const inventoryIds = errorMessage.split(': ');
 

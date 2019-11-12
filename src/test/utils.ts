@@ -4,6 +4,7 @@ import { Dictionary } from '@ngrx/entity';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 export namespace TestUtils {
   export function capitalizeFirstLetter(str: string): string {
@@ -32,5 +33,12 @@ export namespace TestUtils {
 
   export function storeDispatchListener() {
     return jest.spyOn(TestBed.get(Store), 'dispatch');
+  }
+
+  export function modalOpenListener() {
+    return jest.spyOn(TestBed.get(NgbModal), 'open').mockReturnValue({
+      componentInstance: {},
+      result: Promise.resolve('OK')
+    });
   }
 }

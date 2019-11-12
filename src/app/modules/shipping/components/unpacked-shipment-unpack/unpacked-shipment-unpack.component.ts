@@ -45,19 +45,18 @@ export class UnpackedShipmentUnpackComponent extends UnpackedShipmentSpeciemensC
   }
 
   ngOnInit() {
-    this.shipment = this.route.parent.snapshot.data.shipment;
     super.ngOnInit();
+
+    this.shipment$
+      .pipe(filter(shipment => shipment !== undefined && this.toastrMessage !== undefined))
+      .subscribe(() => {
+        this.toastr.success(this.toastrMessage);
+        this.toastrMessage = undefined;
+      });
 
     this.error$.subscribe(errorMessage => {
       this.receiveErrorMessage = errorMessage;
       this.modalService.open(this.receiveSpecimenError, { size: 'lg' });
-    });
-
-    this.shipment$.pipe(filter(shipment => shipment !== undefined)).subscribe(() => {
-      if (this.toastrMessage) {
-        this.toastr.success(this.toastrMessage);
-        this.toastrMessage = undefined;
-      }
     });
   }
 
@@ -75,13 +74,13 @@ export class UnpackedShipmentUnpackComponent extends UnpackedShipmentSpeciemensC
   }
 
   shipmentSpecimenAction([shipmentSpecimen, actionId]) {
-    console.log('actionId', actionId);
     switch (actionId) {
       case 'tagAsMissing':
         this.tagSpecimen(shipmentSpecimen, ShipmentItemState.Missing);
         this.toastrMessage = 'Specimen tagged as Missing';
         this.markTagPending();
         break;
+
       default:
         throw new Error(`action ${actionId} is not handled`);
     }

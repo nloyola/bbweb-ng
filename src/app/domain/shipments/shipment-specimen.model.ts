@@ -14,28 +14,24 @@ export interface IShipmentSpecimen extends IConcurrencySafeEntity {
   shipmentId: string;
 
   /** The specimen this shipment specimen is linked to. */
-  specimenId: string;
+  specimen: ISpecimen;
 
   /** The shipment container this shipment specimen can be found in. */
   shipmentContainerId: string;
-
-  specimen: ISpecimen;
 }
 
 export class ShipmentSpecimen extends ConcurrencySafeEntity implements IShipmentSpecimen {
   state: ShipmentItemState;
   shipmentId: string;
-  specimenId: string;
   shipmentContainerId: string;
   specimen: Specimen;
 
   deserialize(input: IShipmentSpecimen): this {
-    const { state, shipmentId, specimenId, shipmentContainerId } = input;
-    Object.assign(this, { state, shipmentId, specimenId, shipmentContainerId });
+    const { state, shipmentId, shipmentContainerId } = input;
+    Object.assign(this, { state, shipmentId, shipmentContainerId });
     super.deserialize(input);
     if (input.specimen) {
       this.specimen = new Specimen().deserialize(input.specimen);
-      this.specimenId = this.specimen.id;
     }
     return this;
   }

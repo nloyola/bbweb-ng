@@ -549,7 +549,7 @@ export class Factory {
       id: this.domainEntityIdNext(DomainEntities.SHIPMENT_SPECIMEN),
       state: ShipmentItemState.Present,
       shipmentId: this.defaultShipment().id,
-      specimenId: this.defaultSpecimen().id,
+      specimen: this.defaultSpecimen(),
       ...options
     };
     this.defaultEntities.set(DomainEntities.SHIPMENT_SPECIMEN, ss);
