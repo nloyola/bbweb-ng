@@ -122,6 +122,18 @@ export class ShipmentStoreEffects {
   );
 
   @Effect()
+  removeSpecimenRequest$ = this.actions$.pipe(
+    ofType(ShipmentActions.removeSpecimenRequest.type),
+    switchMap(action =>
+      this.shipmentService.removeSpecimen(action.shipment, action.shipmentSpecimen).pipe(
+        // delay(2000),
+        map(shipment => ShipmentActions.removeSpecimenSuccess({ shipment })),
+        catchError(error => observableOf(ShipmentActions.removeSpecimenFailure({ error })))
+      )
+    )
+  );
+
+  @Effect()
   removeShipmentRequest$: Observable<Action> = this.actions$.pipe(
     ofType(ShipmentActions.removeShipmentRequest.type),
     switchMap(action =>

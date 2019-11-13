@@ -1,7 +1,13 @@
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { PagedReply, SearchParams } from '@app/domain';
-import { Shipment, ShipmentState, ShipmentItemState, IShipment } from '@app/domain/shipments';
+import {
+  Shipment,
+  ShipmentState,
+  ShipmentItemState,
+  IShipment,
+  ShipmentSpecimen
+} from '@app/domain/shipments';
 import { PagedQueryBehaviour } from '@test/behaviours/paged-query.behaviour';
 import { Factory } from '@test/factory';
 import '@test/matchers/server-api.matchers';
@@ -308,6 +314,35 @@ describe('ShipmentService', () => {
           'expected a shipment object'
         );
       });
+    });
+  });
+
+  describe('for removing a shipment specimen', () => {
+    let shipment: Shipment;
+    let shipmentSpecimen: ShipmentSpecimen;
+
+    beforeEach(() => {
+      shipment = new Shipment().deserialize(factory.shipment());
+      shipmentSpecimen = new ShipmentSpecimen().deserialize(factory.shipmentSpecimen());
+    });
+
+    it('request contains correct JSON and reply is handled correctly', () => {
+      const obs = service.removeSpecimen(shipment, shipmentSpecimen);
+      obs.subscribe(shipment => {
+        expect(shipment).toEqual(shipment);
+      });
+
+      const url = `${BASE_URL}/specimens/${shipment.id}/${shipmentSpecimen.id}/${shipmentSpecimen.version}`;
+      expect(obs).toBeHttpSuccess(httpMock, 'DELETE', url, true);
+    });
+
+    it('handles an error reply correctly', () => {
+      expect(service.removeSpecimen(shipment, shipmentSpecimen)).toBeHttpError(
+        httpMock,
+        'DELETE',
+        `${BASE_URL}/specimens/${shipment.id}/${shipmentSpecimen.id}/${shipmentSpecimen.version}`,
+        'expected a shipment specimen object'
+      );
     });
   });
 

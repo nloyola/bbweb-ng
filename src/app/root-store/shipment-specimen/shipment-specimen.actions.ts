@@ -35,30 +35,12 @@ export const getShipmentSpecimenFailure = createAction(
   props<{ error: any }>()
 );
 
-export const removeShipmentSpecimenRequest = createAction(
-  '[ShipmentSpecimen] Remove Shipment Specimen Request',
-  props<{ shipmentSpecimen: ShipmentSpecimen }>()
-);
-
-export const removeShipmentSpecimenSuccess = createAction(
-  '[ShipmentSpecimen] Remove Shipment Specimen Success',
-  props<{ shipmentSpecimenId: string }>()
-);
-
-export const removeShipmentSpecimenFailure = createAction(
-  '[ShipmentSpecimen] Remove Shipment Specimen Failure',
-  props<{ error: any }>()
-);
-
 const all = union({
   searchShipmentSpecimensRequest,
   searchShipmentSpecimensSuccess,
   searchShipmentSpecimensFailure,
   getShipmentSpecimenRequest,
   getShipmentSpecimenSuccess,
-  getShipmentSpecimenFailure,
-  removeShipmentSpecimenRequest,
-  removeShipmentSpecimenSuccess,
-  removeShipmentSpecimenFailure
+  getShipmentSpecimenFailure
 });
 export type ShipmentSpecimenActionsUnion = typeof all;

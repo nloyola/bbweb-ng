@@ -124,22 +124,18 @@ describe('UnpackedShipmentExtraComponent', () => {
 
       expect(dispatchListener.mock.calls.length).toBe(1);
       expect(dispatchListener.mock.calls[0][0]).toEqual(
-        ShipmentSpecimenStoreActions.removeShipmentSpecimenRequest({ shipmentSpecimen })
+        ShipmentStoreActions.removeSpecimenRequest({ shipment, shipmentSpecimen })
       );
     }));
 
-    fit('informs the user the specimens have been removed', fakeAsync(() => {
+    it('informs the user the specimens have been removed', fakeAsync(() => {
       TestUtils.modalOpenListener();
       const notificationListener = TestUtils.toastrSuccessListener();
       component.shipmentSpecimenAction([shipmentSpecimen, 'remove']);
       flush();
       fixture.detectChanges();
 
-      const updatedShipment = new Shipment().deserialize({
-        ...shipment
-        specimenCount: shipment.specimenCount + 1
-      });
-      store.dispatch(ShipmentStoreActions.updateShipmentSuccess({ shipment: updatedShipment }));
+      store.dispatch(ShipmentStoreActions.removeSpecimenSuccess({ shipment }));
       flush();
       fixture.detectChanges();
       expect(notificationListener.mock.calls.length).toBe(1);
@@ -152,7 +148,7 @@ describe('UnpackedShipmentExtraComponent', () => {
         component.shipmentSpecimenAction([shipmentSpecimen, 'remove']);
         fixture.detectChanges();
 
-        store.dispatch(ShipmentSpecimenStoreActions.removeShipmentSpecimenFailure({ error }));
+        store.dispatch(ShipmentStoreActions.removeSpecimenFailure({ error }));
         expect(modalOpenListener.mock.calls.length).toBe(1);
       }
     );

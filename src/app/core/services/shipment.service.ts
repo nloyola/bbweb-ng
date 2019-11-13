@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { JSONArray, JSONObject, PagedReply, SearchParams, searchParamsToHttpParams } from '@app/domain';
 import { ApiReply } from '@app/domain/api-reply.model';
 import { Specimen } from '@app/domain/participants';
-import { Shipment, ShipmentItemState, ShipmentState } from '@app/domain/shipments';
+import { Shipment, ShipmentItemState, ShipmentState, ShipmentSpecimen } from '@app/domain/shipments';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CentreLocationInfo } from '@app/domain/centres';
@@ -211,6 +211,14 @@ export class ShipmentService {
    */
   tagSpecimensAsExtra(shipment: Shipment, inventoryIds: string[]): Observable<Shipment> {
     return this.tagSpecimens(shipment, inventoryIds, ShipmentItemState.Extra);
+  }
+
+  /**
+   * Removes a shipment specimen from a shipment.
+   */
+  removeSpecimen(shipment: Shipment, shipmentSpecimen: ShipmentSpecimen): Observable<Shipment> {
+    const url = `${this.BASE_URL}/specimens/${shipment.id}/${shipmentSpecimen.id}/${shipmentSpecimen.version}`;
+    return this.http.delete<ApiReply>(url).pipe(map(this.replyToShipment));
   }
 
   /**

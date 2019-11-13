@@ -5,20 +5,8 @@ import { Factory } from '@test/factory';
 import { initialState } from './shipment-specimen.reducer';
 import * as selectors from './shipment-specimen.selectors';
 
-describe('shipmentSpecimen-store selectors', () => {
+describe('ShipmentSpecimen Store Selectors', () => {
   const factory = new Factory();
-
-  it('selectShipmentSpecimenLastRemoved', () => {
-    const shipmentSpecimen = factory.shipmentSpecimen();
-    const state = {
-      'shipment-specimen': {
-        ...initialState,
-        lastRemovedId: shipmentSpecimen.id
-      }
-    };
-
-    expect(selectors.selectShipmentSpecimenLastRemovedId(state)).toBe(shipmentSpecimen.id);
-  });
 
   it('selectShipmentSpecimenSearchActive', () => {
     const state = {

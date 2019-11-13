@@ -1,6 +1,6 @@
 import { props, createAction, union } from '@ngrx/store';
 import { SearchParams, PagedReply } from '@app/domain';
-import { Shipment, ShipmentItemState } from '@app/domain/shipments';
+import { Shipment, ShipmentItemState, ShipmentSpecimen } from '@app/domain/shipments';
 import { ShipmentUpdateAttribute, ShipmentStateChange } from '@app/core/services';
 import { Specimen } from '@app/domain/participants';
 import { CentreLocationInfo } from '@app/domain/centres';
@@ -107,6 +107,24 @@ export const tagSpecimensSuccess = createAction(
 
 export const tagSpecimensFailure = createAction('[Shipment] Tag Sepcimens Failure', props<{ error: any }>());
 
+export const removeSpecimenRequest = createAction(
+  '[Shipment] Remove Specimens Request',
+  props<{
+    shipment: Shipment;
+    shipmentSpecimen: ShipmentSpecimen;
+  }>()
+);
+
+export const removeSpecimenSuccess = createAction(
+  '[Shipment] Remove Specimens Success',
+  props<{ shipment: Shipment }>()
+);
+
+export const removeSpecimenFailure = createAction(
+  '[Shipment] Remove Specimens Failure',
+  props<{ error: any }>()
+);
+
 export const removeShipmentRequest = createAction(
   '[Shipment] Remove Shipment Request',
   props<{ shipment: Shipment }>()
@@ -146,6 +164,9 @@ const all = union({
   tagSpecimensRequest,
   tagSpecimensSuccess,
   tagSpecimensFailure,
+  removeSpecimenRequest,
+  removeSpecimenSuccess,
+  removeSpecimenFailure,
   removeShipmentRequest,
   removeShipmentSuccess,
   removeShipmentFailure,

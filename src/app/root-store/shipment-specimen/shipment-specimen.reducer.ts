@@ -4,7 +4,6 @@ import * as ShipmentSpecimenActions from './shipment-specimen.actions';
 import { SearchParams, PagedReplyEntityIds, searchParams2Term } from '@app/domain';
 
 export interface State extends EntityState<ShipmentSpecimen> {
-  lastRemovedId: string;
   lastSearch?: SearchParams;
   searchActive?: boolean;
   searchReplies?: { [url: string]: PagedReplyEntityIds };
@@ -14,7 +13,6 @@ export interface State extends EntityState<ShipmentSpecimen> {
 export const adapter: EntityAdapter<ShipmentSpecimen> = createEntityAdapter<ShipmentSpecimen>();
 
 export const initialState: State = adapter.getInitialState({
-  lastRemovedId: null,
   lastSearch: null,
   searchActive: false,
   searchReplies: {},
@@ -78,31 +76,6 @@ export function reducer(
     }
 
     case ShipmentSpecimenActions.getShipmentSpecimenFailure.type: {
-      return {
-        ...state,
-        error: {
-          error: action.error,
-          actionType: action.type
-        }
-      };
-    }
-
-    case ShipmentSpecimenActions.removeShipmentSpecimenRequest.type: {
-      return {
-        ...state,
-        lastRemovedId: null,
-        error: null
-      };
-    }
-
-    case ShipmentSpecimenActions.removeShipmentSpecimenSuccess.type: {
-      return adapter.removeOne(action.shipmentSpecimenId, {
-        ...state,
-        lastRemovedId: action.shipmentSpecimenId
-      });
-    }
-
-    case ShipmentSpecimenActions.removeShipmentSpecimenFailure.type: {
       return {
         ...state,
         error: {

@@ -100,38 +100,4 @@ describe('shipmentSpecimen-store effects', () => {
       expect(effects.getRequest$).toBeObservable(expected);
     });
   });
-
-  describe('removeShipmentSpecimenRequestEffect', () => {
-    let shipmentSpecimen: ShipmentSpecimen;
-    let action: Action;
-
-    beforeEach(() => {
-      shipmentSpecimen = new ShipmentSpecimen().deserialize(factory.shipmentSpecimen());
-      action = ShipmentSpecimenActions.removeShipmentSpecimenRequest({ shipmentSpecimen });
-    });
-
-    it('should respond with success', () => {
-      const completion = ShipmentSpecimenActions.removeShipmentSpecimenSuccess({
-        shipmentSpecimenId: shipmentSpecimen.id
-      });
-
-      jest.spyOn(shipmentSpecimenService, 'remove').mockReturnValue(of(shipmentSpecimen.id));
-      actions = hot('--a-', { a: action });
-      expect(effects.removeShipmentSpecimenRequest$).toBeObservable(cold('--b', { b: completion }));
-    });
-
-    it('should respond with failure', () => {
-      const error = {
-        status: 404,
-        error: {
-          message: 'simulated error'
-        }
-      };
-      const completion = ShipmentSpecimenActions.removeShipmentSpecimenFailure({ error });
-
-      jest.spyOn(shipmentSpecimenService, 'remove').mockReturnValue(throwError(error));
-      actions = hot('--a-', { a: action });
-      expect(effects.removeShipmentSpecimenRequest$).toBeObservable(cold('--b', { b: completion }));
-    });
-  });
 });

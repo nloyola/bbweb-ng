@@ -2,7 +2,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { ShipmentService } from '@app/core/services';
 import { Specimen } from '@app/domain/participants';
-import { Shipment, ShipmentItemState } from '@app/domain/shipments';
+import { Shipment, ShipmentItemState, ShipmentSpecimen } from '@app/domain/shipments';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
 import { Factory } from '@test/factory';
@@ -304,6 +304,40 @@ describe('shipment-store effects', () => {
         expect(effects.tagSpecimensRequest$).toBeObservable(cold('--b', { b: completion }));
         getTestScheduler().flush();
       });
+    });
+  });
+
+  describe('removeSpecimenRequestEffect', () => {
+    let shipment: Shipment;
+    let shipmentSpecimen: ShipmentSpecimen;
+    let action: Action;
+
+    beforeEach(() => {
+      shipment = new Shipment().deserialize(factory.shipment());
+      shipmentSpecimen = new ShipmentSpecimen().deserialize(factory.shipmentSpecimen());
+      action = ShipmentActions.removeSpecimenRequest({ shipment, shipmentSpecimen });
+    });
+
+    it('should respond with success', () => {
+      const completion = ShipmentActions.removeSpecimenSuccess({ shipment });
+
+      jest.spyOn(shipmentService, 'removeSpecimen').mockReturnValue(of(shipment));
+      actions = hot('--a-', { a: action });
+      expect(effects.removeSpecimenRequest$).toBeObservable(cold('--b', { b: completion }));
+    });
+
+    it('should respond with failure', () => {
+      const error = {
+        status: 404,
+        error: {
+          message: 'simulated error'
+        }
+      };
+      const completion = ShipmentActions.removeSpecimenFailure({ error });
+
+      jest.spyOn(shipmentService, 'removeSpecimen').mockReturnValue(throwError(error));
+      actions = hot('--a-', { a: action });
+      expect(effects.removeSpecimenRequest$).toBeObservable(cold('--b', { b: completion }));
     });
   });
 

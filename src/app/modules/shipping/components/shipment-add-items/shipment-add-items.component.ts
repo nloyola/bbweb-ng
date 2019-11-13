@@ -63,7 +63,6 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent {
     super.ngOnInit();
     this.initOnRemoved();
     this.initOnShipmentModified();
-    this.initOnSpecimenRemoved();
     this.initShipmentErrorSelector();
     this.initShipmentSpecimenErrorSelector();
   }
@@ -197,19 +196,6 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent {
       });
   }
 
-  private initOnSpecimenRemoved(): void {
-    this.store$
-      .pipe(
-        select(ShipmentSpecimenStoreSelectors.selectShipmentSpecimenLastRemovedId),
-        withLatestFrom(this.notificationMessage$),
-        takeUntil(this.unsubscribe$)
-      )
-      .subscribe(([_id, message]) => {
-        this.toastr.success(message);
-        this.blockingProgressService.hide();
-      });
-  }
-
   private initShipmentErrorSelector() {
     this.store$
       .pipe(
@@ -258,7 +244,10 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent {
     modal.result
       .then(() => {
         this.store$.dispatch(
-          ShipmentSpecimenStoreActions.removeShipmentSpecimenRequest({ shipmentSpecimen })
+          ShipmentStoreActions.removeSpecimenRequest({
+            shipment: this.shipment,
+            shipmentSpecimen
+          })
         );
         this.blockingProgressService.show('Removing Specimen...');
         this.notificationMessage$.next('Specimen Removed');

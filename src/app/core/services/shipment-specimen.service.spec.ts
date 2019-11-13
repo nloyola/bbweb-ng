@@ -87,32 +87,6 @@ describe('shipment-specimens.Service', () => {
     PagedQueryBehaviour.sharedBehaviour(context);
   });
 
-  describe('for removing a shipment specimen', () => {
-    it('request contains correct JSON and reply is handled correctly', () => {
-      const { specimenData } = createEntities();
-      const shipmentSpecimen = specimenData[0].shipmentSpecimen;
-      const obs = service.remove(shipmentSpecimen);
-      obs.subscribe(id => {
-        expect(id).toEqual(shipmentSpecimen.id);
-      });
-
-      /* tslint:disable-next-line:max-line-length */
-      const url = `${BASE_URL}/${shipmentSpecimen.shipmentId}/${shipmentSpecimen.id}/${shipmentSpecimen.version}`;
-      expect(obs).toBeHttpSuccess(httpMock, 'DELETE', url, true);
-    });
-
-    it('handles an error reply correctly', () => {
-      const { specimenData } = createEntities();
-      const shipmentSpecimen = specimenData[0].shipmentSpecimen;
-      expect(service.remove(shipmentSpecimen)).toBeHttpError(
-        httpMock,
-        'DELETE',
-        `${BASE_URL}/${shipmentSpecimen.shipmentId}/${shipmentSpecimen.id}/${shipmentSpecimen.version}`,
-        'expected a shipment specimen object'
-      );
-    });
-  });
-
   function createEntities(): TestEntities {
     const rawShipment = factory.shipment();
     const rawSpecimen = factory.specimen();

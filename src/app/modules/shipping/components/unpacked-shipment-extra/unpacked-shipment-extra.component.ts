@@ -1,19 +1,19 @@
 import { Component, TemplateRef, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { StateFilter } from '@app/domain/search-filters';
 import { Shipment, ShipmentItemState, ShipmentSpecimen } from '@app/domain/shipments';
 import {
   RootStoreState,
   ShipmentSpecimenStoreActions,
-  ShipmentStoreActions,
-  ShipmentSpecimenStoreSelectors
+  ShipmentSpecimenStoreSelectors,
+  ShipmentStoreActions
 } from '@app/root-store';
 import { faVial } from '@fortawesome/free-solid-svg-icons';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Store, select } from '@ngrx/store';
+import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
-import { filter, withLatestFrom, takeUntil } from 'rxjs/operators';
+import { filter, takeUntil } from 'rxjs/operators';
 import { ShipmentSpecimenAction } from '../shipment-specimens-table/shipment-specimens-table.container';
 import { UnpackedShipmentSpeciemensComponent } from '../unpacked-shipment-specimens/unpacked-shipment-specimens.component';
 
@@ -58,18 +58,6 @@ export class UnpackedShipmentExtraComponent extends UnpackedShipmentSpeciemensCo
     this.shipment$
       .pipe(filter(shipment => shipment !== undefined && this.toastrMessage !== undefined))
       .subscribe(() => {
-        debugger;
-        this.toastr.success(this.toastrMessage);
-        this.toastrMessage = undefined;
-      });
-
-    this.store$
-      .pipe(
-        select(ShipmentSpecimenStoreSelectors.selectShipmentSpecimenLastRemovedId),
-        filter(shipmentSpecimenId => shipmentSpecimenId !== undefined && this.toastrMessage !== undefined),
-        takeUntil(this.unsubscribe$)
-      )
-      .subscribe(() => {
         this.toastr.success(this.toastrMessage);
         this.toastrMessage = undefined;
       });
@@ -109,11 +97,13 @@ export class UnpackedShipmentExtraComponent extends UnpackedShipmentSpeciemensCo
     modal.result
       .then(() => {
         this.store$.dispatch(
-          ShipmentSpecimenStoreActions.removeShipmentSpecimenRequest({ shipmentSpecimen })
+          ShipmentStoreActions.removeSpecimenRequest({
+            shipment: this.shipment,
+            shipmentSpecimen
+          })
         );
         this.toastrMessage = 'Specimen removed';
         this.markTagPending();
-        //debugger;
       })
       .catch(() => undefined);
   }

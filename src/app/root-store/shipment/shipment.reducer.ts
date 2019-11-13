@@ -215,6 +215,27 @@ export function reducer(state = initialState, action: ShipmentActions.ShipmentAc
       };
     }
 
+    case ShipmentActions.removeSpecimenRequest.type: {
+      return {
+        ...state,
+        error: null
+      };
+    }
+
+    case ShipmentActions.removeSpecimenSuccess.type: {
+      return adapter.upsertOne(action.shipment, state);
+    }
+
+    case ShipmentActions.removeSpecimenFailure.type: {
+      return {
+        ...state,
+        error: {
+          error: action.error,
+          actionType: action.type
+        }
+      };
+    }
+
     case ShipmentActions.removeShipmentRequest.type: {
       return {
         ...state,

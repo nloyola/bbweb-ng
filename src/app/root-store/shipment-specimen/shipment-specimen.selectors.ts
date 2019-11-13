@@ -9,8 +9,6 @@ import { ShipmentSpecimen } from '@app/domain/shipments';
 import { createFeatureSelector, createSelector, MemoizedSelector } from '@ngrx/store';
 import * as fromShipmentSpecimen from './shipment-specimen.reducer';
 
-export const getLastRemovedId = (state: fromShipmentSpecimen.State): string => state.lastRemovedId;
-
 export const getSearchActive = (state: fromShipmentSpecimen.State): boolean => state.searchActive;
 
 export const getLastSearch = (state: fromShipmentSpecimen.State): SearchParams => state.lastSearch;
@@ -22,11 +20,6 @@ export const getError = (state: fromShipmentSpecimen.State): any => state.error;
 
 export const selectShipmentSpecimenState = createFeatureSelector<fromShipmentSpecimen.State>(
   'shipment-specimen'
-);
-
-export const selectShipmentSpecimenLastRemovedId: MemoizedSelector<object, string> = createSelector(
-  selectShipmentSpecimenState,
-  getLastRemovedId
 );
 
 export const selectShipmentSpecimenSearchActive: MemoizedSelector<object, boolean> = createSelector(
@@ -44,7 +37,6 @@ export const selectShipmentError: MemoizedSelector<object, any> = createSelector
   getError
 );
 
-/* tslint:disable-next-line:max-line-length */
 export const selectShipmentSpecimenSearchReplies: MemoizedSelector<
   object,
   { [url: string]: PagedReplyEntityIds }

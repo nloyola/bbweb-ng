@@ -1,6 +1,6 @@
 import { PagedReplyEntityIds } from '@app/domain';
 import { Specimen } from '@app/domain/participants';
-import { Shipment, ShipmentItemState } from '@app/domain/shipments';
+import { Shipment, ShipmentItemState, ShipmentSpecimen } from '@app/domain/shipments';
 import { Factory } from '@test/factory';
 import * as ShipmentActions from './shipment.actions';
 import { initialState, reducer } from './shipment.reducer';
@@ -349,6 +349,59 @@ describe('Shipment Reducer', () => {
         }
       };
       const action = ShipmentActions.tagSpecimensFailure(payload);
+      const state = reducer(undefined, action);
+
+      expect(state).toEqual({
+        ...initialState,
+        lastSearch: null,
+        error: {
+          actionType: action.type,
+          error: action.error
+        }
+      });
+    });
+  });
+
+  describe('when removing a shipment specimen', () => {
+    let shipment: Shipment;
+    let shipmentSpecimen: ShipmentSpecimen;
+
+    beforeEach(() => {
+      shipment = new Shipment().deserialize(factory.shipment());
+      shipmentSpecimen = new ShipmentSpecimen().deserialize(factory.shipmentSpecimen());
+    });
+
+    it('removeShipmentSpecimenRequest', () => {
+      const action = ShipmentActions.removeSpecimenRequest({ shipment, shipmentSpecimen });
+      const state = reducer(undefined, action);
+
+      expect(state).toEqual(initialState);
+    });
+
+    it('removeShipmentSpecimenSuccess', () => {
+      const testInitialState = {
+        ...initialState,
+        ids: [shipmentSpecimen.id],
+        entities: {}
+      };
+      testInitialState['entities'][shipmentSpecimen.id] = shipmentSpecimen;
+
+      const action = ShipmentActions.removeSpecimenSuccess({ shipment });
+      const state = reducer(testInitialState, action);
+
+      expect(state.entities[shipment.id]).toEqual(shipment);
+    });
+
+    it('removeShipmentSpecimenFailure', () => {
+      const payload = {
+        error: {
+          status: 404,
+          error: {
+            message: 'simulated error'
+          }
+        }
+      };
+      const action = ShipmentActions.removeSpecimenFailure(payload);
       const state = reducer(undefined, action);
 
       expect(state).toEqual({

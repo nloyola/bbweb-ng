@@ -50,21 +50,6 @@ export class ShipmentSpecimenService {
     );
   }
 
-  /**
-   * Removes this shipment from the system.
-   */
-  remove(shipmentSpecimen: ShipmentSpecimen): Observable<string> {
-    const url = `${this.BASE_URL}/${shipmentSpecimen.shipmentId}/${shipmentSpecimen.id}/${shipmentSpecimen.version}`;
-    return this.http.delete<ApiReply>(url).pipe(
-      map((reply: ApiReply) => {
-        if (reply && reply.data) {
-          return shipmentSpecimen.id;
-        }
-        throw new Error('expected a valid reply');
-      })
-    );
-  }
-
   private replyToShipmentSpecimen(reply: ApiReply): ShipmentSpecimen {
     if (reply && reply.data) {
       return new ShipmentSpecimen().deserialize(reply.data as any);
