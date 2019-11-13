@@ -88,8 +88,6 @@ export class ShipmentSpecimensTableContainerComponent implements OnInit, OnDestr
         this.shipmentSpecimenData.currentPage = 1;
         this.updateSpecimens();
       });
-
-    this.initOnShipmentSpecimenRemoved();
   }
 
   ngOnDestroy() {
@@ -120,18 +118,6 @@ export class ShipmentSpecimensTableContainerComponent implements OnInit, OnDestr
   private viewShipmentSpecimen(shipmentSpecimen: ShipmentSpecimen) {
     const modalRef = this.modalService.open(SpecimenViewModalComponent, { size: 'lg' });
     modalRef.componentInstance.specimen = shipmentSpecimen.specimen;
-  }
-
-  // reload the table if any shipment specimen is removed
-  private initOnShipmentSpecimenRemoved(): void {
-    this.store$
-      .pipe(
-        select(ShipmentSpecimenStoreSelectors.selectShipmentSpecimenLastRemovedId),
-        takeUntil(this.unsubscribe$)
-      )
-      .subscribe(() => {
-        this.updateSpecimens();
-      });
   }
 
   private createShipmentSpecimenData(): ShipmentSpecimenData {

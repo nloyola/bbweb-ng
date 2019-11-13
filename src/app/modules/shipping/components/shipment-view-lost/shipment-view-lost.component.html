@@ -1,26 +1,11 @@
-<div class="pb-2 mt-4 mb-2">
-  <div class="row">
-    <div class="col-md-12">
-      <div class="d-inline-block">
-        <h1>
-          {{ shipment.courierName }}: {{ shipment.trackingNumber }}
-          <span class="badge badge-pill badge-danger" i18n>Lost</span>
-        </h1>
-      </div>
-
-      <div class="float-right d-inline-block">
-        <button class="btn btn-warning btn-sm mr-1" (click)="backToSent()">
-          <mat-icon class="mr-1">arrow_left</mat-icon>
-          <span i18n>Back to Sent</span>
-        </button>
-      </div>
-    </div>
+<app-shipment-viewer [shipment]="shipment" [displayState]="true">
+  <div shipmentButtons class="float-right d-inline-block">
+    <button class="btn btn-warning btn-sm mr-1" (click)="backToSent()">
+      <mat-icon class="mr-1">arrow_left</mat-icon>
+      <span i18n>Back to Sent</span>
+    </button>
   </div>
-
-  <app-shipment-information-card [shipment]="shipment" [displayState]="true"> </app-shipment-information-card>
-
-  <app-shipment-specimens-table [shipment]="shipment"></app-shipment-specimens-table>
-</div>
+</app-shipment-viewer>
 
 <ng-template #unpackedTimeModal let-modal>
   <app-modal-input-date-time

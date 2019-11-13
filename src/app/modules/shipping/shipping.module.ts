@@ -38,6 +38,7 @@ import { UnpackedShipmentReceivedComponent } from './components/unpacked-shipmen
 import { UnpackedShipmentMissingComponent } from './components/unpacked-shipment-missing/unpacked-shipment-missing.component';
 import { UnpackedShipmentExtraComponent } from './components/unpacked-shipment-extra/unpacked-shipment-extra.component';
 import { ShipmentViewCompletedComponent } from './components/shipment-view-completed/shipment-view-completed.component';
+import { ShipmentViewerComponent } from './components/shipment-viewer/shipment-viewer.component';
 
 @NgModule({
   imports: [
@@ -83,7 +84,8 @@ import { ShipmentViewCompletedComponent } from './components/shipment-view-compl
     UnpackedShipmentReceivedComponent,
     UnpackedShipmentMissingComponent,
     UnpackedShipmentExtraComponent,
-    ShipmentViewCompletedComponent
+    ShipmentViewCompletedComponent,
+    ShipmentViewerComponent
   ],
   entryComponents: [
     ModalInputCentreLocationComponent,

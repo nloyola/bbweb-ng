@@ -1,33 +1,15 @@
-<div class="pb-2 mt-4 mb-2">
-  <div class="row">
-    <div class="col-md-12">
-      <div class="d-inline-block">
-        <h1>
-          {{ shipment?.courierName }}: {{ shipment?.trackingNumber }}
-          <span class="badge badge-pill badge-secondary" i18n>Packed</span>
-        </h1>
-      </div>
-
-      <div class="float-right d-inline-block">
-        <button class="btn btn-warning btn-sm mr-1" (click)="backToCreated()">
-          <mat-icon class="mr-1">arrow_left</mat-icon>
-          <span i18n>Back to created</span>
-        </button>
-        <button class="btn btn-primary btn-sm mr-1" (click)="tagAsSent()">
-          <span i18n>Tag as sent</span>
-          <mat-icon class="ml-1">arrow_right</mat-icon>
-        </button>
-      </div>
-
-      <app-shipment-information-card [shipment]="shipment" [displayState]="true">
-      </app-shipment-information-card>
-
-      <app-shipment-specimens-table [shipment]="shipment"></app-shipment-specimens-table>
-    </div>
+<app-shipment-viewer [shipment]="shipment" [displayState]="true">
+  <div shipmentButtons class="float-right d-inline-block">
+    <button class="btn btn-warning btn-sm mr-1" (click)="backToCreated()">
+      <mat-icon class="mr-1">arrow_left</mat-icon>
+      <span i18n>Back to created</span>
+    </button>
+    <button class="btn btn-primary btn-sm mr-1" (click)="tagAsSent()">
+      <span i18n>Tag as sent</span>
+      <mat-icon class="ml-1">arrow_right</mat-icon>
+    </button>
   </div>
-</div>
-
-<app-blocking-progress></app-blocking-progress>
+</app-shipment-viewer>
 
 <ng-template #sentTimeModal let-modal>
   <app-modal-input-date-time

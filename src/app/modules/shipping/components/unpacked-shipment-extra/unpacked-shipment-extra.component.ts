@@ -16,6 +16,7 @@ import { ToastrService } from 'ngx-toastr';
 import { filter, takeUntil } from 'rxjs/operators';
 import { ShipmentSpecimenAction } from '../shipment-specimens-table/shipment-specimens-table.container';
 import { UnpackedShipmentSpeciemensComponent } from '../unpacked-shipment-specimens/unpacked-shipment-specimens.component';
+import { BlockingProgressService } from '@app/core/services/blocking-progress.service';
 
 @Component({
   selector: 'app-unpacked-shipment-extra',
@@ -46,7 +47,8 @@ export class UnpackedShipmentExtraComponent extends UnpackedShipmentSpeciemensCo
     store$: Store<RootStoreState.State>,
     route: ActivatedRoute,
     private modalService: NgbModal,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private blockingProgressService: BlockingProgressService
   ) {
     super(store$, route);
   }
@@ -60,6 +62,7 @@ export class UnpackedShipmentExtraComponent extends UnpackedShipmentSpeciemensCo
       .subscribe(() => {
         this.toastr.success(this.toastrMessage);
         this.toastrMessage = undefined;
+        this.blockingProgressService.hide();
       });
 
     this.error$.pipe(filter(() => this.toastrMessage !== undefined)).subscribe(errorMessage => {
@@ -79,6 +82,7 @@ export class UnpackedShipmentExtraComponent extends UnpackedShipmentSpeciemensCo
     this.markTagPending();
     this.shipmentLoading$.next(true);
     this.toastrMessage = 'Specimen(s) tagged as Extra';
+    this.blockingProgressService.show('Updating Shipment...');
   }
 
   shipmentSpecimenAction([shipmentSpecimen, actionId]) {
@@ -104,6 +108,7 @@ export class UnpackedShipmentExtraComponent extends UnpackedShipmentSpeciemensCo
         );
         this.toastrMessage = 'Specimen removed';
         this.markTagPending();
+        this.blockingProgressService.show('Updating Shipment...');
       })
       .catch(() => undefined);
   }

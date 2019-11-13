@@ -6,8 +6,9 @@ import { Shipment } from '@app/domain/shipments';
 import { NgrxRuntimeChecks, ShipmentStoreReducer } from '@app/root-store';
 import { StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
-import { ShipmentViewUnpackedComponent } from './shipment-view-unpacked.component';
+import { ShipmentFixture } from '@test/fixtures/shipment.fixture';
 import { ToastrModule } from 'ngx-toastr';
+import { ShipmentViewUnpackedComponent } from './shipment-view-unpacked.component';
 
 describe('ShipmentViewUnpackedComponent', () => {
   let component: ShipmentViewUnpackedComponent;
@@ -34,9 +35,10 @@ describe('ShipmentViewUnpackedComponent', () => {
   }));
 
   beforeEach(() => {
+    shipment = new Shipment().deserialize(factory.shipment());
     fixture = TestBed.createComponent(ShipmentViewUnpackedComponent);
     component = fixture.componentInstance;
-    shipment = new Shipment().deserialize(factory.shipment());
+    ShipmentFixture.updateActivatedRoute(shipment);
     fixture.detectChanges();
   });
 

@@ -1,39 +1,30 @@
 import { Component, TemplateRef, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { ShipmentStateTransision } from '@app/core/services';
+import { BlockingProgressService } from '@app/core/services/blocking-progress.service';
 import { RootStoreState, ShipmentStoreActions } from '@app/root-store';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
-import { Subject } from 'rxjs';
-import { filter, takeUntil, withLatestFrom } from 'rxjs/operators';
-import { ShipmentViewerComponent } from '../shipment-viewer/shipment-viewer.component';
-import { BlockingProgressService } from '@app/core/services/blocking-progress.service';
+import { ShipmentViewer } from '../shipment-viewer';
 
 @Component({
   selector: 'app-shipment-view-received',
   templateUrl: './shipment-view-received.component.html',
   styleUrls: ['./shipment-view-received.component.scss']
 })
-export class ShipmentViewReceivedComponent extends ShipmentViewerComponent {
+export class ShipmentViewReceivedComponent extends ShipmentViewer {
   @ViewChild('unpackedTimeModal', { static: false }) unpackedTimeModal: TemplateRef<any>;
   @ViewChild('backToSentModal', { static: false }) backToSentModal: TemplateRef<any>;
 
-  private backToSent$ = new Subject<boolean>();
-  private unpackedTime$ = new Subject<Date>();
-
   constructor(
     store$: Store<RootStoreState.State>,
-    private modalService: NgbModal,
-    private toastr: ToastrService,
-    private blockingProgressService: BlockingProgressService
+    route: ActivatedRoute,
+    toastr: ToastrService,
+    modalService: NgbModal,
+    blockingProgressService: BlockingProgressService
   ) {
-    super(store$);
-  }
-
-  ngOnInit() {
-    super.ngOnInit();
-    this.initBackToSent();
-    this.initTagAsUnpacked();
+    super(store$, route, toastr, modalService, blockingProgressService);
   }
 
   backToSent() {
@@ -50,7 +41,8 @@ export class ShipmentViewReceivedComponent extends ShipmentViewerComponent {
             }
           })
         );
-        this.backToSent$.next(true);
+
+        this.notificationMessage = 'Tagged as Sent';
         this.blockingProgressService.show('Updating Shipment...');
       })
       .catch(() => undefined);
@@ -70,34 +62,9 @@ export class ShipmentViewReceivedComponent extends ShipmentViewerComponent {
             }
           })
         );
-        this.unpackedTime$.next(unpackedTime);
+        this.notificationMessage = 'Received time recorded';
         this.blockingProgressService.show('Updating Shipment...');
       })
       .catch(() => undefined);
-  }
-
-  private initBackToSent(): void {
-    this.shipment$
-      .pipe(
-        withLatestFrom(this.backToSent$),
-        takeUntil(this.unsubscribe$),
-        filter(([_shipment, flag]) => flag !== undefined)
-      )
-      .subscribe(() => {
-        this.toastr.success('Tagged as Sent');
-        this.blockingProgressService.hide();
-      });
-  }
-
-  private initTagAsUnpacked(): void {
-    this.shipment$
-      .pipe(
-        withLatestFrom(this.unpackedTime$),
-        takeUntil(this.unsubscribe$)
-      )
-      .subscribe(() => {
-        this.toastr.success('Received time recorded');
-        this.blockingProgressService.hide();
-      });
   }
 }

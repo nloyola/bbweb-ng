@@ -1,39 +1,30 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import { Component, Input, TemplateRef, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { BlockingProgressService } from '@app/core/services/blocking-progress.service';
 import { Shipment, ShipmentSpecimen } from '@app/domain/shipments';
 import { ModalInputOptions } from '@app/modules/modals/models';
-import {
-  RootStoreState,
-  ShipmentSpecimenStoreActions,
-  ShipmentStoreActions,
-  ShipmentStoreSelectors,
-  ShipmentSpecimenStoreSelectors
-} from '@app/root-store';
+import { RootStoreState, ShipmentStoreActions, ShipmentStoreSelectors } from '@app/root-store';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { select, Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
-import { Subject } from 'rxjs';
-import { filter, takeUntil, withLatestFrom } from 'rxjs/operators';
+import { filter, takeUntil } from 'rxjs/operators';
 import { ShipmentStateTransision } from '../../../../core/services/shipment.service';
 import { ModalShipmentHasNoSpecimensComponent } from '../modal-shipment-has-no-specimens/modal-shipment-has-no-specimens.component';
 import { ModalShipmentHasSpecimensComponent } from '../modal-shipment-has-specimens/modal-shipment-has-specimens.component';
 import { ModalShipmentRemoveComponent } from '../modal-shipment-remove/modal-shipment-remove.component';
 import { ShipmentSpecimenAction } from '../shipment-specimens-table/shipment-specimens-table.container';
-import { ShipmentViewerComponent } from '../shipment-viewer/shipment-viewer.component';
-import { BlockingProgressService } from '@app/core/services/blocking-progress.service';
+import { ShipmentViewer } from '../shipment-viewer';
 
 @Component({
   selector: 'app-shipment-add-items',
   templateUrl: './shipment-add-items.component.html',
   styleUrls: ['./shipment-add-items.component.scss']
 })
-export class ShipmentAddItemsComponent extends ShipmentViewerComponent {
+export class ShipmentAddItemsComponent extends ShipmentViewer {
   @ViewChild('packedTimeModal', { static: false }) packedTimeModal: TemplateRef<any>;
   @ViewChild('sentTimeModal', { static: false }) sentTimeModal: TemplateRef<any>;
   @ViewChild('removeShipmentSpecimenModal', { static: false }) removeShipmentSpecimenModal: TemplateRef<any>;
   @ViewChild('addSpecimenError', { static: false }) addSpecimenError: TemplateRef<any>;
-
-  @Input() shipment: Shipment;
 
   packedTimeModalOptions: ModalInputOptions = { required: true };
   sentTimeModalOptions: ModalInputOptions = { required: true };
@@ -48,23 +39,19 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent {
   ];
   addErrorMessage = '';
 
-  private notificationMessage$ = new Subject<string>();
-
   constructor(
     store$: Store<RootStoreState.State>,
-    private modalService: NgbModal,
-    private toastr: ToastrService,
-    private blockingProgressService: BlockingProgressService
+    route: ActivatedRoute,
+    toastr: ToastrService,
+    modalService: NgbModal,
+    blockingProgressService: BlockingProgressService
   ) {
-    super(store$);
+    super(store$, route, toastr, modalService, blockingProgressService);
   }
 
   ngOnInit() {
     super.ngOnInit();
     this.initOnRemoved();
-    this.initOnShipmentModified();
-    this.initShipmentErrorSelector();
-    this.initShipmentSpecimenErrorSelector();
   }
 
   removeShipment() {
@@ -82,7 +69,7 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent {
           })
         );
         this.blockingProgressService.show('Removing Shipment...');
-        this.notificationMessage$.next('Shipment removed');
+        this.notificationMessage = 'Shipment removed';
       })
       .catch(() => undefined);
   }
@@ -107,7 +94,7 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent {
             }
           })
         );
-        this.notificationMessage$.next('Packed time recorded');
+        this.notificationMessage = 'Packed time recorded';
         this.blockingProgressService.show('Updating Shipment...');
       })
       .catch(() => undefined);
@@ -134,7 +121,7 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent {
             }
           })
         );
-        this.notificationMessage$.next('Packed and Sent time recorded');
+        this.notificationMessage = 'Packed and Sent time recorded';
         this.blockingProgressService.show('Updating Shipment...');
       })
       .catch(() => undefined);
@@ -156,86 +143,59 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent {
         specimenInventoryIds
       })
     );
-    this.notificationMessage$.next('Specimen Added');
+    this.notificationMessage = 'Specimen Added';
     this.blockingProgressService.show('Adding Specimen...');
   }
 
-  shipmentSpecimenAction([shipmentSpecimen, actionId]) {
-    switch (actionId) {
+  shipmentSpecimenEvent([shipmentSpecimen, eventId]) {
+    switch (eventId) {
       case 'remove':
         this.removeShipmentSpecimen(shipmentSpecimen);
         break;
       default:
-        throw new Error(`action ${actionId} is not handled`);
+        throw new Error(`event ${eventId} is invalid`);
     }
-  }
-
-  private initOnShipmentModified(): void {
-    this.shipment$
-      .pipe(
-        withLatestFrom(this.notificationMessage$),
-        takeUntil(this.unsubscribe$)
-      )
-      .subscribe(([_shipment, message]) => {
-        this.toastr.success(message);
-        this.notificationMessage$.next(undefined);
-        this.blockingProgressService.hide();
-      });
   }
 
   private initOnRemoved(): void {
     this.store$
       .pipe(
         select(ShipmentStoreSelectors.selectShipmentLastRemovedId),
-        withLatestFrom(this.notificationMessage$),
+        filter(() => this.notificationMessage !== undefined),
         takeUntil(this.unsubscribe$)
       )
-      .subscribe(([id, message]) => {
-        this.toastr.success(message);
+      .subscribe(() => {
+        this.toastr.success(this.notificationMessage);
         this.blockingProgressService.hide();
       });
   }
 
-  private initShipmentErrorSelector() {
-    this.store$
-      .pipe(
-        select(ShipmentStoreSelectors.selectShipmentError),
-        filter(s => !!s),
-        withLatestFrom(this.notificationMessage$),
-        takeUntil(this.unsubscribe$)
-      )
-      .subscribe(([error, _msg]) => {
-        let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
-        this.toastr.error(errMessage, 'Error', { disableTimeOut: true });
-      });
-  }
+  protected initShipmentErrorSelector() {
+    this.error$.subscribe(error => {
+      if (
+        error.actionType === ShipmentStoreActions.addSpecimensFailure.type ||
+        error.actionType === ShipmentStoreActions.removeSpecimenFailure.type
+      ) {
+        const errorMessage = error.error.error.message;
+        const inventoryIds = errorMessage.split(': ');
 
-  private initShipmentSpecimenErrorSelector(): void {
-    this.store$
-      .pipe(
-        select(ShipmentStoreSelectors.selectShipmentError),
-        filter(error => !!error),
-        takeUntil(this.unsubscribe$)
-      )
-      .subscribe(error => {
-        if (error.actionType === ShipmentStoreActions.addSpecimensFailure.type) {
-          const errorMessage = error.error.error.message;
-          const inventoryIds = errorMessage.split(': ');
-
-          if (errorMessage.match(/invalid specimen inventory IDs/)) {
-            this.addErrorMessage = `Inventory IDs not present in the system:<br><b>${inventoryIds[2]}</b>`;
-          } else if (errorMessage.match(/specimens are already in an active shipment/)) {
-            this.addErrorMessage = `Inventory IDs already in this shipment or another shipment:<br><b>${inventoryIds[2]}</b>`;
-          } else if (errorMessage.match(/invalid centre for specimen inventory IDs/)) {
-            this.addErrorMessage = `Inventory IDs at a different location than where shipment is coming from:<br><b>${inventoryIds[2]}</b>`;
-          } else {
-            this.addErrorMessage = errorMessage;
-          }
-
-          this.modalService.open(this.addSpecimenError, { size: 'lg' });
-          this.blockingProgressService.hide();
+        if (errorMessage.match(/invalid specimen inventory IDs/)) {
+          this.addErrorMessage = `Inventory IDs not present in the system:<br><b>${inventoryIds[2]}</b>`;
+        } else if (errorMessage.match(/specimens are already in an active shipment/)) {
+          this.addErrorMessage = `Inventory IDs already in this shipment or another shipment:<br><b>${inventoryIds[2]}</b>`;
+        } else if (errorMessage.match(/invalid centre for specimen inventory IDs/)) {
+          this.addErrorMessage = `Inventory IDs at a different location than where shipment is coming from:<br><b>${inventoryIds[2]}</b>`;
+        } else {
+          this.addErrorMessage = errorMessage;
         }
-      });
+
+        this.modalService.open(this.addSpecimenError, { size: 'lg' });
+        this.blockingProgressService.hide();
+        return;
+      }
+
+      super.initShipmentErrorSelector();
+    });
   }
 
   private removeShipmentSpecimen(shipmentSpecimen: ShipmentSpecimen) {
@@ -250,8 +210,7 @@ export class ShipmentAddItemsComponent extends ShipmentViewerComponent {
           })
         );
         this.blockingProgressService.show('Removing Specimen...');
-        this.notificationMessage$.next('Specimen Removed');
-        this.blockingProgressService.hide();
+        this.notificationMessage = 'Specimen Removed';
       })
       .catch(() => undefined);
   }

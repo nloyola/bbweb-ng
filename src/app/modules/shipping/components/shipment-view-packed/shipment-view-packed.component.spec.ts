@@ -8,6 +8,7 @@ import { StoreModule } from '@ngrx/store';
 import { Factory } from '@test/factory';
 import { ShipmentViewPackedComponent } from './shipment-view-packed.component';
 import { ToastrModule } from 'ngx-toastr';
+import { ShipmentFixture } from '@test/fixtures/shipment.fixture';
 
 describe('ShipmentViewPageComponent', () => {
   let component: ShipmentViewPackedComponent;
@@ -34,9 +35,10 @@ describe('ShipmentViewPageComponent', () => {
   }));
 
   beforeEach(() => {
+    shipment = new Shipment().deserialize(factory.shipment());
     fixture = TestBed.createComponent(ShipmentViewPackedComponent);
     component = fixture.componentInstance;
-    shipment = new Shipment().deserialize(factory.shipment());
+    ShipmentFixture.updateActivatedRoute(shipment);
     fixture.detectChanges();
   });
 

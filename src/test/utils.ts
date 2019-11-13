@@ -5,6 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { BlockingProgressService } from '@app/core/services/blocking-progress.service';
 
 export namespace TestUtils {
   export function capitalizeFirstLetter(str: string): string {
@@ -40,5 +41,13 @@ export namespace TestUtils {
       componentInstance: {},
       result: Promise.resolve('OK')
     });
+  }
+
+  export function blockingProgressShowListener() {
+    return jest.spyOn(TestBed.get(BlockingProgressService), 'show');
+  }
+
+  export function blockingProgressHideListener() {
+    return jest.spyOn(TestBed.get(BlockingProgressService), 'hide');
   }
 }

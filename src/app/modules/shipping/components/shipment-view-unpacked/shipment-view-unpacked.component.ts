@@ -1,22 +1,21 @@
 import { Component, TemplateRef, ViewChild } from '@angular/core';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { ShipmentStateTransision } from '@app/core/services';
+import { BlockingProgressService } from '@app/core/services/blocking-progress.service';
+import { IdToTab } from '@app/domain';
 import { RootStoreState, ShipmentStoreActions } from '@app/root-store';
 import { NgbModal, NgbTabChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 import { Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
-import { Subject } from 'rxjs';
-import { takeUntil, withLatestFrom, filter } from 'rxjs/operators';
-import { ShipmentViewerComponent } from '../shipment-viewer/shipment-viewer.component';
-import { IdToTab } from '@app/domain';
-import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
-import { BlockingProgressService } from '@app/core/services/blocking-progress.service';
+import { filter, takeUntil } from 'rxjs/operators';
+import { ShipmentViewer } from '../shipment-viewer';
 
 @Component({
   selector: 'app-shipment-view-unpacked',
   templateUrl: './shipment-view-unpacked.component.html',
   styleUrls: ['./shipment-view-unpacked.component.scss']
 })
-export class ShipmentViewUnpackedComponent extends ShipmentViewerComponent {
+export class ShipmentViewUnpackedComponent extends ShipmentViewer {
   @ViewChild('completedTimeModal', { static: false }) completedTimeModal: TemplateRef<any>;
   @ViewChild('containsSpecimensModal', { static: false }) containsSpecimensModal: TemplateRef<any>;
   @ViewChild('backToReceivedModal', { static: false }) backToReceivedModal: TemplateRef<any>;
@@ -35,25 +34,20 @@ export class ShipmentViewUnpackedComponent extends ShipmentViewerComponent {
     'extra-specimens': { heading: 'Extra Specimens' }
   };
 
-  private backToReceived$ = new Subject<boolean>();
-  private completedTime$ = new Subject<Date>();
-
   constructor(
     store$: Store<RootStoreState.State>,
-    private router: Router,
-    private route: ActivatedRoute,
-    private modalService: NgbModal,
-    private toastr: ToastrService,
-    private blockingProgressService: BlockingProgressService
+    route: ActivatedRoute,
+    modalService: NgbModal,
+    toastr: ToastrService,
+    blockingProgressService: BlockingProgressService,
+    private router: Router
   ) {
-    super(store$);
+    super(store$, route, toastr, modalService, blockingProgressService);
     this.tabIds = Object.keys(this.tabData);
   }
 
   ngOnInit() {
     super.ngOnInit();
-    this.initBackToReceived();
-    this.initTagAsCompleted();
 
     this.activeTabId = this.getActiveTabId(this.router.url);
 
@@ -86,7 +80,7 @@ export class ShipmentViewUnpackedComponent extends ShipmentViewerComponent {
             }
           })
         );
-        this.backToReceived$.next(true);
+        this.notificationMessage = 'Shipment back in Receivedstate';
         this.blockingProgressService.show('Updating Shipment...');
       })
       .catch(() => undefined);
@@ -115,34 +109,10 @@ export class ShipmentViewUnpackedComponent extends ShipmentViewerComponent {
             }
           })
         );
-        this.completedTime$.next(datetime);
+        this.notificationMessage = 'Completed time recorded';
         this.blockingProgressService.show('Updating Shipment...');
       })
       .catch(() => undefined);
-  }
-
-  private initBackToReceived(): void {
-    this.shipment$
-      .pipe(
-        withLatestFrom(this.backToReceived$),
-        takeUntil(this.unsubscribe$)
-      )
-      .subscribe(() => {
-        this.toastr.success('Shipment back in Receivedstate');
-        this.blockingProgressService.hide();
-      });
-  }
-
-  private initTagAsCompleted(): void {
-    this.shipment$
-      .pipe(
-        withLatestFrom(this.completedTime$),
-        takeUntil(this.unsubscribe$)
-      )
-      .subscribe(() => {
-        this.toastr.success('Completed time recorded');
-        this.blockingProgressService.hide();
-      });
   }
 
   private getActiveTabId(routeUrl: string): string {

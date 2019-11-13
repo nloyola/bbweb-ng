@@ -1,0 +1,21 @@
+<div class="pb-2 mt-4 mb-2">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="d-inline-block">
+        <h1>
+          {{ shipment?.courierName }}: {{ shipment?.trackingNumber }}
+          <span class="badge badge-pill badge-secondary" i18n>{{ shipment.state | titlecase }}</span>
+        </h1>
+      </div>
+
+      <ng-content select="[shipmentButtons]"></ng-content>
+
+      <app-shipment-information-card [shipment]="shipment" [displayState]="displayState">
+      </app-shipment-information-card>
+
+      <app-shipment-specimens-table [shipment]="shipment"></app-shipment-specimens-table>
+    </div>
+  </div>
+</div>
+
+<app-blocking-progress></app-blocking-progress>

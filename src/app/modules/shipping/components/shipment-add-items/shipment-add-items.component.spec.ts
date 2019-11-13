@@ -2,7 +2,7 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, fakeAsync, flush, TestBed } from '@angular/core/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ShipmentStateChange, ShipmentStateTransision } from '@app/core/services';
-import { Shipment } from '@app/domain/shipments';
+import { Shipment, ShipmentSpecimen } from '@app/domain/shipments';
 import {
   NgrxRuntimeChecks,
   RootStoreState,
@@ -19,6 +19,11 @@ import { ToastrModule } from 'ngx-toastr';
 import { ModalShipmentHasNoSpecimensComponent } from '../modal-shipment-has-no-specimens/modal-shipment-has-no-specimens.component';
 import { ModalShipmentHasSpecimensComponent } from '../modal-shipment-has-specimens/modal-shipment-has-specimens.component';
 import { ShipmentAddItemsComponent } from './shipment-add-items.component';
+import { BlockingProgressService } from '@app/core/services/blocking-progress.service';
+import { ShipmentSpecimensFixture } from '@test/fixtures/shipment-specimens.fixture';
+import { RouterTestingModule } from '@angular/router/testing';
+import { ActivatedRoute } from '@angular/router';
+import { ShipmentFixture } from '@test/fixtures/shipment.fixture';
 
 describe('ShipmentAddItemsComponent', () => {
   let component: ShipmentAddItemsComponent;
@@ -32,6 +37,7 @@ describe('ShipmentAddItemsComponent', () => {
       imports: [
         BrowserAnimationsModule,
         NgbModule,
+        RouterTestingModule,
         StoreModule.forRoot(
           {
             shipment: ShipmentStoreReducer.reducer,
@@ -40,6 +46,12 @@ describe('ShipmentAddItemsComponent', () => {
           NgrxRuntimeChecks
         ),
         ToastrModule.forRoot()
+      ],
+      providers: [
+        {
+          provide: ActivatedRoute,
+          useValue: {}
+        }
       ],
       declarations: [ShipmentAddItemsComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
@@ -208,11 +220,125 @@ describe('ShipmentAddItemsComponent', () => {
     });
   });
 
+  describe('when component is informed by child that the shipment has been updated', () => {
+    it('when update is happening, blocking progress is shown', () => {
+      initializeComponent();
+      const spyListener = TestUtils.blockingProgressShowListener();
+      component.shipmentChange(true);
+      expect(spyListener.mock.calls.length).toBe(1);
+    });
+
+    it('when update completes, blocking progress is hidden', () => {
+      initializeComponent();
+      const spyListener = TestUtils.blockingProgressHideListener();
+      component.shipmentChange(false);
+      expect(spyListener.mock.calls.length).toBe(1);
+    });
+  });
+
+  describe('when a specimen is added', () => {
+    it('action is dispatched', () => {
+      shipment = initializeComponent();
+      const specimenInventoryIds = [factory.stringNext()];
+      const dispatchListener = TestUtils.storeDispatchListener();
+      const blockingListener = TestUtils.blockingProgressShowListener();
+      component.addShipmentSpecimens(specimenInventoryIds);
+      fixture.detectChanges();
+
+      expect(dispatchListener.mock.calls.length).toBe(1);
+      expect(dispatchListener.mock.calls[0][0]).toEqual(
+        ShipmentStoreActions.addSpecimensRequest({
+          shipment,
+          specimenInventoryIds
+        })
+      );
+      expect(blockingListener.mock.calls.length).toBe(1);
+    });
+  });
+
+  describe('for shipment specimen events', () => {
+    it('when an invalid event is received', () => {
+      const action = factory.stringNext();
+      initializeComponent();
+      const shipmentSpecimen = new ShipmentSpecimen().deserialize(factory.shipmentSpecimen());
+      expect(() => {
+        component.shipmentSpecimenEvent([shipmentSpecimen, action]);
+      }).toThrowError(`event ${action} is invalid`);
+    });
+
+    describe('when a specimen is removed', () => {
+      it('action is dispatched', fakeAsync(() => {
+        shipment = initializeComponent();
+        const shipmentSpecimen = new ShipmentSpecimen().deserialize(factory.shipmentSpecimen());
+        const modalListener = TestUtils.modalOpenListener();
+        const dispatchListener = TestUtils.storeDispatchListener();
+        const blockingListener = TestUtils.blockingProgressShowListener();
+        component.shipmentSpecimenEvent([shipmentSpecimen, 'remove']);
+        expect(modalListener.mock.calls.length).toBe(1);
+
+        flush();
+        fixture.detectChanges();
+
+        expect(dispatchListener.mock.calls.length).toBe(1);
+        expect(dispatchListener.mock.calls[0][0]).toEqual(
+          ShipmentStoreActions.removeSpecimenRequest({
+            shipment,
+            shipmentSpecimen
+          })
+        );
+        expect(blockingListener.mock.calls.length).toBe(1);
+      }));
+
+      it('notifies the user of the removal', fakeAsync(() => {
+        shipment = initializeComponent();
+        const shipmentSpecimen = new ShipmentSpecimen().deserialize(factory.shipmentSpecimen());
+        const modalListener = TestUtils.modalOpenListener();
+        component.shipmentSpecimenEvent([shipmentSpecimen, 'remove']);
+        expect(modalListener.mock.calls.length).toBe(1);
+
+        flush();
+        fixture.detectChanges();
+
+        const toastrListener = TestUtils.toastrSuccessListener();
+        const blockingListener = TestUtils.blockingProgressHideListener();
+        store.dispatch(ShipmentStoreActions.removeSpecimenSuccess({ shipment }));
+        flush();
+        fixture.detectChanges();
+        expect(toastrListener.mock.calls.length).toBe(1);
+        expect(blockingListener.mock.calls.length).toBe(1);
+      }));
+
+      describe.each(ShipmentSpecimensFixture.errors)(
+        'informs the user there was a "%s" error',
+        (_errMessage, error) => {
+          it('shows the error in a modal', fakeAsync(() => {
+            shipment = initializeComponent();
+            const shipmentSpecimen = new ShipmentSpecimen().deserialize(factory.shipmentSpecimen());
+            const modalListener = TestUtils.modalOpenListener();
+            const blockingListener = TestUtils.blockingProgressHideListener();
+            component.shipmentSpecimenEvent([shipmentSpecimen, 'remove']);
+            expect(modalListener.mock.calls.length).toBe(1);
+
+            flush();
+            fixture.detectChanges();
+
+            modalListener.mockClear();
+            store.dispatch(ShipmentStoreActions.removeSpecimenFailure({ error }));
+            flush();
+            fixture.detectChanges();
+            expect(modalListener.mock.calls.length).toBe(1);
+            expect(blockingListener.mock.calls.length).toBe(1);
+          }));
+        }
+      );
+    });
+  });
+
   function initializeComponent(shipment?: Shipment): Shipment {
     if (!shipment) {
       shipment = new Shipment().deserialize(factory.shipment());
     }
-    component.shipment = shipment;
+    ShipmentFixture.updateActivatedRoute(shipment);
     fixture.detectChanges();
     return shipment;
   }
