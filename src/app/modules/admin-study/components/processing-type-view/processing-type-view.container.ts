@@ -299,10 +299,7 @@ export class ProcessingTypeViewContainerComponent implements OnInit, OnDestroy {
   updateOutputSpecimen() {
     this.whenStudyDisabled((study, processingType) => {
       const modalRef = this.modalService.open(ProcessingOutputSpecimenModalComponent, { size: 'lg' });
-      modalRef.componentInstance.study = study;
       modalRef.componentInstance.processingType = processingType;
-      modalRef.componentInstance.eventTypes = this.dataSubject.value.eventTypes;
-      modalRef.componentInstance.processingTypes = this.dataSubject.value.processingTypes;
       modalRef.result
         .then(output => {
           if (output === 'Cancel') {

@@ -1,10 +1,9 @@
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService } from '@app/core/services';
-import { NamedEntityInfo } from '@app/domain';
 import { Membership } from '@app/domain/access';
-import { Centre, CentreInfo } from '@app/domain/centres';
-import { Study, StudyInfo } from '@app/domain/studies';
+import { Centre, CentreInfo, CentreStateInfo } from '@app/domain/centres';
+import { Study, StudyInfo, StudyStateInfo } from '@app/domain/studies';
 import { IUserInfo, User, UserInfo } from '@app/domain/users';
 import { CentreRemoveModalComponent } from '@app/modules/modals/components/centre-remove-modal/centre-remove-modal.component';
 import { StudyRemoveModalComponent } from '@app/modules/modals/components/study-remove-modal/study-remove-modal.component';
@@ -183,7 +182,7 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
       .catch(() => undefined);
   }
 
-  studySelected(studyInfo: IUserInfo): void {
+  studySelected(studyInfo: StudyStateInfo): void {
     const membership = this.membershipSubject.value;
     const removeStudy = () => {
       this.store$.dispatch(
@@ -226,7 +225,7 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
       .catch(() => undefined);
   }
 
-  centreSelected(centreInfo: IUserInfo): void {
+  centreSelected(centreInfo: CentreStateInfo): void {
     const membership = this.membershipSubject.value;
     const removeCentre = () => {
       this.store$.dispatch(
