@@ -1,29 +1,28 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, fakeAsync, flush, TestBed } from '@angular/core/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ActivatedRoute } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
 import { ShipmentStateChange, ShipmentStateTransision } from '@app/core/services';
 import { Shipment, ShipmentSpecimen } from '@app/domain/shipments';
 import {
   NgrxRuntimeChecks,
   RootStoreState,
+  ShipmentSpecimenStoreReducer,
   ShipmentStoreActions,
-  ShipmentStoreReducer,
-  ShipmentSpecimenStoreReducer
+  ShipmentStoreReducer
 } from '@app/root-store';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Store, StoreModule } from '@ngrx/store';
 import { EntityUpdateComponentBehaviour } from '@test/behaviours/entity-update-component.behaviour';
 import { Factory } from '@test/factory';
+import { ShipmentSpecimensFixture } from '@test/fixtures/shipment-specimens.fixture';
+import { ShipmentFixture } from '@test/fixtures/shipment.fixture';
 import { TestUtils } from '@test/utils';
 import { ToastrModule } from 'ngx-toastr';
 import { ModalShipmentHasNoSpecimensComponent } from '../modal-shipment-has-no-specimens/modal-shipment-has-no-specimens.component';
 import { ModalShipmentHasSpecimensComponent } from '../modal-shipment-has-specimens/modal-shipment-has-specimens.component';
 import { ShipmentAddItemsComponent } from './shipment-add-items.component';
-import { BlockingProgressService } from '@app/core/services/blocking-progress.service';
-import { ShipmentSpecimensFixture } from '@test/fixtures/shipment-specimens.fixture';
-import { RouterTestingModule } from '@angular/router/testing';
-import { ActivatedRoute } from '@angular/router';
-import { ShipmentFixture } from '@test/fixtures/shipment.fixture';
 
 describe('ShipmentAddItemsComponent', () => {
   let component: ShipmentAddItemsComponent;
@@ -95,7 +94,7 @@ describe('ShipmentAddItemsComponent', () => {
     }));
 
     it('infoms the user if the shipment was removed', fakeAsync(() => {
-      const toastrListener = TestUtils.toastrSuccessListener();
+      const notificationListener = TestUtils.notificationShowListener();
 
       shipment = initializeComponent();
       component.removeShipment();
@@ -106,11 +105,11 @@ describe('ShipmentAddItemsComponent', () => {
       flush();
       fixture.detectChanges();
 
-      expect(toastrListener.mock.calls.length).toBe(1);
+      expect(notificationListener.mock.calls.length).toBe(1);
     }));
 
     it('infoms the user if there was an error when removing', fakeAsync(() => {
-      const toastrListener = TestUtils.toastrErrorListener();
+      const notificationListener = TestUtils.notificationShowErrorListener();
 
       initializeComponent();
       component.removeShipment();
@@ -129,7 +128,7 @@ describe('ShipmentAddItemsComponent', () => {
       flush();
       fixture.detectChanges();
 
-      expect(toastrListener.mock.calls.length).toBe(1);
+      expect(notificationListener.mock.calls.length).toBe(1);
     }));
 
     it('opens a modal informing the user if the shipment contains specimens', fakeAsync(() => {
@@ -299,12 +298,12 @@ describe('ShipmentAddItemsComponent', () => {
         flush();
         fixture.detectChanges();
 
-        const toastrListener = TestUtils.toastrSuccessListener();
+        const notificationListener = TestUtils.notificationShowListener();
         const blockingListener = TestUtils.blockingProgressHideListener();
         store.dispatch(ShipmentStoreActions.removeSpecimenSuccess({ shipment }));
         flush();
         fixture.detectChanges();
-        expect(toastrListener.mock.calls.length).toBe(1);
+        expect(notificationListener.mock.calls.length).toBe(1);
         expect(blockingListener.mock.calls.length).toBe(1);
       }));
 

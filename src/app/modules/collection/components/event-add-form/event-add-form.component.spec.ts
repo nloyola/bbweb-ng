@@ -246,15 +246,15 @@ describe('ParticipantAddEventComponent', () => {
 
       testCommon(event, eventType);
 
-      const toastrListener = TestUtils.toastrSuccessListener();
+      const notificationListener = TestUtils.notificationShowListener();
       store.dispatch(EventStoreActions.addEventSuccess({ event }));
       fixture.detectChanges();
-      expect(toastrListener.mock.calls.length).toBe(1);
+      expect(notificationListener.mock.calls.length).toBe(1);
     });
 
     it('on submission failure', fakeAsync(() => {
       const toastr = TestBed.get(ToastrService);
-      const toastrErrorListener = jest.spyOn(toastr, 'error').mockReturnValue(null);
+      const notificationShowErrorListener = jest.spyOn(toastr, 'error').mockReturnValue(null);
       const errors = [
         {
           status: 401,
@@ -278,14 +278,14 @@ describe('ParticipantAddEventComponent', () => {
       fixture.detectChanges();
 
       errors.forEach(error => {
-        toastrErrorListener.mockClear();
+        notificationShowErrorListener.mockClear();
         testCommon(event, eventType);
 
         const action = EventStoreActions.addEventFailure({ error });
         store.dispatch(action);
         flush();
         fixture.detectChanges();
-        expect(toastrErrorListener.mock.calls.length).toBe(1);
+        expect(notificationShowErrorListener.mock.calls.length).toBe(1);
       });
     }));
   });

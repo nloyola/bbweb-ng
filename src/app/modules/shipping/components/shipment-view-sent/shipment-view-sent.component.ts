@@ -1,11 +1,10 @@
 import { Component, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ShipmentStateTransision } from '@app/core/services';
+import { NotificationService, ShipmentStateTransision } from '@app/core/services';
 import { BlockingProgressService } from '@app/core/services/blocking-progress.service';
 import { RootStoreState, ShipmentStoreActions } from '@app/root-store';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Store } from '@ngrx/store';
-import { ToastrService } from 'ngx-toastr';
 import { ShipmentViewer } from '../shipment-viewer';
 
 @Component({
@@ -22,11 +21,11 @@ export class ShipmentViewSentComponent extends ShipmentViewer {
   constructor(
     store$: Store<RootStoreState.State>,
     route: ActivatedRoute,
-    toastr: ToastrService,
+    notificationService: NotificationService,
     modalService: NgbModal,
     blockingProgressService: BlockingProgressService
   ) {
-    super(store$, route, toastr, modalService, blockingProgressService);
+    super(store$, route, notificationService, modalService, blockingProgressService);
   }
 
   backToPacked() {
@@ -43,7 +42,7 @@ export class ShipmentViewSentComponent extends ShipmentViewer {
             }
           })
         );
-        this.notificationMessage = 'Tagged as Packed';
+        this.notificationService.add('Tagged as Packed');
         this.blockingProgressService.show('Updating Shipment...');
       })
       .catch(() => undefined);
@@ -63,7 +62,7 @@ export class ShipmentViewSentComponent extends ShipmentViewer {
             }
           })
         );
-        this.notificationMessage = 'Received time recorded';
+        this.notificationService.add('Received time recorded');
         this.blockingProgressService.show('Updating Shipment...');
       })
       .catch(() => undefined);
@@ -84,7 +83,7 @@ export class ShipmentViewSentComponent extends ShipmentViewer {
             }
           })
         );
-        this.notificationMessage = 'Received time and unpacked time recorded';
+        this.notificationService.add('Received time and unpacked time recorded');
         this.blockingProgressService.show('Updating Shipment...');
       })
       .catch(() => undefined);
@@ -103,7 +102,7 @@ export class ShipmentViewSentComponent extends ShipmentViewer {
             }
           })
         );
-        this.notificationMessage = 'Tagged as Lost';
+        this.notificationService.add('Tagged as Lost');
         this.blockingProgressService.show('Updating Shipment...');
       })
       .catch(() => undefined);

@@ -1,11 +1,9 @@
 import { Component, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ShipmentStateTransision } from '@app/core/services';
-import { BlockingProgressService } from '@app/core/services/blocking-progress.service';
+import { BlockingProgressService, NotificationService, ShipmentStateTransision } from '@app/core/services';
 import { RootStoreState, ShipmentStoreActions } from '@app/root-store';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Store } from '@ngrx/store';
-import { ToastrService } from 'ngx-toastr';
 import { ShipmentViewer } from '../shipment-viewer';
 
 @Component({
@@ -19,11 +17,11 @@ export class ShipmentViewCompletedComponent extends ShipmentViewer {
   constructor(
     store$: Store<RootStoreState.State>,
     route: ActivatedRoute,
-    toastr: ToastrService,
+    notificationService: NotificationService,
     modalService: NgbModal,
     blockingProgressService: BlockingProgressService
   ) {
-    super(store$, route, toastr, modalService, blockingProgressService);
+    super(store$, route, notificationService, modalService, blockingProgressService);
   }
 
   backToUnpacked() {
@@ -40,7 +38,7 @@ export class ShipmentViewCompletedComponent extends ShipmentViewer {
             }
           })
         );
-        this.notificationMessage = 'Tagged as Unpacked';
+        this.notificationService.add('Tagged as Unpacked');
         this.blockingProgressService.show('Updating Shipment...');
       })
       .catch(() => undefined);

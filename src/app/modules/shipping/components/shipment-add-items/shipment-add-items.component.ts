@@ -14,6 +14,7 @@ import { ModalShipmentHasSpecimensComponent } from '../modal-shipment-has-specim
 import { ModalShipmentRemoveComponent } from '../modal-shipment-remove/modal-shipment-remove.component';
 import { ShipmentSpecimenAction } from '../shipment-specimens-table/shipment-specimens-table.container';
 import { ShipmentViewer } from '../shipment-viewer';
+import { NotificationService } from '@app/core/services';
 
 @Component({
   selector: 'app-shipment-add-items',
@@ -42,11 +43,11 @@ export class ShipmentAddItemsComponent extends ShipmentViewer {
   constructor(
     store$: Store<RootStoreState.State>,
     route: ActivatedRoute,
-    toastr: ToastrService,
+    notificationService: NotificationService,
     modalService: NgbModal,
     blockingProgressService: BlockingProgressService
   ) {
-    super(store$, route, toastr, modalService, blockingProgressService);
+    super(store$, route, notificationService, modalService, blockingProgressService);
   }
 
   ngOnInit() {
@@ -69,7 +70,7 @@ export class ShipmentAddItemsComponent extends ShipmentViewer {
           })
         );
         this.blockingProgressService.show('Removing Shipment...');
-        this.notificationMessage = 'Shipment removed';
+        this.notificationService.add('Shipment removed');
       })
       .catch(() => undefined);
   }
@@ -94,7 +95,7 @@ export class ShipmentAddItemsComponent extends ShipmentViewer {
             }
           })
         );
-        this.notificationMessage = 'Packed time recorded';
+        this.notificationService.add('Packed time recorded');
         this.blockingProgressService.show('Updating Shipment...');
       })
       .catch(() => undefined);
@@ -121,7 +122,7 @@ export class ShipmentAddItemsComponent extends ShipmentViewer {
             }
           })
         );
-        this.notificationMessage = 'Packed and Sent time recorded';
+        this.notificationService.add('Packed and Sent time recorded');
         this.blockingProgressService.show('Updating Shipment...');
       })
       .catch(() => undefined);
@@ -143,7 +144,7 @@ export class ShipmentAddItemsComponent extends ShipmentViewer {
         specimenInventoryIds
       })
     );
-    this.notificationMessage = 'Specimen Added';
+    this.notificationService.add('Specimen Added');
     this.blockingProgressService.show('Adding Specimen...');
   }
 
@@ -161,17 +162,18 @@ export class ShipmentAddItemsComponent extends ShipmentViewer {
     this.store$
       .pipe(
         select(ShipmentStoreSelectors.selectShipmentLastRemovedId),
-        filter(() => this.notificationMessage !== undefined),
+        filter(() => this.notificationService.notificationPending()),
         takeUntil(this.unsubscribe$)
       )
       .subscribe(() => {
-        this.toastr.success(this.notificationMessage);
+        this.notificationService.show();
         this.blockingProgressService.hide();
       });
   }
 
   protected initShipmentErrorSelector() {
     this.error$.subscribe(error => {
+      debugger;
       if (
         error.actionType === ShipmentStoreActions.addSpecimensFailure.type ||
         error.actionType === ShipmentStoreActions.removeSpecimenFailure.type
@@ -209,8 +211,8 @@ export class ShipmentAddItemsComponent extends ShipmentViewer {
             shipmentSpecimen
           })
         );
+        this.notificationService.add('Specimen Removed');
         this.blockingProgressService.show('Removing Specimen...');
-        this.notificationMessage = 'Specimen Removed';
       })
       .catch(() => undefined);
   }

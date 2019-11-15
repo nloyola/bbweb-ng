@@ -79,7 +79,7 @@ describe('UnpackedShipmentUnpackComponent', () => {
     });
 
     it('informs the user the specimens have been received', () => {
-      const notificationListener = TestUtils.toastrSuccessListener();
+      const notificationListener = TestUtils.notificationShowListener();
       component.receiveShipmentSpecimens(specimenInventoryIds);
       fixture.detectChanges();
 
@@ -126,7 +126,7 @@ describe('UnpackedShipmentUnpackComponent', () => {
     });
 
     it('informs the user the specimens have been received', () => {
-      const notificationListener = TestUtils.toastrSuccessListener();
+      const notificationListener = TestUtils.notificationShowListener();
       component.shipmentSpecimenAction([shipmentSpecimen, 'tagAsMissing']);
       fixture.detectChanges();
 

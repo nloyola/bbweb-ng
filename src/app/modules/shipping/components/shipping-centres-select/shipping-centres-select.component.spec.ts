@@ -94,8 +94,8 @@ describe('ShippingCentresSelectComponent', () => {
     expect(eventProduced).toBe(true);
   });
 
-  it('displays a toastr error when an error is reported', fakeAsync(() => {
-    const toastrListener = TestUtils.toastrErrorListener();
+  it('displays a notification error when an error is reported', fakeAsync(() => {
+    const notificationListener = TestUtils.notificationShowErrorListener();
     const message = 'simulated error';
     fixture.detectChanges();
 
@@ -110,7 +110,7 @@ describe('ShippingCentresSelectComponent', () => {
     );
     flush();
     fixture.detectChanges();
-    expect(toastrListener.mock.calls.length).toBe(1);
-    expect(toastrListener.mock.calls[0][0]).toEqual(message);
+    expect(notificationListener.mock.calls.length).toBe(1);
+    expect(notificationListener.mock.calls[0][0]).toEqual(message);
   }));
 });

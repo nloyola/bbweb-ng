@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NotificationService } from '@app/core/services';
 import { Annotation, AnnotationFactory } from '@app/domain/annotations';
 import { CollectionEvent, Participant, Specimen } from '@app/domain/participants';
 import { CollectionEventType } from '@app/domain/studies';
@@ -13,16 +14,12 @@ import {
   SpecimenStoreActions,
   SpecimenStoreSelectors
 } from '@app/root-store';
+import { DropdownMenuItem } from '@app/shared/components/dropdown-menu/dropdown-menu.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Dictionary } from '@ngrx/entity';
 import { createSelector, select, Store } from '@ngrx/store';
-import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
-import { filter, map, shareReplay, takeUntil, withLatestFrom, tap } from 'rxjs/operators';
-import {
-  DropdownMenuComponent,
-  DropdownMenuItem
-} from '@app/shared/components/dropdown-menu/dropdown-menu.component';
+import { filter, map, shareReplay, takeUntil, tap } from 'rxjs/operators';
 
 interface SelectorData {
   events: Dictionary<CollectionEvent>;
@@ -62,7 +59,6 @@ export class EventViewComponent implements OnInit, OnDestroy {
   menuItems: DropdownMenuItem[];
 
   private entitiesSubject = new BehaviorSubject(null);
-  private updatedMessage$ = new Subject<string>();
   private unsubscribe$ = new Subject<void>();
 
   constructor(
@@ -70,7 +66,7 @@ export class EventViewComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private modalService: NgbModal,
-    private toastr: ToastrService
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit() {
@@ -154,17 +150,17 @@ export class EventViewComponent implements OnInit, OnDestroy {
 
     this.entities$
       .pipe(
-        withLatestFrom(this.updatedMessage$),
+        filter(() => this.notificationService.notificationPending()),
         takeUntil(this.unsubscribe$)
       )
-      .subscribe(([entities, message]) => {
-        if (entities === undefined || message === null) {
+      .subscribe(entities => {
+        if (entities === undefined) {
           return;
         }
 
+        this.notificationService.show();
+
         if (entities.event !== undefined) {
-          this.toastr.success(message, 'Update Successfull');
-          this.updatedMessage$.next(null);
           if (entities.event.visitNumber !== this.route.parent.snapshot.params.visitNumber) {
             // uniqueId was changed and a new slug was assigned
             //
@@ -178,7 +174,6 @@ export class EventViewComponent implements OnInit, OnDestroy {
             ]);
           }
         } else {
-          this.toastr.success(message, 'Remove Successfull');
           this.router.navigate([
             '/collection',
             this.route.parent.parent.parent.parent.snapshot.params.slug,
@@ -190,16 +185,15 @@ export class EventViewComponent implements OnInit, OnDestroy {
     this.store$
       .pipe(
         select(EventStoreSelectors.selectCollectionEventError),
-        filter(error => error !== null),
-        withLatestFrom(this.updatedMessage$),
+        filter(error => error && this.notificationService.notificationPending()),
         takeUntil(this.unsubscribe$)
       )
-      .subscribe(([error, _msg]) => {
+      .subscribe(error => {
         let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
         if (errMessage && errMessage.indexOf('already exists') > -1) {
           errMessage = 'An event with that visit number exists. Please use a different one.';
         }
-        this.toastr.error(errMessage, 'Update Error', { disableTimeOut: true });
+        this.notificationService.showError(errMessage, 'Update Error');
       });
   }
 
@@ -221,11 +215,9 @@ export class EventViewComponent implements OnInit, OnDestroy {
             value
           })
         );
-        this.updatedMessage$.next('Visit number was updated');
+        this.notificationService.add('Visit number was updated', 'Update Successfull');
       })
-      .catch(() => {
-        // don't care if user pressed the Cancel button
-      });
+      .catch(() => undefined);
   }
 
   updateTimeCompleted() {
@@ -241,11 +233,9 @@ export class EventViewComponent implements OnInit, OnDestroy {
             value
           })
         );
-        this.updatedMessage$.next('Time Completed was updated');
+        this.notificationService.add('Time Completed was updated', 'Update Successfull');
       })
-      .catch(() => {
-        // don't care if user pressed the Cancel button
-      });
+      .catch(() => undefined);
   }
 
   updateAnnotation(annotation: Annotation) {
@@ -263,7 +253,7 @@ export class EventViewComponent implements OnInit, OnDestroy {
             value: updatedAnnotation.serverAnnotation()
           })
         );
-        this.updatedMessage$.next(`${annotation.label} was updated`);
+        this.notificationService.add(`${annotation.label} was updated`, 'Update Successfull');
       })
       .catch(() => {
         // don't care if user pressed the Cancel button
@@ -283,7 +273,7 @@ export class EventViewComponent implements OnInit, OnDestroy {
       .open(this.removeEventModal)
       .result.then(() => {
         this.store$.dispatch(EventStoreActions.removeEventRequest({ event }));
-        this.updatedMessage$.next('Event Removed');
+        this.notificationService.add('Event Removed', 'Remove Successfull');
       })
       .catch(() => undefined);
   }

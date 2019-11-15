@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NotificationService } from '@app/core/services';
 import { AnnotationType } from '@app/domain/annotations';
 import { CollectionEventType, Study } from '@app/domain/studies';
 import { CollectedSpecimenDefinition } from '@app/domain/studies/collected-specimen-definition.model';
@@ -15,9 +16,8 @@ import { AnnotationTypeViewComponent } from '@app/shared/components/annotation-t
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Dictionary } from '@ngrx/entity';
 import { createSelector, select, Store } from '@ngrx/store';
-import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
-import { filter, map, shareReplay, takeUntil, withLatestFrom } from 'rxjs/operators';
+import { filter, map, shareReplay, takeUntil } from 'rxjs/operators';
 import { EventTypeRemoveComponent } from '../event-type-remove/event-type-remove.component';
 import { SpecimenDefinitionRemoveComponent } from '../specimen-definition-remove/specimen-definition-remove.component';
 import { SpecimenDefinitionViewComponent } from '../specimen-definition-view/specimen-definition-view.component';
@@ -54,7 +54,7 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private modalService: NgbModal,
-    private toastr: ToastrService
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit() {
@@ -63,7 +63,7 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
       if (this.eventTypeId !== data.eventType.id) {
         // user selected a different event type
         this.eventTypeId = data.eventType.id;
-        this.updatedMessage$.next(null);
+        this.notificationService.clear();
       }
     });
 
@@ -104,16 +104,12 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
 
     this.data$
       .pipe(
-        withLatestFrom(this.updatedMessage$),
+        filter(() => this.notificationService.notificationPending()),
         takeUntil(this.unsubscribe$)
       )
-      .subscribe(([data, msg]) => {
-        if (msg === null) {
-          return;
-        }
-
+      .subscribe(data => {
         if (data.eventType !== undefined) {
-          this.toastr.success(msg, 'Update Successfull');
+          this.notificationService.show();
 
           if (data.eventType.slug !== this.route.snapshot.params.eventTypeSlug) {
             // name was changed and new slug was assigned
@@ -128,26 +124,23 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
             ]);
           }
         } else {
-          this.toastr.success(msg, 'Remove Successfull');
+          this.notificationService.show();
           this.router.navigate(['/admin/studies', data.study.slug, 'collection', 'view']);
         }
-
-        this.updatedMessage$.next(null);
       });
 
     this.store$
       .pipe(
         select(EventTypeStoreSelectors.selectError),
-        filter(error => !!error),
-        withLatestFrom(this.updatedMessage$),
+        filter(error => !!error && this.notificationService.notificationPending()),
         takeUntil(this.unsubscribe$)
       )
-      .subscribe(([error, _msg]) => {
+      .subscribe(error => {
         let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
-        if (errMessage.indexOf('already exists') > -1) {
+        if (errMessage && errMessage.indexOf('already exists') > -1) {
           errMessage = 'A participant with that unique ID already exists. Please use a different one.';
         }
-        this.toastr.error(errMessage, 'Update Error', { disableTimeOut: true });
+        this.notificationService.showError(errMessage, 'Update Error');
       });
   }
 
@@ -157,7 +150,7 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
   }
 
   updateName() {
-    this.whenStudyDisabled((study, eventType) => {
+    this.whenStudyDisabled((_study, eventType) => {
       this.updateNameModalOptions = {
         required: true,
         minLength: 2
@@ -172,14 +165,14 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
               value
             })
           );
-          this.updatedMessage$.next('Event name was updated');
+          this.notificationService.add('Event name was updated', 'Update Successful');
         })
         .catch(() => undefined);
     });
   }
 
   updateDescription() {
-    this.whenStudyDisabled((study, eventType) => {
+    this.whenStudyDisabled((_study, eventType) => {
       this.updateDescriptionModalOptions = {
         rows: 20,
         cols: 10
@@ -194,14 +187,14 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
               value
             })
           );
-          this.updatedMessage$.next('Event description was updated');
+          this.notificationService.add('Event description was updated', 'Update Successful');
         })
         .catch(() => undefined);
     });
   }
 
   updateRecurring() {
-    this.whenStudyDisabled((study, eventType) => {
+    this.whenStudyDisabled((_study, eventType) => {
       this.modalService
         .open(this.updateRecurringModal, { size: 'lg' })
         .result.then(value => {
@@ -212,7 +205,7 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
               value
             })
           );
-          this.updatedMessage$.next('Recurring was updated');
+          this.notificationService.add('Recurring was updated', 'Update Successful');
         })
         .catch(() => undefined);
     });
@@ -239,7 +232,7 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
   }
 
   removeAnnotationType(annotationType: AnnotationType): void {
-    this.whenStudyDisabled((study, eventType) => {
+    this.whenStudyDisabled((_study, eventType) => {
       const modalRef = this.modalService.open(AnnotationTypeRemoveComponent);
       modalRef.componentInstance.annotationType = annotationType;
       modalRef.result
@@ -252,7 +245,7 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
             })
           );
 
-          this.updatedMessage$.next('Annotation removed');
+          this.notificationService.add('Annotation removed', 'Update Successful');
         })
         .catch(() => undefined);
     });
@@ -279,7 +272,7 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
   }
 
   removeSpecimenDefinition(specimenDefinition: CollectedSpecimenDefinition): void {
-    this.whenStudyDisabled((study, eventType) => {
+    this.whenStudyDisabled((_study, eventType) => {
       const modalRef = this.modalService.open(SpecimenDefinitionRemoveComponent);
       modalRef.componentInstance.specimenDefinition = specimenDefinition;
       modalRef.result
@@ -291,22 +284,20 @@ export class EventTypeViewContainerComponent implements OnInit, OnDestroy {
               value: specimenDefinition.id
             })
           );
-
-          this.updatedMessage$.next('Specimen removed');
+          this.notificationService.add('Specimen removed', 'Update Successful');
         })
         .catch(() => undefined);
     });
   }
 
   removeEventType() {
-    this.whenStudyDisabled((study, eventType) => {
+    this.whenStudyDisabled((_study, eventType) => {
       const modalRef = this.modalService.open(EventTypeRemoveComponent);
       modalRef.componentInstance.eventType = eventType;
       modalRef.result
         .then(() => {
           this.store$.dispatch(EventTypeStoreActions.removeEventTypeRequest({ eventType }));
-
-          this.updatedMessage$.next('Event removed');
+          this.notificationService.add('Event removed', 'Remove Successful');
         })
         .catch(() => undefined);
     });

@@ -1,6 +1,6 @@
 import { Component, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ShipmentStateTransision } from '@app/core/services';
+import { ShipmentStateTransision, NotificationService } from '@app/core/services';
 import { BlockingProgressService } from '@app/core/services/blocking-progress.service';
 import { RootStoreState, ShipmentStoreActions } from '@app/root-store';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -20,11 +20,11 @@ export class ShipmentViewPackedComponent extends ShipmentViewer {
   constructor(
     store$: Store<RootStoreState.State>,
     route: ActivatedRoute,
-    toastr: ToastrService,
+    notificationService: NotificationService,
     modalService: NgbModal,
     blockingProgressService: BlockingProgressService
   ) {
-    super(store$, route, toastr, modalService, blockingProgressService);
+    super(store$, route, notificationService, modalService, blockingProgressService);
   }
 
   backToCreated() {
@@ -40,7 +40,7 @@ export class ShipmentViewPackedComponent extends ShipmentViewer {
             }
           })
         );
-        this.notificationMessage = 'Shipment back in Created state';
+        this.notificationService.add('Shipment back in Created state');
         this.blockingProgressService.show('Updating Shipment...');
       })
       .catch(() => undefined);
@@ -60,7 +60,7 @@ export class ShipmentViewPackedComponent extends ShipmentViewer {
             }
           })
         );
-        this.notificationMessage = 'Sent time recorded';
+        this.notificationService.add('Sent time recorded');
         this.blockingProgressService.show('Updating Shipment...');
       })
       .catch(() => undefined);

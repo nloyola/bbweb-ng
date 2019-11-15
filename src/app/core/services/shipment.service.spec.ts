@@ -91,8 +91,8 @@ describe('ShipmentService', () => {
         expect(body).toEqual({
           courierName: shipment.courierName,
           trackingNumber: shipment.trackingNumber,
-          originId: shipment.origin.location.id,
-          destinationId: shipment.destination.location.id
+          originLocationId: shipment.origin.location.id,
+          destinationLocationId: shipment.destination.location.id
         });
       });
     });

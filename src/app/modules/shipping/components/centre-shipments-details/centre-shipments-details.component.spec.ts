@@ -294,7 +294,7 @@ describe('CentreShipmentsDetailsComponent', () => {
 
       it('infoms the user if the shipment was removed', fakeAsync(() => {
         const shipment = new Shipment().deserialize(factory.shipment());
-        const toastrListener = TestUtils.toastrSuccessListener();
+        const notificationListener = TestUtils.notificationShowListener();
 
         component.shipmentRemove(shipment);
         flush();
@@ -308,12 +308,12 @@ describe('CentreShipmentsDetailsComponent', () => {
         flush();
         fixture.detectChanges();
 
-        expect(toastrListener.mock.calls.length).toBe(1);
+        expect(notificationListener.mock.calls.length).toBe(1);
       }));
 
       it('infoms the user if there was an error when removing', fakeAsync(() => {
         const shipment = new Shipment().deserialize(factory.shipment());
-        const toastrListener = TestUtils.toastrErrorListener();
+        const notificationListener = TestUtils.notificationShowErrorListener();
 
         component.shipmentRemove(shipment);
         flush();
@@ -331,7 +331,7 @@ describe('CentreShipmentsDetailsComponent', () => {
         flush();
         fixture.detectChanges();
 
-        expect(toastrListener.mock.calls.length).toBe(1);
+        expect(notificationListener.mock.calls.length).toBe(1);
       }));
 
       it('throws an error if shipment is not in "created" state', fakeAsync(() => {

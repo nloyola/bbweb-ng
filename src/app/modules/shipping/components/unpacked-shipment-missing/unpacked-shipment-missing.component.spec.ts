@@ -84,7 +84,7 @@ describe('UnpackedShipmentMissingComponent', () => {
     });
 
     it('informs the user the specimens have been received', () => {
-      const notificationListener = TestUtils.toastrSuccessListener();
+      const notificationListener = TestUtils.notificationShowListener();
       component.shipmentSpecimenAction([shipmenSpecimen, 'tagAsPresent']);
       fixture.detectChanges();
 
@@ -95,12 +95,12 @@ describe('UnpackedShipmentMissingComponent', () => {
     it.each(ShipmentSpecimensFixture.errors)(
       'informs the user there was a "%s" error',
       (errMessage, error) => {
-        const toastrListener = TestUtils.toastrErrorListener();
+        const notificationListener = TestUtils.notificationShowErrorListener();
         component.shipmentSpecimenAction([shipmenSpecimen, 'tagAsPresent']);
         fixture.detectChanges();
 
         store.dispatch(ShipmentStoreActions.tagSpecimensFailure({ error }));
-        expect(toastrListener.mock.calls.length).toBe(1);
+        expect(notificationListener.mock.calls.length).toBe(1);
       }
     );
   });

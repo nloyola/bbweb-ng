@@ -51,8 +51,8 @@ export class ModalInputCentreLocationComponent extends ModalInputComponent<Centr
 
     this.locationTypeahead.selected$
       .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((centreLocationInfo: CentreLocationInfo) => {
-        this.input.setValue(centreLocationInfo);
+      .subscribe((locationInfo: CentreLocationInfo) => {
+        this.input.setValue(locationInfo);
         this.modalInputValid = true;
       });
   }

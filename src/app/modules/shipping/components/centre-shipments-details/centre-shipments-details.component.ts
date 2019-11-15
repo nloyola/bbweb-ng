@@ -9,12 +9,12 @@ import { Shipment, ShipmentState } from '@app/domain/shipments';
 import { RootStoreState, ShipmentStoreActions, ShipmentStoreSelectors } from '@app/root-store';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { select, Store } from '@ngrx/store';
-import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject, BehaviorSubject } from 'rxjs';
-import { filter, map, shareReplay, takeUntil, withLatestFrom, tap } from 'rxjs/operators';
+import { filter, map, shareReplay, takeUntil, tap } from 'rxjs/operators';
 import { ModalShipmentHasSpecimensComponent } from '../modal-shipment-has-specimens/modal-shipment-has-specimens.component';
 import { ModalShipmentRemoveComponent } from '../modal-shipment-remove/modal-shipment-remove.component';
 import { BlockingProgressService } from '@app/core/services/blocking-progress.service';
+import { NotificationService } from '@app/core/services';
 
 export enum CentreShipmentsViewMode {
   Incoming = 'incoming',
@@ -50,15 +50,14 @@ export class CentreShipmentsDetailsComponent implements OnInit, OnDestroy {
   stateFilter: StateFilter;
   mode: CentreShipmentsViewMode;
 
-  private updatedMessage$ = new Subject<string>();
   protected unsubscribe$: Subject<void> = new Subject<void>();
 
   constructor(
-    protected store$: Store<RootStoreState.State>,
-    protected router: Router,
-    protected route: ActivatedRoute,
-    protected modalService: NgbModal,
-    protected toastr: ToastrService,
+    private store$: Store<RootStoreState.State>,
+    private router: Router,
+    private route: ActivatedRoute,
+    private modalService: NgbModal,
+    private notificationService: NotificationService,
     private blockingProgressService: BlockingProgressService
   ) {}
 
@@ -172,7 +171,7 @@ export class CentreShipmentsDetailsComponent implements OnInit, OnDestroy {
       .open(ModalShipmentRemoveComponent, { size: 'lg' })
       .result.then(() => {
         this.store$.dispatch(ShipmentStoreActions.removeShipmentRequest({ shipment }));
-        this.updatedMessage$.next('Shipment removed');
+        this.notificationService.add('Shipment removed');
         this.blockingProgressService.show('Removing...');
       })
       .catch(() => undefined);
@@ -218,11 +217,11 @@ export class CentreShipmentsDetailsComponent implements OnInit, OnDestroy {
     this.store$
       .pipe(
         select(ShipmentStoreSelectors.selectShipmentLastRemovedId),
-        withLatestFrom(this.updatedMessage$),
+        filter(() => this.notificationService.notificationPending()),
         takeUntil(this.unsubscribe$)
       )
       .subscribe(() => {
-        this.toastr.success('The shipment was removed');
+        this.notificationService.show();
         this.updateShipments();
       });
   }
@@ -231,13 +230,12 @@ export class CentreShipmentsDetailsComponent implements OnInit, OnDestroy {
     this.store$
       .pipe(
         select(ShipmentStoreSelectors.selectShipmentError),
-        filter(s => !!s),
-        withLatestFrom(this.updatedMessage$),
+        filter(s => !!s && this.notificationService.notificationPending()),
         takeUntil(this.unsubscribe$)
       )
-      .subscribe(([error, _msg]) => {
+      .subscribe(error => {
         let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
-        this.toastr.error(errMessage, 'Error', { disableTimeOut: true });
+        this.notificationService.showError(errMessage, 'Error');
         this.blockingProgressService.hide();
       });
   }

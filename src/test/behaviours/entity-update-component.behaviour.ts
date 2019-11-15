@@ -1,9 +1,7 @@
 import { ComponentFixture, fakeAsync, flush, TestBed } from '@angular/core/testing';
-import { Router } from '@angular/router';
 import { RootStoreState } from '@app/root-store';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { Action, Store } from '@ngrx/store';
-import { ToastrService } from 'ngx-toastr';
 import { TestUtils } from '@test/utils';
 
 export namespace EntityUpdateComponentBehaviour {
@@ -28,10 +26,10 @@ export namespace EntityUpdateComponentBehaviour {
     describe('(shared behaviour)', () => {
       let store: Store<RootStoreState.State>;
       let modalService: NgbModal;
-      let storeListener: any;
-      let modalListener: any;
-      let toastrSuccessListener: any;
-      let toastrErrorListener: any;
+      let storeListener: jest.MockInstance<void, any[]>;
+      let modalListener: jest.MockInstance<NgbModalRef, any>;
+      let notificationShowListener: jest.MockInstance<void, any[]>;
+      let notificationShowErrorListener: jest.MockInstance<void, any[]>;
 
       beforeEach(() => {
         store = TestBed.get(Store);
@@ -40,8 +38,8 @@ export namespace EntityUpdateComponentBehaviour {
         storeListener = jest.spyOn(store, 'dispatch');
         modalListener = jest.spyOn(modalService, 'open');
         modalListener.mockReturnValue(context.modalReturnValue);
-        toastrSuccessListener = TestUtils.toastrSuccessListener();
-        toastrErrorListener = TestUtils.toastrErrorListener();
+        notificationShowListener = TestUtils.notificationShowListener();
+        notificationShowErrorListener = TestUtils.notificationShowErrorListener();
       });
 
       describe('when successful', () => {
@@ -67,37 +65,36 @@ export namespace EntityUpdateComponentBehaviour {
           context.dispatchSuccessAction();
           flush();
           context.fixture.detectChanges();
-          expect(toastrSuccessListener.mock.calls.length).toBe(1);
+          expect(notificationShowListener.mock.calls.length).toBe(1);
         }));
       });
 
-      it('informs the user when an error occurs', fakeAsync(() => {
-        const errors = [
-          {
-            status: 401,
-            statusText: 'Unauthorized'
-          },
-          {
-            status: 404,
-            error: {
-              message: 'simulated error'
-            }
-          },
-          {
-            status: 404,
-            error: {
-              message: context.duplicateAttibuteValueError
-            }
+      const errors = [
+        {
+          status: 401,
+          statusText: 'Unauthorized'
+        },
+        {
+          status: 404,
+          error: {
+            message: 'simulated error'
           }
-        ];
+        },
+        {
+          status: 404,
+          error: {
+            message: context.duplicateAttibuteValueError
+          }
+        }
+      ];
 
-        context.componentInitialize();
-        flush();
-        context.fixture.detectChanges();
-        context.componentValidateInitialization();
+      describe.each(errors)('for errors', error => {
+        it('informs the user when an error occurs', fakeAsync(() => {
+          context.componentInitialize();
+          flush();
+          context.fixture.detectChanges();
+          context.componentValidateInitialization();
 
-        errors.forEach(error => {
-          toastrErrorListener.mockClear();
           context.updateEntity();
           flush();
 
@@ -105,9 +102,9 @@ export namespace EntityUpdateComponentBehaviour {
           flush();
           context.fixture.detectChanges();
 
-          expect(toastrErrorListener.mock.calls.length).toBe(1);
-        });
-      }));
+          expect(notificationShowErrorListener.mock.calls.length).toBe(1);
+        }));
+      });
     });
   }
 }

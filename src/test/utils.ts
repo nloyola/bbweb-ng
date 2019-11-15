@@ -1,11 +1,11 @@
 import { TestBed } from '@angular/core/testing';
-import { DomainEntity } from '@app/domain';
-import { Dictionary } from '@ngrx/entity';
-import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
-import { Store } from '@ngrx/store';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NotificationService } from '@app/core/services';
 import { BlockingProgressService } from '@app/core/services/blocking-progress.service';
+import { DomainEntity } from '@app/domain';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Dictionary } from '@ngrx/entity';
+import { Store } from '@ngrx/store';
 
 export namespace TestUtils {
   export function capitalizeFirstLetter(str: string): string {
@@ -20,12 +20,16 @@ export namespace TestUtils {
     return result;
   }
 
-  export function toastrSuccessListener() {
-    return jest.spyOn(TestBed.get(ToastrService), 'success').mockReturnValue(null);
+  export function notificationAddListener() {
+    return jest.spyOn(TestBed.get(NotificationService), 'add').mockReturnValue(null);
   }
 
-  export function toastrErrorListener() {
-    return jest.spyOn(TestBed.get(ToastrService), 'error').mockReturnValue(null);
+  export function notificationShowListener() {
+    return jest.spyOn(TestBed.get(NotificationService), 'show').mockReturnValue(null);
+  }
+
+  export function notificationShowErrorListener() {
+    return jest.spyOn(TestBed.get(NotificationService), 'showError').mockReturnValue(null);
   }
 
   export function routerNavigateListener() {

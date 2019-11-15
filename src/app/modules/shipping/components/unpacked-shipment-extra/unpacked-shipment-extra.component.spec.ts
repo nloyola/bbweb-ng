@@ -1,14 +1,13 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed, fakeAsync, flush } from '@angular/core/testing';
+import { async, ComponentFixture, fakeAsync, flush, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import { Shipment, ShipmentItemState, ShipmentSpecimen } from '@app/domain/shipments';
 import {
   NgrxRuntimeChecks,
   RootStoreState,
+  ShipmentSpecimenStoreReducer,
   ShipmentStoreActions,
-  ShipmentStoreReducer,
-  ShipmentSpecimenStoreActions,
-  ShipmentSpecimenStoreReducer
+  ShipmentStoreReducer
 } from '@app/root-store';
 import { Store, StoreModule } from '@ngrx/store';
 import { UnpackShipmentSpecimenBehaviour } from '@test/behaviours/unpack-shipment-specimen.behaviour';
@@ -86,7 +85,7 @@ describe('UnpackedShipmentExtraComponent', () => {
     });
 
     it('informs the user the specimens have been received', () => {
-      const notificationListener = TestUtils.toastrSuccessListener();
+      const notificationListener = TestUtils.notificationShowListener();
       component.tagShipmentSpecimens(specimenInventoryIds);
       fixture.detectChanges();
 
@@ -130,7 +129,7 @@ describe('UnpackedShipmentExtraComponent', () => {
 
     it('informs the user the specimens have been removed', fakeAsync(() => {
       TestUtils.modalOpenListener();
-      const notificationListener = TestUtils.toastrSuccessListener();
+      const notificationListener = TestUtils.notificationShowListener();
       component.shipmentSpecimenAction([shipmentSpecimen, 'remove']);
       flush();
       fixture.detectChanges();

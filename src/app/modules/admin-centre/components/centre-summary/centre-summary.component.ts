@@ -1,15 +1,15 @@
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Centre, CentreStateUIMap, CentreState } from '@app/domain/centres';
+import { NotificationService } from '@app/core/services';
+import { Centre, CentreState, CentreStateUIMap } from '@app/domain/centres';
 import { CentreUI } from '@app/domain/centres/centre-ui.model';
 import { ModalInputTextareaOptions, ModalInputTextOptions } from '@app/modules/modals/models';
 import { CentreStoreActions, CentreStoreSelectors, RootStoreState } from '@app/root-store';
 import { DropdownMenuItem } from '@app/shared/components/dropdown-menu/dropdown-menu.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { select, Store } from '@ngrx/store';
-import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { filter, map, shareReplay, takeUntil, withLatestFrom, tap } from 'rxjs/operators';
+import { filter, map, shareReplay, takeUntil, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-centre-summary',
@@ -31,7 +31,6 @@ export class CentreSummaryComponent implements OnInit, OnDestroy {
   menuItems: DropdownMenuItem[];
 
   private centreSubject = new BehaviorSubject(null);
-  private updatedMessage$ = new Subject<string>();
   private unsubscribe$ = new Subject<void>();
 
   constructor(
@@ -39,7 +38,7 @@ export class CentreSummaryComponent implements OnInit, OnDestroy {
     private modalService: NgbModal,
     private router: Router,
     private route: ActivatedRoute,
-    private toastr: ToastrService
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit() {
@@ -66,40 +65,32 @@ export class CentreSummaryComponent implements OnInit, OnDestroy {
 
     this.centre$
       .pipe(
-        withLatestFrom(this.updatedMessage$),
+        filter(() => this.notificationService.notificationPending()),
         takeUntil(this.unsubscribe$)
       )
-      .subscribe(([centre, msg]) => {
-        if (msg === null) {
-          return;
-        }
+      .subscribe(centre => {
+        this.notificationService.show();
 
-        if (centre !== undefined) {
-          this.toastr.success(msg, 'Update Successfull');
-          this.updatedMessage$.next(null);
-
-          if (centre.slug !== this.route.parent.snapshot.params.slug) {
-            // name was changed and new slug was assigned
-            //
-            // need to change state since slug is used in URL and by breadcrumbs
-            this.router.navigate(['../..', centre.slug, 'summary'], { relativeTo: this.route });
-          }
+        if (centre !== undefined && centre.slug !== this.route.parent.snapshot.params.slug) {
+          // name was changed and new slug was assigned
+          //
+          // need to change state since slug is used in URL and by breadcrumbs
+          this.router.navigate(['../..', centre.slug, 'summary'], { relativeTo: this.route });
         }
       });
 
     this.store$
       .pipe(
         select(CentreStoreSelectors.selectCentreError),
-        filter(error => !!error),
-        withLatestFrom(this.updatedMessage$),
+        filter(error => !!error && this.notificationService.notificationPending()),
         takeUntil(this.unsubscribe$)
       )
-      .subscribe(([error, _msg]) => {
+      .subscribe(error => {
         let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
-        if (errMessage.indexOf('name already exists') > -1) {
+        if (errMessage && errMessage.indexOf('name already exists') > -1) {
           errMessage = 'A centre with that name already exists. Please use another name.';
         }
-        this.toastr.error(errMessage, 'Update Error', { disableTimeOut: true });
+        this.notificationService.showError(errMessage, 'Update Error');
       });
   }
 
@@ -124,7 +115,7 @@ export class CentreSummaryComponent implements OnInit, OnDestroy {
               value
             })
           );
-          this.updatedMessage$.next('Centre name was updated');
+          this.notificationService.add('Centre name was updated', 'Centre Updated');
         })
         .catch(() => undefined);
     });
@@ -146,7 +137,7 @@ export class CentreSummaryComponent implements OnInit, OnDestroy {
               value: value ? value : undefined
             })
           );
-          this.updatedMessage$.next('Centre description was updated');
+          this.notificationService.add('Centre description was updated', 'Centre Updated');
         })
         .catch(() => undefined);
     });
@@ -169,7 +160,7 @@ export class CentreSummaryComponent implements OnInit, OnDestroy {
         value: action
       })
     );
-    this.updatedMessage$.next('Centre state was updated');
+    this.notificationService.add('Centre state was updated', 'Centre Updated');
   }
 
   private whenCentreDisabled(fn: (centre: Centre) => void) {
@@ -181,7 +172,7 @@ export class CentreSummaryComponent implements OnInit, OnDestroy {
     fn(centre);
   }
 
-  private createMenuItems(centre): DropdownMenuItem[] {
+  private createMenuItems(centre: Centre): DropdownMenuItem[] {
     const items: DropdownMenuItem[] = [];
 
     if (centre.isDisabled()) {

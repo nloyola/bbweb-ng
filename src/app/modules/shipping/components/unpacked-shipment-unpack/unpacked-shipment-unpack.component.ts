@@ -11,6 +11,7 @@ import { tap, filter } from 'rxjs/operators';
 import { UnpackedShipmentSpeciemensComponent } from '../unpacked-shipment-specimens/unpacked-shipment-specimens.component';
 import { ShipmentSpecimenAction } from '../shipment-specimens-table/shipment-specimens-table.container';
 import { ToastrService } from 'ngx-toastr';
+import { NotificationService } from '@app/core/services';
 
 @Component({
   selector: 'app-unpacked-shipment-unpack',
@@ -33,13 +34,12 @@ export class UnpackedShipmentUnpackComponent extends UnpackedShipmentSpeciemensC
       iconClass: 'danger-icon'
     }
   ];
-  toastrMessage: string = undefined;
 
   constructor(
     store$: Store<RootStoreState.State>,
     route: ActivatedRoute,
     private modalService: NgbModal,
-    private toastr: ToastrService
+    private notificationService: NotificationService
   ) {
     super(store$, route);
   }
@@ -48,10 +48,9 @@ export class UnpackedShipmentUnpackComponent extends UnpackedShipmentSpeciemensC
     super.ngOnInit();
 
     this.shipment$
-      .pipe(filter(shipment => shipment !== undefined && this.toastrMessage !== undefined))
+      .pipe(filter(shipment => shipment !== undefined && this.notificationService.notificationPending()))
       .subscribe(() => {
-        this.toastr.success(this.toastrMessage);
-        this.toastrMessage = undefined;
+        this.notificationService.show();
       });
 
     this.error$.subscribe(errorMessage => {
@@ -70,14 +69,14 @@ export class UnpackedShipmentUnpackComponent extends UnpackedShipmentSpeciemensC
     );
     this.shipmentLoading$.next(true);
     this.markTagPending();
-    this.toastrMessage = 'Specimen(s) received';
+    this.notificationService.add('Specimen(s) received');
   }
 
   shipmentSpecimenAction([shipmentSpecimen, actionId]) {
     switch (actionId) {
       case 'tagAsMissing':
         this.tagSpecimen(shipmentSpecimen, ShipmentItemState.Missing);
-        this.toastrMessage = 'Specimen tagged as Missing';
+        this.notificationService.add('Specimen tagged as Missing');
         this.markTagPending();
         break;
 

@@ -1,10 +1,10 @@
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { NotificationService } from '@app/core/services/notification.service';
 import { PagedReplyInfo } from '@app/domain';
 import { Centre } from '@app/domain/centres';
 import { NameFilter } from '@app/domain/search-filters';
 import { CentreStoreActions, CentreStoreSelectors, RootStoreState } from '@app/root-store';
 import { select, Store } from '@ngrx/store';
-import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 
@@ -25,7 +25,10 @@ export class ShippingCentresSelectComponent implements OnInit, OnDestroy {
   private filterValues = 'state::enabled';
   private unsubscribe$: Subject<void> = new Subject<void>();
 
-  constructor(private store$: Store<RootStoreState.State>, private toastr: ToastrService) {}
+  constructor(
+    private store$: Store<RootStoreState.State>,
+    private notificationService: NotificationService
+  ) {}
 
   ngOnInit() {
     this.isLoading$ = this.store$.pipe(select(CentreStoreSelectors.selectCentreSearchActive));
@@ -43,7 +46,7 @@ export class ShippingCentresSelectComponent implements OnInit, OnDestroy {
       )
       .subscribe(error => {
         let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
-        this.toastr.error(errMessage, 'Error', { disableTimeOut: true });
+        this.notificationService.showError(errMessage);
       });
 
     this.applySearchParams();

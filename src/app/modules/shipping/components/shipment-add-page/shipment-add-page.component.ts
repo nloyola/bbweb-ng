@@ -1,6 +1,7 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NotificationService } from '@app/core/services';
 import { CentreLocationInfo } from '@app/domain/centres';
 import { Shipment, ShipmentState } from '@app/domain/shipments';
 import { RootStoreState, ShipmentStoreActions, ShipmentStoreSelectors } from '@app/root-store';
@@ -9,7 +10,6 @@ import {
   CentreLocationSelectTypeahead
 } from '@app/shared/typeaheads/centre-loction-select-typeahead';
 import { select, Store } from '@ngrx/store';
-import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 
@@ -36,7 +36,7 @@ export class ShipmentAddPageComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
-    private toastr: ToastrService
+    private notificationService: NotificationService
   ) {
     this.form = this.formBuilder.group({
       courierName: ['', [Validators.required]],
@@ -55,11 +55,11 @@ export class ShipmentAddPageComponent implements OnInit, OnDestroy {
     this.store$
       .pipe(
         select(ShipmentStoreSelectors.selectShipmentLastAdded),
-        filter(s => !!s),
+        filter(s => !!s && this.notificationService.notificationPending()),
         takeUntil(this.unsubscribe$)
       )
       .subscribe((shipment: Shipment) => {
-        this.toastr.success(`Shipment was added successfully: ${shipment.trackingNumber}`, 'Add Successfull');
+        this.notificationService.show();
         this.router.navigate(['/shipping', shipment.origin.slug, 'outgoing', 'view', shipment.id]);
         this.store$.dispatch(ShipmentStoreActions.clearLastAdded());
       });
@@ -67,15 +67,15 @@ export class ShipmentAddPageComponent implements OnInit, OnDestroy {
     this.store$
       .pipe(
         select(ShipmentStoreSelectors.selectShipmentError),
-        filter(s => !!s),
+        filter(s => !!s && this.notificationService.notificationPending()),
         takeUntil(this.unsubscribe$)
       )
-      .subscribe((error: any) => {
+      .subscribe(error => {
         let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
         if (errMessage.match(/EntityCriteriaError: shipment with tracking number already exists/)) {
           errMessage = `That Tracking Number is already in use by another shipment.`;
         }
-        this.toastr.error(errMessage, 'Add Error', { disableTimeOut: true });
+        this.notificationService.showError(errMessage, 'Add Error');
       });
   }
 
@@ -106,6 +106,10 @@ export class ShipmentAddPageComponent implements OnInit, OnDestroy {
       state: ShipmentState.Created
     });
     this.store$.dispatch(ShipmentStoreActions.addShipmentRequest({ shipment }));
+    this.notificationService.add(
+      `Shipment was added successfully: ${shipment.trackingNumber}`,
+      'Add Successfull'
+    );
     this.isSaving = true;
   }
 
@@ -121,8 +125,8 @@ export class ShipmentAddPageComponent implements OnInit, OnDestroy {
 
     this.originTypeahead.selected$
       .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((centreLocationInfo: CentreLocationInfo) => {
-        this.origin.setValue(centreLocationInfo);
+      .subscribe((locationInfo: CentreLocationInfo) => {
+        this.origin.setValue(locationInfo);
       });
   }
 
@@ -133,8 +137,8 @@ export class ShipmentAddPageComponent implements OnInit, OnDestroy {
 
     this.destinationTypeahead.selected$
       .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((centreLocationInfo: CentreLocationInfo) => {
-        this.destination.setValue(centreLocationInfo);
+      .subscribe((locationInfo: CentreLocationInfo) => {
+        this.destination.setValue(locationInfo);
       });
   }
 

@@ -9,6 +9,7 @@ import { ToastrService } from 'ngx-toastr';
 import { UnpackedShipmentSpeciemensComponent } from '../unpacked-shipment-specimens/unpacked-shipment-specimens.component';
 import { ShipmentSpecimenAction } from '../shipment-specimens-table/shipment-specimens-table.container';
 import { filter } from 'rxjs/operators';
+import { NotificationService } from '@app/core/services';
 
 @Component({
   selector: 'app-unpacked-shipment-missing',
@@ -25,9 +26,12 @@ export class UnpackedShipmentMissingComponent extends UnpackedShipmentSpeciemens
       iconClass: 'success-icon'
     }
   ];
-  toastrMessage: string = undefined;
 
-  constructor(store$: Store<RootStoreState.State>, route: ActivatedRoute, private toastr: ToastrService) {
+  constructor(
+    store$: Store<RootStoreState.State>,
+    route: ActivatedRoute,
+    private notificationService: NotificationService
+  ) {
     super(store$, route);
   }
 
@@ -35,17 +39,13 @@ export class UnpackedShipmentMissingComponent extends UnpackedShipmentSpeciemens
     super.ngOnInit();
 
     this.shipment$
-      .pipe(filter(shipment => shipment !== undefined && this.toastrMessage !== undefined))
+      .pipe(filter(shipment => shipment !== undefined && this.notificationService.notificationPending()))
       .subscribe(() => {
-        if (this.toastrMessage) {
-          this.toastr.success(this.toastrMessage);
-          this.toastrMessage = undefined;
-        }
+        this.notificationService.show();
       });
 
-    this.error$.pipe(filter(() => this.toastrMessage !== undefined)).subscribe(errorMessage => {
-      this.toastr.error(errorMessage);
-      this.toastrMessage = undefined;
+    this.error$.pipe(filter(() => this.notificationService.notificationPending())).subscribe(errorMessage => {
+      this.notificationService.showError(errorMessage);
     });
   }
 
@@ -54,7 +54,7 @@ export class UnpackedShipmentMissingComponent extends UnpackedShipmentSpeciemens
       case 'tagAsPresent':
         this.tagSpecimen(shipmentSpecimen, ShipmentItemState.Present);
         this.markTagPending();
-        this.toastrMessage = 'Specimen tagged as Unpacked';
+        this.notificationService.add('Specimen tagged as Unpacked');
         break;
       default:
         throw new Error(`action ${actionId} is not handled`);

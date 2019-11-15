@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NotificationService } from '@app/core/services';
 import { User, UserState, UserUI } from '@app/domain/users';
 import { ModalInputTextOptions } from '@app/modules/modals/models';
 import { RootStoreState, UserStoreActions, UserStoreSelectors } from '@app/root-store';
@@ -7,9 +8,8 @@ import { DropdownMenuItem } from '@app/shared/components/dropdown-menu/dropdown-
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Dictionary } from '@ngrx/entity';
 import { select, Store } from '@ngrx/store';
-import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { filter, map, shareReplay, takeUntil, withLatestFrom, tap } from 'rxjs/operators';
+import { filter, map, shareReplay, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
 
 @Component({
   selector: 'app-user-profile',
@@ -36,7 +36,6 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   menuItems: DropdownMenuItem[];
 
   private userSubject = new BehaviorSubject(null);
-  private updatedMessage$ = new Subject<string>();
   private unsubscribe$ = new Subject<void>();
 
   constructor(
@@ -44,7 +43,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private modalService: NgbModal,
-    private toastr: ToastrService
+    private notificationService: NotificationService
   ) {
     this.user$ = this.store$.pipe(
       select(UserStoreSelectors.selectAllUserEntities),
@@ -68,16 +67,11 @@ export class UserProfileComponent implements OnInit, OnDestroy {
 
     this.user$
       .pipe(
-        withLatestFrom(this.updatedMessage$),
+        filter(user => user && this.notificationService.notificationPending()),
         takeUntil(this.unsubscribe$)
       )
-      .subscribe(([user, msg]) => {
-        if (msg === null || user === undefined) {
-          return;
-        }
-
-        this.toastr.success(msg, 'Update Successfull');
-        this.updatedMessage$.next(null);
+      .subscribe(user => {
+        this.notificationService.show();
 
         if (user.slug !== this.route.snapshot.params.slug) {
           // name was changed and new slug was assigned
@@ -90,16 +84,15 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     this.store$
       .pipe(
         select(UserStoreSelectors.selectUserError),
-        filter(error => !!error),
-        withLatestFrom(this.updatedMessage$),
+        filter(error => !!error && this.notificationService.notificationPending()),
         takeUntil(this.unsubscribe$)
       )
-      .subscribe(([error, _msg]) => {
+      .subscribe(error => {
         let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
-        if (errMessage.match(/EmailNotAvailable: user with email already exists/)) {
+        if (errMessage && errMessage.match(/EmailNotAvailable: user with email already exists/)) {
           errMessage = `That email address is in use by another user.`;
         }
-        this.toastr.error(errMessage, 'Update Error', { disableTimeOut: true });
+        this.notificationService.showError(errMessage, 'Update Error');
       });
   }
 
@@ -122,7 +115,8 @@ export class UserProfileComponent implements OnInit, OnDestroy {
             value
           })
         );
-        this.updatedMessage$.next('User name was updated');
+
+        this.notificationService.add('Name was updated', 'Update Successfull');
       })
       .catch(() => undefined);
   }
@@ -139,7 +133,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
             value
           })
         );
-        this.updatedMessage$.next('User  email was updated');
+        this.notificationService.add('Email address was updated', 'Update Successfull');
       })
       .catch(() => undefined);
   }
@@ -156,7 +150,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
             value
           })
         );
-        this.updatedMessage$.next('User password was updated');
+        this.notificationService.add('Password was updated', 'Update Successfull');
       })
       .catch(() => undefined);
   }
@@ -173,7 +167,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
             value
           })
         );
-        this.updatedMessage$.next('User avatar URL was updated');
+        this.notificationService.add('Avatar URL was updated', 'Update Successfull');
       })
       .catch(() => undefined);
   }
@@ -199,7 +193,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
         value: action
       })
     );
-    this.updatedMessage$.next('User state was updated');
+    this.notificationService.add('State was updated', 'Update Successfull');
   }
 
   private createSortMenuItems(user: User): DropdownMenuItem[] {

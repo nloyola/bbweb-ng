@@ -17,6 +17,7 @@ import { filter, takeUntil } from 'rxjs/operators';
 import { ShipmentSpecimenAction } from '../shipment-specimens-table/shipment-specimens-table.container';
 import { UnpackedShipmentSpeciemensComponent } from '../unpacked-shipment-specimens/unpacked-shipment-specimens.component';
 import { BlockingProgressService } from '@app/core/services/blocking-progress.service';
+import { NotificationService } from '@app/core/services';
 
 @Component({
   selector: 'app-unpacked-shipment-extra',
@@ -41,13 +42,12 @@ export class UnpackedShipmentExtraComponent extends UnpackedShipmentSpeciemensCo
       iconClass: 'danger-icon'
     }
   ];
-  toastrMessage: string = undefined;
 
   constructor(
     store$: Store<RootStoreState.State>,
     route: ActivatedRoute,
     private modalService: NgbModal,
-    private toastr: ToastrService,
+    private notificationService: NotificationService,
     private blockingProgressService: BlockingProgressService
   ) {
     super(store$, route);
@@ -58,14 +58,14 @@ export class UnpackedShipmentExtraComponent extends UnpackedShipmentSpeciemensCo
     super.ngOnInit();
 
     this.shipment$
-      .pipe(filter(shipment => shipment !== undefined && this.toastrMessage !== undefined))
+      .pipe(filter(shipment => shipment !== undefined && this.notificationService.notificationPending()))
       .subscribe(() => {
-        this.toastr.success(this.toastrMessage);
-        this.toastrMessage = undefined;
+        this.notificationService.show();
         this.blockingProgressService.hide();
       });
 
-    this.error$.pipe(filter(() => this.toastrMessage !== undefined)).subscribe(errorMessage => {
+    this.error$.pipe(filter(() => this.notificationService.notificationPending())).subscribe(errorMessage => {
+      this.blockingProgressService.hide();
       this.extraErrorMessage = errorMessage;
       this.modalService.open(this.extraSpecimenError, { size: 'lg' });
     });
@@ -81,7 +81,7 @@ export class UnpackedShipmentExtraComponent extends UnpackedShipmentSpeciemensCo
     );
     this.markTagPending();
     this.shipmentLoading$.next(true);
-    this.toastrMessage = 'Specimen(s) tagged as Extra';
+    this.notificationService.add('Specimen(s) tagged as Extra');
     this.blockingProgressService.show('Updating Shipment...');
   }
 
@@ -106,7 +106,7 @@ export class UnpackedShipmentExtraComponent extends UnpackedShipmentSpeciemensCo
             shipmentSpecimen
           })
         );
-        this.toastrMessage = 'Specimen removed';
+        this.notificationService.add('Specimen removed');
         this.markTagPending();
         this.blockingProgressService.show('Updating Shipment...');
       })

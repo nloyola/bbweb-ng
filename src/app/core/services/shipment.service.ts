@@ -76,8 +76,8 @@ export class ShipmentService {
     const json = {
       courierName: shipment.courierName,
       trackingNumber: shipment.trackingNumber,
-      originId: shipment.origin.location.id,
-      destinationId: shipment.destination.location.id
+      originLocationId: shipment.origin.location.id,
+      destinationLocationId: shipment.destination.location.id
     };
     return this.http.post<ApiReply>(`${this.BASE_URL}/`, json).pipe(
       // delay(2000),

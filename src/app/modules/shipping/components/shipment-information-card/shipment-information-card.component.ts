@@ -1,23 +1,23 @@
 import {
   Component,
   EventEmitter,
-  OnInit,
   Input,
-  TemplateRef,
-  ViewChild,
   OnDestroy,
-  Output
+  OnInit,
+  Output,
+  TemplateRef,
+  ViewChild
 } from '@angular/core';
+import { NotificationService } from '@app/core/services';
 import { Shipment } from '@app/domain/shipments';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalInputTextOptions } from '@app/modules/modals/models';
-import { Store, select } from '@ngrx/store';
 import { RootStoreState, ShipmentStoreActions, ShipmentStoreSelectors } from '@app/root-store';
-import { Subject, Observable } from 'rxjs';
-import { map, shareReplay, tap, withLatestFrom, takeUntil, filter } from 'rxjs/operators';
-import { ToastrService } from 'ngx-toastr';
 import { DropdownMenuItem } from '@app/shared/components/dropdown-menu/dropdown-menu.component';
 import { faBoxOpen } from '@fortawesome/free-solid-svg-icons';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { select, Store } from '@ngrx/store';
+import { Observable, Subject } from 'rxjs';
+import { filter, map, shareReplay, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-shipment-information-card',
@@ -48,13 +48,12 @@ export class ShipmentInformationCardComponent implements OnInit, OnDestroy {
   updateDestinationModalOptions: ModalInputTextOptions;
   menuItems: DropdownMenuItem[];
 
-  private updatedMessage$ = new Subject<string>();
   private unsubscribe$ = new Subject<void>();
 
   constructor(
     private store$: Store<RootStoreState.State>,
     private modalService: NgbModal,
-    private toastr: ToastrService
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit() {
@@ -81,28 +80,29 @@ export class ShipmentInformationCardComponent implements OnInit, OnDestroy {
 
     this.shipment$
       .pipe(
-        withLatestFrom(this.updatedMessage$),
+        filter(() => this.notificationService.notificationPending()),
         takeUntil(this.unsubscribe$)
       )
-      .subscribe(([_shipment, msg]) => {
-        this.toastr.success(msg, 'Update Successfull');
-        this.updatedMessage$.next(null);
+      .subscribe(() => {
+        this.notificationService.show();
         this.onShipmentUpdate.emit(false);
       });
 
     this.store$
       .pipe(
         select(ShipmentStoreSelectors.selectShipmentError),
-        filter(error => !!error),
-        withLatestFrom(this.updatedMessage$),
+        filter(error => !!error && this.notificationService.notificationPending()),
         takeUntil(this.unsubscribe$)
       )
-      .subscribe(([error, _msg]) => {
+      .subscribe(error => {
         let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
-        if (errMessage.match(/EntityCriteriaError: shipment with tracking number already exists/)) {
+        if (
+          errMessage &&
+          errMessage.match(/EntityCriteriaError: shipment with tracking number already exists/)
+        ) {
           errMessage = `That Tracking Number is already in use by another shipment.`;
         }
-        this.toastr.error(errMessage, 'Update Error', { disableTimeOut: true });
+        this.notificationService.showError(errMessage, 'Update Error');
         this.onShipmentUpdate.emit(false);
       });
   }
@@ -125,7 +125,7 @@ export class ShipmentInformationCardComponent implements OnInit, OnDestroy {
           })
         );
         this.onShipmentUpdate.emit(true);
-        this.updatedMessage$.next('Courier was updated');
+        this.notificationService.add('Courier was updated', 'Update Successfull');
       })
       .catch(() => undefined);
   }
@@ -143,7 +143,7 @@ export class ShipmentInformationCardComponent implements OnInit, OnDestroy {
           })
         );
         this.onShipmentUpdate.emit(true);
-        this.updatedMessage$.next('Tracking Number was updated');
+        this.notificationService.add('Tracking Number was updated', 'Update Successfull');
       })
       .catch(() => undefined);
   }
@@ -161,7 +161,7 @@ export class ShipmentInformationCardComponent implements OnInit, OnDestroy {
           })
         );
         this.onShipmentUpdate.emit(true);
-        this.updatedMessage$.next('From Location was updated');
+        this.notificationService.add('From Location was updated', 'Update Successfull');
       })
       .catch(() => undefined);
   }
@@ -179,7 +179,7 @@ export class ShipmentInformationCardComponent implements OnInit, OnDestroy {
           })
         );
         this.onShipmentUpdate.emit(true);
-        this.updatedMessage$.next('To Location was updated');
+        this.notificationService.add('To Location was updated', 'Update Successfull');
       })
       .catch(() => undefined);
   }

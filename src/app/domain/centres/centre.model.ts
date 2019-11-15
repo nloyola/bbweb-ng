@@ -9,7 +9,8 @@ import {
   IEntityInfo,
   IEntityInfoSet,
   Location,
-  IEntityInfoAndState
+  IEntityInfoAndState,
+  NamedEntityInfo
 } from '@app/domain';
 import { Study, StudyState, StudyStateInfo } from '@app/domain/studies';
 import { CentreState } from './centre-state.enum';
@@ -93,6 +94,9 @@ export class Centre extends ConcurrencySafeEntity implements ICentre {
     return this.hasStudies();
   }
 }
+
+/* tslint:disable-next-line:max-classes-per-file */
+export class CentreInfo extends NamedEntityInfo<Centre> {}
 
 /* tslint:disable-next-line:max-classes-per-file */
 export class CentreStateInfo extends EntityInfoAndState<Centre, CentreState> {}

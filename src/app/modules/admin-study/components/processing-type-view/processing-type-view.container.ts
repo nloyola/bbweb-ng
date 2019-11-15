@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { NotificationService } from '@app/core/services';
 import { AnnotationType } from '@app/domain/annotations';
 import { CollectionEventType, ProcessingType, ProcessingTypeInputEntity, Study } from '@app/domain/studies';
 import { ModalInputTextareaOptions, ModalInputTextOptions } from '@app/modules/modals/models';
@@ -16,9 +17,8 @@ import { AnnotationTypeViewComponent } from '@app/shared/components/annotation-t
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Dictionary } from '@ngrx/entity';
 import { Action, createSelector, select, Store } from '@ngrx/store';
-import { ToastrService } from 'ngx-toastr';
-import { Observable, Subject, combineLatest, BehaviorSubject } from 'rxjs';
-import { filter, map, shareReplay, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
+import { filter, map, shareReplay, takeUntil } from 'rxjs/operators';
 import { ProcessingInputSpecimenModalComponent } from '../processing-input-specimen-modal/processing-input-specimen-modal.component';
 import { ProcessingOutputSpecimenModalComponent } from '../processing-output-specimen-modal/processing-output-specimen-modal.component';
 import { ProcessingTypeRemoveComponent } from '../processing-type-remove/processing-type-remove.component';
@@ -59,7 +59,6 @@ export class ProcessingTypeViewContainerComponent implements OnInit, OnDestroy {
   private data$: Observable<StoreData>;
   private dataSubject = new BehaviorSubject(null);
   private inputEntityRequested = false;
-  private updatedMessage$ = new Subject<string>();
   private unsubscribe$ = new Subject<void>();
 
   constructor(
@@ -67,7 +66,7 @@ export class ProcessingTypeViewContainerComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private modalService: NgbModal,
-    private toastr: ToastrService
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit() {
@@ -77,7 +76,7 @@ export class ProcessingTypeViewContainerComponent implements OnInit, OnDestroy {
         // user selected a different event type
         this.processingTypeId = data.processingType.id;
         this.inputEntityRequested = false;
-        this.updatedMessage$.next(null);
+        this.notificationService.clear();
       }
     });
 
@@ -136,16 +135,12 @@ export class ProcessingTypeViewContainerComponent implements OnInit, OnDestroy {
 
     this.data$
       .pipe(
-        withLatestFrom(this.updatedMessage$),
+        filter(() => this.notificationService.notificationPending()),
         takeUntil(this.unsubscribe$)
       )
-      .subscribe(([data, msg]) => {
-        if (msg === null) {
-          return;
-        }
-
+      .subscribe(data => {
+        this.notificationService.show();
         if (data.processingType !== undefined) {
-          this.toastr.success(msg, 'Update Successfull');
           if (data.processingType.slug !== this.route.parent.snapshot.params.processingTypeSlug) {
             // name was changed and new slug was assigned
             //
@@ -159,26 +154,22 @@ export class ProcessingTypeViewContainerComponent implements OnInit, OnDestroy {
             ]);
           }
         } else {
-          this.toastr.success(msg, 'Remove Successfull');
           this.router.navigate(['/admin/studies', data.study.slug, 'processing']);
         }
-
-        this.updatedMessage$.next(null);
       });
 
     this.store$
       .pipe(
         select(ProcessingTypeStoreSelectors.selectError),
-        filter(error => !!error),
-        withLatestFrom(this.updatedMessage$),
+        filter(error => !!error && this.notificationService.notificationPending()),
         takeUntil(this.unsubscribe$)
       )
-      .subscribe(([error, _msg]) => {
+      .subscribe(error => {
         let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
-        if (errMessage.indexOf('already exists') > -1) {
+        if (errMessage && errMessage.indexOf('already exists') > -1) {
           errMessage = 'A processing step with that name already exists. Please use another name.';
         }
-        this.toastr.error(errMessage, 'Update Error', { disableTimeOut: true });
+        this.notificationService.showError(errMessage, 'Update Error');
       });
   }
 
@@ -199,7 +190,7 @@ export class ProcessingTypeViewContainerComponent implements OnInit, OnDestroy {
               value
             })
           );
-          this.updatedMessage$.next('Step name was updated');
+          this.notificationService.add('Step name was updated', 'Update Successfull');
         })
         .catch(() => undefined);
     });
@@ -217,7 +208,7 @@ export class ProcessingTypeViewContainerComponent implements OnInit, OnDestroy {
               value: value ? value : undefined
             })
           );
-          this.updatedMessage$.next('Step description was updated');
+          this.notificationService.add('Step description was updated', 'Update Successfull');
         })
         .catch(() => undefined);
     });
@@ -235,7 +226,7 @@ export class ProcessingTypeViewContainerComponent implements OnInit, OnDestroy {
               value
             })
           );
-          this.updatedMessage$.next('Enabled was updated');
+          this.notificationService.add('Enabled was updated', 'Update Successfull');
         })
         .catch(() => undefined);
     });
@@ -274,7 +265,7 @@ export class ProcessingTypeViewContainerComponent implements OnInit, OnDestroy {
             })
           );
 
-          this.updatedMessage$.next('Annotation removed');
+          this.notificationService.add('Annotation removed', 'Update Successfull');
         })
         .catch(() => undefined);
     });
@@ -299,7 +290,7 @@ export class ProcessingTypeViewContainerComponent implements OnInit, OnDestroy {
             })
           );
 
-          this.updatedMessage$.next('Input specimen updated');
+          this.notificationService.add('Input specimen updated', 'Update Successfull');
         })
         .catch(() => undefined);
     });
@@ -326,7 +317,7 @@ export class ProcessingTypeViewContainerComponent implements OnInit, OnDestroy {
             })
           );
 
-          this.updatedMessage$.next('Output specimen updated');
+          this.notificationService.add('Output specimen updated', 'Update Successfull');
         })
         .catch(() => undefined);
     });
@@ -348,7 +339,7 @@ export class ProcessingTypeViewContainerComponent implements OnInit, OnDestroy {
               processingType
             })
           );
-          this.updatedMessage$.next('Processing step removed');
+          this.notificationService.add('Processing step removed', 'Remove Successfull');
         })
         .catch(() => undefined);
     });

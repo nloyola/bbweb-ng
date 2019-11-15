@@ -8,6 +8,7 @@ import { ToastrService } from 'ngx-toastr';
 import { filter } from 'rxjs/operators';
 import { ShipmentSpecimenAction } from '../shipment-specimens-table/shipment-specimens-table.container';
 import { UnpackedShipmentSpeciemensComponent } from '../unpacked-shipment-specimens/unpacked-shipment-specimens.component';
+import { NotificationService } from '@app/core/services';
 
 @Component({
   selector: 'app-unpacked-shipment-received',
@@ -24,9 +25,12 @@ export class UnpackedShipmentReceivedComponent extends UnpackedShipmentSpeciemen
       iconClass: 'success-icon'
     }
   ];
-  toastrMessage: string = undefined;
 
-  constructor(store$: Store<RootStoreState.State>, route: ActivatedRoute, private toastr: ToastrService) {
+  constructor(
+    store$: Store<RootStoreState.State>,
+    route: ActivatedRoute,
+    private notificationService: NotificationService
+  ) {
     super(store$, route);
   }
 
@@ -34,15 +38,13 @@ export class UnpackedShipmentReceivedComponent extends UnpackedShipmentSpeciemen
     super.ngOnInit();
 
     this.shipment$
-      .pipe(filter(shipment => shipment !== undefined && this.toastrMessage !== undefined))
+      .pipe(filter(shipment => shipment !== undefined && this.notificationService.notificationPending()))
       .subscribe(() => {
-        this.toastr.success(this.toastrMessage);
-        this.toastrMessage = undefined;
+        this.notificationService.show();
       });
 
-    this.error$.pipe(filter(() => this.toastrMessage !== undefined)).subscribe(errorMessage => {
-      this.toastr.error(errorMessage);
-      this.toastrMessage = undefined;
+    this.error$.pipe(filter(() => this.notificationService.notificationPending())).subscribe(errorMessage => {
+      this.notificationService.showError(errorMessage);
     });
   }
 
@@ -50,7 +52,7 @@ export class UnpackedShipmentReceivedComponent extends UnpackedShipmentSpeciemen
     switch (actionId) {
       case 'tagAsPresent':
         this.tagSpecimen(shipmentSpecimen, ShipmentItemState.Present);
-        this.toastrMessage = 'Specimen tagged as Unpacked';
+        this.notificationService.add('Specimen tagged as Unpacked');
         this.markTagPending();
         break;
 

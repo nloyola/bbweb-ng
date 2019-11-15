@@ -1,12 +1,10 @@
 import { Component, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { ShipmentStateTransision } from '@app/core/services';
-import { BlockingProgressService } from '@app/core/services/blocking-progress.service';
+import { BlockingProgressService, NotificationService, ShipmentStateTransision } from '@app/core/services';
 import { IdToTab } from '@app/domain';
 import { RootStoreState, ShipmentStoreActions } from '@app/root-store';
 import { NgbModal, NgbTabChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 import { Store } from '@ngrx/store';
-import { ToastrService } from 'ngx-toastr';
 import { filter, takeUntil } from 'rxjs/operators';
 import { ShipmentViewer } from '../shipment-viewer';
 
@@ -38,11 +36,11 @@ export class ShipmentViewUnpackedComponent extends ShipmentViewer {
     store$: Store<RootStoreState.State>,
     route: ActivatedRoute,
     modalService: NgbModal,
-    toastr: ToastrService,
+    notificationService: NotificationService,
     blockingProgressService: BlockingProgressService,
     private router: Router
   ) {
-    super(store$, route, toastr, modalService, blockingProgressService);
+    super(store$, route, notificationService, modalService, blockingProgressService);
     this.tabIds = Object.keys(this.tabData);
   }
 
@@ -80,7 +78,7 @@ export class ShipmentViewUnpackedComponent extends ShipmentViewer {
             }
           })
         );
-        this.notificationMessage = 'Shipment back in Receivedstate';
+        this.notificationService.add('Shipment back in Receivedstate');
         this.blockingProgressService.show('Updating Shipment...');
       })
       .catch(() => undefined);
@@ -109,7 +107,7 @@ export class ShipmentViewUnpackedComponent extends ShipmentViewer {
             }
           })
         );
-        this.notificationMessage = 'Completed time recorded';
+        this.notificationService.add('Completed time recorded');
         this.blockingProgressService.show('Updating Shipment...');
       })
       .catch(() => undefined);

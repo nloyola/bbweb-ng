@@ -1,22 +1,23 @@
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NotificationService } from '@app/core/services';
+import { NamedEntityInfo } from '@app/domain';
 import { Membership } from '@app/domain/access';
-import { Centre } from '@app/domain/centres';
-import { Study } from '@app/domain/studies';
-import { IUserInfo, User } from '@app/domain/users';
+import { Centre, CentreInfo } from '@app/domain/centres';
+import { Study, StudyInfo } from '@app/domain/studies';
+import { IUserInfo, User, UserInfo } from '@app/domain/users';
 import { CentreRemoveModalComponent } from '@app/modules/modals/components/centre-remove-modal/centre-remove-modal.component';
 import { StudyRemoveModalComponent } from '@app/modules/modals/components/study-remove-modal/study-remove-modal.component';
 import { UserRemoveModalComponent } from '@app/modules/modals/components/user-remove-modal/user-remove-modal.component';
 import { ModalInputTextareaOptions, ModalInputTextOptions } from '@app/modules/modals/models';
 import { MembershipStoreActions, MembershipStoreSelectors, RootStoreState } from '@app/root-store';
+import { DropdownMenuItem } from '@app/shared/components/dropdown-menu/dropdown-menu.component';
 import { CentreSelectTypeahead, StudySelectTypeahead, UserSelectTypeahead } from '@app/shared/typeaheads';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Dictionary } from '@ngrx/entity';
 import { select, Store } from '@ngrx/store';
-import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { filter, map, shareReplay, takeUntil, withLatestFrom } from 'rxjs/operators';
-import { DropdownMenuItem } from '@app/shared/components/dropdown-menu/dropdown-menu.component';
+import { filter, map, shareReplay, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-membership-view',
@@ -42,7 +43,6 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
   menuItems: DropdownMenuItem[];
 
   private membershipSubject = new BehaviorSubject(null);
-  private updatedMessage$ = new Subject<string>();
   private unsubscribe$ = new Subject<void>();
 
   constructor(
@@ -50,7 +50,7 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private modalService: NgbModal,
-    private toastr: ToastrService
+    private notificationService: NotificationService
   ) {
     this.createUserTypeahead();
     this.createStudyTypeahead();
@@ -77,17 +77,12 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
 
     this.membership$
       .pipe(
-        withLatestFrom(this.updatedMessage$),
+        filter(() => this.notificationService.notificationPending()),
         takeUntil(this.unsubscribe$)
       )
-      .subscribe(([membership, msg]) => {
-        if (msg === null) {
-          return;
-        }
-
+      .subscribe(membership => {
+        this.notificationService.show();
         if (membership !== undefined) {
-          this.toastr.success(msg, 'Update Successfull');
-
           this.userAddTypeahead.clearSelected();
           this.studyAddTypeahead.clearSelected();
           this.centreAddTypeahead.clearSelected();
@@ -100,24 +95,21 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
           }
         } else {
           this.router.navigate(['..'], { relativeTo: this.route });
-          this.toastr.success(msg, 'Remove Successfull');
         }
-        this.updatedMessage$.next(null);
       });
 
     this.store$
       .pipe(
         select(MembershipStoreSelectors.selectMembershipError),
-        filter(error => !!error),
-        withLatestFrom(this.updatedMessage$),
+        filter(error => !!error && this.notificationService.notificationPending()),
         takeUntil(this.unsubscribe$)
       )
-      .subscribe(([error, _msg]) => {
+      .subscribe(error => {
         let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
-        if (errMessage.indexOf('name already used') > -1) {
+        if (errMessage && errMessage.indexOf('name already used') > -1) {
           errMessage = 'A membership with that name already exists. Please use another name.';
         }
-        this.toastr.error(errMessage, 'Update Error', { disableTimeOut: true });
+        this.notificationService.showError(errMessage, 'Update Error');
       });
   }
 
@@ -146,7 +138,7 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
             value
           })
         );
-        this.updatedMessage$.next('User name was updated');
+        this.notificationService.add('User name was updated', 'Update Successfull');
       })
       .catch(() => undefined);
   }
@@ -167,7 +159,7 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
             value: value ? value : undefined
           })
         );
-        this.updatedMessage$.next('Membership description was updated');
+        this.notificationService.add('Membership description was updated', 'Update Successfull');
       })
       .catch(() => undefined);
   }
@@ -186,7 +178,7 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
           })
         );
 
-        this.updatedMessage$.next('User removed');
+        this.notificationService.add('User removed', 'Update Successfull');
       })
       .catch(() => undefined);
   }
@@ -202,7 +194,7 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
         })
       );
 
-      this.updatedMessage$.next('Study removed');
+      this.notificationService.add('Study removed', 'Update Successfull');
     };
 
     const modalRef = this.modalService.open(StudyRemoveModalComponent);
@@ -225,7 +217,7 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
               })
             );
 
-            this.updatedMessage$.next('Membership now applies to all studies');
+            this.notificationService.add('Membership now applies to all studies', 'Update Successfull');
           })
           .catch(() => {
             removeStudy();
@@ -245,7 +237,7 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
         })
       );
 
-      this.updatedMessage$.next('Centre removed');
+      this.notificationService.add('Centre removed', 'Update Successfull');
     };
 
     const modalRef = this.modalService.open(CentreRemoveModalComponent);
@@ -268,7 +260,7 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
               })
             );
 
-            this.updatedMessage$.next('Membership now applies to all centres');
+            this.notificationService.add('Membership now applies to all centres', 'Update Successfull');
           })
           .catch(() => {
             removeCentre();
@@ -287,7 +279,7 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
             membership
           })
         );
-        this.updatedMessage$.next('Memberhsip Removed');
+        this.notificationService.add('Memberhsip Removed', 'Remove Successful');
       })
       .catch(() => undefined);
   }
@@ -296,7 +288,7 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
     this.userAddTypeahead = new UserSelectTypeahead(this.store$, (users: User[]) => {
       // filter out users already linked to this membership
       const membership = this.membershipSubject.value;
-      const existingUserIds = membership.userData.map(ud => ud.id);
+      const existingUserIds = membership.userData.map((userData: UserInfo) => userData.id);
       return users.filter(entity => existingUserIds.indexOf(entity.id) < 0);
     });
 
@@ -310,7 +302,7 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
         })
       );
 
-      this.updatedMessage$.next('User added');
+      this.notificationService.add('User added', 'Update Successfull');
     });
   }
 
@@ -318,7 +310,7 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
     this.studyAddTypeahead = new StudySelectTypeahead(this.store$, (studies: Study[]) => {
       const membership = this.membershipSubject.value;
       // filter out studys already linked to this membership
-      const existingStudyIds = membership.studyData.entityData.map(sd => sd.id);
+      const existingStudyIds = membership.studyData.entityData.map((studyInfo: StudyInfo) => studyInfo.id);
       return studies.filter(entity => existingStudyIds.indexOf(entity.id) < 0);
     });
 
@@ -332,7 +324,7 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
         })
       );
 
-      this.updatedMessage$.next('Study added');
+      this.notificationService.add('Study added', 'Update Successfull');
     });
   }
 
@@ -340,7 +332,9 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
     this.centreAddTypeahead = new CentreSelectTypeahead(this.store$, (centres: Centre[]) => {
       const membership = this.membershipSubject.value;
       // filter out centres already linked to this membership
-      const existingCentreIds = membership.centreData.entityData.map(sd => sd.id);
+      const existingCentreIds = membership.centreData.entityData.map(
+        (centreInfo: CentreInfo) => centreInfo.id
+      );
       return centres.filter(entity => existingCentreIds.indexOf(entity.id) < 0);
     });
 
@@ -354,7 +348,7 @@ export class MembershipViewComponent implements OnInit, OnDestroy {
         })
       );
 
-      this.updatedMessage$.next('Centre added');
+      this.notificationService.add('Centre added', 'Update Successfull');
     });
   }
 

@@ -85,7 +85,7 @@ describe('ShipmentAddPageComponent', () => {
   describe('when submitting', () => {
     it('on valid submission', fakeAsync(() => {
       const shipment = new Shipment().deserialize(factory.shipment());
-      const toastrListener = TestUtils.toastrSuccessListener();
+      const notificationListener = TestUtils.notificationShowListener();
       const storeListener = jest.spyOn(store, 'dispatch');
       const routerListener = jest.spyOn(router, 'navigate').mockResolvedValue(true);
 
@@ -112,7 +112,7 @@ describe('ShipmentAddPageComponent', () => {
       fixture.detectChanges();
       flush();
 
-      expect(toastrListener.mock.calls.length).toBe(1);
+      expect(notificationListener.mock.calls.length).toBe(1);
       expect(routerListener.mock.calls.length).toBe(1);
       expect(routerListener.mock.calls[0][0]).toEqual([
         '/shipping',
@@ -145,7 +145,7 @@ describe('ShipmentAddPageComponent', () => {
     describe.each(errorTable)('on submission failure', error => {
       it('displays error', fakeAsync(() => {
         const shipment = new Shipment().deserialize(factory.shipment());
-        const toastrListener = TestUtils.toastrErrorListener();
+        const notificationListener = TestUtils.notificationShowErrorListener();
 
         component.courierName.setValue(shipment.courierName);
         component.trackingNumber.setValue(shipment.trackingNumber);
@@ -159,7 +159,7 @@ describe('ShipmentAddPageComponent', () => {
         store.dispatch(action);
         flush();
         fixture.detectChanges();
-        expect(toastrListener.mock.calls.length).toBe(1);
+        expect(notificationListener.mock.calls.length).toBe(1);
       }));
     });
   });

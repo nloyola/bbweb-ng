@@ -1,17 +1,17 @@
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Study, StudyStateUIMap, StudyState } from '@app/domain/studies';
+import { Study, StudyState, StudyStateUIMap } from '@app/domain/studies';
 import { StudyUI } from '@app/domain/studies/study-ui.model';
 import { ModalInputTextareaOptions, ModalInputTextOptions } from '@app/modules/modals/models';
 import { RootStoreState, StudyStoreActions, StudyStoreSelectors } from '@app/root-store';
 import { EnableAllowdIds } from '@app/root-store/study/study.reducer';
+import { DropdownMenuItem } from '@app/shared/components/dropdown-menu/dropdown-menu.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Dictionary } from '@ngrx/entity';
 import { createSelector, select, Store } from '@ngrx/store';
-import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { filter, map, shareReplay, takeUntil, withLatestFrom, tap } from 'rxjs/operators';
-import { DropdownMenuItem } from '@app/shared/components/dropdown-menu/dropdown-menu.component';
+import { filter, map, shareReplay, takeUntil, tap } from 'rxjs/operators';
+import { NotificationService } from '@app/core/services';
 
 interface StoreData {
   study: Study;
@@ -45,7 +45,6 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
   private data$: Observable<StoreData>;
   private studyId: string;
   private dataSubject = new BehaviorSubject(null);
-  private updatedMessage$ = new Subject<string>();
   private unsubscribe$ = new Subject<void>();
 
   constructor(
@@ -53,7 +52,7 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
     private modalService: NgbModal,
     private router: Router,
     private route: ActivatedRoute,
-    private toastr: ToastrService
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit() {
@@ -89,16 +88,15 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
 
     this.data$
       .pipe(
-        withLatestFrom(this.updatedMessage$),
+        filter(() => this.notificationService.notificationPending()),
         takeUntil(this.unsubscribe$)
       )
-      .subscribe(([data, msg]) => {
-        if (data === undefined || msg === null) {
+      .subscribe(data => {
+        if (data === undefined) {
           return;
         }
 
-        this.toastr.success(msg, 'Update Successfull');
-        this.updatedMessage$.next(null);
+        this.notificationService.show();
 
         if (data.study.slug !== this.route.parent.snapshot.params.slug) {
           // name was changed and new slug was assigned
@@ -111,16 +109,15 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
     this.store$
       .pipe(
         select(StudyStoreSelectors.selectStudyError),
-        filter(error => !!error),
-        withLatestFrom(this.updatedMessage$),
+        filter(error => !!error && this.notificationService.notificationPending()),
         takeUntil(this.unsubscribe$)
       )
-      .subscribe(([error, _msg]) => {
+      .subscribe(error => {
         let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
-        if (errMessage.indexOf('name already used') > -1) {
+        if (errMessage && errMessage.indexOf('name already used') > -1) {
           errMessage = 'A study with that name already exists. Please use another name.';
         }
-        this.toastr.error(errMessage, 'Update Error', { disableTimeOut: true });
+        this.notificationService.showError(errMessage, 'Update Error');
       });
   }
 
@@ -141,7 +138,7 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
               value
             })
           );
-          this.updatedMessage$.next('Study name was updated');
+          this.notificationService.add('Name was updated', 'Update Successfull');
         })
         .catch(() => undefined);
     });
@@ -159,7 +156,7 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
               value: value ? value : undefined
             })
           );
-          this.updatedMessage$.next('Study description was updated');
+          this.notificationService.add('Description was updated', 'Update Successfull');
         })
         .catch(() => undefined);
     });
@@ -197,7 +194,7 @@ export class StudySummaryComponent implements OnInit, OnDestroy {
         value: action
       })
     );
-    this.updatedMessage$.next('Study state was updated');
+    this.notificationService.add('State was updated', 'Update Successfull');
   }
 
   private whenStudyDisabled(fn: (study: Study) => void) {

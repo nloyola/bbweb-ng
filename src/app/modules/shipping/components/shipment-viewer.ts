@@ -1,12 +1,12 @@
 import { OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { NotificationService } from '@app/core/services';
 import { BlockingProgressService } from '@app/core/services/blocking-progress.service';
 import { Shipment } from '@app/domain/shipments';
 import { ModalInputOptions } from '@app/modules/modals/models';
 import { RootStoreState, ShipmentStoreSelectors } from '@app/root-store';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { select, Store } from '@ngrx/store';
-import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject } from 'rxjs';
 import { filter, map, shareReplay, takeUntil, tap } from 'rxjs/operators';
 
@@ -16,7 +16,6 @@ import { filter, map, shareReplay, takeUntil, tap } from 'rxjs/operators';
 export class ShipmentViewer implements OnInit, OnDestroy {
   shipment: Shipment;
   modalInputOptions: ModalInputOptions = { required: true };
-  notificationMessage: string = undefined;
 
   protected shipment$: Observable<Shipment>;
   protected error$: Observable<any>;
@@ -25,7 +24,7 @@ export class ShipmentViewer implements OnInit, OnDestroy {
   constructor(
     protected store$: Store<RootStoreState.State>,
     protected route: ActivatedRoute,
-    protected toastr: ToastrService,
+    protected notificationService: NotificationService,
     protected modalService: NgbModal,
     protected blockingProgressService: BlockingProgressService
   ) {}
@@ -59,9 +58,8 @@ export class ShipmentViewer implements OnInit, OnDestroy {
       shareReplay()
     );
 
-    this.shipment$.pipe(filter(() => this.notificationMessage !== undefined)).subscribe(() => {
-      this.toastr.success(this.notificationMessage);
-      this.notificationMessage = undefined;
+    this.shipment$.pipe(filter(() => this.notificationService.notificationPending())).subscribe(() => {
+      this.notificationService.show();
       this.blockingProgressService.hide();
     });
 
@@ -69,10 +67,9 @@ export class ShipmentViewer implements OnInit, OnDestroy {
   }
 
   protected initShipmentErrorSelector() {
-    this.error$.pipe(filter(() => this.notificationMessage !== undefined)).subscribe(error => {
+    this.error$.pipe(filter(() => this.notificationService.notificationPending())).subscribe(error => {
       let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
-      this.toastr.error(errMessage, 'Error', { disableTimeOut: true });
-      this.notificationMessage = undefined;
+      this.notificationService.showError(errMessage, 'Error');
       this.blockingProgressService.hide();
     });
   }

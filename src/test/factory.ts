@@ -5,7 +5,6 @@ import {
   HasSlug,
   IConcurrencySafeEntity,
   IDomainEntity,
-  IEntityInfo,
   IEntityInfoAndState,
   IEntityInfoSet,
   ILocation,

@@ -1,23 +1,23 @@
-import { Component, OnInit, ViewChild, TemplateRef, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NotificationService } from '@app/core/services';
+import { Annotation, AnnotationFactory } from '@app/domain/annotations';
 import { Participant } from '@app/domain/participants';
+import { Study } from '@app/domain/studies';
+import { ModalInputTextOptions } from '@app/modules/modals/models';
 import {
+  ParticipantStoreActions,
   ParticipantStoreSelectors,
   RootStoreState,
   StudyStoreActions,
-  StudyStoreSelectors,
-  ParticipantStoreActions
+  StudyStoreSelectors
 } from '@app/root-store';
-import { select, Store, createSelector } from '@ngrx/store';
-import { Observable, Subject, BehaviorSubject } from 'rxjs';
-import { map, shareReplay, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
-import { Dictionary } from '@ngrx/entity';
-import { Study } from '@app/domain/studies';
-import { Annotation, AnnotationFactory } from '@app/domain/annotations';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ToastrService } from 'ngx-toastr';
-import { ModalInputTextOptions } from '@app/modules/modals/models';
 import { DropdownMenuItem } from '@app/shared/components/dropdown-menu/dropdown-menu.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Dictionary } from '@ngrx/entity';
+import { createSelector, select, Store } from '@ngrx/store';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { map, shareReplay, takeUntil, tap, filter } from 'rxjs/operators';
 
 interface EntityData {
   participant: Participant;
@@ -48,7 +48,6 @@ export class ParticipantSummaryComponent implements OnInit, OnDestroy {
 
   private newUniqueId: string;
   private entitiesSubject = new BehaviorSubject(null);
-  private updatedMessage$ = new Subject<string>();
   private unsubscribe$ = new Subject<void>();
 
   constructor(
@@ -56,7 +55,7 @@ export class ParticipantSummaryComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private modalService: NgbModal,
-    private toastr: ToastrService
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit() {
@@ -123,16 +122,15 @@ export class ParticipantSummaryComponent implements OnInit, OnDestroy {
 
     this.entities$
       .pipe(
-        withLatestFrom(this.updatedMessage$),
+        filter(() => this.notificationService.notificationPending()),
         takeUntil(this.unsubscribe$)
       )
-      .subscribe(([entities, message]) => {
-        if (entities === undefined || message == null) {
+      .subscribe(entities => {
+        if (entities === undefined) {
           return;
         }
 
-        this.toastr.success(message, 'Update Successfull');
-        this.updatedMessage$.next(null);
+        this.notificationService.show();
         if (entities.participant.slug !== this.route.parent.snapshot.params.slug) {
           // uniqueId was changed and a new slug was assigned
           //
@@ -144,19 +142,15 @@ export class ParticipantSummaryComponent implements OnInit, OnDestroy {
     this.store$
       .pipe(
         select(ParticipantStoreSelectors.selectParticipantError),
-        withLatestFrom(this.updatedMessage$),
+        filter(error => error !== null && this.notificationService.notificationPending()),
         takeUntil(this.unsubscribe$)
       )
-      .subscribe(([error, _msg]) => {
-        if (error === null) {
-          return;
-        }
-
+      .subscribe(error => {
         let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
-        if (errMessage !== undefined && errMessage.match(/participant with unique ID already exists/)) {
+        if (errMessage && errMessage.match(/participant with unique ID already exists/)) {
           errMessage = `A participant with the ID ${this.newUniqueId} already exits.`;
         }
-        this.toastr.error(errMessage, 'Update Error', { disableTimeOut: true });
+        this.notificationService.showError(errMessage, 'Update Error');
       });
   }
 
@@ -178,11 +172,9 @@ export class ParticipantSummaryComponent implements OnInit, OnDestroy {
             value
           })
         );
-        this.updatedMessage$.next('Unique ID was updated');
+        this.notificationService.add('Unique ID was updated', 'Update Successfull');
       })
-      .catch(() => {
-        // don't care if user pressed the Cancel button
-      });
+      .catch(() => undefined);
   }
 
   updateAnnotation(annotation: Annotation) {
@@ -200,7 +192,7 @@ export class ParticipantSummaryComponent implements OnInit, OnDestroy {
             value: updatedAnnotation.serverAnnotation()
           })
         );
-        this.updatedMessage$.next(`${annotation.label} was updated`);
+        this.notificationService.add(`${annotation.label} was updated`, 'Update Successfull');
       })
       .catch(() => {
         // don't care if user pressed the Cancel button

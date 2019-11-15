@@ -1,23 +1,22 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SearchParams } from '@app/domain';
-import { Participant, CollectionEvent } from '@app/domain/participants';
+import { NotificationService } from '@app/core/services';
+import { Annotation, AnnotationFactory } from '@app/domain/annotations';
+import { CollectionEvent, Participant } from '@app/domain/participants';
 import { CollectionEventType } from '@app/domain/studies';
 import {
+  EventStoreActions,
+  EventStoreSelectors,
   EventTypeStoreActions,
   EventTypeStoreSelectors,
-  RootStoreState,
-  EventStoreActions,
-  EventStoreSelectors
+  RootStoreState
 } from '@app/root-store';
-import { select, Store } from '@ngrx/store';
-import { Observable, Subject, BehaviorSubject } from 'rxjs';
-import { takeUntil, tap, withLatestFrom, filter, shareReplay } from 'rxjs/operators';
-import { AnnotationsAddSubformComponent } from '../annotations-add-subform/annotations-add-subform.component';
-import { Annotation, AnnotationFactory } from '@app/domain/annotations';
 import { faCalendar } from '@fortawesome/free-solid-svg-icons';
-import { ToastrService } from 'ngx-toastr';
+import { select, Store } from '@ngrx/store';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { filter, shareReplay, takeUntil, tap } from 'rxjs/operators';
+import { AnnotationsAddSubformComponent } from '../annotations-add-subform/annotations-add-subform.component';
 
 @Component({
   selector: 'app-event-add-form',
@@ -33,7 +32,6 @@ export class EventAddFormComponent implements OnInit, OnDestroy {
   faCalendar = faCalendar;
 
   private eventTypesSubject = new BehaviorSubject(null);
-  private addedMessage$ = new Subject<string>();
   private unsubscribe$ = new Subject<void>();
 
   constructor(
@@ -41,7 +39,7 @@ export class EventAddFormComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
-    private toastr: ToastrService
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit() {
@@ -80,29 +78,28 @@ export class EventAddFormComponent implements OnInit, OnDestroy {
     this.store$
       .pipe(
         select(EventStoreSelectors.selectCollectionEventLastAdded),
-        withLatestFrom(this.addedMessage$),
+        filter(() => this.notificationService.notificationPending()),
         takeUntil(this.unsubscribe$)
       )
-      .subscribe(([event, msg]) => {
+      .subscribe(event => {
         const participant = this.route.parent.parent.snapshot.data.participant;
         this.isSaving$.next(false);
-        this.toastr.success(msg, 'Add Successful');
+        this.notificationService.show();
         this.router.navigate([`/collection/${participant.slug}/collection/view/${event.visitNumber}`]);
       });
 
     this.store$
       .pipe(
         select(EventStoreSelectors.selectCollectionEventError),
-        filter(error => error !== undefined),
-        withLatestFrom(this.addedMessage$),
+        filter(error => error !== undefined && this.notificationService.notificationPending()),
         takeUntil(this.unsubscribe$)
       )
-      .subscribe(([error, _msg]) => {
+      .subscribe(error => {
         let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
-        if (errMessage.match(/already exists/)) {
+        if (errMessage && errMessage.match(/already exists/)) {
           errMessage = `That visit number already exists for this participant.`;
         }
-        this.toastr.error(errMessage, 'Add Error', { disableTimeOut: true });
+        this.notificationService.showError(errMessage, 'Add Error');
         this.isSaving$.next(false);
       });
 
@@ -150,7 +147,9 @@ export class EventAddFormComponent implements OnInit, OnDestroy {
 
   onSubmit(): void {
     this.isSaving$.next(true);
-    const eventType = this.eventTypesSubject.value.find(et => et.id === this.form.value.eventType);
+    const eventType = this.eventTypesSubject.value.find(
+      (et: CollectionEventType) => et.id === this.form.value.eventType
+    );
     const event = new CollectionEvent().deserialize({
       participantId: this.route.parent.parent.snapshot.data.participant.id,
       participantSlug: this.route.parent.parent.snapshot.data.participant.slug,
@@ -161,7 +160,7 @@ export class EventAddFormComponent implements OnInit, OnDestroy {
     } as any);
     event.annotations = AnnotationsAddSubformComponent.valueToAnnotations(this.annotationsGroup);
     this.store$.dispatch(EventStoreActions.addEventRequest({ event }));
-    this.addedMessage$.next('Event Added');
+    this.notificationService.add('Event Added', 'Add Successful');
   }
 
   onCancel(): void {
