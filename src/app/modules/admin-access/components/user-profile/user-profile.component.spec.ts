@@ -108,9 +108,7 @@ describe('UserProfileComponent', () => {
         store.dispatch(UserStoreActions.getUserSuccess({ user }));
       };
       context.componentValidateInitialization = () => undefined;
-      context.dispatchSuccessAction = () => {
-        store.dispatch(UserStoreActions.updateUserSuccess({ user }));
-      };
+      context.successAction = UserStoreActions.updateUserSuccess({ user });
       context.createExpectedFailureAction = error => UserStoreActions.updateUserFailure({ error });
       context.duplicateAttibuteValueError = 'EmailNotAvailable: user with email already exists';
     });
@@ -118,7 +116,7 @@ describe('UserProfileComponent', () => {
     describe('when updating name', () => {
       beforeEach(() => {
         const newName = factory.stringNext();
-        context.modalReturnValue = { result: Promise.resolve(newName) };
+        context.modalReturnValue = newName;
         context.updateEntity = () => {
           component.updateName();
         };
@@ -134,9 +132,7 @@ describe('UserProfileComponent', () => {
           attributeName: 'name',
           value: newName
         });
-        context.dispatchSuccessAction = () => {
-          store.dispatch(UserStoreActions.updateUserSuccess({ user: userWithUpdatedSlug }));
-        };
+        context.successAction = UserStoreActions.updateUserSuccess({ user: userWithUpdatedSlug });
       });
 
       EntityUpdateComponentBehaviour.sharedBehaviour(context);
@@ -145,7 +141,7 @@ describe('UserProfileComponent', () => {
     describe('when updating email', () => {
       beforeEach(() => {
         const newValue = faker.internet.email();
-        context.modalReturnValue = { result: Promise.resolve(newValue) };
+        context.modalReturnValue = newValue;
         context.updateEntity = () => {
           component.updateEmail();
         };
@@ -165,7 +161,7 @@ describe('UserProfileComponent', () => {
           currentPassword: faker.lorem.word(),
           newPassword: faker.lorem.word()
         };
-        context.modalReturnValue = { result: Promise.resolve(newValue) };
+        context.modalReturnValue = newValue;
         context.updateEntity = () => {
           component.updatePassword();
         };
@@ -182,7 +178,7 @@ describe('UserProfileComponent', () => {
     describe('when updating avatar URL', () => {
       beforeEach(() => {
         const newValue = faker.internet.url();
-        context.modalReturnValue = { result: Promise.resolve(newValue) };
+        context.modalReturnValue = newValue;
         context.updateEntity = () => {
           component.updateAvatarUrl();
         };

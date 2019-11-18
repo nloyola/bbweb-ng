@@ -194,15 +194,13 @@ describe('ParticipantSummaryComponent', () => {
           dispatchEntities(entities);
         };
         context.componentValidateInitialization = () => undefined;
-        context.dispatchSuccessAction = () => {
-          store.dispatch(ParticipantStoreActions.updateParticipantSuccess({ participant }));
-        };
+        context.successAction = ParticipantStoreActions.updateParticipantSuccess({ participant });
         context.createExpectedFailureAction = error =>
           ParticipantStoreActions.updateParticipantFailure({ error });
         context.duplicateAttibuteValueError = 'unique id already exists';
 
         const newUniqueId = factory.stringNext();
-        context.modalReturnValue = { result: Promise.resolve(newUniqueId) };
+        context.modalReturnValue = newUniqueId;
         context.updateEntity = () => {
           component.updateUniqueId();
         };
@@ -217,13 +215,9 @@ describe('ParticipantSummaryComponent', () => {
           attributeName: 'uniqueId',
           value: newUniqueId
         });
-        context.dispatchSuccessAction = () => {
-          store.dispatch(
-            ParticipantStoreActions.updateParticipantSuccess({
-              participant: updatedParticipant
-            })
-          );
-        };
+        context.successAction = ParticipantStoreActions.updateParticipantSuccess({
+          participant: updatedParticipant
+        });
       });
 
       EntityUpdateComponentBehaviour.sharedBehaviour(context);
@@ -243,14 +237,12 @@ describe('ParticipantSummaryComponent', () => {
         dispatchEntities(entities);
       };
       context.componentValidateInitialization = () => undefined;
-      context.dispatchSuccessAction = () => {
-        store.dispatch(ParticipantStoreActions.updateParticipantSuccess({ participant }));
-      };
+      context.successAction = ParticipantStoreActions.updateParticipantSuccess({ participant });
       context.createExpectedFailureAction = error =>
         ParticipantStoreActions.updateParticipantFailure({ error });
       context.duplicateAttibuteValueError = undefined;
 
-      context.modalReturnValue = { result: Promise.resolve(annotation) };
+      context.modalReturnValue = annotation;
       context.updateEntity = () => {
         component.updateAnnotation(annotation);
       };
@@ -263,9 +255,9 @@ describe('ParticipantSummaryComponent', () => {
         attributeName: 'addOrUpdateAnnotation',
         value: annotation.serverAnnotation()
       });
-      context.dispatchSuccessAction = () => {
-        store.dispatch(ParticipantStoreActions.updateParticipantSuccess({ participant: updatedParticipant }));
-      };
+      context.successAction = ParticipantStoreActions.updateParticipantSuccess({
+        participant: updatedParticipant
+      });
     });
 
     EntityUpdateComponentBehaviour.sharedBehaviour(context);

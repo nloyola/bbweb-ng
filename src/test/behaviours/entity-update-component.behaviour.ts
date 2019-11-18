@@ -6,38 +6,34 @@ import { TestUtils } from '@test/utils';
 
 export namespace EntityUpdateComponentBehaviour {
   export interface Context<T> {
-    fixture: ComponentFixture<T>;
-    componentInitialize: () => void;
-    componentValidateInitialization: () => void;
-    updateEntity: () => void;
-    attributeName: string;
+    fixture?: ComponentFixture<T>;
+    componentInitialize?: () => void;
+    componentValidateInitialization?: () => void;
+    updateEntity?: () => void;
+    attributeName?: string;
 
     // its possible the component uses a modal to get confirmation from the user to do the update,
     // this value would contain the value returned from the modal
-    modalReturnValue: any;
+    modalReturnValue?: any;
 
-    duplicateAttibuteValueError: string;
-    dispatchSuccessAction: () => void;
-    expectedSuccessAction: Action;
-    createExpectedFailureAction: (error: any) => Action;
+    duplicateAttibuteValueError?: string;
+    successAction?: Action;
+    expectedSuccessAction?: Action;
+    createExpectedFailureAction?: (error: any) => Action;
   }
 
   export function sharedBehaviour<T>(context: Context<T>) {
     describe('(shared behaviour)', () => {
       let store: Store<RootStoreState.State>;
-      let modalService: NgbModal;
       let storeListener: jest.MockInstance<void, any[]>;
-      let modalListener: jest.MockInstance<NgbModalRef, any>;
       let notificationShowListener: jest.MockInstance<void, any[]>;
       let notificationShowErrorListener: jest.MockInstance<void, any[]>;
 
       beforeEach(() => {
         store = TestBed.get(Store);
-        modalService = TestBed.get(NgbModal);
+        TestUtils.modalOpenListener(context.modalReturnValue);
 
-        storeListener = jest.spyOn(store, 'dispatch');
-        modalListener = jest.spyOn(modalService, 'open');
-        modalListener.mockReturnValue(context.modalReturnValue);
+        storeListener = TestUtils.storeDispatchListener();
         notificationShowListener = TestUtils.notificationShowListener();
         notificationShowErrorListener = TestUtils.notificationShowErrorListener();
       });
@@ -62,7 +58,7 @@ export namespace EntityUpdateComponentBehaviour {
 
         it('informs the user the change was successful', fakeAsync(() => {
           testCommon();
-          context.dispatchSuccessAction();
+          store.dispatch(context.successAction);
           flush();
           context.fixture.detectChanges();
           expect(notificationShowListener.mock.calls.length).toBe(1);

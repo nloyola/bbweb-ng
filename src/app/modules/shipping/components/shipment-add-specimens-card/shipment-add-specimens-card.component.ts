@@ -4,7 +4,6 @@ import { Shipment } from '@app/domain/shipments';
 import { RootStoreState, ShipmentStoreSelectors } from '@app/root-store';
 import { faVial } from '@fortawesome/free-solid-svg-icons';
 import { select, Store } from '@ngrx/store';
-import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject } from 'rxjs';
 import { filter, map, shareReplay, takeUntil, tap } from 'rxjs/operators';
 
@@ -22,7 +21,6 @@ export class ShipmentAddSpecimensCardComponent implements OnInit, OnDestroy {
   faVial = faVial;
   shipmentLoading = false;
   shipment$: Observable<Shipment>;
-  specimenCount: number;
   form: FormGroup;
   inputInventoryIds = [];
   existingInventoryIds = [];
@@ -32,7 +30,6 @@ export class ShipmentAddSpecimensCardComponent implements OnInit, OnDestroy {
   constructor(private store$: Store<RootStoreState.State>, private formBuilder: FormBuilder) {}
 
   ngOnInit() {
-    this.specimenCount = this.shipment.specimenCount;
     this.form = this.formBuilder.group({
       inventoryIds: ['', [Validators.required]]
     });
@@ -65,9 +62,6 @@ export class ShipmentAddSpecimensCardComponent implements OnInit, OnDestroy {
       )
       .subscribe(shipment => {
         this.shipment = shipment;
-        if (this.shipment.specimenCount > this.specimenCount) {
-          this.specimenCount = this.shipment.specimenCount;
-        }
       });
 
     this.store$

@@ -56,7 +56,7 @@ export class ShipmentAddItemsComponent extends ShipmentViewer {
   }
 
   removeShipment() {
-    if (this.shipment.specimenCount > 0) {
+    if (this.shipment.hasSpecimens()) {
       this.modalService.open(ModalShipmentHasSpecimensComponent, { size: 'lg' });
       return;
     }
@@ -76,7 +76,7 @@ export class ShipmentAddItemsComponent extends ShipmentViewer {
   }
 
   tagAsPacked() {
-    if (this.shipment.specimenCount <= 0) {
+    if (!this.shipment.hasSpecimens()) {
       const modalRef = this.modalService.open(ModalShipmentHasNoSpecimensComponent, { size: 'lg' });
       modalRef.componentInstance.transition = ShipmentStateTransision.Packed;
       return;
@@ -102,7 +102,7 @@ export class ShipmentAddItemsComponent extends ShipmentViewer {
   }
 
   tagAsSent() {
-    if (this.shipment.specimenCount <= 0) {
+    if (!this.shipment.hasSpecimens()) {
       const modalRef = this.modalService.open(ModalShipmentHasNoSpecimensComponent, { size: 'lg' });
       modalRef.componentInstance.transition = ShipmentStateTransision.SkipToSent;
       return;
@@ -173,7 +173,6 @@ export class ShipmentAddItemsComponent extends ShipmentViewer {
 
   protected initShipmentErrorSelector() {
     this.error$.subscribe(error => {
-      debugger;
       if (
         error.actionType === ShipmentStoreActions.addSpecimensFailure.type ||
         error.actionType === ShipmentStoreActions.removeSpecimenFailure.type

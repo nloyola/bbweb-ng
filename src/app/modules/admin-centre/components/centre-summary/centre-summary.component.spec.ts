@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA, NgZone } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -15,6 +15,7 @@ import { Factory } from '@test/factory';
 import * as faker from 'faker';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { CentreSummaryComponent } from './centre-summary.component';
+import { TestUtils } from '@test/utils';
 
 describe('CentreSummaryComponent', () => {
   let component: CentreSummaryComponent;
@@ -115,9 +116,7 @@ describe('CentreSummaryComponent', () => {
         store.dispatch(CentreStoreActions.getCentreSuccess({ centre }));
       };
       context.componentValidateInitialization = () => undefined;
-      context.dispatchSuccessAction = () => {
-        store.dispatch(CentreStoreActions.updateCentreSuccess({ centre }));
-      };
+      context.successAction = CentreStoreActions.updateCentreSuccess({ centre });
       context.createExpectedFailureAction = error => CentreStoreActions.updateCentreFailure({ error });
       context.duplicateAttibuteValueError = 'name already used';
     });
@@ -125,7 +124,7 @@ describe('CentreSummaryComponent', () => {
     describe('when updating name', () => {
       beforeEach(() => {
         const newName = factory.stringNext();
-        context.modalReturnValue = { result: Promise.resolve(newName) };
+        context.modalReturnValue = newName;
         context.updateEntity = () => {
           component.updateName();
         };
@@ -141,9 +140,7 @@ describe('CentreSummaryComponent', () => {
           attributeName: 'name',
           value: newName
         });
-        context.dispatchSuccessAction = () => {
-          store.dispatch(CentreStoreActions.updateCentreSuccess({ centre: centreWithUpdatedSlug }));
-        };
+        context.successAction = CentreStoreActions.updateCentreSuccess({ centre: centreWithUpdatedSlug });
       });
 
       EntityUpdateComponentBehaviour.sharedBehaviour(context);
@@ -152,7 +149,7 @@ describe('CentreSummaryComponent', () => {
     describe('when updating description', () => {
       beforeEach(() => {
         const newValue = faker.lorem.paragraphs();
-        context.modalReturnValue = { result: Promise.resolve(newValue) };
+        context.modalReturnValue = newValue;
         context.updateEntity = () => {
           component.updateDescription();
         };
@@ -200,109 +197,99 @@ describe('CentreSummaryComponent', () => {
     });
   });
 
-  describe('common behaviour', () => {
-    const componentModalFuncs = [
-      (c: CentreSummaryComponent) => c.updateName(),
-      (c: CentreSummaryComponent) => c.updateDescription()
-    ];
+  const testData = [
+    {
+      comonentFunc: () => component.updateName(),
+      attribute: 'name',
+      value: 'test'
+    },
+    {
+      componentFunc: () => component.updateDescription(),
+      attribute: 'description',
+      value: 'test'
+    }
+  ];
 
-    it('functions should open a modal', fakeAsync(() => {
-      const testData = [
-        {
-          componentFunc: c => c.updateName(),
-          attribute: 'name',
-          value: 'test'
-        },
-        {
-          componentFunc: c => c.updateDescription(),
-          attribute: 'description',
-          value: 'test'
-        }
-      ];
-
-      const modalListener = jest.spyOn(modalService, 'open');
-
+  describe.each`
+    methodName             | attributeName    | value
+    ${'updateName'}        | ${'name'}        | ${'test'}
+    ${'updateDescription'} | ${'description'} | ${'test'}
+  `('updating $attributeName', ({ methodName, attributeName, value }) => {
+    it('should open a modal', fakeAsync(() => {
       store.dispatch(CentreStoreActions.getCentreSuccess({ centre }));
       fixture.detectChanges();
 
       const storeListener = jest.spyOn(store, 'dispatch');
-      testData.forEach((testInfo, index) => {
-        modalListener.mockReturnValue({
-          componentInstance: {},
-          result: Promise.resolve(testInfo.value)
-        } as any);
+      const modalListener = TestUtils.modalOpenListener(value);
 
-        testInfo.componentFunc(component);
-        fixture.detectChanges();
-        tick(1000);
+      expect(component[methodName]).toBeFunction();
+      component[methodName]();
+      fixture.detectChanges();
+      flush();
 
-        expect(storeListener.mock.calls.length).toBe(index + 1);
-        expect(storeListener.mock.calls[index][0]).toEqual(
-          CentreStoreActions.updateCentreRequest({
-            centre,
-            attributeName: testInfo.attribute as CentreUpdateAttribute,
-            value: testInfo.value
-          })
-        );
-      });
-      expect(modalListener.mock.calls.length).toBe(componentModalFuncs.length);
+      expect(modalListener.mock.calls.length).toBe(1);
+      expect(storeListener.mock.calls.length).toBe(1);
+      expect(storeListener.mock.calls[0][0]).toEqual(
+        CentreStoreActions.updateCentreRequest({
+          centre,
+          attributeName,
+          value
+        })
+      );
     }));
+  });
 
-    it('functions that should notify the user', fakeAsync(() => {
+  describe.each`
+    methodName             | attributeName    | value
+    ${'updateName'}        | ${'name'}        | ${'test'}
+    ${'updateDescription'} | ${'description'} | ${'test'}
+    ${'disable'}           | ${'state'}       | ${'disable'}
+    ${'enable'}            | ${'state'}       | ${'enable'}
+  `('when $attributeName is updated', ({ methodName, attributeName, value }) => {
+    it('should notify the user when completed', fakeAsync(() => {
       const toastr = TestBed.get(ToastrService);
 
       jest.spyOn(toastr, 'success').mockReturnValue(null);
       jest.spyOn(store, 'dispatch');
-      jest.spyOn(modalService, 'open').mockReturnValue({
-        componentInstance: {},
-        result: Promise.resolve('test')
-      } as any);
+      TestUtils.modalOpenListener(value);
 
       store.dispatch(CentreStoreActions.getCentreSuccess({ centre }));
       fixture.detectChanges();
 
-      const componentUpdateFuncs = [
-        (c: CentreSummaryComponent) => component.disable(),
-        (c: CentreSummaryComponent) => component.enable()
-      ].concat(componentModalFuncs);
+      expect(component[methodName]).toBeFunction();
+      component[methodName]();
+      fixture.detectChanges();
+      flush();
+      expect(store.dispatch).toHaveBeenCalled();
+      store.dispatch(CentreStoreActions.updateCentreSuccess({ centre }));
+      flush();
 
-      componentUpdateFuncs.forEach(updateFunc => {
-        updateFunc(component);
-        fixture.detectChanges();
-        tick(1000);
-        expect(store.dispatch).toHaveBeenCalled();
-        store.dispatch(CentreStoreActions.updateCentreSuccess({ centre }));
-        tick(1000);
-      });
-
-      tick(1000);
-      expect(toastr.success.mock.calls.length).toBe(componentUpdateFuncs.length);
+      expect(toastr.success.mock.calls.length).toBe(1);
     }));
+  });
 
-    it('functions that change the centre state', fakeAsync(() => {
+  describe.each`
+    methodName   | attributeName | value
+    ${'disable'} | ${'state'}    | ${'disable'}
+    ${'enable'}  | ${'state'}    | ${'enable'}
+  `('when $attributeName is updated', ({ methodName, attributeName, value }) => {
+    it('should change the centre state', fakeAsync(() => {
       store.dispatch(CentreStoreActions.getCentreSuccess({ centre }));
       fixture.detectChanges();
-
-      const testData = [
-        { componentFunc: c => c.disable(), value: 'disable' },
-        { componentFunc: c => c.enable(), value: 'enable' }
-      ];
 
       const storeListener = jest.spyOn(store, 'dispatch');
-      testData.forEach((testInfo, index) => {
-        testInfo.componentFunc(component);
-        fixture.detectChanges();
-        tick(1000);
+      component[methodName]();
+      fixture.detectChanges();
+      flush();
 
-        expect(storeListener.mock.calls.length).toBe(index + 1);
-        expect(storeListener.mock.calls[index][0]).toEqual(
-          CentreStoreActions.updateCentreRequest({
-            centre,
-            attributeName: 'state',
-            value: testInfo.value
-          })
-        );
-      });
+      expect(storeListener.mock.calls.length).toBe(1);
+      expect(storeListener.mock.calls[0][0]).toEqual(
+        CentreStoreActions.updateCentreRequest({
+          centre,
+          attributeName: 'state',
+          value
+        })
+      );
     }));
   });
 });

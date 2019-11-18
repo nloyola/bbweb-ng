@@ -125,7 +125,7 @@ describe('EventViewComponent', () => {
 
   describe('when updating attributes', () => {
     const context: EntityUpdateComponentBehaviour.Context<EventViewComponent> = {} as any;
-    let event;
+    let event: any;
 
     beforeEach(() => {
       const entities = createEntities();
@@ -135,9 +135,7 @@ describe('EventViewComponent', () => {
         dispatchEntities(entities);
       };
       context.componentValidateInitialization = () => undefined;
-      context.dispatchSuccessAction = () => {
-        store.dispatch(EventStoreActions.updateEventSuccess({ event }));
-      };
+      context.successAction = EventStoreActions.updateEventSuccess({ event });
       context.createExpectedFailureAction = error => EventStoreActions.updateEventFailure({ error });
       context.duplicateAttibuteValueError = 'visit number already exists';
     });
@@ -145,7 +143,7 @@ describe('EventViewComponent', () => {
     describe('when updating visit number', () => {
       beforeEach(() => {
         const newVisitNumber = 999;
-        context.modalReturnValue = { result: Promise.resolve(newVisitNumber) };
+        context.modalReturnValue = newVisitNumber;
         context.updateEntity = () => {
           component.updateVisitNumber();
         };
@@ -160,9 +158,7 @@ describe('EventViewComponent', () => {
           attributeName: 'visitNumber',
           value: newVisitNumber
         });
-        context.dispatchSuccessAction = () => {
-          store.dispatch(EventStoreActions.updateEventSuccess({ event: updatedEvent }));
-        };
+        context.successAction = EventStoreActions.updateEventSuccess({ event: updatedEvent });
       });
 
       EntityUpdateComponentBehaviour.sharedBehaviour(context);
@@ -171,7 +167,7 @@ describe('EventViewComponent', () => {
     describe('when updating time completed', () => {
       beforeEach(() => {
         const newTimeCompleted = faker.date.recent(10);
-        context.modalReturnValue = { result: Promise.resolve(newTimeCompleted) };
+        context.modalReturnValue = newTimeCompleted;
         context.updateEntity = () => {
           component.updateTimeCompleted();
         };
@@ -186,9 +182,7 @@ describe('EventViewComponent', () => {
           attributeName: 'timeCompleted',
           value: newTimeCompleted
         });
-        context.dispatchSuccessAction = () => {
-          store.dispatch(EventStoreActions.updateEventSuccess({ event: updatedEvent }));
-        };
+        context.successAction = EventStoreActions.updateEventSuccess({ event: updatedEvent });
       });
 
       EntityUpdateComponentBehaviour.sharedBehaviour(context);
@@ -210,13 +204,11 @@ describe('EventViewComponent', () => {
         dispatchEntities(entities);
       };
       context.componentValidateInitialization = () => undefined;
-      context.dispatchSuccessAction = () => {
-        store.dispatch(EventStoreActions.updateEventSuccess({ event }));
-      };
+      context.successAction = EventStoreActions.updateEventSuccess({ event });
       context.createExpectedFailureAction = error => EventStoreActions.updateEventFailure({ error });
       context.duplicateAttibuteValueError = undefined;
 
-      context.modalReturnValue = { result: Promise.resolve(annotation) };
+      context.modalReturnValue = annotation;
       context.updateEntity = () => {
         component.updateAnnotation(annotation);
       };
@@ -229,9 +221,7 @@ describe('EventViewComponent', () => {
         attributeName: 'addOrUpdateAnnotation',
         value: annotation.serverAnnotation()
       });
-      context.dispatchSuccessAction = () => {
-        store.dispatch(EventStoreActions.updateEventSuccess({ event: updatedEvent }));
-      };
+      context.successAction = EventStoreActions.updateEventSuccess({ event: updatedEvent });
     });
 
     EntityUpdateComponentBehaviour.sharedBehaviour(context);
@@ -291,8 +281,6 @@ describe('EventViewComponent', () => {
 
     it('user is informed event cannot be removed when it has specimens', fakeAsync(() => {
       const entities = createEntities();
-      const { event } = entities;
-
       dispatchEntities(entities);
       fixture.detectChanges();
 

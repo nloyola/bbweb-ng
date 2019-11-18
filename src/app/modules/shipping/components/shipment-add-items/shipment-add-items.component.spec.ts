@@ -144,16 +144,13 @@ describe('ShipmentAddItemsComponent', () => {
   });
 
   describe('when tagging shipments', () => {
-    const context: EntityUpdateComponentBehaviour.Context<ShipmentAddItemsComponent> = {} as any;
+    const context: EntityUpdateComponentBehaviour.Context<ShipmentAddItemsComponent> = {};
 
     beforeEach(() => {
       context.fixture = fixture;
       context.componentValidateInitialization = () => undefined;
-      context.dispatchSuccessAction = () => {
-        store.dispatch(ShipmentStoreActions.updateShipmentSuccess({ shipment }));
-      };
       context.createExpectedFailureAction = error => ShipmentStoreActions.updateShipmentFailure({ error });
-      context.duplicateAttibuteValueError = 'xxxx';
+      context.duplicateAttibuteValueError = undefined;
     });
 
     describe.each`
@@ -169,10 +166,8 @@ describe('ShipmentAddItemsComponent', () => {
             store.dispatch(ShipmentStoreActions.getShipmentSuccess({ shipment }));
             initializeComponent(shipment);
           };
-          context.modalReturnValue = {
-            componentInstance: {},
-            result: Promise.resolve(modalValue)
-          };
+          context.successAction = ShipmentStoreActions.updateShipmentSuccess({ shipment });
+          context.modalReturnValue = modalValue;
           context.updateEntity = () => {
             expect(component[methodName]).toBeFunction();
             component[methodName]();
@@ -190,9 +185,6 @@ describe('ShipmentAddItemsComponent', () => {
             attributeName: 'state',
             value
           });
-          context.dispatchSuccessAction = () => {
-            store.dispatch(ShipmentStoreActions.updateShipmentSuccess({ shipment }));
-          };
         });
 
         EntityUpdateComponentBehaviour.sharedBehaviour(context);

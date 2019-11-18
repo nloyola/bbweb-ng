@@ -1,7 +1,7 @@
 import { fakeAsync, flush, TestBed } from '@angular/core/testing';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
+import { TestUtils } from '@test/utils';
 
 export namespace EntityWithSubEntityBehaviour {
   export interface BaseContext {
@@ -24,17 +24,15 @@ export namespace EntityWithSubEntityBehaviour {
   export function addSharedBehaviour(context: AddContext) {
     describe('(shared behaviour)', () => {
       let store: Store<{}>;
-      let modalService: NgbModal;
       let toastr: ToastrService;
       let storeListener: any;
 
       beforeEach(() => {
         store = TestBed.get(Store);
-        modalService = TestBed.get(NgbModal);
         toastr = TestBed.get(ToastrService);
 
         storeListener = jest.spyOn(store, 'dispatch');
-        jest.spyOn(modalService, 'open').mockReturnValue(context.modalReturnValue);
+        TestUtils.modalOpenListener(context.modalReturnValue);
         jest.spyOn(toastr, 'success').mockReturnValue(null);
         jest.spyOn(toastr, 'error').mockReturnValue(null);
       });
@@ -89,17 +87,15 @@ export namespace EntityWithSubEntityBehaviour {
   export function removeSharedBehaviour(context: RemoveContext) {
     describe('(shared behaviour)', () => {
       let store: Store<{}>;
-      let modalService: NgbModal;
       let toastr: ToastrService;
       let storeListener: any;
 
       beforeEach(() => {
         store = TestBed.get(Store);
-        modalService = TestBed.get(NgbModal);
         toastr = TestBed.get(ToastrService);
 
         storeListener = jest.spyOn(store, 'dispatch');
-        jest.spyOn(modalService, 'open').mockReturnValue(context.modalReturnValue);
+        TestUtils.modalOpenListener(context.modalReturnValue);
         jest.spyOn(toastr, 'success').mockReturnValue(null);
         jest.spyOn(toastr, 'error').mockReturnValue(null);
       });

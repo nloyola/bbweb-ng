@@ -1,11 +1,10 @@
 import { Component, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ShipmentStateTransision, NotificationService } from '@app/core/services';
+import { NotificationService, ShipmentStateTransision } from '@app/core/services';
 import { BlockingProgressService } from '@app/core/services/blocking-progress.service';
 import { RootStoreState, ShipmentStoreActions } from '@app/root-store';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Store } from '@ngrx/store';
-import { ToastrService } from 'ngx-toastr';
 import { ShipmentViewer } from '../shipment-viewer';
 
 @Component({

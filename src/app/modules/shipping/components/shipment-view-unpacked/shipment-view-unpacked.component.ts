@@ -60,7 +60,7 @@ export class ShipmentViewUnpackedComponent extends ShipmentViewer {
   }
 
   backToReceived() {
-    if (this.shipment.specimenCount !== this.shipment.presentSpecimenCount) {
+    if (this.shipment.hasUnpackedSpecimens()) {
       this.modalService.open(this.containsUnpackedSpecimensModal, { size: 'lg' });
       return;
     }
@@ -89,6 +89,7 @@ export class ShipmentViewUnpackedComponent extends ShipmentViewer {
   }
 
   tagAsCompleted() {
+    debugger;
     if (this.shipment.presentSpecimenCount > 0) {
       this.modalService.open(this.containsSpecimensModal, { size: 'lg' });
       return;

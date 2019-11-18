@@ -113,9 +113,7 @@ describe('StudySummaryComponent', () => {
       context.fixture = fixture;
       context.componentInitialize = () => dispatchSetupActions();
       context.componentValidateInitialization = () => undefined;
-      context.dispatchSuccessAction = () => {
-        store.dispatch(StudyStoreActions.updateStudySuccess({ study }));
-      };
+      context.successAction = StudyStoreActions.updateStudySuccess({ study });
       context.createExpectedFailureAction = error => StudyStoreActions.updateStudyFailure({ error });
       context.duplicateAttibuteValueError = 'name already used';
     });
@@ -123,7 +121,7 @@ describe('StudySummaryComponent', () => {
     describe('when updating name', () => {
       beforeEach(() => {
         const newName = factory.stringNext();
-        context.modalReturnValue = { result: Promise.resolve(newName) };
+        context.modalReturnValue = newName;
         context.updateEntity = () => {
           component.updateName();
         };
@@ -139,9 +137,7 @@ describe('StudySummaryComponent', () => {
           attributeName: 'name',
           value: newName
         });
-        context.dispatchSuccessAction = () => {
-          store.dispatch(StudyStoreActions.updateStudySuccess({ study: studyWithUpdatedSlug }));
-        };
+        context.successAction = StudyStoreActions.updateStudySuccess({ study: studyWithUpdatedSlug });
       });
 
       EntityUpdateComponentBehaviour.sharedBehaviour(context);
@@ -150,7 +146,7 @@ describe('StudySummaryComponent', () => {
     describe('when updating description', () => {
       beforeEach(() => {
         const newValue = faker.lorem.paragraphs();
-        context.modalReturnValue = { result: Promise.resolve(newValue) };
+        context.modalReturnValue = newValue;
         context.updateEntity = () => {
           component.updateDescription();
         };

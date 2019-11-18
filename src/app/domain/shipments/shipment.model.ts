@@ -114,6 +114,10 @@ export class Shipment extends ConcurrencySafeEntity {
     return this.specimenCount > 0;
   }
 
+  hasUnpackedSpecimens() {
+    return this.specimenCount !== this.presentSpecimenCount;
+  }
+
   deserialize(input: IShipment): this {
     const { state, courierName, trackingNumber, specimenCount, presentSpecimenCount } = input;
     Object.assign(this, { state, courierName, trackingNumber, specimenCount, presentSpecimenCount });

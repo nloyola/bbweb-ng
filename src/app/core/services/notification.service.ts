@@ -17,6 +17,7 @@ export class NotificationService {
   constructor(private toastr: ToastrService) {}
 
   add(message: string, title?: string): void {
+    // console.log('add', message);
     this.notificationStack.push({ message, title });
   }
 
@@ -47,6 +48,7 @@ export class NotificationService {
   }
 
   notificationPending(): boolean {
+    // console.log('notificationPending', !this.notificationStack.isEmpty());
     return !this.notificationStack.isEmpty();
   }
 }

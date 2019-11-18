@@ -61,9 +61,7 @@ describe('ShipmentInformationCardComponent', () => {
         store.dispatch(ShipmentStoreActions.getShipmentSuccess({ shipment }));
       };
       context.componentValidateInitialization = () => undefined;
-      context.dispatchSuccessAction = () => {
-        store.dispatch(ShipmentStoreActions.updateShipmentSuccess({ shipment }));
-      };
+      context.successAction = ShipmentStoreActions.updateShipmentSuccess({ shipment });
       context.createExpectedFailureAction = error => ShipmentStoreActions.updateShipmentFailure({ error });
       context.duplicateAttibuteValueError =
         'EntityCriteriaError: shipment with tracking number already exists';
@@ -72,7 +70,7 @@ describe('ShipmentInformationCardComponent', () => {
     describe('when updating courier name', () => {
       beforeEach(() => {
         const newName = factory.stringNext();
-        context.modalReturnValue = { result: Promise.resolve(newName) };
+        context.modalReturnValue = newName;
         context.updateEntity = () => {
           component.updateCourier();
         };
@@ -82,9 +80,7 @@ describe('ShipmentInformationCardComponent', () => {
           attributeName: 'courierName',
           value: newName
         });
-        context.dispatchSuccessAction = () => {
-          store.dispatch(ShipmentStoreActions.updateShipmentSuccess({ shipment }));
-        };
+        context.successAction = ShipmentStoreActions.updateShipmentSuccess({ shipment });
       });
 
       EntityUpdateComponentBehaviour.sharedBehaviour(context);
@@ -93,7 +89,7 @@ describe('ShipmentInformationCardComponent', () => {
     describe('when updating tracking number', () => {
       beforeEach(() => {
         const newTrackingNumber = factory.stringNext();
-        context.modalReturnValue = { result: Promise.resolve(newTrackingNumber) };
+        context.modalReturnValue = newTrackingNumber;
         context.updateEntity = () => {
           component.updateTrackingNumber();
         };
@@ -103,9 +99,7 @@ describe('ShipmentInformationCardComponent', () => {
           attributeName: 'trackingNumber',
           value: newTrackingNumber
         });
-        context.dispatchSuccessAction = () => {
-          store.dispatch(ShipmentStoreActions.updateShipmentSuccess({ shipment }));
-        };
+        context.successAction = ShipmentStoreActions.updateShipmentSuccess({ shipment });
       });
 
       EntityUpdateComponentBehaviour.sharedBehaviour(context);
@@ -119,7 +113,7 @@ describe('ShipmentInformationCardComponent', () => {
           })
         );
         const newLocationInfo = new CentreLocationInfo().deserialize(factory.centreLocationInfo(centre));
-        context.modalReturnValue = { result: Promise.resolve(newLocationInfo) };
+        context.modalReturnValue = newLocationInfo;
         context.updateEntity = () => {
           component.updateOrigin();
         };
@@ -129,9 +123,7 @@ describe('ShipmentInformationCardComponent', () => {
           attributeName: 'origin',
           value: newLocationInfo
         });
-        context.dispatchSuccessAction = () => {
-          store.dispatch(ShipmentStoreActions.updateShipmentSuccess({ shipment }));
-        };
+        context.successAction = ShipmentStoreActions.updateShipmentSuccess({ shipment });
       });
 
       EntityUpdateComponentBehaviour.sharedBehaviour(context);
@@ -145,7 +137,7 @@ describe('ShipmentInformationCardComponent', () => {
           })
         );
         const newLocationInfo = new CentreLocationInfo().deserialize(factory.centreLocationInfo(centre));
-        context.modalReturnValue = { result: Promise.resolve(newLocationInfo) };
+        context.modalReturnValue = newLocationInfo;
         context.updateEntity = () => {
           component.updateDestination();
         };
@@ -155,9 +147,7 @@ describe('ShipmentInformationCardComponent', () => {
           attributeName: 'destination',
           value: newLocationInfo
         });
-        context.dispatchSuccessAction = () => {
-          store.dispatch(ShipmentStoreActions.updateShipmentSuccess({ shipment }));
-        };
+        context.successAction = ShipmentStoreActions.updateShipmentSuccess({ shipment });
       });
 
       EntityUpdateComponentBehaviour.sharedBehaviour(context);

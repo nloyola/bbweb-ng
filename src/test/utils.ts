@@ -20,38 +20,38 @@ export namespace TestUtils {
     return result;
   }
 
-  export function notificationAddListener() {
+  export function notificationAddListener(): jest.MockInstance<void, any[]> {
     return jest.spyOn(TestBed.get(NotificationService), 'add').mockReturnValue(null);
   }
 
-  export function notificationShowListener() {
+  export function notificationShowListener(): jest.MockInstance<void, any[]> {
     return jest.spyOn(TestBed.get(NotificationService), 'show').mockReturnValue(null);
   }
 
-  export function notificationShowErrorListener() {
+  export function notificationShowErrorListener(): jest.MockInstance<void, any[]> {
     return jest.spyOn(TestBed.get(NotificationService), 'showError').mockReturnValue(null);
   }
 
-  export function routerNavigateListener() {
+  export function routerNavigateListener(): jest.MockInstance<void, any[]> {
     return jest.spyOn(TestBed.get(Router), 'navigate').mockResolvedValue(true);
   }
 
-  export function storeDispatchListener() {
+  export function storeDispatchListener(): jest.MockInstance<void, any[]> {
     return jest.spyOn(TestBed.get(Store), 'dispatch');
   }
 
-  export function modalOpenListener() {
+  export function modalOpenListener(result: any = 'OK'): jest.MockInstance<void, any[]> {
     return jest.spyOn(TestBed.get(NgbModal), 'open').mockReturnValue({
       componentInstance: {},
-      result: Promise.resolve('OK')
+      result: Promise.resolve(result)
     });
   }
 
-  export function blockingProgressShowListener() {
+  export function blockingProgressShowListener(): jest.MockInstance<void, any[]> {
     return jest.spyOn(TestBed.get(BlockingProgressService), 'show');
   }
 
-  export function blockingProgressHideListener() {
+  export function blockingProgressHideListener(): jest.MockInstance<void, any[]> {
     return jest.spyOn(TestBed.get(BlockingProgressService), 'hide');
   }
 }

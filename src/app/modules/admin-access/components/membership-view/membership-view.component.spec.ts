@@ -112,9 +112,7 @@ describe('MembershipViewComponent', () => {
         store.dispatch(MembershipStoreActions.getMembershipSuccess({ membership }));
       };
       context.componentValidateInitialization = () => undefined;
-      context.dispatchSuccessAction = () => {
-        store.dispatch(MembershipStoreActions.updateMembershipSuccess({ membership }));
-      };
+      context.successAction = MembershipStoreActions.updateMembershipSuccess({ membership });
       context.createExpectedFailureAction = error =>
         MembershipStoreActions.updateMembershipFailure({ error });
       context.duplicateAttibuteValueError = 'name already used';
@@ -123,7 +121,7 @@ describe('MembershipViewComponent', () => {
     describe('when updating name', () => {
       beforeEach(() => {
         const newName = factory.stringNext();
-        context.modalReturnValue = { result: Promise.resolve(newName) };
+        context.modalReturnValue = newName;
         context.updateEntity = () => {
           component.updateName();
         };
@@ -139,13 +137,9 @@ describe('MembershipViewComponent', () => {
           attributeName: 'name',
           value: newName
         });
-        context.dispatchSuccessAction = () => {
-          store.dispatch(
-            MembershipStoreActions.updateMembershipSuccess({
-              membership: membershipWithUpdatedSlug
-            })
-          );
-        };
+        context.successAction = MembershipStoreActions.updateMembershipSuccess({
+          membership: membershipWithUpdatedSlug
+        });
       });
 
       EntityUpdateComponentBehaviour.sharedBehaviour(context);
@@ -154,7 +148,7 @@ describe('MembershipViewComponent', () => {
     describe('when updating description', () => {
       beforeEach(() => {
         const newValue = faker.lorem.paragraphs();
-        context.modalReturnValue = { result: Promise.resolve(newValue) };
+        context.modalReturnValue = newValue;
         context.updateEntity = () => {
           component.updateDescription();
         };

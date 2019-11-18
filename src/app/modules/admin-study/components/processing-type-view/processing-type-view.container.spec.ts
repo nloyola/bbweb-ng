@@ -130,13 +130,9 @@ describe('ProcessingTypeViewContainerComponent', () => {
         store.dispatch(new ProcessingTypeStoreActions.GetProcessingTypeSuccess({ processingType }));
       };
       context.componentValidateInitialization = () => undefined;
-      context.dispatchSuccessAction = () => {
-        store.dispatch(
-          new ProcessingTypeStoreActions.UpdateProcessingTypeSuccess({
-            processingType
-          })
-        );
-      };
+      context.successAction = new ProcessingTypeStoreActions.UpdateProcessingTypeSuccess({
+        processingType
+      });
       context.createExpectedFailureAction = error =>
         new ProcessingTypeStoreActions.UpdateProcessingTypeFailure({ error });
       context.duplicateAttibuteValueError = 'already exists';
@@ -145,7 +141,7 @@ describe('ProcessingTypeViewContainerComponent', () => {
     describe('when updating name', () => {
       beforeEach(() => {
         const newName = factory.stringNext();
-        context.modalReturnValue = { result: Promise.resolve(newName) };
+        context.modalReturnValue = newName;
         context.updateEntity = () => {
           component.updateName();
         };
@@ -161,13 +157,9 @@ describe('ProcessingTypeViewContainerComponent', () => {
           attributeName: 'name',
           value: newName
         });
-        context.dispatchSuccessAction = () => {
-          store.dispatch(
-            new ProcessingTypeStoreActions.UpdateProcessingTypeSuccess({
-              processingType: processingTypeWithUpdatedSlug
-            })
-          );
-        };
+        context.successAction = new ProcessingTypeStoreActions.UpdateProcessingTypeSuccess({
+          processingType: processingTypeWithUpdatedSlug
+        });
       });
 
       EntityUpdateComponentBehaviour.sharedBehaviour(context);
@@ -176,7 +168,7 @@ describe('ProcessingTypeViewContainerComponent', () => {
     describe('when updating description', () => {
       beforeEach(() => {
         const newValue = faker.lorem.paragraphs();
-        context.modalReturnValue = { result: Promise.resolve(newValue) };
+        context.modalReturnValue = newValue;
         context.updateEntity = () => {
           component.updateDescription();
         };
@@ -194,7 +186,7 @@ describe('ProcessingTypeViewContainerComponent', () => {
     describe('when updating enabled', () => {
       beforeEach(() => {
         const newValue = true;
-        context.modalReturnValue = { result: Promise.resolve(newValue) };
+        context.modalReturnValue = newValue;
         context.updateEntity = () => {
           component.updateEnabled();
         };

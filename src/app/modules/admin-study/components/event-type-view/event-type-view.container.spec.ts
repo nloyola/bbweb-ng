@@ -135,9 +135,7 @@ describe('EventTypeViewContainer', () => {
         store.dispatch(EventTypeStoreActions.getEventTypeSuccess({ eventType }));
       };
       context.componentValidateInitialization = () => undefined;
-      context.dispatchSuccessAction = () => {
-        store.dispatch(EventTypeStoreActions.updateEventTypeSuccess({ eventType }));
-      };
+      context.successAction = EventTypeStoreActions.updateEventTypeSuccess({ eventType });
       context.createExpectedFailureAction = error => EventTypeStoreActions.updateEventTypeFailure({ error });
       context.duplicateAttibuteValueError = 'already exists';
     });
@@ -145,7 +143,7 @@ describe('EventTypeViewContainer', () => {
     describe('when updating name', () => {
       beforeEach(() => {
         const newName = factory.stringNext();
-        context.modalReturnValue = { result: Promise.resolve(newName) };
+        context.modalReturnValue = newName;
         context.updateEntity = () => {
           component.updateName();
         };
@@ -161,13 +159,9 @@ describe('EventTypeViewContainer', () => {
           attributeName: 'name',
           value: newName
         });
-        context.dispatchSuccessAction = () => {
-          store.dispatch(
-            EventTypeStoreActions.updateEventTypeSuccess({
-              eventType: eventTypeWithUpdatedSlug
-            })
-          );
-        };
+        context.successAction = EventTypeStoreActions.updateEventTypeSuccess({
+          eventType: eventTypeWithUpdatedSlug
+        });
       });
 
       EntityUpdateComponentBehaviour.sharedBehaviour(context);
@@ -176,7 +170,7 @@ describe('EventTypeViewContainer', () => {
     describe('when updating description', () => {
       beforeEach(() => {
         const newValue = faker.lorem.paragraphs();
-        context.modalReturnValue = { result: Promise.resolve(newValue) };
+        context.modalReturnValue = newValue;
         context.updateEntity = () => {
           component.updateDescription();
         };
@@ -194,7 +188,7 @@ describe('EventTypeViewContainer', () => {
     describe('when updating recurring', () => {
       beforeEach(() => {
         const newValue = true;
-        context.modalReturnValue = { result: Promise.resolve(newValue) };
+        context.modalReturnValue = newValue;
         context.updateEntity = () => {
           component.updateRecurring();
         };
