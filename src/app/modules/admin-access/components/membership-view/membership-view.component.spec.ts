@@ -18,6 +18,7 @@ import { Factory } from '@test/factory';
 import * as faker from 'faker';
 import { ToastrModule } from 'ngx-toastr';
 import { MembershipViewComponent } from './membership-view.component';
+import { DropdownMenuSelectableItem } from '@app/shared/components/dropdown-menu/dropdown-menu.component';
 
 describe('MembershipViewComponent', () => {
   let component: MembershipViewComponent;
@@ -486,5 +487,23 @@ describe('MembershipViewComponent', () => {
       expect(routerListener.mock.calls.length).toBe(1);
       expect(routerListener.mock.calls[0][0]).toEqual(['..']);
     }));
+  });
+
+  it.each`
+    label                   | methodName
+    ${'Update Name'}        | ${'updateName'}
+    ${'Update Description'} | ${'updateDescription'}
+    ${'Remove Membership'}  | ${'removeMembership'}
+  `('menu item with $label is defined and calls correct method', ({ label, methodName }) => {
+    fixture.detectChanges();
+    const menuItem = component.menuItems.find(item => item.kind === 'selectable' && item.label === label);
+    const selectableMenuItem = menuItem as DropdownMenuSelectableItem;
+    expect(selectableMenuItem).toBeTruthy();
+    expect(selectableMenuItem.onSelected).toBeFunction();
+
+    expect(component[methodName]).toBeFunction();
+    component[methodName] = jest.fn();
+    selectableMenuItem.onSelected();
+    expect(component[methodName].mock.calls.length).toBe(1);
   });
 });
