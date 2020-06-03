@@ -4,7 +4,7 @@
     <div class="form-group row">
       <label for="email" class="col-md-3 col-form-label" i18n>{{ label }}</label>
       <div class="col-md-8">
-        <input class="form-control" formControlName="input" ngbAutoFocus />
+        <input type="email" class="form-control" formControlName="input" ngbAutoFocus />
       </div>
       <div class="col-md-8 offset-3" *ngIf="input.invalid && input.touched">
         <div class="text-danger small" *ngIf="input.errors.required" i18n>

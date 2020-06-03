@@ -6,6 +6,9 @@ export class DateTimeAnnotation extends Annotation {
   value: Date;
 
   displayValue(): string {
+    if (this.value === undefined) {
+      return undefined;
+    }
     return formatDate(this.value, AppSettings.DATE_FORMAT, 'en_CA');
   }
 

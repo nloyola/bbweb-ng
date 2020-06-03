@@ -6,9 +6,9 @@ import { CentreLocationInfo } from '@app/domain/centres';
 import { Shipment, ShipmentState } from '@app/domain/shipments';
 import { RootStoreState, ShipmentStoreActions, ShipmentStoreSelectors } from '@app/root-store';
 import {
-  CentreLocationResultsMapper,
-  CentreLocationSelectTypeahead
-} from '@app/shared/typeaheads/centre-loction-select-typeahead';
+  CentreLocationSelectTypeahead,
+  CentreLocationResultsMapper
+} from '@app/shared/typeaheads/centre-location-select-typeahead';
 import { select, Store } from '@ngrx/store';
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
@@ -55,7 +55,7 @@ export class ShipmentAddPageComponent implements OnInit, OnDestroy {
     this.store$
       .pipe(
         select(ShipmentStoreSelectors.selectShipmentLastAdded),
-        filter(s => !!s && this.notificationService.notificationPending()),
+        filter((s) => !!s && this.notificationService.notificationPending()),
         takeUntil(this.unsubscribe$)
       )
       .subscribe((shipment: Shipment) => {
@@ -67,10 +67,10 @@ export class ShipmentAddPageComponent implements OnInit, OnDestroy {
     this.store$
       .pipe(
         select(ShipmentStoreSelectors.selectShipmentError),
-        filter(s => !!s && this.notificationService.notificationPending()),
+        filter((s) => !!s && this.notificationService.notificationPending()),
         takeUntil(this.unsubscribe$)
       )
-      .subscribe(error => {
+      .subscribe((error) => {
         let errMessage = error.error.error ? error.error.error.message : error.error.statusText;
         if (errMessage.match(/EntityCriteriaError: shipment with tracking number already exists/)) {
           errMessage = `That Tracking Number is already in use by another shipment.`;
@@ -150,7 +150,7 @@ export class ShipmentAddPageComponent implements OnInit, OnDestroy {
 
       const locationToFilterId = locationIdToFilterFn();
       if (locationToFilterId !== undefined) {
-        return locations.filter(info => info.location.id !== locationToFilterId);
+        return locations.filter((info) => info.location.id !== locationToFilterId);
       }
       return locations;
     };
